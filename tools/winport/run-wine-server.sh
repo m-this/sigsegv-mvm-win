@@ -16,9 +16,17 @@
 # How far this gets, on wine 10.0: the whole engine stack loads, engine.dll,
 # materialsystem, studiorender, vphysics, datacache, vgui2, vscript and
 # shaderapiempty. Then the process exits 255 without a word, before it loads
-# tf/bin/server.dll. The 64-bit server does exactly the same, so this is not a
-# wine32 problem. Nothing is hooked yet because server.dll is never mapped, so
-# this is the wall to clear before the test bed is worth anything.
+# tf/bin/server.dll.
+#
+# Three things say that wall is the engine and not the way it was started.
+# srcds_win64.exe does exactly the same, so it is not a wine32 problem. Every
+# map does the same, so it is not the map. And driving the GUI dialog instead,
+# under Xvfb with xdotool pressing its default button, prints the same one
+# shader line and exits the same way, so the dialog was never the blocker
+# either. Do not spend another evening on the dialog.
+#
+# Nothing is hooked yet because server.dll is never mapped, so this is the wall
+# to clear before the test bed is worth anything.
 set -euo pipefail
 
 SERVER="${TF2_WIN_SERVER:-$HOME/tf2-win-server}"
