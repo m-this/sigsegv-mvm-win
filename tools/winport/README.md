@@ -42,6 +42,33 @@ syntax and the loader path are all already in place.
 | non-mangled C symbols      |   315 | data globals and engine exports        |
 | `sym regex`                |    11 | case by case                           |
 
+## The dumps have to come from the same build
+
+The Linux tables under `mvm-reversed/Useful/vtable` were made against some past
+build and say so nowhere. Against a current `server.dll` they disagree for
+reasons that look like the ABI and are not: `CGenericFlexCycler` has a single
+vtable on each side and still differed by ten slots, which no ABI rule explains
+and a game update does.
+
+`dumplinuxvtables.py` is the answer, and it needs no reversing at all.
+`server_srv.so` keeps its symbol table, which is the whole reason SigMod
+resolves anything on Linux: `_ZTV<class>` is the vtable and every slot in it
+points at a function the symbol table names. It reads the sub-table structure
+too, since an Itanium vtable opens each one with its offset-to-top and its
+typeinfo pointer, so a class that multiply inherits comes out table by table
+rather than as one flat run that walks on into its bases.
+
+    python3 tools/winport/dumplinuxvtables.py /path/to/tf/bin/server_srv.so linux-vtables/
+
+3,277 classes, 238,617 slots, from the same build as the Windows dump. Check
+that: `steamapps/appmanifest_232250.acf` on each side carries a `buildid`, and
+the two have to be equal or none of this means anything.
+
+Matching the fresh dump instead of the stale one took the resolved count from
+**214 to 388**, and it moved the alignment used from `raw` to `collapse` for 99
+classes, which is the Itanium double destructor showing up exactly where it
+should.
+
 ## What is done
 
 `dumpvtables.py` reads the MSVC RTTI out of `server.dll` directly, no IDA
@@ -60,14 +87,20 @@ makes the tables equal in length.
     python3 tools/winport/matchvtables.py \
         mvm-reversed/Useful/vtable/server_srv win-vtables/ classified.json
 
-Result on the current build, and it is deliberately conservative:
+Both dumps now carry the offset of each sub-table, so a class that multiply
+inherits is compared table for table: the one at offset 0 is the class's own on
+either side. That refusal bucket is gone, and what it was hiding is visible
+instead, which is that some classes genuinely have a different number of
+virtuals on the two platforms.
+
+Result on the current build, against a version-matched Linux dump, and it is
+deliberately conservative:
 
 | outcome                  | addresses | classes |
 | ------------------------ | --------: | ------: |
-| index derived            |       206 |      56 |
-| several Windows vtables  |       442 |     124 |
-| no alignment fits        |       125 |      25 |
-| no dump on one side      |       197 |      59 |
+| index derived            |       388 |     108 |
+| no alignment fits        |       408 |     104 |
+| no dump on one side      |       174 |      63 |
 
 `knownvtidx.generated.txt` holds those 206. Every one was checked back against
 both dumps: 201 entry names match their signature exactly and the other five are
@@ -95,9 +128,12 @@ addresses are the boundaries.
 
 ## Order of work from here
 
-1. The 442 refused for multiple inheritance are the biggest single bucket and
-   the cheapest to attack: match each secondary vtable by its locator `offset`
-   field, which says where in the complete object that vtable sits.
+1. The 408 that do not align. These are no longer a tooling gap: both sides are
+   the same build and the same sub-table, so a class whose tables differ in
+   length differs for real. `CTFPlayer` is 496 against 490, `CTFBot` 538 against
+   495. Find what the six or the forty-three are on one class and the answer
+   probably covers many: candidates are covariant returns, which Itanium gives a
+   slot and MSVC does not, and overload runs MSVC reverses.
 2. Make AMBuild's MSVC path build. `AMBuildScript` already has
    `configure_msvc` and `configure_windows`; what has never been tried is
    `libs/udis86` and `libs/lua`, both built with autotools by the Linux CI.

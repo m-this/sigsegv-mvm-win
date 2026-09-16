@@ -104,7 +104,14 @@ def type_descriptors(pe):
 
 
 def locators(pe, descriptors):
-    """address -> class name, for every Complete Object Locator we can believe."""
+    """address -> (class name, offset), for every Complete Object Locator we can believe.
+
+    The offset is where in the complete object this vtable's subobject sits, and
+    it is what tells a class's own table from the ones it carries for the bases
+    it multiply inherits: the primary table is the one at offset 0. Without it a
+    class with several tables is unmatchable, which is the largest refusal
+    bucket in matchvtables.py.
+    """
     found = {}
     for s in pe.sections:
         if s["exec"]:
@@ -122,7 +129,7 @@ def locators(pe, descriptors):
             cd = pe.dword(va + 16)
             target = cd if not pe.pe32_plus else pe.base + (cd or 0)
             if cd and pe.section_of(target) is not None:
-                found[va] = name
+                found[va] = (name, pe.dword(va + 4) or 0)
     return found
 
 
@@ -141,11 +148,12 @@ def vtables(pe, cols):
         for va in range(s["va"], s["va"] + s["vsize"] - pe.ptr, pe.ptr):
             pointed = pe.word(va)
             if pointed is not None and pointed in cols:
-                starts.append((va + pe.ptr, cols[pointed]))
+                name, offset = cols[pointed]
+                starts.append((va + pe.ptr, name, offset))
 
     boundaries = sorted(cols)
     out = {}
-    for start, name in starts:
+    for start, name, offset in starts:
         limit = next((b for b in boundaries if b > start), None)
         slots, at = [], start
         while limit is None or at < limit:
@@ -155,7 +163,7 @@ def vtables(pe, cols):
             slots.append((len(slots), fn))
             at += pe.ptr
         if slots:
-            out.setdefault(name, []).append((start, slots))
+            out.setdefault(name, []).append((start, offset, slots))
     return out
 
 
@@ -190,9 +198,11 @@ def main():
         pretty = undecorate(decorated)
         safe = re.sub(r"[^A-Za-z0-9_.-]", "_", pretty)
         lines = [pretty, ""]
-        for start, slots in sorted(instances):
-            if len(instances) > 1:
-                lines.append(f"// vtable at 0x{start:08x}")
+        for start, offset, slots in sorted(instances):
+            # The offset is always written, not only when a class has several
+            # tables: a reader should not have to know how many there were to
+            # know whether this is the class's own table or a base's.
+            lines.append(f"// vtable at 0x{start:08x} offset 0x{offset:04x}")
             for index, fn in slots:
                 lines.append(f"+0x{index * pe.ptr:04x}:  {fn:08x}")
             lines.append("")
