@@ -27,20 +27,35 @@ for path in "$XWIN/crt/include" "$SDK/public" "$AM/sourcemod/public" "$AM/metamo
 done
 command -v clang-cl >/dev/null || { echo "clang-cl not on PATH" >&2; exit 1; }
 
+# Windows does not care about the case of a header name and Linux does, and
+# Microsoft's own headers are not consistent with themselves. Derived, so it is
+# rebuilt here rather than committed.
+SHIM="${SHIM:-$OUT/caseshim}"
+bash "$(dirname "$0")/caseshim.sh" "$SHIM" \
+	"$XWIN/sdk/include/um" "$XWIN/sdk/include/shared" \
+	"$XWIN/sdk/include/ucrt" "$XWIN/crt/include"
+
 # SOURCE_ENGINE=12 and TF_DLL come from hl2sdk-manifests/manifests/tf2.json;
 # COMPILER_MSVC32 and the CRT quieting come from AMBuildScript's configure_msvc.
 FLAGS=(
 	--target=i686-pc-windows-msvc /nologo /std:c++17 /EHsc /GR- /TP -fsyntax-only /W0
 	/FI"$ROOT/tools/winport/msvc_prelude.h"
+	# The Linux build force-includes the mod's own precompiled header into every
+	# source, AMBuilder:546, and almost nothing here names it: src/util/buf.h
+	# calls DevMsg with no include chain that could have declared it. Leaving
+	# this out measured a tree that was never meant to compile without it.
+	/FI"$ROOT/src/common.h"
+	/I"$ROOT/tools/winport/shim" /I"$SHIM"
 	/imsvc "$XWIN/crt/include" /imsvc "$XWIN/sdk/include/ucrt"
 	/imsvc "$XWIN/sdk/include/um" /imsvc "$XWIN/sdk/include/shared"
 	/I"$SDK/public" /I"$SDK/public/engine" /I"$SDK/public/mathlib" /I"$SDK/public/vstdlib"
 	/I"$SDK/public/tier0" /I"$SDK/public/tier1" /I"$SDK/public/toolframework"
 	/I"$SDK/public/game/server" /I"$SDK/game/shared" /I"$SDK/common"
 	/I"$AM/sourcemod/public" /I"$AM/sourcemod/public/extensions"
-	/I"$AM/sourcemod/public/amtl" /I"$AM/sourcemod/sourcepawn/include"
+	/I"$AM/sourcemod/public/amtl" /I"$AM/sourcemod/public/amtl/amtl"
+	/I"$AM/sourcemod/sourcepawn/include"
 	/I"$AM/metamod-source/core" /I"$AM/metamod-source/core/sourcehook"
-	/I"$ROOT" /I"$ROOT/src" /I"$ROOT/libs/udis86"
+	/I"$ROOT" /I"$ROOT/src" /I"$ROOT/src/sdk" /I"$ROOT/libs/udis86"
 	/I"$ROOT/libs/fmt/include" /I"$ROOT/libs/lua/src"
 	/DSOURCE_ENGINE=12 /DGAME_DLL /DRAD_TELEMETRY_DISABLED
 	/DCOMPILER_MSVC /DCOMPILER_MSVC32 /DWIN32 /D_WINDOWS /DTF_DLL
