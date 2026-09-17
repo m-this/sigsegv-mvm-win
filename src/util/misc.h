@@ -5,7 +5,20 @@
 #include <random>
 
 
+/* Every size given to this is the Linux layout of a reversed game type, read off
+ * server_srv.so. The MSVC ABI lays classes out differently, so asserting those
+ * numbers on Windows fails for all 119 of them and says nothing at all about
+ * what the Windows sizes are.
+ *
+ * So on Windows this checks nothing, and that is a gap rather than a pass: a
+ * stub whose Windows layout differs reads the wrong offsets at runtime. Each
+ * type a Windows build actually uses has to be measured against server.dll
+ * before it is trusted there. Tracked as apw-5g4.13. */
+#if defined _MSC_VER
+#define SIZE_CHECK(_type, _size)
+#else
 #define SIZE_CHECK(_type, _size) static_assert(sizeof(_type) == _size, "sizeof(" #_type ") == " #_size)
+#endif
 
 
 constexpr long double operator"" _deg(long double deg)        { return deg * (M_PI / 180.0); }

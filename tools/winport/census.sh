@@ -16,6 +16,11 @@
 set -uo pipefail
 
 XWIN="${XWIN:-$HOME/xwin-sdk}"
+# Boost, header-only as this tree uses it: string algorithms, tokenizer, pool.
+# The Linux build takes it from the system. Here it comes out of the Debian
+# package without installing it:
+#     apt-get download libboost1.83-dev && dpkg -x libboost1.83-dev_*.deb ~/winport-deps/boost
+BOOST="${BOOST:-$HOME/winport-deps/boost/usr/include}"
 AM="${ALLIEDMODDERS:-$(cd "$(dirname "$0")/../../.." && pwd)/alliedmodders}"
 SDK="$AM/hl2sdk-tf2"
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
@@ -37,6 +42,23 @@ bash "$(dirname "$0")/caseshim.sh" "$SHIM" \
 
 # SOURCE_ENGINE=12 and TF_DLL come from hl2sdk-manifests/manifests/tf2.json;
 # COMPILER_MSVC32 and the CRT quieting come from AMBuildScript's configure_msvc.
+# The engine defines AMBuildScript:578 gives every build: SE_<NAME>=<code> for
+# every SDK manifest, which the tree compares SOURCE_ENGINE against, and
+# SE_IS_<NAME> for the one being built. Without SE_IS_TF2 every TF2-specific
+# stub is behind a false #ifdef, and CEconEntity, CMultiPlayerAnimState and the
+# rest turn up as hundreds of unknown types. Derived from the manifests so a new
+# SDK needs nothing here.
+SE_DEFINES=$(python3 - "$AM/hl2sdk-manifests/manifests" <<'PY'
+import json, pathlib, sys
+for f in sorted(pathlib.Path(sys.argv[1]).glob("*.json")):
+    d = json.loads(f.read_text())
+    if "define" in d and "code" in d:
+        print(f"/DSE_{d['define']}={d['code']}")
+PY
+)
+# shellcheck disable=SC2206 # one flag per line, split on purpose
+SE_DEFINES=($SE_DEFINES /DSE_IS_TF2)
+
 FLAGS=(
 	--target=i686-pc-windows-msvc /nologo /std:c++20 /EHsc /GR- /TP -fsyntax-only /W0
 	/FI"$ROOT/tools/winport/msvc_prelude.h"
@@ -57,6 +79,8 @@ FLAGS=(
 	/I"$AM/metamod-source/core" /I"$AM/metamod-source/core/sourcehook"
 	/I"$ROOT" /I"$ROOT/src" /I"$ROOT/src/sdk" /I"$ROOT/libs/udis86"
 	/I"$ROOT/libs/fmt/include" /I"$ROOT/libs/lua/src"
+	/imsvc "$BOOST"
+	"${SE_DEFINES[@]}"
 	/DSOURCE_ENGINE=12 /DGAME_DLL /DRAD_TELEMETRY_DISABLED
 	/DCOMPILER_MSVC /DCOMPILER_MSVC32 /DWIN32 /D_WINDOWS /DTF_DLL
 	/D_CRT_SECURE_NO_DEPRECATE /D_CRT_SECURE_NO_WARNINGS /D_CRT_NONSTDC_NO_DEPRECATE

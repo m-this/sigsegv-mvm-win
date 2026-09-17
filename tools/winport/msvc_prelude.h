@@ -61,3 +61,11 @@
 #include <utility>
 #include <variant>
 #include <vector>
+
+/* ARRAY_SIZE is used by the tree and defined nowhere in it or in the SDK: on
+ * Linux libiberty.h supplies it, reached through the demangler includes in
+ * common.h, which a Windows build does not have. Same definition libiberty
+ * gives. */
+#ifndef ARRAY_SIZE
+#define ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
+#endif
