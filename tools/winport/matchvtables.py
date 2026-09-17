@@ -220,4 +220,5 @@ def main():
     print(f"\nwrote {len(resolved)} entries to {out}")
 
 
-main()
+if __name__ == "__main__":
+    main()
