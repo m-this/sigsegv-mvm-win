@@ -35,10 +35,9 @@ command -v clang-cl >/dev/null || { echo "clang-cl not on PATH" >&2; exit 1; }
 # Windows does not care about the case of a header name and Linux does, and
 # Microsoft's own headers are not consistent with themselves. Derived, so it is
 # rebuilt here rather than committed.
+# Built once, below, by the parent: a --one child rebuilding it would empty the
+# directory under the children still reading it.
 SHIM="${SHIM:-$OUT/caseshim}"
-bash "$(dirname "$0")/caseshim.sh" "$SHIM" \
-	"$XWIN/sdk/include/um" "$XWIN/sdk/include/shared" \
-	"$XWIN/sdk/include/ucrt" "$XWIN/crt/include"
 
 # SOURCE_ENGINE=12 and TF_DLL come from hl2sdk-manifests/manifests/tf2.json;
 # COMPILER_MSVC32 and the CRT quieting come from AMBuildScript's configure_msvc.
@@ -103,8 +102,20 @@ compile_one() {
 if [ "${1:-}" = "--one" ]; then cd "$ROOT"; compile_one "$2"; exit 0; fi
 
 rm -rf "$OUT"; mkdir -p "$OUT/errors"
+bash "$(dirname "$0")/caseshim.sh" "$SHIM" \
+	"$XWIN/sdk/include/um" "$XWIN/sdk/include/shared" \
+	"$XWIN/sdk/include/ucrt" "$XWIN/crt/include"
 cd "$ROOT"
-find src -name '*.cpp' | sort > "$OUT/sources"
+# The sources AMBuilder builds by default, not every .cpp under src: a third of
+# those are mods it lists commented out, which nobody compiles on Linux either.
+python3 - <<'PY' > "$OUT/sources"
+import types
+text = open("AMBuilder").read()
+ext = types.SimpleNamespace(name="sigsegv", exclude=[], optimize_mods_only=False)
+scope = {"Extension": ext}
+exec(text[:text.index("project = builder.LibraryProject")], scope)
+print("\n".join(sorted(set(scope["sourceFiles"]))))
+PY
 echo "$(wc -l < "$OUT/sources") sources, $JOBS jobs"
 
 xargs -a "$OUT/sources" -P "$JOBS" -I{} "$0" --one {} > "$OUT/results"
