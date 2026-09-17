@@ -8,17 +8,24 @@
 #include <boost/algorithm/string.hpp>
 #include "sp_vm_api.h"
 
-std::unordered_map<std::string, ModCommand *> commands;
+/* Constructed on first use: ModCommands are static objects all over the tree and
+ * register in their constructors, so a namespace-scope map is only ready in
+ * time if the linker happened to order this file first. */
+static std::unordered_map<std::string, ModCommand *> &ModCommands()
+{
+    static std::unordered_map<std::string, ModCommand *> commands;
+    return commands;
+}
 
 void ModConsoleCommand(const CCommand &args);
 ModCommand::ModCommand(const char *name, ModCommandCallbackFn callback, IMod *mod, const char *helpString, int flags) : name(name), callback(callback), command(name, ModConsoleCommand, helpString, flags), mod(mod)
 {
-    commands[name] = this;
+    ModCommands()[name] = this;
 }
 
 ModCommand::~ModCommand() 
 {
-    commands.erase(this->name);
+    ModCommands().erase(this->name);
 }
 
 enum class ModCommandExecuteType
@@ -35,8 +42,8 @@ void ModConsoleCommand(const CCommand &args)
 {
     std::string commandLower = args[0];
     boost::algorithm::to_lower(commandLower);
-    auto it = commands.find(commandLower.c_str());
-    if (it != commands.end() && !(it->second->mod != nullptr && !it->second->mod->IsEnabled())) {
+    auto it = ModCommands().find(commandLower.c_str());
+    if (it != ModCommands().end() && !(it->second->mod != nullptr && !it->second->mod->IsEnabled())) {
         if (it->second->CanPlayerCall(nullptr)) {
             auto func = it->second->callback;
             last_mod_command_execute_type = ModCommandExecuteType::SERVER_CONSOLE;
@@ -94,14 +101,14 @@ namespace Mod::Common::Commands
 			std::string commandLower = newArgs[0];
             boost::algorithm::to_lower(commandLower);
 
-            auto it = commands.find(commandLower.c_str());
+            auto it = ModCommands().find(commandLower.c_str());
             // Add sig_ prefix if not present and did not find a command with original name
-            if (it == commands.end() && !commandLower.starts_with("sig_")) {
-                it = commands.find("sig_"s+commandLower.c_str());
+            if (it == ModCommands().end() && !commandLower.starts_with("sig_")) {
+                it = ModCommands().find("sig_"s+commandLower.c_str());
                 fullCommand.insert(0, "sig_");
                 newArgs.Tokenize(fullCommand.c_str());
             }
-            if (it != commands.end() && !(it->second->mod != nullptr && !it->second->mod->IsEnabled())) {
+            if (it != ModCommands().end() && !(it->second->mod != nullptr && !it->second->mod->IsEnabled())) {
                 if (it->second->CanPlayerCall(player)) {
                     auto func = it->second->callback;
                     last_mod_command_execute_type = ModCommandExecuteType::CHAT;
@@ -123,8 +130,8 @@ namespace Mod::Common::Commands
 		if (player != nullptr) {
 			std::string commandLower = args[0];
             boost::algorithm::to_lower(commandLower);
-            auto it = commands.find(commandLower.c_str());
-            if (it != commands.end()) {
+            auto it = ModCommands().find(commandLower.c_str());
+            if (it != ModCommands().end()) {
                 if (it->second->CanPlayerCall(player)) {
                     auto func = it->second->callback;
                     last_mod_command_execute_type = ModCommandExecuteType::CLIENT_CONSOLE;
@@ -148,7 +155,7 @@ namespace Mod::Common::Commands
     }
 
     ModCommand sig_help("sig_help", [](CCommandPlayer *player, const CCommand& args){
-        for (auto &[name, command] : commands) {
+        for (auto &[name, command] : ModCommands()) {
             if ((command->mod == nullptr || command->mod->IsEnabled()) && command->CanPlayerCall(player)) {
                 auto text = command->command.GetHelpText();
                 if (last_mod_command_execute_type == ModCommandExecuteType::CHAT) {

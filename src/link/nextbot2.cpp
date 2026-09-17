@@ -76,6 +76,7 @@ THUNK_VTABLE(9ChasePath, 0x200);
 
 #include "re/nextbot.h"
 #include "re/path.h"
+#include "stub/nextbot_cc.h"
 
 static MemberFuncThunk<Action<CTFBot> *, void> ft_Action_dtor_D2("Action<CTFBot>::~Action [D2]");
 
@@ -85,6 +86,11 @@ static MemberFuncThunk<Action<CTFBot> *, void> ft_Action_dtor_D2("Action<CTFBot>
 /* nesting the dtor thunk inside an actual dtor is a bad idea, but it's better
  * than the horrible alternative */
 template<> Action<CTFBot>::~Action() { ft_Action_dtor_D2(this); }
+
+/* Action<CBotNPCArcher> shares its code with Action<CZombie>, as the thunks in
+ * nextbot1.cpp already assume. */
+static MemberFuncThunk<Action<CBotNPCArcher> *, void> ft_Action_CBotNPCArcher_dtor_D2("Action<CZombie>::~Action [D2]");
+template<> Action<CBotNPCArcher>::~Action() { ft_Action_CBotNPCArcher_dtor_D2(this); }
 
 /* not implemented */
 INextBotEventResponder::~INextBotEventResponder() { assert(false); }

@@ -316,8 +316,11 @@ private:
 class CMultiScan : public IScan
 {
 public:
-	template<typename CONTAINER, typename SCANNER>
-	CMultiScan(const CONTAINER& scanners)
+	/* A container of scanners. SCANNER used to be a second template parameter
+	 * nothing could deduce, so a container argument went to the variadic
+	 * constructor below and was itself cast to IScanner *. */
+	template<typename CONTAINER, typename SCANNER = typename CONTAINER::value_type>
+	CMultiScan(CONTAINER& scanners)
 	{
 		for (SCANNER& scanner : scanners) {
 			this->m_Scanners.push_back(&scanner);

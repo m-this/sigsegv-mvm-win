@@ -430,6 +430,94 @@ float CTFBotPathCost::operator()(CNavArea *area1, CNavArea *area2, const CNavLad
 /* CZombiePathCost */
 float CZombiePathCost::operator()(CNavArea *area1, CNavArea *area2, const CNavLadder *ladder, const CFuncElevator *elevator, float f1) const { return ft_CZombiePathCost_op_func(this, area1, area2, ladder, elevator, f1); }
 
+#if defined _MSC_VER
+/* On Linux the extension leaves these undefined and the dynamic loader binds
+ * them to server_srv.so, which exports them. A DLL cannot import from a module
+ * that exports nothing, so on Windows they forward to the game's code by
+ * address like every other thunk here. They are the methods of the game's own
+ * path classes that the mod's actions reach through embedded ChasePath and
+ * PathFollower members. */
+static MemberFuncThunk<const Path *, const Vector&, float, const Path::Segment *>                        ft_Path_GetPosition                ("Path::GetPosition");
+static MemberFuncThunk<const Path *, const Vector&, const Vector&, const Path::Segment *, float>         ft_Path_GetClosestPosition         ("Path::GetClosestPosition");
+static MemberFuncThunk<const Path *, CBaseEntity *>                                                    ft_Path_GetSubject                 ("Path::GetSubject");
+static MemberFuncThunk<const Path *, float>                                                            ft_Path_GetAge                     ("Path::GetAge");
+static MemberFuncThunk<const Path *, void, const Vector&, Path::SeekType, float>                        ft_Path_MoveCursorToClosestPosition("Path::MoveCursorToClosestPosition");
+static MemberFuncThunk<      Path *, void>                                                             ft_Path_MoveCursorToStart          ("Path::MoveCursorToStart");
+static MemberFuncThunk<      Path *, void>                                                             ft_Path_MoveCursorToEnd            ("Path::MoveCursorToEnd");
+static MemberFuncThunk<      Path *, void, float, Path::MoveCursorType>                                ft_Path_MoveCursor                 ("Path::MoveCursor");
+static MemberFuncThunk<const Path *, float>                                                            ft_Path_GetCursorPosition          ("Path::GetCursorPosition");
+static MemberFuncThunk<const Path *, const Path::CursorData *>                                         ft_Path_GetCursorData              ("Path::GetCursorData");
+static MemberFuncThunk<      Path *, void, float, float>                                               ft_Path_DrawInterpolated           ("Path::DrawInterpolated");
+static MemberFuncThunk<const Path *, const Path::Segment *>                                            ft_Path_FirstSegment               ("Path::FirstSegment");
+static MemberFuncThunk<const Path *, const Path::Segment *, const Path::Segment *>                     ft_Path_NextSegment                ("Path::NextSegment");
+static MemberFuncThunk<const Path *, const Path::Segment *, const Path::Segment *>                     ft_Path_PriorSegment               ("Path::PriorSegment");
+static MemberFuncThunk<const Path *, const Path::Segment *>                                            ft_Path_LastSegment                ("Path::LastSegment");
+static MemberFuncThunk<      Path *, void, INextBot *, const Path&>                                    ft_Path_Copy                       ("Path::Copy");
+static MemberFuncThunk<      Path *, bool, INextBot *, const IPathCost&, const IPathOpenGoalSelector&, float> ft_Path_ComputeWithOpenGoal ("Path::ComputeWithOpenGoal");
+static MemberFuncThunk<const Path *, void, INextBot *, const CNavArea *, const Vector&, const CNavArea *, NavDirType, Vector *> ft_Path_ComputeAreaCrossing("Path::ComputeAreaCrossing");
+
+static MemberFuncThunk<      PathFollower *, void>                                                     ft_PathFollower_ctor               ("PathFollower::PathFollower [C1]");
+static MemberFuncThunk<      PathFollower *, void>                                                     ft_PathFollower_dtor               ("PathFollower::~PathFollower [D1]");
+static MemberFuncThunk<const PathFollower *, const Path::Segment *>                                    ft_PathFollower_GetCurrentGoal     ("PathFollower::GetCurrentGoal");
+static MemberFuncThunk<const PathFollower *, void, const Path::Segment *>                              ft_PathFollower_Draw               ("PathFollower::Draw");
+static MemberFuncThunk<      PathFollower *, void, INextBot *, Path::ResultType>                       ft_PathFollower_OnPathChanged      ("PathFollower::OnPathChanged");
+static MemberFuncThunk<const PathFollower *, CBaseEntity *>                                            ft_PathFollower_GetHindrance       ("PathFollower::GetHindrance");
+static MemberFuncThunk<const PathFollower *, bool, INextBot *, Path::SegmentType, float>               ft_PathFollower_IsDiscontinuityAhead("PathFollower::IsDiscontinuityAhead");
+
+static MemberFuncThunk<const ChasePath *, float>                                                       ft_ChasePath_GetLeadRadius         ("ChasePath::GetLeadRadius");
+static MemberFuncThunk<const ChasePath *, float>                                                       ft_ChasePath_GetMaxPathLength      ("ChasePath::GetMaxPathLength");
+static MemberFuncThunk<const ChasePath *, Vector, INextBot *, CBaseEntity *>                           ft_ChasePath_PredictSubjectPosition("ChasePath::PredictSubjectPosition");
+static MemberFuncThunk<const ChasePath *, bool, INextBot *, CBaseEntity *>                             ft_ChasePath_IsRepathNeeded        ("ChasePath::IsRepathNeeded");
+static MemberFuncThunk<const ChasePath *, float>                                                       ft_ChasePath_GetLifetime           ("ChasePath::GetLifetime");
+
+const Vector& Path::GetPosition(float dist, const Segment *seg) const                                   { return ft_Path_GetPosition                (this, dist, seg); }
+const Vector& Path::GetClosestPosition(const Vector& pos, const Segment *seg, float dist) const         { return ft_Path_GetClosestPosition         (this, pos, seg, dist); }
+CBaseEntity *Path::GetSubject() const                                                                   { return ft_Path_GetSubject                 (this); }
+float Path::GetAge() const                                                                              { return ft_Path_GetAge                     (this); }
+void Path::MoveCursorToClosestPosition(const Vector& pos, SeekType stype, float dist) const             {        ft_Path_MoveCursorToClosestPosition(this, pos, stype, dist); }
+void Path::MoveCursorToStart()                                                                          {        ft_Path_MoveCursorToStart          (this); }
+void Path::MoveCursorToEnd()                                                                            {        ft_Path_MoveCursorToEnd            (this); }
+void Path::MoveCursor(float dist, MoveCursorType mctype)                                                {        ft_Path_MoveCursor                 (this, dist, mctype); }
+float Path::GetCursorPosition() const                                                                   { return ft_Path_GetCursorPosition          (this); }
+const Path::CursorData *Path::GetCursorData() const                                                     { return ft_Path_GetCursorData              (this); }
+void Path::DrawInterpolated(float from, float to)                                                       {        ft_Path_DrawInterpolated           (this, from, to); }
+const Path::Segment *Path::FirstSegment() const                                                         { return ft_Path_FirstSegment               (this); }
+const Path::Segment *Path::NextSegment(const Segment *seg) const                                        { return ft_Path_NextSegment                (this, seg); }
+const Path::Segment *Path::PriorSegment(const Segment *seg) const                                       { return ft_Path_PriorSegment               (this, seg); }
+const Path::Segment *Path::LastSegment() const                                                          { return ft_Path_LastSegment                (this); }
+void Path::Copy(INextBot *nextbot, const Path& that)                                                    {        ft_Path_Copy                       (this, nextbot, that); }
+bool Path::ComputeWithOpenGoal(INextBot *nextbot, const IPathCost& cost_func, const IPathOpenGoalSelector& sel, float f1) { return ft_Path_ComputeWithOpenGoal(this, nextbot, cost_func, sel, f1); }
+void Path::ComputeAreaCrossing(INextBot *nextbot, const CNavArea *area, const Vector& from, const CNavArea *to, NavDirType dir, Vector *out) const { ft_Path_ComputeAreaCrossing(this, nextbot, area, from, to, dir, out); }
+
+/* The game's constructor and destructor do the member work and install its own
+ * vtable, Path's part included, so Path's own are empty: running them again
+ * around the game's would only redo that work. Path's members are trivially
+ * destructible. */
+static MemberFuncThunk<const Path *, const Path::Segment *>                                            ft_Path_GetCurrentGoal             ("Path::GetCurrentGoal");
+static MemberFuncThunk<      Path *, void>                                                             ft_Path_Invalidate                 ("Path::Invalidate");
+static MemberFuncThunk<const Path *, void, const Path::Segment *>                                      ft_Path_Draw                       ("Path::Draw");
+static MemberFuncThunk<      Path *, void, INextBot *, Path::ResultType>                               ft_Path_OnPathChanged              ("Path::OnPathChanged");
+const Path::Segment *Path::GetCurrentGoal() const                                                       { return ft_Path_GetCurrentGoal             (this); }
+void Path::Invalidate()                                                                                 {        ft_Path_Invalidate                 (this); }
+void Path::Draw(const Segment *seg) const                                                               {        ft_Path_Draw                       (this, seg); }
+void Path::OnPathChanged(INextBot *nextbot, ResultType rtype)                                           {        ft_Path_OnPathChanged              (this, nextbot, rtype); }
+Path::Path()                                                                                            {}
+Path::~Path()                                                                                           {}
+PathFollower::PathFollower()                                                                            {        ft_PathFollower_ctor               (this); }
+PathFollower::~PathFollower()                                                                           {        ft_PathFollower_dtor               (this); }
+const Path::Segment *PathFollower::GetCurrentGoal() const                                               { return ft_PathFollower_GetCurrentGoal     (this); }
+void PathFollower::Draw(const Segment *seg) const                                                       {        ft_PathFollower_Draw               (this, seg); }
+void PathFollower::OnPathChanged(INextBot *nextbot, ResultType rtype)                                   {        ft_PathFollower_OnPathChanged      (this, nextbot, rtype); }
+CBaseEntity *PathFollower::GetHindrance() const                                                         { return ft_PathFollower_GetHindrance       (this); }
+bool PathFollower::IsDiscontinuityAhead(INextBot *nextbot, SegmentType stype, float f1) const           { return ft_PathFollower_IsDiscontinuityAhead(this, nextbot, stype, f1); }
+
+float ChasePath::GetLeadRadius() const                                                                  { return ft_ChasePath_GetLeadRadius         (this); }
+float ChasePath::GetMaxPathLength() const                                                               { return ft_ChasePath_GetMaxPathLength      (this); }
+Vector ChasePath::PredictSubjectPosition(INextBot *nextbot, CBaseEntity *ent) const                     { return ft_ChasePath_PredictSubjectPosition(this, nextbot, ent); }
+bool ChasePath::IsRepathNeeded(INextBot *nextbot, CBaseEntity *ent) const                               { return ft_ChasePath_IsRepathNeeded        (this, nextbot, ent); }
+float ChasePath::GetLifetime() const                                                                    { return ft_ChasePath_GetLifetime           (this); }
+#endif
+
 /* Behavior<CTFBot> */
 template<> INextBotEventResponder *Behavior<CTFBot>::FirstContainedResponder() const { return ft_Behavior_FirstContainedResponder(this); }
 

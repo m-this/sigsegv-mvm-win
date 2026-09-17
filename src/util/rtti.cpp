@@ -9,24 +9,27 @@
 
 namespace RTTI
 {
+	// Constructed on first use: mods look these up from their constructors,
+	// which run during static initialization in an order the linker picks.
+	//
 	// Windows: str typeinfo(T).raw_name() => _TypeDescriptor*
 	// Linux:   str typeinfo(T).name()     => abi::__class_type_info*
-	static std::unordered_map<std::string, const rtti_t *> s_RTTI;
+	static std::unordered_map<std::string, const rtti_t *>& s_RTTI() { static std::unordered_map<std::string, const rtti_t *> m; return m; }
 	
 	// Windows: str typeinfo(T).raw_name() => void **
 	// Linux:   str typeinfo(T).name()     => void **
-	static std::unordered_map<std::string, const void **> s_VT;
+	static std::unordered_map<std::string, const void **>& s_VT() { static std::unordered_map<std::string, const void **> m; return m; }
 	
 	// Windows: str typeinfo(T).raw_name() => void **
 	// Linux:   str typeinfo(T).name()     => void **
-	static std::unordered_map<std::string, VTableInfo> s_VTInfo;
+	static std::unordered_map<std::string, VTableInfo>& s_VTInfo() { static std::unordered_map<std::string, VTableInfo> m; return m; }
 	
 	
 	void PreLoad()
 	{
 		DevMsg("RTTI::PreLoad BEGIN\n");
-		s_RTTI.clear();
-		s_VT.clear();
+		s_RTTI().clear();
+		s_VT().clear();
 		
 #if defined __GNUC__
 		
@@ -51,20 +54,20 @@ namespace RTTI
 							std::string key(name);
 							auto addr = (const rtti_t *)(sym.addr);
 							
-							if (s_RTTI.find(key) != s_RTTI.end()) {
+							if (s_RTTI().find(key) != s_RTTI().end()) {
 								DevWarning("RTTI::PreLoad: duplicate symbol \"_ZTI%s\"\n", name);
 							} else {
-								s_RTTI[key] = addr;
+								s_RTTI()[key] = addr;
 							//	DevMsg("RTTI: %08x \"%s\"\n", (uintptr_t)addr, name);
 							}
 						} else if (is_vt) {
 							std::string key(name);
 							auto addr = (const void **)((uintptr_t)(sym.addr) + offsetof(vtable, vfptrs));
 							
-							if (s_VT.find(key) != s_VT.end()) {
+							if (s_VT().find(key) != s_VT().end()) {
 								DevWarning("RTTI::PreLoad: duplicate symbol \"_ZTV%s\"\n", name);
 							} else {
-								s_VT[key] = addr;
+								s_VT()[key] = addr;
 							//	DevMsg("VT: %08x \"%s\"\n", (uintptr_t)addr, name);
 							}
 						}
@@ -159,11 +162,11 @@ namespace RTTI
 				++n_add;
 				
 				std::string key(name);
-				if (s_RTTI.find(key) != s_RTTI.end()) {
+				if (s_RTTI().find(key) != s_RTTI().end()) {
 				//	DevWarning("RTTI::PreLoad: duplicate RTTI str \"%s\"\n", name);
 				} else {
-					s_RTTI[key] = addr;
-				//	DevMsg("\"%s\" TD @ %08x\n", name, (uintptr_t)s_RTTI[key]);
+					s_RTTI()[key] = addr;
+				//	DevMsg("\"%s\" TD @ %08x\n", name, (uintptr_t)s_RTTI()[key]);
 				}
 			}
 			DevMsg("RTTI::PreLoad:\n"
@@ -175,9 +178,11 @@ namespace RTTI
 			
 			
 			Prof::Begin();
-			std::unordered_map<COLScanner *, std::string> scannermap_COL;
+			std::unordered_map<const COLScanner *, std::string> scannermap_COL;
 			std::vector<COLScanner> scanners_COL;
-			for (const auto& pair : s_RTTI) {
+			// the map below is keyed by element address, so the vector must never reallocate
+			scanners_COL.reserve(s_RTTI().size());
+			for (const auto& pair : s_RTTI()) {
 				auto name = pair.first;
 				auto p_TD = pair.second;
 				
@@ -215,8 +220,9 @@ namespace RTTI
 			
 			
 			Prof::Begin();
-			std::unordered_map<VTScanner *, std::string> scannermap_VT;
+			std::unordered_map<const VTScanner *, std::string> scannermap_VT;
 			std::vector<VTScanner> scanners_VT;
+			scanners_VT.reserve(results_COL.size());
 			for (const auto& pair : results_COL) {
 				auto name  = pair.first;
 				auto p_COL = pair.second;
@@ -238,8 +244,8 @@ namespace RTTI
 					continue;
 				}
 				
-				s_VT[name] = (const void **)((uintptr_t)scanner.FirstMatch() + 0x4);
-			//	DevMsg("\"%s\" VT @ %08x\n", name.c_str(), (uintptr_t)s_VT[name]);
+				s_VT()[name] = (const void **)((uintptr_t)scanner.FirstMatch() + 0x4);
+			//	DevMsg("\"%s\" VT @ %08x\n", name.c_str(), (uintptr_t)s_VT()[name]);
 			}
 			Prof::End("VT post");
 		}
@@ -247,13 +253,13 @@ namespace RTTI
 		
 #if 0
 		std::multimap<uintptr_t, std::string> addrmap;
-		for (const auto& pair : s_RTTI) {
+		for (const auto& pair : s_RTTI()) {
 			addrmap.emplace((uintptr_t)pair.second, "TD   " + pair.first);
 		}
 		for (const auto& pair : results_COL) {
 			addrmap.emplace((uintptr_t)pair.second, "COL  " + pair.first);
 		}
-		for (const auto& pair : s_VT) {
+		for (const auto& pair : s_VT()) {
 			addrmap.emplace((uintptr_t)pair.second, "VT   " + pair.first);
 		}
 		
@@ -273,18 +279,18 @@ namespace RTTI
 #endif
 		
 		
-		DevMsg("RTTI::PreLoad: found %u RTTI\n", s_RTTI.size());
-		DevMsg("RTTI::PreLoad: found %u VT\n", s_VT.size());
+		DevMsg("RTTI::PreLoad: found %u RTTI\n", s_RTTI().size());
+		DevMsg("RTTI::PreLoad: found %u VT\n", s_VT().size());
 
 		std::map<size_t, std::string> vtSwapped;
-		for (auto &[name, ptr] : s_VT) {
+		for (auto &[name, ptr] : s_VT()) {
 			vtSwapped.emplace((size_t)ptr, name);
 		}
 		std::string prevName = "";
 		size_t prevPtr = 0U;
 		for (auto &[ptr, name] : vtSwapped) {
 			if (!prevName.empty()) {
-				s_VTInfo.emplace(prevName, VTableInfo((void **)prevPtr, Clamp(ptr - prevPtr, (size_t) 0U, sizeof(size_t) * 2048)));
+				s_VTInfo().emplace(prevName, VTableInfo((void **)prevPtr, Clamp(ptr - prevPtr, (size_t) 0U, sizeof(size_t) * 2048)));
 			}
 			prevName = name;
 			prevPtr = ptr;
@@ -302,8 +308,8 @@ namespace RTTI
 	
 	const rtti_t *GetRTTI(const char *name)
 	{
-		auto it = s_RTTI.find(std::string(name));
-		if (it == s_RTTI.end()) {
+		auto it = s_RTTI().find(std::string(name));
+		if (it == s_RTTI().end()) {
 			DevMsg("RTTI::GetRTTI FAIL: no RTTI addr for name \"%s\"\n", name);
 			return nullptr;
 		}
@@ -313,8 +319,8 @@ namespace RTTI
 	
 	const void **GetVTable(const char *name)
 	{
-		auto it = s_VT.find(std::string(name));
-		if (it == s_VT.end()) {
+		auto it = s_VT().find(std::string(name));
+		if (it == s_VT().end()) {
 			DevMsg("RTTI::GetVTable FAIL: no VT addr for name \"%s\"\n", name);
 			return nullptr;
 		}
@@ -324,16 +330,16 @@ namespace RTTI
 
 	const std::unordered_map<std::string, const rtti_t *> &GetAllRTTI()
 	{
-		return s_RTTI;
+		return s_RTTI();
 	}
 
 	const std::unordered_map<std::string, const void **> &GetAllVTable()
 	{
-		return s_VT;
+		return s_VT();
 	}
 
 	const std::unordered_map<std::string, VTableInfo> &GetAllVTableInfo()
 	{
-		return s_VTInfo;
+		return s_VTInfo();
 	}
 }
