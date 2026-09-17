@@ -244,14 +244,12 @@ MemberFuncThunk<CTFBot::SuspectedSpyInfo_t *, bool> CTFBot::SuspectedSpyInfo_t::
 
 
 IMPL_EXTRACT(CTFBot::MissionType,   CTFBot, m_nMission,  new CExtract_CTFBot_m_nMission());
-#if !defined _WINDOWS
 //#if TOOLCHAIN_FIXES
 IMPL_EXTRACT(CUtlVector<CFmtStr>,   CTFBot, m_Tags,      new CExtract_CTFBot_m_Tags());
 //#endif
 IMPL_EXTRACT(CTFBot::AttributeType, CTFBot, m_nBotAttrs, new CExtract_CTFBot_m_nBotAttrs());
 IMPL_REL_BEFORE(CTFBot::WeaponRestriction, CTFBot, m_iWeaponRestrictionFlags,    m_nBotAttrs, 0);
 IMPL_REL_AFTER(CHandle<CBaseEntity>, CTFBot, m_enemySentry,    m_nBotAttrs, int, void *, EHANDLE, EHANDLE, EHANDLE, void *, bool);
-#endif
 
 MemberFuncThunk<const CTFBot *, ILocomotion *                            > CTFBot::ft_GetLocomotionInterface      ("CTFBot::GetLocomotionInterface");
 MemberFuncThunk<const CTFBot *, IBody *                                  > CTFBot::ft_GetBodyInterface            ("CTFBot::GetBodyInterface");

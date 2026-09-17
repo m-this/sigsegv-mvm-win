@@ -108,7 +108,7 @@ namespace Mod::Etc::Extra_Player_Slots
             ConColorMsg(Color(0xff,0xff,0x00),"Extra player slots %s, change level\n", ExtraSlotsEnabled() ? "enabled" : "disabled");
             if (g_pPopulationManager != nullptr) {
                 std::filesystem::path filename = g_pPopulationManager->GetPopulationFilename();
-                nextMissionAfterMapChange = filename.stem();
+                nextMissionAfterMapChange = filename.stem().string();
             }
             engine->ChangeLevel(STRING(gpGlobals->mapname), nullptr);
         }

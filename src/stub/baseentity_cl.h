@@ -94,39 +94,6 @@ private:
 	// ...
 };
 
-#ifdef _WINDOWS
-inline float C_BaseAnimating::GetModelScale() const
-{
-	assert(engine->GetServerVersion() == 4016097);
-	return *(float *)((uintptr_t)this + 0x658);
-}
-inline int C_BaseAnimating::GetHitboxSet() const
-{
-	assert(engine->GetServerVersion() == 4016097);
-	return *(int *)((uintptr_t)this + 0x560);
-}
-#include <bone_setup.h>
-#include "addr/standard.h"
-inline void C_BaseAnimating::GetBoneTransform(int iBone, matrix3x4_t& pBoneToWorld)
-{
-	assert(engine->GetServerVersion() == 4016097);
-	
-	// really horrible unoptimized and probably unsafe implementation
-	
-//	static CAddr_FixedAddr("[client] C_BaseAnimating::GetBoneCache", "", 0x00173720, engine->GetServerVersion());
-	static MemberFuncThunk<C_BaseAnimating *, CBoneCache *, CStudioHdr *> ft_GetBoneCache("");
-	ft_GetBoneCache.ForceLink(LibMgr::GetInfo(Library::CLIENT).BaseAddr() + 0x173720);
-	
-//	static CAddr_FixedAddr("[client] CBoneCache::GetCachedBone", "", 0x001671d0, engine->GetServerVersion());
-	static MemberFuncThunk<CBoneCache *, matrix3x4_t *, int> ft_GetCachedBone("");
-	ft_GetCachedBone.ForceLink(LibMgr::GetInfo(Library::CLIENT).BaseAddr() + 0x1671d0);
-	
-	CBoneCache *pcache = ft_GetBoneCache(this, nullptr);
-	matrix3x4_t *pmatrix = ft_GetCachedBone(pcache, iBone);
-	
-	MatrixCopy(*pmatrix, pBoneToWorld);
-}
-#endif
 
 
 #if 0

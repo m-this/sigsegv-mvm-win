@@ -19,7 +19,9 @@
 #include "util/iterate.h"
 #include "util/misc.h"
 #include "util/thread_pool.h"
+#ifdef __linux__
 #include <link.h>
+#endif
 #include <bitset>
 
 int global_frame_list_counter = 0;

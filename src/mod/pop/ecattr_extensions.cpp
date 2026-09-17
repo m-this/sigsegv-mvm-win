@@ -971,7 +971,7 @@ namespace Mod::Pop::ECAttr_Extensions
 			}
 		} else if (FStrEq(name, "PreferTeam")) {
 			data.prefer_team = kv->GetInt();
-			for (size_t i = 0; i < ARRAYSIZE(g_aTeamNames); i++) {
+			for (size_t i = 0; i < std::size(g_aTeamNames.GetRef()); i++) {
 				if (StringStartsWith(g_aTeamNames[i], kv->GetString())) {
 					data.prefer_team = i;
 				}

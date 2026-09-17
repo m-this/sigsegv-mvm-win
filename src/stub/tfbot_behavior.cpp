@@ -4,11 +4,6 @@
 #include "util/rtti.h"
 
 
-#if defined _MSC_VER
-#error
-#endif
-
-
 //template<typename T> Action<T>::~Action() {}
 
 

@@ -183,13 +183,32 @@ void CVirtualHookAll::DoDisable()
 }
 
 
+/* Whether the class that owns vtable is base's class or derives from it. The
+ * type information sits in the slot before the first virtual function on both
+ * ABIs, and says it differently: libstdc++ answers with __do_upcast, MSVC lists
+ * every base class in the complete object locator's hierarchy. */
+static bool VTableDerivesFrom(const void **vtable, const void **base, void *object)
+{
+#if defined _MSC_VER
+    auto hierarchy = static_cast<const __RTTI_CompleteObjectLocator *>(vtable[-1])->pClassDescriptor;
+    auto wanted    = static_cast<const __RTTI_CompleteObjectLocator *>(base[-1])->pTypeDescriptor;
+    for (unsigned long i = 0; i < hierarchy->numBaseClasses; ++i) {
+        if (hierarchy->pBaseClassArray->arrayOfBaseClassDescriptors[i]->pTypeDescriptor == wanted) {
+            return true;
+        }
+    }
+    return false;
+#else
+    return static_cast<const std::type_info *>(*(vtable-1))->__do_upcast(*((const __cxxabiv1::__class_type_info **)base-1), &object);
+#endif
+}
+
 void CVirtualHookInherit::DoEnable()
 {
     if (!this->m_bEnabled && this->m_bLoaded) {
         auto origfunc = *this->m_pFuncPtr;
         for (auto &[name, vtable] : RTTI::GetAllVTable()) {
-            void *result = *this->m_pFuncPtr;
-            if (vtable[this->m_iOffset] == origfunc && static_cast<const std::type_info *>(*(vtable-1))->__do_upcast(*((const __cxxabiv1::__class_type_info **)this->m_pVTable-1), &result)) {
+            if (vtable[this->m_iOffset] == origfunc && VTableDerivesFrom(vtable, (const void **)this->m_pVTable, *this->m_pFuncPtr)) {
                 CVirtualHookFunc::Find(this->m_pFuncPtr, (void *) *vtable).AddVirtualHook(this);
             }
         }
@@ -203,8 +222,7 @@ void CVirtualHookInherit::DoDisable()
     if (this->m_bEnabled) {
         auto origfunc = *this->m_pFuncPtr;
         for (auto &[name, vtable] : RTTI::GetAllVTable()) {
-            void *result = *this->m_pFuncPtr;
-            if (vtable[this->m_iOffset] == origfunc && static_cast<const std::type_info *>(*(vtable-1))->__do_upcast(*((const __cxxabiv1::__class_type_info **)this->m_pVTable-1), &result)) {
+            if (vtable[this->m_iOffset] == origfunc && VTableDerivesFrom(vtable, (const void **)this->m_pVTable, *this->m_pFuncPtr)) {
                 CVirtualHookFunc::Find(this->m_pFuncPtr, (void *) *vtable).RemoveVirtualHook(this);
             }
         }

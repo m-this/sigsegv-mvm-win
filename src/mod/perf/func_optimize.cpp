@@ -447,6 +447,7 @@ namespace Mod::Perf::Func_Optimize
 	}
 
     uintptr_t CThreadLocalBase_Get_addr = 0;
+#ifdef __linux__ // a probe of the pthread TLS call path, registered nowhere
     DETOUR_DECL_MEMBER(void *, CThreadLocalBase_Get)
 	{
         auto addrA = &pthread_getspecific;
@@ -470,6 +471,7 @@ namespace Mod::Perf::Func_Optimize
         //}
 		return DETOUR_MEMBER_CALL();
 	}
+#endif
 
     DETOUR_DECL_MEMBER(void, CTFBot_AvoidPlayers, CUserCmd *cmd)
 	{

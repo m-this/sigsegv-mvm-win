@@ -503,12 +503,10 @@ public:
 			return false;
 		}
 		
-#if defined __clang__
-		ptrdiff_t adj = -offsetof(vtable, vfptrs);
-#elif defined __GNUC__
-		ptrdiff_t adj = -offsetof(vtable, vfptrs);
-#elif defined _MSC_VER
+#if defined _MSC_VER
 		ptrdiff_t adj = 0;
+#else
+		ptrdiff_t adj = -offsetof(vtable, vfptrs);
 #endif
 		
 		memcpy(m_pDest, (void *)((uintptr_t)vt + adj), SIZE);

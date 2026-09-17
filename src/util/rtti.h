@@ -5,21 +5,17 @@
 #include "abi.h"
 #include "util/demangle.h"
 
-#if defined __clang__
-typedef abi::__class_type_info rtti_t;
-#elif defined __GNUC__
-typedef abi::__class_type_info rtti_t;
-#elif defined _MSC_VER
+#if defined _MSC_VER
 typedef _TypeDescriptor rtti_t;
+#else
+typedef abi::__class_type_info rtti_t;
 #endif
 
 
-#if defined __clang__
-#define TYPEID_RAW_NAME(typeinfo) typeinfo.name()
-#elif defined __GNUC__
-#define TYPEID_RAW_NAME(typeinfo) typeinfo.name()
-#elif defined _MSC_VER
+#if defined _MSC_VER
 #define TYPEID_RAW_NAME(typeinfo) typeinfo.raw_name()
+#else
+#define TYPEID_RAW_NAME(typeinfo) typeinfo.name()
 #endif
 
 template<typename T>

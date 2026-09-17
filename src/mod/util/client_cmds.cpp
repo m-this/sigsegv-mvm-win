@@ -1108,6 +1108,7 @@ namespace Mod::Util::Client_Cmds
 
 			ModCommandResponse("%s", displaystr.c_str());
 			displaystr = "";
+#if !defined _MSC_VER // __do_upcast is libstdc++'s
 			displaystr += CFmtStr("\n\nupcast casting tests: \n\n");
 			displaystr += CFmtStr("(tfplayer)entity->player %d | ", static_cast<const std::type_info *>(rtti_base_entity)->__do_upcast(rtti_tf_player, (void **)&testent));
 			displaystr += CFmtStr("(gamerules)entity->player %d | ", static_cast<const std::type_info *>(rtti_base_entity)->__do_upcast(rtti_tf_player, (void **)&gamerules));
@@ -1118,6 +1119,7 @@ namespace Mod::Util::Client_Cmds
 			displaystr += CFmtStr("(tfplayer)object->entity %d | ", static_cast<const std::type_info *>(rtti_base_object)->__do_upcast(rtti_base_entity, (void **)&testent));
 			displaystr += CFmtStr("(tfplayer)entity->object %d | ", static_cast<const std::type_info *>(rtti_base_entity)->__do_upcast(rtti_base_object, (void **)&testent));
 			displaystr += CFmtStr("(tfplayer)player->object %d | ", static_cast<const std::type_info *>(rtti_tf_player)->__do_upcast(rtti_base_object, (void **)&testent));
+#endif
 
 		}
 		else if (strcmp(args[2], "rtticastscorer") == 0) {
@@ -1238,6 +1240,7 @@ namespace Mod::Util::Client_Cmds
 			timer.End();
 			displaystr += CFmtStr("threadlocal time: %.9f\n", timer.GetDuration().GetSeconds());
 		}
+#if !defined _MSC_VER // pthread keys
 		else if (strcmp(args[2], "threadlocalmine") == 0) {
 			static pthread_key_t index;
 			static int done = pthread_key_create( &index, NULL );
@@ -1249,6 +1252,7 @@ namespace Mod::Util::Client_Cmds
 			timer.End();
 			displaystr += CFmtStr("threadlocalmine time: %.9f\n", timer.GetDuration().GetSeconds());
 		}
+#endif
 		else if (strcmp(args[2], "mgrtime") == 0) {
 			IHasAttributes *attrs = player->m_pAttributes;
 			attrs = rtti_cast<IHasAttributes *>(player);

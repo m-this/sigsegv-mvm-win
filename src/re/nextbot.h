@@ -450,8 +450,6 @@ template<class Actor> const char *Action<Actor>::DebugString() const            
 template<class Actor> void Action<Actor>::PrintStateToConsole() const                                                                                           {        ft_Action_PrintStateToConsole                <Actor>(this);                           }
 template<class Actor> void Action<Actor>::DeleteThis()                                                                                                        {        ft_Action_DeleteThis                        <Actor>(this);                           }
 
-#if defined __GNUC__ || defined __clang__
-
 /* ActionStub: provides a base for interoperating with real Action<T> objects in the game */
 template<typename T>
 class ActionStub : public Action<T>
@@ -495,6 +493,34 @@ protected:
 	}
 	
 private:
+#if defined _MSC_VER
+	/* MSVC gives each vtable pointer its own vtable, and each of those its own
+	 * complete object locator, whose offset field says where in the object that
+	 * pointer sits. So: the locator naming U at this offset, then the vtable
+	 * whose slot -1 points at it. */
+	template<typename U>
+	static uintptr_t FindAdditionalVTable(ptrdiff_t offset)
+	{
+		using COLScanner = CAlignedTypeScanner<ScanDir::FORWARD, ScanResults::ALL, const _TypeDescriptor *>;
+		using VTScanner  = CAlignedTypeScanner<ScanDir::FORWARD, ScanResults::ALL, const __RTTI_CompleteObjectLocator *>;
+		
+		const __RTTI_CompleteObjectLocator *col = nullptr;
+		CScan<COLScanner> scan_COL(CLibSegBounds(Library::SERVER, Segment::RODATA), RTTI::GetRTTI<U>());
+		for (auto match : scan_COL.Matches()) {
+			auto p_COL = (const __RTTI_CompleteObjectLocator *)((uintptr_t)match - offsetof(__RTTI_CompleteObjectLocator, pTypeDescriptor));
+			if (p_COL->signature == 0x00000000 && p_COL->offset == (unsigned long)offset) {
+				assert(col == nullptr);
+				col = p_COL;
+			}
+		}
+		assert(col != nullptr);
+		
+		CScan<VTScanner> scan_VT(CLibSegBounds(Library::SERVER, Segment::RODATA), col);
+		assert(scan_VT.ExactlyOneMatch());
+		
+		return ((uintptr_t)scan_VT.FirstMatch() + sizeof(const __RTTI_CompleteObjectLocator *));
+	}
+#else
 	struct VTPreamble
 	{
 		ptrdiff_t base_neg_off;
@@ -532,9 +558,8 @@ private:
 		
 		return ((uintptr_t)scan.FirstMatch() + sizeof(VTPreamble));
 	}
-};
-
 #endif
+};
 
 
 template<typename Functor>

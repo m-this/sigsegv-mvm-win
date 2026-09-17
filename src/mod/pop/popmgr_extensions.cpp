@@ -32,6 +32,7 @@
 #include "CommandBuffer.h"
 #include <regex>
 #include "util/translation.h"
+#include <dirent.h>
 
 // WARN_IGNORE__REORDER()
 // #include <../server/vote_controller.h>
@@ -39,7 +40,9 @@
 
 
 #define UNW_LOCAL_ONLY
+#if !defined _MSC_VER
 #include <cxxabi.h>
+#endif
 
 #define PLAYER_ANIM_WEARABLE_ITEM_ID 12138
 
@@ -307,6 +310,14 @@ namespace Mod::Pop::PopMgr_Extensions
 		PointTemplateInfo info;
 		std::vector<std::unique_ptr<ItemListEntry>> weapons;
 
+		/* Move-only, and saying so: MSVC's std::map and std::list moves are not
+		 * noexcept, so without this std::vector reallocates by copying, and the
+		 * unique_ptrs cannot be copied. */
+		WeaponPointTemplateInfo() = default;
+		WeaponPointTemplateInfo(WeaponPointTemplateInfo &&) = default;
+		WeaponPointTemplateInfo &operator=(WeaponPointTemplateInfo &&) = default;
+		WeaponPointTemplateInfo(const WeaponPointTemplateInfo &) = delete;
+		WeaponPointTemplateInfo &operator=(const WeaponPointTemplateInfo &) = delete;
 	};
 
 	struct ItemReplace
