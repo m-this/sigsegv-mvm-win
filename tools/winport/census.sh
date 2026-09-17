@@ -38,7 +38,7 @@ bash "$(dirname "$0")/caseshim.sh" "$SHIM" \
 # SOURCE_ENGINE=12 and TF_DLL come from hl2sdk-manifests/manifests/tf2.json;
 # COMPILER_MSVC32 and the CRT quieting come from AMBuildScript's configure_msvc.
 FLAGS=(
-	--target=i686-pc-windows-msvc /nologo /std:c++17 /EHsc /GR- /TP -fsyntax-only /W0
+	--target=i686-pc-windows-msvc /nologo /std:c++20 /EHsc /GR- /TP -fsyntax-only /W0
 	/FI"$ROOT/tools/winport/msvc_prelude.h"
 	# The Linux build force-includes the mod's own precompiled header into every
 	# source, AMBuilder:546, and almost nothing here names it: src/util/buf.h

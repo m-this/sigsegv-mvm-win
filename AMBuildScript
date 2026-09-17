@@ -444,7 +444,10 @@ class ExtensionConfig(object):
       '/EHsc',
       '/GR-',
       '/TP',
-      '/std:c++17'
+      # The Linux branch above builds as gnu++2a, and this tree needs it: class
+      # types as non-type template parameters, FixedString in stub/baseentity.h
+      # among them. This branch was never built, so it never caught up.
+      '/std:c++20'
     ]
     cxx.linkflags += [
       'kernel32.lib',
