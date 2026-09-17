@@ -63,6 +63,7 @@ public:
 	}
 
 	virtual const char *GetNameDebug() { return m_pszFuncName; }
+	const char *GetFuncName() const { return m_pszFuncName; }
 	virtual const char *GetTypeDebug() { return "STATIC_FUNC"; }
 	virtual uintptr_t GetAddressDebug() { return (uintptr_t) m_pFuncPtr; }
 	const void *GetFuncPtr() const { return this->m_pFuncPtr; }
@@ -89,6 +90,10 @@ public:
 	
 	inline RET operator()(PARAMS... args) const
 	{
+#if defined _WINDOWS
+		/* the Windows address table is incomplete; name the gap instead of jumping to 0 */
+		if (link.GetFuncPtr() == nullptr) Error("SigMod: called unresolved function \"%s\"\n", link.GetFuncName());
+#endif
 #ifdef DEBUG
 		assert(link.GetFuncPtr() != nullptr); 
 #endif
@@ -123,6 +128,7 @@ public:
 	}
 	
 	virtual const char *GetNameDebug() { return m_pszFuncName; }
+	const char *GetFuncName() const { return m_pszFuncName; }
 	virtual const char *GetTypeDebug() { return "MEMBER_FUNC"; }
 	virtual uintptr_t GetAddressDebug() { return (uintptr_t)m_pFuncPtr; }
 	const void *GetFuncPtr() const { return this->m_pFuncPtr; }
@@ -165,6 +171,10 @@ public:
 	inline RET operator()(const C *obj, PARAMS... args) const = delete;
 	inline RET operator()(      C *obj, PARAMS... args) const
 	{
+#if defined _WINDOWS
+		/* the Windows address table is incomplete; name the gap instead of jumping to 0 */
+		if (link.GetFuncPtr() == nullptr) Error("SigMod: called unresolved function \"%s\"\n", link.GetFuncName());
+#endif
 #ifdef __GNUC__
 		FPtr pFunc= (FPtr)link.GetFuncPtr();
 #else
@@ -204,6 +214,10 @@ public:
 	inline RET operator()(      C *obj, PARAMS... args) const = delete;
 	inline RET operator()(const C *obj, PARAMS... args) const
 	{
+#if defined _WINDOWS
+		/* the Windows address table is incomplete; name the gap instead of jumping to 0 */
+		if (link.GetFuncPtr() == nullptr) Error("SigMod: called unresolved function \"%s\"\n", link.GetFuncName());
+#endif
 #ifdef __GNUC__
 		FPtr pFunc= (FPtr)link.GetFuncPtr();
 #else
@@ -431,6 +445,7 @@ public:
 	}
 	
 	inline T& GetRef() const { return *(T *)link.m_pObjPtr; }
+	inline bool IsLinked() const { return link.m_pObjPtr != nullptr; }
 	
 protected:
 	inline T *GetPtr() const { return (T *)link.m_pObjPtr; }

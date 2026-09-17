@@ -224,6 +224,20 @@ void IMod::InvokeLoad()
 	bool ok_detour = this->LoadDetours();
 	bool ok_hooks = this->LoadVirtualHooks();
 	
+#if defined _WINDOWS
+	/* The Windows address table is incomplete while the port is brought up,
+	 * and some Linux detour targets do not exist as functions in server.dll at
+	 * all, GCC clones among them. A detour that failed to load is never
+	 * enabled (IDetour::Enable checks), so a mod runs with the rest of its
+	 * detours instead of not at all; every failure was already warned about
+	 * above, and sig_listmods counts them. Patches and virtual hooks stay
+	 * all-or-nothing. */
+	if (!ok_detour) {
+		Warning("IMod::InvokeLoad: \"%s\": loading without its failed detours\n", this->GetName());
+		ok_detour = true;
+	}
+#endif
+	
 	if (!ok_patch || !ok_detour || !ok_hooks) {
 		this->m_bFailed = true;
 		return;

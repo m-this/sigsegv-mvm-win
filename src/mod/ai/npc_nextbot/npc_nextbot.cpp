@@ -896,6 +896,12 @@ namespace Mod::AI::NPC_Nextbot
             nb_head_aim_settle_duration = g_pCVar->FindVar("nb_head_aim_settle_duration");
 
             auto botVtable = RTTI::GetVTable(TypeName<CBotNPCArcher>());
+            auto bodyVtable = RTTI::GetVTable(TypeName<CBotNPCBody>());
+            auto locomotionVtable = RTTI::GetVTable("23NextBotGroundLocomotion");
+            auto visionVtable = RTTI::GetVTable("7IVision");
+            if (botVtable == nullptr || bodyVtable == nullptr || locomotionVtable == nullptr || visionVtable == nullptr) {
+                return false;
+            }
             memcpy(MyBotVTable, botVtable-4, sizeof(MyBotVTable));
 
             CVirtualHook hooks[] = {
@@ -912,23 +918,28 @@ namespace Mod::AI::NPC_Nextbot
                 CVirtualHook(TypeName<CBotNPCArcher>(), TypeName<CBaseCombatCharacter>(), "CBaseCombatCharacter::ShouldGib", GET_VHOOK_CALLBACK(CBotNPCArcher_ShouldGib), GET_VHOOK_INNERPTR(CBotNPCArcher_ShouldGib))
                 
             };
+            /* A hook that did not load has no offset; installing it anyway
+             * writes through an uninitialised index. The NPC is not offered
+             * unless every hook is in place. */
+            bool ok = true;
             for (auto &hook : hooks) {
-                hook.DoLoad();
-                hook.AddToVTable(MyBotVTable+4);
+                if (hook.DoLoad()) {
+                    hook.AddToVTable(MyBotVTable+4);
+                } else {
+                    ok = false;
+                }
             }
 
-            auto bodyVtable = RTTI::GetVTable(TypeName<CBotNPCBody>());
             memcpy(MyBodyVTable, bodyVtable-4, sizeof(MyBodyVTable));
-
-            auto locomotionVtable = RTTI::GetVTable("23NextBotGroundLocomotion");
             memcpy(MyLocomotionVTable, locomotionVtable-4, sizeof(MyLocomotionVTable));
-
-            auto visionVtable = RTTI::GetVTable("7IVision");
             memcpy(MyVisionVTable, visionVtable-4, sizeof(MyVisionVTable));
 
-            LoadBodyHooks(MyBodyVTable+4);
-            LoadLocomotionHooks(MyLocomotionVTable+4);
-            LoadVisionHooks(MyVisionVTable+4);
+            ok = LoadBodyHooks(MyBodyVTable+4) && ok;
+            ok = LoadLocomotionHooks(MyLocomotionVTable+4) && ok;
+            ok = LoadVisionHooks(MyVisionVTable+4) && ok;
+            if (!ok) {
+                return false;
+            }
             
             servertools->GetEntityFactoryDictionary()->InstallFactory(new MyNPCFactory(servertools->GetEntityFactoryDictionary()->FindFactory("bot_npc_archer")), "$bot_npc");
             return true;

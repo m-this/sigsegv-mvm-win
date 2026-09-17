@@ -485,6 +485,18 @@ void CAddr_Pattern::ProcessStrings()
 }
 
 
+bool CAddr_SendTable::FindAddrLinux(uintptr_t& addr) const
+{
+	for (ServerClass *sc = gamedll->GetAllServerClasses(); sc != nullptr; sc = sc->m_pNext) {
+		if (sc->m_pTable != nullptr && strcmp(sc->m_pTable->GetName(), this->m_strTable.c_str()) == 0) {
+			addr = (uintptr_t)sc->m_pTable;
+			return true;
+		}
+	}
+	DevMsg("CAddr_SendTable: \"%s\": no server class has table \"%s\"\n", this->GetName(), this->m_strTable.c_str());
+	return false;
+}
+
 bool IAddr_ConCommandBase::FindAddrLinux(uintptr_t& addr) const
 {
 	const char *name = this->GetConName();

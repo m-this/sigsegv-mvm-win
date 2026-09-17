@@ -984,7 +984,7 @@ namespace Mod::AI::NPC_Nextbot
         return GetNextbotModuleBody(reinterpret_cast<CBotNPCBody *>(this))->m_isSightedIn;
     }
     
-    void LoadBodyHooks(void **vtable) {
+    bool LoadBodyHooks(void **vtable) {
         CVirtualHook hooks[] = {
             CVirtualHook(TypeName<CBotNPCBody>(), "INextBotComponent::Upkeep", GET_VHOOK_CALLBACK(MyNextbotBody_Upkeep), GET_VHOOK_INNERPTR(MyNextbotBody_Upkeep)),
             CVirtualHook(TypeName<CBotNPCBody>(), "5IBody", "IBody::Update", GET_VHOOK_CALLBACK(MyNextbotBody_Update), GET_VHOOK_INNERPTR(MyNextbotBody_Update)),
@@ -1013,10 +1013,15 @@ namespace Mod::AI::NPC_Nextbot
             CVirtualHook(TypeName<CBotNPCBody>(), "22INextBotEventResponder","INextBotEventResponder::OnLandOnGround", GET_VHOOK_CALLBACK(MyNextbotBody_OnLandOnGround), GET_VHOOK_INNERPTR(MyNextbotBody_OnLandOnGround)),
             CVirtualHook(TypeName<CBotNPCBody>(), "5IBody","IBody::IsHeadAimingOnTarget", GET_VHOOK_CALLBACK(MyNextbotBody_IsHeadAimingOnTarget), GET_VHOOK_INNERPTR(MyNextbotBody_IsHeadAimingOnTarget))
         };
+        bool ok = true;
         for (auto &hook : hooks) {
-            hook.DoLoad();
-            hook.AddToVTable(vtable);
+            if (hook.DoLoad()) {
+                hook.AddToVTable(vtable);
+            } else {
+                ok = false;
+            }
         }
+        return ok;
     }
 
     // static MemberFuncThunk<CBotNPCBody *, void, INextBot *> ft_CBotNPCBody_ctor("CBotNPCBody::CBotNPCBody");

@@ -770,7 +770,7 @@ void CDetouredFunc::UninstallJump()
 	}
 	
 	// Check if some extension had overriden our jump, but not when the game is in shutdown/restart state as it does not matter by then
-	int state = g_HostState.GetRef().m_currentState;
+	int state = g_HostState.IsLinked() ? g_HostState.GetRef().m_currentState : 0;
 	if (!this->ValidateCurrentPrologue() && !(state == 6 || state == 7)) {
 		const char *func_name = AddrManager::ReverseLookup(this->m_pFunc);
 		if (func_name == nullptr) func_name = "???";

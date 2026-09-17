@@ -73,6 +73,7 @@ private:
 		{ "func ebpprologue vprof",                &CSigsegvGameConf::AddrEntry_Load_Func_EBPPrologue_VProf },
 		{ "convar",                                &CSigsegvGameConf::AddrEntry_Load_ConVar },
 		{ "concommand",                            &CSigsegvGameConf::AddrEntry_Load_ConCommand },
+		{ "sendtable",                             &CSigsegvGameConf::AddrEntry_Load_SendTable },
 	};
 	
 	void AddrEntry_Load_Common(IAddr *addr);
@@ -91,6 +92,7 @@ private:
 	
 	SMCResult AddrEntry_Load_ConCommandBase(bool is_command);
 	SMCResult AddrEntry_Load_ConVar()     { return this->AddrEntry_Load_ConCommandBase(false); }
+	SMCResult AddrEntry_Load_SendTable();
 	SMCResult AddrEntry_Load_ConCommand() { return this->AddrEntry_Load_ConCommandBase(true);  }
 };
 extern CSigsegvGameConf g_GCHook;

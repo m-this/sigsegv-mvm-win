@@ -178,11 +178,31 @@ void* COM_CompressBuffer_LZSS( const void *source, unsigned int sourceLen, unsig
     return ft_COM_CompressBuffer_LZSS(source, sourceLen, compressedLen, maxCompressedLen);
 }
 
+#if defined _WINDOWS
+/* engine.dll has no COM_CompressBuffer_Snappy: it is inlined into its callers.
+ * COM_BufferToBufferCompress_Snappy is there, so allocate what the Linux body
+ * allocates, Snappy's worst case plus the four-byte tag, and let it fill that.
+ * The buffer comes from this module's malloc, which the free below matches. */
+static StaticFuncThunk<bool, void *, unsigned int *, const void *, unsigned int> ft_COM_BufferToBufferCompress_Snappy("COM_BufferToBufferCompress_Snappy");
+void* COM_CompressBuffer_Snappy( const void *source, unsigned int sourceLen, unsigned int *compressedLen, unsigned int maxCompressedLen )
+{
+    unsigned int size = 32 + sourceLen + sourceLen / 6 + 4;
+    void *dest = malloc(size);
+    if (dest == nullptr) return nullptr;
+    *compressedLen = size;
+    if (!ft_COM_BufferToBufferCompress_Snappy(dest, compressedLen, source, sourceLen) || *compressedLen > maxCompressedLen) {
+        free(dest);
+        return nullptr;
+    }
+    return dest;
+}
+#else
 StaticFuncThunk<void *, const void *, unsigned int, unsigned int *, unsigned int> ft_COM_CompressBuffer_Snappy("COM_CompressBuffer_Snappy");
 void* COM_CompressBuffer_Snappy( const void *source, unsigned int sourceLen, unsigned int *compressedLen, unsigned int maxCompressedLen )
 {
     return ft_COM_CompressBuffer_Snappy(source, sourceLen, compressedLen, maxCompressedLen);
 }
+#endif
 
 StaticFuncThunk<bool, void *, unsigned int *, const void *, unsigned int> ft_COM_BufferToBufferDecompress("COM_BufferToBufferDecompress");
 bool COM_BufferToBufferDecompress( void *dest, unsigned int *destLen, const void *source, unsigned int sourceLen )
@@ -421,7 +441,7 @@ void GenerateItemNames() {
             uint outputSize;
             void *outputCompress = COM_CompressBuffer_Snappy(fileout.Base(), fileout.TellPut(), &outputSize, UINT_MAX);
 
-            auto fileh = filesystem->Open(path_sm,"wb", "GAME");
+            auto fileh = outputCompress != nullptr ? filesystem->Open(path_sm,"wb", "GAME") : nullptr;
             if (fileh != nullptr) {
                 filesystem->Write(outputCompress, outputSize, fileh);
                 filesystem->Close(fileh);

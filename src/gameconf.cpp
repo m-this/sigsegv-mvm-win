@@ -6,6 +6,10 @@
 
 
 static const char *const configs[] = {
+#if defined _WINDOWS
+	/* first, so its addresses take the names before the Linux symbols do */
+	"sigsegv/windows",
+#endif
 	"sigsegv/datamaps",
 	"sigsegv/entities",
 	"sigsegv/globals",
@@ -687,6 +691,22 @@ SMCResult CSigsegvGameConf::AddrEntry_Load_Func_EBPPrologue_VProf()
 	const auto& v_group = kv.at("v_group");
 	
 	auto a = new CAddr_Func_EBPPrologue_VProf(name, sym, v_name, v_group);
+	this->AddrEntry_Load_Common(a);
+	this->m_AddrPtrs.push_back(std::unique_ptr<IAddr>(a));
+	return SMCResult_Continue;
+}
+
+SMCResult CSigsegvGameConf::AddrEntry_Load_SendTable()
+{
+	const auto& name = this->m_AddrEntry_State.m_Name;
+	const auto& kv   = this->m_AddrEntry_State.m_KeyValues;
+	
+	if (kv.find("table") == kv.end()) {
+		DevMsg("GameData error: addr \"%s\" lacks required key \"table\"\n", name.c_str());
+		return SMCResult_HaltFail;
+	}
+	
+	auto a = new CAddr_SendTable(name, kv.at("table"));
 	this->AddrEntry_Load_Common(a);
 	this->m_AddrPtrs.push_back(std::unique_ptr<IAddr>(a));
 	return SMCResult_Continue;

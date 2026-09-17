@@ -191,7 +191,7 @@ namespace Mod::AI::NPC_Nextbot
         return true;
     }
 
-    void LoadLocomotionHooks(void **vtable) {
+    bool LoadLocomotionHooks(void **vtable) {
         
         CVirtualHook hooks[] = {
             CVirtualHook("23NextBotGroundLocomotion", TypeName<CZombieIntention>(), "CZombieIntention::Reset", GET_VHOOK_CALLBACK(MyNextbotLocomotion_Reset), GET_VHOOK_INNERPTR(MyNextbotLocomotion_Reset)),
@@ -210,10 +210,15 @@ namespace Mod::AI::NPC_Nextbot
             //CVirtualHook("23NextBotGroundLocomotion", "16CTFBotLocomotion", "CTFBotLocomotion::Approach", GET_VHOOK_CALLBACK(MyNextbotLocomotion_Approach), GET_VHOOK_INNERPTR(MyNextbotLocomotion_Approach))
             
         };
+        bool ok = true;
         for (auto &hook : hooks) {
-            hook.DoLoad();
-            hook.AddToVTable(vtable);
+            if (hook.DoLoad()) {
+                hook.AddToVTable(vtable);
+            } else {
+                ok = false;
+            }
         }
+        return ok;
     }
 
     // static MemberFuncThunk<NextBotGroundLocomotion *, void, INextBot *> ft_NextBotGroundLocomotion_ctor("NextBotGroundLocomotion::NextBotGroundLocomotion");

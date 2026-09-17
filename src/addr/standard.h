@@ -460,6 +460,24 @@ private:
 };
 
 
+/* A send table, found by its network name in the server class list. The tables
+ * are built by static constructors, so on Windows no static pointer leads to
+ * them the way server_srv.so's symbol does on Linux. */
+class CAddr_SendTable : public IAddr
+{
+public:
+	CAddr_SendTable(const std::string& name, const std::string& table) :
+		m_strName(name), m_strTable(table) {}
+	
+	virtual const char *GetName() const override { return this->m_strName.c_str(); }
+	virtual bool FindAddrLinux(uintptr_t& addr) const override;
+	virtual bool FindAddrWin(uintptr_t& addr) const override { return this->FindAddrLinux(addr); }
+	
+private:
+	std::string m_strName;
+	std::string m_strTable;
+};
+
 class IAddr_ConCommandBase : public IAddr
 {
 public:

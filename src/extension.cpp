@@ -93,6 +93,11 @@ IScriptManager *scriptManager = nullptr;
 extern int laserSprite;
 bool CExtSigsegv::SDK_OnLoad(char *error, size_t maxlength, bool late)
 {
+#if defined _WINDOWS
+	/* A dedicated server has nobody to click an assertion dialog, which would
+	 * hang it; report to stderr and abort instead, as glibc does. */
+	_set_error_mode(_OUT_TO_STDERR);
+#endif
 #ifndef OPTIMIZE_MODS_ONLY
 	ColorSpew::Enable();
 #endif

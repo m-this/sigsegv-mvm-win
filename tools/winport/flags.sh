@@ -37,15 +37,15 @@ WIN_CFLAGS=(
 )
 
 WIN_CXXFLAGS=(
-	"${WIN_CFLAGS[@]}" /std:c++20 /EHsc /GR- /TP
+	# /GR, not the /GR- AMBuildScript had: Linux keeps RTTI and the tree uses dynamic_cast.
+	"${WIN_CFLAGS[@]}" /std:c++20 /EHsc /GR /TP
 	# AMBuildScript's -Wno-narrowing and -Wno-deprecated-register, in clang's
 	# spelling: both are errors in clang by default and only warnings in gcc.
 	-Wno-c++11-narrowing -Wno-register
-	/FI"$ROOT/tools/winport/msvc_prelude.h"
-	# The Linux build force-includes the mod's own precompiled header into every
-	# source, AMBuilder:546, and almost nothing here names it: src/util/buf.h
-	# calls DevMsg with no include chain that could have declared it.
-	/FI"$ROOT/src/common.h"
+	# pch.h is the prelude and src/common.h. The Linux build force-includes
+	# common.h into every source, AMBuilder:546, and almost nothing here names
+	# it: src/util/buf.h calls DevMsg with no include chain that declares it.
+	/FI"$ROOT/tools/winport/pch.h"
 	/I"$ROOT/tools/winport/shim" /I"$SHIM"
 	/I"$SDK/public" /I"$SDK/public/engine" /I"$SDK/public/mathlib" /I"$SDK/public/vstdlib"
 	/I"$SDK/public/tier0" /I"$SDK/public/tier1" /I"$SDK/public/toolframework"

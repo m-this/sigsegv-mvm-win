@@ -442,7 +442,9 @@ class ExtensionConfig(object):
     ]
     cxx.cxxflags += [
       '/EHsc',
-      '/GR-',
+      # RTTI stays on, as on Linux, which never passes -fno-rtti: IDetour::DoEnable
+      # and others dynamic_cast.
+      '/GR',
       '/TP',
       # The Linux branch above builds as gnu++2a, and this tree needs it: class
       # types as non-type template parameters, FixedString in stub/baseentity.h

@@ -201,4 +201,5 @@ def main():
     print("\nwrote /tmp/sigport/classified.json")
 
 
-main()
+if __name__ == "__main__":
+    main()

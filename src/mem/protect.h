@@ -76,7 +76,10 @@ inline void MemProtModifier::ApplyFlags(MemProtModifier::Flags flags) const
 	DWORD old_prot;
 	DWORD new_prot = this->TranslateFlags(flags);
 	
-	assert(VirtualProtect((LPVOID)this->m_pAddr, this->m_nLen, new_prot, &old_prot) == 0);
+	/* VirtualProtect returns nonzero on success, the opposite of mprotect. The
+	 * call stays outside assert so it happens whatever NDEBUG says. */
+	BOOL ok = VirtualProtect((LPVOID)this->m_pAddr, this->m_nLen, new_prot, &old_prot);
+	assert(ok != 0);
 }
 
 #else

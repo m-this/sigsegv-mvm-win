@@ -365,6 +365,296 @@ def vtable_pairs(linux_dir, windows_dir):
     return {l: w for l, w in forward.items() if reverse[w] == 1}
 
 
+def data_pairs(linux, windows, pairs):
+    """Phase 3, globals: in a matched pair of functions, the absolute references
+    into writable data come in the same order on both sides when there are the
+    same number of them. Each such reference proposes the Windows address of
+    the Linux object it lands in, less the same offset into it. An object is
+    kept when every proposal agrees, and it is marked by how many pairs said so.
+    """
+    objects = {}
+    for section in linux.elf.iter_sections():
+        if not isinstance(section, SymbolTableSection):
+            continue
+        for symbol in section.iter_symbols():
+            if symbol["st_info"]["type"] == "STT_OBJECT" and symbol["st_value"] and symbol["st_shndx"] != "SHN_UNDEF":
+                objects.setdefault(symbol["st_value"], (symbol.name, max(symbol["st_size"], 1)))
+    object_starts = sorted(objects)
+    writable = [s for s in linux.elf.iter_sections() if s.name in (".data", ".bss", ".data.rel.ro")]
+
+    def linux_object(value):
+        if not any(s["sh_addr"] <= value < s["sh_addr"] + s["sh_size"] for s in writable):
+            return None
+        i = bisect.bisect_right(object_starts, value) - 1
+        if i < 0:
+            return None
+        start = object_starts[i]
+        name, size = objects[start]
+        return (name, value - start) if value < start + size else None
+
+    data = windows.sections[".data"]
+    data_start = windows.base + data.VirtualAddress
+    data_end = data_start + max(data.Misc_VirtualSize, data.SizeOfRawData)
+    lbase = linux.text["sh_addr"]
+    linux_sites = linux.relocation_sites()
+
+    proposals = collections.defaultdict(collections.Counter)
+    for l, w in pairs.items():
+        size = linux.functions[l][1]
+        i, j = bisect.bisect_left(linux_sites, l), bisect.bisect_left(linux_sites, l + size)
+        lrefs = []
+        for site in linux_sites[i:j]:
+            value = struct.unpack_from("<I", linux.text_bytes, site - lbase)[0]
+            obj = linux_object(value)
+            if obj is not None:
+                lrefs.append(obj)
+        k = bisect.bisect_right(windows.starts, w)
+        end = windows.starts[k] if k < len(windows.starts) else windows.text_end
+        a, b = bisect.bisect_left(windows.relocs, w), bisect.bisect_left(windows.relocs, end)
+        wrefs = [v for v in (windows.read_u32(site) for site in windows.relocs[a:b]) if data_start <= v < data_end]
+        if not lrefs or len(lrefs) != len(wrefs):
+            continue
+        for (name, offset), value in zip(lrefs, wrefs):
+            proposals[name][value - offset] += 1
+
+    out = {}
+    for name, counter in proposals.items():
+        if len(counter) == 1:
+            addr, votes = next(iter(counter.items()))
+            out[name] = (addr, votes)
+    taken = collections.Counter(addr for addr, _ in out.values())
+    return {name: v for name, v in out.items() if taken[v[0]] == 1}
+
+
+def call_graph(cs, ranges, code_of, known_starts, in_text=None):
+    """function -> ordered call targets, for every function in ranges."""
+    graph = {}
+    for start, end in ranges:
+        graph[start] = call_targets(cs, code_of(start, end), start, known_starts, in_text)
+    return graph
+
+
+def consensus(linux, windows, pairs, rounds=10, neighbours=2):
+    """Phase 4: structural consensus over whole call graphs.
+
+    Callees: a Linux function whose matched callees all have counterparts is
+    the one unmatched Windows function that calls every one of those
+    counterparts. Callers: a Linux function called by matched functions is the
+    one unmatched function every one of their counterparts calls. A candidate
+    has to be the only one, and needs at least two agreeing neighbours."""
+    cs = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
+    cs.detail = True
+    lbase = linux.text["sh_addr"]
+    linux_starts = set(linux.functions)
+    lranges = [(a, a + linux.functions[a][1]) for a in linux.starts if linux.functions[a][1] > 0]
+    lgraph = call_graph(cs, lranges, lambda a, b: linux.text_bytes[a - lbase:b - lbase], linux_starts)
+    print(f"linux call graph: {len(lgraph)} functions")
+    wstarts = windows.starts
+    wranges = [(a, min(wstarts[i + 1] if i + 1 < len(wstarts) else windows.text_end, a + 0x4000)) for i, a in enumerate(wstarts)]
+    wgraph = call_graph(cs, wranges, lambda a, b: windows.text_bytes[a - windows.text_start:b - windows.text_start], set(wstarts), windows.in_text)
+    print(f"windows call graph: {len(wgraph)} functions")
+
+    def callers(graph):
+        out = collections.defaultdict(set)
+        for f, targets in graph.items():
+            for t in targets:
+                out[t].add(f)
+        return out
+    lcallers, wcallers = callers(lgraph), callers(wgraph)
+
+    forward = dict(pairs)
+    backward = {w: l for l, w in forward.items()}
+    added = {}
+    for round_number in range(rounds):
+        proposals = {}
+        for l in lgraph:
+            if l in forward:
+                continue
+            callees = {t for t in lgraph[l] if t in forward}
+            candidates = None
+            if len(callees) >= neighbours:
+                for t in callees:
+                    those = {c for c in wcallers.get(forward[t], ()) if c not in backward}
+                    candidates = those if candidates is None else candidates & those
+                if candidates is not None and len(candidates) == 1:
+                    proposals.setdefault(l, set()).update(candidates)
+            known_callers = {c for c in lcallers.get(l, ()) if c in forward}
+            if len(known_callers) >= neighbours:
+                candidates = None
+                for c in known_callers:
+                    those = {t for t in wgraph.get(forward[c], ()) if t not in backward}
+                    candidates = those if candidates is None else candidates & those
+                if candidates is not None and len(candidates) == 1:
+                    proposals.setdefault(l, set()).update(candidates)
+        claimed = collections.Counter(next(iter(ws)) for ws in proposals.values() if len(ws) == 1)
+        new = 0
+        for l, ws in proposals.items():
+            if len(ws) != 1:
+                continue
+            w = next(iter(ws))
+            if claimed[w] > 1 or w in backward:
+                continue
+            forward[l], backward[w] = w, l
+            added[l] = w
+            new += 1
+        print(f"consensus round {round_number + 1}: {new} new")
+        if new == 0:
+            break
+    return added
+
+
+def table_pairs(linux, windows):
+    """Phase 5: function pointers stored in data next to a name.
+
+    SendProp and datadesc entries keep a name string and a function pointer at
+    a fixed distance in the same record, and the record layout is the same on
+    both sides. A (name, distance) key that appears once on each side pairs the
+    two functions it points to."""
+    def keys(pointers, is_function, is_string):
+        # pointers: sorted list of (site, value) inside writable data
+        out = collections.defaultdict(set)
+        sites = [site for site, _ in pointers]
+        for idx, (site, value) in enumerate(pointers):
+            if not is_function(value):
+                continue
+            lo = bisect.bisect_left(sites, site - 64)
+            hi = bisect.bisect_right(sites, site + 64)
+            for other_site, other_value in pointers[lo:hi]:
+                text = is_string(other_value)
+                if text is not None:
+                    out[(text, site - other_site)].add(value)
+        return out
+
+    lbase_text = linux.text["sh_addr"]
+    lend_text = lbase_text + linux.text["sh_size"]
+    lpointers = []
+    data_sections = [s for s in linux.elf.iter_sections() if s.name in (".data", ".data.rel.ro")]
+    for section in linux.elf.iter_sections():
+        if not isinstance(section, RelocationSection):
+            continue
+        for reloc in section.iter_relocations():
+            if reloc["r_info_type"] not in (8, 1):
+                continue
+            site = reloc["r_offset"]
+            for ds in data_sections:
+                if ds["sh_addr"] <= site < ds["sh_addr"] + ds["sh_size"]:
+                    raw = ds.data()
+                    value = struct.unpack_from("<I", raw, site - ds["sh_addr"])[0]
+                    lpointers.append((site, value))
+                    break
+    lpointers.sort()
+    lkeys = keys(lpointers, lambda v: v in linux.functions, linux.string_at)
+
+    wpointers = []
+    for site in windows.relocs:
+        if windows.in_text(site):
+            continue
+        try:
+            wpointers.append((site, windows.read_u32(site)))
+        except Exception:
+            continue
+    wstarts = set(windows.starts)
+    wkeys = keys(wpointers, lambda v: windows.in_text(v), windows.string_at)
+
+    out = {}
+    for key, ls in lkeys.items():
+        ws = wkeys.get(key)
+        if len(ls) == 1 and ws and len(ws) == 1:
+            l, w = next(iter(ls)), next(iter(ws))
+            out.setdefault(l, set()).add(w)
+    single = {l: next(iter(ws)) for l, ws in out.items() if len(ws) == 1}
+    taken = collections.Counter(single.values())
+    return {l: w for l, w in single.items() if taken[w] == 1}
+
+
+def named_objects(linux, windows):
+    """Phase 6, data that names itself: a send table, a datamap, a convar.
+
+    A Linux data object holding a pointer to a string at some offset k is, on
+    Windows, k bytes before the one place in data that points to the same
+    string, when there is only one such place and the Linux string too is
+    pointed to from data only once."""
+    objects = []
+    for section in linux.elf.iter_sections():
+        if not isinstance(section, SymbolTableSection):
+            continue
+        for symbol in section.iter_symbols():
+            if symbol["st_info"]["type"] == "STT_OBJECT" and symbol["st_size"] >= 8 and symbol["st_shndx"] != "SHN_UNDEF":
+                objects.append((symbol["st_value"], symbol["st_size"], symbol.name))
+    data_sections = [s for s in linux.elf.iter_sections() if s.name in (".data", ".data.rel.ro")]
+
+    linux_string_sites = collections.defaultdict(list)
+    for section in linux.elf.iter_sections():
+        if not isinstance(section, RelocationSection):
+            continue
+        for reloc in section.iter_relocations():
+            if reloc["r_info_type"] not in (8, 1):
+                continue
+            site = reloc["r_offset"]
+            for ds in data_sections:
+                if ds["sh_addr"] <= site < ds["sh_addr"] + ds["sh_size"]:
+                    value = struct.unpack_from("<I", ds.data(), site - ds["sh_addr"])[0]
+                    text = linux.string_at(value)
+                    if text is not None:
+                        linux_string_sites[text].append(site)
+                    break
+
+    windows_string_sites = collections.defaultdict(list)
+    for site in windows.relocs:
+        if windows.in_text(site):
+            continue
+        try:
+            text = windows.string_at(windows.read_u32(site))
+        except Exception:
+            continue
+        if text is not None:
+            windows_string_sites[text].append(site)
+
+    site_owner = {}
+    starts = sorted((a, size, name) for a, size, name in objects)
+    keys = [a for a, _, _ in starts]
+    for text, sites in linux_string_sites.items():
+        if len(sites) != 1 or len(windows_string_sites.get(text, ())) != 1:
+            continue
+        site = sites[0]
+        i = bisect.bisect_right(keys, site) - 1
+        if i < 0:
+            continue
+        a, size, name = starts[i]
+        if site < a + size:
+            site_owner.setdefault(name, set()).add(windows_string_sites[text][0] - (site - a))
+    single = {name: next(iter(v)) for name, v in site_owner.items() if len(v) == 1}
+    taken = collections.Counter(single.values())
+    return {name: addr for name, addr in single.items() if taken[addr] == 1}
+
+
+def displacement_similarity(linux, windows, lsym_addr, waddr, cs):
+    """Jaccard of the [reg+disp] field offsets two functions use.
+
+    Source classes mostly keep their field offsets across both compilers, so
+    a real pair tends to touch the same ones: on the vtable pairs 56% score
+    0.3 or more against 5% of random pairs. Many real pairs score 0, where a
+    layout differs, so this confirms a pair and never rules one out. None when
+    neither side has any."""
+    from capstone.x86 import X86_OP_MEM, X86_REG_EBP, X86_REG_ESP
+
+    def disps(code, address):
+        out = set()
+        for insn in cs.disasm(code, address):
+            for op in insn.operands:
+                if op.type == X86_OP_MEM and op.mem.base not in (0, X86_REG_ESP, X86_REG_EBP) and 0x10 <= op.mem.disp < 0x10000:
+                    out.add(op.mem.disp)
+        return out
+
+    lbase = linux.text["sh_addr"]
+    size = linux.functions[lsym_addr][1]
+    a = disps(linux.text_bytes[lsym_addr - lbase:lsym_addr - lbase + size], lsym_addr)
+    i = bisect.bisect_right(windows.starts, waddr)
+    end = windows.starts[i] if i < len(windows.starts) else windows.text_end
+    b = disps(windows.text_bytes[waddr - windows.text_start:min(end, waddr + 0x3000) - windows.text_start], waddr)
+    return round(len(a & b) / len(a | b), 3) if a | b else None
+
+
 def main():
     linux_path, windows_path, out_path = sys.argv[1:4]
     linux = Linux(linux_path)
@@ -439,6 +729,33 @@ def main():
             "via": "call",
             "evidence": [linux.functions[via][0]],
         }
+    pairs = {linux.by_name[name]: m["rva"] + windows.base for name, m in result.items() if name in linux.by_name}
+    taken = set(pairs.values())
+    tables = table_pairs(linux, windows)
+    for l, w in tables.items():
+        if l in pairs or w in taken:
+            continue
+        pairs[l] = w
+        taken.add(w)
+        result[linux.functions[l][0]] = {"rva": w - windows.base, "via": "table", "evidence": []}
+    print(f"data-table pairs: {len(tables)}")
+    for l, w in consensus(linux, windows, pairs).items():
+        pairs[l] = w
+        result[linux.functions[l][0]] = {"rva": w - windows.base, "via": "consensus", "evidence": []}
+    for l, (w, via) in propagate(linux, windows, pairs).items():
+        pairs[l] = w
+        result[linux.functions[l][0]] = {"rva": w - windows.base, "via": "call", "evidence": [linux.functions[via][0]]}
+    for name, (addr, votes) in data_pairs(linux, windows, pairs).items():
+        if name not in result:
+            result[name] = {"rva": addr - windows.base, "via": "data", "votes": votes, "evidence": []}
+    cs = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
+    cs.detail = True
+    for name, entry in result.items():
+        if entry["via"] in ("call", "consensus", "table") and name in linux.by_name:
+            entry["fields"] = displacement_similarity(linux, windows, linux.by_name[name], entry["rva"] + windows.base, cs)
+    for name, addr in named_objects(linux, windows).items():
+        if name not in result:
+            result[name] = {"rva": addr - windows.base, "via": "named data", "evidence": []}
     print(f"matched in total: {len(result)}")
     json.dump(result, open(out_path, "w"), indent=1)
 

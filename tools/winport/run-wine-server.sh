@@ -50,4 +50,4 @@ exec xvfb-run -a --server-args="-screen 0 1280x1024x24" \
 	wine srcds.exe -game tf -console -usercon -condebug \
 		-nomessagebox -nocrashdialog -nobreakpad \
 		+sv_lan 1 +rcon_password "$RCON_PASSWORD" \
-		+maxplayers 32 +map "$MAP"
+		+maxplayers 32 ${DEVELOPER:+ +developer "$DEVELOPER"} +map "$MAP"

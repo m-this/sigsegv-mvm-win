@@ -1,0 +1,88 @@
+{
+ "_ZL16g_GameStringPool": {
+  "rva": "0xa35508",
+  "why": "AllocPooledString, CC_DumpGameStringTable and AllocPooledString_StaticConstantStringPointer all address it from here; field offsets +0x4, +0x8 and +0x14 agree with Linux"
+ },
+ "_ZN18CPopulationManager17RestoreCheckpointEv": {
+  "rva": "0x5e6b30",
+  "why": "references Announcer.MVM_Get_To_Upgrade and the upgrade-history message, as on Linux; called by the matched caller"
+ },
+ "_ZN19CMannVsMachineStats18RoundEvent_WaveEndEb": {
+  "rva": "0x5e1000",
+  "why": "same three strings, MVMWaveChange, MVMWaveFailed and sv_cheats; calls all six matched callees"
+ },
+ "_ZN18CPopulationManager21SetPopulationFilenameEPKc": {
+  "rva": "0x5e42e0",
+  "why": "inside CPopulationManager's code, 512 bytes against Linux's 513, MAX_PATH buffer on the stack; called by the matched caller"
+ },
+ "_ZN18CPopulationManager5SpawnEv": {
+  "rva": "0x5e7500",
+  "why": "base Spawn call then a virtual tail call, the Linux body's shape, inside CPopulationManager's code"
+ },
+ "_ZN9KeyValues23RecursiveMergeKeyValuesEPS_": {
+  "rva": "0x6e9d90",
+  "why": "reads the argument's +0x18 first as Linux does; called by the matched caller and calls the matched callee"
+ },
+ "_ZN24CTeamplayRoundBasedRules11State_EnterE22gamerules_roundstate_t": {
+  "rva": "0x350ae0",
+  "why": "references both 'Gamerules: entering state' strings and compares this+0x3cc against the argument first, as Linux does; the other referrer is an inlined copy"
+ },
+ "_ZN18CPopulationManager14PostInitializeEv": {
+  "rva": "0x5e4bf0",
+  "why": "the only function referencing 'Cannot populate - no Navigation Mesh exists.'"
+ },
+ "_Z13GetItemSchemav": {
+  "rva": "0x3b8810",
+  "why": "called by 62 of its 68 matched callers; body is call GEconItemSchema, add eax 4, ret, the Linux shape"
+ },
+ "_ZN15CEconItemSchema17GetItemDefinitionEi": {
+  "rva": "0x3b9300",
+  "why": "called by 12 of its 14 matched callers; a map lookup on this+0xc4. The Linux const overload is a jmp to the same body"
+ },
+ "_ZNK15CEconItemSchema17GetItemDefinitionEi": {
+  "rva": "0x3b9300",
+  "why": "called by 12 of its 14 matched callers; a map lookup on this+0xc4. The Linux const overload is a jmp to the same body"
+ },
+ "_ZN15CEconItemSchema22GetAttributeDefinitionEi": {
+  "rva": "0x3b8e30",
+  "why": "called by 7 of its 8 matched callers; a map lookup on this+0x1bc. The Linux const overload is a jmp to the same body"
+ },
+ "_ZNK15CEconItemSchema22GetAttributeDefinitionEi": {
+  "rva": "0x3b8e30",
+  "why": "called by 7 of its 8 matched callers; a map lookup on this+0x1bc. The Linux const overload is a jmp to the same body"
+ },
+ "_Z17AllocPooledStringPKc": {
+  "rva": "0x281550",
+  "why": "addresses g_GameStringPool+4 (0xa3550c) as the Linux body addresses the pool's +4; next to CC_DumpGameStringTable in the string-pool code"
+ },
+ "COM_BufferToBufferCompress_Snappy": {
+  "name": "COM_BufferToBufferCompress_Snappy",
+  "lib": "engine",
+  "rva": "0x15cf80",
+  "why": "one of three engine.dll functions using the SNAP tag 0x50414e53; the one that writes it into a caller's buffer, takes (dest, destLen*, source, sourceLen) and returns bool. The allocating COM_CompressBuffer_Snappy is inlined away"
+ },
+ "_ZN13CEconItemViewC1Ev": {
+  "name": "CEconItemView::CEconItemView [C1]",
+  "rva": "0x3c3560",
+  "why": "of the four functions writing CEconItemView's vtable 0x10828164, the one with no argument and a plain ret that zeroes the fields; 0x3c3410 is the copy constructor (ret 4, reads its argument), 0x3c36f0 the destructor, 0x3c38c0 the deleting destructor"
+ },
+ "_Z23COM_GetUncompressedSizePKvj": {
+  "lib": "engine",
+  "rva": "0x15d910",
+  "why": "(buffer, length): reads the LZSS tag's stored size or asks Snappy for it behind the SNAP tag, else -1"
+ },
+ "_Z28COM_BufferToBufferDecompressPvPjPKvj": {
+  "lib": "engine",
+  "rva": "0x15d050",
+  "why": "(dest, destLen*, source, sourceLen): checks source for the LZSS and SNAP tags and decompresses into dest"
+ },
+ "_ZNK13CEconItemView7GetSkinEib": {
+  "rva": "0x3c46f0",
+  "why": "checks the team index against 4 and the viewmodel flag, ret 8 for its two arguments, and calls GetItemSchema then GetItemDefinition, in CEconItemView's code"
+ },
+ "_ZL11g_HostState": {
+  "rva": "0x639ca4",
+  "why": "the CHostState::State_NewGame function assigns 3 to it, and m_currentState is the first member; one of the addresses the matched referrers of the Linux global use",
+  "lib": "engine"
+ }
+}
