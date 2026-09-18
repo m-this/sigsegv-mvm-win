@@ -10,13 +10,14 @@ Linux symbol lookups one for one.
 `fixed` is tied to a server version, which is what it should be: the matches
 are only true for the build they were made against.
 
-    emitgamedata.py matches.json SERVER_VERSION [datamaps.json] > gamedata/sigsegv/windows.txt
+    emitgamedata.py matches.json SERVER_VERSION [datamaps.json [knownvtidx.generated.txt]] > gamedata/sigsegv/windows.txt
 
 tools/winport/overrides.json holds addresses checked by hand, keyed by Linux
 symbol, and wins over matches.json.
 """
 
 import glob
+import os
 import re
 import json
 import sys
@@ -35,8 +36,13 @@ version = sys.argv[2]
 # server.
 overrides = json.load(open(Path(__file__).parent / "overrides.json"))
 for sym, entry in overrides.items():
+    # "bad" marks a match that was checked and is wrong: leave the name out, so
+    # it fails to resolve out loud rather than running the wrong function.
+    if entry.get("bad"):
+        matches.pop(sym, None)
+        continue
     matches[sym] = {"rva": int(entry["rva"], 16), "via": "verified: " + entry["why"]}
-extra = [(e["name"], {"type": "sym", "sym": s, "lib": e.get("lib", "server")}) for s, e in overrides.items() if "name" in e]
+extra = [(e["name"], {"type": "sym", "sym": s, "lib": e.get("lib", "server")}) for s, e in overrides.items() if "name" in e and not e.get("bad")]
 
 found = []
 for path in sorted(glob.glob(str(root / "gamedata/sigsegv/*.txt"))):
@@ -87,12 +93,23 @@ if len(sys.argv) > 3:
         matches[entry["sym"]] = {"rva": entry["rva"], "via": "datamaps.py: the datamap whose +8 names the class and that a GetDataDescMap returns"}
         found.append((class_name + "::m_DataMap", {"type": "sym", "sym": entry["sym"], "lib": "server"}))
 
+# matchvtables.py wrote a Windows address for each virtual function it could
+# align. The gamedata's own "func knownvtidx" entries carry Linux indices,
+# which are not the Windows ones, so those names are taken from here instead.
+by_name = {}
+if len(sys.argv) > 4:
+    text = open(sys.argv[4]).read()
+    for m in re.finditer(r'"([^"]+)"\n\{\n(?:[^}]*?)// [^\n]*windows (0x[0-9a-f]+)', text):
+        by_name[m.group(1)] = int(m.group(2), 16) - 0x10000000
+
 found_names = {name for name, _ in found}
 for name, entry in found + [x for x in extra if x[0] not in found_names]:
     lib = entry.get("lib", "server")
     if entry.get("type") != "sym" or (lib != "server" and "verified" not in matches.get(entry.get("sym"), {}).get("via", "")):
         continue
     match = matches.get(entry.get("sym"))
+    if match is None and name in by_name:
+        match = {"rva": by_name[name], "via": "vtable index"}
     if match is None and name.startswith("DT_") and name.endswith("::g_SendTable"):
         out += [
             f'\t\t\t\t"{name}"', "\t\t\t\t{",
@@ -104,9 +121,12 @@ for name, entry in found + [x for x in extra if x[0] not in found_names]:
         continue
     if match is None:
         continue
-    # Structural matches go in only with field-offset evidence behind them: a
-    # missing address fails its link out loud, a wrong one runs the wrong code.
-    if match["via"] in ("call", "consensus", "table") and (match.get("fields") or 0) < 0.3:
+    # Structural matches go in only with field-offset evidence behind them. A
+    # missing address is named out loud when something calls it; a wrong one
+    # corrupts quietly, and the two runs with every structural match in both
+    # ended in a silent crash that took a bisection to find. FIELDS_MIN=0
+    # includes them all.
+    if match["via"] in ("call", "consensus", "table") and (match.get("fields") or 0) < float(os.environ.get("FIELDS_MIN", 0.3)):
         continue
     out += [
         f'\t\t\t\t"{name}"', "\t\t\t\t{",

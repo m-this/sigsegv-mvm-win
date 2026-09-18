@@ -37,6 +37,10 @@ MAP="${1:-mvm_decoy}"
 RCON_PASSWORD="${RCON_PASSWORD:-winport}"
 export WINEPREFIX="${WINEPREFIX:-$HOME/.wine-tf2}"
 export WINEDEBUG="${WINEDEBUG:--all}"
+# srcds.exe is large-address-aware and the 2 GB a 32-bit process gets by default
+# is not enough for a big community map with the extension loaded: the engine
+# stops with "Out of memory or address space" while spawning it.
+export WINE_LARGE_ADDRESS_AWARE="${WINE_LARGE_ADDRESS_AWARE:-1}"
 
 [ -d "$SERVER" ] || { echo "no server at $SERVER; set TF2_WIN_SERVER" >&2; exit 1; }
 command -v xvfb-run >/dev/null || { echo "xvfb-run is required" >&2; exit 1; }

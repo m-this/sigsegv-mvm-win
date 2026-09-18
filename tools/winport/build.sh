@@ -68,8 +68,10 @@ compile_one() {
 	stale "$obj" "$file" "$kind" || { echo "ok $file"; return; }
 	local flags
 	case "$kind" in
-	# /Z7 so a crash under winedbg names a function rather than an offset.
-	ext) flags=("${WIN_CXXFLAGS[@]}" "$OPT" /Oy- /Z7 /I"$OUT/gen" /Yu"$ROOT/tools/winport/pch.h" /Fp"$PCH") ;;
+	# /Z7 so a crash under winedbg names a function rather than an offset. It
+	# costs image size, and the server is close to a 32-bit process's address
+	# space with a large community map loaded, so DEBUGINFO=0 leaves it out.
+	ext) flags=("${WIN_CXXFLAGS[@]}" "$OPT" /Oy- ${DEBUGINFO:+/Z7} /I"$OUT/gen" /Yu"$ROOT/tools/winport/pch.h" /Fp"$PCH") ;;
 	# ANN is written as a DLL; built into this one, its exports are harmless and
 	# the dllimport its header gives callers resolves locally at link time.
 	ann) flags=("${WIN_CFLAGS[@]}" /TP /EHsc "$OPT" /DDLL_EXPORTS /I"$ROOT/libs/ann/include" /I"$ROOT/libs/ann/src") ;;
@@ -126,8 +128,8 @@ pch_stale() {
 if pch_stale; then
 	echo "precompiling pch.h"
 	printf '#include "%s"\n' "$ROOT/tools/winport/pch.h" > "$OUT/pch.cpp"
-	clang-cl "${WIN_CXXFLAGS[@]}" "$OPT" /Oy- /Z7 /I"$OUT/gen" /Yc"$ROOT/tools/winport/pch.h" /Fp"$PCH" \
-		/clang:-MMD /clang:-MF"$PCH.d" -c "$OUT/pch.cpp" /Fo"$OUT/pch.obj" > "$OUT/errors/pch.log" 2>&1 \
+	clang-cl "${WIN_CXXFLAGS[@]}" "$OPT" /Oy- /I"$OUT/gen" /Yc"$ROOT/tools/winport/pch.h" /Fp"$PCH" \
+		${DEBUGINFO:+/Z7} /clang:-MMD /clang:-MF"$PCH.d" -c "$OUT/pch.cpp" /Fo"$OUT/pch.obj" > "$OUT/errors/pch.log" 2>&1 \
 		|| { cat "$OUT/errors/pch.log"; exit 1; }
 	write_deps "$PCH.d" "$PCH.deps"
 fi
@@ -179,7 +181,9 @@ echo "compiled: $ok, failed: $failed"
 echo "linking"
 mapfile -t objects < <(sed -E 's/^[a-z0-9]+ //' "$OUT/sources" | while read -r f; do obj_of "$f"; done)
 objects+=("$OUT/pch.obj")
-lld-link /nologo /DLL /MACHINE:X86 /DEBUG /errorlimit:0 /OUT:"$OUT/sigsegv.ext.2.tf2.dll" \
+# /BASE well above the engine's own modules: loaded in the middle of the free
+# space, a 6 MB module splits what the engine needs for a big map in one piece.
+lld-link /nologo /DLL /MACHINE:X86 /BASE:0x66000000 ${DEBUGINFO:+/DEBUG} /errorlimit:0 /OUT:"$OUT/sigsegv.ext.2.tf2.dll" \
 	/LIBPATH:"$XWIN/crt/lib/x86" /LIBPATH:"$XWIN/sdk/lib/um/x86" /LIBPATH:"$XWIN/sdk/lib/ucrt/x86" \
 	"${objects[@]}" \
 	"$SDK/lib/public/x86/tier0.lib" "$SDK/lib/public/x86/tier1.lib" \

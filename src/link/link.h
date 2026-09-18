@@ -290,6 +290,7 @@ public:
 	virtual const char *GetTypeDebug() { return "VIRTUAL_FUNC"; }
 	virtual uintptr_t GetAddressDebug() { return GetVTableIndex() * sizeof(uintptr_t); }
 	int GetVTableIndex() const { return this->m_iVTIndex; }
+	const char *GetFuncName() const { return this->m_pszFuncName; }
 	
 private:
 	virtual void ForceAddr(uintptr_t addr) override { this->m_iVTIndex = addr; }
@@ -339,6 +340,11 @@ public:
 		assert(vt_index != -1);
 		assert(obj != nullptr);
 #endif
+#if defined _WINDOWS
+		/* an index of -1 would read the slot before the vtable and call whatever
+		   is there; the Windows address table is still incomplete */
+		if (vt_index == -1) Error("SigMod: virtual function \"%s\" has no vtable index\n", link.GetFuncName());
+#endif
 		
 		auto pVT = *reinterpret_cast<void **const *>(obj);
 #ifdef __GNUC__
@@ -374,6 +380,11 @@ public:
 #ifdef DEBUG
 		assert(vt_index != -1);
 		assert(obj != nullptr);
+#endif
+#if defined _WINDOWS
+		/* an index of -1 would read the slot before the vtable and call whatever
+		   is there; the Windows address table is still incomplete */
+		if (vt_index == -1) Error("SigMod: virtual function \"%s\" has no vtable index\n", link.GetFuncName());
 #endif
 		
 		auto pVT = *reinterpret_cast<void **const *>(obj);

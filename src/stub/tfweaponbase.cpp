@@ -1,4 +1,5 @@
 #include "stub/tfweaponbase.h"
+#include "stub/tfplayer.h"
 #include "mem/extract.h"
 
 static constexpr uint8_t s_Buf_CTFWeaponBaseMelee_Holster[] = {
@@ -400,3 +401,9 @@ const char *TranslateWeaponEntForClass_improved(const char *name, int classnum)
 	/* if not handled: return original entity name, not an empty string */
 	return name;
 }
+#if defined _WINDOWS
+CTFPlayer *CTFWeaponBase::GetTFPlayerOwner() const
+{
+	return ToTFPlayer(const_cast<CTFWeaponBase *>(this)->GetOwner());
+}
+#endif

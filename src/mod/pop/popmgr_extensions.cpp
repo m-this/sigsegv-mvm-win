@@ -4737,7 +4737,9 @@ namespace Mod::Pop::PopMgr_Extensions
 		}
 	}
 
-	float vote_tf_mvm_popfile_time = 0.0f;
+	/* -FLT_MAX, not 0: at 0 every mission load in the first ten seconds of a map
+	 * looks like it followed a vote. */
+	float vote_tf_mvm_popfile_time = -FLT_MAX;
 	DETOUR_DECL_MEMBER(void, CMannVsMachineChangeChallengeIssue_ExecuteCommand)
 	{
 		vote_tf_mvm_popfile_time = gpGlobals->curtime;
@@ -4747,7 +4749,7 @@ namespace Mod::Pop::PopMgr_Extensions
 	DETOUR_DECL_MEMBER(bool, CPopulationManager_FindPopulationFileByShortName, const char *missionName, CUtlString &outFullPath)
 	{
 		// No voting for missions that are not on the list
-		if (vote_tf_mvm_popfile_time + 10 > gpGlobals->curtime && vote_tf_mvm_popfile_time <= gpGlobals->curtime) {
+		if (missionName != nullptr && vote_tf_mvm_popfile_time + 10 > gpGlobals->curtime && vote_tf_mvm_popfile_time <= gpGlobals->curtime) {
 			CUtlVector<CUtlString> vec;
 			CPopulationManager::FindDefaultPopulationFileShortNames(vec);
 			if (vec.Find(missionName) == -1 && !(FStrEq(missionName, STRING(gpGlobals->mapname)) && vec.Find("normal") != -1)) {

@@ -12,8 +12,8 @@
   "why": "same three strings, MVMWaveChange, MVMWaveFailed and sv_cheats; calls all six matched callees"
  },
  "_ZN18CPopulationManager21SetPopulationFilenameEPKc": {
-  "rva": "0x5e42e0",
-  "why": "inside CPopulationManager's code, 512 bytes against Linux's 513, MAX_PATH buffer on the stack; called by the matched caller"
+  "rva": "0x5e7450",
+  "why": "the only Windows function calling all three of V_FileBase, CPopulationManager::ResetMap and CTFItemSchema::FindMvmMissionByName, and it copies its argument into a MAX_PATH buffer. The earlier 0x5e42e0 was wrong and broke the AI graph allocation"
  },
  "_ZN18CPopulationManager5SpawnEv": {
   "rva": "0x5e7500",
@@ -84,5 +84,70 @@
   "rva": "0x639ca4",
   "why": "the CHostState::State_NewGame function assigns 3 to it, and m_currentState is the first member; one of the addresses the matched referrers of the Linux global use",
   "lib": "engine"
+ },
+ "g_pGameRules": {
+  "rva": "0xa33c80",
+  "why": "617 of the matched functions that read the Linux global read this one, far ahead of any other candidate",
+  "name": "g_pGameRules"
+ },
+ "_ZN14NextBotManager14CollectAllBotsEP10CUtlVectorIP8INextBot10CUtlMemoryIS2_iEE": {
+  "bad": true,
+  "why": "the match was a memory helper; detouring it made the engine fail to allocate the AI graph on a large map. No candidate found yet"
+ },
+ "_ZN11CBasePlayer10ChangeTeamEibbb": {
+  "bad": true,
+  "why": "address 0x2dde10 is right (it owns the 'CBasePlayer::ChangeTeam( %d ) - invalid team index.' string), but detouring it on Windows makes the call from CTFPlayer::ChangeTeam land in .data, so it is left undetoured until the trampoline path is understood"
+ },
+ "g_aRawPlayerClassNames": {
+  "rva": "0x9cdcf0",
+  "why": "the 13-entry table of class name strings, running undefined, scout, sniper, soldier ... civilian, random, exactly as the Linux array is declared"
+ },
+ "_ZN9CTFPlayer10ChangeTeamEibbb": {
+  "bad": true,
+  "why": "address 0x4e3c50 is right (unique string, 17 of 19 matched callees), but its detour runs with a this that is not a player and faults in CheckPlayerClassLimit; left undetoured with CBasePlayer::ChangeTeam until the detour path is understood"
+ },
+ "_ZNK11CBasePlayer5IsBotEv": {
+  "rva": "0x2e4000",
+  "why": "IsBot and IsFakeClient are the same folded function on Linux (both 0x7a6160), and the CBasePlayer vtable slot the dumps align holds this address on Windows"
+ },
+ "g_pPopulationManager": {
+  "rva": "0xb95da8",
+  "why": "written in CPopulationManager's own code at 0x5e28d4 and cleared to 0 at 0x5e2bbe, and read by the matched functions that read the Linux global"
+ },
+ "_ZNK13CEconItemView13GetStaticDataEv": {
+  "rva": "0x3c4830",
+  "why": "reads the definition index at this+4 and calls the verified GetItemSchema then GetItemDefinition, as the Linux body does; 75 callers against 89 on Linux, inside CEconItemView's code"
+ },
+ "_ZN18CPopulationManager21GetPopulationFilenameEv": {
+  "rva": "0x5e48b0",
+  "why": "returns this+0x3a0, the pair with GetPopulationFilenameShort at this+0x4a4; the 0x104 gap between them matches Linux's 0x3b8 and 0x4bc"
+ },
+ "_ZN18CPopulationManager26GetPopulationFilenameShortEv": {
+  "rva": "0x5e48c0",
+  "why": "returns this+0x4a4, 0x104 after GetPopulationFilename, as on Linux"
+ },
+ "g_pObjectiveResource": {
+  "rva": "0xa74b20",
+  "why": "CPopulationManager::StartCurrentWave reads the Linux global 0x185fc40 first thing, and its verified Windows counterpart reads this address in the same place"
+ },
+ "_ZN11CBaseEntity12SetAbsOriginERK6Vector": {
+  "rva": "0x1fb610",
+  "why": "same shape as the Linux body and as its neighbour SetAbsAngles: the same first call, then comparing the argument's first float against the stored one; all five matched callees are called here too"
+ },
+ "_ZN11CBaseEntity12SetAbsAnglesERK6QAngle": {
+  "rva": "0x1fb3a0",
+  "why": "verified next to SetAbsOrigin: same first call and the same compare-then-store shape as the Linux body, with all six matched callees called here too"
+ },
+ "_Z21SpawnHierarchicalListiP19HierarchicalSpawn_tb": {
+  "rva": "0x297ec0",
+  "why": "treats its first argument as a signed count and the second as the spawn list, 832 bytes against Linux's 856, and calls the helper holding the 'parented to itself' message that the string match had picked instead"
+ },
+ "_ZN13CUserMessages17LookupUserMessageEPKc": {
+  "rva": "0x442370",
+  "why": "called with the message name and the user-messages object in ecx by the wrapper at 0x273090 that every VGUIMenu caller uses; takes one argument (ret 4) and returns -1 when not found, as the Linux body does"
+ },
+ "_Z45AllocPooledString_StaticConstantStringPointerPKc": {
+  "bad": true,
+  "why": "0x281590 looks like the right code but MSVC compiled it as a member of the string pool, with the pool in ecx, while the tree calls it as a free function; bisect showed including it kills the server during a mission"
  }
 }

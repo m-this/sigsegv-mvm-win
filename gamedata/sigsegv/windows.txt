@@ -14,6 +14,114 @@
 		{
 			"addrs"
 			{
+				"IBody::IsHeadSteady"
+				{
+					type  "fixed"
+					sym   "_ZNK5IBody12IsHeadSteadyEv"
+					addr  "0x5bd70"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"IBody::GetHeadSteadyDuration"
+				{
+					type  "fixed"
+					sym   "_ZNK5IBody21GetHeadSteadyDurationEv"
+					addr  "0x15d760"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"IBody::ClearPendingAimReply"
+				{
+					type  "fixed"
+					sym   "_ZN5IBody20ClearPendingAimReplyEv"
+					addr  "0x130b50"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"IBody::SetDesiredPosture"
+				{
+					type  "fixed"
+					sym   "_ZN5IBody17SetDesiredPostureENS_11PostureTypeE"
+					addr  "0x130ba0"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"IBody::GetDesiredPosture"
+				{
+					type  "fixed"
+					sym   "_ZNK5IBody17GetDesiredPostureEv"
+					addr  "0x157970"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"IBody::IsDesiredPosture"
+				{
+					type  "fixed"
+					sym   "_ZNK5IBody16IsDesiredPostureENS_11PostureTypeE"
+					addr  "0x1595e0"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"IBody::GetActualPosture"
+				{
+					type  "fixed"
+					sym   "_ZNK5IBody16GetActualPostureEv"
+					addr  "0x157970"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"IBody::IsActualPosture"
+				{
+					type  "fixed"
+					sym   "_ZNK5IBody15IsActualPostureENS_11PostureTypeE"
+					addr  "0x1595e0"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"IBody::GetHeadAimSubjectLeadTime"
+				{
+					type  "fixed"
+					sym   "_ZNK5IBody25GetHeadAimSubjectLeadTimeEv"
+					addr  "0x15d760"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"IBody::GetActivity"
+				{
+					type  "fixed"
+					sym   "_ZNK5IBody11GetActivityEv"
+					addr  "0x169170"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"IBody::IsActivity"
+				{
+					type  "fixed"
+					sym   "_ZNK5IBody10IsActivityE8Activity"
+					addr  "0x152770"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"IBody::StartActivity"
+				{
+					type  "fixed"
+					sym   "_ZN5IBody13StartActivityE8Activityj"
+					addr  "0x131730"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"IBody::GetEyePosition"
 				{
 					type  "fixed"
@@ -86,6 +194,33 @@
 					lib   "server"
 					// vtable
 				}
+				"IBody::Update"
+				{
+					type  "fixed"
+					sym   "_ZN5IBody6UpdateEv"
+					addr  "0x130b50"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"IBody::IsHeadAimingOnTarget"
+				{
+					type  "fixed"
+					sym   "_ZNK5IBody20IsHeadAimingOnTargetEv"
+					addr  "0x157e70"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"CBotNPCBody::GetSolidMask"
+				{
+					type  "fixed"
+					sym   "_ZNK11CBotNPCBody12GetSolidMaskEv"
+					addr  "0x597d60"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"CBotNPCBody::AimHeadTowards [Vector]"
 				{
 					type  "fixed"
@@ -103,6 +238,33 @@
 					build "10828683"
 					lib   "server"
 					// vtable
+				}
+				"PlayerBody::GetEntity"
+				{
+					type  "fixed"
+					sym   "_ZN10PlayerBody9GetEntityEv"
+					addr  "0x425390"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"ChasePath::~ChasePath [D2]"
+				{
+					type  "fixed"
+					sym   "_ZN9ChasePathD2Ev"
+					addr  "0x5697e0"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"ChasePath::~ChasePath [D0]"
+				{
+					type  "fixed"
+					sym   "_ZN9ChasePathD0Ev"
+					addr  "0x5697e0"
+					build "10828683"
+					lib   "server"
+					// vtable index
 				}
 				"ChasePath::Update"
 				{
@@ -131,6 +293,15 @@
 					lib   "server"
 					// vtable
 				}
+				"CZombieLocomotion::GetRunSpeed"
+				{
+					type  "fixed"
+					sym   "_ZNK17CZombieLocomotion11GetRunSpeedEv"
+					addr  "0x5b7ac0"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"CHeadlessHatmanLocomotion::GetRunSpeed"
 				{
 					type  "fixed"
@@ -148,6 +319,15 @@
 					build "10828683"
 					lib   "server"
 					// vtable
+				}
+				"CMerasmusLocomotion::GetRunSpeed"
+				{
+					type  "fixed"
+					sym   "_ZNK19CMerasmusLocomotion11GetRunSpeedEv"
+					addr  "0x5acd50"
+					build "10828683"
+					lib   "server"
+					// vtable index
 				}
 				"CEyeballBossLocomotion::Approach"
 				{
@@ -185,6 +365,42 @@
 					lib   "server"
 					// vtable
 				}
+				"NextBotGroundLocomotion::GetMaxAcceleration"
+				{
+					type  "fixed"
+					sym   "_ZNK23NextBotGroundLocomotion18GetMaxAccelerationEv"
+					addr  "0x411e40"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"NextBotGroundLocomotion::GetGravity"
+				{
+					type  "fixed"
+					sym   "_ZNK23NextBotGroundLocomotion10GetGravityEv"
+					addr  "0x40f060"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"NextBotGroundLocomotion::GetMaxDeceleration"
+				{
+					type  "fixed"
+					sym   "_ZNK23NextBotGroundLocomotion18GetMaxDecelerationEv"
+					addr  "0x411e40"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"NextBotGroundLocomotion::IsOnGround"
+				{
+					type  "fixed"
+					sym   "_ZNK23NextBotGroundLocomotion10IsOnGroundEv"
+					addr  "0x411fe0"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"NextBotGroundLocomotion::Approach"
 				{
 					type  "fixed"
@@ -203,6 +419,15 @@
 					lib   "server"
 					// vtable
 				}
+				"NextBotGroundLocomotion::GetMaxYawRate"
+				{
+					type  "fixed"
+					sym   "_ZNK23NextBotGroundLocomotion13GetMaxYawRateEv"
+					addr  "0x411e60"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"NextBotGroundLocomotion::GetMaxJumpHeight"
 				{
 					type  "fixed"
@@ -212,6 +437,15 @@
 					lib   "server"
 					// vtable
 				}
+				"NextBotGroundLocomotion::GetDeathDropHeight"
+				{
+					type  "fixed"
+					sym   "_ZNK23NextBotGroundLocomotion18GetDeathDropHeightEv"
+					addr  "0x275220"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"NextBotGroundLocomotion::GetWalkSpeed"
 				{
 					type  "fixed"
@@ -220,6 +454,15 @@
 					build "10828683"
 					lib   "server"
 					// vtable
+				}
+				"NextBotGroundLocomotion::ClimbUpToLedge"
+				{
+					type  "fixed"
+					sym   "_ZN23NextBotGroundLocomotion14ClimbUpToLedgeERK6VectorS2_PK11CBaseEntity"
+					addr  "0x1655c0"
+					build "10828683"
+					lib   "server"
+					// vtable index
 				}
 				"NextBotGroundLocomotion::ApplyAccumulatedApproach"
 				{
@@ -238,15 +481,6 @@
 					build "10828683"
 					lib   "server"
 					// vtable
-				}
-				"NextBotManager::CollectAllBots"
-				{
-					type  "fixed"
-					sym   "_ZN14NextBotManager14CollectAllBotsEP10CUtlVectorIP8INextBot10CUtlMemoryIS2_iEE"
-					addr  "0x414c40"
-					build "10828683"
-					lib   "server"
-					// consensus
 				}
 				"NextBotManager::Update"
 				{
@@ -292,6 +526,33 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"PathFollower::~PathFollower [D1]"
+				{
+					type  "fixed"
+					sym   "_ZN12PathFollowerD1Ev"
+					addr  "0x42aa30"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"PathFollower::~PathFollower [D0]"
+				{
+					type  "fixed"
+					sym   "_ZN12PathFollowerD0Ev"
+					addr  "0x42aa30"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"PathFollower::~PathFollower [D2]"
+				{
+					type  "fixed"
+					sym   "_ZN12PathFollowerD2Ev"
+					addr  "0x42aa30"
+					build "10828683"
+					lib   "server"
+					// vtable index
 				}
 				"PathFollower::Update"
 				{
@@ -373,6 +634,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"PlayerLocomotion::IsOnGround"
+				{
+					type  "fixed"
+					sym   "_ZNK16PlayerLocomotion10IsOnGroundEv"
+					addr  "0x411fe0"
+					build "10828683"
+					lib   "server"
+					// vtable index
 				}
 				"IVision::Update"
 				{
@@ -491,6 +761,15 @@
 					lib   "server"
 					// vtable
 				}
+				"CBaseEntity::IsDeflectable"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity13IsDeflectableEv"
+					addr  "0x157e70"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"CBaseEntity::IsAlive"
 				{
 					type  "fixed"
@@ -554,6 +833,24 @@
 					lib   "server"
 					// vtable
 				}
+				"CBaseEntity::SetAbsOrigin"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity12SetAbsOriginERK6Vector"
+					addr  "0x1fb610"
+					build "10828683"
+					lib   "server"
+					// verified: same shape as the Linux body and as its neighbour SetAbsAngles: the same first call, then comparing the argument's first float against the stored one; all five matched callees are called here too
+				}
+				"CBaseEntity::SetAbsAngles"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity12SetAbsAnglesERK6QAngle"
+					addr  "0x1fb3a0"
+					build "10828683"
+					lib   "server"
+					// verified: verified next to SetAbsOrigin: same first call and the same compare-then-store shape as the Linux body, with all six matched callees called here too
+				}
 				"CBaseEntity::EmitSound [member: normal]"
 				{
 					type  "fixed"
@@ -590,6 +887,15 @@
 					lib   "server"
 					// vtable
 				}
+				"CBaseEntity::IsCombatItem"
+				{
+					type  "fixed"
+					sym   "_ZNK11CBaseEntity12IsCombatItemEv"
+					addr  "0x157e70"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"CBaseEntity::GetModelIndex"
 				{
 					type  "fixed"
@@ -598,6 +904,15 @@
 					build "10828683"
 					lib   "server"
 					// vtable
+				}
+				"CBaseEntity::MyCombatCharacterPointer"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity24MyCombatCharacterPointerEv"
+					addr  "0x157970"
+					build "10828683"
+					lib   "server"
+					// vtable index
 				}
 				"CBaseEntity::PhysicsRunSpecificThink"
 				{
@@ -689,6 +1004,15 @@
 					lib   "server"
 					// string
 				}
+				"CBaseEntity::PerformCustomPhysics"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity20PerformCustomPhysicsEP6VectorS1_P6QAngleS3_"
+					addr  "0x157b90"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"CBaseEntity::PrecacheModel"
 				{
 					type  "fixed"
@@ -715,6 +1039,24 @@
 					build "10828683"
 					lib   "server"
 					// vtable
+				}
+				"CBaseEntity::GetDamage"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity9GetDamageEv"
+					addr  "0x15d760"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"CBaseEntity::SetDamage"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity9SetDamageEf"
+					addr  "0x130ba0"
+					build "10828683"
+					lib   "server"
+					// vtable index
 				}
 				"CBaseEntity::FVisible [ent]"
 				{
@@ -743,6 +1085,24 @@
 					lib   "server"
 					// vtable
 				}
+				"CBaseEntity::IsBaseCombatWeapon"
+				{
+					type  "fixed"
+					sym   "_ZNK11CBaseEntity18IsBaseCombatWeaponEv"
+					addr  "0x157e70"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"CBaseEntity::IsWearable"
+				{
+					type  "fixed"
+					sym   "_ZNK11CBaseEntity10IsWearableEv"
+					addr  "0x157e70"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"CBaseEntity::DrawDebugTextOverlays"
 				{
 					type  "fixed"
@@ -751,6 +1111,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CBaseEntity::MyNextBotPointer"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity16MyNextBotPointerEv"
+					addr  "0x157970"
+					build "10828683"
+					lib   "server"
+					// vtable index
 				}
 				"CBaseEntity::Teleport"
 				{
@@ -779,6 +1148,33 @@
 					lib   "server"
 					// string
 				}
+				"CBaseEntity::IsPlayer"
+				{
+					type  "fixed"
+					sym   "_ZNK11CBaseEntity8IsPlayerEv"
+					addr  "0x157e70"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"CBaseEntity::IsBaseObject"
+				{
+					type  "fixed"
+					sym   "_ZNK11CBaseEntity12IsBaseObjectEv"
+					addr  "0x157e70"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"CBaseEntity::MyCombatWeaponPointer"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity21MyCombatWeaponPointerEv"
+					addr  "0x157970"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"CBaseEntity::OnTakeDamage"
 				{
 					type  "fixed"
@@ -797,6 +1193,15 @@
 					lib   "server"
 					// string
 				}
+				"CBaseEntity::ModifyFireBulletsDamage"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity23ModifyFireBulletsDamageEP15CTakeDamageInfo"
+					addr  "0x130ba0"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"CBaseEntity::GetServerClass"
 				{
 					type  "fixed"
@@ -814,6 +1219,15 @@
 					build "10828683"
 					lib   "server"
 					// call
+				}
+				"CBaseEntity::GetBaseAnimating"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity16GetBaseAnimatingEv"
+					addr  "0x157970"
+					build "10828683"
+					lib   "server"
+					// vtable index
 				}
 				"CBaseEntity::TakeHealth"
 				{
@@ -932,6 +1346,15 @@
 					lib   "server"
 					// string
 				}
+				"CBaseEntity::GetBaseEntity"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity13GetBaseEntityEv"
+					addr  "0x15fff0"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"CBaseEntity::GetNetworkable"
 				{
 					type  "fixed"
@@ -967,6 +1390,15 @@
 					build "10828683"
 					lib   "server"
 					// vtable
+				}
+				"CBaseEntity::GetTracerType"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity13GetTracerTypeEv"
+					addr  "0x157970"
+					build "10828683"
+					lib   "server"
+					// vtable index
 				}
 				"CBaseEntity::SetTransmit"
 				{
@@ -1175,6 +1607,15 @@
 					lib   "server"
 					// vtable
 				}
+				"CBasePlayer::IsBot"
+				{
+					type  "fixed"
+					sym   "_ZNK11CBasePlayer5IsBotEv"
+					addr  "0x2e4000"
+					build "10828683"
+					lib   "server"
+					// verified: IsBot and IsFakeClient are the same folded function on Linux (both 0x7a6160), and the CBasePlayer vtable slot the dumps align holds this address on Windows
+				}
 				"CBasePlayer::CommitSuicide"
 				{
 					type  "fixed"
@@ -1219,15 +1660,6 @@
 					build "10828683"
 					lib   "server"
 					// vtable
-				}
-				"CBasePlayer::ChangeTeam [int, bool, bool, bool]"
-				{
-					type  "fixed"
-					sym   "_ZN11CBasePlayer10ChangeTeamEibbb"
-					addr  "0x2dde10"
-					build "10828683"
-					lib   "server"
-					// string
 				}
 				"CBasePlayer::IsFakeClient"
 				{
@@ -1607,6 +2039,15 @@
 					lib   "server"
 					// vtable
 				}
+				"CTFBaseRocket::Destroy"
+				{
+					type  "fixed"
+					sym   "_ZN13CTFBaseRocket7DestroyEbb"
+					addr  "0x6395c0"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"CTFProjectile_Flare::Explode_Air"
 				{
 					type  "fixed"
@@ -1615,6 +2056,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CTFProjectile_Cleaver::GetDamage"
+				{
+					type  "fixed"
+					sym   "_ZN21CTFProjectile_Cleaver9GetDamageEv"
+					addr  "0x5a1fa0"
+					build "10828683"
+					lib   "server"
+					// vtable index
 				}
 				"CTFProjectile_ThrowableBreadMonster::GetDamage"
 				{
@@ -1679,6 +2129,15 @@
 					lib   "server"
 					// table
 				}
+				"CTFWeaponBaseGrenadeProj::Destroy"
+				{
+					type  "fixed"
+					sym   "_ZN24CTFWeaponBaseGrenadeProj7DestroyEbb"
+					addr  "0x6395c0"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"CTFPipebombLauncher::FireProjectile"
 				{
 					type  "fixed"
@@ -1705,6 +2164,15 @@
 					build "10828683"
 					lib   "server"
 					// vtable
+				}
+				"CBaseFilter::PassesFilterImpl"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseFilter16PassesFilterImplEP11CBaseEntityS1_"
+					addr  "0x1636f0"
+					build "10828683"
+					lib   "server"
+					// vtable index
 				}
 				"CBaseFlex::AddSceneEvent"
 				{
@@ -1769,6 +2237,15 @@
 					lib   "server"
 					// string
 				}
+				"CBaseProjectile::~CBaseProjectile [D2]"
+				{
+					type  "fixed"
+					sym   "_ZN15CBaseProjectileD2Ev"
+					addr  "0x20f610"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"CBaseProjectile::GetCollideWithTeammatesDelay"
 				{
 					type  "fixed"
@@ -1777,6 +2254,15 @@
 					build "10828683"
 					lib   "server"
 					// vtable
+				}
+				"CBaseProjectile::GetProjectileType"
+				{
+					type  "fixed"
+					sym   "_ZNK15CBaseProjectile17GetProjectileTypeEv"
+					addr  "0x169170"
+					build "10828683"
+					lib   "server"
+					// vtable index
 				}
 				"CBaseProjectile::SetLauncher"
 				{
@@ -1849,6 +2335,24 @@
 					build "10828683"
 					lib   "server"
 					// vtable
+				}
+				"CBaseServerVehicle::IsPassengerUsingStandardWeapons"
+				{
+					type  "fixed"
+					sym   "_ZN18CBaseServerVehicle31IsPassengerUsingStandardWeaponsEi"
+					addr  "0x152770"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"CBaseServerVehicle::IsPassengerVisible"
+				{
+					type  "fixed"
+					sym   "_ZN18CBaseServerVehicle18IsPassengerVisibleEi"
+					addr  "0x152770"
+					build "10828683"
+					lib   "server"
+					// vtable index
 				}
 				"CBaseServerVehicle::ItemPostFrame"
 				{
@@ -2057,6 +2561,15 @@
 					lib   "server"
 					// vtable
 				}
+				"CEconItemView::GetStaticData"
+				{
+					type  "fixed"
+					sym   "_ZNK13CEconItemView13GetStaticDataEv"
+					addr  "0x3c4830"
+					build "10828683"
+					lib   "server"
+					// verified: reads the definition index at this+4 and calls the verified GetItemSchema then GetItemDefinition, as the Linux body does; 75 callers against 89 on Linux, inside CEconItemView's code
+				}
 				"CEconItemView::GetStyle"
 				{
 					type  "fixed"
@@ -2092,6 +2605,15 @@
 					build "10828683"
 					lib   "server"
 					// vtable
+				}
+				"CGameText::KeyValue"
+				{
+					type  "fixed"
+					sym   "_ZN9CGameText8KeyValueEPKcS1_"
+					addr  "0x201d30"
+					build "10828683"
+					lib   "server"
+					// vtable index
 				}
 				"CGameUI::Deactivate"
 				{
@@ -2354,6 +2876,15 @@
 					lib   "server"
 					// vtable
 				}
+				"CTFGrenadePipebombProjectile::IsDeflectable"
+				{
+					type  "fixed"
+					sym   "_ZN28CTFGrenadePipebombProjectile13IsDeflectableEv"
+					addr  "0x5bd70"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"CTFGrenadePipebombProjectile::OnTakeDamage"
 				{
 					type  "fixed"
@@ -2380,6 +2911,15 @@
 					build "10828683"
 					lib   "server"
 					// vtable
+				}
+				"CTFGrenadePipebombProjectile::StickybombTouch"
+				{
+					type  "fixed"
+					sym   "_ZN28CTFGrenadePipebombProjectile15StickybombTouchEP11CBaseEntity"
+					addr  "0x130ba0"
+					build "10828683"
+					lib   "server"
+					// vtable index
 				}
 				"CTFGrenadePipebombProjectile::DetonateStickies"
 				{
@@ -2435,6 +2975,24 @@
 					lib   "server"
 					// string
 				}
+				"CTFPointWeaponMimic::~CTFPointWeaponMimic [D0]"
+				{
+					type  "fixed"
+					sym   "_ZN19CTFPointWeaponMimicD0Ev"
+					addr  "0x5e1650"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"CTFPointWeaponMimic::~CTFPointWeaponMimic [D2]"
+				{
+					type  "fixed"
+					sym   "_ZN19CTFPointWeaponMimicD2Ev"
+					addr  "0x5e1650"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"CTFPointWeaponMimic::Spawn"
 				{
 					type  "fixed"
@@ -2471,6 +3029,15 @@
 					lib   "server"
 					// string
 				}
+				"CTFProjectile_EnergyBall::CanHeadshot"
+				{
+					type  "fixed"
+					sym   "_ZN24CTFProjectile_EnergyBall11CanHeadshotEv"
+					addr  "0x157e70"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"CTFProjectile_EnergyBall::Explode"
 				{
 					type  "fixed"
@@ -2479,6 +3046,15 @@
 					build "10828683"
 					lib   "server"
 					// vtable
+				}
+				"CTFProjectile_EnergyBall::IsDeflectable"
+				{
+					type  "fixed"
+					sym   "_ZN24CTFProjectile_EnergyBall13IsDeflectableEv"
+					addr  "0x5bd70"
+					build "10828683"
+					lib   "server"
+					// vtable index
 				}
 				"CTFProjectile_Flare::Explode"
 				{
@@ -2624,6 +3200,15 @@
 					lib   "server"
 					// vtable
 				}
+				"CTFWeaponBaseGrenadeProj::GetWeaponID"
+				{
+					type  "fixed"
+					sym   "_ZNK24CTFWeaponBaseGrenadeProj11GetWeaponIDEv"
+					addr  "0x157970"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"CTFWeaponBaseGrenadeProj::InitGrenade"
 				{
 					type  "fixed"
@@ -2686,6 +3271,24 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"~CTriggerCamera [D0]"
+				{
+					type  "fixed"
+					sym   "_ZN14CTriggerCameraD0Ev"
+					addr  "0x362d60"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"~CTriggerCamera [D2]"
+				{
+					type  "fixed"
+					sym   "_ZN14CTriggerCameraD2Ev"
+					addr  "0x362d60"
+					build "10828683"
+					lib   "server"
+					// vtable index
 				}
 				"CTriggerCamera::Enable"
 				{
@@ -2759,6 +3362,24 @@
 					lib   "server"
 					// consensus
 				}
+				"CGameMovement::Accelerate"
+				{
+					type  "fixed"
+					sym   "_ZN13CGameMovement10AccelerateER6Vectorff"
+					addr  "0x278040"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"CGameMovement::AirAccelerate"
+				{
+					type  "fixed"
+					sym   "_ZN13CGameMovement13AirAccelerateER6Vectorff"
+					addr  "0x274e30"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"CTFPowerupBottle::SetNumCharges"
 				{
 					type  "fixed"
@@ -2795,6 +3416,15 @@
 					lib   "server"
 					// data
 				}
+				"g_pObjectiveResource"
+				{
+					type  "fixed"
+					sym   "g_pObjectiveResource"
+					addr  "0xa74b20"
+					build "10828683"
+					lib   "server"
+					// verified: CPopulationManager::StartCurrentWave reads the Linux global 0x185fc40 first thing, and its verified Windows counterpart reads this address in the same place
+				}
 				"CGameRulesProxy::s_pGameRulesProxy"
 				{
 					type  "fixed"
@@ -2803,6 +3433,15 @@
 					build "10828683"
 					lib   "server"
 					// data
+				}
+				"g_pPopulationManager"
+				{
+					type  "fixed"
+					sym   "g_pPopulationManager"
+					addr  "0xb95da8"
+					build "10828683"
+					lib   "server"
+					// verified: written in CPopulationManager's own code at 0x5e28d4 and cleared to 0 at 0x5e2bbe, and read by the matched functions that read the Linux global
 				}
 				"g_aTeamNames"
 				{
@@ -2821,6 +3460,15 @@
 					build "10828683"
 					lib   "server"
 					// named data
+				}
+				"g_aRawPlayerClassNames"
+				{
+					type  "fixed"
+					sym   "g_aRawPlayerClassNames"
+					addr  "0x9cdcf0"
+					build "10828683"
+					lib   "server"
+					// verified: the 13-entry table of class name strings, running undefined, scout, sniper, soldier ... civilian, random, exactly as the Linux array is declared
 				}
 				"g_aWeaponNames"
 				{
@@ -3044,6 +3692,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CUserMessages::LookupUserMessage"
+				{
+					type  "fixed"
+					sym   "_ZN13CUserMessages17LookupUserMessageEPKc"
+					addr  "0x442370"
+					build "10828683"
+					lib   "server"
+					// verified: called with the message name and the user-messages object in ecx by the wrapper at 0x273090 that every VGUIMenu caller uses; takes one argument (ret 4) and returns -1 when not found, as the Linux body does
 				}
 				"CUserMessages::Register"
 				{
@@ -3450,6 +4107,15 @@
 					lib   "server"
 					// consensus
 				}
+				"CTFGameMovement::CheckJumpButton"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFGameMovement15CheckJumpButtonEv"
+					addr  "0x4720e0"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"GetParticleSystemIndex"
 				{
 					type  "fixed"
@@ -3531,6 +4197,24 @@
 					lib   "server"
 					// vtable
 				}
+				"CAttributeManager::~CAttributeManager [D2]"
+				{
+					type  "fixed"
+					sym   "_ZN17CAttributeManagerD2Ev"
+					addr  "0x39d560"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"CAttributeManager::~CAttributeManager [D0]"
+				{
+					type  "fixed"
+					sym   "_ZN17CAttributeManagerD0Ev"
+					addr  "0x39d560"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"CAttributeManager::ApplyAttributeFloat"
 				{
 					type  "fixed"
@@ -3539,6 +4223,24 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"INextBotComponent::GetBot"
+				{
+					type  "fixed"
+					sym   "_ZNK17INextBotComponent6GetBotEv"
+					addr  "0x5ba60"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"INextBotComponent::Upkeep"
+				{
+					type  "fixed"
+					sym   "_ZN17INextBotComponent6UpkeepEv"
+					addr  "0x130b50"
+					build "10828683"
+					lib   "server"
+					// vtable index
 				}
 				"CTFGameRules::GetKillingWeaponName"
 				{
@@ -3679,10 +4381,10 @@
 				{
 					type  "fixed"
 					sym   "_Z21SpawnHierarchicalListiP19HierarchicalSpawn_tb"
-					addr  "0x297470"
+					addr  "0x297ec0"
 					build "10828683"
 					lib   "server"
-					// string
+					// verified: treats its first argument as a signed count and the second as the spawn list, 832 bytes against Linux's 856, and calls the helper holding the 'parented to itself' message that the string match had picked instead
 				}
 				"CalculateMeleeDamageForce"
 				{
@@ -3810,6 +4512,15 @@
 					lib   "server"
 					// call
 				}
+				"CServerGameDLL::LevelInit"
+				{
+					type  "fixed"
+					sym   "_ZN14CServerGameDLL9LevelInitEPKcS1_S1_S1_bb"
+					addr  "0x26fca0"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"CQuestItemTracker::FireGameEvent"
 				{
 					type  "fixed"
@@ -3927,6 +4638,15 @@
 					lib   "server"
 					// string
 				}
+				"ConCommandBase::GetName"
+				{
+					type  "fixed"
+					sym   "_ZNK14ConCommandBase7GetNameEv"
+					addr  "0x5ba60"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"CTFGameRules::PowerupModeKillCountCompare"
 				{
 					type  "fixed"
@@ -3980,6 +4700,15 @@
 					build "10828683"
 					lib   "server"
 					// vtable
+				}
+				"CTFTankBossBody::GetSolidMask"
+				{
+					type  "fixed"
+					sym   "_ZNK15CTFTankBossBody12GetSolidMaskEv"
+					addr  "0x1e15f0"
+					build "10828683"
+					lib   "server"
+					// vtable index
 				}
 				"CTFGameRules::SendWinPanelInfo"
 				{
@@ -4206,6 +4935,15 @@
 					lib   "server"
 					// vtable
 				}
+				"CTeamplayRules::SetStalemate"
+				{
+					type  "fixed"
+					sym   "_ZN14CTeamplayRules12SetStalemateEibb"
+					addr  "0x157de0"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"CTeamplayRules::SetWinningTeam"
 				{
 					type  "fixed"
@@ -4232,6 +4970,15 @@
 					build "10828683"
 					lib   "server"
 					// vtable
+				}
+				"CEyeballBossIdle::OnStart"
+				{
+					type  "fixed"
+					sym   ""
+					addr  "0x5a7200"
+					build "10828683"
+					lib   "server"
+					// vtable index
 				}
 				""
 				{
@@ -4322,6 +5069,24 @@
 					build "10828683"
 					lib   "server"
 					// vtable
+				}
+				"CBaseTrigger::StartTouch"
+				{
+					type  "fixed"
+					sym   "[clone]"
+					addr  "0x360860"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"CGameMovement::CheckFalling"
+				{
+					type  "fixed"
+					sym   "[clone]"
+					addr  "0x273fb0"
+					build "10828683"
+					lib   "server"
+					// vtable index
 				}
 				"CNavMesh::GetNearestNavArea [vec]"
 				{
@@ -4602,14 +5367,23 @@
 					lib   "server"
 					// string
 				}
+				"CPopulationManager::GetPopulationFilename"
+				{
+					type  "fixed"
+					sym   "_ZN18CPopulationManager21GetPopulationFilenameEv"
+					addr  "0x5e48b0"
+					build "10828683"
+					lib   "server"
+					// verified: returns this+0x3a0, the pair with GetPopulationFilenameShort at this+0x4a4; the 0x104 gap between them matches Linux's 0x3b8 and 0x4bc
+				}
 				"CPopulationManager::SetPopulationFilename"
 				{
 					type  "fixed"
 					sym   "_ZN18CPopulationManager21SetPopulationFilenameEPKc"
-					addr  "0x5e42e0"
+					addr  "0x5e7450"
 					build "10828683"
 					lib   "server"
-					// verified: inside CPopulationManager's code, 512 bytes against Linux's 513, MAX_PATH buffer on the stack; called by the matched caller
+					// verified: the only Windows function calling all three of V_FileBase, CPopulationManager::ResetMap and CTFItemSchema::FindMvmMissionByName, and it copies its argument into a MAX_PATH buffer. The earlier 0x5e42e0 was wrong and broke the AI graph allocation
 				}
 				"CPopulationManager::GetPlayerCurrencySpent"
 				{
@@ -4628,6 +5402,24 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CMissionPopulator::~CMissionPopulator [D0]"
+				{
+					type  "fixed"
+					sym   "_ZN17CMissionPopulatorD0Ev"
+					addr  "0x5ecb00"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"CMissionPopulator::~CMissionPopulator [D2]"
+				{
+					type  "fixed"
+					sym   "_ZN17CMissionPopulatorD2Ev"
+					addr  "0x5ecb00"
+					build "10828683"
+					lib   "server"
+					// vtable index
 				}
 				"CMissionPopulator::Parse"
 				{
@@ -4665,6 +5457,24 @@
 					lib   "server"
 					// string
 				}
+				"CWave::~CWave [D0]"
+				{
+					type  "fixed"
+					sym   "_ZN5CWaveD0Ev"
+					addr  "0x5ecbe0"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"CWave::~CWave [D2]"
+				{
+					type  "fixed"
+					sym   "_ZN5CWaveD2Ev"
+					addr  "0x5ecbe0"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"CWave::ActiveWaveUpdate"
 				{
 					type  "fixed"
@@ -4691,6 +5501,24 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CWaveSpawnPopulator::~CWaveSpawnPopulator [D0]"
+				{
+					type  "fixed"
+					sym   "_ZN19CWaveSpawnPopulatorD0Ev"
+					addr  "0x5ecd00"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"CWaveSpawnPopulator::~CWaveSpawnPopulator [D2]"
+				{
+					type  "fixed"
+					sym   "_ZN19CWaveSpawnPopulatorD2Ev"
+					addr  "0x5ecd00"
+					build "10828683"
+					lib   "server"
+					// vtable index
 				}
 				"CWaveSpawnPopulator::Parse"
 				{
@@ -4728,6 +5556,24 @@
 					lib   "server"
 					// vtable
 				}
+				"IPopulationSpawner::HasAttribute"
+				{
+					type  "fixed"
+					sym   "_ZN18IPopulationSpawner12HasAttributeEN6CTFBot13AttributeTypeEi"
+					addr  "0x131730"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"IPopulationSpawner::IsMiniBoss"
+				{
+					type  "fixed"
+					sym   "_ZN18IPopulationSpawner10IsMiniBossEi"
+					addr  "0x152770"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"IPopulationSpawner::ParseSpawner"
 				{
 					type  "fixed"
@@ -4737,6 +5583,24 @@
 					lib   "server"
 					// string
 				}
+				"CTankSpawner::~CTankSpawner [D0]"
+				{
+					type  "fixed"
+					sym   "_ZN12CTankSpawnerD0Ev"
+					addr  "0x5e8830"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"CTankSpawner::~CTankSpawner [D2]"
+				{
+					type  "fixed"
+					sym   "_ZN12CTankSpawnerD2Ev"
+					addr  "0x5e8830"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"CTankSpawner::GetClassIcon"
 				{
 					type  "fixed"
@@ -4745,6 +5609,15 @@
 					build "10828683"
 					lib   "server"
 					// vtable
+				}
+				"CTankSpawner::IsMiniBoss"
+				{
+					type  "fixed"
+					sym   "_ZN12CTankSpawner10IsMiniBossEi"
+					addr  "0x1595e0"
+					build "10828683"
+					lib   "server"
+					// vtable index
 				}
 				"CTankSpawner::Parse"
 				{
@@ -4763,6 +5636,24 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CTFBotSpawner::~CTFBotSpawner [D0]"
+				{
+					type  "fixed"
+					sym   "_ZN13CTFBotSpawnerD0Ev"
+					addr  "0x5e87b0"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"CTFBotSpawner::~CTFBotSpawner [D2]"
+				{
+					type  "fixed"
+					sym   "_ZN13CTFBotSpawnerD2Ev"
+					addr  "0x5e87b0"
+					build "10828683"
+					lib   "server"
+					// vtable index
 				}
 				"CTFBotSpawner::Parse"
 				{
@@ -4790,6 +5681,24 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CSquadSpawner::~CSquadSpawner [D0]"
+				{
+					type  "fixed"
+					sym   "_ZN13CSquadSpawnerD0Ev"
+					addr  "0x5e8750"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"CSquadSpawner::~CSquadSpawner [D2]"
+				{
+					type  "fixed"
+					sym   "_ZN13CSquadSpawnerD2Ev"
+					addr  "0x5e8750"
+					build "10828683"
+					lib   "server"
+					// vtable index
 				}
 				"CSquadSpawner::GetClassIcon"
 				{
@@ -5002,10 +5911,28 @@
 				{
 					type  "fixed"
 					sym   "_ZN18CPopulationManager21SetPopulationFilenameEPKc"
-					addr  "0x5e42e0"
+					addr  "0x5e7450"
 					build "10828683"
 					lib   "server"
-					// verified: inside CPopulationManager's code, 512 bytes against Linux's 513, MAX_PATH buffer on the stack; called by the matched caller
+					// verified: the only Windows function calling all three of V_FileBase, CPopulationManager::ResetMap and CTFItemSchema::FindMvmMissionByName, and it copies its argument into a MAX_PATH buffer. The earlier 0x5e42e0 was wrong and broke the AI graph allocation
+				}
+				"CMissionPopulator::~CMissionPopulator [D0]"
+				{
+					type  "fixed"
+					sym   "_ZN17CMissionPopulatorD0Ev"
+					addr  "0x5ecb00"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"CMissionPopulator::~CMissionPopulator [D2]"
+				{
+					type  "fixed"
+					sym   "_ZN17CMissionPopulatorD2Ev"
+					addr  "0x5ecb00"
+					build "10828683"
+					lib   "server"
+					// vtable index
 				}
 				"CMissionPopulator::Parse"
 				{
@@ -5043,6 +5970,24 @@
 					lib   "server"
 					// string
 				}
+				"CWave::~CWave [D0]"
+				{
+					type  "fixed"
+					sym   "_ZN5CWaveD0Ev"
+					addr  "0x5ecbe0"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"CWave::~CWave [D2]"
+				{
+					type  "fixed"
+					sym   "_ZN5CWaveD2Ev"
+					addr  "0x5ecbe0"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"CWave::ActiveWaveUpdate"
 				{
 					type  "fixed"
@@ -5070,6 +6015,24 @@
 					lib   "server"
 					// string
 				}
+				"CWaveSpawnPopulator::~CWaveSpawnPopulator [D0]"
+				{
+					type  "fixed"
+					sym   "_ZN19CWaveSpawnPopulatorD0Ev"
+					addr  "0x5ecd00"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"CWaveSpawnPopulator::~CWaveSpawnPopulator [D2]"
+				{
+					type  "fixed"
+					sym   "_ZN19CWaveSpawnPopulatorD2Ev"
+					addr  "0x5ecd00"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"CWaveSpawnPopulator::Parse"
 				{
 					type  "fixed"
@@ -5088,6 +6051,42 @@
 					lib   "server"
 					// vtable
 				}
+				"IPopulationSpawner::HasAttribute"
+				{
+					type  "fixed"
+					sym   "_ZN18IPopulationSpawner12HasAttributeEN6CTFBot13AttributeTypeEi"
+					addr  "0x131730"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"IPopulationSpawner::IsMiniBoss"
+				{
+					type  "fixed"
+					sym   "_ZN18IPopulationSpawner10IsMiniBossEi"
+					addr  "0x152770"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"CTankSpawner::~CTankSpawner [D0]"
+				{
+					type  "fixed"
+					sym   "_ZN12CTankSpawnerD0Ev"
+					addr  "0x5e8830"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"CTankSpawner::~CTankSpawner [D2]"
+				{
+					type  "fixed"
+					sym   "_ZN12CTankSpawnerD2Ev"
+					addr  "0x5e8830"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"CTankSpawner::GetClassIcon"
 				{
 					type  "fixed"
@@ -5096,6 +6095,15 @@
 					build "10828683"
 					lib   "server"
 					// vtable
+				}
+				"CTankSpawner::IsMiniBoss"
+				{
+					type  "fixed"
+					sym   "_ZN12CTankSpawner10IsMiniBossEi"
+					addr  "0x1595e0"
+					build "10828683"
+					lib   "server"
+					// vtable index
 				}
 				"CTankSpawner::Parse"
 				{
@@ -5114,6 +6122,24 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CTFBotSpawner::~CTFBotSpawner [D0]"
+				{
+					type  "fixed"
+					sym   "_ZN13CTFBotSpawnerD0Ev"
+					addr  "0x5e87b0"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"CTFBotSpawner::~CTFBotSpawner [D2]"
+				{
+					type  "fixed"
+					sym   "_ZN13CTFBotSpawnerD2Ev"
+					addr  "0x5e87b0"
+					build "10828683"
+					lib   "server"
+					// vtable index
 				}
 				"CTFBotSpawner::Parse"
 				{
@@ -5565,6 +6591,15 @@
 					lib   "server"
 					// vtable
 				}
+				"CTFBotUseItem::~CTFBotUseItem [D2]"
+				{
+					type  "fixed"
+					sym   "_ZN13CTFBotUseItemD2Ev"
+					addr  "0x576f90"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
 				"CTFBotDeliverFlag::UpgradeOverTime"
 				{
 					type  "fixed"
@@ -5600,6 +6635,33 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CTFBotEscortSquadLeader::OnEnd"
+				{
+					type  "fixed"
+					sym   "_ZN23CTFBotEscortSquadLeader5OnEndEP6CTFBotP6ActionIS0_E"
+					addr  "0x14fa90"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"CTFBotEscortSquadLeader::~CTFBotEscortSquadLeader [D0]"
+				{
+					type  "fixed"
+					sym   "_ZN23CTFBotEscortSquadLeaderD0Ev"
+					addr  "0x5911f0"
+					build "10828683"
+					lib   "server"
+					// vtable index
+				}
+				"CTFBotEscortSquadLeader::~CTFBotEscortSquadLeader [D2]"
+				{
+					type  "fixed"
+					sym   "_ZN23CTFBotEscortSquadLeaderD2Ev"
+					addr  "0x5911f0"
+					build "10828683"
+					lib   "server"
+					// vtable index
 				}
 				"CTFBotSpyInfiltrate::Update"
 				{
@@ -5933,15 +6995,6 @@
 					build "10828683"
 					lib   "server"
 					// call
-				}
-				"CTFPlayer::ChangeTeam"
-				{
-					type  "fixed"
-					sym   "_ZN9CTFPlayer10ChangeTeamEibbb"
-					addr  "0x4e3c50"
-					build "10828683"
-					lib   "server"
-					// string
 				}
 				"CTFPlayer::ItemIsAllowed"
 				{
@@ -6653,6 +7706,15 @@
 					build "10828683"
 					lib   "engine"
 					// verified: one of three engine.dll functions using the SNAP tag 0x50414e53; the one that writes it into a caller's buffer, takes (dest, destLen*, source, sourceLen) and returns bool. The allocating COM_CompressBuffer_Snappy is inlined away
+				}
+				"g_pGameRules"
+				{
+					type  "fixed"
+					sym   "g_pGameRules"
+					addr  "0xa33c80"
+					build "10828683"
+					lib   "server"
+					// verified: 617 of the matched functions that read the Linux global read this one, far ahead of any other candidate
 				}
 			}
 		}

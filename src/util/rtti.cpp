@@ -306,9 +306,35 @@ namespace RTTI
 	}
 	
 	
+#if defined _MSC_VER
+	/* The tree names some classes the way libstdc++ spells them, "5IBody" for
+	 * IBody. For a plain class name that is the MSVC name with its length in
+	 * front, so translate those; the class/struct choice is not in the Itanium
+	 * name and both are tried. Anything else is returned as it was. */
+	template<typename MAP>
+	static auto FindByName(const MAP& map, const char *name)
+	{
+		auto it = map.find(std::string(name));
+		if (it != map.end() || !isdigit((unsigned char)name[0])) return it;
+		
+		char *end;
+		long len = strtol(name, &end, 10);
+		if (len <= 0 || (long)strlen(end) != len) return it;
+		
+		for (const char *prefix : {".?AV", ".?AU"}) {
+			auto found = map.find(prefix + std::string(end) + "@@");
+			if (found != map.end()) return found;
+		}
+		return it;
+	}
+#else
+	template<typename MAP>
+	static auto FindByName(const MAP& map, const char *name) { return map.find(std::string(name)); }
+#endif
+	
 	const rtti_t *GetRTTI(const char *name)
 	{
-		auto it = s_RTTI().find(std::string(name));
+		auto it = FindByName(s_RTTI(), name);
 		if (it == s_RTTI().end()) {
 			DevMsg("RTTI::GetRTTI FAIL: no RTTI addr for name \"%s\"\n", name);
 			return nullptr;
@@ -319,7 +345,7 @@ namespace RTTI
 	
 	const void **GetVTable(const char *name)
 	{
-		auto it = s_VT().find(std::string(name));
+		auto it = FindByName(s_VT(), name);
 		if (it == s_VT().end()) {
 			DevMsg("RTTI::GetVTable FAIL: no VT addr for name \"%s\"\n", name);
 			return nullptr;

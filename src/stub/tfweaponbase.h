@@ -22,7 +22,13 @@ public:
 class CTFWeaponBase : public CBaseCombatWeapon, public IHasGenericMeter
 {
 public:
+#if defined _WINDOWS
+	/* No address for it in server.dll yet, and none is needed: the Linux body
+	 * is the owner read back as a player, which costs no call at all. */
+	CTFPlayer *GetTFPlayerOwner() const;
+#else
 	CTFPlayer *GetTFPlayerOwner() const { return ft_GetTFPlayerOwner(this); }
+#endif
 	
 	bool IsSilentKiller() { return ft_IsSilentKiller(this); }
 	float Energy_GetMaxEnergy() { return ft_Energy_GetMaxEnergy(this); }

@@ -241,7 +241,14 @@ extern CAttribute_String *last_parsed_string_attribute_value;
 class CAttributeList
 {
 public:
+#if defined _WINDOWS
+	/* No such function in server.dll: MSVC inlined it into its callers. Defined
+	 * below, once CEconItemAttribute is a complete type, and doing the search
+	 * the Linux body does: the first attribute with this definition index. */
+	CEconItemAttribute *GetAttributeByID(int def_idx) const;
+#else
 	CEconItemAttribute *GetAttributeByID(int def_idx) const            { return ft_GetAttributeByID      (this, def_idx); }
+#endif
 	CEconItemAttribute *GetAttributeByName(const char *name) const     { return ft_GetAttributeByName    (this, name); }
 	void IterateAttributes(IEconItemAttributeIterator *iter) const     {        ft_IterateAttributes     (this, iter); }
 	void AddAttribute(CEconItemAttribute *pAttr)                       {        ft_AddAttribute          (this, pAttr); }
@@ -542,6 +549,19 @@ private:
 	float m_iRawValue32;
 	int m_nRefundableCurrency;
 };
+
+#if defined _WINDOWS
+inline CEconItemAttribute *CAttributeList::GetAttributeByID(int def_idx) const
+{
+	auto& attributes = const_cast<CAttributeList *>(this)->Attributes();
+	for (int i = 0; i < attributes.Count(); ++i) {
+		if (attributes[i].GetAttributeDefinitionIndex() == def_idx) {
+			return &attributes[i];
+		}
+	}
+	return nullptr;
+}
+#endif
 #ifdef PLATFORM_64BITS
 static_assert(sizeof(CEconItemAttribute) == 0x18);
 #else

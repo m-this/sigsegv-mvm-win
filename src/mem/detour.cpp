@@ -740,6 +740,14 @@ void CDetouredFunc::InstallJump(void *target)
 		Jump_WriteJump(this->m_pFunc, (uintptr_t)target, this->m_OriginalPrologue.size() > this->m_zJumpSize ? this->m_OriginalPrologue.size() : 0);
 	}
 	
+	{
+		const char *func_name = AddrManager::ReverseLookup(this->m_pFunc);
+		auto bytes = (const uint8_t *)this->m_pFunc;
+		DevMsg("CDetouredFunc::InstallJump: \"%s\" at %08x -> %08x, prologue %zu, now %02x %02x %02x %02x %02x\n",
+			func_name != nullptr ? func_name : "???", (uintptr_t)this->m_pFunc, (uintptr_t)target,
+			this->m_OriginalPrologue.size(), bytes[0], bytes[1], bytes[2], bytes[3], bytes[4]);
+	}
+	
 	this->m_CurrentPrologue.resize(this->m_OriginalPrologue.size());
 	memcpy(this->m_CurrentPrologue.data(), this->m_pFunc, this->m_CurrentPrologue.size());
 	

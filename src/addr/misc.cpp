@@ -51,6 +51,10 @@ struct CExtract_g_pGameRules : public IExtract<uintptr_t>
 using CExtract_g_pGameRules = IExtractStub;
 #endif
 
+/* Not on Windows: the extraction below reads the CGameRules destructor's bytes
+ * through a vtable index that is the Linux one, and a static address here would
+ * take the name before gamedata/sigsegv/windows.txt could give it. */
+#if !defined _WINDOWS
 class CAddr_g_pGameRules : public IAddr_Sym
 {
 public:
@@ -70,6 +74,7 @@ public:
 	}
 };
 static CAddr_g_pGameRules addr_g_pGameRules;
+#endif
 
 
 class CAddr_pszWpnEntTranslationList : public IAddr_Sym
