@@ -1,0 +1,832 @@
+AI:EngieBot_Dispensers	CTFBotMvMEngineerBuildSentryGun::CTFBotMvMEngineerBuildSentryGun [C1]
+AI:EngieBot_Dispensers	CTFBotMvMEngineerBuildTeleportExit::CTFBotMvMEngineerBuildTeleportExit [C1]
+AI:EngieBot_Dispensers	~CTFBotMvMEngineerIdle [D0]
+AI:EngieBot_Dispensers	~CTFBotMvMEngineerIdle [D1]
+AI:EngieBot_Dispensers	~CTFBotMvMEngineerIdle [D2]
+AI:EngieBot_NoPush	CTFGameRules::PushAllPlayersAway
+AI:EngieBot_Wrangler	CLaserDot::Create
+AI:EngieBot_Wrangler	CTFLaserPointer::CreateLaserDot
+AI:Giant_Pyro	CTFBotMainAction::InitialContainedAction
+AI:Improved_Targeting	CTFBot::IsExplosiveProjectileWeapon
+AI:Improved_Targeting	CTFBotMainAction::GetHealerOfThreat
+AI:Improved_Targeting	CTFBotMainAction::OnContact
+AI:Improved_Targeting	CTFBotMainAction::SelectMoreDangerousThreat
+AI:Improved_Targeting	CTFBot::SuspectSpy
+AI:Improved_UseItem	CTFBot::EquipLongRangeWeapon
+AI:Improved_UseItem	CTFBot::OpportunisticallyUseWeaponAbilities
+AI:My_Nextbot	CBotNPCArcher::CBotNPCArcher
+AI:My_Nextbot	CBotNPCArcherIntention::CBotNPCArcherIntention
+AI:My_Nextbot	CBotNPCArcherIntention::Reset
+AI:My_Nextbot	CBotNPCArcher::Spawn
+AI:My_Nextbot	CTraceFilterIgnorePlayers::ShouldHitEntity
+AI:My_Nextbot_Unlag	CLagCompensationManager::FinishLagCompensation
+AI:My_Nextbot_UnlagNPCGlobal	NextBotCombatCharacter::Spawn
+AI:Puppet	CTFBotMainAction::InitialContainedAction
+AI:WrapAssassin_AltFire	CTFBat_Giftwrap::GetWeaponID
+AI:WrapAssassin_AltFire	CTFBot::OpportunisticallyUseWeaponAbilities
+Anim:Player_UpdateModel_AnimState_Fix	CTFPlayer::UpdateModel
+Attr:BlockBackstab_OldStyle	CTFPlayerShared::SetItemChargeMeter [clone]
+Attr:Custom_Attributes	CAttributeList::AddAttribute
+Attr:Custom_Attributes	CAttributeList::DestroyAllAttributes
+Attr:Custom_Attributes	CAttributeList::RemoveAttribute
+Attr:Custom_Attributes	CAttributeList::RemoveAttributeByIndex
+Attr:Custom_Attributes	CAttributeList::SetRuntimeAttributeValue
+Attr:Custom_Attributes	CAttributeManager::ClearCache [clone]
+Attr:Custom_Attributes	CAttributeManager::ProvideTo
+Attr:Custom_Attributes	CAttributeManager::StopProvidingTo
+Attr:Custom_Attributes	CBaseCombatWeapon::Equip
+Attr:Custom_Attributes	CBaseCombatWeapon::HasPrimaryAmmo
+Attr:Custom_Attributes	CBaseCombatWeapon::SetIdealActivity
+Attr:Custom_Attributes	CBaseCombatWeapon::WeaponSound
+Attr:Custom_Attributes	CBaseEntity::DispatchTraceAttack
+Attr:Custom_Attributes	CBaseEntity::InSameTeam
+Attr:Custom_Attributes	CBaseObject::CanBeUpgraded
+Attr:Custom_Attributes	CBaseObject::FindBuildPointOnPlayer [clone]
+Attr:Custom_Attributes	CBaseObject::FindNearestBuildPoint
+Attr:Custom_Attributes	CBaseObject::FindSnapToBuildPos
+Attr:Custom_Attributes	CBaseObject::StartPlacement
+Attr:Custom_Attributes	CBaseObject::StartUpgrading
+Attr:Custom_Attributes	CCollisionEvent::PostCollision
+Attr:Custom_Attributes	CEconEntity::UpdateModelToClass
+Attr:Custom_Attributes	CEconEntity::UpdateOnRemove
+Attr:Custom_Attributes	CEconItemDefinition::GetActivityOverride
+Attr:Custom_Attributes	CEconItemView::GetAnimationSlot
+Attr:Custom_Attributes	CGameMovement::CheckFalling [clone]
+Attr:Custom_Attributes	CGameMovement::FullNoClipMove
+Attr:Custom_Attributes	CGameMovement::PlayerMove
+Attr:Custom_Attributes	CObjectDispenser::DispenseMetal
+Attr:Custom_Attributes	CObjectDispenser::GetHealRate
+Attr:Custom_Attributes	CObjectDispenser::SetModel
+Attr:Custom_Attributes	CObjectSapper::ApplyRoboSapperEffects [clone]
+Attr:Custom_Attributes	CObjectSapper::GetSapperModelName
+Attr:Custom_Attributes	CObjectSapper::GetSapperSoundName
+Attr:Custom_Attributes	CObjectSapper::IsParentValid
+Attr:Custom_Attributes	CObjectSapper::IsValidRoboSapperTarget
+Attr:Custom_Attributes	CObjectSapper::UpdateOnRemove
+Attr:Custom_Attributes	CObjectSentrygun::EmitSentrySound
+Attr:Custom_Attributes	CObjectSentrygun::FindTarget
+Attr:Custom_Attributes	CObjectSentrygun::FireRocket
+Attr:Custom_Attributes	CObjectSentrygun::FoundTarget
+Attr:Custom_Attributes	CObjectSentrygun::MakeScaledBuilding
+Attr:Custom_Attributes	CObjectSentrygun::SentryRotate
+Attr:Custom_Attributes	CObjectSentrygun::SentryThink
+Attr:Custom_Attributes	CObjectSentrygun::SetModel
+Attr:Custom_Attributes	CObjectSentrygun::StartUpgrading
+Attr:Custom_Attributes	CObjectSentrygun::ValidTargetPlayer
+Attr:Custom_Attributes	CObjectTeleporter::PlayerCanBeTeleported [clone]
+Attr:Custom_Attributes	CObjectTeleporter::RecieveTeleportingPlayer
+Attr:Custom_Attributes	CObjectTeleporter::TeleporterSend
+Attr:Custom_Attributes	CObjectTeleporter::TeleporterThink
+Attr:Custom_Attributes	CObjectTeleporter::TeleporterTouch
+Attr:Custom_Attributes	CRecipientFilter::IgnorePredictionCull
+Attr:Custom_Attributes	CTeamplayRoundBasedRules::GetMinTimeWhenPlayerMaySpawn
+Attr:Custom_Attributes	CTFBaseRocket::Create
+Attr:Custom_Attributes	CTFBot::ShouldGib
+Attr:Custom_Attributes	CTFBotTacticalMonitor::ShouldOpportunisticallyTeleport
+Attr:Custom_Attributes	CTFChargedSMG::SecondaryAttack
+Attr:Custom_Attributes	CTFCompoundBow::GetProjectileSpeed
+Attr:Custom_Attributes	CTFCompoundBow::LaunchGrenade
+Attr:Custom_Attributes	CTFCrossbow::GetProjectileSpeed
+Attr:Custom_Attributes	CTFDroppedWeapon::Create
+Attr:Custom_Attributes	CTFFlameManager::BCanBurnEntityThisFrame
+Attr:Custom_Attributes	CTFFlameThrower::SetWeaponState
+Attr:Custom_Attributes	CTFFlareGun_Revenge::Deploy
+Attr:Custom_Attributes	CTFFlareGun_Revenge::Holster
+Attr:Custom_Attributes	CTFGameMovement::PreventBunnyJumping
+Attr:Custom_Attributes	CTFGameMovement::ToggleParachute [clone]
+Attr:Custom_Attributes	CTFGameRules::FPlayerCanTakeDamage
+Attr:Custom_Attributes	CTFGameRules::OnPlayerSpawned
+Attr:Custom_Attributes	CTFGrapplingHook::GetProjectileSpeed
+Attr:Custom_Attributes	CTFGrapplingHook::ItemPostFrame
+Attr:Custom_Attributes	CTFJar::TossJarThink
+Attr:Custom_Attributes	CTFMinigun::CanHolster
+Attr:Custom_Attributes	CTFMinigun::SetWeaponState
+Attr:Custom_Attributes	CTFMinigun::WindDown
+Attr:Custom_Attributes	CTFMinigun::WindUp
+Attr:Custom_Attributes	CTFPistol_ScoutSecondary::GetDamageType
+Attr:Custom_Attributes	CTFPlayer::AddObject [clone]
+Attr:Custom_Attributes	CTFPlayer::CanDisguise
+Attr:Custom_Attributes	CTFPlayer::CanGoInvisible
+Attr:Custom_Attributes	CTFPlayer::ClearTauntAttack
+Attr:Custom_Attributes	CTFPlayer::CreateRagdollEntity [args]
+Attr:Custom_Attributes	CTFPlayer::DropAmmoPack
+Attr:Custom_Attributes	CTFPlayer::DropCurrencyPack
+Attr:Custom_Attributes	CTFPlayer::GetOpposingTFTeam
+Attr:Custom_Attributes	CTFPlayer::GetSceneSoundToken
+Attr:Custom_Attributes	CTFPlayer::InspectButtonPressed
+Attr:Custom_Attributes	CTFPlayer::IsAllowedToInitiateTauntWithPartner
+Attr:Custom_Attributes	CTFPlayer::IsAllowedToTaunt
+Attr:Custom_Attributes	CTFPlayer::IsReadyToSpawn
+Attr:Custom_Attributes	CTFPlayer::ItemsMatch [clone]
+Attr:Custom_Attributes	CTFPlayer::ReapplyItemUpgrades
+Attr:Custom_Attributes	CTFPlayer::RemoveAllOwnedEntitiesFromWorld
+Attr:Custom_Attributes	CTFPlayer::RemoveObject
+Attr:Custom_Attributes	CTFPlayer::SetGrapplingHookTarget
+Attr:Custom_Attributes	CTFPlayerShared::Burn
+Attr:Custom_Attributes	CTFPlayerShared::CalculateObjectCost
+Attr:Custom_Attributes	CTFPlayerShared::GetMaxBuffedHealth
+Attr:Custom_Attributes	CTFPlayerShared::OnAddBalloonHead
+Attr:Custom_Attributes	CTFPlayerShared::PulseMedicRadiusHeal [clone]
+Attr:Custom_Attributes	CTFPlayerShared::SetChargeEffect
+Attr:Custom_Attributes	CTFPlayerShared::UpdateCloakMeter [clone]
+Attr:Custom_Attributes	CTFPlayerShared::UpdateEnergyDrinkMeter [clone]
+Attr:Custom_Attributes	CTFPlayer::ShouldGainInstantSpawn
+Attr:Custom_Attributes	CTFPlayer::SpyDeadRingerDeath
+Attr:Custom_Attributes	CTFPlayer::StopTaunt
+Attr:Custom_Attributes	CTFPlayer::UpdateOnRemove
+Attr:Custom_Attributes	CTFPlayer::WantsLagCompensationOnEntity
+Attr:Custom_Attributes	CTFProjectile_Arrow::BreakArrow
+Attr:Custom_Attributes	CTFProjectile_Arrow::CanHeadshot
+Attr:Custom_Attributes	CTFProjectile_Arrow::CheckSkyboxImpact
+Attr:Custom_Attributes	CTFProjectile_Arrow::CreateTrail
+Attr:Custom_Attributes	CTFProjectile_Arrow::FadeOut
+Attr:Custom_Attributes	CTFProjectile_Arrow::IsDeflectable
+Attr:Custom_Attributes	CTFProjectile_Arrow::StrikeTarget
+Attr:Custom_Attributes	CTFProjectile_BallOfFire::RocketTouch
+Attr:Custom_Attributes	CTFProjectile_EnergyRing::CanHeadshot
+Attr:Custom_Attributes	CTFProjectile_EnergyRing::Create
+Attr:Custom_Attributes	CTFProjectile_EnergyRing::ProjectileTouch
+Attr:Custom_Attributes	CTFProjectile_EnergyRing::ShouldPenetrate
+Attr:Custom_Attributes	CTFProjectile_Flare::GetDamageType
+Attr:Custom_Attributes	CTFProjectile_Flare::IsDeflectable
+Attr:Custom_Attributes	CTFProjectile_GrapplingHook::CanHeadshot
+Attr:Custom_Attributes	CTFProjectile_GrapplingHook::HookTarget
+Attr:Custom_Attributes	CTFProjectile_HealingBolt::CanHeadshot
+Attr:Custom_Attributes	CTFProjectile_MechanicalArmOrb::CheckForProjectiles
+Attr:Custom_Attributes	CTFProjectile_Rocket::IsDeflectable
+Attr:Custom_Attributes	CTFRadiusDamageInfo::ApplyToEntity [clone]
+Attr:Custom_Attributes	CTFReviveMarker::Create
+Attr:Custom_Attributes	CTFRevolver::Deploy
+Attr:Custom_Attributes	CTFRevolver::GetDamageType
+Attr:Custom_Attributes	CTFRevolver::Holster
+Attr:Custom_Attributes	CTFShotgunBuildingRescue::GetProjectileSpeed
+Attr:Custom_Attributes	CTFShotgun_Revenge::Deploy
+Attr:Custom_Attributes	CTFShotgun_Revenge::Holster
+Attr:Custom_Attributes	CTFSMG::GetDamageType
+Attr:Custom_Attributes	CTFSniperRifleClassic::GetDamageType
+Attr:Custom_Attributes	CTFSniperRifle::GetDamageType
+Attr:Custom_Attributes	CTFSodaPopper::SecondaryAttack
+Attr:Custom_Attributes	CTFStickBomb::Smack
+Attr:Custom_Attributes	CTFWeaponBase::ApplyFireDelay
+Attr:Custom_Attributes	CTFWeaponBase::AutoFiresFullClip
+Attr:Custom_Attributes	CTFWeaponBase::CanHolster
+Attr:Custom_Attributes	CTFWeaponBase::CheckReloadMisfire
+Attr:Custom_Attributes	CTFWeaponBase::DeflectEntity
+Attr:Custom_Attributes	CTFWeaponBase::Energy_Recharge
+Attr:Custom_Attributes	CTFWeaponBase::GetAfterburnRateOnHit
+Attr:Custom_Attributes	CTFWeaponBase::GetDamageType
+Attr:Custom_Attributes	CTFWeaponBase::GetParticleColor
+Attr:Custom_Attributes	CTFWeaponBase::GetPenetrateType
+Attr:Custom_Attributes	CTFWeaponBase::GetSpreadAngles
+Attr:Custom_Attributes	CTFWeaponBase::GetViewModelWeaponRole
+Attr:Custom_Attributes	CTFWeaponBaseGun::FireEnergyBall
+Attr:Custom_Attributes	CTFWeaponBaseGun::GetProjectileSpeed
+Attr:Custom_Attributes	CTFWeaponBaseGun::RemoveProjectileAmmo
+Attr:Custom_Attributes	CTFWeaponBaseGun::UpdatePunchAngles
+Attr:Custom_Attributes	CTFWeaponBase::Holster
+Attr:Custom_Attributes	CTFWeaponBase::ItemBusyFrame
+Attr:Custom_Attributes	CTFWeaponBase::ItemHolsterFrame
+Attr:Custom_Attributes	CTFWeaponBase::ItemPostFrame
+Attr:Custom_Attributes	CTFWeaponBaseMelee::Swing
+Attr:Custom_Attributes	CTFWeaponBase::Reload
+Attr:Custom_Attributes	CTFWeaponBase::SendWeaponAnim
+Attr:Custom_Attributes	CTFWeaponBase::UpdateHands
+Attr:Custom_Attributes	CTFWeaponBuilder::StartPlacement
+Attr:Custom_Attributes	CTFWeaponBuilder::StopPlacement
+Attr:Custom_Attributes	CTFWeaponFlameBall::FireProjectile
+Attr:Custom_Attributes	CTFWeaponInvis::ActivateInvisibilityWatch
+Attr:Custom_Attributes	CTFWeaponInvis::CleanupInvisibilityWatch
+Attr:Custom_Attributes	CTFWeaponInvis::GetViewModel
+Attr:Custom_Attributes	CTFWearableDemoShield::DoCharge
+Attr:Custom_Attributes	CUpgrades::ApplyUpgradeToItem [clone]
+Attr:Custom_Attributes	CUpgrades::EndTouch
+Attr:Custom_Attributes	CUpgrades::PlayerPurchasingUpgrade [clone]
+Attr:Custom_Attributes	CUpgrades::UpgradeTouch
+Attr:Custom_Attributes	CVEngineServer::PlaybackTempEntity
+Attr:Custom_Attributes	CWeaponMedigun::AllowedToHealTarget
+Attr:Custom_Attributes	CWeaponMedigun::CycleResistType [clone]
+Attr:Custom_Attributes	CWeaponMedigun::GetTargetRange
+Attr:Custom_Attributes	CWeaponMedigun::HealTargetThink
+Attr:Custom_Attributes	CWeaponMedigun::StartHealingTarget
+Attr:Custom_Attributes	FX_FireBullets
+Attr:Custom_Attributes	HandleRageGain
+Attr:Custom_Attributes	PropDynamic_CollidesWithGrenades
+Attr:Custom_Attributes	static_attrib_t::BInitFromKV_SingleLine
+Attr:Custom_Attributes	SV_ComputeClientPacks
+Attr:Custom_Attributes	TE_PlayerAnimEvent
+Attr:Custom_Attributes	TE_TFExplosion
+Attr:Custom_Attributes	TE_TFParticleEffect [No attachment]
+Attr:Custom_Attributes	UTIL_EntitiesInSphere
+Attr:CustomProjectileModel_Precache	CTFCleaver::CreateJarProjectile
+Attr:CustomProjectileModel_Precache	CTFJar::CreateJarProjectile
+Attr:CustomProjectileModel_Precache	CTFJarGas::CreateJarProjectile
+Attr:CustomProjectileModel_Precache	CTFJarMilk::CreateJarProjectile
+Bot:Bot_Player_Slot_Reorder	CBaseServer::CreateFakeClient
+Bot:Bot_Player_Slot_Reorder	CBaseServer::GetFreeClient
+Bot:IsSpaceToSpawnHere_Scale	CTFPlayerShared::OnAddHalloweenTiny
+Bot:IsSpaceToSpawnHere_Scale	CTFPlayerShared::OnRemoveHalloweenTiny
+Bot:IsSpaceToSpawnHere_Scale	IEngineTrace::TraceRay
+Bot:IsSpaceToSpawnHere_Scale	IsSpaceToSpawnHere
+Bot:Kart_Locomotion	CTFBotMainAction::Dodge [clone]
+Bot:Spy_SelectRandomReachableEnemy	CollectPlayers<CTFPlayer>
+Bot:Spy_SelectRandomReachableEnemy	CTFBot::SelectRandomReachableEnemy
+Common:ExtraEntityData	~CBaseEntity [D2]
+Common:Weapon_Shoot	CBaseCombatWeapon::WeaponSound
+Common:Weapon_Shoot	CBaseEntity::DispatchTraceAttack
+Common:Weapon_Shoot	CTFGameRules::FPlayerCanTakeDamage
+Common:Weapon_Shoot	CTFPlayer::DoAnimationEvent
+Common:Weapon_Shoot	CTFPlayer::MaybeDrawRailgunBeam
+Common:Weapon_Shoot	CTFProjectile_BallOfFire::Burn
+Common:Weapon_Shoot	CTFProjectile_Flare::SendDeathNotice
+Common:Weapon_Shoot	CTFWeaponBaseGun::DoFireEffects
+Common:Weapon_Shoot	CTFWeaponBaseGun::RemoveProjectileAmmo
+Common:Weapon_Shoot	CTFWeaponBaseGun::UpdatePunchAngles
+Common:Weapon_Shoot	EconItemInterface_OnOwnerKillEaterEvent
+Common:Weapon_Shoot	EconItemInterface_OnOwnerKillEaterEvent_Batched
+Common:Weapon_Shoot	GetKilleaterWeaponFromDamageInfo
+Common:Weapon_Shoot	TE_FireBullets
+Cond:Reprogrammed	CBaseObject::FindSnapToBuildPos
+Cond:Reprogrammed	CObjectSapper::IsValidRoboSapperTarget
+Cond:Reprogrammed	CObjectSentrygun::FindTarget
+Cond:Reprogrammed	CollectPlayers<CTFPlayer>
+Cond:Reprogrammed	CTFBotMedicHeal::IsVisibleToEnemy
+Cond:Reprogrammed	CTFGameRules::FireGameEvent
+Cond:Reprogrammed	CTFKnife::CanPerformBackstabAgainstTarget [clone]
+Cond:Reprogrammed	CTFPlayer::ChangeTeam
+Cond:Reprogrammed	CTFPlayer::DeathSound
+Cond:Reprogrammed	CTFPlayer::GetOpposingTFTeam
+Cond:Reprogrammed	CTFPlayer::ModifyOrAppendCriteria
+Cond:Reprogrammed	CTFPlayerShared::CTFPlayerShared
+Cond:Reprogrammed	CTFPlayerShared::OnConditionAdded
+Cond:Reprogrammed	CTFPlayerShared::OnConditionRemoved
+Cond:Reprogrammed	CTFTeamManager::GetTeam
+Cond:Reprogrammed	SV_ComputeClientPacks
+Credits:Better_Radius_Collection	CTFPlayerShared::RadiusCurrencyCollectionCheck
+Debug:UserMsg_Overflow	CMannVsMachineStats::NotifyTargetPlayerEvent
+Debug:UserMsg_Overflow	CMannVsMachineStats::PlayerEvent_Upgraded
+Demo:StringTable_Limit	[engine] bf_read::bf_read
+Demo:StringTable_Limit	[engine] bf_write::bf_write
+Demo:StringTable_Limit	[engine] CUtlBuffer::EnsureCapacity
+Etc:Crash_Fixes	CBaseServer::CheckPassword
+Etc:Crash_Fixes	CBaseServer::ConnectClient
+Etc:Crash_Fixes	ClientData_Update
+Etc:Detector	CBaseClient::SetName
+Etc:Detector	CBaseServer::CheckProtocol
+Etc:Detector	CServerPlugin::ClientSettingsChanged
+Etc:Detector	CServerPlugin::OnQueryCvarValueFinished
+Etc:Detector	CTFGameRules::FireGameEvent
+Etc:Detector	CTFPlayer::PostThink
+Etc:Detector	CTFPlayerShared::OnConditionAdded
+Etc:Detector	CTFPlayerShared::OnConditionRemoved
+Etc:Detector	UTIL_SetOrigin
+Etc:Entity_Limit_Manager	CBaseCombatWeapon::Equip
+Etc:Entity_Limit_Manager	CBaseCombatWeapon::SetViewModelIndex
+Etc:Entity_Limit_Manager_Convert_Serverside	CEntityFactory<CEnvEntityMaker>::Create
+Etc:Entity_Limit_Manager_Convert_Serverside	CEntityFactory<CEnvShake>::Create
+Etc:Entity_Limit_Manager_Convert_Serverside	CEntityFactory<CEnvViewPunch>::Create
+Etc:Entity_Limit_Manager_Convert_Serverside	CEntityFactory<CFuncNavAvoid>::Create
+Etc:Entity_Limit_Manager_Convert_Serverside	CEntityFactory<CFuncNavPrefer>::Create
+Etc:Entity_Limit_Manager_Convert_Serverside	CEntityFactory<CGameText>::Create
+Etc:Entity_Limit_Manager_Convert_Serverside	CEntityFactory<CPathTrack>::Create
+Etc:Entity_Limit_Manager_Convert_Serverside	CEntityFactory<CPointClientCommand>::Create
+Etc:Entity_Limit_Manager_Convert_Serverside	CEntityFactory<CPointEntity>::Create
+Etc:Entity_Limit_Manager_Convert_Serverside	CEntityFactory<CPointHurt>::Create
+Etc:Entity_Limit_Manager_Convert_Serverside	CEntityFactory<CPointNavInterface>::Create
+Etc:Entity_Limit_Manager_Convert_Serverside	CEntityFactory<CPointPopulatorInterface>::Create
+Etc:Entity_Limit_Manager_Convert_Serverside	CEntityFactory<CPointServerCommand>::Create
+Etc:Entity_Limit_Manager_Convert_Serverside	CEntityFactory<CRagdollMagnet>::Create
+Etc:Entity_Limit_Manager_Convert_Serverside	CEntityFactory<CTeamplayRoundWin>::Create
+Etc:Entity_Limit_Manager_Convert_Serverside	CEntityFactory<CTFBotHint>::Create
+Etc:Entity_Limit_Manager_Convert_Serverside	CEntityFactory<CTFBotHintSentrygun>::Create
+Etc:Entity_Limit_Manager_Convert_Serverside	CEntityFactory<CTFBotHintTeleporterExit>::Create
+Etc:Entity_Limit_Manager_Convert_Serverside	CEntityFactory<CTFForceRespawn>::Create
+Etc:Entity_Limit_Manager_Convert_Serverside	CEntityFactory<CTFHudNotify>::Create
+Etc:Entity_Limit_Manager_Convert_Serverside	CEntityFactory<CTrainingAnnotation>::Create
+Etc:Entity_Limit_Manager	CTFPlayer::CreateDisguiseWeaponList
+Etc:Entity_Limit_Manager	CTFPlayerShared::DetermineDisguiseWeapon
+Etc:Entity_Limit_Manager	CTFPlayerShared::DetermineDisguiseWearables
+Etc:Entity_Limit_Manager	CTFPlayerShared::RemoveDisguiseWeapon
+Etc:Entity_Limit_Manager	CTFPlayer::UpdateExpression
+Etc:Entity_Limit_Manager	InstancedScriptedScene
+Etc:Entity_Limit_Manager	Physics_SimulateEntity
+Etc:Heat_Seeking_Rockets	CBaseEntity::SetMoveType
+Etc:Heat_Seeking_Rockets	CTFBaseRocket::Create
+Etc:Heat_Seeking_Rockets	CTFProjectile_Flare::PerformCustomPhysics
+Etc:Holiday_Items_Allow	UTIL_GetHolidayForString
+Etc:Huntsman_Damage_Fix	CTFCompoundBow::GetChargeMaxTime
+Etc:Huntsman_Damage_Fix	CTFCompoundBow::GetProjectileDamage
+Etc:Limp_Projectiles	CTFGrenadePipebombProjectile::Create
+Etc:Mapentity_Additions	CBaseEntity::DispatchUpdateTransmitState
+Etc:Mapentity_Additions	CBaseObject::InitializeMapPlacedObject
+Etc:Mapentity_Additions	CCaptureFlag::FlagTouch
+Etc:Mapentity_Additions	CCaptureFlag::PickUp
+Etc:Mapentity_Additions	CCollisionEvent::ShouldCollide
+Etc:Mapentity_Additions	CEventAction::CEventAction [C2]
+Etc:Mapentity_Additions	CFlagDetectionZone::EntityIsFlagCarrier
+Etc:Mapentity_Additions	CFuncRotating::InputStop
+Etc:Mapentity_Additions	CGlobalEntityList::FindEntityByClassname
+Etc:Mapentity_Additions	CGlobalEntityList::FindEntityByName
+Etc:Mapentity_Additions	CItem::ItemTouch
+Etc:Mapentity_Additions	CObjectSentrygun::FireRocket
+Etc:Mapentity_Additions	CObjectTeleporter::RecieveTeleportingPlayer
+Etc:Mapentity_Additions	CPointPush::PushThink
+Etc:Mapentity_Additions	CPopulationManager::Initialize [clone]
+Etc:Mapentity_Additions	CPopulationManager::ResetMap
+Etc:Mapentity_Additions	CPopulationManager::UpdateObjectiveResource
+Etc:Mapentity_Additions	CTeamRoundTimer::InputSetTime
+Etc:Mapentity_Additions	CTFBaseRocket::Create
+Etc:Mapentity_Additions	CTFBot::GetFlagToFetch
+Etc:Mapentity_Additions	CTFBot::Spawn
+Etc:Mapentity_Additions	CTFDroppedWeapon::Create
+Etc:Mapentity_Additions	CTFDroppedWeapon::InitPickedUpWeapon
+Etc:Mapentity_Additions	CTFGameRules::CleanUpMap
+Etc:Mapentity_Additions	CTFGameRules::RoundCleanupShouldIgnore
+Etc:Mapentity_Additions	CTFGameRules::ShouldCreateEntity
+Etc:Mapentity_Additions	CTFMedigunShield::ShieldThink
+Etc:Mapentity_Additions	CTFPlayer::InputIgnitePlayer
+Etc:Mapentity_Additions	CTFPlayer::StateLeave
+Etc:Mapentity_Additions	CTriggerCamera::Disable
+Etc:Mapentity_Additions	CTriggerHurt::HurtEntity [clone]
+Etc:Mapentity_Additions	CTriggerIgnite::BurnEntities [clone]
+Etc:Mapentity_Additions	CTriggerIgnite::IgniteEntity
+Etc:Mapentity_Additions	IsSpaceToSpawnHere
+Etc:Mapentity_Additions	OnBotTeleported
+Etc:Mapentity_Additions	PassServerEntityFilter [clone]
+Etc:Mapentity_Additions	SV_ComputeClientPacks
+Etc:Mapentity_Additions	UTIL_EntitiesInSphere
+Etc:Medicgun_Beam_Machinery	CWeaponMedigun::AllowedToHealTarget
+Etc:Melee_Ignore_Teammates	CAttributeManager::AttribHookValue<int>
+Etc:Misc:AllowVoteMidWave	CKickIssue::RequestCallVote
+Etc:Misc	CCommandBuffer::AddText
+Etc:Misc	CTFPlayer::RemoveAllWeapons
+Etc:Misc	CTFPlayerShared::OnRemoveStunned
+Etc:Misc	CTFPlayer::StartBuildingObjectOfType
+Etc:Misc	CTFProjectile_Arrow::StrikeTarget
+Etc:Misc	CTFProjectile_BallOfFire::RocketTouch
+Etc:Misc	CTFProjectile_EnergyRing::ProjectileTouch
+Etc:Misc	CTFProjectile_Rocket::IsDeflectable
+Etc:Misc	CTFWrench::Smack
+Etc:Misc	CTraceFilterIgnorePlayers::ShouldHitEntity
+Etc:Misc:HHHHealthBar	CHeadlessHatman [D2]
+Etc:Misc:HHHHealthBar	CHeadlessHatman::OnTakeDamage_Alive
+Etc:Misc:HHHHealthBar	CHeadlessHatman::Spawn
+Etc:Misc:ScriptSaveLimit	Script_StringToFile
+Etc:Misc	SendProxyArrayLength_PlayerObjects
+Etc:Misc	SendProxy_PlayerObjectList
+Etc:Misc:SentryBusterParticleChange	DispatchParticleEffect [overload 3]
+Etc:Misc:SpectatorVoteFix	CVoteController::TryCastVote [clone]
+Etc:MM_Spoof	CTFGameRules::GetCurrentMatchGroup
+Etc:Player_Bullet_Bounding_Fix	FX_FireBullets
+Etc:RateLimit_Exclude	CBaseMultiplayerPlayer::ShouldRunRateLimitedCommand [str]
+Etc:SendProp_Override	CBaseServer::WriteDeltaEntities
+Etc:SendProp_Override	CGameServer::SendClientMessages
+Etc:SendProp_Override_Extension	SV_ComputeClientPacks
+Etc:SendProp_Override	PackedEntity::GetPropsChangedAfterTick
+Etc:SendProp_Override	SendTable_CalcDelta
+Etc:SendProp_Override	SendTable_WritePropList
+Etc:SendProp_Override	SV_DetermineUpdateType
+Etc:Suppress_NB_Event_Messages	_SpewMessage [internal]
+Etc:Target_ChangeGravity_Improved	CTargetChangeGravity::InputChangeGrav
+Etc:Target_ChangeGravity_Improved	CTargetChangeGravity::InputResetGrav
+Etc:Trigger_Filter_Fix	CBaseFilter::InputTestActivator
+Etc:Unintended_Class_Weapon_Improvements	CBaseCombatCharacter::Weapon_Detach
+Etc:Unintended_Class_Weapon_Improvements	CEconEntity::UpdateOnRemove
+Etc:Unintended_Class_Weapon_Improvements	ClassCanBuild
+Etc:Unintended_Class_Weapon_Improvements	CTFFists::Punch
+Etc:Unintended_Class_Weapon_Improvements	CTFFists::SecondaryAttack
+Etc:Unintended_Class_Weapon_Improvements	CTFMinigun::SecondaryAttack
+Etc:Unintended_Class_Weapon_Improvements	CTFPlayerClassShared::SetCustomModel
+Etc:Unintended_Class_Weapon_Improvements	CTFPlayer::DoClassSpecialSkill
+Etc:Unintended_Class_Weapon_Improvements	CTFPlayer::EndClassSpecialSkill
+Etc:Unintended_Class_Weapon_Improvements	CTFPlayer::ManageBuilderWeapons
+Etc:Unintended_Class_Weapon_Improvements	CTFPlayerShared::UpdateEnergyDrinkMeter [clone]
+Etc:Unintended_Class_Weapon_Improvements	CTFWeaponBase::Holster
+Etc:Unintended_Class_Weapon_Improvements	CTFWeaponBaseMelee::SecondaryAttack
+Etc:Unintended_Class_Weapon_Improvements	CTFWeaponBase::UpdateHands
+Etc:Unintended_Class_Weapon_Improvements	CTFWearable::Equip
+Etc:Unintended_Class_Weapon_Improvements	HandleRageGain
+Etc:Weapon_Mimic_Teamnum	CBaseEntity::CreateNoSpawn
+Etc:Weapon_Mimic_Teamnum	CTFBaseProjectile::GetDamageType
+Etc:Weapon_Mimic_Teamnum	CTFPointWeaponMimic::Fire
+Etc:Weapon_Mimic_Teamnum	CTFPointWeaponMimic::InputFireOnce
+Etc:Weapon_Mimic_Teamnum	CTFProjectile_Arrow::Create
+Etc:Weapon_Mimic_Teamnum	CTFProjectile_Rocket::Create
+MvM:ChangeBotAttributes_Crash_Fix	CPointPopulatorInterface::InputChangeBotAttributes
+MvM:ChangeClass_AnyTime	CTFPlayer::IsReadyToPlay
+MvM:Chat_Unrestrict	CTFPlayer::CanHearAndReadChatFrom
+MvM:Disposable_Sentry_Health_Upgrades	CBaseObject::SetHealth
+MvM:Disposable_Sentry_Health_Upgrades	CObjectSentrygun::MakeDisposableBuilding
+MvM:Drop_Weapons	CTFAmmoPack::Create
+MvM:Drop_Weapons	CTFDroppedWeapon::Create
+MvM:Drop_Weapons	CTFPlayer::DropAmmoPack
+MvM:Drop_Weapons	CTFPlayer::ShouldDropAmmoPack
+MvM:Extended_Upgrades	ApplyUpgrade_Default
+MvM:Extended_Upgrades	CTFGameRules::CanUpgradeWithAttrib
+MvM:Extended_Upgrades	CTFGameRules::GetCostForUpgrade
+MvM:Extended_Upgrades	CTFPlayer::GiveDefaultItems
+MvM:Extended_Upgrades	CUpgrades::ApplyUpgradeToItem [clone]
+MvM:Extended_Upgrades	CUpgrades::PlayerPurchasingUpgrade [clone]
+MvM:Extended_Upgrades	GetUpgradeStepData
+MvM:FriendlyFire	CTFGameRules::FPlayerCanTakeDamage
+MvM:FriendlyFire	CTFPlayer::WantsLagCompensationOnEntity
+MvM:Gib_Improvements	CTFBot::ShouldGib
+MvM:Gib_Improvements	CTFPlayer::CreateRagdollEntity [args]
+MvM:Gib_Improvements	CTFSniperRifle::ExplosiveHeadShot
+MvM:Human_Death_Yells	CTFPlayer::DeathSound
+MvM:Human_Death_Yells	CTFPlayer::SpyDeadRingerDeath
+MvM:JoinTeam_Blue_Allow	CBaseObject::ShouldQuickBuild
+MvM:JoinTeam_Blue_Allow	CObjectSentrygun::SentryThink
+MvM:JoinTeam_Blue_Allow	CObjectTeleporter::DeterminePlaybackRate
+MvM:JoinTeam_Blue_Allow	CollectPlayers<CTFPlayer>
+MvM:JoinTeam_Blue_Allow	CTFBaseBoss::OnTakeDamage
+MvM:JoinTeam_Blue_Allow	CTFBot::Spawn
+MvM:JoinTeam_Blue_Allow	CTFGameRules::FireGameEvent
+MvM:JoinTeam_Blue_Allow	CTFGameRules::OnPlayerSpawned
+MvM:JoinTeam_Blue_Allow	CTFGameRules::PlayerReadyStatus_ShouldStartCountdown
+MvM:JoinTeam_Blue_Allow	CTFGameRules::ShouldRespawnQuickly
+MvM:JoinTeam_Blue_Allow	CTFKnife::CanPerformBackstabAgainstTarget [clone]
+MvM:JoinTeam_Blue_Allow	CTFPlayer::RemoveAllOwnedEntitiesFromWorld
+MvM:JoinTeam_Blue_Allow	CTFPlayer::RemoveAmmo
+MvM:JoinTeam_Blue_Allow	CTFPlayerShared::RadiusSpyScan
+MvM:JoinTeam_Blue_Allow	CTFReviveMarker::Create
+MvM:JoinTeam_Blue_Allow	CVoteController::IsValidVoter [clone]
+MvM:JoinTeam_Blue_Allow	GetKilleaterWeaponFromDamageInfo
+MvM:JoinTeam_Blue_Allow	SV_ComputeClientPacks
+MvM:MedigunShield_Damage	CTFMedigunShield::Create
+MvM:No_Halloween_Souls	CTFGameRules::DropHalloweenSoulPack
+MvM:No_Halloween_Souls	CTFPlayerShared::OnRemovePhase
+MvM:No_Halloween_Souls	CTFReviveMarker::Create
+MvM:No_Halloween_Souls	CTFSniperRifle::ExplosiveHeadShot
+MvM:Player_Limit	CTFGCServerSystem::PreClientUpdate
+MvM:Red_Robot_Eye_Glow	CBasePlayer::ChangeTeam [int, bool, bool, bool]
+MvM:Red_Robot_Eye_Glow	CTFPlayerClassShared::SetCustomModel
+MvM:Refund_Exploit_Fix	CPopulationManager::SetNumRespecsForPlayer
+MvM:Refund_Exploit_Fix	CTFPlayer::GetAutoTeam
+MvM:RoboSapper_Override	CObjectSapper::ApplyRoboSapper
+MvM:RoboSapper_Override	CObjectSapper::ApplyRoboSapperEffects [clone]
+MvM:Robot_Limit	CGameServer::SetHibernating
+MvM:Robot_Limit	CPopulationManager::CollectMvMBots
+MvM:Robot_Limit	CPopulationManager::WaveEnd
+MvM:Sapper_Allow_Multiple_Active	CTFPlayer::CanBuild [clone]
+MvM:Sapper_Allow_Multiple_Active	CTFPlayer::GetNumObjects
+MvM:Teleporter_Aggro	CTFBotVision::UpdatePotentiallyVisibleNPCVector
+MvM:Upgrade_Disallow	ApplyUpgrade_Default
+MvM:Upgrade_Disallow	CUpgrades::PlayerPurchasingUpgrade [clone]
+MvM:UpgradeStation_Regen_Improved	CTFPlayer::GiveDefaultItems
+MvM:UpgradeStation_Regen_Improved	CUpgrades::PlayerPurchasingUpgrade [clone]
+MvM:Weapon_AntiGrief	CanScatterGunKnockBack
+MvM:Weapon_AntiGrief	CTFPistol_ScoutPrimary::Push
+MvM:Weapon_AntiGrief	CTFPlayer::ApplyGenericPushbackImpulse
+MvM:Weapon_AntiGrief	CTFScatterGun::ApplyPostHitEffects
+MvM:Weapon_Balancing	CTFPlayerShared::ModifyRage
+MvM:Weapon_Balancing	CTFSniperRifle::ExplosiveHeadShot
+MvM:Weapon_Balancing	CWeaponMedigun::AddCharge
+MvM:Weapon_Balancing	HandleRageGain
+MvM:Weapon_Balancing	ISpatialPartition::EnumerateElementsInSphere
+Perf:Attributes_Optimize	CAttributeManager::AttribHookValue<float>
+Perf:Attributes_Optimize	CAttributeManager::AttribHookValue<int>
+Perf:Attributes_Optimize	CAttributeManager::ClearCache [clone]
+Perf:Attributes_Optimize	CEconEntity::UpdateOnRemove
+Perf:Attributes_Optimize	CTFPlayer::UpdateOnRemove
+Perf:Extra_Player_Slots	CBaseClient::FireGameEvent
+Perf:Extra_Player_Slots	CBaseCombatWeapon::Equip
+Perf:Extra_Player_Slots	CBaseServer::CreateFakeClient
+Perf:Extra_Player_Slots	CBaseServer::FillServerInfo
+Perf:Extra_Player_Slots	CBaseServer::GetFreeClient
+Perf:Extra_Player_Slots	CGameMovement::GetPointContentsCached [clone]
+Perf:Extra_Player_Slots	CHLTVDirector::BuildActivePlayerList
+Perf:Extra_Player_Slots	CLagCompensationManager::FinishLagCompensation
+Perf:Extra_Player_Slots	CSteam3Server::SendUpdatedServerDetails
+Perf:Extra_Player_Slots	CTeamplayRoundBasedRules::State_Enter_PREROUND
+Perf:Extra_Player_Slots	CTFGameRules::CalcDominationAndRevenge [clone]
+Perf:Extra_Player_Slots	CTFGameRules::PlayerReadyStatus_UpdatePlayerState
+Perf:Extra_Player_Slots	CTFGameStats::AccumulateAndResetPerLifeStats
+Perf:Extra_Player_Slots	CTFGameStats::Event_PlayerConnected
+Perf:Extra_Player_Slots	CTFGameStats::Event_PlayerEarnedKillStreak
+Perf:Extra_Player_Slots	CTFGameStats::FindPlayerStats
+Perf:Extra_Player_Slots	CTFGameStats::IncrementStat
+Perf:Extra_Player_Slots	CTFGameStats::ResetKillHistory
+Perf:Extra_Player_Slots	CTFGameStats::ResetPlayerStats
+Perf:Extra_Player_Slots	CTFGameStats::SendStatsToPlayer
+Perf:Extra_Player_Slots	CTFGameStats::TrackKillStats
+Perf:Extra_Player_Slots	CTFPlayer::CreateRagdollEntity [args]
+Perf:Extra_Player_Slots	CTFPlayer::MaybeDrawRailgunBeam
+Perf:Extra_Player_Slots	CTFPlayerResource::SetPlayerClassWhenKilled
+Perf:Extra_Player_Slots	CTFPlayerShared::SetPlayerDominated
+Perf:Extra_Player_Slots	CTFPlayerShared::SetPlayerDominatingMe
+Perf:Extra_Player_Slots	CTFWearable::Equip
+Perf:Extra_Player_Slots	CTriggerCatapult::OnLaunchedVictim
+Perf:Extra_Player_Slots	CVoiceGameMgr::ClientConnected
+Perf:Extra_Player_Slots	Host_Changelevel
+Perf:Extra_Player_Slots_Players	CBaseServer::WriteDeltaEntities
+Perf:Extra_Player_Slots_Players	CHLTVServer::Shutdown
+Perf:Extra_Player_Slots_Players	CHLTVServer::StartMaster
+Perf:Extra_Player_Slots_Players	SV_DetermineUpdateType
+Perf:Extra_Player_Slots	SendProxyArrayLength_PlayerArray
+Perf:Extra_Player_Slots	SV_BroadcastVoiceData
+Perf:Extra_Player_Slots	SV_ComputeClientPacks
+Perf:Filesystem_Optimize	findFileInDirCaseInsensitive
+Perf:Flame_Breakable_Collision	CGlobalEntityList::FindEntityByClassname
+Perf::Func_Optimize	CBasePlayer::Weapon_Equip
+Perf::Func_Optimize	CItemGeneration::GenerateRandomItem
+Perf::Func_Optimize	CModelInfoServer::RegisterDynamicModel
+Perf::Func_Optimize	CTFBot::AvoidPlayers
+Perf::Func_Optimize	CTFPlayer::GetEntityForLoadoutSlot
+Perf::Func_Optimize	CTFPlayer::WantsLagCompensationOnEntity
+Perf::Func_Optimize	CWeaponMedigun::PrimaryAttack
+Perf::Func_Optimize	FX_FireBullets
+Perf:HLTV_Client_Interact	CHLTVClient::ExecuteStringCommand
+Perf:HLTV_Client_Interact	CHLTVServer::ConnectClient
+Perf:HLTV_Optimize	CBaseServer::GetFreeClient
+Perf:HLTV_Optimize	CGameClient::ShouldSendMessages
+Perf:HLTV_Optimize	CHLTVDemoRecorder::StopRecording [clone]
+Perf:HLTV_Optimize	CHLTVServer::IsTVRelay
+Perf:HLTV_Optimize	CHLTVServer::RestoreTick
+Perf:HLTV_Optimize	CHLTVServer::RunFrame
+Perf:HLTV_Optimize	CHLTVServer::UpdateTick
+Perf:HLTV_Optimize	CNetworkStringTable::RestoreTick
+Perf:HLTV_Optimize	CNetworkStringTable::UpdateMirrorTable
+Perf:HLTV_Optimize	CPlayer::IsSourceTV
+Perf:HLTV_Optimize	NextBotPlayer<CTFPlayer>::PhysicsSimulate
+Perf::Idle_Optimize	CGameServer::SetHibernating
+Perf::Idle_Optimize	SV_Frame
+Perf:MvM_Load_Popfile	CPopulationManager::ResetMap
+Perf:MvM_Load_Popfile	tf_mvm_popfile
+Perf:SendProp_Optimize	AllocChangeFrameList
+Perf:SendProp_Optimize	CAnimationLayer::StudioFrameAdvance
+Perf:SendProp_Optimize	CBaseAnimatingOverlay::FastRemoveLayer [clone]
+Perf:SendProp_Optimize	CBaseAnimatingOverlay::SetLayerCycle
+Perf:SendProp_Optimize	CBaseCombatWeapon::OnActiveStateChanged
+Perf:SendProp_Optimize	~CBaseEntity [D2]
+Perf:SendProp_Optimize	CGameClient::SetupPackInfo
+Perf:SendProp_Optimize	CHLTVClient::SendSnapshot
+Perf:SendProp_Optimize	CMultiPlayerAnimState::RestartGesture [clone]
+Perf:SendProp_Optimize	CParallelProcessor<CGameClient *>::Run
+Perf:SendProp_Optimize	CParallelProcessor<PackWork_t>::Run
+Perf:SendProp_Optimize	CTFPlayer::AddObject [clone]
+Perf:SendProp_Optimize	CTFPlayer::RemoveObject
+Perf:SendProp_Optimize	CTFWeaponBase::OnActiveStateChanged
+Perf:SendProp_Optimize	CVEngineServer::CheckAreasConnected
+Perf:SendProp_Optimize	InvalidateSharedEdictChangeInfo
+Perf:SendProp_Optimize	SendTable_CullPropsFromProxies
+Perf:SendProp_Optimize	SendTable_WritePropList
+Perf:SendProp_Optimize	SV_ComputeClientPacks
+Perf::Virtual_Call_Optimize_Inline_Virtuals	CServerNetworkProperty::GetClassName
+Pop:ECAttr_Extensions	CBaseCombatWeapon::WeaponSound
+Pop:ECAttr_Extensions	CEconItemSchema::GetItemDefinitionByName [clone]
+Pop:ECAttr_Extensions	CFuncNavCost::IsApplicableTo [clone]
+Pop:ECAttr_Extensions	CItemGeneration::GenerateRandomItem
+Pop:ECAttr_Extensions	CTFBot::AvoidPlayers
+Pop:ECAttr_Extensions	CTFBot::~CTFBot [D0]
+Pop:ECAttr_Extensions	CTFBot::~CTFBot [D2]
+Pop:ECAttr_Extensions	CTFBot::EquipBestWeaponForThreat
+Pop:ECAttr_Extensions	CTFBot::EquipRequiredWeapon
+Pop:ECAttr_Extensions	CTFBot::GetDesiredAttackRange
+Pop:ECAttr_Extensions	CTFBotMainAction::FireWeaponAtEnemy
+Pop:ECAttr_Extensions	CTFBotMainAction::SelectMoreDangerousThreatInternal
+Pop:ECAttr_Extensions	CTFBotMainAction::SelectTargetPoint
+Pop:ECAttr_Extensions	CTFPlayer::DeathSound
+Pop:ECAttr_Extensions	CTFPlayer::GetHandScaleSpeed
+Pop:ECAttr_Extensions	CTFPlayer::GetHeadScaleSpeed
+Pop:ECAttr_Extensions	CTFPlayer::GetSceneSoundToken
+Pop:ECAttr_Extensions	CTFPlayer::GetTorsoScaleSpeed
+Pop:ECAttr_Extensions	CTFPlayer::PainSound
+Pop:ECAttr_Extensions	CTFPlayer::StateLeave
+Pop:ECAttr_Extensions	CTFProjectile_Rocket::Spawn
+Pop:ECAttr_Extensions	CTFWeaponBaseGun::FireRocket
+Pop:ECAttr_Extensions	DispatchParticleEffect [overload 3]
+Pop:ECAttr_Extensions	NextBotPlayer<CTFPlayer>::PressCrouchButton
+Pop:ECAttr_Extensions	NextBotPlayer<CTFPlayer>::ReleaseCrouchButton
+Pop:ECAttr_Extensions	TE_TFParticleEffect
+Pop:EventPopfile_Improvements	CPopulationManager::UpdateObjectiveResource
+Pop:EventPopfile_Improvements	UTIL_IsHolidayActive
+Pop:ExtAttr:AlwaysFireWeaponAlt	CTFBotMainAction::FireWeaponAtEnemy
+Pop:ExtAttr:Parse	CTFBot::Spawn
+Pop:KV_Conditional	EvaluateConditional
+Pop:Mission_Extensions	CTFPlayerClassShared::SetCustomModel
+Pop:Nested_Complex_Spawners	CWave::AddClassType
+Pop:PointTemplates	CCollisionProperty::SetSolid
+Pop:PointTemplates	CCollisionProperty::SetSolidFlags
+Pop:PointTemplates	CEnvEntityMaker::InputForceSpawn
+Pop:PointTemplates	CEnvEntityMaker::InputForceSpawnAtEntityOrigin
+Pop:PointTemplates	CEnvEntityMaker::SpawnEntity
+Pop:PointTemplates	CUpgrades::~CUpgrades [D0]
+Pop:PointTemplates	CUpgrades::~CUpgrades [D2]
+Pop:PointTemplates	CUpgrades::Spawn
+Pop:PopMgr_Extensions	CBaseCombatWeapon::Equip
+Pop:PopMgr_Extensions	CBaseEntity::EmitSound [static: emitsound]
+Pop:PopMgr_Extensions	CBaseEntity::EmitSound [static: emitsound + handle]
+Pop:PopMgr_Extensions	CBaseFileSystem::LoadKeyValues
+Pop:PopMgr_Extensions	CBasePlayer::ChangeTeam [int, bool, bool, bool]
+Pop:PopMgr_Extensions	CCaptureFlag::GetMaxReturnTime
+Pop:PopMgr_Extensions	CCaptureFlag::PickUp
+Pop:PopMgr_Extensions	CEconEntity::UpdateOnRemove
+Pop:PopMgr_Extensions	CEngineSoundServer::PrecacheSound
+Pop:PopMgr_Extensions	CHeadlessHatmanAttack::AttackTarget
+Pop:PopMgr_Extensions	CHeadlessHatmanAttack::RecomputeHomePosition
+Pop:PopMgr_Extensions	CObjectSentrygun::FindTarget
+Pop:PopMgr_Extensions	CObjectTeleporter::PlayerCanBeTeleported [clone]
+Pop:PopMgr_Extensions	CPopulationManager::AdjustMinPlayerSpawnTime
+Pop:PopMgr_Extensions	CPopulationManager::ResetMap
+Pop:PopMgr_Extensions	CPopulationManager::StartCurrentWave
+Pop:PopMgr_Extensions	CPopulationManager::UpdateObjectiveResource
+Pop:PopMgr_Extensions	CreateSpellSpawnZombie
+Pop:PopMgr_Extensions	CSpawnLocation::FindSpawnLocation
+Pop:PopMgr_Extensions	CTeamplayRoundBasedRules::BroadcastSound
+Pop:PopMgr_Extensions	CTeamplayRoundBasedRules::GetMinTimeWhenPlayerMaySpawn
+Pop:PopMgr_Extensions	CTFAmmoPack::InitAmmoPack
+Pop:PopMgr_Extensions	CTFBot::GetNearestKnownSappableTarget
+Pop:PopMgr_Extensions	CTFBotTacticalMonitor::FindNearbyTeleporter
+Pop:PopMgr_Extensions	CTFGameMovement::PreventBunnyJumping
+Pop:PopMgr_Extensions	CTFGameRules::BetweenRounds_Think
+Pop:PopMgr_Extensions	CTFGameRules::BroadcastSound
+Pop:PopMgr_Extensions	CTFGameRules::CanUpgradeWithAttrib
+Pop:PopMgr_Extensions	CTFGameRules::GetBonusRoundTime
+Pop:PopMgr_Extensions	CTFGameRules::IsUsingSpells
+Pop:PopMgr_Extensions	CTFGameRules::OnPlayerSpawned
+Pop:PopMgr_Extensions	CTFGCServerSystem::PreClientUpdate
+Pop:PopMgr_Extensions	CTFPlayer::ChangeTeam
+Pop:PopMgr_Extensions	CTFPlayerClassShared::GetHandModelName
+Pop:PopMgr_Extensions	CTFPlayerClassShared::SetCustomModel
+Pop:PopMgr_Extensions	CTFPlayer::DeathSound
+Pop:PopMgr_Extensions	CTFPlayer::DropCurrencyPack
+Pop:PopMgr_Extensions	CTFPlayer::EndPurchasableUpgrades
+Pop:PopMgr_Extensions	CTFPlayer::GetEntityForLoadoutSlot
+Pop:PopMgr_Extensions	CTFPlayer::GetSceneSoundToken
+Pop:PopMgr_Extensions	CTFPlayer::GiveDefaultItems
+Pop:PopMgr_Extensions	CTFPlayer::InputSetCustomModel
+Pop:PopMgr_Extensions	CTFPlayer::IsReadyToSpawn
+Pop:PopMgr_Extensions	CTFPlayer::ModifyOrAppendCriteria
+Pop:PopMgr_Extensions	CTFPlayer::PickupWeaponFromOther
+Pop:PopMgr_Extensions	CTFPlayer::ReapplyItemUpgrades
+Pop:PopMgr_Extensions	CTFPlayer::RemoveCurrency
+Pop:PopMgr_Extensions	CTFPlayerSharedUtils::GetEconItemViewByLoadoutSlot
+Pop:PopMgr_Extensions	CTFPlayer::ShouldGainInstantSpawn
+Pop:PopMgr_Extensions	CTFPlayer::ValidateWeapons
+Pop:PopMgr_Extensions	CTFPowerup::Spawn
+Pop:PopMgr_Extensions	CTFProjectile_Arrow::StrikeTarget
+Pop:PopMgr_Extensions	CTFReviveMarker::Create
+Pop:PopMgr_Extensions	CTFRevolver::CanFireCriticalShot
+Pop:PopMgr_Extensions	CTFSniperRifle::CreateSniperDot
+Pop:PopMgr_Extensions	CTFSpellBook::SetSelectedSpell
+Pop:PopMgr_Extensions	CTFWeaponBase::CalcIsAttackCritical
+Pop:PopMgr_Extensions	CTFWeaponBase::CanFireCriticalShot
+Pop:PopMgr_Extensions	CTFWeaponBase::Holster
+Pop:PopMgr_Extensions	CTFWearable::Equip
+Pop:PopMgr_Extensions	CUpgrades::PlayerPurchasingUpgrade [clone]
+Pop:PopMgr_Extensions	CUpgrades::UpgradeTouch
+Pop:PopMgr_Extensions	CZombieBehavior::OnKilled
+Pop:PopMgr_Extensions	DispatchParticleEffect [overload 2]
+Pop:PopMgr_Extensions	DispatchParticleEffect [overload 3]
+Pop:PopMgr_Extensions	DispatchParticleEffect [overload 4]
+Pop:PopMgr_Extensions	DispatchParticleEffect [overload 6]
+Pop:PopMgr_Extensions	DispatchParticleEffect [overload 7]
+Pop:Tank_Extensions	CBaseAnimating::LookupAttachment
+Pop:Tank_Extensions	CBaseEntity::EmitSound [static: normal]
+Pop:Tank_Extensions	CTFBaseBoss::OnTakeDamage
+Pop:Tank_Extensions	CTFBaseBoss::ResolvePlayerCollision
+Pop:Tank_Extensions	CTFBaseBoss::Touch
+Pop:Tank_Extensions	CTFFlameManager::GetFlameDamageScale
+Pop:Tank_Extensions	CTFTankBoss::GetCurrencyValue
+Pop:Tank_Extensions	CTFTankBoss::TankBossThink
+Pop:Tank_Extensions	CTFTankBoss::UpdateOnRemove
+Pop:Tank_Extensions	CTFTankBoss::UpdatePingSound
+Pop:Tank_Extensions	HandleRageGain
+Pop:Tank_Extensions	UTIL_ScreenShake
+Pop:TFBot_Extensions	CBaseCombatCharacter::Weapon_Detach
+Pop:TFBot_Extensions	CBaseObject::FindBuildPointOnPlayer [clone]
+Pop:TFBot_Extensions	CBasePlayer::ChangeTeam [int, bool, bool, bool]
+Pop:TFBot_Extensions	CCaptureFlag::PickUp
+Pop:TFBot_Extensions	CQuestItemTracker::FireGameEvent_NonVirtual
+Pop:TFBot_Extensions	CSpawnLocation::FindSpawnLocation
+Pop:TFBot_Extensions	CTFAmmoPack::Create
+Pop:TFBot_Extensions	CTFBot::~CTFBot [D0]
+Pop:TFBot_Extensions	CTFBot::~CTFBot [D2]
+Pop:TFBot_Extensions	CTFBotDeliverFlag::OnEnd
+Pop:TFBot_Extensions	CTFBot::EquipBestWeaponForThreat
+Pop:TFBot_Extensions	CTFBot::GetFlagCaptureZone
+Pop:TFBot_Extensions	CTFBot::GetFlagToFetch
+Pop:TFBot_Extensions	CTFBot::IsBarrageAndReloadWeapon
+Pop:TFBot_Extensions	CTFBot::OnWeaponFired
+Pop:TFBot_Extensions	CTFBot::ShouldFireCompressionBlast
+Pop:TFBot_Extensions	CTFBot::Spawn
+Pop:TFBot_Extensions	CTFBotSquad::ShouldSquadLeaderWaitForFormation
+Pop:TFBot_Extensions	CTFBotTacticalMonitor::AvoidBumpingEnemies
+Pop:TFBot_Extensions	CTFDroppedWeapon::Create
+Pop:TFBot_Extensions	CTFKnife::CanPerformBackstabAgainstTarget [clone]
+Pop:TFBot_Extensions	CTFPlayer::DropAmmoPack
+Pop:TFBot_Extensions	CTFPlayer::GiveDefaultItems
+Pop:TFBot_Extensions	CTFPlayer::RemoveOwnedProjectiles
+Pop:TFBot_Extensions	CTFPlayerShared::OnConditionAdded
+Pop:TFBot_Extensions	CTFPlayerShared::OnConditionRemoved
+Pop:TFBot_Extensions	CTFPlayer::ShouldDropAmmoPack
+Pop:TFBot_Extensions	CTFPlayer::StateLeave
+Pop:TFBot_Extensions	DoTeleporterOverride
+Pop:TFBot_Extensions	GetBotEscortCount
+Pop:TFBot_Extensions	IgnoreActorsTraceFilterFunction
+Pop:TFBot_Extensions	NextBotPlayer<CTFPlayer>::Update
+Pop:Wave_Extensions	CBaseEntity::Create
+Pop:Wave_Extensions	CEyeballBossDead::Update
+Pop:Wave_Extensions	CEyeballBossIdle::Update
+Pop:Wave_Extensions	CPopulationManager::WaveEnd
+Pop:Wave_Extensions	CTFPlayer::ReapplyItemUpgrades
+Pop:Wave_Extensions	CWave::IsDoneWithNonSupportWaves
+Pop:Wave_Extensions	SV_ComputeClientPacks
+Pop:WaveSpawn_Extensions	CBaseEntity::Create
+Pop:WaveSpawn_Extensions	CEyeballBossDead::Update
+Pop:WaveSpawn_Extensions	CEyeballBossIdle::Update
+Pop:WaveSpawn_Extensions	CSpawnLocation::FindSpawnLocation
+Pop:WaveSpawn_Extensions	CWave::AddClassType
+Pop:WaveSpawn_Extensions	CZombie::OnTakeDamage_Alive
+Prof:Flame_Breakable_Collision	CGlobalEntityList::FindEntityByClassname
+Prof:Frame_Prof	CGameClient::ShouldSendMessages
+Prof:Frame_Prof	CGameServer::SendClientMessages
+Prof:Frame_Prof	CMapReslistGenerator::RunFrame
+Prof:Frame_Prof	Host_CheckDumpMemoryStats
+Prof:Popfile_Load	tf_mvm_popfile
+Robot:Building_Stomp	CTFBotMainAction::OnContact
+Robot:Spawn_SetName	IVEngineServer::SetFakeClientConVarValue
+Robot:Ticklish	CTFPlayer::CanBeForcedToLaugh
+Sniper:Head_Uncap	CTFSniperRifleDecap::SniperRifleChargeRateMod
+Sound:Tele_Activate	CTFBotHintEngineerNest::HintTeleporterThink
+Sound:Unused_Sapper	CObjectSapper::ApplyRoboSapperEffects [clone]
+Tank:Gunslinger_Combo	CTFRobotArm::Smack
+Tank:Gunslinger_Combo	CTFWeaponBaseMelee::DoSwingTrace
+Util:Client_Cmds	CMapReslistGenerator::RunFrame
+Util:Client_Cmds	CTFDroppedWeapon::Create
+Util:Client_Cmds	Host_CheckDumpMemoryStats
+Util:ConFilter	_SpewMessage [internal]
+Util:DebugOverlay_Font_v3	[client] ApplyOutlineToTexture
+Util:DebugOverlay_Font_v3	[client] CDebugOverlay::Paint
+Util:DebugOverlay_Font_v3	[client] CFontTextureCache::GetTextureForChars
+Util:DebugOverlay_Font_v3	[client] CMatSystemSurface::DrawColoredText [va_list]
+Util:DebugOverlay_Font_v3	[client] CWin32Font::Create
+Util:DebugOverlay_Font_v3	ISurface::SetFontGlyphSet
+Util:Download_Manager	CGameClient::FileDenied
+Util:Download_Manager	CGameClient::FileReceived
+Util:Download_Manager	CNetChan::HandleUpload
+Util:Download_Manager	CServerPlugin::OnQueryCvarValueFinished
+Util:Download_Manager	CTFGameRules::OnPlayerSpawned
+Util:DTWarning_Use_CVar	DataTable_Warning
+Util:Entity_Overlays	DrawAllDebugOverlays
+Util:Entity_Overlays	GetNextCommandEntity
+Util:Entity_Overlays	SetDebugBits
+Util:Lua	CBaseCombatWeapon::Equip
+Util:Lua	CCollisionEvent::ShouldCollide
+Util:Lua	CTFPlayer::UpdateOnRemove
+Util:Lua	CTFWeaponBase::Holster
+Util:Lua	CTFWearable::Equip
+Util:Lua	CVEngineServer::PlaybackTempEntity
+Util:Lua	DispatchSpawn
+Util:Lua	PassServerEntityFilter [clone]
+Util:Notify_Send	Con_NPrintf
+Util:Notify_Send	IVEngineServer::Con_NPrintf
+Util:Notify_Send	IVEngineServer::Con_NXPrintf
+Util:Overlay_Send	CBaseEntity::AddTimedOverlay
+Util:Overlay_Send	CBaseEntity::DrawTimedOverlays
+Util:Overlay_Send	clear_debug_overlays
+Util:Overlay_Send	ConColorMsg
+Util:Overlay_Send	CTFPlayer::UpdateOnRemove
+Util:Overlay_Send	DrawAllDebugOverlays
+Util:Overlay_Send	IVEngineServer::IsDedicatedServer
+Util:Overlay_Send	NDebugOverlay::Axis
+Util:Overlay_Send	NDebugOverlay::Box
+Util:Overlay_Send	NDebugOverlay::BoxAngles
+Util:Overlay_Send	NDebugOverlay::BoxDirection
+Util:Overlay_Send	NDebugOverlay::Circle
+Util:Overlay_Send	NDebugOverlay::Circle_ang
+Util:Overlay_Send	NDebugOverlay::Circle_axes
+Util:Overlay_Send	NDebugOverlay::Cross3D_ext
+Util:Overlay_Send	NDebugOverlay::Cross3DOriented_ang
+Util:Overlay_Send	NDebugOverlay::Cross3DOriented_mat
+Util:Overlay_Send	NDebugOverlay::Cross3D_size
+Util:Overlay_Send	NDebugOverlay::EntityText
+Util:Overlay_Send	NDebugOverlay::EntityTextAtPosition
+Util:Overlay_Send	NDebugOverlay::Grid
+Util:Overlay_Send	NDebugOverlay::HorzArrow
+Util:Overlay_Send	NDebugOverlay::Line
+Util:Overlay_Send	NDebugOverlay::ScreenText
+Util:Overlay_Send	NDebugOverlay::ScreenTextLine
+Util:Overlay_Send	NDebugOverlay::Sphere
+Util:Overlay_Send	NDebugOverlay::Sphere_ang
+Util:Overlay_Send	NDebugOverlay::SweptBox
+Util:Overlay_Send	NDebugOverlay::Text
+Util:Overlay_Send	NDebugOverlay::Triangle
+Util:Overlay_Send	NDebugOverlay::VertArrow
+Util:Overlay_Send	NDebugOverlay::YawArrow
+Util:Overlay_Send	NextBotPlayer<CTFPlayer>::PhysicsSimulate
+Util:Overlay_Send	NextBotPlayer<CTFPlayer>::Update
+Util:Pooled_String_Fix	AllocPooledString_StaticConstantStringPointer
+Util:Pooled_String_Fix	FindPooledString
+Util:Vehicle_Fix	CBaseCombatCharacter::CalculatePhysicsStressDamage
+Util:Vehicle_Fix	CBaseCombatWeapon::WeaponSound
+Util:Vehicle_Fix	CBasePlayer::GetInVehicle [clone]
+Util:Vehicle_Fix	CPropVehicleDriveable::DriveVehicle
+Util:Vehicle_Fix	CPropVehicleDriveable::PassengerShouldReceiveDamage
+Util:Vehicle_Fix	CPropVehicleDriveable::TraceAttack
+Util:Vehicle_Fix	CPropVehicleDriveable::Use
+Util:Vehicle_Fix	CTFGameRules::OnPlayerSpawned
+Util:Vehicle_Fix	CTFWeaponBaseGun::UpdatePunchAngles
+Util:Vehicle_Fix	SV_ComputeClientPacks
+Util:VScript_Load_Init_Scripts	VScriptRunScript
+Util:VScript_Send_Output_To_Admins	SQVM::Call

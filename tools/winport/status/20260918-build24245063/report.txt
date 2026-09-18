@@ -1,0 +1,173 @@
+MODS total 200 {'FAILED': 23, 'DISABLED': 157, 'UNLOADED': 10, 'OK': 10}
+shipped ON (by convar name match): 2
+
+FAILED mods (status FAILED): 23
+      Attr      Custom_Attributes                        detours=298 failed=192 patches=0
+      Perf      Extra_Player_Slots                       detours= 58 failed= 33 patches=0
+      Perf      SendProp_Optimize                        detours= 26 failed= 19 patches=2
+      MvM       JoinTeam_Blue_Allow                      detours= 27 failed= 18 patches=6
+      Cond      Reprogrammed                             detours= 38 failed= 16 patches=4
+      Perf:     Func_Optimize                            detours= 20 failed=  8 patches=5
+      Util      DebugOverlay_Font_v3                     detours=  6 failed=  6 patches=0
+      AI        EngieBot_Dispensers                      detours=  7 failed=  5 patches=0
+      AI        My_Nextbot                               detours=  6 failed=  5 patches=0
+      MvM       Human_Death_Yells                        detours=  2 failed=  2 patches=1
+      Perf      HLTV_Client_Interact                     detours=  2 failed=  2 patches=0
+      MvM       MedigunShield_Damage                     detours=  1 failed=  1 patches=1
+      Bot       Medieval_NonMelee                        detours=  1 failed=  0 patches=1
+      Bot       RunFast                                  detours=  3 failed=  0 patches=1
+      Etc       Allow_Civilian_Class                     detours=  2 failed=  0 patches=1
+      Etc       Override_Move_Speed                      detours=  1 failed=  0 patches=1
+      MvM       Blu_Velocity_Limit_Remove                detours=  0 failed=  0 patches=1
+      MvM       Dominations                              detours=  0 failed=  0 patches=1
+      MvM       Set_Credit_Team                          detours=  0 failed=  0 patches=5
+      MvM       YER_Unnerf                               detours=  0 failed=  0 patches=1
+      Perf:     Virtual_Call_Optimize                    detours=  0 failed=  0 patches=3
+      Robot     Underground_Check_Override               detours=  1 failed=  0 patches=0
+      Sniper    Charge_Uncap                             detours=  0 failed=  0 patches=2
+
+LOADED but with failed detours (partial = silent misbehaviour):
+  ON  DISABLED Etc       Unintended_Class_Weapon_Improvements     detours= 28 failed= 16 active=0
+  ON  DISABLED Etc       Entity_Limit_Manager                     detours= 11 failed=  9 active=0
+      OK       Pop       PopMgr_Extensions                        detours=126 failed= 68 active=58
+      DISABLED Etc       Mapentity_Additions                      detours= 67 failed= 38 active=0
+      DISABLED Pop       TFBot_Extensions                         detours= 66 failed= 32 active=0
+      DISABLED Util      Overlay_Send                             detours= 61 failed= 30 active=0
+      DISABLED Util      Overlay_Send                             detours= 32 failed= 29 active=0
+      DISABLED Pop       ECAttr_Extensions                        detours= 54 failed= 26 active=0
+      DISABLED Etc       Entity_Limit_Manager_Convert_Serverside  detours= 24 failed= 21 active=0
+      DISABLED Common    Weapon_Shoot                             detours= 21 failed= 14 active=0
+      DISABLED Pop       Tank_Extensions                          detours= 33 failed= 12 active=0
+      DISABLED Etc       Misc                                     detours= 16 failed= 11 active=0
+      DISABLED Perf      HLTV_Optimize                            detours= 13 failed= 11 active=0
+      DISABLED Util      Vehicle_Fix                              detours= 21 failed= 10 active=0
+      DISABLED Etc       Detector                                 detours= 18 failed=  9 active=0
+      OK       Pop       PointTemplates                           detours= 12 failed=  8 active=4
+      OK       Util      Lua                                      detours= 30 failed=  8 active=22
+      DISABLED MvM       Extended_Upgrades                        detours= 12 failed=  7 active=0
+      DISABLED Pop       Wave_Extensions                          detours= 18 failed=  7 active=0
+      DISABLED Etc       SendProp_Override                        detours=  6 failed=  6 active=0
+      DISABLED Etc       Weapon_Mimic_Teamnum                     detours= 12 failed=  6 active=0
+      DISABLED Pop       WaveSpawn_Extensions                     detours= 30 failed=  6 active=0
+      DISABLED AI        Improved_Targeting                       detours=  7 failed=  5 active=0
+      DISABLED MvM       Weapon_Balancing                         detours= 11 failed=  5 active=0
+      DISABLED Perf      Attributes_Optimize                      detours=  5 failed=  5 active=0
+      DISABLED Util      Download_Manager                         detours=  8 failed=  5 active=0
+      DISABLED Attr      CustomProjectileModel_Precache           detours=  7 failed=  4 active=0
+      DISABLED Bot       IsSpaceToSpawnHere_Scale                 detours=  6 failed=  4 active=0
+      DISABLED MvM       Drop_Weapons                             detours=  4 failed=  4 active=0
+      DISABLED MvM       Weapon_AntiGrief                         detours= 11 failed=  4 active=0
+      DISABLED Perf      Extra_Player_Slots_Players               detours=  5 failed=  4 active=0
+      DISABLED Prof      Frame_Prof                               detours=  4 failed=  4 active=0
+      DISABLED Demo      StringTable_Limit                        detours=  6 failed=  3 active=0
+      DISABLED Etc       Heat_Seeking_Rockets                     detours=  5 failed=  3 active=0
+      DISABLED Etc:Misc  HHHHealthBar                             detours=  3 failed=  3 active=0
+      DISABLED MvM       Gib_Improvements                         detours=  5 failed=  3 active=0
+      DISABLED MvM       No_Halloween_Souls                       detours=  5 failed=  3 active=0
+      DISABLED MvM       Robot_Limit                              detours=  6 failed=  3 active=0
+      DISABLED Util      Client_Cmds                              detours=  3 failed=  3 active=0
+      DISABLED Util      Entity_Overlays                          detours=  3 failed=  3 active=0
+      DISABLED Util      Notify_Send                              detours=  3 failed=  3 active=0
+      DISABLED AI        EngieBot_Wrangler                        detours=  4 failed=  2 active=0
+      DISABLED AI        Improved_UseItem                         detours=  3 failed=  2 active=0
+      DISABLED AI        WrapAssassin_AltFire                     detours=  2 failed=  2 active=0
+      DISABLED Bot       Bot_Player_Slot_Reorder                  detours=  2 failed=  2 active=0
+      DISABLED Bot       Spy_SelectRandomReachableEnemy           detours=  3 failed=  2 active=0
+      DISABLED Debug     UserMsg_Overflow                         detours=  3 failed=  2 active=0
+      DISABLED Etc       Crash_Fixes                              detours=  4 failed=  2 active=0
+      DISABLED Etc       Huntsman_Damage_Fix                      detours=  3 failed=  2 active=0
+      DISABLED Etc       Target_ChangeGravity_Improved            detours=  2 failed=  2 active=0
+      DISABLED MvM       Disposable_Sentry_Health_Upgrades        detours=  3 failed=  2 active=0
+      DISABLED MvM       FriendlyFire                             detours=  2 failed=  2 active=0
+      DISABLED MvM       Red_Robot_Eye_Glow                       detours=  4 failed=  2 active=0
+      DISABLED MvM       Refund_Exploit_Fix                       detours=  2 failed=  2 active=0
+      DISABLED MvM       RoboSapper_Override                      detours=  3 failed=  2 active=0
+      DISABLED MvM       Sapper_Allow_Multiple_Active             detours=  2 failed=  2 active=0
+      DISABLED MvM       UpgradeStation_Regen_Improved            detours=  2 failed=  2 active=0
+      DISABLED MvM       Upgrade_Disallow                         detours=  2 failed=  2 active=0
+      DISABLED Perf      MvM_Load_Popfile                         detours=  6 failed=  2 active=0
+      DISABLED Perf:     Idle_Optimize                            detours=  2 failed=  2 active=0
+      DISABLED Pop       EventPopfile_Improvements                detours=  4 failed=  2 active=0
+      DISABLED Tank      Gunslinger_Combo                         detours=  2 failed=  2 active=0
+      DISABLED Util      Pooled_String_Fix                        detours=  4 failed=  2 active=0
+      DISABLED AI        EngieBot_NoPush                          detours=  5 failed=  1 active=0
+      DISABLED AI        Giant_Pyro                               detours=  3 failed=  1 active=0
+      DISABLED AI        My_Nextbot_Unlag                         detours=  2 failed=  1 active=0
+      DISABLED AI        My_Nextbot_UnlagNPCGlobal                detours=  1 failed=  1 active=0
+      DISABLED AI        Puppet                                   detours=  1 failed=  1 active=0
+      DISABLED Anim      Player_UpdateModel_AnimState_Fix         detours=  1 failed=  1 active=0
+      DISABLED Attr      BlockBackstab_OldStyle                   detours=  3 failed=  1 active=0
+      DISABLED Bot       Kart_Locomotion                          detours=  3 failed=  1 active=0
+      OK       Common    ExtraEntityData                          detours=  1 failed=  1 active=0
+      DISABLED Credits   Better_Radius_Collection                 detours=  1 failed=  1 active=0
+      DISABLED Etc       Crash_Fixes                              detours=  3 failed=  1 active=0
+      DISABLED Etc       Holiday_Items_Allow                      detours=  2 failed=  1 active=0
+      DISABLED Etc       Limp_Projectiles                         detours=  1 failed=  1 active=0
+      DISABLED Etc       MM_Spoof                                 detours=  1 failed=  1 active=0
+      DISABLED Etc       Medicgun_Beam_Machinery                  detours=  1 failed=  1 active=0
+      DISABLED Etc       Melee_Ignore_Teammates                   detours=  5 failed=  1 active=0
+      DISABLED Etc       Misc                                     detours=  1 failed=  1 active=0
+      DISABLED Etc       Player_Bullet_Bounding_Fix               detours=  1 failed=  1 active=0
+      DISABLED Etc       RateLimit_Exclude                        detours=  1 failed=  1 active=0
+      DISABLED Etc       SendProp_Override_Extension              detours=  1 failed=  1 active=0
+      DISABLED Etc       Suppress_NB_Event_Messages               detours=  1 failed=  1 active=0
+      DISABLED Etc       Trigger_Filter_Fix                       detours=  4 failed=  1 active=0
+      DISABLED Etc:Misc  AllowVoteMidWave                         detours=  1 failed=  1 active=0
+      DISABLED Etc:Misc  ScriptSaveLimit                          detours=  1 failed=  1 active=0
+      DISABLED Etc:Misc  SentryBusterParticleChange               detours=  2 failed=  1 active=0
+      DISABLED Etc:Misc  SpectatorVoteFix                         detours=  1 failed=  1 active=0
+      DISABLED MvM       ChangeBotAttributes_Crash_Fix            detours=  3 failed=  1 active=0
+      DISABLED MvM       ChangeClass_AnyTime                      detours=  2 failed=  1 active=0
+      DISABLED MvM       Chat_Unrestrict                          detours=  1 failed=  1 active=0
+      DISABLED MvM       No_Halloween_Souls                       detours=  1 failed=  1 active=0
+      DISABLED MvM       Player_Limit                             detours=  3 failed=  1 active=0
+      DISABLED MvM       Teleporter_Aggro                         detours=  1 failed=  1 active=0
+      DISABLED Perf      Filesystem_Optimize                      detours=  1 failed=  1 active=0
+      DISABLED Perf      Flame_Breakable_Collision                detours=  2 failed=  1 active=0
+      DISABLED Perf:     Virtual_Call_Optimize_Inline_Virtuals    detours=  5 failed=  1 active=0
+      OK       Pop       KV_Conditional                           detours=  1 failed=  1 active=0
+      DISABLED Pop       Mission_Extensions                       detours=  5 failed=  1 active=0
+      DISABLED Pop       Nested_Complex_Spawners                  detours=  8 failed=  1 active=0
+      DISABLED Pop:ExtAttr AlwaysFireWeaponAlt                      detours=  1 failed=  1 active=0
+      DISABLED Pop:ExtAttr Parse                                    detours=  3 failed=  1 active=0
+      DISABLED Prof      Flame_Breakable_Collision                detours=  2 failed=  1 active=0
+      DISABLED Prof      Popfile_Load                             detours=  1 failed=  1 active=0
+      DISABLED Robot     Building_Stomp                           detours=  3 failed=  1 active=0
+      DISABLED Robot     Spawn_SetName                            detours=  2 failed=  1 active=0
+      DISABLED Robot     Ticklish                                 detours=  1 failed=  1 active=0
+      DISABLED Sniper    Head_Uncap                               detours=  1 failed=  1 active=0
+      DISABLED Sound     Tele_Activate                            detours=  1 failed=  1 active=0
+      DISABLED Sound     Unused_Sapper                            detours=  2 failed=  1 active=0
+      DISABLED Util      ConFilter                                detours=  1 failed=  1 active=0
+      DISABLED Util      DTWarning_Use_CVar                       detours=  1 failed=  1 active=0
+      DISABLED Util      VScript_Load_Init_Scripts                detours=  2 failed=  1 active=0
+      DISABLED Util      VScript_Send_Output_To_Admins            detours=  1 failed=  1 active=0
+
+OK mods with byte patches applied on Windows (Linux-codegen bytes that matched):
+
+Pop:* mods (what the 99 missions ride on):
+      DISABLED ECAttr_Extensions                        detours= 54 failed= 26 active=0 patches=0
+      DISABLED EventPopfile_Improvements                detours=  4 failed=  2 active=0 patches=0
+      OK       KV_Conditional                           detours=  1 failed=  1 active=0 patches=0
+      DISABLED Mission_Extensions                       detours=  5 failed=  1 active=0 patches=0
+      DISABLED Nested_Complex_Spawners                  detours=  8 failed=  1 active=0 patches=0
+      OK       PointTemplates                           detours= 12 failed=  8 active=4 patches=0
+      OK       PopMgr_Extensions                        detours=126 failed= 68 active=58 patches=0
+      DISABLED TFBot_Extensions                         detours= 66 failed= 32 active=0 patches=0
+      DISABLED Tank_Extensions                          detours= 33 failed= 12 active=0 patches=0
+      DISABLED WaveSpawn_Extensions                     detours= 30 failed=  6 active=0 patches=0
+      DISABLED Wave_Extensions                          detours= 18 failed=  7 active=0 patches=0
+
+LINKAGE thunks by kind (total / unresolved):
+  MEMBER_FUNC      762 /   380
+  STATIC_FUNC      333 /   281
+  VIRTUAL_FUNC     250 /     1
+  GLOBAL           102 /    72
+
+ADDRS ok=1124 fail=1645
+FAIL by classification bucket: {'(not in classified.json)': 1645}
+FAIL by library: {'server': 1372, 'engine': 212, 'client': 33, 'dedicated': 6, 'tier0': 5, 'vguimatsurface': 5, 'sourcemodcore': 5, 'soundemittersystem': 2, 'datacache': 2, 'vscript': 2, 'vstdlib': 1}
+FAIL server, by class (top 30):
+  (free)=185, CTFPlayer=108, CTFBot=51, CBaseEntity=48, CTFPlayerShared=44, CTFWeaponBase=43, NextBotPlayer<CTFPlayer>=32, CTFGameRules=31, CBaseCombatWeapon=29, NDebugOverlay=27, CPopulationManager=26, CBaseAnimating=23, CBaseObject=20, CBasePlayer=17, CTFWeaponBaseGun=17, CTFBotMainAction=16, CBaseCombatCharacter=13, CObjectSentrygun=13, CTFProjectile_Arrow=11, CAttributeList=10, CAttributeManager=10, CBaseAnimatingOverlay=10, CEconEntity=10, CUpgrades=10, CNavArea=9, CObjectSapper=9, CServerNetworkProperty=9, CTFGameStats=9, CWeaponMedigun=9, CObjectTeleporter=8
+
+classified.json sample keys: none  n= 0

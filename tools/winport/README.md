@@ -126,7 +126,14 @@ class, because `.rdata` packs them together and the neighbour's first slot is a
 code pointer too. Every table is preceded by its own locator, so the locator
 addresses are the boundaries.
 
-## Order of work from here
+## Where the work is now
+
+`ANALYSIS.md` beside this file is current: the measured state of the port
+against buildid 24245063, what cannot work on Windows, and the work in
+batches. The order below is the plan as it stood before the extension first
+loaded, kept because the reasoning still holds.
+
+## Order of work, as first planned
 
 1. The 408 that do not align. These are no longer a tooling gap: both sides are
    the same build and the same sub-table, so a class whose tables differ in

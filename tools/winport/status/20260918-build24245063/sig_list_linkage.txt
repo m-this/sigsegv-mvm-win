@@ -1,0 +1,1449 @@
+KIND              ADDRESS  NAME                                                        
+MEMBER_FUNC   0x000000000  CAttributeList::GetAttributeByID                            
+MEMBER_FUNC   0x000000000  CAttributeList::GetAttributeByName                          
+MEMBER_FUNC   0x000000000  CAttributeList::IterateAttributes                           
+MEMBER_FUNC   0x000000000  CAttributeList::AddAttribute                                
+MEMBER_FUNC   0x000000000  CAttributeList::RemoveAttribute                             
+MEMBER_FUNC   0x000000000  CAttributeList::RemoveAttributeByIndex                      
+MEMBER_FUNC   0x000000000  CAttributeList::DestroyAllAttributes                        
+MEMBER_FUNC   0x000000000  CAttributeList::SetRuntimeAttributeValue                    
+MEMBER_FUNC   0x000000000  CAttributeList::SetRuntimeAttributeRefundableCurrency       
+MEMBER_FUNC   0x000000000  CAttributeList::NotifyManagerOfAttributeValueChanges        
+MEMBER_FUNC   0x076084ba0  CEconItemView::IterateAttributes                            
+STATIC_FUNC   0x000000000  NDebugOverlay::Box                                          
+STATIC_FUNC   0x000000000  NDebugOverlay::BoxDirection                                 
+STATIC_FUNC   0x000000000  NDebugOverlay::BoxAngles                                    
+STATIC_FUNC   0x000000000  NDebugOverlay::SweptBox                                     
+STATIC_FUNC   0x075ef8fc0  NDebugOverlay::EntityBounds                                 
+STATIC_FUNC   0x000000000  NDebugOverlay::Line                                         
+STATIC_FUNC   0x000000000  NDebugOverlay::Triangle                                     
+STATIC_FUNC   0x000000000  NDebugOverlay::EntityText                                   
+STATIC_FUNC   0x000000000  NDebugOverlay::EntityTextAtPosition                         
+STATIC_FUNC   0x000000000  NDebugOverlay::Grid                                         
+STATIC_FUNC   0x000000000  NDebugOverlay::Text                                         
+STATIC_FUNC   0x000000000  NDebugOverlay::ScreenText                                   
+STATIC_FUNC   0x000000000  NDebugOverlay::Cross3D_ext                                  
+STATIC_FUNC   0x000000000  NDebugOverlay::Cross3D_size                                 
+STATIC_FUNC   0x000000000  NDebugOverlay::Cross3DOriented_ang                          
+STATIC_FUNC   0x000000000  NDebugOverlay::Cross3DOriented_mat                          
+STATIC_FUNC   0x000000000  NDebugOverlay::DrawTickMarkedLine                           
+STATIC_FUNC   0x000000000  NDebugOverlay::DrawGroundCrossHairOverlay                   
+STATIC_FUNC   0x000000000  NDebugOverlay::HorzArrow                                    
+STATIC_FUNC   0x000000000  NDebugOverlay::YawArrow                                     
+STATIC_FUNC   0x000000000  NDebugOverlay::VertArrow                                    
+STATIC_FUNC   0x000000000  NDebugOverlay::Axis                                         
+STATIC_FUNC   0x000000000  NDebugOverlay::Sphere                                       
+STATIC_FUNC   0x000000000  NDebugOverlay::Circle                                       
+STATIC_FUNC   0x000000000  NDebugOverlay::Circle_ang                                   
+STATIC_FUNC   0x000000000  NDebugOverlay::Circle_axes                                  
+STATIC_FUNC   0x000000000  NDebugOverlay::Sphere_ang                                   
+MEMBER_FUNC   0x000000000  INextBot::IsRangeLessThan                                   
+MEMBER_FUNC   0x000000000  INextBot::IsRangeGreaterThan                                
+VIRTUAL_FUNC  0x0fffffffc  NextBotPlayer<CTFPlayer>::GetEntity                         
+MEMBER_FUNC   0x075d1ba60  INextBotComponent::GetBot                                   
+MEMBER_FUNC   0x0760e4e10  CKnownEntity::Destroy                                       
+MEMBER_FUNC   0x0760e72c0  CKnownEntity::UpdatePosition                                
+MEMBER_FUNC   0x0760e51c0  CKnownEntity::GetEntity                                     
+MEMBER_FUNC   0x075eb7b90  CKnownEntity::GetLastKnownPosition                          
+MEMBER_FUNC   0x0760e56f0  CKnownEntity::HasLastKnownPositionBeenSeen                  
+MEMBER_FUNC   0x0760e62d0  CKnownEntity::MarkLastKnownPositionAsSeen                   
+MEMBER_FUNC   0x0760e5390  CKnownEntity::GetLastKnownArea                              
+MEMBER_FUNC   0x0760e5610  CKnownEntity::GetTimeSinceLastKnown                         
+MEMBER_FUNC   0x0760e55f0  CKnownEntity::GetTimeSinceBecameKnown                       
+MEMBER_FUNC   0x0760e7400  CKnownEntity::UpdateVisibilityStatus                        
+MEMBER_FUNC   0x0760e6280  CKnownEntity::IsVisibleInFOVNow                             
+MEMBER_FUNC   0x0760e6290  CKnownEntity::IsVisibleRecently                             
+MEMBER_FUNC   0x0760e5600  CKnownEntity::GetTimeSinceBecameVisible                     
+MEMBER_FUNC   0x0760e56e0  CKnownEntity::GetTimeWhenBecameVisible                      
+MEMBER_FUNC   0x0760e5620  CKnownEntity::GetTimeSinceLastSeen                          
+MEMBER_FUNC   0x0760e7430  CKnownEntity::WasEverVisible                                
+MEMBER_FUNC   0x0760e6210  CKnownEntity::IsObsolete                                    
+MEMBER_FUNC   0x0760e4b50  CKnownEntity::operator==                                    
+MEMBER_FUNC   0x0760e5820  CKnownEntity::Is                                            
+MEMBER_FUNC   0x075e17970  INextBotEventResponder::FirstContainedResponder             
+MEMBER_FUNC   0x075e10fd0  INextBotEventResponder::NextContainedResponder              
+MEMBER_FUNC   0x0760cfe80  INextBotEventResponder::OnLeaveGround                       
+MEMBER_FUNC   0x0760cfe40  INextBotEventResponder::OnLandOnGround                      
+MEMBER_FUNC   0x0760cfd10  INextBotEventResponder::OnContact                           
+MEMBER_FUNC   0x0760cffa0  INextBotEventResponder::OnMoveToSuccess                     
+MEMBER_FUNC   0x0760cff60  INextBotEventResponder::OnMoveToFailure                     
+MEMBER_FUNC   0x0760d0220  INextBotEventResponder::OnStuck                             
+MEMBER_FUNC   0x0760d04d0  INextBotEventResponder::OnUnStuck                           
+MEMBER_FUNC   0x0760d00f0  INextBotEventResponder::OnPostureChanged                    
+MEMBER_FUNC   0x0760cfa60  INextBotEventResponder::OnAnimationActivityComplete         
+MEMBER_FUNC   0x0760cfaa0  INextBotEventResponder::OnAnimationActivityInterrupted      
+MEMBER_FUNC   0x0760cfae0  INextBotEventResponder::OnAnimationEvent                    
+MEMBER_FUNC   0x0760cfd90  INextBotEventResponder::OnIgnite                            
+MEMBER_FUNC   0x0760cfdc0  INextBotEventResponder::OnInjured                           
+MEMBER_FUNC   0x0760cfe00  INextBotEventResponder::OnKilled                            
+MEMBER_FUNC   0x0760d0070  INextBotEventResponder::OnOtherKilled                       
+MEMBER_FUNC   0x0760d0160  INextBotEventResponder::OnSight                             
+MEMBER_FUNC   0x0760cfef0  INextBotEventResponder::OnLostSight                         
+MEMBER_FUNC   0x0760d01a0  INextBotEventResponder::OnSound                             
+MEMBER_FUNC   0x0760d01e0  INextBotEventResponder::OnSpokeConcept                      
+MEMBER_FUNC   0x0760d0500  INextBotEventResponder::OnWeaponFired                       
+MEMBER_FUNC   0x0760cffe0  INextBotEventResponder::OnNavAreaChanged                    
+MEMBER_FUNC   0x0760cff30  INextBotEventResponder::OnModelChanged                      
+MEMBER_FUNC   0x0760d00b0  INextBotEventResponder::OnPickUp                            
+MEMBER_FUNC   0x0760cfd50  INextBotEventResponder::OnDrop                              
+MEMBER_FUNC   0x0760cfa20  INextBotEventResponder::OnActorEmoted                       
+MEMBER_FUNC   0x0760cfbe0  INextBotEventResponder::OnCommandAttack                     
+MEMBER_FUNC   0x0760cfba0  INextBotEventResponder::OnCommandApproach(vec)              
+MEMBER_FUNC   0x0760cfb60  INextBotEventResponder::OnCommandApproach(ent)              
+MEMBER_FUNC   0x0760cfc90  INextBotEventResponder::OnCommandRetreat                    
+MEMBER_FUNC   0x0760cfc20  INextBotEventResponder::OnCommandPause                      
+MEMBER_FUNC   0x0760cfc60  INextBotEventResponder::OnCommandResume                     
+MEMBER_FUNC   0x0760cfcd0  INextBotEventResponder::OnCommandString                     
+MEMBER_FUNC   0x0760d0120  INextBotEventResponder::OnShoved                            
+MEMBER_FUNC   0x0760cfb20  INextBotEventResponder::OnBlinded                           
+MEMBER_FUNC   0x0760d0450  INextBotEventResponder::OnTerritoryContested                
+MEMBER_FUNC   0x0760d0410  INextBotEventResponder::OnTerritoryCaptured                 
+MEMBER_FUNC   0x0760d0490  INextBotEventResponder::OnTerritoryLost                     
+MEMBER_FUNC   0x0760d0540  INextBotEventResponder::OnWin                               
+MEMBER_FUNC   0x0760cfec0  INextBotEventResponder::OnLose                              
+MEMBER_FUNC   0x0760cf8d0  IContextualQuery::ShouldPickUp                              
+MEMBER_FUNC   0x0760d0790  IContextualQuery::ShouldHurry                               
+MEMBER_FUNC   0x0760d0790  IContextualQuery::ShouldRetreat                             
+MEMBER_FUNC   0x0760cf8d0  IContextualQuery::ShouldAttack                              
+MEMBER_FUNC   0x0760cf8d0  IContextualQuery::IsHindrance                               
+MEMBER_FUNC   0x075f7b550  IContextualQuery::SelectTargetPoint                         
+MEMBER_FUNC   0x0760cf8d0  IContextualQuery::IsPositionAllowed                         
+MEMBER_FUNC   0x075f6b0d0  IContextualQuery::SelectMoreDangerousThreat                 
+MEMBER_FUNC   0x0760ea220  Path::IsValid                                               
+MEMBER_FUNC   0x000000000  Path::ComputePathDetails                                    
+MEMBER_FUNC   0x000000000  Path::BuildTrivialPath                                      
+MEMBER_FUNC   0x000000000  Path::Optimize                                              
+MEMBER_FUNC   0x0760ea510  Path::PostProcess                                           
+VIRTUAL_FUNC  0x00000006c  PathFollower::Update                                        
+VIRTUAL_FUNC  0x000000040  PathFollower::Invalidate                                    
+VIRTUAL_FUNC  0x000000070  PathFollower::SetMinLookAheadDistance                       
+VIRTUAL_FUNC  0x00000007c  ChasePath::Update                                           
+MEMBER_FUNC   0x076228520  CTFBotPathCost::operator()                                  
+MEMBER_FUNC   0x000000000  CZombiePathCost::operator()                                 
+MEMBER_FUNC   0x000000000  Behavior<CTFBot>::FirstContainedResponder                   
+MEMBER_FUNC   0x075e870f0  Action<CZombie>::FirstContainedResponder [INER]             
+MEMBER_FUNC   0x075e10fd0  Action<CZombie>::NextContainedResponder [INER]              
+MEMBER_FUNC   0x0760db160  Action<CZombie>::OnLeaveGround [INER]                       
+MEMBER_FUNC   0x0760dae50  Action<CZombie>::OnLandOnGround [INER]                      
+MEMBER_FUNC   0x0760d9ee0  Action<CZombie>::OnContact [INER]                           
+MEMBER_FUNC   0x0760dc0e0  Action<CZombie>::OnMoveToSuccess [INER]                     
+MEMBER_FUNC   0x0760dbdd0  Action<CZombie>::OnMoveToFailure [INER]                     
+MEMBER_FUNC   0x0760ddd10  Action<CZombie>::OnStuck [INER]                             
+MEMBER_FUNC   0x0760de990  Action<CZombie>::OnUnStuck [INER]                           
+MEMBER_FUNC   0x0760dcd20  Action<CZombie>::OnPostureChanged [INER]                    
+MEMBER_FUNC   0x0760d7cb0  Action<CZombie>::OnAnimationActivityComplete [INER]         
+MEMBER_FUNC   0x0760d7ff0  Action<CZombie>::OnAnimationActivityInterrupted [INER]      
+MEMBER_FUNC   0x0760d8300  Action<CZombie>::OnAnimationEvent [INER]                    
+MEMBER_FUNC   0x0760da500  Action<CZombie>::OnIgnite [INER]                            
+MEMBER_FUNC   0x0760da820  Action<CZombie>::OnInjured [INER]                           
+MEMBER_FUNC   0x0760dab30  Action<CZombie>::OnKilled [INER]                            
+MEMBER_FUNC   0x0760dc700  Action<CZombie>::OnOtherKilled [INER]                       
+MEMBER_FUNC   0x0760dd370  Action<CZombie>::OnSight [INER]                             
+MEMBER_FUNC   0x0760db7a0  Action<CZombie>::OnLostSight [INER]                         
+MEMBER_FUNC   0x0760dd680  Action<CZombie>::OnSound [INER]                             
+MEMBER_FUNC   0x0760dd9c0  Action<CZombie>::OnSpokeConcept [INER]                      
+MEMBER_FUNC   0x0760decb0  Action<CZombie>::OnWeaponFired [INER]                       
+MEMBER_FUNC   0x0760dc3f0  Action<CZombie>::OnNavAreaChanged [INER]                    
+MEMBER_FUNC   0x0760dbab0  Action<CZombie>::OnModelChanged [INER]                      
+MEMBER_FUNC   0x0760dca10  Action<CZombie>::OnPickUp [INER]                            
+MEMBER_FUNC   0x0760da1f0  Action<CZombie>::OnDrop [INER]                              
+MEMBER_FUNC   0x0760d7970  Action<CZombie>::OnActorEmoted [INER]                       
+MEMBER_FUNC   0x0760d8f40  Action<CZombie>::OnCommandAttack [INER]                     
+MEMBER_FUNC   0x0760d8c30  Action<CZombie>::OnCommandApproach(vec) [INER]              
+MEMBER_FUNC   0x0760d8920  Action<CZombie>::OnCommandApproach(ent) [INER]              
+MEMBER_FUNC   0x0760d98c0  Action<CZombie>::OnCommandRetreat [INER]                    
+MEMBER_FUNC   0x0760d9250  Action<CZombie>::OnCommandPause [INER]                      
+MEMBER_FUNC   0x0760d9560  Action<CZombie>::OnCommandResume [INER]                     
+MEMBER_FUNC   0x0760d9bd0  Action<CZombie>::OnCommandString [INER]                     
+MEMBER_FUNC   0x0760dd060  Action<CZombie>::OnShoved [INER]                            
+MEMBER_FUNC   0x0760d8610  Action<CZombie>::OnBlinded [INER]                           
+MEMBER_FUNC   0x0760de370  Action<CZombie>::OnTerritoryContested [INER]                
+MEMBER_FUNC   0x0760de060  Action<CZombie>::OnTerritoryCaptured [INER]                 
+MEMBER_FUNC   0x0760de680  Action<CZombie>::OnTerritoryLost [INER]                     
+MEMBER_FUNC   0x0760defc0  Action<CZombie>::OnWin [INER]                               
+MEMBER_FUNC   0x0760db470  Action<CZombie>::OnLose [INER]                              
+MEMBER_FUNC   0x0760d78e0  Action<CZombie>::IsNamed                                    
+MEMBER_FUNC   0x07627ea70  Action<CZombie>::GetFullName                                
+MEMBER_FUNC   0x0760dd040  Action<CZombie>::OnStart                                    
+MEMBER_FUNC   0x0760dd040  Action<CZombie>::Update                                     
+MEMBER_FUNC   0x075e0fa90  Action<CZombie>::OnEnd                                      
+MEMBER_FUNC   0x0760dd040  Action<CZombie>::OnSuspend                                  
+MEMBER_FUNC   0x0760dd040  Action<CZombie>::OnResume                                   
+MEMBER_FUNC   0x075e10fd0  Action<CZombie>::InitialContainedAction                     
+MEMBER_FUNC   0x0760d7fc0  Action<CZombie>::OnLeaveGround                              
+MEMBER_FUNC   0x0760d7fc0  Action<CZombie>::OnLandOnGround                             
+MEMBER_FUNC   0x0760d7c80  Action<CZombie>::OnContact                                  
+MEMBER_FUNC   0x0760d7fc0  Action<CZombie>::OnMoveToSuccess                            
+MEMBER_FUNC   0x0760d7c80  Action<CZombie>::OnMoveToFailure                            
+MEMBER_FUNC   0x0760d9890  Action<CZombie>::OnStuck                                    
+MEMBER_FUNC   0x0760d9890  Action<CZombie>::OnUnStuck                                  
+MEMBER_FUNC   0x0760d9890  Action<CZombie>::OnPostureChanged                           
+MEMBER_FUNC   0x0760d7fc0  Action<CZombie>::OnAnimationActivityComplete                
+MEMBER_FUNC   0x0760d7fc0  Action<CZombie>::OnAnimationActivityInterrupted             
+MEMBER_FUNC   0x0760d7fc0  Action<CZombie>::OnAnimationEvent                           
+MEMBER_FUNC   0x0760d9890  Action<CZombie>::OnIgnite                                   
+MEMBER_FUNC   0x0760d7fc0  Action<CZombie>::OnInjured                                  
+MEMBER_FUNC   0x0760d7fc0  Action<CZombie>::OnKilled                                   
+MEMBER_FUNC   0x0760d7c80  Action<CZombie>::OnOtherKilled                              
+MEMBER_FUNC   0x0760d7fc0  Action<CZombie>::OnSight                                    
+MEMBER_FUNC   0x0760d7fc0  Action<CZombie>::OnLostSight                                
+MEMBER_FUNC   0x0760dd990  Action<CZombie>::OnSound                                    
+MEMBER_FUNC   0x0760dd990  Action<CZombie>::OnSpokeConcept                             
+MEMBER_FUNC   0x0760d7c80  Action<CZombie>::OnWeaponFired                              
+MEMBER_FUNC   0x0760d7c80  Action<CZombie>::OnNavAreaChanged                           
+MEMBER_FUNC   0x0760d9890  Action<CZombie>::OnModelChanged                             
+MEMBER_FUNC   0x0760d7c80  Action<CZombie>::OnPickUp                                   
+MEMBER_FUNC   0x0760d7fc0  Action<CZombie>::OnDrop                                     
+MEMBER_FUNC   0x0760d7c80  Action<CZombie>::OnActorEmoted                              
+MEMBER_FUNC   0x0760d7fc0  Action<CZombie>::OnCommandAttack                            
+MEMBER_FUNC   0x0760d7fc0  Action<CZombie>::OnCommandApproach(vec)                     
+MEMBER_FUNC   0x0760d7c80  Action<CZombie>::OnCommandApproach(ent)                     
+MEMBER_FUNC   0x0760d7c80  Action<CZombie>::OnCommandRetreat                           
+MEMBER_FUNC   0x0760d7fc0  Action<CZombie>::OnCommandPause                             
+MEMBER_FUNC   0x0760d9890  Action<CZombie>::OnCommandResume                            
+MEMBER_FUNC   0x0760d7fc0  Action<CZombie>::OnCommandString                            
+MEMBER_FUNC   0x0760d7fc0  Action<CZombie>::OnShoved                                   
+MEMBER_FUNC   0x0760d7fc0  Action<CZombie>::OnBlinded                                  
+MEMBER_FUNC   0x0760d7fc0  Action<CZombie>::OnTerritoryContested                       
+MEMBER_FUNC   0x0760d7fc0  Action<CZombie>::OnTerritoryCaptured                        
+MEMBER_FUNC   0x0760d7fc0  Action<CZombie>::OnTerritoryLost                            
+MEMBER_FUNC   0x0760d9890  Action<CZombie>::OnWin                                      
+MEMBER_FUNC   0x0760d9890  Action<CZombie>::OnLose                                     
+MEMBER_FUNC   0x075e195e0  Action<CZombie>::IsAbleToBlockMovementOf                    
+MEMBER_FUNC   0x000000000  Action<CZombie>::ApplyResult                                
+MEMBER_FUNC   0x000000000  Action<CZombie>::InvokeOnEnd                                
+MEMBER_FUNC   0x000000000  Action<CZombie>::InvokeOnResume                             
+MEMBER_FUNC   0x000000000  Action<CZombie>::BuildDecoratedName [clone]                 
+MEMBER_FUNC   0x000000000  Action<CZombie>::PrintStateToConsole                        
+MEMBER_FUNC   0x07627ddc0  Action<CZombie>::~Action [D2]                               
+MEMBER_FUNC   0x075e870f0  Action<CTFBot>::FirstContainedResponder [INER]              
+MEMBER_FUNC   0x075e10fd0  Action<CTFBot>::NextContainedResponder [INER]               
+MEMBER_FUNC   0x07621b990  Action<CTFBot>::OnLeaveGround [INER]                        
+MEMBER_FUNC   0x07621b680  Action<CTFBot>::OnLandOnGround [INER]                       
+MEMBER_FUNC   0x07621a280  Action<CTFBot>::OnContact [INER]                            
+MEMBER_FUNC   0x07621c950  Action<CTFBot>::OnMoveToSuccess [INER]                      
+MEMBER_FUNC   0x07621c640  Action<CTFBot>::OnMoveToFailure [INER]                      
+MEMBER_FUNC   0x07621e550  Action<CTFBot>::OnStuck [INER]                              
+MEMBER_FUNC   0x07621f2a0  Action<CTFBot>::OnUnStuck [INER]                            
+MEMBER_FUNC   0x07621d5f0  Action<CTFBot>::OnPostureChanged [INER]                     
+MEMBER_FUNC   0x0762180b0  Action<CTFBot>::OnAnimationActivityComplete [INER]          
+MEMBER_FUNC   0x0762183c0  Action<CTFBot>::OnAnimationActivityInterrupted [INER]       
+MEMBER_FUNC   0x0762186d0  Action<CTFBot>::OnAnimationEvent [INER]                     
+MEMBER_FUNC   0x07621ad40  Action<CTFBot>::OnIgnite [INER]                             
+MEMBER_FUNC   0x07621b060  Action<CTFBot>::OnInjured [INER]                            
+MEMBER_FUNC   0x07621b370  Action<CTFBot>::OnKilled [INER]                             
+MEMBER_FUNC   0x07621cfd0  Action<CTFBot>::OnOtherKilled [INER]                        
+MEMBER_FUNC   0x07621dc20  Action<CTFBot>::OnSight [INER]                              
+MEMBER_FUNC   0x07621bfd0  Action<CTFBot>::OnLostSight [INER]                          
+MEMBER_FUNC   0x07621df30  Action<CTFBot>::OnSound [INER]                              
+MEMBER_FUNC   0x07621e240  Action<CTFBot>::OnSpokeConcept [INER]                       
+MEMBER_FUNC   0x07621f5c0  Action<CTFBot>::OnWeaponFired [INER]                        
+MEMBER_FUNC   0x07621cc60  Action<CTFBot>::OnNavAreaChanged [INER]                     
+MEMBER_FUNC   0x07621c320  Action<CTFBot>::OnModelChanged [INER]                       
+MEMBER_FUNC   0x07621d2e0  Action<CTFBot>::OnPickUp [INER]                             
+MEMBER_FUNC   0x07621a590  Action<CTFBot>::OnDrop [INER]                               
+MEMBER_FUNC   0x076217da0  Action<CTFBot>::OnActorEmoted [INER]                        
+MEMBER_FUNC   0x076219310  Action<CTFBot>::OnCommandAttack [INER]                      
+MEMBER_FUNC   0x076219000  Action<CTFBot>::OnCommandApproach(vec) [INER]               
+MEMBER_FUNC   0x076218cf0  Action<CTFBot>::OnCommandApproach(ent) [INER]               
+MEMBER_FUNC   0x076219c60  Action<CTFBot>::OnCommandRetreat [INER]                     
+MEMBER_FUNC   0x076219620  Action<CTFBot>::OnCommandPause [INER]                       
+MEMBER_FUNC   0x076219930  Action<CTFBot>::OnCommandResume [INER]                      
+MEMBER_FUNC   0x076219f70  Action<CTFBot>::OnCommandString [INER]                      
+MEMBER_FUNC   0x07621d910  Action<CTFBot>::OnShoved [INER]                             
+MEMBER_FUNC   0x0762189e0  Action<CTFBot>::OnBlinded [INER]                            
+MEMBER_FUNC   0x07621ec80  Action<CTFBot>::OnTerritoryContested [INER]                 
+MEMBER_FUNC   0x07621e970  Action<CTFBot>::OnTerritoryCaptured [INER]                  
+MEMBER_FUNC   0x07621ef90  Action<CTFBot>::OnTerritoryLost [INER]                      
+MEMBER_FUNC   0x07621fba0  Action<CTFBot>::OnWin [INER]                                
+MEMBER_FUNC   0x07621bca0  Action<CTFBot>::OnLose [INER]                               
+MEMBER_FUNC   0x0760d78e0  Action<CTFBot>::IsNamed                                     
+MEMBER_FUNC   0x076212660  Action<CTFBot>::GetFullName                                 
+MEMBER_FUNC   0x0760dd040  Action<CTFBot>::OnStart                                     
+MEMBER_FUNC   0x0760dd040  Action<CTFBot>::Update                                      
+MEMBER_FUNC   0x075e0fa90  Action<CTFBot>::OnEnd                                       
+MEMBER_FUNC   0x0760dd040  Action<CTFBot>::OnSuspend                                   
+MEMBER_FUNC   0x0760dd040  Action<CTFBot>::OnResume                                    
+MEMBER_FUNC   0x075e10fd0  Action<CTFBot>::InitialContainedAction                      
+MEMBER_FUNC   0x0760d7fc0  Action<CTFBot>::OnLeaveGround                               
+MEMBER_FUNC   0x0760d7fc0  Action<CTFBot>::OnLandOnGround                              
+MEMBER_FUNC   0x0760d7c80  Action<CTFBot>::OnContact                                   
+MEMBER_FUNC   0x0760d7fc0  Action<CTFBot>::OnMoveToSuccess                             
+MEMBER_FUNC   0x0760d7c80  Action<CTFBot>::OnMoveToFailure                             
+MEMBER_FUNC   0x0760d9890  Action<CTFBot>::OnStuck                                     
+MEMBER_FUNC   0x0760d9890  Action<CTFBot>::OnUnStuck                                   
+MEMBER_FUNC   0x0760d9890  Action<CTFBot>::OnPostureChanged                            
+MEMBER_FUNC   0x0760d7fc0  Action<CTFBot>::OnAnimationActivityComplete                 
+MEMBER_FUNC   0x0760d7fc0  Action<CTFBot>::OnAnimationActivityInterrupted              
+MEMBER_FUNC   0x0760d7fc0  Action<CTFBot>::OnAnimationEvent                            
+MEMBER_FUNC   0x0760d9890  Action<CTFBot>::OnIgnite                                    
+MEMBER_FUNC   0x0760d7fc0  Action<CTFBot>::OnInjured                                   
+MEMBER_FUNC   0x0760d7fc0  Action<CTFBot>::OnKilled                                    
+MEMBER_FUNC   0x0760d7c80  Action<CTFBot>::OnOtherKilled                               
+MEMBER_FUNC   0x0760d7fc0  Action<CTFBot>::OnSight                                     
+MEMBER_FUNC   0x0760d7fc0  Action<CTFBot>::OnLostSight                                 
+MEMBER_FUNC   0x0760dd990  Action<CTFBot>::OnSound                                     
+MEMBER_FUNC   0x0760dd990  Action<CTFBot>::OnSpokeConcept                              
+MEMBER_FUNC   0x0760d7c80  Action<CTFBot>::OnWeaponFired                               
+MEMBER_FUNC   0x0760d7c80  Action<CTFBot>::OnNavAreaChanged                            
+MEMBER_FUNC   0x0760d9890  Action<CTFBot>::OnModelChanged                              
+MEMBER_FUNC   0x0760d7c80  Action<CTFBot>::OnPickUp                                    
+MEMBER_FUNC   0x0760d7fc0  Action<CTFBot>::OnDrop                                      
+MEMBER_FUNC   0x0760d7c80  Action<CTFBot>::OnActorEmoted                               
+MEMBER_FUNC   0x0760d7fc0  Action<CTFBot>::OnCommandAttack                             
+MEMBER_FUNC   0x0760d7fc0  Action<CTFBot>::OnCommandApproach(vec)                      
+MEMBER_FUNC   0x0760d7c80  Action<CTFBot>::OnCommandApproach(ent)                      
+MEMBER_FUNC   0x0760d7c80  Action<CTFBot>::OnCommandRetreat                            
+MEMBER_FUNC   0x0760d7fc0  Action<CTFBot>::OnCommandPause                              
+MEMBER_FUNC   0x0760d9890  Action<CTFBot>::OnCommandResume                             
+MEMBER_FUNC   0x0760d7fc0  Action<CTFBot>::OnCommandString                             
+MEMBER_FUNC   0x0760d7fc0  Action<CTFBot>::OnShoved                                    
+MEMBER_FUNC   0x0760d7fc0  Action<CTFBot>::OnBlinded                                   
+MEMBER_FUNC   0x0760d7fc0  Action<CTFBot>::OnTerritoryContested                        
+MEMBER_FUNC   0x0760d7fc0  Action<CTFBot>::OnTerritoryCaptured                         
+MEMBER_FUNC   0x0760d7fc0  Action<CTFBot>::OnTerritoryLost                             
+MEMBER_FUNC   0x0760d9890  Action<CTFBot>::OnWin                                       
+MEMBER_FUNC   0x0760d9890  Action<CTFBot>::OnLose                                      
+MEMBER_FUNC   0x075e195e0  Action<CTFBot>::IsAbleToBlockMovementOf                     
+MEMBER_FUNC   0x000000000  Action<CTFBot>::ApplyResult                                 
+MEMBER_FUNC   0x000000000  Action<CTFBot>::InvokeOnEnd                                 
+MEMBER_FUNC   0x000000000  Action<CTFBot>::InvokeOnResume                              
+MEMBER_FUNC   0x000000000  Action<CTFBot>::BuildDecoratedName [clone]                  
+MEMBER_FUNC   0x000000000  Action<CTFBot>::PrintStateToConsole                         
+MEMBER_FUNC   0x07620e840  Action<CTFBot>::~Action [D2]                                
+MEMBER_FUNC   0x000000000  NextBotManager::CollectAllBots                              
+STATIC_FUNC   0x000000000  TheNextBots                                                 
+MEMBER_FUNC   0x000000000  Path::GetPosition                                           
+MEMBER_FUNC   0x000000000  Path::GetClosestPosition                                    
+MEMBER_FUNC   0x000000000  Path::GetSubject                                            
+MEMBER_FUNC   0x000000000  Path::GetAge                                                
+MEMBER_FUNC   0x000000000  Path::MoveCursorToClosestPosition                           
+MEMBER_FUNC   0x000000000  Path::MoveCursorToStart                                     
+MEMBER_FUNC   0x000000000  Path::MoveCursorToEnd                                       
+MEMBER_FUNC   0x000000000  Path::MoveCursor                                            
+MEMBER_FUNC   0x000000000  Path::GetCursorPosition                                     
+MEMBER_FUNC   0x000000000  Path::GetCursorData                                         
+MEMBER_FUNC   0x000000000  Path::DrawInterpolated                                      
+MEMBER_FUNC   0x000000000  Path::FirstSegment                                          
+MEMBER_FUNC   0x000000000  Path::NextSegment                                           
+MEMBER_FUNC   0x000000000  Path::PriorSegment                                          
+MEMBER_FUNC   0x000000000  Path::LastSegment                                           
+MEMBER_FUNC   0x000000000  Path::Copy                                                  
+MEMBER_FUNC   0x000000000  Path::ComputeWithOpenGoal                                   
+MEMBER_FUNC   0x000000000  Path::ComputeAreaCrossing                                   
+MEMBER_FUNC   0x000000000  PathFollower::PathFollower [C1]                             
+MEMBER_FUNC   0x0760eaa30  PathFollower::~PathFollower [D1]                            
+MEMBER_FUNC   0x000000000  PathFollower::GetCurrentGoal                                
+MEMBER_FUNC   0x000000000  PathFollower::Draw                                          
+MEMBER_FUNC   0x000000000  PathFollower::OnPathChanged                                 
+MEMBER_FUNC   0x000000000  PathFollower::GetHindrance                                  
+MEMBER_FUNC   0x000000000  PathFollower::IsDiscontinuityAhead                          
+MEMBER_FUNC   0x000000000  ChasePath::GetLeadRadius                                    
+MEMBER_FUNC   0x000000000  ChasePath::GetMaxPathLength                                 
+MEMBER_FUNC   0x000000000  ChasePath::PredictSubjectPosition                           
+MEMBER_FUNC   0x000000000  ChasePath::IsRepathNeeded                                   
+MEMBER_FUNC   0x000000000  ChasePath::GetLifetime                                      
+MEMBER_FUNC   0x000000000  Path::GetCurrentGoal                                        
+MEMBER_FUNC   0x000000000  Path::Invalidate                                            
+MEMBER_FUNC   0x000000000  Path::Draw                                                  
+MEMBER_FUNC   0x000000000  Path::OnPathChanged                                         
+MEMBER_FUNC   0x07620e840  Action<CTFBot>::~Action [D2]                                
+MEMBER_FUNC   0x07627ddc0  Action<CZombie>::~Action [D2]                               
+STATIC_FUNC   0x075f31ef0  GetParticleSystemIndex                                      
+STATIC_FUNC   0x000000000  GetParticleSystemNameFromIndex                              
+STATIC_FUNC   0x000000000  TE_DispatchEffect                                           
+STATIC_FUNC   0x000000000  TE_PhysicsProp                                              
+STATIC_FUNC   0x000000000  TE_BreakModel                                               
+STATIC_FUNC   0x000000000  TE_BeamPoints                                               
+STATIC_FUNC   0x000000000  TE_BeamRingPoint                                            
+STATIC_FUNC   0x000000000  TE_TFExplosion                                              
+STATIC_FUNC   0x000000000  TE_TFBlood                                                  
+STATIC_FUNC   0x000000000  TE_TFParticleEffect                                         
+STATIC_FUNC   0x076130a10  TE_TFParticleEffectComplex                                  
+GLOBAL        0x0766c3fc8  g_CBaseAnimating_ClassReg                                   
+STATIC_FUNC   0x075f31ef0  GetParticleSystemIndex                                      
+STATIC_FUNC   0x000000000  GetParticleSystemNameFromIndex                              
+STATIC_FUNC   0x000000000  TE_DispatchEffect                                           
+STATIC_FUNC   0x000000000  TE_PhysicsProp                                              
+STATIC_FUNC   0x000000000  TE_BreakModel                                               
+STATIC_FUNC   0x000000000  TE_BeamPoints                                               
+STATIC_FUNC   0x000000000  TE_BeamRingPoint                                            
+STATIC_FUNC   0x000000000  TE_TFExplosion                                              
+STATIC_FUNC   0x000000000  TE_TFBlood                                                  
+STATIC_FUNC   0x000000000  TE_TFParticleEffect                                         
+STATIC_FUNC   0x076130a10  TE_TFParticleEffectComplex                                  
+GLOBAL        0x000000000  s_acttableMelee                                             
+STATIC_FUNC   0x075f31ef0  GetParticleSystemIndex                                      
+STATIC_FUNC   0x000000000  GetParticleSystemNameFromIndex                              
+STATIC_FUNC   0x000000000  TE_DispatchEffect                                           
+STATIC_FUNC   0x000000000  TE_PhysicsProp                                              
+STATIC_FUNC   0x000000000  TE_BreakModel                                               
+STATIC_FUNC   0x000000000  TE_BeamPoints                                               
+STATIC_FUNC   0x000000000  TE_BeamRingPoint                                            
+STATIC_FUNC   0x000000000  TE_TFExplosion                                              
+STATIC_FUNC   0x000000000  TE_TFBlood                                                  
+STATIC_FUNC   0x000000000  TE_TFParticleEffect                                         
+STATIC_FUNC   0x076130a10  TE_TFParticleEffectComplex                                  
+STATIC_FUNC   0x075f31ef0  GetParticleSystemIndex                                      
+STATIC_FUNC   0x000000000  GetParticleSystemNameFromIndex                              
+STATIC_FUNC   0x000000000  TE_DispatchEffect                                           
+STATIC_FUNC   0x000000000  TE_PhysicsProp                                              
+STATIC_FUNC   0x000000000  TE_BreakModel                                               
+STATIC_FUNC   0x000000000  TE_BeamPoints                                               
+STATIC_FUNC   0x000000000  TE_BeamRingPoint                                            
+STATIC_FUNC   0x000000000  TE_TFExplosion                                              
+STATIC_FUNC   0x000000000  TE_TFBlood                                                  
+STATIC_FUNC   0x000000000  TE_TFParticleEffect                                         
+STATIC_FUNC   0x076130a10  TE_TFParticleEffectComplex                                  
+STATIC_FUNC   0x075f31ef0  GetParticleSystemIndex                                      
+STATIC_FUNC   0x000000000  GetParticleSystemNameFromIndex                              
+STATIC_FUNC   0x000000000  TE_DispatchEffect                                           
+STATIC_FUNC   0x000000000  TE_PhysicsProp                                              
+STATIC_FUNC   0x000000000  TE_BreakModel                                               
+STATIC_FUNC   0x000000000  TE_BeamPoints                                               
+STATIC_FUNC   0x000000000  TE_BeamRingPoint                                            
+STATIC_FUNC   0x000000000  TE_TFExplosion                                              
+STATIC_FUNC   0x000000000  TE_TFBlood                                                  
+STATIC_FUNC   0x000000000  TE_TFParticleEffect                                         
+STATIC_FUNC   0x076130a10  TE_TFParticleEffectComplex                                  
+GLOBAL        0x000000000  g_pFullFileSystem                                           
+GLOBAL        0x000000000  g_RecipientFilterPredictionSystem                           
+GLOBAL        0x076693ac0  g_MedigunEffects                                            
+GLOBAL        0x000000000  CBaseEntity::m_pPredictionPlayer                            
+STATIC_FUNC   0x075f31ef0  GetParticleSystemIndex                                      
+STATIC_FUNC   0x000000000  GetParticleSystemNameFromIndex                              
+STATIC_FUNC   0x000000000  TE_DispatchEffect                                           
+STATIC_FUNC   0x000000000  TE_PhysicsProp                                              
+STATIC_FUNC   0x000000000  TE_BreakModel                                               
+STATIC_FUNC   0x000000000  TE_BeamPoints                                               
+STATIC_FUNC   0x000000000  TE_BeamRingPoint                                            
+STATIC_FUNC   0x000000000  TE_TFExplosion                                              
+STATIC_FUNC   0x000000000  TE_TFBlood                                                  
+STATIC_FUNC   0x000000000  TE_TFParticleEffect                                         
+STATIC_FUNC   0x076130a10  TE_TFParticleEffectComplex                                  
+GLOBAL        0x000000000  CBaseEntity::m_nPredictionRandomSeedServer                  
+GLOBAL        0x07663ab84  CBaseEntity::m_nPredictionRandomSeed                        
+STATIC_FUNC   0x000000000  GetCurrentSkyCamera                                         
+STATIC_FUNC   0x075f31ef0  GetParticleSystemIndex                                      
+STATIC_FUNC   0x000000000  GetParticleSystemNameFromIndex                              
+STATIC_FUNC   0x000000000  TE_DispatchEffect                                           
+STATIC_FUNC   0x000000000  TE_PhysicsProp                                              
+STATIC_FUNC   0x000000000  TE_BreakModel                                               
+STATIC_FUNC   0x000000000  TE_BeamPoints                                               
+STATIC_FUNC   0x000000000  TE_BeamRingPoint                                            
+STATIC_FUNC   0x000000000  TE_TFExplosion                                              
+STATIC_FUNC   0x000000000  TE_TFBlood                                                  
+STATIC_FUNC   0x000000000  TE_TFParticleEffect                                         
+STATIC_FUNC   0x076130a10  TE_TFParticleEffectComplex                                  
+STATIC_FUNC   0x000000000  SendCvarValueQueryToClient                                  
+GLOBAL        0x000000000  g_FreeEdicts                                                
+GLOBAL        0x000000000  g_DeleteList                                                
+GLOBAL        0x000000000  g_bDisableEhandleAccess                                     
+GLOBAL        0x000000000  s_RemoveImmediateSemaphore                                  
+STATIC_FUNC   0x075f31ef0  GetParticleSystemIndex                                      
+STATIC_FUNC   0x000000000  GetParticleSystemNameFromIndex                              
+STATIC_FUNC   0x000000000  TE_DispatchEffect                                           
+STATIC_FUNC   0x000000000  TE_PhysicsProp                                              
+STATIC_FUNC   0x000000000  TE_BreakModel                                               
+STATIC_FUNC   0x000000000  TE_BeamPoints                                               
+STATIC_FUNC   0x000000000  TE_BeamRingPoint                                            
+STATIC_FUNC   0x000000000  TE_TFExplosion                                              
+STATIC_FUNC   0x000000000  TE_TFBlood                                                  
+STATIC_FUNC   0x000000000  TE_TFParticleEffect                                         
+STATIC_FUNC   0x076130a10  TE_TFParticleEffectComplex                                  
+STATIC_FUNC   0x000000000  SetupMaxPlayers                                             
+GLOBAL        0x000000000  g_SentGameRulesMasks                                        
+MEMBER_FUNC   0x07603ab40  CVoiceGameMgr::UpdateMasks                                  
+STATIC_FUNC   0x000000000  SV_BroadcastVoiceData                                       
+MEMBER_FUNC   0x000000000  CBaseClient::FireGameEvent                                  
+STATIC_FUNC   0x000000000  tf_mvm_popfile                                              
+GLOBAL        0x076662440  g_CBasePlayer_ClassReg                                      
+GLOBAL        0x07663a058  g_CBaseCombatCharacter_ClassReg                             
+GLOBAL        0x000000000  g_CBaseCombatWeapon_ClassReg                                
+GLOBAL        0x0766c3fc8  g_CBaseAnimating_ClassReg                                   
+STATIC_FUNC   0x000000000  tf_mvm_popfile                                              
+GLOBAL        0x000000000  s_lastTeleporter                                            
+GLOBAL        0x000000000  PackRatios                                                  
+GLOBAL        0x000000000  g_bUseFakeIP                                                
+GLOBAL        0x000000000  g_nFakeIP                                                   
+GLOBAL        0x000000000  g_arFakePorts                                               
+GLOBAL        0x000000000  steamgameserverapicontext                                   
+GLOBAL        0x000000000  g_RecipientFilterPredictionSystem                           
+STATIC_FUNC   0x000000000  COM_CompressBuffer_LZSS                                     
+STATIC_FUNC   0x0783bcf80  COM_BufferToBufferCompress_Snappy                           
+STATIC_FUNC   0x0783bd050  COM_BufferToBufferDecompress                                
+STATIC_FUNC   0x0783bd910  COM_GetUncompressedSize                                     
+STATIC_FUNC   0x000000000  MapEntity_ParseToken                                        
+GLOBAL        0x0768453e0  DT_TFPlayerResource::g_SendTable                            
+GLOBAL        0x076711454  DT_PlayerResource::g_SendTable                              
+STATIC_FUNC   0x075f31ef0  GetParticleSystemIndex                                      
+STATIC_FUNC   0x000000000  GetParticleSystemNameFromIndex                              
+STATIC_FUNC   0x000000000  TE_DispatchEffect                                           
+STATIC_FUNC   0x000000000  TE_PhysicsProp                                              
+STATIC_FUNC   0x000000000  TE_BreakModel                                               
+STATIC_FUNC   0x000000000  TE_BeamPoints                                               
+STATIC_FUNC   0x000000000  TE_BeamRingPoint                                            
+STATIC_FUNC   0x000000000  TE_TFExplosion                                              
+STATIC_FUNC   0x000000000  TE_TFBlood                                                  
+STATIC_FUNC   0x000000000  TE_TFParticleEffect                                         
+STATIC_FUNC   0x076130a10  TE_TFParticleEffectComplex                                  
+STATIC_FUNC   0x075f31ef0  GetParticleSystemIndex                                      
+STATIC_FUNC   0x000000000  GetParticleSystemNameFromIndex                              
+STATIC_FUNC   0x000000000  TE_DispatchEffect                                           
+STATIC_FUNC   0x000000000  TE_PhysicsProp                                              
+STATIC_FUNC   0x000000000  TE_BreakModel                                               
+STATIC_FUNC   0x000000000  TE_BeamPoints                                               
+STATIC_FUNC   0x000000000  TE_BeamRingPoint                                            
+STATIC_FUNC   0x000000000  TE_TFExplosion                                              
+STATIC_FUNC   0x000000000  TE_TFBlood                                                  
+STATIC_FUNC   0x000000000  TE_TFParticleEffect                                         
+STATIC_FUNC   0x076130a10  TE_TFParticleEffectComplex                                  
+STATIC_FUNC   0x075f31ef0  GetParticleSystemIndex                                      
+STATIC_FUNC   0x000000000  GetParticleSystemNameFromIndex                              
+STATIC_FUNC   0x000000000  TE_DispatchEffect                                           
+STATIC_FUNC   0x000000000  TE_PhysicsProp                                              
+STATIC_FUNC   0x000000000  TE_BreakModel                                               
+STATIC_FUNC   0x000000000  TE_BeamPoints                                               
+STATIC_FUNC   0x000000000  TE_BeamRingPoint                                            
+STATIC_FUNC   0x000000000  TE_TFExplosion                                              
+STATIC_FUNC   0x000000000  TE_TFBlood                                                  
+STATIC_FUNC   0x000000000  TE_TFParticleEffect                                         
+STATIC_FUNC   0x076130a10  TE_TFParticleEffectComplex                                  
+GLOBAL        0x000000000  modelloader                                                 
+MEMBER_FUNC   0x000000000  CModelLoader::FlushDynamicModels                            
+MEMBER_FUNC   0x000000000  CPlayer::GetEdict                                           
+GLOBAL        0x0766c96b4  g_EntityListPool                                            
+STATIC_FUNC   0x000000000  SV_PackEntity                                               
+STATIC_FUNC   0x000000000  AllocChangeFrameList                                        
+STATIC_FUNC   0x000000000  PackWork_t::Process                                         
+STATIC_FUNC   0x000000000  SendTable_Encode                                            
+STATIC_FUNC   0x000000000  SV_EnsureInstanceBaseline                                   
+GLOBAL        0x000000000  g_BSPData                                                   
+MEMBER_FUNC   0x000000000  CNetworkStringTableContainer::DirectUpdate                  
+MEMBER_FUNC   0x000000000  CStaticPropMgr::LevelInit                                   
+MEMBER_FUNC   0x000000000  CStaticPropMgr::LevelShutdown                               
+GLOBAL        0x000000000  s_StaticPropMgr                                             
+STATIC_FUNC   0x075f31ef0  GetParticleSystemIndex                                      
+STATIC_FUNC   0x000000000  GetParticleSystemNameFromIndex                              
+STATIC_FUNC   0x000000000  TE_DispatchEffect                                           
+STATIC_FUNC   0x000000000  TE_PhysicsProp                                              
+STATIC_FUNC   0x000000000  TE_BreakModel                                               
+STATIC_FUNC   0x000000000  TE_BeamPoints                                               
+STATIC_FUNC   0x000000000  TE_BeamRingPoint                                            
+STATIC_FUNC   0x000000000  TE_TFExplosion                                              
+STATIC_FUNC   0x000000000  TE_TFBlood                                                  
+STATIC_FUNC   0x000000000  TE_TFParticleEffect                                         
+STATIC_FUNC   0x076130a10  TE_TFParticleEffectComplex                                  
+VIRTUAL_FUNC  0x00000014c  PlayerBody::GetEntity                                       
+STATIC_FUNC   0x000000000  PrecachePointTemplates                                      
+STATIC_FUNC   0x075f57ec0  SpawnHierarchicalList                                       
+STATIC_FUNC   0x000000000  SetupMaxPlayers                                             
+STATIC_FUNC   0x075f31ef0  GetParticleSystemIndex                                      
+STATIC_FUNC   0x000000000  GetParticleSystemNameFromIndex                              
+STATIC_FUNC   0x000000000  TE_DispatchEffect                                           
+STATIC_FUNC   0x000000000  TE_PhysicsProp                                              
+STATIC_FUNC   0x000000000  TE_BreakModel                                               
+STATIC_FUNC   0x000000000  TE_BeamPoints                                               
+STATIC_FUNC   0x000000000  TE_BeamRingPoint                                            
+STATIC_FUNC   0x000000000  TE_TFExplosion                                              
+STATIC_FUNC   0x000000000  TE_TFBlood                                                  
+STATIC_FUNC   0x000000000  TE_TFParticleEffect                                         
+STATIC_FUNC   0x076130a10  TE_TFParticleEffectComplex                                  
+STATIC_FUNC   0x075f31ef0  GetParticleSystemIndex                                      
+STATIC_FUNC   0x000000000  GetParticleSystemNameFromIndex                              
+STATIC_FUNC   0x000000000  TE_DispatchEffect                                           
+STATIC_FUNC   0x000000000  TE_PhysicsProp                                              
+STATIC_FUNC   0x000000000  TE_BreakModel                                               
+STATIC_FUNC   0x000000000  TE_BeamPoints                                               
+STATIC_FUNC   0x000000000  TE_BeamRingPoint                                            
+STATIC_FUNC   0x000000000  TE_TFExplosion                                              
+STATIC_FUNC   0x000000000  TE_TFBlood                                                  
+STATIC_FUNC   0x000000000  TE_TFParticleEffect                                         
+STATIC_FUNC   0x076130a10  TE_TFParticleEffectComplex                                  
+STATIC_FUNC   0x07624fc30  TeleportNearVictim                                          
+GLOBAL        0x000000000  s_lastTeleporter                                            
+STATIC_FUNC   0x000000000  OnBotTeleported                                             
+STATIC_FUNC   0x000000000  SendCvarValueQueryToClient                                  
+GLOBAL        0x076840a38  DT_TFObjectiveResource::g_SendTable                         
+STATIC_FUNC   0x075f31ef0  GetParticleSystemIndex                                      
+STATIC_FUNC   0x000000000  GetParticleSystemNameFromIndex                              
+STATIC_FUNC   0x000000000  TE_DispatchEffect                                           
+STATIC_FUNC   0x000000000  TE_PhysicsProp                                              
+STATIC_FUNC   0x000000000  TE_BreakModel                                               
+STATIC_FUNC   0x000000000  TE_BeamPoints                                               
+STATIC_FUNC   0x000000000  TE_BeamRingPoint                                            
+STATIC_FUNC   0x000000000  TE_TFExplosion                                              
+STATIC_FUNC   0x000000000  TE_TFBlood                                                  
+STATIC_FUNC   0x000000000  TE_TFParticleEffect                                         
+STATIC_FUNC   0x076130a10  TE_TFParticleEffectComplex                                  
+GLOBAL        0x000000000  g_pScriptVM                                                 
+GLOBAL        0x000000000  g_pScriptVM                                                 
+MEMBER_FUNC   0x076247900  Path::Compute<CTFBotPathCost> [ent]                         
+MEMBER_FUNC   0x000000000  Path::Compute<CTFBotPathCost> [vec]                         
+MEMBER_FUNC   0x000000000  CBaseAnimating::SetModelScale                               
+MEMBER_FUNC   0x075e8a9e0  CBaseAnimating::DrawServerHitboxes                          
+MEMBER_FUNC   0x000000000  CBaseAnimating::SetBodygroup                                
+MEMBER_FUNC   0x000000000  CBaseAnimating::GetBodygroup                                
+MEMBER_FUNC   0x000000000  CBaseAnimating::GetBodygroupName                            
+MEMBER_FUNC   0x000000000  CBaseAnimating::FindBodygroupByName                         
+MEMBER_FUNC   0x000000000  CBaseAnimating::GetBodygroupCount                           
+MEMBER_FUNC   0x000000000  CBaseAnimating::GetNumBodyGroups                            
+MEMBER_FUNC   0x000000000  CBaseAnimating::GetNumBones                                 
+MEMBER_FUNC   0x000000000  CBaseAnimating::ResetSequenceInfo                           
+MEMBER_FUNC   0x075e8f290  CBaseAnimating::ResetSequence                               
+MEMBER_FUNC   0x000000000  CBaseAnimating::GetModelPtr                                 
+MEMBER_FUNC   0x000000000  CBaseAnimating::LookupPoseParameter                         
+MEMBER_FUNC   0x000000000  CBaseAnimating::GetPoseParameter [int]                      
+MEMBER_FUNC   0x000000000  CBaseAnimating::GetPoseParameter [str]                      
+MEMBER_FUNC   0x000000000  CBaseAnimating::SetPoseParameter                            
+MEMBER_FUNC   0x000000000  CBaseAnimating::GetBoneTransform                            
+MEMBER_FUNC   0x000000000  CBaseAnimating::LookupBone                                  
+MEMBER_FUNC   0x000000000  CBaseAnimating::LookupAttachment                            
+MEMBER_FUNC   0x000000000  CBaseAnimating::LookupSequence                              
+MEMBER_FUNC   0x000000000  CBaseAnimating::GetBonePosition                             
+MEMBER_FUNC   0x000000000  CBaseAnimating::GetAttachment                               
+MEMBER_FUNC   0x075e8b080  CBaseAnimating::GetAttachment [matrix]                      
+MEMBER_FUNC   0x000000000  CBaseAnimating::GetAttachmentBone                           
+MEMBER_FUNC   0x000000000  CBaseAnimating::SequenceDuration                            
+MEMBER_FUNC   0x000000000  CBaseAnimating::InvalidateBoneCache                         
+VIRTUAL_FUNC  0x000000324  CBaseAnimating::StudioFrameAdvance                          
+VIRTUAL_FUNC  0x00000036c  CBaseAnimating::RefreshCollisionBounds                      
+VIRTUAL_FUNC  0x000000354  CBaseAnimating::DispatchAnimEvents                          
+MEMBER_FUNC   0x000000000  CBaseAnimatingOverlay::AddGesture                           
+MEMBER_FUNC   0x000000000  CBaseAnimatingOverlay::AddGestureSequence                   
+MEMBER_FUNC   0x000000000  CBaseAnimatingOverlay::RemoveGesture                        
+MEMBER_FUNC   0x000000000  CBaseAnimatingOverlay::RemoveAllGestures                    
+MEMBER_FUNC   0x000000000  CBaseAnimatingOverlay::RestartGesture                       
+MEMBER_FUNC   0x000000000  CBaseAnimatingOverlay::GetLayerDuration                     
+MEMBER_FUNC   0x000000000  CBaseAnimatingOverlay::SetLayerDuration                     
+MEMBER_FUNC   0x000000000  CEconEntity::DebugDescribe                                  
+VIRTUAL_FUNC  0x0fffffffc  CEconEntity::GetAttributeContainer                          
+VIRTUAL_FUNC  0x0fffffffc  CEconEntity::GetAttributeManager                            
+VIRTUAL_FUNC  0x0fffffffc  CEconEntity::GiveTo                                         
+VIRTUAL_FUNC  0x0fffffffc  CEconEntity::ReapplyProvision                               
+VIRTUAL_FUNC  0x0fffffffc  CEconEntity::UpdateBodygroups                               
+VIRTUAL_FUNC  0x0fffffffc  CEconEntity::TranslateViewmodelHandActivityInternal         
+STATIC_FUNC   0x000000000  UTIL_SetSize                                                
+STATIC_FUNC   0x000000000  InstancedScriptedScene                                      
+STATIC_FUNC   0x075fe3080  StopScriptedScene                                           
+STATIC_FUNC   0x000000000  SelectWeightedSequence                                      
+MEMBER_FUNC   0x000000000  CGlobalEntityList::FindEntityByClassname                    
+MEMBER_FUNC   0x075fe9330  CServerNetworkProperty::AttachEdict                         
+MEMBER_FUNC   0x000000000  CServerNetworkProperty::IsInPVS                             
+MEMBER_FUNC   0x000000000  CBaseEntity::Remove                                         
+MEMBER_FUNC   0x075eac4d0  CBaseEntity::CalcAbsolutePosition                           
+MEMBER_FUNC   0x000000000  CBaseEntity::CalcAbsoluteVelocity                           
+MEMBER_FUNC   0x000000000  CBaseEntity::NameMatchesComplex                             
+MEMBER_FUNC   0x000000000  CBaseEntity::ClassMatchesComplex                            
+MEMBER_FUNC   0x075ebb610  CBaseEntity::SetAbsOrigin                                   
+MEMBER_FUNC   0x075ebb3a0  CBaseEntity::SetAbsAngles                                   
+MEMBER_FUNC   0x000000000  CBaseEntity::SetAbsVelocity                                 
+MEMBER_FUNC   0x075fee1f0  CBaseEntity::EmitSound [member: normal]                     
+MEMBER_FUNC   0x000000000  CBaseEntity::EmitSound [member: normal + handle]            
+MEMBER_FUNC   0x000000000  CBaseEntity::StopSound                                      
+MEMBER_FUNC   0x000000000  CBaseEntity::GetNextThink                                   
+MEMBER_FUNC   0x000000000  CBaseEntity::IsBSPModel                                     
+MEMBER_FUNC   0x000000000  CBaseEntity::EntityText                                     
+MEMBER_FUNC   0x075ebd290  CBaseEntity::TakeDamage                                     
+MEMBER_FUNC   0x000000000  CBaseEntity::SetMoveType                                    
+MEMBER_FUNC   0x000000000  CBaseEntity::GetModel                                       
+MEMBER_FUNC   0x000000000  CBaseEntity::SetNextThink [name]                            
+MEMBER_FUNC   0x000000000  CBaseEntity::SetNextThink [index]                           
+MEMBER_FUNC   0x000000000  CBaseEntity::ThinkSet                                       
+MEMBER_FUNC   0x000000000  CBaseEntity::DispatchUpdateTransmitState                    
+MEMBER_FUNC   0x000000000  CBaseEntity::SetEffects                                     
+MEMBER_FUNC   0x000000000  CBaseEntity::AddEffects                                     
+MEMBER_FUNC   0x000000000  CBaseEntity::ReadKeyField                                   
+MEMBER_FUNC   0x000000000  CBaseEntity::VPhysicsInitStatic                             
+MEMBER_FUNC   0x000000000  CBaseEntity::GetDataObject                                  
+MEMBER_FUNC   0x000000000  CBaseEntity::SetTransmitState                               
+MEMBER_FUNC   0x075eb1030  CBaseEntity::FireNamedOutput                                
+MEMBER_FUNC   0x075ebf4b0  CBaseEntity::ApplyAbsVelocityImpulse                        
+MEMBER_FUNC   0x075ebc060  CBaseEntity::SetLocalVelocity                               
+MEMBER_FUNC   0x075ebbef0  CBaseEntity::SetLocalOrigin                                 
+MEMBER_FUNC   0x075ebbc80  CBaseEntity::SetLocalAngles                                 
+VIRTUAL_FUNC  0x000000224  CBaseEntity::EyePosition                                    
+VIRTUAL_FUNC  0x000000228  CBaseEntity::EyeAngles                                      
+VIRTUAL_FUNC  0x000000048  CBaseEntity::SetOwnerEntity                                 
+VIRTUAL_FUNC  0x0fffffffc  CBaseEntity::Spawn                                          
+VIRTUAL_FUNC  0x00000008c  CBaseEntity::Activate                                       
+VIRTUAL_FUNC  0x00000024c  CBaseEntity::GetVelocity                                    
+VIRTUAL_FUNC  0x000000270  CBaseEntity::WorldSpaceCenter                               
+VIRTUAL_FUNC  0x000000120  CBaseEntity::IsBaseCombatWeapon                             
+VIRTUAL_FUNC  0x000000120  CBaseEntity::IsWearable                                     
+VIRTUAL_FUNC  0x000000120  CBaseEntity::IsCombatItem                                   
+VIRTUAL_FUNC  0x000000020  CBaseEntity::SetModelIndex                                  
+VIRTUAL_FUNC  0x000000018  CBaseEntity::GetModelIndex                                  
+VIRTUAL_FUNC  0x00000001c  CBaseEntity::GetModelName                                   
+VIRTUAL_FUNC  0x000000028  CBaseEntity::MyCombatCharacterPointer                       
+VIRTUAL_FUNC  0x000000028  CBaseEntity::MyCombatWeaponPointer                          
+VIRTUAL_FUNC  0x000000044  CBaseEntity::ShouldCollide                                  
+VIRTUAL_FUNC  0x0000000a0  CBaseEntity::DrawDebugGeometryOverlays                      
+VIRTUAL_FUNC  0x000000184  CBaseEntity::ChangeTeam                                     
+VIRTUAL_FUNC  0x000000034  CBaseEntity::SetModelIndexOverride                          
+VIRTUAL_FUNC  0x00000002c  CBaseEntity::GetDataDescMap                                 
+VIRTUAL_FUNC  0x000000098  CBaseEntity::AcceptInput                                    
+VIRTUAL_FUNC  0x000000068  CBaseEntity::SetModel                                       
+VIRTUAL_FUNC  0x000000130  CBaseEntity::GetDamage                                      
+VIRTUAL_FUNC  0x0000000c8  CBaseEntity::SetDamage                                      
+VIRTUAL_FUNC  0x000000250  CBaseEntity::FVisible [ent]                                 
+VIRTUAL_FUNC  0x000000254  CBaseEntity::FVisible [vec]                                 
+VIRTUAL_FUNC  0x0000001a4  CBaseEntity::Touch                                          
+VIRTUAL_FUNC  0x000000028  CBaseEntity::MyNextBotPointer                               
+VIRTUAL_FUNC  0x0000001c8  CBaseEntity::Teleport                                       
+VIRTUAL_FUNC  0x0000001ec  CBaseEntity::GetMaxHealth                                   
+VIRTUAL_FUNC  0x00000010c  CBaseEntity::IsAlive                                        
+VIRTUAL_FUNC  0x0fffffffc  CBaseEntity::GetDefaultItemChargeMeterValue                 
+VIRTUAL_FUNC  0x000000120  CBaseEntity::IsDeflectable                                  
+VIRTUAL_FUNC  0x000000090  CBaseEntity::SetParent                                      
+VIRTUAL_FUNC  0x000000120  CBaseEntity::IsPlayer                                       
+VIRTUAL_FUNC  0x000000120  CBaseEntity::IsBaseObject                                   
+VIRTUAL_FUNC  0x000000084  CBaseEntity::KeyValue                                       
+VIRTUAL_FUNC  0x000000088  CBaseEntity::GetKeyValue                                    
+VIRTUAL_FUNC  0x0000001d8  CBaseEntity::FireBullets                                    
+VIRTUAL_FUNC  0x000000024  CBaseEntity::GetServerClass                                 
+VIRTUAL_FUNC  0x000000028  CBaseEntity::GetBaseAnimating                               
+VIRTUAL_FUNC  0x000000108  CBaseEntity::TakeHealth                                     
+VIRTUAL_FUNC  0x0fffffffc  CBaseEntity::GetDamageType                                  
+VIRTUAL_FUNC  0x0000001a0  CBaseEntity::StartTouch                                     
+VIRTUAL_FUNC  0x0000001a8  CBaseEntity::EndTouch                                       
+VIRTUAL_FUNC  0x0fffffffc  CBaseEntity::PostClientActive                               
+VIRTUAL_FUNC  0x00000028c  CBaseEntity::VPhysicsDestroyObject                          
+VIRTUAL_FUNC  0x0000002b8  CBaseEntity::PhysicsSolidMaskForEntity                      
+VIRTUAL_FUNC  0x000000028  CBaseEntity::GetTracerType                                  
+VIRTUAL_FUNC  0x000000058  CBaseEntity::SetTransmit                                    
+VIRTUAL_FUNC  0x000000050  CBaseEntity::ShouldTransmit                                 
+MEMBER_FUNC   0x075ee5ce0  CBaseEntityOutput::FireOutput                               
+MEMBER_FUNC   0x000000000  CBaseEntityOutput::ParseEventAction                         
+MEMBER_FUNC   0x000000000  CBaseEntityOutput::DeleteAllElements                        
+STATIC_FUNC   0x000000000  CBaseEntity::Create                                         
+STATIC_FUNC   0x000000000  CBaseEntity::CreateNoSpawn                                  
+STATIC_FUNC   0x075eb86f0  CBaseEntity::PrecacheModel                                  
+STATIC_FUNC   0x000000000  CBaseEntity::PrecacheSound                                  
+STATIC_FUNC   0x000000000  CBaseEntity::PrecacheScriptSound                            
+STATIC_FUNC   0x000000000  CBaseEntity::EmitSound [static: normal]                     
+STATIC_FUNC   0x000000000  CBaseEntity::EmitSound [static: normal + handle]            
+STATIC_FUNC   0x000000000  CBaseEntity::EmitSound [static: emitsound]                  
+STATIC_FUNC   0x000000000  CBaseEntity::EmitSound [static: emitsound + handle]         
+STATIC_FUNC   0x000000000  CBaseEntity::GetTouchTrace                                  
+STATIC_FUNC   0x000000000  CBaseEntity::TransformStepData_ParentToParent               
+STATIC_FUNC   0x000000000  CBaseEntity::TransformStepData_WorldToParent                
+MEMBER_FUNC   0x000000000  CCollisionProperty::SetSurroundingBoundsType                
+MEMBER_FUNC   0x000000000  CCollisionProperty::MarkPartitionHandleDirty                
+MEMBER_FUNC   0x000000000  CCollisionProperty::SetSolidFlags                           
+MEMBER_FUNC   0x075eeba60  CCollisionProperty::SetCollisionBounds                      
+MEMBER_FUNC   0x000000000  CCollisionProperty::SetSolid                                
+STATIC_FUNC   0x000000000  ENTINDEX                                                    
+MEMBER_FUNC   0x000000000  [client] C_BaseEntity::GetAbsVelocity                       
+MEMBER_FUNC   0x000000000  [client] C_BaseEntity::GetVectors                           
+MEMBER_FUNC   0x000000000  [client] C_BaseEntity::GetParentToWorldTransform            
+MEMBER_FUNC   0x000000000  CBaseCombatCharacter::AddGlowEffect                         
+MEMBER_FUNC   0x000000000  CBaseCombatCharacter::RemoveGlowEffect                      
+MEMBER_FUNC   0x000000000  CBaseCombatCharacter::IsGlowEffectActive                    
+MEMBER_FUNC   0x000000000  CBaseCombatCharacter::IsAbleToSee [CBaseEntity *]           
+MEMBER_FUNC   0x000000000  CBaseCombatCharacter::IsAbleToSee [CBaseCombatCharacter *]  
+MEMBER_FUNC   0x000000000  CBaseCombatCharacter::SetBloodColor                         
+MEMBER_FUNC   0x000000000  CBaseCombatCharacter::Weapon_Detach                         
+MEMBER_FUNC   0x000000000  CBaseCombatCharacter::SwitchToNextBestWeapon                
+MEMBER_FUNC   0x000000000  CBaseCombatCharacter::SetAmmoCount                          
+MEMBER_FUNC   0x000000000  CBaseCombatCharacter::CalcDamageForceVector                 
+VIRTUAL_FUNC  0x00000045c  CBaseCombatCharacter::Weapon_GetSlot                        
+VIRTUAL_FUNC  0x000000454  CBaseCombatCharacter::Weapon_CanSwitchTo                    
+VIRTUAL_FUNC  0x00000044c  CBaseCombatCharacter::Weapon_Switch                         
+VIRTUAL_FUNC  0x000000440  CBaseCombatCharacter::Weapon_Equip                          
+VIRTUAL_FUNC  0x00000050c  CBaseCombatCharacter::GetLastKnownArea                      
+VIRTUAL_FUNC  0x000000518  CBaseCombatCharacter::UpdateLastKnownArea                   
+VIRTUAL_FUNC  0x00000041c  CBaseCombatCharacter::GiveAmmo                              
+VIRTUAL_FUNC  0x000000428  CBaseCombatCharacter::GetAmmoCount                          
+VIRTUAL_FUNC  0x0fffffffc  CBaseCombatCharacter::ShouldGib                             
+VIRTUAL_FUNC  0x0000003b8  CBaseCombatCharacter::FInViewCone                           
+VIRTUAL_FUNC  0x0000004b8  CBaseCombatCharacter::BecomeRagdoll                         
+VIRTUAL_FUNC  0x0fffffffc  CBaseCombatCharacter::GetBossType                           
+VIRTUAL_FUNC  0x000000514  CBaseCombatCharacter::ClearLastKnownArea                    
+VIRTUAL_FUNC  0x000000420  CBaseCombatCharacter::RemoveAmmo                            
+STATIC_FUNC   0x000000000  CAI_BaseNPC::GetActivityName                                
+STATIC_FUNC   0x000000000  CAI_BaseNPC::GetActivityID                                  
+MEMBER_FUNC   0x000000000  CMultiPlayerAnimState::OnNewModel                           
+MEMBER_FUNC   0x000000000  CBasePlayer::EyeVectors                                     
+MEMBER_FUNC   0x075fa23e0  CBasePlayer::GetSteamID                                     
+MEMBER_FUNC   0x000000000  CBasePlayer::SetPlayerName                                  
+MEMBER_FUNC   0x000000000  CBasePlayer::GetViewModel                                   
+MEMBER_FUNC   0x000000000  CBasePlayer::DisableButtons                                 
+MEMBER_FUNC   0x000000000  CBasePlayer::EnableButtons                                  
+MEMBER_FUNC   0x000000000  CBasePlayer::ForceButtons                                   
+MEMBER_FUNC   0x000000000  CBasePlayer::UnforceButtons                                 
+MEMBER_FUNC   0x000000000  CBasePlayer::SnapEyeAngles                                  
+MEMBER_FUNC   0x000000000  CBasePlayer::ChangeTeam [int, bool, bool, bool]             
+MEMBER_FUNC   0x000000000  CBasePlayer::SetFOV                                         
+VIRTUAL_FUNC  0x000000574  CBasePlayer::IsFakeClient                                   
+VIRTUAL_FUNC  0x000000574  CBasePlayer::IsBot                                          
+VIRTUAL_FUNC  0x000000720  CBasePlayer::IsBotOfType                                    
+VIRTUAL_FUNC  0x000000714  CBasePlayer::CommitSuicide                                  
+VIRTUAL_FUNC  0x000000544  CBasePlayer::ForceRespawn                                   
+VIRTUAL_FUNC  0x0fffffffc  CBasePlayer::Weapon_ShootPosition                           
+VIRTUAL_FUNC  0x000000710  CBasePlayer::GetPlayerMaxSpeed                              
+VIRTUAL_FUNC  0x0000006e0  CBasePlayer::RemoveWearable                                 
+VIRTUAL_FUNC  0x0fffffffc  CBasePlayer::ChangeTeam [int, bool, bool, bool]             
+VIRTUAL_FUNC  0x0000006dc  CBasePlayer::EquipWearable                                  
+VIRTUAL_FUNC  0x00000068c  CBasePlayer::FindUseEntity                                  
+VIRTUAL_FUNC  0x000000628  CBasePlayer::LeaveVehicle                                   
+VIRTUAL_FUNC  0x000000534  CBasePlayer::CreateViewModel                                
+VIRTUAL_FUNC  0x00000053c  CBasePlayer::WantsLagCompensationOnEntity                   
+VIRTUAL_FUNC  0x000000764  CBaseMultiplayerPlayer::SpeakConceptIfAllowed               
+STATIC_FUNC   0x000000000  [client] CDebugOverlay::AddSphereOverlay                    
+STATIC_FUNC   0x000000000  [client] RenderWireframeSphere                              
+STATIC_FUNC   0x000000000  [client] RenderSphere [material]                            
+STATIC_FUNC   0x000000000  SendProxy_UInt8ToInt32                                      
+MEMBER_FUNC   0x000000000  CPathTrack::GetNext                                         
+VIRTUAL_FUNC  0x0fffffffc  CBaseTrigger::PassesTriggerFilters                          
+MEMBER_FUNC   0x000000000  CBaseFilter::PassesFilter                                   
+MEMBER_FUNC   0x076026ab0  CTriggerCamera::Enable                                      
+MEMBER_FUNC   0x000000000  CTriggerCamera::Disable                                     
+MEMBER_FUNC   0x000000000  CFuncRotating::SetTargetSpeed                               
+STATIC_FUNC   0x000000000  CSprite::SpriteCreate                                       
+VIRTUAL_FUNC  0x000000058  CBaseServerVehicle::HandleEntryExitFinish                   
+VIRTUAL_FUNC  0x000000010  CBaseServerVehicle::SetupMove                               
+VIRTUAL_FUNC  0x000000048  CBaseServerVehicle::HandlePassengerExit                     
+VIRTUAL_FUNC  0x000000044  CBaseServerVehicle::HandlePassengerEntry                    
+VIRTUAL_FUNC  0x0000000f0  CBaseServerVehicle::GetDriver                               
+VIRTUAL_FUNC  0x000000020  CBaseServerVehicle::GetVehicleEnt                           
+GLOBAL        0x000000000  g_WorldEntity                                               
+MEMBER_FUNC   0x000000000  CBeam::EntsInit                                             
+STATIC_FUNC   0x000000000  CBeam::BeamCreate                                           
+GLOBAL        0x0766f3c7c  CGameRulesProxy::s_pGameRulesProxy                          
+VIRTUAL_FUNC  0x00000007c  CGameRules::GetViewVectors                                  
+VIRTUAL_FUNC  0x000000074  CGameRules::ShouldCollide                                   
+VIRTUAL_FUNC  0x0fffffffc  CGameRules::IsConnectedUserInfoChangeAllowed                
+VIRTUAL_FUNC  0x00000024c  CMultiplayRules::VoiceCommand                               
+VIRTUAL_FUNC  0x000000294  CTeamplayRules::SetWinningTeam                              
+VIRTUAL_FUNC  0x00000018c  CTeamplayRules::SetStalemate                                
+MEMBER_FUNC   0x000000000  CTeamplayRoundBasedRules::BroadcastSound                    
+MEMBER_FUNC   0x000000000  CTeamplayRoundBasedRules::GetMinTimeWhenPlayerMaySpawn      
+MEMBER_FUNC   0x0760128e0  CTeamplayRoundBasedRules::State_Transition                  
+MEMBER_FUNC   0x000000000  CTeamplayRoundBasedRules::SetForceMapReset                  
+MEMBER_FUNC   0x000000000  CTeamplayRoundBasedRules::SetTeamRespawnWaveTime            
+VIRTUAL_FUNC  0x0fffffffc  CTeamplayRoundBasedRules::GetNextRespawnWave                
+MEMBER_FUNC   0x000000000  CTFGameRules::CanUpgradeWithAttrib                          
+MEMBER_FUNC   0x000000000  CTFGameRules::GetCostForUpgrade                             
+MEMBER_FUNC   0x000000000  CTFGameRules::GetUpgradeTier                                
+MEMBER_FUNC   0x000000000  CTFGameRules::IsUpgradeTierEnabled                          
+MEMBER_FUNC   0x000000000  CTFGameRules::PlayerReadyStatus_UpdatePlayerState           
+MEMBER_FUNC   0x076149650  CTFGameRules::DistributeCurrencyAmount                      
+MEMBER_FUNC   0x076151030  CTFGameRules::SetCustomUpgradesFile                         
+MEMBER_FUNC   0x076159230  CTFGameRules::RadiusDamage                                  
+MEMBER_FUNC   0x0761524d0  CTFGameRules::IsPVEModeControlled                           
+MEMBER_FUNC   0x000000000  CTFGameRules::DropSpellPickup                               
+MEMBER_FUNC   0x000000000  CTFGameRules::CanPlayerUseRespec                            
+MEMBER_FUNC   0x076152100  CTFGameRules::IsCompetitiveMode                             
+MEMBER_FUNC   0x000000000  CTFGameRules::GetAssister                                   
+MEMBER_FUNC   0x07613eb60  CTFGameRules::ApplyOnDamageModifyRules                      
+MEMBER_FUNC   0x07613db80  CTFGameRules::ApplyOnDamageAliveModifyRules                 
+VIRTUAL_FUNC  0x0fffffffc  CTFGameRules::FlagsMayBeCapped                              
+GLOBAL        0x0766f3c80  g_pGameRules                                                
+STATIC_FUNC   0x000000000  IGameSystem::Add                                            
+STATIC_FUNC   0x000000000  IGameSystem::Remove                                         
+GLOBAL        0x000000000  lagcompensation                                             
+GLOBAL        0x000000000  g_LagCompensationManager                                    
+STATIC_FUNC   0x000000000  [client] RCONClient                                         
+STATIC_FUNC   0x000000000  FindHullIntersection                                        
+STATIC_FUNC   0x000000000  UTIL_GetCommandClientIndex                                  
+STATIC_FUNC   0x000000000  UTIL_GetCommandClient                                       
+STATIC_FUNC   0x07602d030  UTIL_IsCommandIssuedByServerAdmin                           
+MEMBER_FUNC   0x000000000  CMapListManager::RefreshList                                
+MEMBER_FUNC   0x000000000  CMapListManager::GetMapCount                                
+MEMBER_FUNC   0x000000000  CMapListManager::IsMapValid                                 
+MEMBER_FUNC   0x000000000  CMapListManager::GetMapName                                 
+GLOBAL        0x000000000  g_MapListMgr                                                
+MEMBER_FUNC   0x000000000  CTakeDamageInfo::CTakeDamageInfo [C1 | overload 5]          
+MEMBER_FUNC   0x000000000  CTraceFilterSimple::CTraceFilterSimple [C1]                 
+MEMBER_FUNC   0x075ff7680  CStudioHdr::GetNumPoseParameters                            
+MEMBER_FUNC   0x075ff8970  CStudioHdr::pPoseParameter                                  
+STATIC_FUNC   0x000000000  GameStringSystem                                            
+STATIC_FUNC   0x000000000  CSteamID::Render [static]                                   
+MEMBER_FUNC   0x075ff6450  CSteamID::Render [member]                                   
+STATIC_FUNC   0x000000000  PrecacheParticleSystem                                      
+STATIC_FUNC   0x000000000  CRC_File                                                    
+STATIC_FUNC   0x07602cdd0  UTIL_HudMessage                                             
+STATIC_FUNC   0x000000000  UTIL_PlayerDecalTrace                                       
+STATIC_FUNC   0x000000000  UTIL_ParticleTracer                                         
+STATIC_FUNC   0x000000000  TE_PlayerDecal                                              
+MEMBER_FUNC   0x075ee6f10  variant_t::Set                                              
+MEMBER_FUNC   0x000000000  variant_t::SetOther                                         
+MEMBER_FUNC   0x075ee56a0  variant_t::Convert                                          
+STATIC_FUNC   0x000000000  UTIL_StringToVector                                         
+GLOBAL        0x000000000  g_EventQueue                                                
+MEMBER_FUNC   0x075ee5330  CEventQueue::AddEvent                                       
+MEMBER_FUNC   0x075ee5510  CEventQueue::CancelEvents                                   
+MEMBER_FUNC   0x000000000  CSoundEmitterSystemBase::InitSoundInternalParameters        
+MEMBER_FUNC   0x000000000  CSoundEmitterSystemBase::AddSoundsFromFile                  
+STATIC_FUNC   0x075f31ef0  GetParticleSystemIndex                                      
+STATIC_FUNC   0x000000000  GetParticleSystemNameFromIndex                              
+STATIC_FUNC   0x000000000  TE_DispatchEffect                                           
+STATIC_FUNC   0x000000000  TE_PhysicsProp                                              
+STATIC_FUNC   0x000000000  TE_BreakModel                                               
+STATIC_FUNC   0x000000000  TE_BeamPoints                                               
+STATIC_FUNC   0x000000000  TE_BeamRingPoint                                            
+STATIC_FUNC   0x000000000  TE_TFExplosion                                              
+STATIC_FUNC   0x000000000  TE_TFBlood                                                  
+STATIC_FUNC   0x000000000  TE_TFParticleEffect                                         
+STATIC_FUNC   0x076130a10  TE_TFParticleEffectComplex                                  
+STATIC_FUNC   0x000000000  DispatchParticleEffect [overload 1]                         
+STATIC_FUNC   0x000000000  DispatchParticleEffect [overload 2]                         
+STATIC_FUNC   0x000000000  DispatchParticleEffect [overload 3]                         
+STATIC_FUNC   0x000000000  DispatchParticleEffect [overload 4]                         
+STATIC_FUNC   0x000000000  DispatchParticleEffect [overload 5]                         
+STATIC_FUNC   0x000000000  DispatchParticleEffect [overload 6]                         
+STATIC_FUNC   0x000000000  DispatchParticleEffect [overload 7]                         
+STATIC_FUNC   0x075f6a3d0  StopParticleEffects                                         
+VIRTUAL_FUNC  0x0000000bc  CBaseProjectile::GetProjectileType                          
+VIRTUAL_FUNC  0x0fffffffc  CBaseProjectile::IsDestroyable                              
+VIRTUAL_FUNC  0x0fffffffc  CBaseProjectile::Destroy                                    
+VIRTUAL_FUNC  0x0000003a8  CBaseProjectile::SetLauncher                                
+VIRTUAL_FUNC  0x000000398  CBaseProjectile::CanCollideWithTeammates                    
+MEMBER_FUNC   0x000000000  CBaseGrenade::GetThrower                                    
+MEMBER_FUNC   0x000000000  CBaseGrenade::SetThrower                                    
+VIRTUAL_FUNC  0x0000003c8  CBaseGrenade::GetDamageRadius                               
+VIRTUAL_FUNC  0x0fffffffc  CTFBaseProjectile::SetDamage                                
+VIRTUAL_FUNC  0x0fffffffc  CTFBaseProjectile::GetDamage                                
+MEMBER_FUNC   0x000000000  CTFBaseProjectile::SetScorer                                
+VIRTUAL_FUNC  0x0000003c0  CTFBaseRocket::Explode                                      
+VIRTUAL_FUNC  0x0000003b0  CTFBaseRocket::GetWeaponID                                  
+VIRTUAL_FUNC  0x0000003d0  CTFBaseRocket::GetRadius                                    
+MEMBER_FUNC   0x000000000  CTFBaseRocket::GetOwnerPlayer                               
+MEMBER_FUNC   0x000000000  CTFProjectile_EnergyBall::SetScorer                         
+MEMBER_FUNC   0x000000000  CTFProjectile_Flare::SetScorer                              
+MEMBER_FUNC   0x000000000  CTFProjectile_EnergyRing::GetInitialVelocity                
+MEMBER_FUNC   0x000000000  CTFProjectile_Rocket::SetScorer                             
+MEMBER_FUNC   0x000000000  CTFProjectile_Arrow::SetScorer                              
+STATIC_FUNC   0x000000000  CTFProjectile_Arrow::Create                                 
+MEMBER_FUNC   0x0762fa170  CTFWeaponBaseGrenadeProj::InitGrenade                       
+VIRTUAL_FUNC  0x000000028  CTFWeaponBaseGrenadeProj::GetWeaponID                       
+MEMBER_FUNC   0x0762fa790  CTFWeaponBaseGrenadeProj::SetDetonateTimerLength            
+MEMBER_FUNC   0x0762f99e0  CTFWeaponBaseGrenadeProj::Explode                           
+VIRTUAL_FUNC  0x000000410  CTFGrenadePipebombProjectile::SetPipebombMode               
+VIRTUAL_FUNC  0x000000474  CTFProjectile_Throwable::GetVelocityVector                  
+VIRTUAL_FUNC  0x000000470  CTFProjectile_Throwable::GetAngularImpulse                  
+STATIC_FUNC   0x000000000  CTFStunBall::Create                                         
+STATIC_FUNC   0x000000000  CTFBall_Ornament::Create                                    
+STATIC_FUNC   0x000000000  CTFProjectile_Jar::Create                                   
+STATIC_FUNC   0x000000000  CTFProjectile_JarMilk::Create                               
+STATIC_FUNC   0x000000000  CTFProjectile_Cleaver::Create                               
+STATIC_FUNC   0x000000000  CTFProjectile_JarGas::Create                                
+GLOBAL        0x000000000  IBaseProjectileAutoList::m_IBaseProjectileAutoListAutoList  
+MEMBER_FUNC   0x000000000  CVEngineServer::GetChangeAccessor                           
+MEMBER_FUNC   0x000000000  CFrameSnapshotManager::GetPreviouslySentPacket              
+MEMBER_FUNC   0x000000000  CFrameSnapshotManager::UsePreviouslySentPacket              
+MEMBER_FUNC   0x000000000  CFrameSnapshotManager::CreatePackedEntity                   
+MEMBER_FUNC   0x000000000  CFrameSnapshotManager::GetPackedEntity                      
+GLOBAL        0x000000000  g_FrameSnapshotManager                                      
+GLOBAL        0x000000000  g_PropTypeFns                                               
+GLOBAL        0x000000000  SendProxy_StringToString                                    
+GLOBAL        0x000000000  SendProxy_VectorXYToVectorXY                                
+GLOBAL        0x000000000  SendProxy_QAngles                                           
+GLOBAL        0x000000000  SendProxy_Color32ToInt                                      
+GLOBAL        0x000000000  SendProxy_EHandleToInt                                      
+GLOBAL        0x000000000  SendProxy_IntAddOne                                         
+GLOBAL        0x000000000  SendProxy_ShortAddOne                                       
+GLOBAL        0x000000000  SendProxy_StringT_To_String                                 
+GLOBAL        0x000000000  SendProxy_AngleToFloat                                      
+GLOBAL        0x000000000  SendProxy_Empty                                             
+VIRTUAL_FUNC  0x000000320  CTeam::GetTeamNumber                                        
+VIRTUAL_FUNC  0x000000324  CTeam::GetName                                              
+VIRTUAL_FUNC  0x00000034c  CTeam::GetNumPlayers                                        
+VIRTUAL_FUNC  0x000000350  CTeam::GetPlayer                                            
+MEMBER_FUNC   0x075ffcf80  CTeam::AddPlayer                                            
+MEMBER_FUNC   0x075ffd370  CTeam::RemovePlayer                                         
+MEMBER_FUNC   0x000000000  CTFTeam::GetNumObjects                                      
+MEMBER_FUNC   0x000000000  CTFTeam::GetObject                                          
+MEMBER_FUNC   0x000000000  CTFTeamManager::IsValidTeam                                 
+MEMBER_FUNC   0x000000000  CTFTeamManager::GetTeam                                     
+GLOBAL        0x07668e714  s_TFTeamManager                                             
+VIRTUAL_FUNC  0x000000000  CBaseTempEntity::GetServerClass                             
+VIRTUAL_FUNC  0x000000010  CBaseTempEntity::Create                                     
+GLOBAL        0x000000000  hltv                                                        
+GLOBAL        0x078899ca4  g_HostState                                                 
+MEMBER_FUNC   0x000000000  CClientFrameManager::CountClientFrames                      
+MEMBER_FUNC   0x000000000  CClientFrameManager::RemoveOldestFrame                      
+MEMBER_FUNC   0x000000000  CHLTVServer::StartMaster                                    
+MEMBER_FUNC   0x000000000  CBaseServer::CreateFakeClient                               
+MEMBER_FUNC   0x000000000  CBaseServer::RunFrame                                       
+VIRTUAL_FUNC  0x0fffffffc  CBaseServer::GetCPUUsage                                    
+VIRTUAL_FUNC  0x0fffffffc  CBaseServer::UserInfoChanged                                
+VIRTUAL_FUNC  0x0fffffffc  CBaseServer::RejectConnection                               
+VIRTUAL_FUNC  0x0fffffffc  CBaseClient::UpdateSendState                                
+VIRTUAL_FUNC  0x0fffffffc  CBaseClient::SendSnapshot                                   
+VIRTUAL_FUNC  0x0fffffffc  CBaseClient::UpdateAcknowledgedFramecount                   
+MEMBER_FUNC   0x000000000  CGameClient::ShouldSendMessages                             
+MEMBER_FUNC   0x000000000  CGameClient::SetupPackInfo                                  
+MEMBER_FUNC   0x000000000  CGameClient::SetupPrevPackInfo                              
+MEMBER_FUNC   0x000000000  CGameClient::GetSendFrame                                   
+MEMBER_FUNC   0x000000000  CNetworkStringTable::UpdateMirrorTable                      
+MEMBER_FUNC   0x000000000  CNetworkStringTable::DeleteAllStrings                       
+MEMBER_FUNC   0x000000000  CNetChan::IsFileInWaitingList                               
+MEMBER_FUNC   0x000000000  CNetChan::SetFileTransmissionMode                           
+STATIC_FUNC   0x000000000  CNetChan::IsValidFileForTransfer                            
+MEMBER_FUNC   0x076102370  CUserMessages::LookupUserMessage                            
+MEMBER_FUNC   0x076102390  CUserMessages::Register                                     
+GLOBAL        0x076759674  usermessages                                                
+MEMBER_FUNC   0x000000000  [client] CUserMessages::Register                            
+MEMBER_FUNC   0x000000000  [client] CUserMessages::HookMessage                         
+GLOBAL        0x000000000  [client] usermessages                                       
+STATIC_FUNC   0x000000000  [client] CBuildFactoryHelper::GetFactoryNames               
+STATIC_FUNC   0x000000000  [client] CBuildFactoryHelper::InstancePanel                 
+MEMBER_FUNC   0x075ea2680  CBaseCombatWeapon::IsMeleeWeapon                            
+MEMBER_FUNC   0x000000000  CBaseCombatWeapon::SetOwner                                 
+MEMBER_FUNC   0x000000000  CBaseCombatWeapon::GetWpnData                               
+MEMBER_FUNC   0x000000000  CBaseCombatWeapon::SetIdealActivity                         
+MEMBER_FUNC   0x000000000  CBaseCombatWeapon::SetCustomViewModel                       
+VIRTUAL_FUNC  0x000000514  CBaseCombatWeapon::GetMaxClip1                              
+VIRTUAL_FUNC  0x0fffffffc  CBaseCombatWeapon::GetMaxClip2                              
+VIRTUAL_FUNC  0x0fffffffc  CBaseCombatWeapon::HasAmmo                                  
+VIRTUAL_FUNC  0x0fffffffc  CBaseCombatWeapon::HasPrimaryAmmo                           
+VIRTUAL_FUNC  0x0fffffffc  CBaseCombatWeapon::Equip                                    
+VIRTUAL_FUNC  0x0fffffffc  CBaseCombatWeapon::Drop                                     
+VIRTUAL_FUNC  0x0fffffffc  CBaseCombatWeapon::GetViewModel                             
+VIRTUAL_FUNC  0x0fffffffc  CBaseCombatWeapon::GetWorldModel                            
+VIRTUAL_FUNC  0x0fffffffc  CBaseCombatWeapon::SetViewModel                             
+VIRTUAL_FUNC  0x00000047c  CBaseCombatWeapon::PrimaryAttack                            
+VIRTUAL_FUNC  0x0fffffffc  CBaseCombatWeapon::SecondaryAttack                          
+VIRTUAL_FUNC  0x0fffffffc  CBaseCombatWeapon::CanPerformSecondaryAttack                
+VIRTUAL_FUNC  0x0fffffffc  CBaseCombatWeapon::GetShootSound                            
+VIRTUAL_FUNC  0x0fffffffc  CBaseCombatWeapon::GetPrimaryAmmoType                       
+VIRTUAL_FUNC  0x0fffffffc  CBaseCombatWeapon::SetSubType                               
+VIRTUAL_FUNC  0x0fffffffc  CBaseCombatWeapon::CheckReload                              
+VIRTUAL_FUNC  0x0fffffffc  CBaseCombatWeapon::ActivityOverride                         
+VIRTUAL_FUNC  0x0fffffffc  CBaseCombatWeapon::Lower                                    
+MEMBER_FUNC   0x000000000  CBaseViewModel::SetControlPanelsActive                      
+MEMBER_FUNC   0x000000000  CBaseViewModel::SpawnControlPanels                          
+MEMBER_FUNC   0x000000000  CBaseViewModel::DestroyControlPanels                        
+VIRTUAL_FUNC  0x0fffffffc  CBaseViewModel::SetWeaponModel                              
+STATIC_FUNC   0x076030670  UTIL_TraceEntity [IHandleEntity]                            
+STATIC_FUNC   0x000000000  PassServerEntityFilter                                      
+MEMBER_FUNC   0x000000000  CFuncNavCost::HasTag                                        
+MEMBER_FUNC   0x0760a3170  CNavArea::GetExtent                                         
+MEMBER_FUNC   0x0760a2810  CNavArea::GetClosestPointOnArea                             
+MEMBER_FUNC   0x07609d660  CNavArea::ComputeAdjacentConnectionHeightChange             
+MEMBER_FUNC   0x0760a33c0  CNavArea::GetZ [float float]                                
+VIRTUAL_FUNC  0x000000050  CNavArea::DrawFilled                                        
+MEMBER_FUNC   0x000000000  CNavArea::Contains                                          
+MEMBER_FUNC   0x0760a4890  CNavArea::IsOverlapping                                     
+VIRTUAL_FUNC  0x000000044  CNavArea::IsBlocked                                         
+MEMBER_FUNC   0x000000000  CNavArea::AddToOpenList                                     
+MEMBER_FUNC   0x000000000  CNavArea::RemoveFromOpenList                                
+VIRTUAL_FUNC  0x000000080  CNavArea::IsPotentiallyVisible                              
+VIRTUAL_FUNC  0x000000084  CNavArea::IsPotentiallyVisibleToTeam                        
+VIRTUAL_FUNC  0x000000088  CNavArea::IsCompletelyVisible                               
+MEMBER_FUNC   0x000000000  CNavArea::CollectAdjacentAreas                              
+STATIC_FUNC   0x000000000  CNavArea::ClearSearchLists                                  
+GLOBAL        0x000000000  CNavArea::m_masterMarker                                    
+GLOBAL        0x07674d1ec  CNavArea::m_openList                                        
+GLOBAL        0x07674d1f4  CNavArea::s_nCurrVisTestCounter                             
+MEMBER_FUNC   0x076292c10  CTFNavArea::GetCombatIntensity                              
+MEMBER_FUNC   0x000000000  CTFNavArea::AddPotentiallyVisibleActor                      
+MEMBER_FUNC   0x000000000  CTFNavArea::TFMark                                          
+MEMBER_FUNC   0x000000000  CTFNavArea::IsTFMarked                                      
+MEMBER_FUNC   0x000000000  CTFNavArea::IsValidForWanderingPopulation                   
+STATIC_FUNC   0x000000000  CTFNavArea::MakeNewTFMarker                                 
+MEMBER_FUNC   0x000000000  CNavMesh::GetNavArea [vec]                                  
+MEMBER_FUNC   0x000000000  CNavMesh::GetNavArea [ent]                                  
+MEMBER_FUNC   0x0760c8de0  CNavMesh::GetNearestNavArea [vec]                           
+MEMBER_FUNC   0x000000000  CNavMesh::GetNearestNavArea [ent]                           
+MEMBER_FUNC   0x0760c8490  CNavMesh::GetGroundHeight                                   
+MEMBER_FUNC   0x0760b4d10  CNavMesh::Load                                              
+MEMBER_FUNC   0x0760b91e0  CNavMesh::BeginGeneration                                   
+MEMBER_FUNC   0x000000000  CTFNavMesh::CollectBuiltObjects                             
+MEMBER_FUNC   0x000000000  CTFNavMesh::RecomputeInternalData                           
+GLOBAL        0x000000000  TheNavMesh                                                  
+GLOBAL        0x07674abd0  TheNavAreas                                                 
+STATIC_FUNC   0x000000000  NavAreaTravelDistance<CTFBotPathCost>                       
+STATIC_FUNC   0x076227f60  NavAreaBuildPath<CTFBotPathCost>                            
+STATIC_FUNC   0x000000000  CTFDroppedWeapon::Create                                    
+MEMBER_FUNC   0x000000000  CTFDroppedWeapon::InitDroppedWeapon                         
+VIRTUAL_FUNC  0x0fffffffc  CTFPowerup::GetLifeTime                                     
+MEMBER_FUNC   0x0761f3610  CTFPowerup::DropSingleInstance                              
+STATIC_FUNC   0x000000000  CTFReviveMarker::Create                                     
+VIRTUAL_FUNC  0x0fffffffc  CEconWearable::RemoveFrom                                   
+VIRTUAL_FUNC  0x0fffffffc  CEconWearable::UnEquip                                      
+VIRTUAL_FUNC  0x0fffffffc  CEconWearable::GetSkin                                      
+MEMBER_FUNC   0x000000000  CTFWearableDemoShield::DoSpecialAction                      
+MEMBER_FUNC   0x076300f90  CTFWearableDemoShield::EndSpecialAction                     
+MEMBER_FUNC   0x000000000  CTFBotHintEngineerNest::IsStaleNest                         
+MEMBER_FUNC   0x000000000  CTFBotHintEngineerNest::DetonateStaleNest                   
+GLOBAL        0x000000000  ITFBotHintEntityAutoList::m_ITFBotHintEntityAutoListAutoList
+VIRTUAL_FUNC  0x0fffffffc  CTFItem::GetItemID                                          
+MEMBER_FUNC   0x000000000  CCaptureFlag::PickUp                                        
+GLOBAL        0x076759b3c  ICaptureFlagAutoList::m_ICaptureFlagAutoListAutoList        
+MEMBER_FUNC   0x000000000  CUpgrades::GetUpgradeAttributeName                          
+MEMBER_FUNC   0x0762b5de0  CUpgrades::GrantOrRemoveAllUpgrades                         
+MEMBER_FUNC   0x000000000  CUpgrades::PlayerPurchasingUpgrade                          
+MEMBER_FUNC   0x000000000  CUpgrades::ApplyUpgradeToItem                               
+GLOBAL        0x000000000  g_hUpgradeEntity                                            
+VIRTUAL_FUNC  0x0fffffffc  CCurrencyPack::AffectedByRadiusCollection                   
+MEMBER_FUNC   0x000000000  CCurrencyPack::DistributedBy                                
+GLOBAL        0x000000000  ICurrencyPackAutoList::m_ICurrencyPackAutoListAutoList      
+MEMBER_FUNC   0x076112340  CCaptureZone::Capture                                       
+GLOBAL        0x000000000  ICaptureZoneAutoList::m_ICaptureZoneAutoListAutoList        
+STATIC_FUNC   0x000000000  PointInRespawnRoom                                          
+GLOBAL        0x000000000  g_hControlPointMasters                                      
+GLOBAL        0x000000000  ITFFlameEntityAutoList::m_ITFFlameEntityAutoListAutoList    
+MEMBER_FUNC   0x000000000  CTFPointWeaponMimic::GetFiringAngles                        
+MEMBER_FUNC   0x000000000  CTFPointWeaponMimic::Fire                                   
+GLOBAL        0x000000000  g_pMonsterResource                                          
+MEMBER_FUNC   0x0762f6930  CTFWeaponBase::IsSilentKiller                               
+MEMBER_FUNC   0x000000000  CTFWeaponBase::GetTFPlayerOwner                             
+MEMBER_FUNC   0x000000000  CTFWeaponBase::Energy_GetMaxEnergy                          
+MEMBER_FUNC   0x000000000  CTFWeaponBase::CalcIsAttackCritical                         
+MEMBER_FUNC   0x000000000  CTFWeaponBase::GetTFWpnData                                 
+MEMBER_FUNC   0x000000000  CTFWeaponBase::StartEffectBarRegen                          
+MEMBER_FUNC   0x0762f3780  CTFWeaponBase::DeflectProjectiles                           
+VIRTUAL_FUNC  0x0fffffffc  CTFBonesaw::GetWeaponID                                     
+VIRTUAL_FUNC  0x0fffffffc  CTFSniperRifle::GetPenetrateType                            
+VIRTUAL_FUNC  0x0fffffffc  CTFWeaponBase::GetProjectileFireSetup                       
+VIRTUAL_FUNC  0x0fffffffc  CTFWeaponBase::ShouldRemoveInvisibilityOnPrimaryAttack      
+VIRTUAL_FUNC  0x0fffffffc  CTFWeaponBase::IsEnergyWeapon                               
+VIRTUAL_FUNC  0x0fffffffc  CTFWeaponBase::Energy_GetShotCost                           
+VIRTUAL_FUNC  0x0fffffffc  CTFWeaponBase::Misfire                                      
+VIRTUAL_FUNC  0x0fffffffc  CTFWeaponBase::GetParticleColor                             
+VIRTUAL_FUNC  0x0fffffffc  CTFWeaponBase::GetMaxHealthMod                              
+VIRTUAL_FUNC  0x0fffffffc  CTFWeaponBase::GetAfterburnRateOnHit                        
+VIRTUAL_FUNC  0x0fffffffc  CTFWeaponBase::InternalGetEffectBarRechargeTime             
+VIRTUAL_FUNC  0x0fffffffc  CTFWeaponBase::GetEffectBarProgress                         
+VIRTUAL_FUNC  0x00000068c  CTFWeaponBase::ApplyOnHitAttributes                         
+VIRTUAL_FUNC  0x0fffffffc  CTFWeaponBase::GetSkin                                      
+VIRTUAL_FUNC  0x0fffffffc  CTFWeaponBase::WeaponReset                                  
+MEMBER_FUNC   0x000000000  CTFWeaponBaseGun::UpdatePunchAngles                         
+VIRTUAL_FUNC  0x0fffffffc  CTFWeaponBaseGun::GetProjectileGravity                      
+VIRTUAL_FUNC  0x0fffffffc  CTFWeaponBaseGun::GetProjectileSpeed                        
+VIRTUAL_FUNC  0x0000007a0  CTFWeaponBaseGun::GetProjectileDamage                       
+VIRTUAL_FUNC  0x0fffffffc  CTFWeaponBaseGun::GetWeaponProjectileType                   
+VIRTUAL_FUNC  0x0fffffffc  CTFWeaponBaseGun::ModifyProjectile                          
+VIRTUAL_FUNC  0x0fffffffc  CTFWeaponBaseGun::RemoveProjectileAmmo                      
+VIRTUAL_FUNC  0x0fffffffc  CTFWeaponBaseGun::DoFireEffects                             
+VIRTUAL_FUNC  0x0fffffffc  CTFWeaponBaseGun::ShouldPlayFireAnim                        
+VIRTUAL_FUNC  0x000000764  CTFWeaponBaseGun::FireProjectile                            
+VIRTUAL_FUNC  0x0fffffffc  CTFWeaponBaseGun::GetAmmoPerShot                            
+VIRTUAL_FUNC  0x0fffffffc  CTFCompoundBow::GetChargeMaxTime                            
+VIRTUAL_FUNC  0x0fffffffc  CTFCompoundBow::GetCurrentCharge                            
+MEMBER_FUNC   0x000000000  CTFSniperRifle::ExplosiveHeadShot                           
+MEMBER_FUNC   0x0762ead40  CTFSniperRifle::ApplyChargeSpeedModifications               
+VIRTUAL_FUNC  0x0fffffffc  CTFSniperRifle::SniperRifleChargeRateMod                    
+MEMBER_FUNC   0x07627c7e0  CTFSpellBook::RollNewSpell                                  
+MEMBER_FUNC   0x000000000  CTFSniperRifleDecap::GetCount                               
+VIRTUAL_FUNC  0x0fffffffc  CTFWeaponBaseMelee::GetSwingRange                           
+VIRTUAL_FUNC  0x0fffffffc  CTFWeaponBaseMelee::DoSwingTrace                            
+MEMBER_FUNC   0x000000000  CTFKnife::CanPerformBackstabAgainstTarget                   
+MEMBER_FUNC   0x000000000  CTFKnife::IsBehindAndFacingTarget                           
+MEMBER_FUNC   0x000000000  CTFSword::GetSwordSpeedMod                                  
+MEMBER_FUNC   0x000000000  CTFSword::GetSwordHealthMod                                 
+VIRTUAL_FUNC  0x0000007c0  CWeaponMedigun::GetHealRate                                 
+MEMBER_FUNC   0x000000000  CTFFlameThrower::GetMuzzlePosHelper                         
+MEMBER_FUNC   0x0762ca7f0  CTFFlameThrower::GetDeflectionRadius                        
+STATIC_FUNC   0x000000000  LookupWeaponInfoSlot                                        
+STATIC_FUNC   0x000000000  GetFileWeaponInfoFromHandle                                 
+STATIC_FUNC   0x000000000  WeaponID_IsSniperRifle                                      
+STATIC_FUNC   0x000000000  WeaponID_IsSniperRifleOrBow                                 
+STATIC_FUNC   0x000000000  GetWeaponId                                                 
+STATIC_FUNC   0x000000000  WeaponIdToAlias                                             
+MEMBER_FUNC   0x000000000  CBaseObject::SetHealth                                      
+MEMBER_FUNC   0x000000000  CBaseObject::SetPlasmaDisabled                              
+MEMBER_FUNC   0x000000000  CBaseObject::HasSapper                                      
+MEMBER_FUNC   0x000000000  CBaseObject::MustBeBuiltOnAttachmentPoint                   
+MEMBER_FUNC   0x000000000  CBaseObject::FindBuildPointOnPlayer                         
+MEMBER_FUNC   0x000000000  CBaseObject::AttachObjectToObject                           
+MEMBER_FUNC   0x000000000  CBaseObject::FindNearestBuildPoint                          
+VIRTUAL_FUNC  0x0fffffffc  CBaseObject::StartPlacement                                 
+VIRTUAL_FUNC  0x000000558  CBaseObject::StartBuilding                                  
+VIRTUAL_FUNC  0x0fffffffc  CBaseObject::DetonateObject                                 
+VIRTUAL_FUNC  0x0fffffffc  CBaseObject::InitializeMapPlacedObject                      
+VIRTUAL_FUNC  0x0fffffffc  CBaseObject::FinishedBuilding                               
+VIRTUAL_FUNC  0x0fffffffc  CBaseObject::GetMiniBuildingStartingHealth                  
+VIRTUAL_FUNC  0x000000620  CBaseObject::GetMaxHealthForCurrentLevel                    
+VIRTUAL_FUNC  0x0fffffffc  CBaseObject::IsHostileUpgrade                               
+GLOBAL        0x000000000  IBaseObjectAutoList::m_IBaseObjectAutoListAutoList          
+VIRTUAL_FUNC  0x000000684  CObjectDispenser::GetDispenserRadius                        
+VIRTUAL_FUNC  0x0fffffffc  CObjectSentrygun::GetTurretAngles                           
+MEMBER_FUNC   0x000000000  CObjectSentrygun::SentryThink                               
+MEMBER_FUNC   0x000000000  CPopulationManager::LoadMvMMission                          
+MEMBER_FUNC   0x000000000  CPopulationManager::GetCurrentWave                          
+MEMBER_FUNC   0x000000000  CPopulationManager::ResetMap                                
+MEMBER_FUNC   0x0762a62a0  CPopulationManager::PauseSpawning                           
+MEMBER_FUNC   0x0762a7610  CPopulationManager::UnpauseSpawning                         
+MEMBER_FUNC   0x0762a2ec0  CPopulationManager::AllocateBots                            
+MEMBER_FUNC   0x000000000  CPopulationManager::IsInEndlessWaves                        
+MEMBER_FUNC   0x000000000  CPopulationManager::RemovePlayerAndItemUpgradesFromHistory  
+MEMBER_FUNC   0x000000000  CPopulationManager::GetPlayerUpgradeHistory                 
+MEMBER_FUNC   0x0762a48b0  CPopulationManager::GetPopulationFilename                   
+MEMBER_FUNC   0x0762a7450  CPopulationManager::SetPopulationFilename                   
+MEMBER_FUNC   0x0762a47b0  CPopulationManager::GetPlayerCurrencySpent                  
+MEMBER_FUNC   0x0762a50b0  CPopulationManager::JumpToWave                              
+MEMBER_FUNC   0x000000000  CPopulationManager::FindOrAddPlayerUpgradeHistory           
+MEMBER_FUNC   0x0762a70f0  CPopulationManager::SetCheckpoint                           
+STATIC_FUNC   0x000000000  CPopulationManager::CollectMvMBots                          
+STATIC_FUNC   0x0762a3e50  CPopulationManager::FindDefaultPopulationFileShortNames     
+GLOBAL        0x076855da8  g_pPopulationManager                                        
+MEMBER_FUNC   0x000000000  CWave::AddClassType                                         
+MEMBER_FUNC   0x000000000  CWave::ForceFinish                                          
+MEMBER_FUNC   0x0762ace00  CWave::ActiveWaveUpdate                                     
+MEMBER_FUNC   0x0762b11d0  CWave::WaveCompleteUpdate                                   
+MEMBER_FUNC   0x000000000  CWave::IsDoneWithNonSupportWaves                            
+MEMBER_FUNC   0x000000000  CWaveSpawnPopulator::GetCurrencyAmountPerDeath              
+MEMBER_FUNC   0x0762af5f0  CWaveSpawnPopulator::SetState                               
+MEMBER_FUNC   0x0762b06e0  CMissionPopulator::UpdateMission                            
+VIRTUAL_FUNC  0x000000018  CTankSpawner::GetClassIcon                                  
+VIRTUAL_FUNC  0x000000020  CTankSpawner::IsMiniBoss                                    
+VIRTUAL_FUNC  0x000000024  CSquadSpawner::HasAttribute                                 
+VIRTUAL_FUNC  0x000000004  CWaveSpawnPopulator::Parse                                  
+STATIC_FUNC   0x0762aa9a0  IPopulationSpawner::ParseSpawner                            
+STATIC_FUNC   0x000000000  IsSpaceToSpawnHere                                          
+STATIC_FUNC   0x0762a9b80  ParseDynamicAttributes                                      
+STATIC_FUNC   0x000000000  MannVsMachineStats_GetAcquiredCredits                       
+STATIC_FUNC   0x000000000  FireEvent                                                   
+STATIC_FUNC   0x000000000  ParseEvent                                                  
+GLOBAL        0x000000000  CWaveSpawnPopulator::m_reservedPlayerSlotCount              
+MEMBER_FUNC   0x07606e150  CEconItemDefinition::BInitFromKV                            
+MEMBER_FUNC   0x000000000  CEconItemDefinition::IterateAttributes                      
+MEMBER_FUNC   0x07605dc30  CAttributeManager::ApplyAttributeFloatWrapper               
+MEMBER_FUNC   0x07605e2d0  CAttributeManager::ApplyAttributeStringWrapper              
+MEMBER_FUNC   0x000000000  CAttributeManager::GetGlobalCacheVersion                    
+MEMBER_FUNC   0x000000000  CAttributeManager::ClearCache [clone]                       
+MEMBER_FUNC   0x000000000  CAttributeManager::AddProvider                              
+MEMBER_FUNC   0x000000000  CAttributeManager::RemoveProvider                           
+MEMBER_FUNC   0x000000000  CAttributeManager::IsProvidingTo                            
+VIRTUAL_FUNC  0x000000038  CAttributeManager::ApplyAttributeFloatWrapper               
+VIRTUAL_FUNC  0x00000003c  CAttributeManager::ApplyAttributeStringWrapper              
+VIRTUAL_FUNC  0x000000014  CAttributeManager::ApplyAttributeFloat                      
+VIRTUAL_FUNC  0x000000018  CAttributeManager::ApplyAttributeString                     
+STATIC_FUNC   0x000000000  CAttributeManager::AttribHookValue<int>                     
+STATIC_FUNC   0x000000000  CAttributeManager::AttribHookValue<float>                   
+MEMBER_FUNC   0x07608f8c0  CTFItemDefinition::GetLoadoutSlot                           
+MEMBER_FUNC   0x076083560  CEconItemView::CEconItemView [C1]                           
+MEMBER_FUNC   0x0760848f0  CEconItemView::Init                                         
+MEMBER_FUNC   0x076084830  CEconItemView::GetStaticData                                
+MEMBER_FUNC   0x000000000  CEconItemView::GetSOCData                                   
+MEMBER_FUNC   0x076084500  CEconItemView::GetPlayerDisplayModel                        
+MEMBER_FUNC   0x0760846f0  CEconItemView::GetSkin                                      
+MEMBER_FUNC   0x076084860  CEconItemView::GetStyle                                     
+VIRTUAL_FUNC  0x00000004c  CEconItemView::GetItemDefIndex                              
+MEMBER_FUNC   0x000000000  CEconItemAttribute::CEconItemAttribute [C1]                 
+MEMBER_FUNC   0x000000000  CEconItemAttribute::GetStaticData                           
+MEMBER_FUNC   0x076079300  CEconItemSchema::GetItemDefinition                          
+MEMBER_FUNC   0x000000000  CEconItemSchema::GetItemDefinitionByName                    
+MEMBER_FUNC   0x076078e30  CEconItemSchema::GetAttributeDefinition                     
+MEMBER_FUNC   0x076078ea0  CEconItemSchema::GetAttributeDefinitionByName               
+MEMBER_FUNC   0x07606c310  CEconItemSchema::BInitAttributes                            
+MEMBER_FUNC   0x000000000  CEconItemSchema::ItemTesting_CreateTestDefinition           
+STATIC_FUNC   0x076078810  GetItemSchema                                               
+MEMBER_FUNC   0x000000000  CEconItem::AddDynamicAttributeInternal                      
+STATIC_FUNC   0x000000000  ItemGeneration                                              
+MEMBER_FUNC   0x000000000  CItemGeneration::SpawnItem                                  
+MEMBER_FUNC   0x000000000  CItemGeneration::SpawnItem [defIndex]                       
+MEMBER_FUNC   0x000000000  CItemGeneration::GenerateItemFromScriptData                 
+STATIC_FUNC   0x000000000  CopyStringAttributeValueToCharPointerOutput                 
+GLOBAL        0x07667f6c8  g_TeamVisualSections                                        
+STATIC_FUNC   0x000000000  GetLoadoutPositionName                                      
+STATIC_FUNC   0x000000000  GetLoadoutPositionByName                                    
+VIRTUAL_FUNC  0x0fffffffc  CPlayerInventory::DumpInventoryToConsole                    
+VIRTUAL_FUNC  0x0fffffffc  CPlayerInventory::GetMaxItemCount                           
+MEMBER_FUNC   0x000000000  CPlayerInventory::GetItemByPosition                         
+MEMBER_FUNC   0x000000000  CTFInventoryManager::GetInventoryForPlayer                  
+MEMBER_FUNC   0x07608a340  CTFInventoryManager::GetBaseItemForClass                    
+STATIC_FUNC   0x000000000  InventoryManager                                            
+STATIC_FUNC   0x000000000  TFInventoryManager                                          
+VIRTUAL_FUNC  0x0fffffffc  CTFBaseBoss::UpdateCollisionBounds                          
+VIRTUAL_FUNC  0x0fffffffc  CTFBaseBoss::GetCurrencyValue                               
+STATIC_FUNC   0x000000000  CHalloweenBaseBoss::SpawnBossAtPos                          
+STATIC_FUNC   0x000000000  CZombie::SpawnAtPos                                         
+GLOBAL        0x000000000  IZombieAutoList::m_IZombieAutoListAutoList                  
+MEMBER_FUNC   0x000000000  NextBotGroundLocomotion::NextBotGroundLocomotion            
+GLOBAL        0x076734b20  g_pObjectiveResource                                        
+MEMBER_FUNC   0x000000000  CTFObjectiveResource::DecrementMannVsMachineWaveClassCount  
+GLOBAL        0x076711450  g_pPlayerResource                                           
+VIRTUAL_FUNC  0x0fffffffc  NextBotPlayer<CTFPlayer>::PressFireButton                   
+VIRTUAL_FUNC  0x0fffffffc  NextBotPlayer<CTFPlayer>::ReleaseFireButton                 
+VIRTUAL_FUNC  0x0fffffffc  NextBotPlayer<CTFPlayer>::PressAltFireButton                
+VIRTUAL_FUNC  0x0fffffffc  NextBotPlayer<CTFPlayer>::ReleaseAltFireButton              
+VIRTUAL_FUNC  0x0fffffffc  NextBotPlayer<CTFPlayer>::PressMeleeButton                  
+VIRTUAL_FUNC  0x0fffffffc  NextBotPlayer<CTFPlayer>::ReleaseMeleeButton                
+VIRTUAL_FUNC  0x0fffffffc  NextBotPlayer<CTFPlayer>::PressSpecialFireButton            
+VIRTUAL_FUNC  0x0fffffffc  NextBotPlayer<CTFPlayer>::ReleaseSpecialFireButton          
+VIRTUAL_FUNC  0x0fffffffc  NextBotPlayer<CTFPlayer>::PressUseButton                    
+VIRTUAL_FUNC  0x0fffffffc  NextBotPlayer<CTFPlayer>::ReleaseUseButton                  
+VIRTUAL_FUNC  0x0fffffffc  NextBotPlayer<CTFPlayer>::PressReloadButton                 
+VIRTUAL_FUNC  0x0fffffffc  NextBotPlayer<CTFPlayer>::ReleaseReloadButton               
+VIRTUAL_FUNC  0x0fffffffc  NextBotPlayer<CTFPlayer>::PressForwardButton                
+VIRTUAL_FUNC  0x0fffffffc  NextBotPlayer<CTFPlayer>::ReleaseForwardButton              
+VIRTUAL_FUNC  0x0fffffffc  NextBotPlayer<CTFPlayer>::PressBackwardButton               
+VIRTUAL_FUNC  0x0fffffffc  NextBotPlayer<CTFPlayer>::ReleaseBackwardButton             
+VIRTUAL_FUNC  0x0fffffffc  NextBotPlayer<CTFPlayer>::PressLeftButton                   
+VIRTUAL_FUNC  0x0fffffffc  NextBotPlayer<CTFPlayer>::ReleaseLeftButton                 
+VIRTUAL_FUNC  0x0fffffffc  NextBotPlayer<CTFPlayer>::PressRightButton                  
+VIRTUAL_FUNC  0x0fffffffc  NextBotPlayer<CTFPlayer>::ReleaseRightButton                
+VIRTUAL_FUNC  0x0fffffffc  NextBotPlayer<CTFPlayer>::PressJumpButton                   
+VIRTUAL_FUNC  0x0fffffffc  NextBotPlayer<CTFPlayer>::ReleaseJumpButton                 
+VIRTUAL_FUNC  0x0fffffffc  NextBotPlayer<CTFPlayer>::PressCrouchButton                 
+VIRTUAL_FUNC  0x0fffffffc  NextBotPlayer<CTFPlayer>::ReleaseCrouchButton               
+VIRTUAL_FUNC  0x0fffffffc  NextBotPlayer<CTFPlayer>::PressWalkButton                   
+VIRTUAL_FUNC  0x0fffffffc  NextBotPlayer<CTFPlayer>::ReleaseWalkButton                 
+VIRTUAL_FUNC  0x0fffffffc  NextBotPlayer<CTFPlayer>::SetButtonScale                    
+MEMBER_FUNC   0x000000000  CTFBot::SuspectedSpyInfo_t::Suspect                         
+MEMBER_FUNC   0x000000000  CTFBot::SuspectedSpyInfo_t::IsCurrentlySuspected            
+MEMBER_FUNC   0x000000000  CTFBot::SuspectedSpyInfo_t::TestForRealizing                
+MEMBER_FUNC   0x000000000  CTFBot::GetLocomotionInterface                              
+MEMBER_FUNC   0x000000000  CTFBot::GetBodyInterface                                    
+MEMBER_FUNC   0x000000000  CTFBot::GetVisionInterface                                  
+MEMBER_FUNC   0x000000000  CTFBot::GetIntentionInterface                               
+MEMBER_FUNC   0x076212080  CTFBot::GetDesiredPathLookAheadRange                        
+MEMBER_FUNC   0x000000000  CTFBot::PushRequiredWeapon                                  
+MEMBER_FUNC   0x076220910  CTFBot::PopRequiredWeapon                                   
+MEMBER_FUNC   0x000000000  CTFBot::IsLineOfFireClear_vec                               
+MEMBER_FUNC   0x000000000  CTFBot::IsLineOfFireClear_ent                               
+MEMBER_FUNC   0x000000000  CTFBot::IsLineOfFireClear_vec_vec                           
+MEMBER_FUNC   0x000000000  CTFBot::IsLineOfFireClear_vec_ent                           
+MEMBER_FUNC   0x000000000  CTFBot::IsSuspectedSpy                                      
+MEMBER_FUNC   0x000000000  CTFBot::SuspectSpy                                          
+MEMBER_FUNC   0x000000000  CTFBot::StopSuspectingSpy                                   
+MEMBER_FUNC   0x000000000  CTFBot::IsKnownSpy                                          
+MEMBER_FUNC   0x000000000  CTFBot::RealizeSpy                                          
+MEMBER_FUNC   0x000000000  CTFBot::ForgetSpy                                           
+MEMBER_FUNC   0x07620f100  CTFBot::AddItem                                             
+MEMBER_FUNC   0x000000000  CTFBot::GetDesiredAttackRange                               
+MEMBER_FUNC   0x000000000  CTFBot::EquipBestWeaponForThreat                            
+MEMBER_FUNC   0x000000000  CTFBot::EquipRequiredWeapon                                 
+MEMBER_FUNC   0x000000000  CTFBot::SelectRandomReachableEnemy                          
+MEMBER_FUNC   0x000000000  CTFBot::ShouldAutoJump                                      
+MEMBER_FUNC   0x0762120a0  CTFBot::GetEventChangeAttributes                            
+MEMBER_FUNC   0x07621a8a0  CTFBot::OnEventChangeAttributes                             
+MEMBER_FUNC   0x000000000  CTFBot::TransientlyConsistentRandomValue                    
+MEMBER_FUNC   0x000000000  CTFBot::LeaveSquad                                          
+STATIC_FUNC   0x000000000  ToTFBot                                                     
+STATIC_FUNC   0x000000000  NextBotCreatePlayerBot<CTFBot>                              
+MEMBER_FUNC   0x0762295e0  CTFBotAttack::CTFBotAttack [C1]                             
+MEMBER_FUNC   0x076234b00  CTFBotSeekAndDestroy::CTFBotSeekAndDestroy [C1]             
+MEMBER_FUNC   0x000000000  CTFBotFetchFlag::CTFBotFetchFlag [C1]                       
+MEMBER_FUNC   0x000000000  CTFBotPushToCapturePoint::CTFBotPushToCapturePoint [C1]     
+MEMBER_FUNC   0x000000000  CTFBotMainAction::SelectCloserThreat                        
+VIRTUAL_FUNC  0x0000000b8  CTFBotEscortSquadLeader::Update                             
+STATIC_FUNC   0x07623e390  CTFBotMvMEngineerHintFinder::FindHint                       
+MEMBER_FUNC   0x076235a60  CTFBotTacticalMonitor::InitialContainedAction               
+MEMBER_FUNC   0x000000000  CTFPlayerClassShared::SetCustomModel                        
+MEMBER_FUNC   0x000000000  CTFPlayerClassShared::GetHandModelName                      
+MEMBER_FUNC   0x0761d96a0  CTFPlayerShared::AddCond                                    
+MEMBER_FUNC   0x0761ea260  CTFPlayerShared::RemoveCond                                 
+MEMBER_FUNC   0x0761e34e0  CTFPlayerShared::InCond                                     
+MEMBER_FUNC   0x0761e43d0  CTFPlayerShared::IsInvulnerable                             
+MEMBER_FUNC   0x0761ec460  CTFPlayerShared::StunPlayer                                 
+MEMBER_FUNC   0x000000000  CTFPlayerShared::GetConditionsBits                          
+MEMBER_FUNC   0x000000000  CTFPlayerShared::GetConditionDuration                       
+MEMBER_FUNC   0x000000000  CTFPlayerShared::GetConditionProvider                       
+MEMBER_FUNC   0x0761e1b80  CTFPlayerShared::GetDisguiseTeam                            
+MEMBER_FUNC   0x0761e45b0  CTFPlayerShared::IsStealthed                                
+MEMBER_FUNC   0x000000000  CTFPlayerShared::GetPercentInvisible                        
+MEMBER_FUNC   0x0761e4190  CTFPlayerShared::IsControlStunned                           
+MEMBER_FUNC   0x000000000  CTFPlayerShared::IsLoserStateStunned                        
+MEMBER_FUNC   0x000000000  CTFPlayerShared::SetDefaultItemChargeMeters                 
+MEMBER_FUNC   0x000000000  CTFPlayerShared::SetItemChargeMeter                         
+MEMBER_FUNC   0x000000000  CTFPlayerShared::Burn                                       
+MEMBER_FUNC   0x0761e41f0  CTFPlayerShared::IsCritBoosted                              
+MEMBER_FUNC   0x0761e30f0  CTFPlayerShared::Heal                                       
+MEMBER_FUNC   0x0761ec3c0  CTFPlayerShared::StopHealing                                
+MEMBER_FUNC   0x000000000  CTFPlayerShared::FindHealerIndex                            
+MEMBER_FUNC   0x000000000  CTFPlayerShared::RecalculatePlayerBodygroups                
+MEMBER_FUNC   0x0761b2370  CTFPlayer::ForceChangeTeam                                  
+MEMBER_FUNC   0x0761a5040  CTFPlayer::ClientCommand                                    
+MEMBER_FUNC   0x000000000  CTFPlayer::StartBuildingObjectOfType                        
+MEMBER_FUNC   0x000000000  CTFPlayer::HasTheFlag                                       
+MEMBER_FUNC   0x000000000  CTFPlayer::DropFlag                                         
+MEMBER_FUNC   0x000000000  CTFPlayer::GetAutoTeam                                      
+MEMBER_FUNC   0x000000000  CTFPlayer::MedicGetChargeLevel                              
+MEMBER_FUNC   0x0761ec930  CTFPlayer::TeamFortress_CalculateMaxSpeed                   
+MEMBER_FUNC   0x000000000  CTFPlayer::TeamFortress_SetSpeed                            
+MEMBER_FUNC   0x000000000  CTFPlayer::UpdateModel                                      
+MEMBER_FUNC   0x000000000  CTFPlayer::Weapon_OwnsThisID                                
+MEMBER_FUNC   0x0761ef600  CTFPlayer::Weapon_GetWeaponByType                           
+MEMBER_FUNC   0x000000000  CTFPlayer::GetObjectOfType                                  
+MEMBER_FUNC   0x0761e2500  CTFPlayer::GetMaxAmmo                                       
+MEMBER_FUNC   0x000000000  CTFPlayer::GetEquippedWearableForLoadoutSlot                
+MEMBER_FUNC   0x0761b5370  CTFPlayer::HandleCommand_JoinTeam                           
+MEMBER_FUNC   0x000000000  CTFPlayer::HandleCommand_JoinTeam_NoMenus                   
+MEMBER_FUNC   0x0761b4b80  CTFPlayer::HandleCommand_JoinClass                          
+MEMBER_FUNC   0x000000000  CTFPlayer::AddCustomAttribute                               
+MEMBER_FUNC   0x000000000  CTFPlayer::RemoveCustomAttribute                            
+MEMBER_FUNC   0x000000000  CTFPlayer::RemoveAllCustomAttributes                        
+MEMBER_FUNC   0x000000000  CTFPlayer::ReapplyPlayerUpgrades                            
+MEMBER_FUNC   0x0761d4260  CTFPlayer::UseActionSlotItemPressed                         
+MEMBER_FUNC   0x000000000  CTFPlayer::UseActionSlotItemReleased                        
+MEMBER_FUNC   0x000000000  CTFPlayer::GetAttributeManager                              
+MEMBER_FUNC   0x000000000  CTFPlayer::GetAttributeList                                 
+MEMBER_FUNC   0x000000000  CTFPlayer::GetEntityForLoadoutSlot                          
+MEMBER_FUNC   0x000000000  CTFPlayer::RemoveInvisibility                               
+MEMBER_FUNC   0x000000000  CTFPlayer::DoAnimationEvent                                 
+MEMBER_FUNC   0x000000000  CTFPlayer::PlaySpecificSequence                             
+MEMBER_FUNC   0x0761d1d80  CTFPlayer::Taunt                                            
+MEMBER_FUNC   0x000000000  CTFPlayer::PlayTauntSceneFromItem                           
+MEMBER_FUNC   0x000000000  CTFPlayer::GetObject                                        
+MEMBER_FUNC   0x000000000  CTFPlayer::GetObjectCount                                   
+MEMBER_FUNC   0x000000000  CTFPlayer::StateTransition                                  
+MEMBER_FUNC   0x000000000  CTFPlayer::RemoveCurrency                                   
+MEMBER_FUNC   0x000000000  CTFPlayer::CheckInstantLoadoutRespawn                       
+MEMBER_FUNC   0x000000000  CTFPlayer::ForceRegenerateAndRespawn                        
+MEMBER_FUNC   0x000000000  CTFPlayer::ApplyGenericPushbackImpulse                      
+MEMBER_FUNC   0x0761da900  CTFPlayer::CanAirDash                                       
+MEMBER_FUNC   0x0761c9400  CTFPlayer::Regenerate                                       
+MEMBER_FUNC   0x0761bda50  CTFPlayer::ManageRegularWeapons                             
+MEMBER_FUNC   0x000000000  CTFPlayer::ManageBuilderWeapons                             
+MEMBER_FUNC   0x000000000  CTFPlayer::GiveDefaultItems                                 
+MEMBER_FUNC   0x0761ed610  CTFPlayer::TryToPickupBuilding                              
+MEMBER_FUNC   0x0761a8110  CTFPlayer::DetonateObjectOfType                             
+MEMBER_FUNC   0x000000000  CTFPlayer::GetPassiveWeapons                                
+MEMBER_FUNC   0x000000000  CTFPlayer::IsReadyToPlay                                    
+MEMBER_FUNC   0x0761a1490  CTFPlayer::ApplyAbsVelocityImpulse                          
+MEMBER_FUNC   0x000000000  CTFPlayer::SetOffHandWeapon                                 
+MEMBER_FUNC   0x000000000  CTFPlayer::HolsterOffHandWeapon                             
+MEMBER_FUNC   0x000000000  CTFPlayer::CanMoveDuringTaunt                               
+MEMBER_FUNC   0x000000000  CTFPlayer::GetRuneHealthBonus                               
+MEMBER_FUNC   0x000000000  CTFPlayer::ClearDisguiseWeaponList                          
+MEMBER_FUNC   0x0761b32f0  CTFPlayer::GetLoadoutItem                                   
+MEMBER_FUNC   0x0761b3530  CTFPlayer::GetMaxHealthForBuffing                           
+MEMBER_FUNC   0x000000000  CTFPlayer::DoClassSpecialSkill                              
+MEMBER_FUNC   0x000000000  CTFPlayer::GetDesiredHeadScale                              
+MEMBER_FUNC   0x000000000  CTFPlayer::GetDesiredHandScale                              
+MEMBER_FUNC   0x000000000  CTFPlayer::GetDesiredTorsoScale                             
+MEMBER_FUNC   0x000000000  CTFPlayer::SetGrapplingHookTarget                           
+MEMBER_FUNC   0x000000000  CTFPlayer::PlayScene                                        
+MEMBER_FUNC   0x0761b4300  CTFPlayer::GiveNamedItem                                    
+STATIC_FUNC   0x0761c81b0  CTFPlayer::PrecacheMvM                                      
+STATIC_FUNC   0x000000000  CTFPlayerSharedUtils::GetEconItemViewByLoadoutSlot          
+STATIC_FUNC   0x000000000  CollectPlayers<CTFPlayer>                                   
+STATIC_FUNC   0x000000000  TE_PlayerAnimEvent                                          
+STATIC_FUNC   0x000000000  GetPlayerClassData                                          
+STATIC_FUNC   0x000000000  HandleRageGain                                              
+GLOBAL        0x000000000  g_TFClassViewVectors                                        
+GLOBAL        0x000000000  g_MannVsMachineUpgrades                                     
+STATIC_FUNC   0x000000000  ApplyUpgrade_Default                                        
+STATIC_FUNC   0x000000000  GetUpgradeStepData                                          
+GLOBAL        0x07668dc68  g_aTeamNames                                                
+GLOBAL        0x000000000  g_aTeamColors                                               
+GLOBAL        0x000000000  g_aClassNames                                               
+GLOBAL        0x07668dc88  g_aPlayerClassNames                                         
+GLOBAL        0x000000000  g_aPlayerClassNames_NonLocalized                            
+GLOBAL        0x07668dcf0  g_aRawPlayerClassNames                                      
+GLOBAL        0x000000000  g_aRawPlayerClassNamesShort                                 
+GLOBAL        0x07668d770  g_aWeaponNames                                              
+GLOBAL        0x000000000  g_aConditionNames                                           
+GLOBAL        0x000000000  g_szLoadoutStrings                                          
+GLOBAL        0x0766817b8  g_szLoadoutStringsForDisplay                                
+GLOBAL        0x000000000  g_szBotModels                                               
+GLOBAL        0x000000000  g_szBotBossModels                                           
+GLOBAL        0x000000000  g_szPlayerRobotModels                                       
+GLOBAL        0x000000000  g_szBotBossSentryBusterModel                                
+GLOBAL        0x000000000  s_TankModel                                                 
+GLOBAL        0x000000000  s_TankModelRome                                             
+GLOBAL        0x000000000  g_szRomePromoItems_Hat                                      
+GLOBAL        0x000000000  g_szRomePromoItems_Misc                                     
+GLOBAL        0x076659410  g_pszMPConcepts                                             
+GLOBAL        0x0766f5508  g_GameStringPool                                            
+STATIC_FUNC   0x075f41550  AllocPooledString                                           
+STATIC_FUNC   0x000000000  AllocPooledString_StaticConstantStringPointer               
+STATIC_FUNC   0x000000000  FindPooledString                                            
+VIRTUAL_FUNC  0x00000071c  CBasePlayer::IsBot                                          
+

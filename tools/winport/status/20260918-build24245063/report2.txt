@@ -1,0 +1,37 @@
+FAIL by classifier bucket: {'needs_scan': 937, 'virtual': 449, 'code-declared/unclassified': 160, 'nonmangled': 88, 'regex': 11}
+FAIL names carrying a bracket tag: {'client': 47, 'clone': 38, 'engine': 5, 'int': 2, 'str': 2, 'ent': 2, 'vec': 2, 'material': 2}
+
+failing detours per mod (top 30):
+   191  Attr:Custom_Attributes
+    68  Pop:PopMgr_Extensions
+    38  Etc:Mapentity_Additions
+    34  Util:Overlay_Send
+    33  Perf:Extra_Player_Slots
+    32  Pop:TFBot_Extensions
+    26  Pop:ECAttr_Extensions
+    21  Etc:Entity_Limit_Manager_Convert_Serverside
+    19  Perf:SendProp_Optimize
+    18  MvM:JoinTeam_Blue_Allow
+    16  Cond:Reprogrammed
+    16  Etc:Unintended_Class_Weapon_Improvements
+    14  Common:Weapon_Shoot
+    12  Etc:Misc
+    12  Pop:Tank_Extensions
+    11  Perf:HLTV_Optimize
+    10  Util:Vehicle_Fix
+     9  Etc:Detector
+     9  Etc:Entity_Limit_Manager
+     8  Perf::Func_Optimize
+     8  Pop:PointTemplates
+     8  Util:Lua
+     7  MvM:Extended_Upgrades
+     7  Pop:Wave_Extensions
+     6  Etc:SendProp_Override
+     6  Etc:Weapon_Mimic_Teamnum
+     6  Pop:WaveSpawn_Extensions
+     6  Util:DebugOverlay_Font_v3
+     5  AI:EngieBot_Dispensers
+     5  AI:Improved_Targeting
+
+failing detours whose target address is FAIL: 832/832; resolved-yet-failed: 0
+resolved-yet-failed sample: []
