@@ -9,6 +9,12 @@ class IAddr_Sym : public IAddr
 {
 public:
 	virtual bool FindAddrLinux(uintptr_t& addr) const override;
+	/* Windows strips server.dll and engine.dll, which is the whole reason
+	 * gamedata/sigsegv/windows.txt exists, so almost nothing resolves this
+	 * way. Almost: a DLL still exports what it was built to export, and
+	 * GetProcAddress finds those by name. Without this a symbol Windows does
+	 * publish, tier0's Msg among them, failed without the lookup being tried. */
+	virtual bool FindAddrWin(uintptr_t& addr) const override;
 	
 protected:
 	virtual const char *GetSymbol() const = 0;

@@ -17,6 +17,15 @@ bool IAddr_Sym::FindAddrLinux(uintptr_t& addr) const
 }
 
 
+/* The same lookup on Windows, where LibMgr::FindSym is GetProcAddress. An
+ * Itanium-mangled name is never an export and returns nullptr here, which is
+ * what it did before by not being asked. */
+bool IAddr_Sym::FindAddrWin(uintptr_t& addr) const
+{
+	return this->FindAddrLinux(addr);
+}
+
+
 bool CAddr_Sym_Regex::FindAddrLinux(uintptr_t& addr) const
 {
 	static ConVarRef developer("developer");

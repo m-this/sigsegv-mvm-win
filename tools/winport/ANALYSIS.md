@@ -295,18 +295,45 @@ touched, and the server plays wave 1 of `mvm_decoy` and of one mission using
 
 ### Batch 3: `CTFPlayer` and `CTFBot` vtables (159 addresses)
 
-Their Linux and Windows tables differ in length for real. Find the six slots
-(`CTFPlayer`) and the forty-three (`CTFBot`) one side has and the other lacks.
-Candidates named in `README.md`: covariant returns, which Itanium gives a
-slot and MSVC does not; overload runs MSVC emits in reverse. Method: align
-the two dumps by the functions batch 5's string evidence already matched on
-both sides, and read the gaps between anchors. Every derived index goes into
-`knownvtidx.generated.txt` with the anchor pair that proves it.
+**Half measured, 2026-09-18.** `alignprimary.py` is the tool, its docstring
+carries the finding, and running it with no class named reports the corpus.
 
-Acceptance: `matchvtables.py` emits `CTFPlayer` and `CTFBot` with a written
-alignment, and `sig_list_addrs` shows the 159 as OK. Then `Pop:TFBot_Extensions`
-and `Attr:Custom_Attributes` drop most of their failures.
+Why the lengths differ is now known. Itanium emits an interface override in
+the primary table **and** as a thunk in that interface's own secondary table;
+MSVC emits it only in the interface's table. `CTFPlayer`'s six extra Linux
+slots are exactly `GetAttributeManager`, `GetAttributeContainer`,
+`GetAttributeOwner`, `GetAttributeList`, `ReapplyProvision`,
+`InventoryUpdated` and `SOCacheUnsubscribed`, and the three secondary tables
+align one for one with Windows' three: 3, 5 and 8 slots on each side.
 
+Dropping those slots makes `CTFPlayer` 490 against 490, and 263 of its 271
+string anchors then land on their own slot. Across the corpus the same rule
+takes 160 of the 334 unequal classes to equal length.
+
+**It is not enough on its own, and that is the part to respect.** Of those
+160, only 6 have every anchor agree; 145 are off locally, usually by two,
+because MSVC also reverses a run of overloads declared together.
+`CTFPlayer`'s `KeyValue` run is the visible case: Linux slots 31, 32, 33
+against Windows 33, 32, 31. Equal length after the drop is a candidate, not a
+result, and emitting from it would put wrong indices in the table.
+
+What is left:
+
+1. Fold the overload-run reversal into the drop and re-run. The transform
+   `matchvtables.py` already tries for a whole table has to apply to a run
+   inside one.
+2. `CTFPlayer`'s eight disagreements are the acceptance test. The destructor
+   and the `KeyValue` pair are explained; `Spawn`, `PreThink`, `LeaveVehicle`,
+   `ShouldAnnounceAchievement` and `CommitSuicide` are not, and each is either
+   an alignment error or a wrong match from `matchfuncs.py`.
+3. `CTFBot` is not explained by the rule: the drop takes it to 493 against
+   495, over-dropping by two. Its other 37 slots are its own methods past the
+   inherited region, where anchors are sparse.
+4. Only then emit into `knownvtidx.generated.txt`, with the anchor count per
+   class in the comment.
+
+Acceptance: every class the rule claims has every anchor agreeing, and
+`sig_list_addrs` shows the 159 as OK.
 ### Batch 4: `Attr:Custom_Attributes` (191 failing detours)
 
 The largest mod and the one `CustomWeapon` needs. Its 191 names are in
@@ -359,16 +386,29 @@ is called with a convention its target does not have.
 
 ### Batch 7: the engine and the free functions (212 + 185)
 
-Check `engine.dll`'s export table first (`dumpbin /exports`, or
-`pefile`): every C symbol it exports resolves through `GetProcAddress` with
-no scan, and `LibMgr::FindSym` on Windows should try that before anything
-else. Then the 185 free functions in `server.dll` (`report.txt`, "(free)"),
-by unique string reference through `matchfuncs.py`. `TE_*` and
-`GetParticleSystemNameFromIndex` are the ones a mission notices first: 16
-`Link FAIL` lines each in the log.
+**The cheap half is disproven, 2026-09-18.** These binaries export almost
+nothing: `engine.dll` 3 names, `server.dll` 9, `dedicated` 3, and `datacache`,
+`vscript`, `vguimatsurface` and `sourcemodcore` 2 each. Only `tier0` (451) and
+`vstdlib` (65) publish a real table. Against 1,645 failures that is **three
+addresses**, and only `Msg` has a gamedata entry asking for the undecorated
+name. There is no class fix here and the engine's 212 should be expected to
+stay.
 
-Acceptance: engine FAILs under 50, with each remaining one written down as
-unavailable and why.
+Asking the question did find a real bug. `IAddr_Sym` overrode `FindAddrLinux`
+only, so on Windows `FindAddrCommon` called the base `FindAddrWin`, which
+returns false: every `sym` entry failed without the lookup being tried, while
+`LibMgr::FindSym` on Windows is already `GetProcAddress`. Fixed in
+`src/addr/standard.cpp`. It is worth one address today and it is what the code
+always claimed to do.
+
+So the batch is the 185 free functions in `server.dll` (`report.txt`,
+"(free)"), by unique string reference through `matchfuncs.py`. `TE_*` and
+`GetParticleSystemNameFromIndex` are the ones a mission notices first: 16
+`Link FAIL` lines each in the log, and a null thunk ends the server if it is
+ever called.
+
+Acceptance: the free functions a mission reaches resolve, and each engine
+failure that remains is written down as unavailable with its reason.
 
 ### Batch 8: the 19 byte-patch mods and the 37 extractors
 
