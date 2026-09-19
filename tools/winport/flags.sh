@@ -55,7 +55,12 @@ WIN_CXXFLAGS=(
 	/I"$AM/sourcemod/sourcepawn/include"
 	/I"$SOURCEHOOK" /I"$(dirname "$SOURCEHOOK")" /I"$AM/metamod-source/core"
 	/I"$ROOT" /I"$ROOT/src" /I"$ROOT/src/sdk" /I"$ROOT/libs/udis86"
-	/I"$ROOT/libs/fmt/include" /I"$ROOT/libs/lua/src" /I"$ROOT/libs/ann/include"
+	# libs/fmt is not here on purpose. AMBuilder adds its include path and
+	# nothing in src/ includes a fmt header or names fmt::, so the directory
+	# is vestigial: it is in no .gitmodules, upstream's CI never fetches it,
+	# and a fresh checkout has no way to obtain it. Leaving it out is what
+	# makes this build from a clean tree. apw-5g4.10.
+	/I"$ROOT/libs/lua/src" /I"$ROOT/libs/ann/include"
 	/imsvc "$BOOST"
 	"${SE_DEFINES[@]}"
 	/DSOURCE_ENGINE=12 /DGAME_DLL /DRAD_TELEMETRY_DISABLED
