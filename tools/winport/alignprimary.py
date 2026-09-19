@@ -7,9 +7,12 @@ differing, CTFPlayer at 496 Linux slots against 490 and CTFBot at 538 against
 495, and this is the tool for reading those.
 
     alignprimary.py LINUX-VTABLES WIN-VTABLES MATCHES.JSON [CLASS...]
+    alignprimary.py LINUX-VTABLES WIN-VTABLES MATCHES.JSON --candidates SIG_LIST_ADDRS
 
 With classes named, it prints their alignment slot by slot. With none, it runs
-the whole corpus and reports what the rule below explains.
+the whole corpus and reports what the rule below explains. With --emit it
+writes candidate indices for the addresses a `sig_list_addrs` dump reports
+as FAIL. Read "What this does not earn" before using them.
 
 ## The rule
 
@@ -38,8 +41,47 @@ are off locally, usually by two, because MSVC also reverses a run of overloads
 declared together. CTFPlayer's KeyValue run is the visible case, linux slots
 31, 32, 33 against windows 33, 32, 31.
 
-So equal length after the drop is a candidate, not a result. A class earns an
-index when its anchors agree, which is what --verify reports.
+So equal length after the drop is a candidate, not a result.
+
+## What this does not earn
+
+Reversing every overload run makes things worse, not better: across the corpus
+it breaks 63 classes and fixes one. MSVC does not reverse all of them and there
+is no whole-table transform to reach for.
+
+So the next idea was evidence per slot. A slot is a candidate when an anchor
+agrees on it, or when it lies between two agreeing anchors with no disagreeing
+anchor between them. That looked strong. Checked against the 356 indices
+matchvtables.py derived by its own route the two methods overlap on 246 and
+agree on 244, and the two they do not agree about are in neither output:
+
+    CBaseMultiplayerPlayer  CBasePlayer::CommitSuicide   453 against 454
+    CGenericFlexCycler      CBaseEntity::GetTracerType    60 against 23
+
+Both methods cannot be right about those, so both are suspect and one of them
+is already in knownvtidx.generated.txt.
+
+**It is still not enough, and this was measured rather than argued.** The 164
+candidates were merged into windows.txt and run on the Wine bed. The game
+server loaded the map and then shut itself down, twice, at the point the mods
+engage. The same bed with the table as it stands reached wave 1 in 45 seconds.
+So at least one of the 164 is wrong, and a wrong vtable index is a call into
+the wrong function.
+
+The reason is structural. An address that fails on Windows is one matchfuncs.py
+did not match, otherwise emitgamedata.py would already have written it as
+`fixed`. So the slots this is asked about are exactly the slots with no anchor
+of their own, and bracketing is all the evidence there is. 163 of the 164 come
+from a class that has a disagreeing anchor somewhere; only one comes from a
+class where every anchor agrees.
+
+What would earn an index is per-address evidence: the string, call or vtable
+route matchfuncs.py takes, applied to the names that are left. That is the same
+work as batches 4 and 5, and this tool does not shorten it.
+
+`--candidates` still writes them, because a list of 164 names with a probable
+index each is a useful place for that work to start. It is not a fragment to
+ship.
 """
 
 import collections
@@ -207,13 +249,100 @@ def report_all(linux_dir, windows_dir, by_name):
         print(f"  {name:44} linux {l:4} windows {w:4} after the drop {d:4}")
 
 
+def base_name(name):
+    """CTFPlayer::Foo(int) const -> CTFPlayer::Foo, the spelling an address uses."""
+    name = re.sub(r"\s*\bconst\b\s*$", "", name.strip())
+    cut = name.find("(")
+    return (name[:cut] if cut > 0 else name).strip()
+
+
+def confirmed_slots(linux_primary, windows_primary, by_name):
+    """Slots an anchor vouches for, directly or by sitting between two.
+
+    A single agreeing anchor says nothing about its neighbours, so a slot is
+    only taken when agreeing anchors bracket it and nothing disagrees between
+    them.
+    """
+    verdicts = {index: ok for index, _, ok in anchors(linux_primary, windows_primary, by_name)}
+    ordered = sorted(verdicts)
+    out = set()
+    for first, second in zip(ordered, ordered[1:]):
+        if verdicts[first] and verdicts[second]:
+            out.update(range(first, second + 1))
+    return out, verdicts
+
+
+def failing_addresses(path):
+    """The names a sig_list_addrs dump reports as FAIL, without their tags."""
+    out = set()
+    for line in open(path, encoding="utf-8", errors="replace"):
+        match = re.match(r"^\S+\s+FAIL\s+(\S.*?)\s*$", line)
+        if match:
+            out.add(re.sub(r"\s*\[.*\]$", "", match[1]).strip())
+    return out
+
+
+def emit(linux_dir, windows_dir, by_name, wanted):
+    """Candidate indices for the wanted addresses, at slots anchors bracket.
+
+    Not a fragment to ship: merging these killed the server on the Wine bed.
+    See "What this does not earn".
+
+    One entry per address. A name is reached through the first class whose
+    vtable holds it at a confirmed slot, which is the same thing matchvtables.py
+    does: an inherited method sits at the same index in the deriving class, so
+    reading that class's vtable there returns the function the name asks for.
+    """
+    rows, seen = [], set()
+    for name in classes(linux_dir, windows_dir):
+        linux = tables(f"{linux_dir}/{name}.txt")
+        windows = tables(f"{windows_dir}/{name}.txt")
+        if 0 not in linux or 0 not in windows:
+            continue
+        primary = collapse_destructors(linux[0])
+        if len(primary) == len(windows[0]):
+            continue                      # matchvtables.py owns these
+        secondaries = [slots for offset, slots in linux.items() if offset != 0]
+        dropped, _ = drop_interface_duplicates(primary, secondaries)
+        if len(dropped) != len(windows[0]):
+            continue
+        taken, verdicts = confirmed_slots(dropped, windows[0], by_name)
+        agreed = sum(1 for ok in verdicts.values() if ok)
+        for index, (_, slot_name) in enumerate(dropped):
+            address = base_name(slot_name)
+            if index in taken and address in wanted and address not in seen:
+                seen.add(address)
+                rows.append((address, name, index, windows[0][index][0],
+                             slot_name, agreed, len(verdicts)))
+    print("// CANDIDATES from tools/winport/alignprimary.py. Not verified, do not ship.")
+    print("// Merging these into windows.txt made the game server shut itself down")
+    print("// on the Wine bed, twice, where the table as it stands reaches wave 1.")
+    print("// Each one still needs the per-address evidence matchfuncs.py looks for.")
+    print()
+    for address, cls, index, win_addr, sig, agreed, total in sorted(rows):
+        print(f'"{address}"')
+        print("{")
+        print('\ttype    "func knownvtidx"')
+        print(f'\tvtable  "{cls}"')
+        print(f'\tidx     "{index}"')
+        print(f"\t// interface-drop; windows 0x{win_addr:08x}; {agreed}/{total} anchors agree in this class")
+        print(f"\t// {sig}")
+        print("}")
+        print()
+    print(f"// {len(rows)} addresses", file=sys.stderr)
+
+
 def main():
     if len(sys.argv) < 4:
         sys.exit(__doc__)
     linux_dir, windows_dir, matches_path = sys.argv[1:4]
     by_name = windows_address_by_name(matches_path)
     named = sys.argv[4:]
-    if named:
+    if named[:1] == ["--candidates"]:
+        if len(named) != 2:
+            sys.exit("--candidates needs a sig_list_addrs dump to read the failures from")
+        emit(linux_dir, windows_dir, by_name, failing_addresses(named[1]))
+    elif named:
         for name in named:
             report_one(name, linux_dir, windows_dir, by_name)
     else:

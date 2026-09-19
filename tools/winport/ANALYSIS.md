@@ -295,45 +295,50 @@ touched, and the server plays wave 1 of `mvm_decoy` and of one mission using
 
 ### Batch 3: `CTFPlayer` and `CTFBot` vtables (159 addresses)
 
-**Half measured, 2026-09-18.** `alignprimary.py` is the tool, its docstring
-carries the finding, and running it with no class named reports the corpus.
+**Measured and refused, 2026-09-19.** `alignprimary.py` carries the detail.
+Three things are now known and the third closes the route.
 
-Why the lengths differ is now known. Itanium emits an interface override in
-the primary table **and** as a thunk in that interface's own secondary table;
-MSVC emits it only in the interface's table. `CTFPlayer`'s six extra Linux
-slots are exactly `GetAttributeManager`, `GetAttributeContainer`,
-`GetAttributeOwner`, `GetAttributeList`, `ReapplyProvision`,
-`InventoryUpdated` and `SOCacheUnsubscribed`, and the three secondary tables
-align one for one with Windows' three: 3, 5 and 8 slots on each side.
+Why the lengths differ. Itanium emits an interface override in the primary
+table **and** as a thunk in that interface's own secondary table; MSVC emits
+it only in the interface's. `CTFPlayer`'s six extra Linux slots are exactly
+`GetAttributeManager`, `GetAttributeContainer`, `GetAttributeOwner`,
+`GetAttributeList`, `ReapplyProvision`, `InventoryUpdated` and
+`SOCacheUnsubscribed`, and its three secondary tables align one for one with
+Windows' three at 3, 5 and 8 slots. Dropping them makes `CTFPlayer` 490
+against 490 and takes 160 of the 334 unequal classes to equal length.
 
-Dropping those slots makes `CTFPlayer` 490 against 490, and 263 of its 271
-string anchors then land on their own slot. Across the corpus the same rule
-takes 160 of the 334 unequal classes to equal length.
+The overload reversal is not a table-wide transform. Reversing every run of
+overloads breaks 63 classes and fixes one, so MSVC does not reverse all of
+them. `CTFPlayer`'s `KeyValue` run is reversed, at linux 31, 32, 33 against
+windows 33, 32, 31, and most runs are not.
 
-**It is not enough on its own, and that is the part to respect.** Of those
-160, only 6 have every anchor agree; 145 are off locally, usually by two,
-because MSVC also reverses a run of overloads declared together.
-`CTFPlayer`'s `KeyValue` run is the visible case: Linux slots 31, 32, 33
-against Windows 33, 32, 31. Equal length after the drop is a candidate, not a
-result, and emitting from it would put wrong indices in the table.
+Per-slot evidence is not enough either, and this was measured rather than
+argued. Taking only slots that two agreeing anchors bracket gives 164
+candidates. They agree with 244 of the 246 indices `matchvtables.py` derived
+by its own route, which looked like corroboration. Merged into `windows.txt`
+and run on the Wine bed, the server loaded the map and then shut itself down,
+twice, where the table as it stands reaches wave 1 in 45 seconds. At least one
+of the 164 is wrong.
 
-What is left:
+The reason is structural, and it is the thing to carry forward. An address
+that fails on Windows is one `matchfuncs.py` did not match, or
+`emitgamedata.py` would already have written it as `fixed`. So these slots are
+exactly the slots with no anchor of their own, bracketing is all the evidence
+there is, and 163 of the 164 come from a class that has a disagreeing anchor
+somewhere.
 
-1. Fold the overload-run reversal into the drop and re-run. The transform
-   `matchvtables.py` already tries for a whole table has to apply to a run
-   inside one.
-2. `CTFPlayer`'s eight disagreements are the acceptance test. The destructor
-   and the `KeyValue` pair are explained; `Spawn`, `PreThink`, `LeaveVehicle`,
-   `ShouldAnnounceAchievement` and `CommitSuicide` are not, and each is either
-   an alignment error or a wrong match from `matchfuncs.py`.
-3. `CTFBot` is not explained by the rule: the drop takes it to 493 against
-   495, over-dropping by two. Its other 37 slots are its own methods past the
-   inherited region, where anchors are sparse.
-4. Only then emit into `knownvtidx.generated.txt`, with the anchor count per
-   class in the comment.
+What is left of this batch is not a table transform. It is per-address
+evidence, the string, call and vtable routes `matchfuncs.py` takes, applied to
+the names that remain: the same work as batches 4 and 5. The candidates in
+`status/20260919-vtable-candidates/` are where that starts, each with its
+class, index and Windows address.
 
-Acceptance: every class the rule claims has every anchor agreeing, and
-`sig_list_addrs` shows the 159 as OK.
+`CTFBot` never reached even a candidate: the drop overshoots it to 493 against
+495.
+
+Acceptance unchanged: an index is earned per address, and `sig_list_addrs`
+shows the 159 as OK.
+
 ### Batch 4: `Attr:Custom_Attributes` (191 failing detours)
 
 The largest mod and the one `CustomWeapon` needs. Its 191 names are in
