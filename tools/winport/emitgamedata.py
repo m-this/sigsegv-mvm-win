@@ -53,6 +53,17 @@ for path in sorted(glob.glob(str(root / "gamedata/sigsegv/*.txt"))):
 # classify.py's parser loses entries in some addrs_group blocks. Read those
 # blocks directly as well: a [common] block with type and lib, then one
 # "name" "symbol" line per address, up to the block's closing brace.
+#
+# It loses them two ways. Some it never sees, and those are added below. For
+# the rest it reads a `"name" "symbol"` pair as two entries and gives both an
+# empty symbol, so the name is known, matches nothing, and the address fails
+# with a candidate sitting right there: 131 entries, CEyeballBossIdle::Update
+# and CGameMovement::PlayerMove among them. A known entry with no symbol is
+# therefore repaired rather than skipped, and the bogus entry whose name is a
+# mangled symbol is dropped.
+found = [(name, entry) for name, entry in found
+         if not (name.startswith("_Z") and not entry.get("sym"))]
+by_name = {name: entry for name, entry in found}
 known = {name for name, _ in found}
 for path in sorted(glob.glob(str(root / "gamedata/sigsegv/*.txt"))):
     if path.endswith("windows.txt"):
@@ -71,9 +82,15 @@ for path in sorted(glob.glob(str(root / "gamedata/sigsegv/*.txt"))):
             if kv:
                 common[kv.group(1)] = kv.group(2)
             pair = re.match(r'^"([^"]+)"\s+"([^"]+)"$', line)
-            if pair and depth == 1 and pair.group(1) not in known:
-                found.append((pair.group(1), {"type": common.get("type"), "lib": common.get("lib", "server"), "sym": pair.group(2)}))
-                known.add(pair.group(1))
+            if pair and depth == 1:
+                name, symbol = pair.group(1), pair.group(2)
+                entry = {"type": common.get("type"), "lib": common.get("lib", "server"), "sym": symbol}
+                if name not in known:
+                    found.append((name, entry))
+                    by_name[name] = entry
+                    known.add(name)
+                elif not by_name.get(name, {}).get("sym"):
+                    by_name[name].update(entry)
             if depth == 0 and "}" in line:
                 break
             i += 1

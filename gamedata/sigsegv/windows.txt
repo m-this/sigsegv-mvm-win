@@ -5460,11 +5460,137 @@
 				"CEyeballBossIdle::OnStart"
 				{
 					type  "fixed"
-					sym   ""
+					sym   "_ZN16CEyeballBossIdle7OnStartEP12CEyeballBossP6ActionIS0_E"
 					addr  "0x5a7200"
 					build "10828683"
 					lib   "server"
-					// vtable index
+					// vtable
+				}
+				"CEyeballBossIdle::Update"
+				{
+					type  "fixed"
+					sym   "_ZN16CEyeballBossIdle6UpdateEP12CEyeballBossf"
+					addr  "0x5a7330"
+					build "10828683"
+					lib   "server"
+					// string
+				}
+				"CEyeballBossDead::Update"
+				{
+					type  "fixed"
+					sym   "_ZN16CEyeballBossDead6UpdateEP12CEyeballBossf"
+					addr  "0x5a61e0"
+					build "10828683"
+					lib   "server"
+					// string
+				}
+				"CZombieBehavior::OnKilled"
+				{
+					type  "fixed"
+					sym   "_ZN15CZombieBehavior8OnKilledEP7CZombieRK15CTakeDamageInfo"
+					addr  "0x5bf0b0"
+					build "10828683"
+					lib   "server"
+					// vtable
+				}
+				"CZombiePathCost::operator()"
+				{
+					type  "fixed"
+					sym   "_ZNK15CZombiePathCostclEP8CNavAreaS1_PK10CNavLadderPK13CFuncElevatorf"
+					addr  "0x5c0d00"
+					build "10828683"
+					lib   "server"
+					// vtable
+				}
+				"CTeamplayRoundBasedRules::SetTeamRespawnWaveTime"
+				{
+					type  "fixed"
+					sym   "_ZN24CTeamplayRoundBasedRules22SetTeamRespawnWaveTimeEif"
+					addr  "0x350310"
+					build "10828683"
+					lib   "server"
+					// consensus
+				}
+				"CAttributeList::IterateAttributes"
+				{
+					type  "fixed"
+					sym   "_ZNK14CAttributeList17IterateAttributesEP26IEconItemAttributeIterator"
+					addr  "0x3c4b30"
+					build "10828683"
+					lib   "server"
+					// call
+				}
+				"CPlayerInventory::DumpInventoryToConsole"
+				{
+					type  "fixed"
+					sym   "_ZN16CPlayerInventory22DumpInventoryToConsoleEb"
+					addr  "0x3a4b60"
+					build "10828683"
+					lib   "server"
+					// string
+				}
+				"CPlayerInventory::GetMaxItemCount"
+				{
+					type  "fixed"
+					sym   "_ZNK16CPlayerInventory15GetMaxItemCountEv"
+					addr  "0x3a5050"
+					build "10828683"
+					lib   "server"
+					// vtable
+				}
+				"CGameMovement::FullNoClipMove"
+				{
+					type  "fixed"
+					sym   "_ZN13CGameMovement14FullNoClipMoveEff"
+					addr  "0x276d70"
+					build "10828683"
+					lib   "server"
+					// consensus
+				}
+				"CGameMovement::PlayerMove"
+				{
+					type  "fixed"
+					sym   "_ZN13CGameMovement10PlayerMoveEv"
+					addr  "0x278f20"
+					build "10828683"
+					lib   "server"
+					// string
+				}
+				"CLagCompensationManager::BacktrackPlayer"
+				{
+					type  "fixed"
+					sym   "_ZN23CLagCompensationManager15BacktrackPlayerEP11CBasePlayerf"
+					addr  "0x2eda80"
+					build "10828683"
+					lib   "server"
+					// string
+				}
+				"SelectWeightedSequence"
+				{
+					type  "fixed"
+					sym   "_Z22SelectWeightedSequenceP10CStudioHdrii"
+					addr  "0x1c6510"
+					build "10828683"
+					lib   "server"
+					// consensus
+				}
+				"CTraceFilterIgnorePlayers::ShouldHitEntity"
+				{
+					type  "fixed"
+					sym   "_ZN25CTraceFilterIgnorePlayers15ShouldHitEntityEP13IHandleEntityi"
+					addr  "0x45b200"
+					build "10828683"
+					lib   "server"
+					// vtable
+				}
+				"CKickIssue::RequestCallVote"
+				{
+					type  "fixed"
+					sym   "_ZN10CKickIssue15RequestCallVoteEiPKcR20vote_create_failed_tRi"
+					addr  "0x545180"
+					build "10828683"
+					lib   "server"
+					// vtable
 				}
 				""
 				{
