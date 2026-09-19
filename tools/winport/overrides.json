@@ -1,70 +1,37 @@
 {
- "_ZL16g_GameStringPool": {
-  "rva": "0xa35508",
-  "why": "AllocPooledString, CC_DumpGameStringTable and AllocPooledString_StaticConstantStringPointer all address it from here; field offsets +0x4, +0x8 and +0x14 agree with Linux"
+ "COM_BufferToBufferCompress_Snappy": {
+  "lib": "engine",
+  "name": "COM_BufferToBufferCompress_Snappy",
+  "rva": "0x15cf80",
+  "why": "one of three engine.dll functions using the SNAP tag 0x50414e53; the one that writes it into a caller's buffer, takes (dest, destLen*, source, sourceLen) and returns bool. The allocating COM_CompressBuffer_Snappy is inlined away"
  },
- "_ZN18CPopulationManager17RestoreCheckpointEv": {
-  "rva": "0x5e6b30",
-  "why": "references Announcer.MVM_Get_To_Upgrade and the upgrade-history message, as on Linux; called by the matched caller"
- },
- "_ZN19CMannVsMachineStats18RoundEvent_WaveEndEb": {
-  "rva": "0x5e1000",
-  "why": "same three strings, MVMWaveChange, MVMWaveFailed and sv_cheats; calls all six matched callees"
- },
- "_ZN18CPopulationManager21SetPopulationFilenameEPKc": {
-  "rva": "0x5e7450",
-  "why": "the only Windows function calling all three of V_FileBase, CPopulationManager::ResetMap and CTFItemSchema::FindMvmMissionByName, and it copies its argument into a MAX_PATH buffer. The earlier 0x5e42e0 was wrong and broke the AI graph allocation"
- },
- "_ZN18CPopulationManager5SpawnEv": {
-  "rva": "0x5e7500",
-  "why": "base Spawn call then a virtual tail call, the Linux body's shape, inside CPopulationManager's code"
- },
- "_ZN9KeyValues23RecursiveMergeKeyValuesEPS_": {
-  "rva": "0x6e9d90",
-  "why": "reads the argument's +0x18 first as Linux does; called by the matched caller and calls the matched callee"
- },
- "_ZN24CTeamplayRoundBasedRules11State_EnterE22gamerules_roundstate_t": {
-  "rva": "0x350ae0",
-  "why": "references both 'Gamerules: entering state' strings and compares this+0x3cc against the argument first, as Linux does; the other referrer is an inlined copy"
- },
- "_ZN18CPopulationManager14PostInitializeEv": {
-  "rva": "0x5e4bf0",
-  "why": "the only function referencing 'Cannot populate - no Navigation Mesh exists.'"
+ "_Z13DispatchSpawnP11CBaseEntityb": {
+  "rva": "0x36b4a0",
+  "why": "corroborated by tools/winport/corroborate.py: calls all 9 of the Linux function's matched callees, and no string disagrees"
  },
  "_Z13GetItemSchemav": {
   "rva": "0x3b8810",
   "why": "called by 62 of its 68 matched callers; body is call GEconItemSchema, add eax 4, ret, the Linux shape"
  },
- "_ZN15CEconItemSchema17GetItemDefinitionEi": {
-  "rva": "0x3b9300",
-  "why": "called by 12 of its 14 matched callers; a map lookup on this+0xc4. The Linux const overload is a jmp to the same body"
- },
- "_ZNK15CEconItemSchema17GetItemDefinitionEi": {
-  "rva": "0x3b9300",
-  "why": "called by 12 of its 14 matched callers; a map lookup on this+0xc4. The Linux const overload is a jmp to the same body"
- },
- "_ZN15CEconItemSchema22GetAttributeDefinitionEi": {
-  "rva": "0x3b8e30",
-  "why": "called by 7 of its 8 matched callers; a map lookup on this+0x1bc. The Linux const overload is a jmp to the same body"
- },
- "_ZNK15CEconItemSchema22GetAttributeDefinitionEi": {
-  "rva": "0x3b8e30",
-  "why": "called by 7 of its 8 matched callers; a map lookup on this+0x1bc. The Linux const overload is a jmp to the same body"
+ "_Z15OnBotTeleportedP6CTFBot": {
+  "rva": "0x5edc70",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'MVM.Robot_Teleporter_Deliver' with the Linux function, and 6 of its 6 matched callees"
  },
  "_Z17AllocPooledStringPKc": {
   "rva": "0x281550",
   "why": "addresses g_GameStringPool+4 (0xa3550c) as the Linux body addresses the pool's +4; next to CC_DumpGameStringTable in the string-pool code"
  },
- "COM_BufferToBufferCompress_Snappy": {
-  "name": "COM_BufferToBufferCompress_Snappy",
-  "lib": "engine",
-  "rva": "0x15cf80",
-  "why": "one of three engine.dll functions using the SNAP tag 0x50414e53; the one that writes it into a caller's buffer, takes (dest, destLen*, source, sourceLen) and returns bool. The allocating COM_CompressBuffer_Snappy is inlined away"
+ "_Z18TE_PlayerAnimEventP11CBasePlayer17PlayerAnimEvent_ti": {
+  "rva": "0x50ff60",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'cl_predict' with the Linux function, and 2 of its 2 matched callees"
  },
- "_ZN13CEconItemViewC1Ev": {
-  "name": "CEconItemView::CEconItemView [C1]",
-  "rva": "0x3c3560",
-  "why": "of the four functions writing CEconItemView's vtable 0x10828164, the one with no argument and a plain ret that zeroes the fields; 0x3c3410 is the copy constructor (ret 4, reads its argument), 0x3c36f0 the destructor, 0x3c38c0 the deleting destructor"
+ "_Z19ReadEncryptedKVFileP11IFileSystemPKcPKhb": {
+  "rva": "0x39b800",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string '%s.ctx', 'WeaponDatafile' with the Linux function, and 5 of its 5 matched callees"
+ },
+ "_Z21SpawnHierarchicalListiP19HierarchicalSpawn_tb": {
+  "rva": "0x297ec0",
+  "why": "treats its first argument as a signed count and the second as the spawn list, 832 bytes against Linux's 856, and calls the helper holding the 'parented to itself' message that the string match had picked instead"
  },
  "_Z23COM_GetUncompressedSizePKvj": {
   "lib": "engine",
@@ -76,78 +43,383 @@
   "rva": "0x15d050",
   "why": "(dest, destLen*, source, sourceLen): checks source for the LZSS and SNAP tags and decompresses into dest"
  },
- "_ZNK13CEconItemView7GetSkinEib": {
-  "rva": "0x3c46f0",
-  "why": "checks the team index against 4 and the viewmodel flag, ret 8 for its two arguments, and calls GetItemSchema then GetItemDefinition, in CEconItemView's code"
+ "_Z45AllocPooledString_StaticConstantStringPointerPKc": {
+  "bad": true,
+  "why": "0x281590 looks like the right code but MSVC compiled it as a member of the string pool, with the pool in ecx, while the tree calls it as a free function; bisect showed including it kills the server during a mission"
  },
  "_ZL11g_HostState": {
+  "lib": "engine",
   "rva": "0x639ca4",
-  "why": "the CHostState::State_NewGame function assigns 3 to it, and m_currentState is the first member; one of the addresses the matched referrers of the Linux global use",
-  "lib": "engine"
+  "why": "the CHostState::State_NewGame function assigns 3 to it, and m_currentState is the first member; one of the addresses the matched referrers of the Linux global use"
  },
- "g_pGameRules": {
-  "rva": "0xa33c80",
-  "why": "617 of the matched functions that read the Linux global read this one, far ahead of any other candidate",
-  "name": "g_pGameRules"
+ "_ZL16g_GameStringPool": {
+  "rva": "0xa35508",
+  "why": "AllocPooledString, CC_DumpGameStringTable and AllocPooledString_StaticConstantStringPointer all address it from here; field offsets +0x4, +0x8 and +0x14 agree with Linux"
  },
- "_ZN14NextBotManager14CollectAllBotsEP10CUtlVectorIP8INextBot10CUtlMemoryIS2_iEE": {
-  "bad": true,
-  "why": "the match was a memory helper; detouring it made the engine fail to allocate the AI graph on a large map. No candidate found yet"
- },
- "_ZN11CBasePlayer10ChangeTeamEibbb": {
-  "bad": true,
-  "why": "address 0x2dde10 is right (it owns the 'CBasePlayer::ChangeTeam( %d ) - invalid team index.' string), but detouring it on Windows makes the call from CTFPlayer::ChangeTeam land in .data, so it is left undetoured until the trampoline path is understood"
- },
- "g_aRawPlayerClassNames": {
-  "rva": "0x9cdcf0",
-  "why": "the 13-entry table of class name strings, running undefined, scout, sniper, soldier ... civilian, random, exactly as the Linux array is declared"
- },
- "_ZN9CTFPlayer10ChangeTeamEibbb": {
-  "bad": true,
-  "why": "address 0x4e3c50 is right (unique string, 17 of 19 matched callees), but its detour runs with a this that is not a player and faults in CheckPlayerClassLimit; left undetoured with CBasePlayer::ChangeTeam until the detour path is understood"
- },
- "_ZNK11CBasePlayer5IsBotEv": {
-  "rva": "0x2e4000",
-  "why": "IsBot and IsFakeClient are the same folded function on Linux (both 0x7a6160), and the CBasePlayer vtable slot the dumps align holds this address on Windows"
- },
- "g_pPopulationManager": {
-  "rva": "0xb95da8",
-  "why": "written in CPopulationManager's own code at 0x5e28d4 and cleared to 0 at 0x5e2bbe, and read by the matched functions that read the Linux global"
- },
- "_ZNK13CEconItemView13GetStaticDataEv": {
-  "rva": "0x3c4830",
-  "why": "reads the definition index at this+4 and calls the verified GetItemSchema then GetItemDefinition, as the Linux body does; 75 callers against 89 on Linux, inside CEconItemView's code"
- },
- "_ZN18CPopulationManager21GetPopulationFilenameEv": {
-  "rva": "0x5e48b0",
-  "why": "returns this+0x3a0, the pair with GetPopulationFilenameShort at this+0x4a4; the 0x104 gap between them matches Linux's 0x3b8 and 0x4bc"
- },
- "_ZN18CPopulationManager26GetPopulationFilenameShortEv": {
-  "rva": "0x5e48c0",
-  "why": "returns this+0x4a4, 0x104 after GetPopulationFilename, as on Linux"
- },
- "g_pObjectiveResource": {
-  "rva": "0xa74b20",
-  "why": "CPopulationManager::StartCurrentWave reads the Linux global 0x185fc40 first thing, and its verified Windows counterpart reads this address in the same place"
- },
- "_ZN11CBaseEntity12SetAbsOriginERK6Vector": {
-  "rva": "0x1fb610",
-  "why": "same shape as the Linux body and as its neighbour SetAbsAngles: the same first call, then comparing the argument's first float against the stored one; all five matched callees are called here too"
+ "_ZN10CTFMinigun22AttackEnemyProjectilesEv": {
+  "rva": "0x61fce0",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'FX_RicochetSound.Ricochet', 'Halloween.HeadlessBossAxeHitWorld', 'attack_projectiles' with the Linux function, and 9 of its 9 matched callees"
  },
  "_ZN11CBaseEntity12SetAbsAnglesERK6QAngle": {
   "rva": "0x1fb3a0",
   "why": "verified next to SetAbsOrigin: same first call and the same compare-then-store shape as the Linux body, with all six matched callees called here too"
  },
- "_Z21SpawnHierarchicalListiP19HierarchicalSpawn_tb": {
-  "rva": "0x297ec0",
-  "why": "treats its first argument as a signed count and the second as the spawn list, 832 bytes against Linux's 856, and calls the helper holding the 'parented to itself' message that the string match had picked instead"
+ "_ZN11CBaseEntity12SetAbsOriginERK6Vector": {
+  "rva": "0x1fb610",
+  "why": "same shape as the Linux body and as its neighbour SetAbsAngles: the same first call, then comparing the argument's first float against the stored one; all five matched callees are called here too"
+ },
+ "_ZN11CBaseEntity18NameMatchesComplexEPKc": {
+  "rva": "0x1f7790",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string '!player' with the Linux function, and 1 of its 1 matched callees"
+ },
+ "_ZN11CBaseEntity9EmitSoundER16IRecipientFilteriRK11EmitSound_t": {
+  "rva": "0x32e460",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string '(%s)%s', 'CBaseEntity::EmitSound' with the Linux function, and 2 of its 2 matched callees"
+ },
+ "_ZN11CBaseEntity9EmitSoundER16IRecipientFilteriRK11EmitSound_tRs": {
+  "rva": "0x32e550",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string '(%s)%s', 'CBaseEntity::EmitSound' with the Linux function, and 2 of its 2 matched callees"
+ },
+ "_ZN11CBasePlayer10ChangeTeamEibbb": {
+  "bad": true,
+  "why": "address 0x2dde10 is right (it owns the 'CBasePlayer::ChangeTeam( %d ) - invalid team index.' string), but detouring it on Windows makes the call from CTFPlayer::ChangeTeam land in .data, so it is left undetoured until the trampoline path is understood"
+ },
+ "_ZN11CEconEntity18UpdateModelToClassEv": {
+  "rva": "0x3a0270",
+  "why": "corroborated by tools/winport/corroborate.py: calls all 7 of the Linux function's matched callees, and no string disagrees"
+ },
+ "_ZN11CTFAmmoPack6CreateERK6VectorRK6QAngleP11CBaseEntityPKc": {
+  "rva": "0x460f80",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'tf_ammo_pack' with the Linux function, and 4 of its 4 matched callees"
+ },
+ "_ZN12CTFGameRules10CleanUpMapEv": {
+  "rva": "0x485dc0",
+  "why": "corroborated by tools/winport/corroborate.py: calls all 6 of the Linux function's matched callees, and no string disagrees"
+ },
+ "_ZN12CTFGameRules13FireGameEventEP10IGameEvent": {
+  "rva": "0x48b680",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'eventtype', 'full_round', 'player_disconnect' with the Linux function, and 15 of its 16 matched callees"
+ },
+ "_ZN12CTFGameRules19GetTaggedConVarListEP9KeyValues": {
+  "rva": "0x48e800",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'convar' with the Linux function, and 2 of its 2 matched callees"
+ },
+ "_ZN12CTFGameRules21DropHalloweenSoulPackEiRK6VectorP11CBaseEntityi": {
+  "rva": "0x489fa0",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'halloween_souls_pack' with the Linux function, and 2 of its 2 matched callees"
+ },
+ "_ZN12CTFGameStats17SendStatsToPlayerEP9CTFPlayerb": {
+  "rva": "0x4ac8d0",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'MapStatsUpdate', 'PlayerStatsUpdate' with the Linux function, and 6 of its 6 matched callees"
+ },
+ "_ZN13CBotNPCArcher5SpawnEv": {
+  "rva": "0x597690",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'models/weapons/c_models/c_bow/c_bow.mdl' with the Linux function, and 5 of its 5 matched callees"
+ },
+ "_ZN13CEconItemViewC1Ev": {
+  "name": "CEconItemView::CEconItemView [C1]",
+  "rva": "0x3c3560",
+  "why": "of the four functions writing CEconItemView's vtable 0x10828164, the one with no argument and a plain ret that zeroes the fields; 0x3c3410 is the copy constructor (ret 4, reads its argument), 0x3c36f0 the destructor, 0x3c38c0 the deleting destructor"
+ },
+ "_ZN13CObjectSapper14UpdateOnRemoveEv": {
+  "rva": "0x4c9ea0",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'Weapon_p2rec.Timer', 'Weapon_sd_sapper.Timer' with the Linux function, and 2 of its 2 matched callees"
+ },
+ "_ZN13CTFWeaponBase13ItemPostFrameEv": {
+  "rva": "0x636b40",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'auto_fires_full_clip_all_at_once' with the Linux function, and 5 of its 5 matched callees"
+ },
+ "_ZN13CTFWeaponBase20OnActiveStateChangedEi": {
+  "rva": "0x636e80",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'provide_on_active' with the Linux function, and 4 of its 4 matched callees"
+ },
+ "_ZN13CTFWeaponBase7HolsterEP17CBaseCombatWeapon": {
+  "rva": "0x6365f0",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'honorbound' with the Linux function, and 4 of its 4 matched callees"
  },
  "_ZN13CUserMessages17LookupUserMessageEPKc": {
   "rva": "0x442370",
   "why": "called with the message name and the user-messages object in ecx by the wrapper at 0x273090 that every VGUIMenu caller uses; takes one argument (ret 4) and returns -1 when not found, as the Linux body does"
  },
- "_Z45AllocPooledString_StaticConstantStringPointerPKc": {
+ "_ZN14CTFCompoundBow13LaunchGrenadeEv": {
+  "rva": "0x605d60",
+  "why": "corroborated by tools/winport/corroborate.py: calls all 7 of the Linux function's matched callees, and no string disagrees"
+ },
+ "_ZN14CTFCompoundBow19GetProjectileDamageEv": {
+  "rva": "0x6058f0",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'mult_dmg' with the Linux function, and 2 of its 2 matched callees"
+ },
+ "_ZN14CTFSniperRifle13ItemPostFrameEv": {
+  "rva": "0x629f60",
+  "why": "corroborated by tools/winport/corroborate.py: calls all 8 of the Linux function's matched callees, and no string disagrees"
+ },
+ "_ZN14CTFSniperRifle17ExplosiveHeadShotEP9CTFPlayerS1_": {
+  "rva": "0x62b410",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'Weapon_Upgrade.ExplosiveHeadshot', 'dxhr_arm_muzzleflash', 'explosive_sniper_shot' with the Linux function, and 10 of its 10 matched callees"
+ },
+ "_ZN14CTriggerIgnite12IgniteEntityEP11CBaseEntity": {
+  "rva": "0x542940",
+  "why": "corroborated by tools/winport/corroborate.py: calls all 7 of the Linux function's matched callees, and no string disagrees"
+ },
+ "_ZN14CWeaponMedigun15HealTargetThinkEv": {
+  "rva": "0x61c8d0",
+  "why": "corroborated by tools/winport/corroborate.py: calls all 6 of the Linux function's matched callees, and no string disagrees"
+ },
+ "_ZN14CWeaponMedigun18StartHealingTargetEP11CBaseEntity": {
+  "rva": "0x61edc0",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'mult_medigun_overheal_decay', 'set_weapon_mode' with the Linux function, and 5 of its 5 matched callees"
+ },
+ "_ZN14CWeaponMedigun19AllowedToHealTargetEP11CBaseEntity": {
+  "rva": "0x61b160",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'weapon_blocks_healing' with the Linux function, and 6 of its 6 matched callees"
+ },
+ "_ZN14CWeaponMedigun6DeployEv": {
+  "rva": "0x61b780",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'set_weapon_mode' with the Linux function, and 4 of its 4 matched callees"
+ },
+ "_ZN14NextBotManager14CollectAllBotsEP10CUtlVectorIP8INextBot10CUtlMemoryIS2_iEE": {
   "bad": true,
-  "why": "0x281590 looks like the right code but MSVC compiled it as a member of the string pool, with the pool in ecx, while the tree calls it as a free function; bisect showed including it kills the server during a mission"
+  "why": "the match was a memory helper; detouring it made the engine fail to allocate the AI graph on a large map. No candidate found yet"
+ },
+ "_ZN15CEconItemSchema17GetItemDefinitionEi": {
+  "rva": "0x3b9300",
+  "why": "called by 12 of its 14 matched callers; a map lookup on this+0xc4. The Linux const overload is a jmp to the same body"
+ },
+ "_ZN15CEconItemSchema22GetAttributeDefinitionEi": {
+  "rva": "0x3b8e30",
+  "why": "called by 7 of its 8 matched callers; a map lookup on this+0x1bc. The Linux const overload is a jmp to the same body"
+ },
+ "_ZN15CTFFlameThrower18GetMuzzlePosHelperEb": {
+  "rva": "0x60a830",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'FCVAR_NEVER_AS_STRING' with the Linux function, and 2 of its 2 matched callees"
+ },
+ "_ZN15CTFMapsWorkshop21PrepareLevelResourcesEPcjS0_j": {
+  "rva": "0x433a90",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string '[TF Workshop] No steam connection in PrepareLevelResources,, '[TF Workshop] Preparing map ID %llu\\n', '[TF Workshop] Waiting for steam connection\\n' with the Linux function, and 2 of its 2 matched callees"
+ },
+ "_ZN16CObjectSentrygun17ValidTargetPlayerEP9CTFPlayerRK6VectorS4_": {
+  "rva": "0x4cab30",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'set_weapon_mode' with the Linux function, and 4 of its 4 matched callees"
+ },
+ "_ZN16CObjectSentrygun18MakeScaledBuildingEP9CTFPlayer": {
+  "rva": "0x4cce10",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'build_small_sentries' with the Linux function, and 3 of its 3 matched callees"
+ },
+ "_ZN16CObjectSentrygun8SetModelEPKc": {
+  "rva": "0x4ce470",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'aim_pitch', 'aim_yaw' with the Linux function, and 9 of its 9 matched callees"
+ },
+ "_ZN16CTFDroppedWeapon17InitDroppedWeaponEP9CTFPlayerP13CTFWeaponBasebb": {
+  "rva": "0x5f7420",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'ChargeLevelDegradeThink' with the Linux function, and 4 of its 4 matched callees"
+ },
+ "_ZN16CTFDroppedWeapon18InitPickedUpWeaponEP9CTFPlayerP13CTFWeaponBase": {
+  "rva": "0x5f7930",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'ChargeLevelDegradeThink' with the Linux function, and 5 of its 5 matched callees"
+ },
+ "_ZN16CTFDroppedWeapon6CreateEP9CTFPlayerRK6VectorRK6QAnglePKcPK13CEconItemView": {
+  "rva": "0x5f7260",
+  "why": "corroborated by tools/winport/corroborate.py: calls all 6 of the Linux function's matched callees, and no string disagrees"
+ },
+ "_ZN16CTFMedigunShield6CreateEP9CTFPlayer": {
+  "rva": "0x61b2e0",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'WeaponMedi_Shield.Deploy', 'generate_rage_on_heal', 'models/props_mvm/mvm_player_shield2.mdl' with the Linux function, and 3 of its 3 matched callees"
+ },
+ "_ZN16CTFWeaponBuilder13StartBuildingEv": {
+  "rva": "0x603fb0",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'robo_sapper' with the Linux function, and 6 of its 6 matched callees"
+ },
+ "_ZN17CObjectTeleporter15TeleporterThinkEv": {
+  "rva": "0x4d1a70",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'Building_Teleporter.Ready', 'TeleporterContext', 'bidirectional_teleport' with the Linux function, and 7 of its 7 matched callees"
+ },
+ "_ZN17CTFPlayerResource21UpdateConnectedPlayerEiP11CBasePlayer": {
+  "rva": "0x516480",
+  "why": "corroborated by tools/winport/corroborate.py: calls all 10 of the Linux function's matched callees, and no string disagrees"
+ },
+ "_ZN18CPopulationManager12CycleMissionEv": {
+  "rva": "0x5e32b0",
+  "why": "corroborated by tools/winport/corroborate.py: calls all 7 of the Linux function's matched callees, and no string disagrees"
+ },
+ "_ZN18CPopulationManager14PostInitializeEv": {
+  "rva": "0x5e4bf0",
+  "why": "the only function referencing 'Cannot populate - no Navigation Mesh exists.'"
+ },
+ "_ZN18CPopulationManager17RestoreCheckpointEv": {
+  "rva": "0x5e6b30",
+  "why": "references Announcer.MVM_Get_To_Upgrade and the upgrade-history message, as on Linux; called by the matched caller"
+ },
+ "_ZN18CPopulationManager21GetPopulationFilenameEv": {
+  "rva": "0x5e48b0",
+  "why": "returns this+0x3a0, the pair with GetPopulationFilenameShort at this+0x4a4; the 0x104 gap between them matches Linux's 0x3b8 and 0x4bc"
+ },
+ "_ZN18CPopulationManager21SetPopulationFilenameEPKc": {
+  "rva": "0x5e7450",
+  "why": "the only Windows function calling all three of V_FileBase, CPopulationManager::ResetMap and CTFItemSchema::FindMvmMissionByName, and it copies its argument into a MAX_PATH buffer. The earlier 0x5e42e0 was wrong and broke the AI graph allocation"
+ },
+ "_ZN18CPopulationManager26GetPopulationFilenameShortEv": {
+  "rva": "0x5e48c0",
+  "why": "returns this+0x4a4, 0x104 after GetPopulationFilename, as on Linux"
+ },
+ "_ZN18CPopulationManager5SpawnEv": {
+  "rva": "0x5e7500",
+  "why": "base Spawn call then a virtual tail call, the Linux body's shape, inside CPopulationManager's code"
+ },
+ "_ZN18CTFWeaponBaseMelee13GetSwingRangeEv": {
+  "rva": "0x63e1f0",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'is_a_sword' with the Linux function, and 3 of its 3 matched callees"
+ },
+ "_ZN18CTFWeaponBaseMelee7HolsterEP17CBaseCombatWeapon": {
+  "rva": "0x63e250",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'self_mark_for_death' with the Linux function, and 4 of its 4 matched callees"
+ },
+ "_ZN19CMannVsMachineStats18RoundEvent_WaveEndEb": {
+  "rva": "0x5e1000",
+  "why": "same three strings, MVMWaveChange, MVMWaveFailed and sv_cheats; calls all six matched callees"
+ },
+ "_ZN19CMannVsMachineStats20PlayerEvent_UpgradedEP9CTFPlayertthsb": {
+  "rva": "0x5e0500",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'MVMPlayerUpgradedEvent' with the Linux function, and 6 of its 6 matched callees"
+ },
+ "_ZN19CMannVsMachineStats23NotifyTargetPlayerEventEP9CTFPlayerj19eMannVsMachineEventi": {
+  "rva": "0x5e08c0",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'MVMLocalPlayerWaveSpendingValue' with the Linux function, and 6 of its 6 matched callees"
+ },
+ "_ZN20CTFProjectile_Rocket5SpawnEv": {
+  "rva": "0x536080",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'models/weapons/w_models/w_rocket.mdl' with the Linux function, and 1 of its 1 matched callees"
+ },
+ "_ZN20CTFProjectile_Rocket6CreateEP11CBaseEntityRK6VectorRK6QAngleS1_S1_": {
+  "rva": "0x536410",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'tf_projectile_rocket' with the Linux function, and 0 of its 0 matched callees"
+ },
+ "_ZN21CHeadlessHatmanAttack12AttackTargetEP15CHeadlessHatmanP20CBaseCombatCharacterf": {
+  "rva": "0x59df10",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'Halloween.HeadlessBossAxeHitFlesh' with the Linux function, and 7 of its 7 matched callees"
+ },
+ "_ZN21CTFSniperRifleClassic13ItemPostFrameEv": {
+  "rva": "0x62bda0",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'Player.DenyWeaponSelection' with the Linux function, and 11 of its 11 matched callees"
+ },
+ "_ZN21CTFWearableDemoShield15DoSpecialActionEP9CTFPlayer": {
+  "rva": "0x640eb0",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'mod_charge_time' with the Linux function, and 2 of its 2 matched callees"
+ },
+ "_ZN24CTeamplayRoundBasedRules11State_EnterE22gamerules_roundstate_t": {
+  "rva": "0x350ae0",
+  "why": "references both 'Gamerules: entering state' strings and compares this+0x3cc against the argument first, as Linux does; the other referrer is an inlined copy"
+ },
+ "_ZN30CTFProjectile_MechanicalArmOrb19CheckForProjectilesEv": {
+  "rva": "0x619bf0",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'Weapon_Upgrade.ExplosiveHeadshot', 'dxhr_lightningball_hit_blue', 'dxhr_lightningball_hit_red' with the Linux function, and 5 of its 5 matched callees"
+ },
+ "_ZN5CItem9ItemTouchEP11CBaseEntity": {
+  "rva": "0x28eca0",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'plague_healthkit_pickup' with the Linux function, and 6 of its 6 matched callees"
+ },
+ "_ZN6CTFBot26ShouldFireCompressionBlastEv": {
+  "rva": "0x5627b0",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'tf_projectile_energy_ball', 'tf_projectile_rocket' with the Linux function, and 4 of its 4 matched callees"
+ },
+ "_ZN7CZombie14UpdateOnRemoveEv": {
+  "rva": "0x5bff30",
+  "why": "corroborated by tools/winport/corroborate.py: calls all 8 of the Linux function's matched callees, and no string disagrees"
+ },
+ "_ZN9CTFPlayer10ChangeTeamEibbb": {
+  "bad": true,
+  "why": "address 0x4e3c50 is right (unique string, 17 of 19 matched callees), but its detour runs with a this that is not a player and faults in CheckPlayerClassLimit; left undetoured with CBasePlayer::ChangeTeam until the detour path is understood"
+ },
+ "_ZN9CTFPlayer10DeathSoundERK15CTakeDamageInfo": {
+  "rva": "0x4e7d90",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'MVM.GiantCommonExplodes', 'MVM.GiantHeavyExplodes', 'MVM.PlayerDied' with the Linux function, and 7 of its 7 matched callees"
+ },
+ "_ZN9CTFPlayer11CanDisguiseEv": {
+  "rva": "0x51ae50",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'set_cannot_disguise' with the Linux function, and 3 of its 3 matched callees"
+ },
+ "_ZN9CTFPlayer11GetAutoTeamEi": {
+  "rva": "0x4f2bd0",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'FCVAR_NEVER_AS_STRING' with the Linux function, and 10 of its 10 matched callees"
+ },
+ "_ZN9CTFPlayer12DropAmmoPackERK15CTakeDamageInfobb": {
+  "rva": "0x4eb6d0",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'models/items/ammopack_medium.mdl' with the Linux function, and 9 of its 9 matched callees"
+ },
+ "_ZN9CTFPlayer14TeleportEffectEv": {
+  "rva": "0x512d40",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'TFPlayer_TeleportEffect' with the Linux function, and 2 of its 2 matched callees"
+ },
+ "_ZN9CTFPlayer16GiveDefaultItemsEv": {
+  "rva": "0x4fac50",
+  "why": "corroborated by tools/winport/corroborate.py: calls all 6 of the Linux function's matched callees, and no string disagrees"
+ },
+ "_ZN9CTFPlayer19DoClassSpecialSkillEv": {
+  "rva": "0x51fb40",
+  "why": "corroborated by tools/winport/corroborate.py: calls all 6 of the Linux function's matched callees, and no string disagrees"
+ },
+ "_ZN9CTFPlayer20ManageBuilderWeaponsEP19TFPlayerClassData_t": {
+  "rva": "0x4fd700",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'tf_weapon_builder' with the Linux function, and 4 of its 4 matched callees"
+ },
+ "_ZN9CTFPlayer21PickupWeaponFromOtherEP16CTFDroppedWeapon": {
+  "rva": "0x505c40",
+  "why": "corroborated by tools/winport/corroborate.py: calls all 13 of the Linux function's matched callees, and no string disagrees"
+ },
+ "_ZN9CTFPlayer26CheckInstantLoadoutRespawnEv": {
+  "rva": "0x4e45e0",
+  "why": "corroborated by tools/winport/corroborate.py: calls all 6 of the Linux function's matched callees, and no string disagrees"
+ },
+ "_ZN9KeyValues23RecursiveMergeKeyValuesEPS_": {
+  "rva": "0x6e9d90",
+  "why": "reads the argument's +0x18 first as Linux does; called by the matched caller and calls the matched callee"
+ },
+ "_ZNK11CBasePlayer5IsBotEv": {
+  "rva": "0x2e4000",
+  "why": "IsBot and IsFakeClient are the same folded function on Linux (both 0x7a6160), and the CBasePlayer vtable slot the dumps align holds this address on Windows"
+ },
+ "_ZNK13CEconItemView13GetStaticDataEv": {
+  "rva": "0x3c4830",
+  "why": "reads the definition index at this+4 and calls the verified GetItemSchema then GetItemDefinition, as the Linux body does; 75 callers against 89 on Linux, inside CEconItemView's code"
+ },
+ "_ZNK13CEconItemView7GetSkinEib": {
+  "rva": "0x3c46f0",
+  "why": "checks the team index against 4 and the viewmodel flag, ret 8 for its two arguments, and calls GetItemSchema then GetItemDefinition, in CEconItemView's code"
+ },
+ "_ZNK13CTFWeaponBase10CanHolsterEv": {
+  "rva": "0x632d00",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'honorbound' with the Linux function, and 3 of its 3 matched callees"
+ },
+ "_ZNK15CEconItemSchema17GetItemDefinitionEi": {
+  "rva": "0x3b9300",
+  "why": "called by 12 of its 14 matched callers; a map lookup on this+0xc4. The Linux const overload is a jmp to the same body"
+ },
+ "_ZNK15CEconItemSchema22GetAttributeDefinitionEi": {
+  "rva": "0x3b8e30",
+  "why": "called by 7 of its 8 matched callers; a map lookup on this+0x1bc. The Linux const overload is a jmp to the same body"
+ },
+ "_ZNK9CTFPlayer12GetMaxHealthEv": {
+  "rva": "0x4f3500",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'add_maxhealth_nonbuffed' with the Linux function, and 2 of its 2 matched callees"
+ },
+ "_ZNK9CTFPlayer18GetRuneHealthBonusEv": {
+  "rva": "0x4f3ec0",
+  "why": "corroborated by tools/winport/corroborate.py: shares the string 'decapitate_type' with the Linux function, and 3 of its 3 matched callees"
+ },
+ "g_aRawPlayerClassNames": {
+  "rva": "0x9cdcf0",
+  "why": "the 13-entry table of class name strings, running undefined, scout, sniper, soldier ... civilian, random, exactly as the Linux array is declared"
+ },
+ "g_pGameRules": {
+  "name": "g_pGameRules",
+  "rva": "0xa33c80",
+  "why": "617 of the matched functions that read the Linux global read this one, far ahead of any other candidate"
+ },
+ "g_pObjectiveResource": {
+  "rva": "0xa74b20",
+  "why": "CPopulationManager::StartCurrentWave reads the Linux global 0x185fc40 first thing, and its verified Windows counterpart reads this address in the same place"
+ },
+ "g_pPopulationManager": {
+  "rva": "0xb95da8",
+  "why": "written in CPopulationManager's own code at 0x5e28d4 and cleared to 0 at 0x5e2bbe, and read by the matched functions that read the Linux global"
  }
 }

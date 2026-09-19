@@ -860,6 +860,24 @@
 					lib   "server"
 					// call
 				}
+				"CBaseEntity::EmitSound [static: emitsound]"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity9EmitSoundER16IRecipientFilteriRK11EmitSound_t"
+					addr  "0x32e460"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string '(%s)%s', 'CBaseEntity::EmitSound' with the Linux function, and 2 of its 2 matched callees
+				}
+				"CBaseEntity::EmitSound [static: emitsound + handle]"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity9EmitSoundER16IRecipientFilteriRK11EmitSound_tRs"
+					addr  "0x32e550"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string '(%s)%s', 'CBaseEntity::EmitSound' with the Linux function, and 2 of its 2 matched callees
+				}
 				"CBaseEntity::PhysicsSimulate"
 				{
 					type  "fixed"
@@ -1021,6 +1039,15 @@
 					build "10828683"
 					lib   "server"
 					// call
+				}
+				"CBaseEntity::NameMatchesComplex"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity18NameMatchesComplexEPKc"
+					addr  "0x1f7790"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string '!player' with the Linux function, and 1 of its 1 matched callees
 				}
 				"CBaseEntity::ParseMapData"
 				{
@@ -1859,6 +1886,15 @@
 					lib   "server"
 					// vtable
 				}
+				"CZombie::UpdateOnRemove"
+				{
+					type  "fixed"
+					sym   "_ZN7CZombie14UpdateOnRemoveEv"
+					addr  "0x5bff30"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: calls all 8 of the Linux function's matched callees, and no string disagrees
+				}
 				"CZombie::Event_Killed"
 				{
 					type  "fixed"
@@ -1867,6 +1903,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CBotNPCArcher::Spawn"
+				{
+					type  "fixed"
+					sym   "_ZN13CBotNPCArcher5SpawnEv"
+					addr  "0x597690"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'models/weapons/c_models/c_bow/c_bow.mdl' with the Linux function, and 5 of its 5 matched callees
 				}
 				"CBaseCombatWeapon::IsMeleeWeapon"
 				{
@@ -1922,6 +1967,15 @@
 					lib   "server"
 					// string
 				}
+				"CTFWeaponBase::ItemPostFrame"
+				{
+					type  "fixed"
+					sym   "_ZN13CTFWeaponBase13ItemPostFrameEv"
+					addr  "0x636b40"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'auto_fires_full_clip_all_at_once' with the Linux function, and 5 of its 5 matched callees
+				}
 				"CTFWeaponBase::Deploy"
 				{
 					type  "fixed"
@@ -1930,6 +1984,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CTFWeaponBase::Holster"
+				{
+					type  "fixed"
+					sym   "_ZN13CTFWeaponBase7HolsterEP17CBaseCombatWeapon"
+					addr  "0x6365f0"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'honorbound' with the Linux function, and 4 of its 4 matched callees
 				}
 				"CTFWeaponBase::Equip"
 				{
@@ -1948,6 +2011,24 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CTFWeaponBase::OnActiveStateChanged"
+				{
+					type  "fixed"
+					sym   "_ZN13CTFWeaponBase20OnActiveStateChangedEi"
+					addr  "0x636e80"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'provide_on_active' with the Linux function, and 4 of its 4 matched callees
+				}
+				"CTFWeaponBase::CanHolster"
+				{
+					type  "fixed"
+					sym   "_ZNK13CTFWeaponBase10CanHolsterEv"
+					addr  "0x632d00"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'honorbound' with the Linux function, and 3 of its 3 matched callees
 				}
 				"CTFWeaponBaseGun::FireProjectile"
 				{
@@ -2012,6 +2093,15 @@
 					lib   "server"
 					// string
 				}
+				"CWeaponMedigun::Deploy"
+				{
+					type  "fixed"
+					sym   "_ZN14CWeaponMedigun6DeployEv"
+					addr  "0x61b780"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'set_weapon_mode' with the Linux function, and 4 of its 4 matched callees
+				}
 				"CBaseProjectile::CanCollideWithTeammates"
 				{
 					type  "fixed"
@@ -2020,6 +2110,15 @@
 					build "10828683"
 					lib   "server"
 					// vtable
+				}
+				"CObjectSapper::UpdateOnRemove"
+				{
+					type  "fixed"
+					sym   "_ZN13CObjectSapper14UpdateOnRemoveEv"
+					addr  "0x4c9ea0"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'Weapon_p2rec.Timer', 'Weapon_sd_sapper.Timer' with the Linux function, and 2 of its 2 matched callees
 				}
 				"CTFBaseRocket::GetWeaponID"
 				{
@@ -2146,6 +2245,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CItem::ItemTouch"
+				{
+					type  "fixed"
+					sym   "_ZN5CItem9ItemTouchEP11CBaseEntity"
+					addr  "0x28eca0"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'plague_healthkit_pickup' with the Linux function, and 6 of its 6 matched callees
 				}
 				"CBaseFilter::PassesDamageFilter"
 				{
@@ -2471,6 +2579,15 @@
 					lib   "server"
 					// string
 				}
+				"CEconEntity::UpdateModelToClass"
+				{
+					type  "fixed"
+					sym   "_ZN11CEconEntity18UpdateModelToClassEv"
+					addr  "0x3a0270"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: calls all 7 of the Linux function's matched callees, and no string disagrees
+				}
 				"CEconItemDefinition::BInitFromKV"
 				{
 					type  "fixed"
@@ -2651,6 +2768,24 @@
 					lib   "server"
 					// string
 				}
+				"CObjectSentrygun::MakeScaledBuilding"
+				{
+					type  "fixed"
+					sym   "_ZN16CObjectSentrygun18MakeScaledBuildingEP9CTFPlayer"
+					addr  "0x4cce10"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'build_small_sentries' with the Linux function, and 3 of its 3 matched callees
+				}
+				"CObjectSentrygun::SetModel"
+				{
+					type  "fixed"
+					sym   "_ZN16CObjectSentrygun8SetModelEPKc"
+					addr  "0x4ce470"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'aim_pitch', 'aim_yaw' with the Linux function, and 9 of its 9 matched callees
+				}
 				"CObjectSentrygun::Spawn"
 				{
 					type  "fixed"
@@ -2660,6 +2795,15 @@
 					lib   "server"
 					// string
 				}
+				"CObjectSentrygun::ValidTargetPlayer"
+				{
+					type  "fixed"
+					sym   "_ZN16CObjectSentrygun17ValidTargetPlayerEP9CTFPlayerRK6VectorS4_"
+					addr  "0x4cab30"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'set_weapon_mode' with the Linux function, and 4 of its 4 matched callees
+				}
 				"CObjectTeleporter::SetModel"
 				{
 					type  "fixed"
@@ -2668,6 +2812,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CObjectTeleporter::TeleporterThink"
+				{
+					type  "fixed"
+					sym   "_ZN17CObjectTeleporter15TeleporterThinkEv"
+					addr  "0x4d1a70"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'Building_Teleporter.Ready', 'TeleporterContext', 'bidirectional_teleport' with the Linux function, and 7 of its 7 matched callees
 				}
 				"CPointTeleport::Activate"
 				{
@@ -2741,6 +2894,15 @@
 					lib   "server"
 					// vtable
 				}
+				"CTFAmmoPack::Create"
+				{
+					type  "fixed"
+					sym   "_ZN11CTFAmmoPack6CreateERK6VectorRK6QAngleP11CBaseEntityPKc"
+					addr  "0x460f80"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'tf_ammo_pack' with the Linux function, and 4 of its 4 matched callees
+				}
 				"CTFBaseRocket::CheckForStunOnImpact"
 				{
 					type  "fixed"
@@ -2804,6 +2966,51 @@
 					lib   "server"
 					// string
 				}
+				"CTFCompoundBow::GetProjectileDamage"
+				{
+					type  "fixed"
+					sym   "_ZN14CTFCompoundBow19GetProjectileDamageEv"
+					addr  "0x6058f0"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'mult_dmg' with the Linux function, and 2 of its 2 matched callees
+				}
+				"CTFCompoundBow::LaunchGrenade"
+				{
+					type  "fixed"
+					sym   "_ZN14CTFCompoundBow13LaunchGrenadeEv"
+					addr  "0x605d60"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: calls all 7 of the Linux function's matched callees, and no string disagrees
+				}
+				"CTFDroppedWeapon::Create"
+				{
+					type  "fixed"
+					sym   "_ZN16CTFDroppedWeapon6CreateEP9CTFPlayerRK6VectorRK6QAnglePKcPK13CEconItemView"
+					addr  "0x5f7260"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: calls all 6 of the Linux function's matched callees, and no string disagrees
+				}
+				"CTFDroppedWeapon::InitDroppedWeapon"
+				{
+					type  "fixed"
+					sym   "_ZN16CTFDroppedWeapon17InitDroppedWeaponEP9CTFPlayerP13CTFWeaponBasebb"
+					addr  "0x5f7420"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'ChargeLevelDegradeThink' with the Linux function, and 4 of its 4 matched callees
+				}
+				"CTFDroppedWeapon::InitPickedUpWeapon"
+				{
+					type  "fixed"
+					sym   "_ZN16CTFDroppedWeapon18InitPickedUpWeaponEP9CTFPlayerP13CTFWeaponBase"
+					addr  "0x5f7930"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'ChargeLevelDegradeThink' with the Linux function, and 5 of its 5 matched callees
+				}
 				"CTFFlameEntity::OnCollide"
 				{
 					type  "fixed"
@@ -2857,6 +3064,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CTFFlameThrower::GetMuzzlePosHelper"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFFlameThrower18GetMuzzlePosHelperEb"
+					addr  "0x60a830"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'FCVAR_NEVER_AS_STRING' with the Linux function, and 2 of its 2 matched callees
 				}
 				"CTFFlameThrower::PrimaryAttack"
 				{
@@ -2948,6 +3164,24 @@
 					lib   "server"
 					// string
 				}
+				"CTFMedigunShield::Create"
+				{
+					type  "fixed"
+					sym   "_ZN16CTFMedigunShield6CreateEP9CTFPlayer"
+					addr  "0x61b2e0"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'WeaponMedi_Shield.Deploy', 'generate_rage_on_heal', 'models/props_mvm/mvm_player_shield2.mdl' with the Linux function, and 3 of its 3 matched callees
+				}
+				"CTFMinigun::AttackEnemyProjectiles"
+				{
+					type  "fixed"
+					sym   "_ZN10CTFMinigun22AttackEnemyProjectilesEv"
+					addr  "0x61fce0"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'FX_RicochetSound.Ricochet', 'Halloween.HeadlessBossAxeHitWorld', 'attack_projectiles' with the Linux function, and 9 of its 9 matched callees
+				}
 				"CTFMinigun::SharedAttack"
 				{
 					type  "fixed"
@@ -2956,6 +3190,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CTFPlayerResource::UpdateConnectedPlayer"
+				{
+					type  "fixed"
+					sym   "_ZN17CTFPlayerResource21UpdateConnectedPlayerEiP11CBasePlayer"
+					addr  "0x516480"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: calls all 10 of the Linux function's matched callees, and no string disagrees
 				}
 				"CTFPlayerShared::Disguise"
 				{
@@ -3074,6 +3317,33 @@
 					lib   "server"
 					// vtable
 				}
+				"CTFProjectile_MechanicalArmOrb::CheckForProjectiles"
+				{
+					type  "fixed"
+					sym   "_ZN30CTFProjectile_MechanicalArmOrb19CheckForProjectilesEv"
+					addr  "0x619bf0"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'Weapon_Upgrade.ExplosiveHeadshot', 'dxhr_lightningball_hit_blue', 'dxhr_lightningball_hit_red' with the Linux function, and 5 of its 5 matched callees
+				}
+				"CTFProjectile_Rocket::Create"
+				{
+					type  "fixed"
+					sym   "_ZN20CTFProjectile_Rocket6CreateEP11CBaseEntityRK6VectorRK6QAngleS1_S1_"
+					addr  "0x536410"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'tf_projectile_rocket' with the Linux function, and 0 of its 0 matched callees
+				}
+				"CTFProjectile_Rocket::Spawn"
+				{
+					type  "fixed"
+					sym   "_ZN20CTFProjectile_Rocket5SpawnEv"
+					addr  "0x536080"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'models/weapons/w_models/w_rocket.mdl' with the Linux function, and 1 of its 1 matched callees
+				}
 				"CTFProjectile_Throwable::GetAngularImpulse"
 				{
 					type  "fixed"
@@ -3118,6 +3388,33 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CTFSniperRifle::ExplosiveHeadShot"
+				{
+					type  "fixed"
+					sym   "_ZN14CTFSniperRifle17ExplosiveHeadShotEP9CTFPlayerS1_"
+					addr  "0x62b410"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'Weapon_Upgrade.ExplosiveHeadshot', 'dxhr_arm_muzzleflash', 'explosive_sniper_shot' with the Linux function, and 10 of its 10 matched callees
+				}
+				"CTFSniperRifle::ItemPostFrame"
+				{
+					type  "fixed"
+					sym   "_ZN14CTFSniperRifle13ItemPostFrameEv"
+					addr  "0x629f60"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: calls all 8 of the Linux function's matched callees, and no string disagrees
+				}
+				"CTFSniperRifleClassic::ItemPostFrame"
+				{
+					type  "fixed"
+					sym   "_ZN21CTFSniperRifleClassic13ItemPostFrameEv"
+					addr  "0x62bda0"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'Player.DenyWeaponSelection' with the Linux function, and 11 of its 11 matched callees
 				}
 				"CTFSpellBook::RollNewSpell"
 				{
@@ -3236,6 +3533,24 @@
 					lib   "server"
 					// string
 				}
+				"CTFWeaponBaseMelee::GetSwingRange"
+				{
+					type  "fixed"
+					sym   "_ZN18CTFWeaponBaseMelee13GetSwingRangeEv"
+					addr  "0x63e1f0"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'is_a_sword' with the Linux function, and 3 of its 3 matched callees
+				}
+				"CTFWeaponBaseMelee::Holster"
+				{
+					type  "fixed"
+					sym   "_ZN18CTFWeaponBaseMelee7HolsterEP17CBaseCombatWeapon"
+					addr  "0x63e250"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'self_mark_for_death' with the Linux function, and 4 of its 4 matched callees
+				}
 				"CTFWeaponBaseMelee::OnSwingHit"
 				{
 					type  "fixed"
@@ -3262,6 +3577,24 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CTFWeaponBuilder::StartBuilding"
+				{
+					type  "fixed"
+					sym   "_ZN16CTFWeaponBuilder13StartBuildingEv"
+					addr  "0x603fb0"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'robo_sapper' with the Linux function, and 6 of its 6 matched callees
+				}
+				"CTFWearableDemoShield::DoSpecialAction"
+				{
+					type  "fixed"
+					sym   "_ZN21CTFWearableDemoShield15DoSpecialActionEP9CTFPlayer"
+					addr  "0x640eb0"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'mod_charge_time' with the Linux function, and 2 of its 2 matched callees
 				}
 				"CTFWearableDemoShield::EndSpecialAction"
 				{
@@ -3299,6 +3632,15 @@
 					lib   "server"
 					// string
 				}
+				"CTriggerIgnite::IgniteEntity"
+				{
+					type  "fixed"
+					sym   "_ZN14CTriggerIgnite12IgniteEntityEP11CBaseEntity"
+					addr  "0x542940"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: calls all 7 of the Linux function's matched callees, and no string disagrees
+				}
 				"CUpgrades::GrantOrRemoveAllUpgrades"
 				{
 					type  "fixed"
@@ -3317,6 +3659,15 @@
 					lib   "server"
 					// vtable
 				}
+				"CWeaponMedigun::AllowedToHealTarget"
+				{
+					type  "fixed"
+					sym   "_ZN14CWeaponMedigun19AllowedToHealTargetEP11CBaseEntity"
+					addr  "0x61b160"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'weapon_blocks_healing' with the Linux function, and 6 of its 6 matched callees
+				}
 				"CWeaponMedigun::GetHealRate"
 				{
 					type  "fixed"
@@ -3326,6 +3677,15 @@
 					lib   "server"
 					// string
 				}
+				"CWeaponMedigun::HealTargetThink"
+				{
+					type  "fixed"
+					sym   "_ZN14CWeaponMedigun15HealTargetThinkEv"
+					addr  "0x61c8d0"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: calls all 6 of the Linux function's matched callees, and no string disagrees
+				}
 				"CWeaponMedigun::RemoveHealingTarget"
 				{
 					type  "fixed"
@@ -3334,6 +3694,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CWeaponMedigun::StartHealingTarget"
+				{
+					type  "fixed"
+					sym   "_ZN14CWeaponMedigun18StartHealingTargetEP11CBaseEntity"
+					addr  "0x61edc0"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'mult_medigun_overheal_decay', 'set_weapon_mode' with the Linux function, and 5 of its 5 matched callees
 				}
 				"ICaptureFlagAutoList::m_ICaptureFlagAutoListAutoList"
 				{
@@ -3882,6 +4251,15 @@
 					lib   "server"
 					// string
 				}
+				"CTFGameRules::DropHalloweenSoulPack"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules21DropHalloweenSoulPackEiRK6VectorP11CBaseEntityi"
+					addr  "0x489fa0"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'halloween_souls_pack' with the Linux function, and 2 of its 2 matched callees
+				}
 				"CTFGameRules::IsPVEModeControlled"
 				{
 					type  "fixed"
@@ -4008,6 +4386,15 @@
 					lib   "server"
 					// string
 				}
+				"CTFGameRules::FireGameEvent"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules13FireGameEventEP10IGameEvent"
+					addr  "0x48b680"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'eventtype', 'full_round', 'player_disconnect' with the Linux function, and 15 of its 16 matched callees
+				}
 				"CSteamID::Render [member]"
 				{
 					type  "fixed"
@@ -4107,6 +4494,15 @@
 					lib   "server"
 					// consensus
 				}
+				"ReadEncryptedKVFile"
+				{
+					type  "fixed"
+					sym   "_Z19ReadEncryptedKVFileP11IFileSystemPKcPKhb"
+					addr  "0x39b800"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string '%s.ctx', 'WeaponDatafile' with the Linux function, and 5 of its 5 matched callees
+				}
 				"CTFGameMovement::CheckJumpButton"
 				{
 					type  "fixed"
@@ -4152,6 +4548,15 @@
 					lib   "server"
 					// call
 				}
+				"TE_PlayerAnimEvent"
+				{
+					type  "fixed"
+					sym   "_Z18TE_PlayerAnimEventP11CBasePlayer17PlayerAnimEvent_ti"
+					addr  "0x50ff60"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'cl_predict' with the Linux function, and 2 of its 2 matched callees
+				}
 				"CBaseTempEntity::Create"
 				{
 					type  "fixed"
@@ -4178,6 +4583,24 @@
 					build "10828683"
 					lib   "server"
 					// call
+				}
+				"CMannVsMachineStats::PlayerEvent_Upgraded"
+				{
+					type  "fixed"
+					sym   "_ZN19CMannVsMachineStats20PlayerEvent_UpgradedEP9CTFPlayertthsb"
+					addr  "0x5e0500"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'MVMPlayerUpgradedEvent' with the Linux function, and 6 of its 6 matched callees
+				}
+				"CMannVsMachineStats::NotifyTargetPlayerEvent"
+				{
+					type  "fixed"
+					sym   "_ZN19CMannVsMachineStats23NotifyTargetPlayerEventEP9CTFPlayerj19eMannVsMachineEventi"
+					addr  "0x5e08c0"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'MVMLocalPlayerWaveSpendingValue' with the Linux function, and 6 of its 6 matched callees
 				}
 				"CTraceFilterObject::ShouldHitEntity"
 				{
@@ -4287,6 +4710,15 @@
 					lib   "server"
 					// vtable
 				}
+				"CTFGameRules::CleanUpMap"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules10CleanUpMapEv"
+					addr  "0x485dc0"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: calls all 6 of the Linux function's matched callees, and no string disagrees
+				}
 				"CBaseEntityOutput::FireOutput"
 				{
 					type  "fixed"
@@ -4394,6 +4826,15 @@
 					build "10828683"
 					lib   "server"
 					// call
+				}
+				"CHeadlessHatmanAttack::AttackTarget"
+				{
+					type  "fixed"
+					sym   "_ZN21CHeadlessHatmanAttack12AttackTargetEP15CHeadlessHatmanP20CBaseCombatCharacterf"
+					addr  "0x59df10"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'Halloween.HeadlessBossAxeHitFlesh' with the Linux function, and 7 of its 7 matched callees
 				}
 				"variant_t::Set"
 				{
@@ -4575,6 +5016,15 @@
 					lib   "server"
 					// string
 				}
+				"CTFGameRules::GetTaggedConVarList"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules19GetTaggedConVarListEP9KeyValues"
+					addr  "0x48e800"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'convar' with the Linux function, and 2 of its 2 matched callees
+				}
 				"CGameMovement::CheckStuck"
 				{
 					type  "fixed"
@@ -4583,6 +5033,15 @@
 					build "10828683"
 					lib   "server"
 					// vtable
+				}
+				"CTFGameStats::SendStatsToPlayer"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameStats17SendStatsToPlayerEP9CTFPlayerb"
+					addr  "0x4ac8d0"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'MapStatsUpdate', 'PlayerStatsUpdate' with the Linux function, and 6 of its 6 matched callees
 				}
 				"CTFGameStats::Event_PlayerDisconnectedTF"
 				{
@@ -4692,6 +5151,15 @@
 					lib   "server"
 					// vtable
 				}
+				"DispatchSpawn"
+				{
+					type  "fixed"
+					sym   "_Z13DispatchSpawnP11CBaseEntityb"
+					addr  "0x36b4a0"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: calls all 9 of the Linux function's matched callees, and no string disagrees
+				}
 				"CTraceFilterEntity::ShouldHitEntity"
 				{
 					type  "fixed"
@@ -4736,6 +5204,15 @@
 					build "10828683"
 					lib   "server"
 					// consensus
+				}
+				"OnBotTeleported"
+				{
+					type  "fixed"
+					sym   "_Z15OnBotTeleportedP6CTFBot"
+					addr  "0x5edc70"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'MVM.Robot_Teleporter_Deliver' with the Linux function, and 6 of its 6 matched callees
 				}
 				"CTFGameRules::FlPlayerFallDamage"
 				{
@@ -4898,6 +5375,15 @@
 					build "10828683"
 					lib   "server"
 					// call
+				}
+				"CTFMapsWorkshop::PrepareLevelResources"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFMapsWorkshop21PrepareLevelResourcesEPcjS0_j"
+					addr  "0x433a90"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string '[TF Workshop] No steam connection in PrepareLevelResources,, '[TF Workshop] Preparing map ID %llu\n', '[TF Workshop] Waiting for steam connection\n' with the Linux function, and 2 of its 2 matched callees
 				}
 				"CTFMapsWorkshop::Refresh"
 				{
@@ -5267,6 +5753,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CPopulationManager::CycleMission"
+				{
+					type  "fixed"
+					sym   "_ZN18CPopulationManager12CycleMissionEv"
+					addr  "0x5e32b0"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: calls all 7 of the Linux function's matched callees, and no string disagrees
 				}
 				"CPopulationManager::FindDefaultPopulationFileShortNames"
 				{
@@ -5835,6 +6330,15 @@
 					lib   "server"
 					// string
 				}
+				"CPopulationManager::CycleMission"
+				{
+					type  "fixed"
+					sym   "_ZN18CPopulationManager12CycleMissionEv"
+					addr  "0x5e32b0"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: calls all 7 of the Linux function's matched callees, and no string disagrees
+				}
 				"CPopulationManager::GetNumRespecsAvailableForPlayer"
 				{
 					type  "fixed"
@@ -6248,6 +6752,15 @@
 					build "10828683"
 					lib   "server"
 					// call
+				}
+				"CTFBot::ShouldFireCompressionBlast"
+				{
+					type  "fixed"
+					sym   "_ZN6CTFBot26ShouldFireCompressionBlastEv"
+					addr  "0x5627b0"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'tf_projectile_energy_ball', 'tf_projectile_rocket' with the Linux function, and 4 of its 4 matched callees
 				}
 				"CTFBot::GetEventChangeAttributes"
 				{
@@ -6834,6 +7347,15 @@
 					lib   "server"
 					// string
 				}
+				"CTFPlayer::GetAutoTeam"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer11GetAutoTeamEi"
+					addr  "0x4f2bd0"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'FCVAR_NEVER_AS_STRING' with the Linux function, and 10 of its 10 matched callees
+				}
 				"CTFPlayer::Event_Killed"
 				{
 					type  "fixed"
@@ -6842,6 +7364,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CTFPlayer::TeleportEffect"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer14TeleportEffectEv"
+					addr  "0x512d40"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'TFPlayer_TeleportEffect' with the Linux function, and 2 of its 2 matched callees
 				}
 				"CTFPlayer::ManageRegularWeapons"
 				{
@@ -6960,6 +7491,24 @@
 					lib   "server"
 					// string
 				}
+				"CTFPlayer::GiveDefaultItems"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer16GiveDefaultItemsEv"
+					addr  "0x4fac50"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: calls all 6 of the Linux function's matched callees, and no string disagrees
+				}
+				"CTFPlayer::DropAmmoPack"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer12DropAmmoPackERK15CTakeDamageInfobb"
+					addr  "0x4eb6d0"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'models/items/ammopack_medium.mdl' with the Linux function, and 9 of its 9 matched callees
+				}
 				"CTFPlayer::OnKilledOther_Effects"
 				{
 					type  "fixed"
@@ -6995,6 +7544,24 @@
 					build "10828683"
 					lib   "server"
 					// call
+				}
+				"CTFPlayer::DeathSound"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer10DeathSoundERK15CTakeDamageInfo"
+					addr  "0x4e7d90"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'MVM.GiantCommonExplodes', 'MVM.GiantHeavyExplodes', 'MVM.PlayerDied' with the Linux function, and 7 of its 7 matched callees
+				}
+				"CTFPlayer::DoClassSpecialSkill"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer19DoClassSpecialSkillEv"
+					addr  "0x51fb40"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: calls all 6 of the Linux function's matched callees, and no string disagrees
 				}
 				"CTFPlayer::ItemIsAllowed"
 				{
@@ -7194,6 +7761,15 @@
 					lib   "server"
 					// string
 				}
+				"CTFPlayer::CheckInstantLoadoutRespawn"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer26CheckInstantLoadoutRespawnEv"
+					addr  "0x4e45e0"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: calls all 6 of the Linux function's matched callees, and no string disagrees
+				}
 				"CTFPlayer::GiveAmmo"
 				{
 					type  "fixed"
@@ -7203,6 +7779,15 @@
 					lib   "server"
 					// string
 				}
+				"CTFPlayer::ManageBuilderWeapons"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer20ManageBuilderWeaponsEP19TFPlayerClassData_t"
+					addr  "0x4fd700"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'tf_weapon_builder' with the Linux function, and 4 of its 4 matched callees
+				}
 				"CTFPlayer::OnTakeDamage_Alive"
 				{
 					type  "fixed"
@@ -7211,6 +7796,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CTFPlayer::PickupWeaponFromOther"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer21PickupWeaponFromOtherEP16CTFDroppedWeapon"
+					addr  "0x505c40"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: calls all 13 of the Linux function's matched callees, and no string disagrees
 				}
 				"CTFPlayer::Regenerate"
 				{
@@ -7346,6 +7940,33 @@
 					build "10828683"
 					lib   "server"
 					// call
+				}
+				"CTFPlayer::GetRuneHealthBonus"
+				{
+					type  "fixed"
+					sym   "_ZNK9CTFPlayer18GetRuneHealthBonusEv"
+					addr  "0x4f3ec0"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'decapitate_type' with the Linux function, and 3 of its 3 matched callees
+				}
+				"CTFPlayer::GetMaxHealth"
+				{
+					type  "fixed"
+					sym   "_ZNK9CTFPlayer12GetMaxHealthEv"
+					addr  "0x4f3500"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'add_maxhealth_nonbuffed' with the Linux function, and 2 of its 2 matched callees
+				}
+				"CTFPlayer::CanDisguise"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer11CanDisguiseEv"
+					addr  "0x51ae50"
+					build "10828683"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'set_cannot_disguise' with the Linux function, and 3 of its 3 matched callees
 				}
 				"CTFPlayerShared::SetScoutHypeMeter"
 				{

@@ -1,0 +1,373 @@
+STRONG CObjectTeleporter::TeleporterThink                   via=consensus strings=4 (+0/+8) callees=7/7
+         shared: ['Building_Teleporter.Ready', 'TeleporterContext', 'bidirectional_teleport', 'builderid']
+STRONG CTFPlayer::DeathSound                                via=consensus strings=4 (+0/+0) callees=7/7
+         shared: ['MVM.GiantCommonExplodes', 'MVM.GiantHeavyExplodes', 'MVM.PlayerDied', 'Player.FallGib']
+STRONG CTFGameRules::FireGameEvent                          via=consensus strings=4 (+1/+8) callees=15/16
+         shared: ['eventtype', 'full_round', 'player_disconnect', 'recalculate_truce']
+STRONG CTFMapsWorkshop::PrepareLevelResources               via=call      strings=3 (+0/+10) callees=2/2
+         shared: ['[TF Workshop] No steam connection in PrepareLevelResources, workshop map loads will fail\n', '[TF Workshop] Preparing map ID %llu\n', '[TF Workshop] Waiting for steam connection\n']
+STRONG CTFMedigunShield::Create                             via=consensus strings=3 (+1/+0) callees=3/3
+         shared: ['WeaponMedi_Shield.Deploy', 'generate_rage_on_heal', 'models/props_mvm/mvm_player_shield2.mdl']
+STRONG CTFMinigun::AttackEnemyProjectiles                   via=consensus strings=3 (+0/+0) callees=9/9
+         shared: ['FX_RicochetSound.Ricochet', 'Halloween.HeadlessBossAxeHitWorld', 'attack_projectiles']
+STRONG CTFProjectile_MechanicalArmOrb::CheckForProjectiles  via=consensus strings=3 (+0/+0) callees=5/5
+         shared: ['Weapon_Upgrade.ExplosiveHeadshot', 'dxhr_lightningball_hit_blue', 'dxhr_lightningball_hit_red']
+STRONG CTFSniperRifle::ExplosiveHeadShot                    via=consensus strings=3 (+0/+0) callees=10/10
+         shared: ['Weapon_Upgrade.ExplosiveHeadshot', 'dxhr_arm_muzzleflash', 'explosive_sniper_shot']
+STRONG CBaseEntity::EmitSound [static: emitsound + handle]  via=consensus strings=2 (+1/+1) callees=2/2
+         shared: ['(%s)%s', 'CBaseEntity::EmitSound']
+STRONG CBaseEntity::EmitSound [static: emitsound]           via=consensus strings=2 (+1/+1) callees=2/2
+         shared: ['(%s)%s', 'CBaseEntity::EmitSound']
+STRONG CObjectSapper::UpdateOnRemove                        via=consensus strings=2 (+0/+1) callees=2/2
+         shared: ['Weapon_p2rec.Timer', 'Weapon_sd_sapper.Timer']
+STRONG CObjectSentrygun::SetModel                           via=consensus strings=2 (+0/+0) callees=9/9
+         shared: ['aim_pitch', 'aim_yaw']
+STRONG CTFBot::ShouldFireCompressionBlast                   via=consensus strings=2 (+0/+0) callees=4/4
+         shared: ['tf_projectile_energy_ball', 'tf_projectile_rocket']
+STRONG CTFGameStats::SendStatsToPlayer                      via=consensus strings=2 (+0/+0) callees=6/6
+         shared: ['MapStatsUpdate', 'PlayerStatsUpdate']
+STRONG CWeaponMedigun::StartHealingTarget                   via=consensus strings=2 (+0/+3) callees=5/5
+         shared: ['mult_medigun_overheal_decay', 'set_weapon_mode']
+STRONG ReadEncryptedKVFile                                  via=call      strings=2 (+0/+0) callees=5/5
+         shared: ['%s.ctx', 'WeaponDatafile']
+STRONG MapEntity_ParseEntity                                via=call      strings=2 (+0/+1) callees=0/1
+         shared: ["Can't init %s\n", 'classname missing from entity!\n']
+STRONG CBaseEntity::NameMatchesComplex                      via=call      strings=1 (+0/+0) callees=1/1
+         shared: ['!player']
+STRONG CBotNPCArcher::Spawn                                 via=consensus strings=1 (+1/+1) callees=5/5
+         shared: ['models/weapons/c_models/c_bow/c_bow.mdl']
+STRONG CHeadlessHatmanAttack::AttackTarget                  via=consensus strings=1 (+0/+0) callees=7/7
+         shared: ['Halloween.HeadlessBossAxeHitFlesh']
+STRONG CItem::ItemTouch                                     via=consensus strings=1 (+0/+0) callees=6/6
+         shared: ['plague_healthkit_pickup']
+STRONG CMannVsMachineStats::NotifyTargetPlayerEvent         via=consensus strings=1 (+0/+0) callees=6/6
+         shared: ['MVMLocalPlayerWaveSpendingValue']
+STRONG CMannVsMachineStats::PlayerEvent_Upgraded            via=consensus strings=1 (+0/+0) callees=6/6
+         shared: ['MVMPlayerUpgradedEvent']
+STRONG CObjectSentrygun::MakeScaledBuilding                 via=consensus strings=1 (+0/+0) callees=3/3
+         shared: ['build_small_sentries']
+STRONG CObjectSentrygun::ValidTargetPlayer                  via=consensus strings=1 (+0/+0) callees=4/4
+         shared: ['set_weapon_mode']
+STRONG CTFAmmoPack::Create                                  via=consensus strings=1 (+0/+2) callees=4/4
+         shared: ['tf_ammo_pack']
+STRONG CTFCompoundBow::GetProjectileDamage                  via=consensus strings=1 (+0/+0) callees=2/2
+         shared: ['mult_dmg']
+STRONG CTFDroppedWeapon::InitDroppedWeapon                  via=consensus strings=1 (+0/+0) callees=4/4
+         shared: ['ChargeLevelDegradeThink']
+STRONG CTFDroppedWeapon::InitPickedUpWeapon                 via=consensus strings=1 (+0/+0) callees=5/5
+         shared: ['ChargeLevelDegradeThink']
+STRONG CTFFlameThrower::GetMuzzlePosHelper                  via=call      strings=1 (+0/+0) callees=2/2
+         shared: ['FCVAR_NEVER_AS_STRING']
+STRONG CTFGameRules::DropHalloweenSoulPack                  via=consensus strings=1 (+0/+0) callees=2/2
+         shared: ['halloween_souls_pack']
+STRONG CTFGameRules::GetTaggedConVarList                    via=consensus strings=1 (+0/+0) callees=2/2
+         shared: ['convar']
+STRONG CTFPlayer::CanDisguise                               via=consensus strings=1 (+0/+0) callees=3/3
+         shared: ['set_cannot_disguise']
+STRONG CTFPlayer::DropAmmoPack                              via=consensus strings=1 (+0/+0) callees=9/9
+         shared: ['models/items/ammopack_medium.mdl']
+STRONG CTFPlayer::GetAutoTeam                               via=consensus strings=1 (+0/+0) callees=10/10
+         shared: ['FCVAR_NEVER_AS_STRING']
+STRONG CTFPlayer::GetMaxHealth                              via=consensus strings=1 (+0/+0) callees=2/2
+         shared: ['add_maxhealth_nonbuffed']
+STRONG CTFPlayer::GetRuneHealthBonus                        via=consensus strings=1 (+0/+0) callees=3/3
+         shared: ['decapitate_type']
+STRONG CTFPlayer::ManageBuilderWeapons                      via=consensus strings=1 (+0/+0) callees=4/4
+         shared: ['tf_weapon_builder']
+STRONG CTFPlayer::TeleportEffect                            via=call      strings=1 (+0/+3) callees=2/2
+         shared: ['TFPlayer_TeleportEffect']
+STRONG CTFProjectile_Rocket::Spawn                          via=consensus strings=1 (+0/+0) callees=1/1
+         shared: ['models/weapons/w_models/w_rocket.mdl']
+STRONG CTFSniperRifleClassic::ItemPostFrame                 via=consensus strings=1 (+0/+0) callees=11/11
+         shared: ['Player.DenyWeaponSelection']
+STRONG CTFWeaponBase::CanHolster                            via=call      strings=1 (+0/+0) callees=3/3
+         shared: ['honorbound']
+STRONG CTFWeaponBase::Holster                               via=consensus strings=1 (+0/+1) callees=4/4
+         shared: ['honorbound']
+STRONG CTFWeaponBase::ItemPostFrame                         via=consensus strings=1 (+0/+0) callees=5/5
+         shared: ['auto_fires_full_clip_all_at_once']
+STRONG CTFWeaponBase::OnActiveStateChanged                  via=consensus strings=1 (+0/+0) callees=4/4
+         shared: ['provide_on_active']
+STRONG CTFWeaponBaseMelee::GetSwingRange                    via=consensus strings=1 (+0/+0) callees=3/3
+         shared: ['is_a_sword']
+STRONG CTFWeaponBaseMelee::Holster                          via=consensus strings=1 (+0/+0) callees=4/4
+         shared: ['self_mark_for_death']
+STRONG CTFWeaponBuilder::StartBuilding                      via=consensus strings=1 (+0/+0) callees=6/6
+         shared: ['robo_sapper']
+STRONG CTFWearableDemoShield::DoSpecialAction               via=call      strings=1 (+0/+0) callees=2/2
+         shared: ['mod_charge_time']
+STRONG CWeaponMedigun::AllowedToHealTarget                  via=consensus strings=1 (+0/+0) callees=6/6
+         shared: ['weapon_blocks_healing']
+STRONG CWeaponMedigun::Deploy                               via=consensus strings=1 (+0/+0) callees=4/4
+         shared: ['set_weapon_mode']
+STRONG OnBotTeleported                                      via=consensus strings=1 (+0/+0) callees=6/6
+         shared: ['MVM.Robot_Teleporter_Deliver']
+STRONG TE_PlayerAnimEvent                                   via=call      strings=1 (+0/+29) callees=2/2
+         shared: ['cl_predict']
+STRONG CBaseAnimating::SetModelScale                        via=call      strings=1 (+0/+0) callees=3/4
+         shared: ['UpdateModelScaleThink']
+STRONG CPointPopulatorInterface::InputChangeBotAttributes   via=table     strings=1 (+0/+0) callees=3/5
+         shared: ['ChangeBotAttributes: Failed to find event [%s] in the pop file\n']
+STRONG CTFProjectile_EnergyRing::ShouldPenetrate            via=call      strings=1 (+0/+4) callees=0/1
+         shared: ['energy_weapon_penetration']
+STRONG CTFProjectile_Rocket::Create                         via=call      strings=1 (+0/+0) callees=0/0
+         shared: ['tf_projectile_rocket']
+       CAI_BaseNPC::GetActivityID                           via=consensus strings=0 (+0/+0) callees=1/1
+       CBaseAnimating::FindBodygroupByName                  via=consensus strings=0 (+0/+0) callees=1/1
+       CBaseAnimating::GetAttachmentBone                    via=consensus strings=0 (+0/+0) callees=3/3
+       CBaseAnimating::GetPoseParameter [int]               via=call      strings=0 (+0/+0) callees=2/2
+       CBaseAnimating::LookupAttachment                     via=call      strings=0 (+0/+0) callees=1/1
+       CBaseAnimating::LookupSequence                       via=call      strings=0 (+0/+0) callees=1/1
+       CBaseAnimating::ResetSequenceInfo                    via=call      strings=0 (+0/+0) callees=2/2
+       CBaseAnimating::SetBodygroup                         via=consensus strings=0 (+0/+0) callees=2/2
+       CBaseCombatWeapon::UpdateTransmitState               via=consensus strings=0 (+0/+0) callees=3/3
+       CBaseEntity::AddEffects                              via=call      strings=0 (+0/+0) callees=1/1
+       CBaseEntity::AddTimedOverlay                         via=call      strings=0 (+0/+0) callees=1/1
+STRONG CBaseEntity::CreateNoSpawn                           via=call      strings=0 (+0/+0) callees=4/4
+       CBaseEntity::PhysicsRunThink                         via=consensus strings=0 (+0/+0) callees=1/1
+       CBaseEntity::PrecacheScriptSound                     via=call      strings=0 (+0/+0) callees=1/1
+       CBaseEntity::Remove                                  via=call      strings=0 (+0/+0) callees=1/1
+       CBaseEntity::SetMoveType                             via=call      strings=0 (+0/+0) callees=3/3
+       CBaseFilter::InputTestActivator                      via=table     strings=0 (+0/+0) callees=1/1
+       CBaseObject::InitializeMapPlacedObject               via=consensus strings=0 (+0/+0) callees=2/2
+       CBaseObject::SetHealth                               via=consensus strings=0 (+0/+0) callees=2/2
+       CBasePlayer::SetVCollisionState                      via=consensus strings=0 (+0/+0) callees=1/1
+       CCaptureFlag::GetMaxReturnTime                       via=consensus strings=0 (+0/+0) callees=2/2
+       CCollisionProperty::MarkPartitionHandleDirty         via=call      strings=0 (+0/+0) callees=1/1
+STRONG CCollisionProperty::SetSolid                         via=call      strings=0 (+0/+0) callees=4/4
+       CCollisionProperty::SetSurroundingBoundsType         via=call      strings=0 (+0/+0) callees=1/1
+STRONG CEconEntity::UpdateModelToClass                      via=consensus strings=0 (+0/+0) callees=7/7
+       CEnvEntityMaker::InputForceSpawn                     via=consensus strings=0 (+0/+0) callees=2/2
+       CGlobalEntityList::FindEntityByName                  via=call      strings=0 (+1/+0) callees=2/2
+       CHalloweenBaseBoss::SpawnBossAtPos                   via=consensus strings=0 (+0/+3) callees=3/3
+STRONG CItemGeneration::SpawnItem                           via=consensus strings=0 (+0/+0) callees=5/5
+       CObjectDispenser::SetModel                           via=consensus strings=0 (+0/+0) callees=2/2
+       CObjectSapper::IsValidRoboSapperTarget               via=consensus strings=0 (+0/+0) callees=3/3
+STRONG CPopulationManager::CycleMission                     via=consensus strings=0 (+0/+2) callees=7/7
+       CPopulationManager::ResetMap                         via=call      strings=0 (+0/+0) callees=3/3
+       CPopulationManager::StartCurrentWave                 via=consensus strings=0 (+0/+0) callees=3/3
+       CPopulationManager::UpdateObjectiveResource          via=consensus strings=0 (+0/+1) callees=1/1
+       CPropVehicleDriveable::TraceAttack                   via=consensus strings=0 (+0/+2) callees=2/2
+STRONG CTFAmmoPack::InitAmmoPack                            via=consensus strings=0 (+0/+0) callees=5/5
+       CTFBaseBoss::OnTakeDamage                            via=consensus strings=0 (+0/+0) callees=2/2
+       CTFBaseBoss::Touch                                   via=consensus strings=0 (+0/+0) callees=3/3
+       CTFBot::EquipBestWeaponForThreat                     via=call      strings=0 (+0/+0) callees=1/1
+       CTFBot::EquipLongRangeWeapon                         via=call      strings=0 (+0/+0) callees=1/1
+STRONG CTFBot::GetFlagToFetch                               via=consensus strings=0 (+0/+0) callees=5/5
+       CTFBot::GetTimeLeftToCapture                         via=consensus strings=0 (+0/+0) callees=1/1
+       CTFBot::IsBarrageAndReloadWeapon                     via=consensus strings=0 (+0/+0) callees=1/1
+       CTFBot::SelectRandomReachableEnemy                   via=consensus strings=0 (+0/+0) callees=2/2
+       CTFBot::ShouldGib                                    via=consensus strings=0 (+0/+0) callees=2/2
+STRONG CTFBotMainAction::OnContact                          via=consensus strings=0 (+0/+0) callees=4/4
+       CTFBotVision::UpdatePotentiallyVisibleNPCVector      via=consensus strings=0 (+1/+0) callees=2/2
+STRONG CTFCompoundBow::LaunchGrenade                        via=consensus strings=0 (+0/+0) callees=7/7
+STRONG CTFDroppedWeapon::Create                             via=consensus strings=0 (+1/+0) callees=6/6
+STRONG CTFFists::Punch                                      via=consensus strings=0 (+0/+0) callees=4/4
+       CTFFlameEntity::RemoveFlame                          via=consensus strings=0 (+0/+4) callees=2/2
+STRONG CTFGameRules::CleanUpMap                             via=consensus strings=0 (+0/+0) callees=6/6
+       CTFGameRules::GetAssister                            via=call      strings=0 (+0/+0) callees=2/2
+       CTFGameStats::IncrementStat                          via=call      strings=0 (+0/+0) callees=1/1
+       CTFGrenadeLauncher::SecondaryAttack                  via=consensus strings=0 (+0/+0) callees=2/2
+       CTFKnife::DisguiseOnKill                             via=consensus strings=0 (+0/+0) callees=3/3
+       CTFMechanicalArm::ShockAttack                        via=consensus strings=0 (+0/+1) callees=3/3
+STRONG CTFMinigun::WindDown                                 via=consensus strings=0 (+0/+0) callees=4/4
+STRONG CTFPlayer::CheckInstantLoadoutRespawn                via=consensus strings=0 (+0/+0) callees=6/6
+STRONG CTFPlayer::CreateRagdollEntity [args]                via=consensus strings=0 (+1/+0) callees=5/5
+STRONG CTFPlayer::DoClassSpecialSkill                       via=consensus strings=0 (+0/+0) callees=6/6
+       CTFPlayer::DropFlag                                  via=call      strings=0 (+0/+3) callees=1/1
+       CTFPlayer::EndClassSpecialSkill                      via=consensus strings=0 (+0/+0) callees=2/2
+       CTFPlayer::EndPurchasableUpgrades                    via=call      strings=0 (+0/+0) callees=1/1
+       CTFPlayer::GetEntityForLoadoutSlot                   via=consensus strings=0 (+0/+0) callees=2/2
+STRONG CTFPlayer::GiveDefaultItems                          via=consensus strings=0 (+0/+0) callees=6/6
+       CTFPlayer::InputIgnitePlayer                         via=table     strings=0 (+0/+0) callees=1/1
+       CTFPlayer::MedicGetChargeLevel                       via=consensus strings=0 (+0/+0) callees=1/1
+STRONG CTFPlayer::PickupWeaponFromOther                     via=consensus strings=0 (+0/+0) callees=13/13
+STRONG CTFPlayer::PlayTauntRemapInputScene                  via=consensus strings=0 (+0/+0) callees=4/4
+       CTFPlayer::RemoveAllOwnedEntitiesFromWorld           via=consensus strings=0 (+0/+0) callees=1/1
+       CTFPlayer::RemoveAllWeapons                          via=consensus strings=0 (+0/+0) callees=3/3
+STRONG CTFPlayer::RemoveInvisibility                        via=consensus strings=0 (+0/+0) callees=4/4
+STRONG CTFPlayer::RemoveOwnedProjectiles                    via=consensus strings=0 (+0/+0) callees=4/4
+STRONG CTFPlayer::SetGrapplingHookTarget                    via=consensus strings=0 (+0/+0) callees=5/5
+       CTFPlayer::StopTaunt                                 via=consensus strings=0 (+0/+0) callees=2/2
+       CTFPlayer::TeamFortress_SetSpeed                     via=call      strings=0 (+0/+0) callees=1/1
+       CTFPlayer::UseActionSlotItemReleased                 via=consensus strings=0 (+0/+0) callees=3/3
+STRONG CTFPlayerResource::UpdateConnectedPlayer             via=consensus strings=0 (+0/+0) callees=10/10
+STRONG CTFPlayerResource::UpdateDisconnectedPlayer          via=consensus strings=0 (+0/+0) callees=4/4
+       CTFPlayerSharedUtils::GetEconItemViewByLoadoutSlot   via=consensus strings=0 (+0/+0) callees=2/2
+STRONG CTFPointWeaponMimic::GetFiringAngles                 via=consensus strings=0 (+0/+0) callees=4/4
+STRONG CTFPowerup::Spawn                                    via=call      strings=0 (+0/+0) callees=5/5
+STRONG CTFRevolver::Holster                                 via=consensus strings=0 (+1/+0) callees=4/4
+STRONG CTFSniperRifle::ItemPostFrame                        via=consensus strings=0 (+1/+0) callees=8/8
+STRONG CTFWeaponBase::ItemBusyFrame                         via=consensus strings=0 (+0/+0) callees=5/5
+       CTFWeaponBase::PrimaryAttack                         via=consensus strings=0 (+0/+0) callees=3/3
+       CTFWeaponBase::UpdateHands                           via=consensus strings=0 (+0/+0) callees=2/2
+STRONG CTFWeaponBuilder::StartPlacement                     via=consensus strings=0 (+0/+0) callees=5/5
+       CTFWeaponBuilder::StopPlacement                      via=consensus strings=0 (+0/+0) callees=1/1
+STRONG CTFWeaponInvis::CleanupInvisibilityWatch             via=consensus strings=0 (+0/+0) callees=4/4
+       CTFWearable::CanEquip                                via=consensus strings=0 (+0/+0) callees=2/2
+       CTFWearable::Equip                                   via=call      strings=0 (+0/+0) callees=2/2
+STRONG CTriggerCamera::Disable                              via=consensus strings=0 (+0/+0) callees=5/5
+       CTriggerCatapult::OnLaunchedVictim                   via=consensus strings=0 (+0/+0) callees=1/1
+STRONG CTriggerIgnite::IgniteEntity                         via=call      strings=0 (+0/+0) callees=7/7
+STRONG CWeaponMedigun::HealTargetThink                      via=consensus strings=0 (+1/+0) callees=6/6
+STRONG CWeaponMedigun::PrimaryAttack                        via=consensus strings=0 (+0/+0) callees=4/4
+STRONG CZombie::UpdateOnRemove                              via=consensus strings=0 (+0/+1) callees=8/8
+       CheckValveSignature                                  via=consensus strings=0 (+0/+0) callees=1/1
+       CollectPlayers<CTFPlayer>                            via=call      strings=0 (+0/+0) callees=1/1
+       DispatchParticleEffect [overload 3]                  via=call      strings=0 (+0/+1) callees=2/2
+STRONG DispatchParticleEffect [overload 6]                  via=consensus strings=0 (+0/+1) callees=4/4
+       DispatchParticleEffect [overload 7]                  via=consensus strings=0 (+0/+1) callees=2/2
+STRONG DispatchSpawn                                        via=call      strings=0 (+0/+0) callees=9/9
+       GetClassIndexFromString                              via=consensus strings=0 (+0/+0) callees=1/1
+       GetLoadoutPositionByName                             via=call      strings=0 (+0/+0) callees=1/1
+STRONG GetUpgradeStepData                                   via=consensus strings=0 (+0/+0) callees=5/5
+       GetWeaponId                                          via=call      strings=0 (+0/+0) callees=1/1
+       MannVsMachineStats_GetAcquiredCredits                via=consensus strings=0 (+0/+0) callees=1/1
+       NDebugOverlay::Circle_axes                           via=consensus strings=0 (+0/+0) callees=1/1
+       NDebugOverlay::Cross3DOriented_ang                   via=consensus strings=0 (+0/+0) callees=2/2
+       NDebugOverlay::Cross3D_size                          via=call      strings=0 (+0/+0) callees=1/1
+       NDebugOverlay::HorzArrow                             via=call      strings=0 (+0/+0) callees=2/2
+       NDebugOverlay::Line                                  via=call      strings=0 (+0/+0) callees=3/3
+STRONG NDebugOverlay::Text                                  via=call      strings=0 (+0/+0) callees=4/4
+       NDebugOverlay::Triangle                              via=call      strings=0 (+0/+0) callees=3/3
+       NDebugOverlay::YawArrow                              via=consensus strings=0 (+0/+0) callees=2/2
+STRONG NextBotCombatCharacter::Spawn                        via=call      strings=0 (+0/+0) callees=5/5
+STRONG ParseParticleEffects                                 via=consensus strings=0 (+0/+0) callees=5/5
+       PassServerEntityFilter                               via=call      strings=0 (+0/+0) callees=1/1
+       PointInRespawnRoom                                   via=call      strings=0 (+0/+0) callees=1/1
+       TE_TFExplosion                                       via=call      strings=0 (+0/+0) callees=1/1
+       TE_TFParticleEffect                                  via=call      strings=0 (+0/+0) callees=2/2
+       UTIL_GetCommandClient                                via=call      strings=0 (+0/+0) callees=1/1
+       UTIL_GetHolidayForString                             via=consensus strings=0 (+0/+0) callees=1/1
+       UTIL_SetOrigin                                       via=call      strings=0 (+0/+0) callees=2/2
+       ~CBaseEntity [D2]                                    via=consensus strings=0 (+0/+0) callees=3/3
+STRONG CTFPlayer::ValidateWeapons                           via=call      strings=0 (+1/+4) callees=12/13
+STRONG CBaseObject::UpdateOnRemove                          via=consensus strings=0 (+0/+0) callees=5/6
+STRONG NDebugOverlay::Circle                                via=consensus strings=0 (+0/+0) callees=5/6
+STRONG CTFGameRules::BetweenRounds_Think                    via=consensus strings=0 (+0/+2) callees=4/5
+STRONG CTFPlayer::StartBuildingObjectOfType                 via=call      strings=0 (+0/+0) callees=4/5
+STRONG CBaseEntity::PhysicsNoclip                           via=consensus strings=0 (+3/+0) callees=3/4
+STRONG CBaseObject::FinishedBuilding                        via=call      strings=0 (+0/+0) callees=3/4
+STRONG CBaseObject::StartUpgrading                          via=consensus strings=0 (+0/+0) callees=3/4
+STRONG CNavArea::Contains                                   via=call      strings=0 (+0/+0) callees=3/4
+STRONG CTFPlayer::AddCustomAttribute                        via=call      strings=0 (+1/+0) callees=3/4
+STRONG CTFWeaponBase::CalcIsAttackCritical                  via=call      strings=0 (+0/+0) callees=3/4
+STRONG Physics_SimulateEntity                               via=consensus strings=0 (+4/+0) callees=3/4
+       AllocPooledString_StaticConstantStringPointer        via=consensus strings=0 (+0/+0) callees=1/2
+       CBaseEntity::Create                                  via=call      strings=0 (+0/+0) callees=1/2
+       CBaseEntity::ThinkSet                                via=call      strings=0 (+0/+0) callees=1/2
+       CTFBot::IsLineOfFireClear_vec_vec                    via=call      strings=0 (+0/+0) callees=1/2
+       CTFPlayer::CanMoveDuringTaunt                        via=consensus strings=0 (+0/+0) callees=1/2
+       CTFPlayer::RemoveCustomAttribute                     via=call      strings=0 (+0/+0) callees=1/2
+       DispatchParticleEffect [overload 1]                  via=call      strings=0 (+0/+0) callees=1/2
+       CBaseAnimating::GetBonePosition                      via=call      strings=0 (+0/+0) callees=1/3
+       CBaseEntity::EntityText                              via=call      strings=0 (+0/+0) callees=1/5
+       CBaseAnimating::GetAttachment                        via=call      strings=0 (+0/+0) callees=0/2
+       CBaseAnimating::GetModelPtr                          via=call      strings=0 (+0/+0) callees=0/1
+       CBaseAnimating::InvalidateBoneCache                  via=call      strings=0 (+0/+0) callees=0/1
+       CBaseAnimating::LookupBone                           via=call      strings=0 (+0/+0) callees=0/2
+       CBaseAnimating::LookupPoseParameter                  via=call      strings=0 (+0/+0) callees=0/4
+       CBaseAnimating::SetPoseParameter                     via=call      strings=0 (+0/+0) callees=0/0
+       CBaseAnimatingOverlay::AddGesture                    via=call      strings=0 (+0/+0) callees=0/1
+       CBaseAnimatingOverlay::FastRemoveLayer               via=call      strings=0 (+0/+0) callees=0/1
+       CBaseAnimatingOverlay::GetLayerDuration              via=consensus strings=0 (+0/+0) callees=0/1
+       CBaseAnimatingOverlay::RestartGesture                via=call      strings=0 (+0/+0) callees=0/1
+       CBaseAnimatingOverlay::SetLayerDuration              via=call      strings=0 (+0/+0) callees=0/1
+       CBaseCombatCharacter::CalcDamageForceVector          via=consensus strings=0 (+0/+0) callees=0/0
+       CBaseCombatCharacter::SetBloodColor                  via=consensus strings=0 (+0/+0) callees=0/0
+       CBaseCombatCharacter::SwitchToNextBestWeapon         via=call      strings=0 (+0/+0) callees=0/0
+       CBaseEntity::DispatchUpdateTransmitState             via=call      strings=0 (+0/+0) callees=0/0
+       CBaseEntity::GetDataObject                           via=call      strings=0 (+0/+0) callees=0/0
+       CBaseEntity::GetNextThink                            via=call      strings=0 (+0/+0) callees=0/1
+       CBaseEntity::GetTouchTrace                           via=call      strings=0 (+0/+0) callees=0/0
+       CBaseEntity::InSameTeam                              via=call      strings=0 (+0/+0) callees=0/0
+       CBaseEntity::IsBSPModel                              via=call      strings=0 (+0/+0) callees=0/1
+       CBaseEntity::PrecacheSound                           via=consensus strings=0 (+2/+3) callees=0/1
+       CBaseEntity::SetTransmitState                        via=call      strings=0 (+0/+1) callees=0/0
+       CBaseEntity::StopSound                               via=call      strings=0 (+1/+0) callees=0/1
+       CBaseEntity::TransformStepData_ParentToParent        via=call      strings=0 (+0/+0) callees=0/1
+       CBaseGrenade::GetThrower                             via=call      strings=0 (+0/+0) callees=0/0
+       CBaseGrenade::SetThrower                             via=call      strings=0 (+0/+0) callees=0/0
+       CBaseMultiplayerPlayer::ShouldRunRateLimitedCommand  via=consensus strings=0 (+1/+0) callees=0/0
+       CBaseObject::SetPlasmaDisabled                       via=call      strings=0 (+0/+0) callees=0/0
+       CBasePlayer::ForceButtons                            via=call      strings=0 (+0/+0) callees=0/0
+       CBasePlayer::SetPlayerName                           via=call      strings=0 (+0/+0) callees=0/0
+       CBasePlayer::SnapEyeAngles                           via=call      strings=0 (+0/+0) callees=0/0
+       CBasePlayer::UnforceButtons                          via=call      strings=0 (+0/+0) callees=0/0
+       CCurrencyPack::SetAmount                             via=call      strings=0 (+0/+0) callees=0/0
+       CEconItemDefinition::IterateAttributes               via=consensus strings=0 (+0/+0) callees=0/0
+       CEconItemSchema::GetItemDefinitionByName             via=call      strings=0 (+0/+0) callees=0/0
+       CGameMovement::GetPointContentsCached                via=call      strings=0 (+0/+0) callees=0/1
+       CGlobalEntityList::NumberOfEntities                  via=call      strings=0 (+0/+0) callees=0/0
+       CPathTrack::GetNext                                  via=call      strings=0 (+0/+0) callees=0/0
+       CPopulationManager::IsInEndlessWaves                 via=consensus strings=0 (+0/+0) callees=0/0
+       CPopulationManager::RestorePlayerCurrency            via=call      strings=0 (+0/+1) callees=0/0
+       CTFBaseProjectile::FlyThink                          via=table     strings=0 (+0/+0) callees=0/2
+       CTFBaseRocket::GetOwnerPlayer                        via=call      strings=0 (+0/+0) callees=0/0
+       CTFBot::GetDesiredAttackRange                        via=call      strings=0 (+0/+0) callees=0/4
+       CTFBot::GetFlagCaptureZone                           via=consensus strings=0 (+0/+0) callees=0/0
+       CTFBot::GetNearestKnownSappableTarget                via=call      strings=0 (+0/+0) callees=0/0
+       CTFBotFetchFlag::CTFBotFetchFlag [C1]                via=call      strings=0 (+0/+0) callees=0/0
+       CTFBotSpySap::CTFBotSpySap [C2]                      via=call      strings=0 (+0/+0) callees=0/0
+       CTFBotTacticalMonitor::AvoidBumpingEnemies           via=call      strings=0 (+0/+0) callees=0/4
+       CTFFlameThrower::SetWeaponState                      via=consensus strings=0 (+1/+0) callees=0/3
+       CTFGameRules::GetCurrentMatchGroup                   via=call      strings=0 (+0/+0) callees=0/1
+       CTFGameStats::FindPlayerStats                        via=consensus strings=0 (+0/+0) callees=0/0
+       CTFGameStats::ResetKillHistory                       via=call      strings=0 (+0/+0) callees=0/0
+       CTFKnife::IsBehindAndFacingTarget                    via=call      strings=0 (+0/+0) callees=0/2
+       CTFNavArea::IsTFMarked                               via=call      strings=0 (+0/+0) callees=0/0
+       CTFNavArea::IsValidForWanderingPopulation            via=consensus strings=0 (+0/+0) callees=0/0
+       CTFNavArea::TFMark                                   via=call      strings=0 (+0/+0) callees=0/0
+       CTFPlayer::DoAnimationEvent                          via=call      strings=0 (+0/+1) callees=0/1
+       CTFPlayer::GetObjectOfType                           via=call      strings=0 (+0/+0) callees=0/0
+       CTFPlayer::HasTheFlag                                via=call      strings=0 (+0/+0) callees=0/0
+       CTFPlayer::HolsterOffHandWeapon                      via=consensus strings=0 (+0/+0) callees=0/0
+       CTFPlayer::InputSetCustomModel                       via=table     strings=0 (+0/+0) callees=0/1
+       CTFPlayer::IsMiniBoss                                via=call      strings=0 (+0/+0) callees=0/0
+       CTFPlayer::IsPlayerClass                             via=call      strings=0 (+0/+0) callees=0/0
+       CTFPlayer::RemoveCurrency                            via=consensus strings=0 (+0/+0) callees=0/0
+       CTFPlayer::SetOffHandWeapon                          via=call      strings=0 (+0/+0) callees=0/0
+       CTFPlayerShared::GetMaxBuffedHealth                  via=call      strings=0 (+0/+1) callees=0/1
+       CTFPlayerShared::RecalculatePlayerBodygroups         via=call      strings=0 (+0/+0) callees=0/0
+       CTFPlayerShared::RemoveDisguiseWeapon                via=call      strings=0 (+0/+0) callees=0/0
+       CTFPlayerShared::SetItemChargeMeter                  via=consensus strings=0 (+0/+0) callees=0/0
+       CTFPlayerShared::SetPlayerDominated                  via=consensus strings=0 (+0/+0) callees=0/0
+       CTFPointWeaponMimic::InputFireOnce                   via=table     strings=0 (+0/+0) callees=0/4
+       CTFSpellBook::SetSelectedSpell                       via=call      strings=0 (+0/+0) callees=0/0
+       CTFTeamManager::GetTeam                              via=consensus strings=0 (+0/+0) callees=0/0
+       CTFWeaponBase::GetTFWpnData                          via=call      strings=0 (+0/+0) callees=0/0
+       CTFWeaponBase::WeaponReset                           via=consensus strings=0 (+0/+1) callees=0/0
+       CTargetChangeGravity::InputChangeGrav                via=table     strings=0 (+0/+0) callees=0/0
+       CTargetChangeGravity::InputResetGrav                 via=table     strings=0 (+0/+0) callees=0/0
+       CTraceFilterSimple::CTraceFilterSimple               via=call      strings=0 (+0/+0) callees=0/0
+       CUpgrades::PlayerPurchasingUpgrade                   via=call      strings=0 (+0/+0) callees=0/1
+       CUtlConstStringBase<char>::Set                       via=call      strings=0 (+0/+0) callees=0/0
+       CVoiceGameMgr::ClientConnected                       via=call      strings=0 (+0/+0) callees=0/0
+       CWeaponMedigun::AddCharge                            via=consensus strings=0 (+0/+0) callees=0/0
+       DispatchParticleEffect [overload 2]                  via=call      strings=0 (+0/+0) callees=0/3
+       DispatchParticleEffect [overload 5]                  via=call      strings=0 (+0/+0) callees=0/1
+       EconItemInterface_OnOwnerKillEaterEvent              via=call      strings=0 (+0/+0) callees=0/0
+       GetFileWeaponInfoFromHandle                          via=call      strings=0 (+0/+0) callees=0/0
+       GetLoadoutPositionName                               via=call      strings=0 (+0/+1) callees=0/0
+       GetPlayerClassData                                   via=call      strings=0 (+0/+0) callees=0/0
+       InstancedScriptedScene                               via=call      strings=0 (+5/+0) callees=0/6
+       InventoryManager                                     via=consensus strings=0 (+0/+0) callees=0/0
+       NDebugOverlay::Axis                                  via=call      strings=0 (+0/+0) callees=0/2
+       NDebugOverlay::Box                                   via=call      strings=0 (+0/+0) callees=0/0
+       NDebugOverlay::EntityText                            via=call      strings=0 (+0/+0) callees=0/0
+       NDebugOverlay::EntityTextAtPosition                  via=call      strings=0 (+0/+0) callees=0/0
+       NDebugOverlay::Sphere                                via=call      strings=0 (+0/+0) callees=0/1
+       Path::Compute<CTFBotPathCost> [vec]                  via=call      strings=0 (+4/+0) callees=0/5
+       PrecacheParticleSystem                               via=call      strings=0 (+0/+0) callees=0/0
+       PropDynamic_CollidesWithGrenades                     via=call      strings=0 (+0/+0) callees=0/0
+       StandardFilterRules                                  via=call      strings=0 (+0/+0) callees=0/1
+       TFMapsWorkshop                                       via=call      strings=0 (+0/+5) callees=0/0
+       UTIL_GetCommandClientIndex                           via=call      strings=0 (+0/+0) callees=0/0
+       UTIL_IsHolidayActive                                 via=consensus strings=0 (+0/+0) callees=0/0
+       UTIL_Remove [CBaseEntity *]                          via=call      strings=0 (+0/+0) callees=0/0
+       UTIL_ScreenShake                                     via=call      strings=0 (+0/+3) callees=0/4
+       UTIL_StringToVector                                  via=call      strings=0 (+0/+0) callees=0/0
+       V_snprintf                                           via=call      strings=0 (+0/+0) callees=0/0
+       WeaponID_IsSniperRifle                               via=call      strings=0 (+0/+0) callees=0/0
+       WeaponID_IsSniperRifleOrBow                          via=consensus strings=0 (+0/+0) callees=0/0
+       WeaponIdToAlias                                      via=call      strings=0 (+0/+0) callees=0/0
