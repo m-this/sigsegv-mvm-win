@@ -1904,6 +1904,15 @@
 					lib   "server"
 					// string
 				}
+				"CZombie::OnTakeDamage_Alive"
+				{
+					type  "fixed"
+					sym   "_ZN7CZombie18OnTakeDamage_AliveERK15CTakeDamageInfo"
+					addr  "0x5bf200"
+					build "10828683"
+					lib   "server"
+					// verified: string lead (scored), agreed by strings: 3 shared string(s), 4/5 matched callees, windows/linux size 912/1838
+				}
 				"CBotNPCArcher::Spawn"
 				{
 					type  "fixed"
@@ -1939,6 +1948,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CTFWeaponBase::DeflectEntity"
+				{
+					type  "fixed"
+					sym   "_ZN13CTFWeaponBase13DeflectEntityEP11CBaseEntityP9CTFPlayerR6Vector"
+					addr  "0x633180"
+					build "10828683"
+					lib   "server"
+					// verified: vtable CPasstimeGun[424], agreed by strings: 2 shared string(s), 4/6 matched callees, windows/linux size 1536/2058
 				}
 				"CTFWeaponBase::GetShootSound"
 				{
@@ -2002,6 +2020,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CTFWeaponBase::ApplyFireDelay"
+				{
+					type  "fixed"
+					sym   "_ZNK13CTFWeaponBase14ApplyFireDelayEf"
+					addr  "0x630ae0"
+					build "10828683"
+					lib   "server"
+					// verified: string lead, agreed by strings+callees: 1 shared string(s), 4/5 matched callees, windows/linux size 336/359
 				}
 				"CTFWeaponBase::IsPassiveWeapon"
 				{
@@ -2110,6 +2137,24 @@
 					build "10828683"
 					lib   "server"
 					// vtable
+				}
+				"CBaseObject::AttachObjectToObject"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseObject20AttachObjectToObjectEP11CBaseEntityiR6Vector"
+					addr  "0x4beca0"
+					build "10828683"
+					lib   "server"
+					// verified: string lead, agreed by strings+callees: 1 shared string(s), 6/7 matched callees, windows/linux size 640/729
+				}
+				"CObjectSapper::GetSapperModelName"
+				{
+					type  "fixed"
+					sym   "_ZN13CObjectSapper18GetSapperModelNameE13SapperModel_tPKc"
+					addr  "0x4c8e50"
+					build "10828683"
+					lib   "server"
+					// verified: string lead, agreed by strings: 3 shared string(s), 3/3 matched callees, windows/linux size 256/280
 				}
 				"CObjectSapper::UpdateOnRemove"
 				{
@@ -2254,6 +2299,24 @@
 					build "10828683"
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: shares the string 'plague_healthkit_pickup' with the Linux function, and 6 of its 6 matched callees
+				}
+				"CSprite::SpriteCreate"
+				{
+					type  "fixed"
+					sym   "_ZN7CSprite12SpriteCreateEPKcRK6Vectorb"
+					addr  "0x336070"
+					build "10828683"
+					lib   "server"
+					// verified: string lead (scored), agreed by strings+callees: 1 shared string(s), 6/6 matched callees, windows/linux size 176/238
+				}
+				"CAmmoPack::Precache"
+				{
+					type  "fixed"
+					sym   "_ZN9CAmmoPack8PrecacheEv"
+					addr  "0x443b10"
+					build "10828683"
+					lib   "server"
+					// verified: vtable CAmmoPack[25], agreed by strings: 2 shared string(s), 3/3 matched callees, windows/linux size 48/62
 				}
 				"CBaseFilter::PassesDamageFilter"
 				{
@@ -2741,6 +2804,15 @@
 					lib   "server"
 					// string
 				}
+				"CHeadlessHatman::Spawn"
+				{
+					type  "fixed"
+					sym   "_ZN15CHeadlessHatman5SpawnEv"
+					addr  "0x59ca00"
+					build "10828683"
+					lib   "server"
+					// verified: string lead (scored), agreed by strings: 3 shared string(s), 6/9 matched callees, windows/linux size 320/514
+				}
 				"CMannVsMachineUpgradeManager::LoadUpgradesFileFromPath"
 				{
 					type  "fixed"
@@ -2759,6 +2831,15 @@
 					lib   "server"
 					// string
 				}
+				"CObjectSapper::ApplyRoboSapper"
+				{
+					type  "fixed"
+					sym   "_ZN13CObjectSapper15ApplyRoboSapperEP9CTFPlayerfi"
+					addr  "0x4c86f0"
+					build "10828683"
+					lib   "server"
+					// verified: string lead, agreed by strings+callees: 1 shared string(s), 5/6 matched callees, windows/linux size 960/1111
+				}
 				"CObjectSentrygun::Attack"
 				{
 					type  "fixed"
@@ -2767,6 +2848,24 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CObjectSentrygun::FireRocket"
+				{
+					type  "fixed"
+					sym   "_ZN16CObjectSentrygun10FireRocketEv"
+					addr  "0x4cbf40"
+					build "10828683"
+					lib   "server"
+					// verified: string lead, agreed by strings: 3 shared string(s), 6/8 matched callees, windows/linux size 816/931
+				}
+				"CObjectSentrygun::FoundTarget"
+				{
+					type  "fixed"
+					sym   "_ZN16CObjectSentrygun11FoundTargetEP11CBaseEntityRK6Vectorb"
+					addr  "0x4cc2c0"
+					build "10828683"
+					lib   "server"
+					// verified: string lead, agreed by strings: 2 shared string(s), 1/2 matched callees, windows/linux size 592/668
 				}
 				"CObjectSentrygun::MakeScaledBuilding"
 				{
@@ -2794,6 +2893,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CObjectSentrygun::StartUpgrading"
+				{
+					type  "fixed"
+					sym   "_ZN16CObjectSentrygun14StartUpgradingEv"
+					addr  "0x4cebc0"
+					build "10828683"
+					lib   "server"
+					// verified: string lead, agreed by strings: 3 shared string(s), 1/2 matched callees, windows/linux size 400/463
 				}
 				"CObjectSentrygun::ValidTargetPlayer"
 				{
@@ -3173,6 +3281,15 @@
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: shares the string 'WeaponMedi_Shield.Deploy', 'generate_rage_on_heal', 'models/props_mvm/mvm_player_shield2.mdl' with the Linux function, and 3 of its 3 matched callees
 				}
+				"CTFMedigunShield::ShieldTouch"
+				{
+					type  "fixed"
+					sym   "_ZN16CTFMedigunShield11ShieldTouchEP11CBaseEntity"
+					addr  "0x61e630"
+					build "10828683"
+					lib   "server"
+					// verified: string lead, agreed by strings+callees: 2 shared string(s), 8/8 matched callees, windows/linux size 1616/957
+				}
 				"CTFMinigun::AttackEnemyProjectiles"
 				{
 					type  "fixed"
@@ -3191,6 +3308,15 @@
 					lib   "server"
 					// string
 				}
+				"CTFPipebombLauncher::DetonateRemotePipebombs"
+				{
+					type  "fixed"
+					sym   "_ZN19CTFPipebombLauncher23DetonateRemotePipebombsEb"
+					addr  "0x623280"
+					build "10828683"
+					lib   "server"
+					// verified: string lead, agreed by strings: 2 shared string(s), 1/1 matched callees, windows/linux size 336/422
+				}
 				"CTFPlayerResource::UpdateConnectedPlayer"
 				{
 					type  "fixed"
@@ -3208,6 +3334,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CTFPlayerShared::OnRemoveHalloweenTiny"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFPlayerShared21OnRemoveHalloweenTinyEv"
+					addr  "0x527660"
+					build "10828683"
+					lib   "server"
+					// verified: string lead (scored), agreed by strings: 2 shared string(s), 2/3 matched callees, windows/linux size 1088/1793
 				}
 				"CTFPlayerShared::PulseRageBuff"
 				{
@@ -3272,6 +3407,33 @@
 					lib   "server"
 					// string
 				}
+				"CTFProjectile_Arrow::CheckSkyboxImpact"
+				{
+					type  "fixed"
+					sym   "_ZN19CTFProjectile_Arrow17CheckSkyboxImpactEP11CBaseEntity"
+					addr  "0x5f9c70"
+					build "10828683"
+					lib   "server"
+					// verified: string lead, agreed by strings: 4 shared string(s), 2/2 matched callees, windows/linux size 1056/1078
+				}
+				"CTFProjectile_Arrow::StrikeTarget"
+				{
+					type  "fixed"
+					sym   "_ZN19CTFProjectile_Arrow12StrikeTargetEP13mstudiobbox_tP11CBaseEntity"
+					addr  "0x5f85e0"
+					build "10828683"
+					lib   "server"
+					// verified: string lead, agreed by strings+callees: 1 shared string(s), 9/10 matched callees, windows/linux size 1872/2054
+				}
+				"CTFProjectile_BallOfFire::Burn"
+				{
+					type  "fixed"
+					sym   "_ZN24CTFProjectile_BallOfFire4BurnEP11CBaseEntity"
+					addr  "0x5350d0"
+					build "10828683"
+					lib   "server"
+					// verified: string lead, agreed by strings: 4 shared string(s), 16/16 matched callees, windows/linux size 3440/5261
+				}
 				"CTFProjectile_EnergyBall::CanHeadshot"
 				{
 					type  "fixed"
@@ -3307,6 +3469,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CTFProjectile_GrapplingHook::HookTarget"
+				{
+					type  "fixed"
+					sym   "_ZN27CTFProjectile_GrapplingHook10HookTargetEP11CBaseEntity"
+					addr  "0x5fb0f0"
+					build "10828683"
+					lib   "server"
+					// verified: string lead, agreed by strings: 3 shared string(s), 3/4 matched callees, windows/linux size 512/321
 				}
 				"CTFProjectile_Jar::Explode"
 				{
@@ -3371,6 +3542,15 @@
 					lib   "server"
 					// vtable
 				}
+				"CTFScatterGun::ApplyPostHitEffects"
+				{
+					type  "fixed"
+					sym   "_ZN13CTFScatterGun19ApplyPostHitEffectsERK15CTakeDamageInfoP9CTFPlayer"
+					addr  "0x628150"
+					build "10828683"
+					lib   "server"
+					// verified: vtable CTFPEPBrawlerBlaster[420], agreed by strings: 2 shared string(s), 4/4 matched callees, windows/linux size 704/957
+				}
 				"CTFSniperRifle::ApplyChargeSpeedModifications"
 				{
 					type  "fixed"
@@ -3424,6 +3604,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CTFStickBomb::Smack"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFStickBomb5SmackEv"
+					addr  "0x6022f0"
+					build "10828683"
+					lib   "server"
+					// verified: string lead, agreed by strings: 4 shared string(s), 10/11 matched callees, windows/linux size 912/1471
 				}
 				"CTFStunBall::ApplyBallImpactEffectOnVictim"
 				{
@@ -3586,6 +3775,15 @@
 					build "10828683"
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: shares the string 'robo_sapper' with the Linux function, and 6 of its 6 matched callees
+				}
+				"CTFWeaponInvis::ActivateInvisibilityWatch"
+				{
+					type  "fixed"
+					sym   "_ZN14CTFWeaponInvis25ActivateInvisibilityWatchEv"
+					addr  "0x612c80"
+					build "10828683"
+					lib   "server"
+					// verified: vtable CTFWeaponInvis[475], agreed by strings+callees: 1 shared string(s), 5/6 matched callees, windows/linux size 432/501
 				}
 				"CTFWearableDemoShield::DoSpecialAction"
 				{
@@ -4017,6 +4215,24 @@
 					lib   "server"
 					// string
 				}
+				"CMannVsMachineStats::SendUpgradesToPlayer"
+				{
+					type  "fixed"
+					sym   "_ZN19CMannVsMachineStats20SendUpgradesToPlayerEP9CTFPlayerP10CUtlVectorI12CUpgradeInfo10CUtlMemoryIS3_iEE"
+					addr  "0x5e12d0"
+					build "10828683"
+					lib   "server"
+					// verified: string lead, agreed by strings: 2 shared string(s), 4/4 matched callees, windows/linux size 224/262
+				}
+				"EvaluateConditional"
+				{
+					type  "fixed"
+					sym   "_Z19EvaluateConditionalPKc"
+					addr  "0x6e71a0"
+					build "10828683"
+					lib   "server"
+					// verified: string lead, agreed by strings: 4 shared string(s), 1/1 matched callees, windows/linux size 400/247
+				}
 				"UTIL_GetListenServerHost"
 				{
 					type  "fixed"
@@ -4133,6 +4349,15 @@
 					build "10828683"
 					lib   "server"
 					// verified: called by 62 of its 68 matched callers; body is call GEconItemSchema, add eax 4, ret, the Linux shape
+				}
+				"CMannVsMachineStats::ResetUpgradeSpending"
+				{
+					type  "fixed"
+					sym   "_ZN19CMannVsMachineStats20ResetUpgradeSpendingEP9CTFPlayer"
+					addr  "0x5e0d80"
+					build "10828683"
+					lib   "server"
+					// verified: string lead, agreed by strings+callees: 1 shared string(s), 4/4 matched callees, windows/linux size 352/705
 				}
 				"CGameRules::GetViewVectors"
 				{
@@ -4377,6 +4602,15 @@
 					lib   "server"
 					// call
 				}
+				"CanScatterGunKnockBack"
+				{
+					type  "fixed"
+					sym   "_Z22CanScatterGunKnockBackP13CTFWeaponBaseff"
+					addr  "0x628710"
+					build "10828683"
+					lib   "server"
+					// verified: string lead (scored), agreed by strings: 2 shared string(s), 2/2 matched callees, windows/linux size 112/129
+				}
 				"CTFGameRules::SetWinningTeam"
 				{
 					type  "fixed"
@@ -4448,6 +4682,15 @@
 					build "10828683"
 					lib   "server"
 					// call
+				}
+				"CTFGameRules::OnPlayerSpawned"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules15OnPlayerSpawnedEP9CTFPlayer"
+					addr  "0x493fb0"
+					build "10828683"
+					lib   "server"
+					// verified: string lead (scored), agreed by strings+callees: 2 shared string(s), 9/10 matched callees, windows/linux size 1936/3382
 				}
 				"UserMessageBegin"
 				{
@@ -4646,6 +4889,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"FX_FireBullets"
+				{
+					type  "fixed"
+					sym   "_Z14FX_FireBulletsP13CTFWeaponBaseiRK6VectorRK6QAngleiiiffb"
+					addr  "0x470b80"
+					build "10828683"
+					lib   "server"
+					// verified: string lead, agreed by strings: 5 shared string(s), 12/12 matched callees, windows/linux size 1776/3065
 				}
 				"INextBotComponent::GetBot"
 				{
@@ -5393,6 +5645,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CTeamplayRoundBasedRules::BroadcastSound"
+				{
+					type  "fixed"
+					sym   "_ZN24CTeamplayRoundBasedRules14BroadcastSoundEiPKciP11CBasePlayer"
+					addr  "0x4836e0"
+					build "10828683"
+					lib   "server"
+					// verified: string lead, agreed by strings: 2 shared string(s), 0/0 matched callees, windows/linux size 160/144
 				}
 				"UTIL_IsCommandIssuedByServerAdmin"
 				{
@@ -6438,6 +6699,15 @@
 					lib   "server"
 					// call
 				}
+				"ParseEvent"
+				{
+					type  "fixed"
+					sym   "_ZL10ParseEventP9KeyValues"
+					addr  "0x5ea190"
+					build "10828683"
+					lib   "server"
+					// verified: string lead, agreed by strings+callees: 1 shared string(s), 7/7 matched callees, windows/linux size 448/499
+				}
 				"CPopulationManager::AllocateBots"
 				{
 					type  "fixed"
@@ -7410,6 +7680,15 @@
 					lib   "server"
 					// vtable
 				}
+				"CTFPlayer::ApplyGenericPushbackImpulse"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer27ApplyGenericPushbackImpulseERK6VectorPS_"
+					addr  "0x4e15d0"
+					build "10828683"
+					lib   "server"
+					// verified: string lead, agreed by strings: 2 shared string(s), 7/8 matched callees, windows/linux size 320/440
+				}
 				"CTFPlayer::ApplyPushFromDamage"
 				{
 					type  "fixed"
@@ -7815,6 +8094,15 @@
 					lib   "server"
 					// consensus
 				}
+				"CTFPlayerShared::CalculateObjectCost"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFPlayerShared19CalculateObjectCostEP9CTFPlayeri"
+					addr  "0x51a810"
+					build "10828683"
+					lib   "server"
+					// verified: string lead (scored), agreed by strings: 2 shared string(s), 2/2 matched callees, windows/linux size 240/269
+				}
 				"CTFPlayerMove::StartCommand"
 				{
 					type  "fixed"
@@ -7832,6 +8120,15 @@
 					build "10828683"
 					lib   "server"
 					// vtable
+				}
+				"CTFPlayer::PainSound"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer9PainSoundERK15CTakeDamageInfo"
+					addr  "0x5059c0"
+					build "10828683"
+					lib   "server"
+					// verified: string lead, agreed by strings: 2 shared string(s), 6/7 matched callees, windows/linux size 640/1124
 				}
 				"CTFPlayer::UseActionSlotItemPressed"
 				{
@@ -7851,6 +8148,24 @@
 					lib   "server"
 					// string
 				}
+				"HandleRageGain"
+				{
+					type  "fixed"
+					sym   "_Z14HandleRageGainP9CTFPlayerjff"
+					addr  "0x4f5910"
+					build "10828683"
+					lib   "server"
+					// verified: string lead (scored), agreed by strings: 2 shared string(s), 2/2 matched callees, windows/linux size 592/848
+				}
+				"CTFPlayer::ModifyOrAppendCriteria"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer22ModifyOrAppendCriteriaER14AI_CriteriaSet"
+					addr  "0x4fec90"
+					build "10828683"
+					lib   "server"
+					// verified: string lead, agreed by strings: 43 shared string(s), 28/29 matched callees, windows/linux size 4976/5797
+				}
 				"CTFPlayer::Touch"
 				{
 					type  "fixed"
@@ -7859,6 +8174,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CTFPlayer::PlayTauntSceneFromItem"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer22PlayTauntSceneFromItemEPK13CEconItemView"
+					addr  "0x506760"
+					build "10828683"
+					lib   "server"
+					// verified: string lead, agreed by strings: 13 shared string(s), 19/22 matched callees, windows/linux size 2912/5299
 				}
 				"CTFPlayer::RegenThink"
 				{
@@ -8093,6 +8417,24 @@
 					build "10828683"
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: shares the string 'set_cannot_disguise' with the Linux function, and 3 of its 3 matched callees
+				}
+				"CTFPlayerShared::DetermineDisguiseWeapon"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFPlayerShared23DetermineDisguiseWeaponEb"
+					addr  "0x51ec90"
+					build "10828683"
+					lib   "server"
+					// verified: string lead, agreed by strings: 2 shared string(s), 11/12 matched callees, windows/linux size 2416/2344
+				}
+				"CTFPlayerShared::DetermineDisguiseWearables"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFPlayerShared26DetermineDisguiseWearablesEv"
+					addr  "0x51f600"
+					build "10828683"
+					lib   "server"
+					// verified: string lead, agreed by strings+callees: 1 shared string(s), 5/6 matched callees, windows/linux size 752/974
 				}
 				"CTFPlayerShared::SetScoutHypeMeter"
 				{

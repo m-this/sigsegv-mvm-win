@@ -46,11 +46,9 @@ def instructions_from(windows, decoder, address):
     for _, instruction in zip(range(MAX_INSTRUCTIONS), decoder.disasm(code, address)):
         raw = bytearray(instruction.bytes)
         keep = bytearray(b"\x01" * len(raw))
-        detail = instruction
-        # rel32 branches and calls: the target moves with the function.
+        # rel32 branches and calls: the target moves with the function, so
+        # everything after the opcode goes.
         if instruction.mnemonic in ("call", "jmp") or instruction.mnemonic.startswith("j"):
-            if instruction.imm_size if hasattr(instruction, "imm_size") else 0:
-                pass
             for index in range(1, len(raw)):
                 keep[index] = 0
         else:

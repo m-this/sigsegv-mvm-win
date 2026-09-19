@@ -8,7 +8,7 @@ takes the next port up when 27015 is already held: read the "Network: IP"
 line in tf/console.log for both.
 """
 import os
-import socket, struct, sys, time
+import socket, struct, sys
 def pkt(i, t, body): b = body.encode() + b"\0\0"; return struct.pack("<iii", len(b) + 8, i, t) + b
 def rd(s):
     hdr = s.recv(4); n = struct.unpack("<i", hdr)[0]; d = b""

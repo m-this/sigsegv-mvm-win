@@ -7,7 +7,7 @@ take one at a time. Every number below comes from a file in
 `status/20260918-build24245063/`; re-measure before trusting any of them
 against a newer game build.
 
-The port loads, resolves 41 % of its address table, and plays `mvm_decoy`
+The port loads, resolves 45 % of its address table, and plays `mvm_decoy`
 under Wine with the archipelago plugin and the defender bots beside it. It has
 also killed one player's real Windows server with `STATUS_HEAP_CORRUPTION`
 before the first map loaded, and that crash has not been reproduced. Both are
@@ -341,36 +341,51 @@ shows the 159 as OK.
 
 ### Batch 4: `Attr:Custom_Attributes` (191 failing detours)
 
-The largest mod and the one `CustomWeapon` needs. Its 191 names are in
-`failed_detours.tsv`. Take them by class: after batch 3 the `CTFPlayer*`
-and `CTFBot` ones fall out; what remains is `CObjectSentrygun`,
-`CObjectTeleporter`, `CObjectSapper`, `CTFProjectile_*`, `CTFWeaponBase*`,
-`CAttributeList`, `CAttributeManager`. Each is a `matchfuncs.py` question:
-unique string, then unique callee set, then a hand signature; `overrides.json`
-with a `why` for each. The 3 empty-name vhook failures are a separate line:
-find which `VHOOK_DECL` in `src/mod/attr/custom_attributes.cpp` has no class
-resolved and why.
-
-Acceptance: mod status OK, failed detours under 20, and a mission with
-`CustomWeapon` (16 of the 99; `pop-feature-usage.json` names them) spawns
-its weapons.
-
 ### Batch 5: the mission mods, in usage order (~230 addresses)
 
-`Pop:PopMgr_Extensions` 68, `Etc:Mapentity_Additions` 38,
-`Pop:TFBot_Extensions` 32, `Pop:ECAttr_Extensions` 26, `Pop:Tank_Extensions`
-12, `Pop:PointTemplates` 8, `Util:Lua` 8, `MvM:Extended_Upgrades` 7,
-`Pop:Wave_Extensions` 7, `Pop:WaveSpawn_Extensions` 6, `MvM:Robot_Limit` 3.
-Names per mod in `failed_detours.tsv`. Same method as batch 4. Work
-`PopMgr_Extensions` first: it is OK with half its hooks, which is the state
-that lies to a mission author.
+### Batch 7: the engine and the free functions (212 + 185)
 
-While here, decide the archipelago-side rule for a half-loaded mod: a mission
-whose keys need a hook that did not resolve should be refused with the hook's
-name, the way apw-2v6 asks for modifiers.
+**These three are one job and it is now measured, 2026-09-19.** Every address
+in them is a name with no Windows symbol, and the only thing that resolves one
+is evidence about that address. There is no transform, no rule and no rerun
+that does a batch of them at once; three were tried and all three failed.
 
-Acceptance: each mod OK with zero failed detours, and the missions that use
-its keys play wave 1 under Wine.
+What worked, and what it is worth:
+
+- `corroborate.py`, on the 316 candidates the field-evidence gate refuses:
+  **68 addresses**, each with a shared string literal or a full callee set.
+- the `emitgamedata.py` parser repair: **14 addresses** that had a match all
+  along and an empty symbol.
+- `IAddr_Sym::FindAddrWin`: **1 address**, and the class of bug it closes.
+- `leads.py` plus the score-and-sweep method in
+  `status/20260919-sweep/`: **38 addresses**.
+
+That is 121, taking the table from 1124 resolved to 1245. It is also the end
+of what the evidence supports. Of the 1,524 that remain:
+
+| | |
+| ---: | --- |
+| 705 | the Linux function references no string literal, so no string route reaches it |
+| 212 | in `engine.dll`, which publishes three exported names in total, so `GetProcAddress` reaches none of them |
+| 187 | have a candidate that several signals refuse, usually on size |
+| 57 | have candidates and none passes |
+| 48 | every candidate is already claimed by another address |
+| 33 | in `client.dll`, which a dedicated server never loads |
+
+What is left is per-address reversing: read the function on both sides, decide,
+and write the reason in `overrides.json`. `leads.py` prints the narrowest first
+and `corroborate.py` scores a proposal, so the tools are there; the reading is
+not automatable and is the months of work this was always going to be.
+
+Two things to do next that are not that:
+
+1. `CEconItemSchema::GetItemDefinitionByName` blocks `mvm_skeleclipse_b7a`
+   and every mission like it. The candidate and why it was refused are in
+   `status/20260919-sweep/`.
+2. The 705 with no strings want caller-position matching rather than strings.
+   `reseed.py` runs the existing propagation again with the verified addresses
+   as seeds: it found 44 new pairs, of which 7 were addresses anybody wanted
+   and none passed the filter. A better position aligner is the open idea.
 
 ### Batch 6: the two blocked detours and the static calling conventions
 
@@ -388,32 +403,6 @@ callee's convention from its `ret N` and its use of `ecx`/`edx`, and give
 
 Acceptance: the two `bad` entries leave `overrides.json`, and no static thunk
 is called with a convention its target does not have.
-
-### Batch 7: the engine and the free functions (212 + 185)
-
-**The cheap half is disproven, 2026-09-18.** These binaries export almost
-nothing: `engine.dll` 3 names, `server.dll` 9, `dedicated` 3, and `datacache`,
-`vscript`, `vguimatsurface` and `sourcemodcore` 2 each. Only `tier0` (451) and
-`vstdlib` (65) publish a real table. Against 1,645 failures that is **three
-addresses**, and only `Msg` has a gamedata entry asking for the undecorated
-name. There is no class fix here and the engine's 212 should be expected to
-stay.
-
-Asking the question did find a real bug. `IAddr_Sym` overrode `FindAddrLinux`
-only, so on Windows `FindAddrCommon` called the base `FindAddrWin`, which
-returns false: every `sym` entry failed without the lookup being tried, while
-`LibMgr::FindSym` on Windows is already `GetProcAddress`. Fixed in
-`src/addr/standard.cpp`. It is worth one address today and it is what the code
-always claimed to do.
-
-So the batch is the 185 free functions in `server.dll` (`report.txt`,
-"(free)"), by unique string reference through `matchfuncs.py`. `TE_*` and
-`GetParticleSystemNameFromIndex` are the ones a mission notices first: 16
-`Link FAIL` lines each in the log, and a null thunk ends the server if it is
-ever called.
-
-Acceptance: the free functions a mission reaches resolve, and each engine
-failure that remains is written down as unavailable with its reason.
 
 ### Batch 8: the 19 byte-patch mods and the 37 extractors
 

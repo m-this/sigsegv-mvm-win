@@ -13,6 +13,14 @@
   "rva": "0x3b8810",
   "why": "called by 62 of its 68 matched callers; body is call GEconItemSchema, add eax 4, ret, the Linux shape"
  },
+ "_Z14FX_FireBulletsP13CTFWeaponBaseiRK6VectorRK6QAngleiiiffb": {
+  "rva": "0x470b80",
+  "why": "string lead, agreed by strings: 5 shared string(s), 12/12 matched callees, windows/linux size 1776/3065"
+ },
+ "_Z14HandleRageGainP9CTFPlayerjff": {
+  "rva": "0x4f5910",
+  "why": "string lead (scored), agreed by strings: 2 shared string(s), 2/2 matched callees, windows/linux size 592/848"
+ },
  "_Z15OnBotTeleportedP6CTFBot": {
   "rva": "0x5edc70",
   "why": "corroborated by tools/winport/corroborate.py: shares the string 'MVM.Robot_Teleporter_Deliver' with the Linux function, and 6 of its 6 matched callees"
@@ -25,6 +33,10 @@
   "rva": "0x50ff60",
   "why": "corroborated by tools/winport/corroborate.py: shares the string 'cl_predict' with the Linux function, and 2 of its 2 matched callees"
  },
+ "_Z19EvaluateConditionalPKc": {
+  "rva": "0x6e71a0",
+  "why": "string lead, agreed by strings: 4 shared string(s), 1/1 matched callees, windows/linux size 400/247"
+ },
  "_Z19ReadEncryptedKVFileP11IFileSystemPKcPKhb": {
   "rva": "0x39b800",
   "why": "corroborated by tools/winport/corroborate.py: shares the string '%s.ctx', 'WeaponDatafile' with the Linux function, and 5 of its 5 matched callees"
@@ -32,6 +44,10 @@
  "_Z21SpawnHierarchicalListiP19HierarchicalSpawn_tb": {
   "rva": "0x297ec0",
   "why": "treats its first argument as a signed count and the second as the spawn list, 832 bytes against Linux's 856, and calls the helper holding the 'parented to itself' message that the string match had picked instead"
+ },
+ "_Z22CanScatterGunKnockBackP13CTFWeaponBaseff": {
+  "rva": "0x628710",
+  "why": "string lead (scored), agreed by strings: 2 shared string(s), 2/2 matched callees, windows/linux size 112/129"
  },
  "_Z23COM_GetUncompressedSizePKvj": {
   "lib": "engine",
@@ -46,6 +62,10 @@
  "_Z45AllocPooledString_StaticConstantStringPointerPKc": {
   "bad": true,
   "why": "0x281590 looks like the right code but MSVC compiled it as a member of the string pool, with the pool in ecx, while the tree calls it as a free function; bisect showed including it kills the server during a mission"
+ },
+ "_ZL10ParseEventP9KeyValues": {
+  "rva": "0x5ea190",
+  "why": "string lead, agreed by strings+callees: 1 shared string(s), 7/7 matched callees, windows/linux size 448/499"
  },
  "_ZL11g_HostState": {
   "lib": "engine",
@@ -80,6 +100,10 @@
   "rva": "0x32e550",
   "why": "corroborated by tools/winport/corroborate.py: shares the string '(%s)%s', 'CBaseEntity::EmitSound' with the Linux function, and 2 of its 2 matched callees"
  },
+ "_ZN11CBaseObject20AttachObjectToObjectEP11CBaseEntityiR6Vector": {
+  "rva": "0x4beca0",
+  "why": "string lead, agreed by strings+callees: 1 shared string(s), 6/7 matched callees, windows/linux size 640/729"
+ },
  "_ZN11CBasePlayer10ChangeTeamEibbb": {
   "bad": true,
   "why": "address 0x2dde10 is right (it owns the 'CBasePlayer::ChangeTeam( %d ) - invalid team index.' string), but detouring it on Windows makes the call from CTFPlayer::ChangeTeam land in .data, so it is left undetoured until the trampoline path is understood"
@@ -100,6 +124,10 @@
   "rva": "0x48b680",
   "why": "corroborated by tools/winport/corroborate.py: shares the string 'eventtype', 'full_round', 'player_disconnect' with the Linux function, and 15 of its 16 matched callees"
  },
+ "_ZN12CTFGameRules15OnPlayerSpawnedEP9CTFPlayer": {
+  "rva": "0x493fb0",
+  "why": "string lead (scored), agreed by strings+callees: 2 shared string(s), 9/10 matched callees, windows/linux size 1936/3382"
+ },
  "_ZN12CTFGameRules19GetTaggedConVarListEP9KeyValues": {
   "rva": "0x48e800",
   "why": "corroborated by tools/winport/corroborate.py: shares the string 'convar' with the Linux function, and 2 of its 2 matched callees"
@@ -111,6 +139,10 @@
  "_ZN12CTFGameStats17SendStatsToPlayerEP9CTFPlayerb": {
   "rva": "0x4ac8d0",
   "why": "corroborated by tools/winport/corroborate.py: shares the string 'MapStatsUpdate', 'PlayerStatsUpdate' with the Linux function, and 6 of its 6 matched callees"
+ },
+ "_ZN12CTFStickBomb5SmackEv": {
+  "rva": "0x6022f0",
+  "why": "string lead, agreed by strings: 4 shared string(s), 10/11 matched callees, windows/linux size 912/1471"
  },
  "_ZN13CBotNPCArcher5SpawnEv": {
   "rva": "0x597690",
@@ -124,6 +156,22 @@
  "_ZN13CObjectSapper14UpdateOnRemoveEv": {
   "rva": "0x4c9ea0",
   "why": "corroborated by tools/winport/corroborate.py: shares the string 'Weapon_p2rec.Timer', 'Weapon_sd_sapper.Timer' with the Linux function, and 2 of its 2 matched callees"
+ },
+ "_ZN13CObjectSapper15ApplyRoboSapperEP9CTFPlayerfi": {
+  "rva": "0x4c86f0",
+  "why": "string lead, agreed by strings+callees: 1 shared string(s), 5/6 matched callees, windows/linux size 960/1111"
+ },
+ "_ZN13CObjectSapper18GetSapperModelNameE13SapperModel_tPKc": {
+  "rva": "0x4c8e50",
+  "why": "string lead, agreed by strings: 3 shared string(s), 3/3 matched callees, windows/linux size 256/280"
+ },
+ "_ZN13CTFScatterGun19ApplyPostHitEffectsERK15CTakeDamageInfoP9CTFPlayer": {
+  "rva": "0x628150",
+  "why": "vtable CTFPEPBrawlerBlaster[420], agreed by strings: 2 shared string(s), 4/4 matched callees, windows/linux size 704/957"
+ },
+ "_ZN13CTFWeaponBase13DeflectEntityEP11CBaseEntityP9CTFPlayerR6Vector": {
+  "rva": "0x633180",
+  "why": "vtable CPasstimeGun[424], agreed by strings: 2 shared string(s), 4/6 matched callees, windows/linux size 1536/2058"
  },
  "_ZN13CTFWeaponBase13ItemPostFrameEv": {
   "rva": "0x636b40",
@@ -157,6 +205,10 @@
   "rva": "0x62b410",
   "why": "corroborated by tools/winport/corroborate.py: shares the string 'Weapon_Upgrade.ExplosiveHeadshot', 'dxhr_arm_muzzleflash', 'explosive_sniper_shot' with the Linux function, and 10 of its 10 matched callees"
  },
+ "_ZN14CTFWeaponInvis25ActivateInvisibilityWatchEv": {
+  "rva": "0x612c80",
+  "why": "vtable CTFWeaponInvis[475], agreed by strings+callees: 1 shared string(s), 5/6 matched callees, windows/linux size 432/501"
+ },
  "_ZN14CTriggerIgnite12IgniteEntityEP11CBaseEntity": {
   "rva": "0x542940",
   "why": "corroborated by tools/winport/corroborate.py: calls all 7 of the Linux function's matched callees, and no string disagrees"
@@ -189,6 +241,10 @@
   "rva": "0x3b8e30",
   "why": "called by 7 of its 8 matched callers; a map lookup on this+0x1bc. The Linux const overload is a jmp to the same body"
  },
+ "_ZN15CHeadlessHatman5SpawnEv": {
+  "rva": "0x59ca00",
+  "why": "string lead (scored), agreed by strings: 3 shared string(s), 6/9 matched callees, windows/linux size 320/514"
+ },
  "_ZN15CTFFlameThrower18GetMuzzlePosHelperEb": {
   "rva": "0x60a830",
   "why": "corroborated by tools/winport/corroborate.py: shares the string 'FCVAR_NEVER_AS_STRING' with the Linux function, and 2 of its 2 matched callees"
@@ -196,6 +252,34 @@
  "_ZN15CTFMapsWorkshop21PrepareLevelResourcesEPcjS0_j": {
   "rva": "0x433a90",
   "why": "corroborated by tools/winport/corroborate.py: shares the string '[TF Workshop] No steam connection in PrepareLevelResources,, '[TF Workshop] Preparing map ID %llu\\n', '[TF Workshop] Waiting for steam connection\\n' with the Linux function, and 2 of its 2 matched callees"
+ },
+ "_ZN15CTFPlayerShared19CalculateObjectCostEP9CTFPlayeri": {
+  "rva": "0x51a810",
+  "why": "string lead (scored), agreed by strings: 2 shared string(s), 2/2 matched callees, windows/linux size 240/269"
+ },
+ "_ZN15CTFPlayerShared21OnRemoveHalloweenTinyEv": {
+  "rva": "0x527660",
+  "why": "string lead (scored), agreed by strings: 2 shared string(s), 2/3 matched callees, windows/linux size 1088/1793"
+ },
+ "_ZN15CTFPlayerShared23DetermineDisguiseWeaponEb": {
+  "rva": "0x51ec90",
+  "why": "string lead, agreed by strings: 2 shared string(s), 11/12 matched callees, windows/linux size 2416/2344"
+ },
+ "_ZN15CTFPlayerShared26DetermineDisguiseWearablesEv": {
+  "rva": "0x51f600",
+  "why": "string lead, agreed by strings+callees: 1 shared string(s), 5/6 matched callees, windows/linux size 752/974"
+ },
+ "_ZN16CObjectSentrygun10FireRocketEv": {
+  "rva": "0x4cbf40",
+  "why": "string lead, agreed by strings: 3 shared string(s), 6/8 matched callees, windows/linux size 816/931"
+ },
+ "_ZN16CObjectSentrygun11FoundTargetEP11CBaseEntityRK6Vectorb": {
+  "rva": "0x4cc2c0",
+  "why": "string lead, agreed by strings: 2 shared string(s), 1/2 matched callees, windows/linux size 592/668"
+ },
+ "_ZN16CObjectSentrygun14StartUpgradingEv": {
+  "rva": "0x4cebc0",
+  "why": "string lead, agreed by strings: 3 shared string(s), 1/2 matched callees, windows/linux size 400/463"
  },
  "_ZN16CObjectSentrygun17ValidTargetPlayerEP9CTFPlayerRK6VectorS4_": {
   "rva": "0x4cab30",
@@ -220,6 +304,10 @@
  "_ZN16CTFDroppedWeapon6CreateEP9CTFPlayerRK6VectorRK6QAnglePKcPK13CEconItemView": {
   "rva": "0x5f7260",
   "why": "corroborated by tools/winport/corroborate.py: calls all 6 of the Linux function's matched callees, and no string disagrees"
+ },
+ "_ZN16CTFMedigunShield11ShieldTouchEP11CBaseEntity": {
+  "rva": "0x61e630",
+  "why": "string lead, agreed by strings+callees: 2 shared string(s), 8/8 matched callees, windows/linux size 1616/957"
  },
  "_ZN16CTFMedigunShield6CreateEP9CTFPlayer": {
   "rva": "0x61b2e0",
@@ -281,9 +369,29 @@
   "rva": "0x5e0500",
   "why": "corroborated by tools/winport/corroborate.py: shares the string 'MVMPlayerUpgradedEvent' with the Linux function, and 6 of its 6 matched callees"
  },
+ "_ZN19CMannVsMachineStats20ResetUpgradeSpendingEP9CTFPlayer": {
+  "rva": "0x5e0d80",
+  "why": "string lead, agreed by strings+callees: 1 shared string(s), 4/4 matched callees, windows/linux size 352/705"
+ },
+ "_ZN19CMannVsMachineStats20SendUpgradesToPlayerEP9CTFPlayerP10CUtlVectorI12CUpgradeInfo10CUtlMemoryIS3_iEE": {
+  "rva": "0x5e12d0",
+  "why": "string lead, agreed by strings: 2 shared string(s), 4/4 matched callees, windows/linux size 224/262"
+ },
  "_ZN19CMannVsMachineStats23NotifyTargetPlayerEventEP9CTFPlayerj19eMannVsMachineEventi": {
   "rva": "0x5e08c0",
   "why": "corroborated by tools/winport/corroborate.py: shares the string 'MVMLocalPlayerWaveSpendingValue' with the Linux function, and 6 of its 6 matched callees"
+ },
+ "_ZN19CTFPipebombLauncher23DetonateRemotePipebombsEb": {
+  "rva": "0x623280",
+  "why": "string lead, agreed by strings: 2 shared string(s), 1/1 matched callees, windows/linux size 336/422"
+ },
+ "_ZN19CTFProjectile_Arrow12StrikeTargetEP13mstudiobbox_tP11CBaseEntity": {
+  "rva": "0x5f85e0",
+  "why": "string lead, agreed by strings+callees: 1 shared string(s), 9/10 matched callees, windows/linux size 1872/2054"
+ },
+ "_ZN19CTFProjectile_Arrow17CheckSkyboxImpactEP11CBaseEntity": {
+  "rva": "0x5f9c70",
+  "why": "string lead, agreed by strings: 4 shared string(s), 2/2 matched callees, windows/linux size 1056/1078"
  },
  "_ZN20CTFProjectile_Rocket5SpawnEv": {
   "rva": "0x536080",
@@ -305,9 +413,21 @@
   "rva": "0x640eb0",
   "why": "corroborated by tools/winport/corroborate.py: shares the string 'mod_charge_time' with the Linux function, and 2 of its 2 matched callees"
  },
+ "_ZN24CTFProjectile_BallOfFire4BurnEP11CBaseEntity": {
+  "rva": "0x5350d0",
+  "why": "string lead, agreed by strings: 4 shared string(s), 16/16 matched callees, windows/linux size 3440/5261"
+ },
  "_ZN24CTeamplayRoundBasedRules11State_EnterE22gamerules_roundstate_t": {
   "rva": "0x350ae0",
   "why": "references both 'Gamerules: entering state' strings and compares this+0x3cc against the argument first, as Linux does; the other referrer is an inlined copy"
+ },
+ "_ZN24CTeamplayRoundBasedRules14BroadcastSoundEiPKciP11CBasePlayer": {
+  "rva": "0x4836e0",
+  "why": "string lead, agreed by strings: 2 shared string(s), 0/0 matched callees, windows/linux size 160/144"
+ },
+ "_ZN27CTFProjectile_GrapplingHook10HookTargetEP11CBaseEntity": {
+  "rva": "0x5fb0f0",
+  "why": "string lead, agreed by strings: 3 shared string(s), 3/4 matched callees, windows/linux size 512/321"
  },
  "_ZN30CTFProjectile_MechanicalArmOrb19CheckForProjectilesEv": {
   "rva": "0x619bf0",
@@ -321,9 +441,21 @@
   "rva": "0x5627b0",
   "why": "corroborated by tools/winport/corroborate.py: shares the string 'tf_projectile_energy_ball', 'tf_projectile_rocket' with the Linux function, and 4 of its 4 matched callees"
  },
+ "_ZN7CSprite12SpriteCreateEPKcRK6Vectorb": {
+  "rva": "0x336070",
+  "why": "string lead (scored), agreed by strings+callees: 1 shared string(s), 6/6 matched callees, windows/linux size 176/238"
+ },
  "_ZN7CZombie14UpdateOnRemoveEv": {
   "rva": "0x5bff30",
   "why": "corroborated by tools/winport/corroborate.py: calls all 8 of the Linux function's matched callees, and no string disagrees"
+ },
+ "_ZN7CZombie18OnTakeDamage_AliveERK15CTakeDamageInfo": {
+  "rva": "0x5bf200",
+  "why": "string lead (scored), agreed by strings: 3 shared string(s), 4/5 matched callees, windows/linux size 912/1838"
+ },
+ "_ZN9CAmmoPack8PrecacheEv": {
+  "rva": "0x443b10",
+  "why": "vtable CAmmoPack[25], agreed by strings: 2 shared string(s), 3/3 matched callees, windows/linux size 48/62"
  },
  "_ZN9CTFPlayer10ChangeTeamEibbb": {
   "bad": true,
@@ -365,9 +497,25 @@
   "rva": "0x505c40",
   "why": "corroborated by tools/winport/corroborate.py: calls all 13 of the Linux function's matched callees, and no string disagrees"
  },
+ "_ZN9CTFPlayer22ModifyOrAppendCriteriaER14AI_CriteriaSet": {
+  "rva": "0x4fec90",
+  "why": "string lead, agreed by strings: 43 shared string(s), 28/29 matched callees, windows/linux size 4976/5797"
+ },
+ "_ZN9CTFPlayer22PlayTauntSceneFromItemEPK13CEconItemView": {
+  "rva": "0x506760",
+  "why": "string lead, agreed by strings: 13 shared string(s), 19/22 matched callees, windows/linux size 2912/5299"
+ },
  "_ZN9CTFPlayer26CheckInstantLoadoutRespawnEv": {
   "rva": "0x4e45e0",
   "why": "corroborated by tools/winport/corroborate.py: calls all 6 of the Linux function's matched callees, and no string disagrees"
+ },
+ "_ZN9CTFPlayer27ApplyGenericPushbackImpulseERK6VectorPS_": {
+  "rva": "0x4e15d0",
+  "why": "string lead, agreed by strings: 2 shared string(s), 7/8 matched callees, windows/linux size 320/440"
+ },
+ "_ZN9CTFPlayer9PainSoundERK15CTakeDamageInfo": {
+  "rva": "0x5059c0",
+  "why": "string lead, agreed by strings: 2 shared string(s), 6/7 matched callees, windows/linux size 640/1124"
  },
  "_ZN9KeyValues23RecursiveMergeKeyValuesEPS_": {
   "rva": "0x6e9d90",
@@ -388,6 +536,10 @@
  "_ZNK13CTFWeaponBase10CanHolsterEv": {
   "rva": "0x632d00",
   "why": "corroborated by tools/winport/corroborate.py: shares the string 'honorbound' with the Linux function, and 3 of its 3 matched callees"
+ },
+ "_ZNK13CTFWeaponBase14ApplyFireDelayEf": {
+  "rva": "0x630ae0",
+  "why": "string lead, agreed by strings+callees: 1 shared string(s), 4/5 matched callees, windows/linux size 336/359"
  },
  "_ZNK15CEconItemSchema17GetItemDefinitionEi": {
   "rva": "0x3b9300",
