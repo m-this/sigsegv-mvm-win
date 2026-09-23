@@ -112,26 +112,22 @@ class CBasicScanner : public IScanner
 {
 public:
 	CBasicScanner(const IBounds& bounds, const void *seek, int len) :
-		IScanner(DIR, RTYPE, ALIGN, bounds, len)
-	{
-		this->m_Seek = new uint8_t[len];
-		memcpy(this->m_Seek, seek, len);
-	}
-	virtual ~CBasicScanner()
-	{
-		delete[] this->m_Seek;
-	}
+		IScanner(DIR, RTYPE, ALIGN, bounds, len),
+		m_Seek(reinterpret_cast<const uint8_t *>(seek), reinterpret_cast<const uint8_t *>(seek) + len) {}
 	
 	virtual bool CheckOne(const void *where) override;
 	
 private:
-	uint8_t *m_Seek;
+	/* A vector and not new[]: scanners are kept in vectors, and the implicit
+	 * copy a growing vector makes shared the buffer the old copy then freed.
+	 * On Windows that double free is STATUS_HEAP_CORRUPTION at load. */
+	std::vector<uint8_t> m_Seek;
 };
 
 template<ScanDir DIR, ScanResults RTYPE, int ALIGN>
 inline bool CBasicScanner<DIR, RTYPE, ALIGN>::CheckOne(const void *where)
 {
-	if (memcmp(where, this->m_Seek, this->GetLen()) == 0) {
+	if (memcmp(where, this->m_Seek.data(), this->GetLen()) == 0) {
 		this->AddMatch(where);
 		return true;
 	} else {
