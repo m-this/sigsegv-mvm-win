@@ -423,6 +423,7 @@ public:
 	
 	virtual const char *GetNameDebug() { return m_pszObjName; }
 	virtual const char *GetTypeDebug() { return "GLOBAL"; }
+	const char *GetObjName() const { return m_pszObjName; }
 	virtual uintptr_t GetAddressDebug() { return  (uintptr_t) this->m_pObjPtr; }
 	void *m_pObjPtr = nullptr;
 
@@ -455,13 +456,37 @@ public:
 		return this->GetRef();
 	}
 	
-	inline T& GetRef() const { return *(T *)link.m_pObjPtr; }
+	inline T& GetRef() const
+	{
+		/* An array of unknown bound or a function has no size to zero. */
+		if constexpr (!std::is_function_v<T> && !std::is_unbounded_array_v<T>) {
+			if (link.m_pObjPtr == nullptr) {
+				return this->Unresolved();
+			}
+		}
+		return *(T *)link.m_pObjPtr;
+	}
 	inline bool IsLinked() const { return link.m_pObjPtr != nullptr; }
 	
 protected:
-	inline T *GetPtr() const { return (T *)link.m_pObjPtr; }
+	inline T *GetPtr() const { return std::addressof(this->GetRef()); }
 private:
+	/* A global the gamedata could not find, which on Windows is dozens.
+	 * Reading one dereferenced null and killed the server as soon as a mod
+	 * touched it, at load for any mod the convar file enables. It reads as
+	 * zero bytes of its own now, so a pointer global reads null and the
+	 * caller's null check runs. */
+	T& Unresolved() const
+	{
+		if (this->m_pUnresolved == nullptr) {
+			this->m_pUnresolved = static_cast<T *>(calloc(1, sizeof(T)));
+			Warning("GlobalThunk: \"%s\" is unresolved and reads as zero\n", link.GetObjName());
+		}
+		return *this->m_pUnresolved;
+	}
+	
 	GlobalThunkBase link;
+	mutable T *m_pUnresolved = nullptr;
 };
 
 template<typename T>
