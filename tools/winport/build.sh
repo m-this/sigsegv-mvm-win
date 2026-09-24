@@ -89,7 +89,9 @@ compile_one() {
 		local f
 		flags=()
 		for f in "${WIN_CXXFLAGS[@]}"; do [[ $f == /FI*pch.h ]] || flags+=("$f"); done
-		flags+=("$OPT" /Oy- ${DEBUGINFO:+/Z7}) ;;
+		# NDEBUG, as a Valve release build has it: without it the file defines
+		# _DEBUG for crtdbg.h and asks the linker for the debug CRT.
+		flags+=("$OPT" /Oy- /DNDEBUG ${DEBUGINFO:+/Z7}) ;;
 	esac
 	if clang-cl "${flags[@]}" /clang:-MMD /clang:-MF"$obj.d" -c "$file" /Fo"$obj" > "$log" 2>&1; then
 		write_deps "$obj.d" "$obj.deps"
