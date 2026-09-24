@@ -1,2 +1,2 @@
-# The function under the eip=1 faults, whole: which of its callees does SigMod hook?
-server 0x516480 700
+# The function in CTFPlayer vtable slot +0x1ec, called with no arguments.
+# Filled in once inspect.sh names it.
