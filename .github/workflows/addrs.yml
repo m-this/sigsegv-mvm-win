@@ -47,11 +47,6 @@ jobs:
         done
         ls -la game-*/tf/bin game-*/tf/steam.inf
         grep -h -i 'ServerVersion' game-*/tf/steam.inf
-    # The same queries the heapcheck job runs, minutes after a push rather
-    # than after a Windows server has been installed.
-    - name: Disassemble the queries in disasm.txt
-      if: always()
-      run: python3 tools/winport/bed/disasm.py game-windows tools/winport/bed/disasm.txt
     - name: Derive the table
       run: |
         ver=$(grep -i '^ServerVersion=' game-windows/tf/steam.inf | cut -d= -f2 | tr -d '\r')
@@ -78,6 +73,11 @@ jobs:
         echo "entries: committed $(wc -l < committed.tsv), derived $(wc -l < derived.tsv), same address $(comm -12 committed.tsv derived.tsv | wc -l)"
         diff committed.tsv derived.tsv | head -40 || true
         tail -n 8 matchvtables.log matchfuncs.log
+    # The same queries the heapcheck job runs, last so the end of the log holds them; minutes after a push rather
+    # than after a Windows server has been installed.
+    - name: Disassemble the queries in disasm.txt
+      if: always()
+      run: python3 tools/winport/bed/disasm.py game-windows tools/winport/bed/disasm.txt
     - uses: actions/upload-artifact@v4
       if: always()
       with:
