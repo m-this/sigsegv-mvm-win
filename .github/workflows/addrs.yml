@@ -68,7 +68,7 @@ jobs:
         ver=$(grep -i '^ServerVersion=' ../game-windows/tf/steam.inf | cut -d= -f2 | tr -d '\r')
         echo "build served now: ServerVersion $ver"
         echo "committed table:  $(grep -m1 -o 'ServerVersion [0-9]*' ../gamedata/sigsegv/windows.txt)"
-        addrs() { grep -B4 'addr ' "$1" | grep -oE '^\s+"[^"]+"$|addr +"[^"]+"' | paste - - | sort; }
+        addrs() { awk '/^\t+"[^"]+"\r?$/ { name = $0 } /^\t+addr +"/ { print name "\t" $2 }' "$1" | sort; }
         addrs ../gamedata/sigsegv/windows.txt > committed.tsv
         addrs windows.txt > derived.tsv
         echo "entries: committed $(wc -l < committed.tsv), derived $(wc -l < derived.tsv), same address $(comm -12 committed.tsv derived.tsv | wc -l)"
@@ -77,7 +77,7 @@ jobs:
         echo "derived windows.txt, gzip+base64:"
         gzip -9c windows.txt | base64 -w 0; echo
         echo "end of derived windows.txt"
-        tail -n 8 matchvtables.log matchfuncs.log argsize.log
+        tail -n 8 matchvtables.log matchfuncs.log; cat argsize.log
         # Against the build it was made for, the committed table is what the
         # scripts make: an address added by hand without its override, or an
         # override the table lacks, fails here. Against another build the
