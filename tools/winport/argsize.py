@@ -151,6 +151,25 @@ def main():
         print(f"  {via:9} expect {expect:3}: {count:5}, pop as expected {ok}")
     json.dump(matches, open(sys.argv[2], "w"), indent=1)
 
+    # Every address the committed table gives a member, whatever put it there,
+    # against the pop its symbol calls for. A member with no arguments that
+    # ends `ret 4`, or one with two that ends `ret`, is the wrong function or a
+    # static, and a detour on it unbalances the stack.
+    table = (Path(__file__).resolve().parents[2] / "gamedata/sigsegv/windows.txt").read_text(errors="replace")
+    fixed = [(m[1], m[2], int(m[3], 16)) for m in re.finditer(
+        r'\n\t+"([^"]+)"\s*\n\t+\{[^}]*?\bsym\s+"(_Z[^"]+)"[^}]*?\baddr\s+"0x([0-9a-f]+)"[^}]*?lib\s+"server"', table)]
+    plain.update(demangle(sorted({sym for _, sym, _ in fixed} - set(plain))))
+    wrong = 0
+    for name, sym, rva in fixed:
+        expect = expected_pop(sym, plain.get(sym, ""))
+        if expect is None:
+            continue
+        got = first_return(windows, decoder, rva + windows.base)
+        if got is not None and got != expect:
+            wrong += 1
+            print(f"  table: {name} at {rva:#x} ends ret {got}, {plain[sym]} calls for {expect}")
+    print(f"table entries against their symbols: {wrong} pop what the arguments do not say")
+
 
 if __name__ == "__main__":
     main()
