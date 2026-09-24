@@ -1,4 +1,5 @@
 # What disasm.py prints into the heapcheck job's log, at its end.
+# (queries are read top to bottom; each prints its own block)
 # CBaseEntity::ThinkSet: SetContextThink is a macro over it, so the first call
 # after pushing a think context's name is ThinkSet. The contexts should agree.
 server callafter TeleporterContext

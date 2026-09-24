@@ -12,6 +12,11 @@ on:
       - '2*'
     branches:
       - 'claude/**'
+    # The address-table job's own inputs: a Windows server has nothing new
+    # to play when only these change.
+    paths-ignore:
+      - '.github/workflows/addrs.yml'
+      - 'tools/winport/bed/disasm.txt'
   workflow_dispatch:
     inputs:
       archipelago_ref:
