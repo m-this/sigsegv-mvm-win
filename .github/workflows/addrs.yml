@@ -17,6 +17,7 @@ on:
       - 'tools/winport/*.py'
       - 'tools/winport/overrides.json'
       - 'gamedata/sigsegv/windows.txt'
+      - 'tools/winport/wanted.txt'
       - 'tools/winport/bed/disasm.*'
 
 concurrency:
@@ -86,6 +87,15 @@ jobs:
           echo "windows.txt is not what the scripts derive from ServerVersion $ver: $(grep -c '^<' differ.txt) entries only committed, $(grep -c '^>' differ.txt) only derived"
           exit 1
         fi
+    - name: Candidates for the functions in wanted.txt
+      if: always()
+      run: |
+        wanted=$(grep -v '^#' tools/winport/wanted.txt | tr '\n' ' ')
+        [ -n "$wanted" ] || exit 0
+        for sym in $wanted; do
+          python3 -c "import json,sys; m=json.load(open('derived/matches.json')).get(sys.argv[1]); print(sys.argv[1], 'turned away:' if m else 'no match', m or '')" "$sym"
+        done
+        python3 tools/winport/candidates.py game-linux/tf/bin/server_srv.so game-windows/tf/bin/server.dll derived/matches.json $wanted
     # The same queries the heapcheck job runs, last so the end of the log holds them; minutes after a push rather
     # than after a Windows server has been installed.
     - name: Disassemble the queries in disasm.txt
