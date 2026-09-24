@@ -1,5 +1,4 @@
-# SigMod frames to name, as the bed report prints them. Sweep of f829870:
-# faults at map load through these.
-sigsegv.ext.2.tf2.dll+0x271fc3
-sigsegv.ext.2.tf2.dll+0xf6362
-sigsegv.ext.2.tf2.dll+0xf4eaa
+# SigMod frames to name, as the bed report prints them. Sweep of f4b9d1f:
+# a null read under a plugin native, through server+0x4e3cee.
+sigsegv.ext.2.tf2.dll+0x15554b
+sigsegv.ext.2.tf2.dll+0x156430
