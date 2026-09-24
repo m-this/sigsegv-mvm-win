@@ -37,10 +37,10 @@ if (Test-Path "$Out\cdb.log") {
   $pick = if ($starts.Count -le 4) { $starts } else { $starts[0, 1, -2, -1] }
   foreach ($i in $pick) {
     Write-Host "--- cdb: $($log[$i])"
-    $end = [Math]::Min($log.Count - 1, $i + 40)
+    $end = [Math]::Min($log.Count - 1, $i + 70)
     for ($j = $i + 1; $j -le $end; $j++) {
       if ($log[$j] -match '^(start +end|FIRST-CHANCE|SECOND-CHANCE|PROCESS EXIT|BREAKPOINT|HEAP CORRUPTION)') { break }
-      if ($log[$j] -match '^(eip=|\(|Access violation)' -or ($log[$j] -match '^[0-9a-f]{8} [0-9a-f]{8}' -and $log[$j] -notmatch 'ntdll!|KERNEL')) {
+      if ($log[$j] -match '^(eip=|\(|Access violation|FAULT-CODE|STACK-WORDS)' -or ($log[$j] -match '^[0-9a-f]{8}[ `]' -and $log[$j] -notmatch 'ntdll!|KERNEL')) {
         Write-Host ($log[$j] -replace '^[0-9a-f]{8} [0-9a-f]{8} +([0-9a-f]{8} ){3}', '' -replace ' \(FPO: [^)]*\)', '' -replace ' \(CONV: [a-z]+\)', '' -replace '/home/runner/work/sigsegv-mvm-win/sigsegv-mvm-win/', '')
       }
     }

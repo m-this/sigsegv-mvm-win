@@ -1,5 +1,8 @@
 # What disasm.py prints into the heapcheck job's log, at its end.
-# KeyValues::LoadFromBuffer: windows.txt has 0x6e8340, matched by the string
-# both overloads' neighbourhood shares; the CUtlBuffer& overload is wanted.
-string KeyValues::LoadFromBuffer(
-0x6e8340 90
+# The map-load access violation, frame by frame from the fault outwards,
+# below SigMod's Detour_KeyValues_LoadFromBuffer.
+engine CreateInterface+0xaccc2
+server CreateInterface+0x989e
+server CreateInterface+0x650d
+server CreateInterface+0x687a
+server CreateInterface+0x5489
