@@ -32,10 +32,11 @@ if ($srcds -and (Test-Path $cdb)) {
   @(
     ".logopen $out\cdb.log"
     ".sympath $extensions"
+    '.lines -e'
     '.reload'
-    'sxe -c ".echo FIRST-CHANCE AV; r; kv 16; gn" -c2 ".echo SECOND-CHANCE AV; r; kv 60; lm; .dump /ma C:\bed\dumps\av.dmp; q" av'
-    'sxe -c ".echo HEAP CORRUPTION; kv 60; .dump /ma C:\bed\dumps\heap.dmp; q" c0000374'
-    'sxe -c ".echo STACK BUFFER OVERRUN; kv 60; .dump /ma C:\bed\dumps\gs.dmp; q" c0000409'
+    'sxe -c ".echo FIRST-CHANCE AV; r; kv 16; gn" -c2 ".echo SECOND-CHANCE AV; r; kv 60; lm; .dump /ma C:/bed/dumps/av.dmp; q" av'
+    'sxe -c ".echo HEAP CORRUPTION; kv 60; .dump /ma C:/bed/dumps/heap.dmp; q" c0000374'
+    'sxe -c ".echo STACK BUFFER OVERRUN; kv 60; .dump /ma C:/bed/dumps/gs.dmp; q" c0000409'
     'sxe -c ".echo PROCESS EXIT; ~* kv 30; q" epr'
     'g'
   ) | Set-Content "$out\cdb.script"
