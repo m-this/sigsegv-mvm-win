@@ -18,6 +18,7 @@ on:
       - 'tools/winport/overrides.json'
       - 'gamedata/sigsegv/windows.txt'
       - 'tools/winport/wanted.txt'
+      - 'tools/winport/pluginsigs.txt'
       - 'tools/winport/bed/disasm.*'
 
 concurrency:
@@ -96,6 +97,23 @@ jobs:
           python3 -c "import json,sys; m=json.load(open('derived/matches.json')).get(sys.argv[1]); print(sys.argv[1], 'turned away:' if m else 'no match', m or '')" "$sym"
         done
         python3 tools/winport/candidates.py game-linux/tf/bin/server_srv.so game-windows/tf/bin/server.dll derived/matches.json $wanted
+    - name: Windows signatures for the plugin's functions in pluginsigs.txt
+      if: always()
+      run: |
+        python3 - <<'PY' > derived/pluginsigs.json
+        import json
+        matches = json.load(open("derived/matches.json"))
+        rows = []
+        for line in open("tools/winport/pluginsigs.txt"):
+            if line.strip() and not line.startswith("#"):
+                name, sym = line.split()
+                m = matches.get(sym)
+                print(name, sym, m and {k: m[k] for k in ("rva", "via") if k in m}, file=__import__("sys").stderr)
+                if m:
+                    rows.append({"name": name, "sym": sym, "rva": m["rva"]})
+        print(json.dumps(rows))
+        PY
+        python3 tools/winport/winsig.py game-windows/tf/bin/server.dll derived/pluginsigs.json
     # The same queries the heapcheck job runs, last so the end of the log holds them; minutes after a push rather
     # than after a Windows server has been installed.
     - name: Disassemble the queries in disasm.txt
