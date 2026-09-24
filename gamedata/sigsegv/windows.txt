@@ -5412,6 +5412,15 @@
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: calls all 9 of the Linux function's matched callees, and no string disagrees
 				}
+				"CBaseEntity::ThinkSet"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity8ThinkSetEMS_FvvEfPKc"
+					addr  "0x2025e0"
+					build "10828683"
+					lib   "server"
+					// verified: SetContextThink is a macro over ThinkSet, and the first call after pushing a think context's name is 0x2025e0 at 34 sites across TeleporterContext, RemoveThink, ZapThink, DieContext and ChargeLevelDegradeThink; the body stores the function at +8 (m_pfnThink) when the context is null and ends ret 0xc, a 4-byte BASEPTR, a float and a context, as SigMod calls it
+				}
 				"CTraceFilterEntity::ShouldHitEntity"
 				{
 					type  "fixed"

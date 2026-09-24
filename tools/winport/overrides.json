@@ -573,5 +573,9 @@
  "g_pPopulationManager": {
   "rva": "0xb95da8",
   "why": "written in CPopulationManager's own code at 0x5e28d4 and cleared to 0 at 0x5e2bbe, and read by the matched functions that read the Linux global"
+ },
+ "_ZN11CBaseEntity8ThinkSetEMS_FvvEfPKc": {
+  "rva": "0x2025e0",
+  "why": "SetContextThink is a macro over ThinkSet, and the first call after pushing a think context's name is 0x2025e0 at 34 sites across TeleporterContext, RemoveThink, ZapThink, DieContext and ChargeLevelDegradeThink; the body stores the function at +8 (m_pfnThink) when the context is null and ends ret 0xc, a 4-byte BASEPTR, a float and a context, as SigMod calls it"
  }
 }
