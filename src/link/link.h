@@ -21,8 +21,10 @@ inline R UnresolvedValue()
 	if constexpr (std::is_void_v<R>) {
 		return;
 	} else if constexpr (std::is_reference_v<R>) {
-		static auto *zero = static_cast<std::remove_reference_t<R> *>(calloc(1, sizeof(std::remove_reference_t<R>)));
-		return *zero;
+		/* The referenced type may be incomplete here: one zeroed block,
+		 * larger than any game object a thunk hands back, serves them all. */
+		alignas(16) static unsigned char zero[0x10000] = {};
+		return *reinterpret_cast<std::remove_reference_t<R> *>(zero);
 	} else {
 		alignas(R) static const unsigned char zero[sizeof(R)] = {};
 		return *reinterpret_cast<const R *>(zero);
