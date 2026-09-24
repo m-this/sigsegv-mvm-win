@@ -185,7 +185,7 @@ public:
 	
 	DECL_SENDPROP_RW(bool, m_bValidatedAttachedEntity);
 #if defined _WINDOWS
-	DECL_SENDPROP(uint8_t, m_AttributeManager);
+	DECL_SENDPROP_RW(uint8_t, m_AttributeManager);
 #endif
 	
 	// make the model visible for other players
