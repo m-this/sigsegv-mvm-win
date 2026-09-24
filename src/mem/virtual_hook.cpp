@@ -39,6 +39,27 @@ bool CVirtualHook::DoLoad()
             break;
         }
     }
+#if defined _WINDOWS
+    /* MSVC folds identical bodies, so one address can fill several slots:
+     * IBody::Update, INextBotComponent::Upkeep and IBody::ClearPendingAimReply
+     * are one `ret` in server.dll. The first slot holding it is then only one
+     * of them, and a hook put there runs in place of another virtual with
+     * other arguments. Refused, unless the address fills that one slot. */
+    if (found) {
+        size_t slots = 0;
+        for (const auto &[vtname, info] : RTTI::GetAllVTableInfo()) {
+            if ((const void **)info.vtable == pVTForCalcOffset) { slots = info.size / sizeof(void *); break; }
+        }
+        int count = 0;
+        for (size_t i = 0; i < slots; ++i) {
+            if (pVTForCalcOffset[i] == pFunc) ++count;
+        }
+        if (count > 1) {
+            Warning("CVirtualHook: \"%s\": refused, its address fills %d slots of %s\n", this->m_pszFuncName, count, this->m_pszVTableNameForCalcOffset);
+            return false;
+        }
+    }
+#endif
 
     // If another Virtual Hook was already applied to this function 
     if (!found) {

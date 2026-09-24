@@ -106,7 +106,7 @@ Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyCo
 # Detours SigMod refused on Windows: a pop mismatch is a wrong address or a
 # wrong declaration, and each one is a mechanic that does nothing.
 Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
-  Select-String -Pattern 'DoLoad: "[^"]+": refused' | ForEach-Object { $_.Line.Trim() } |
+  Select-String -Pattern '(?:DoLoad|CVirtualHook): "[^"]+": refused' | ForEach-Object { $_.Line.Trim() } |
   Sort-Object -Unique | ForEach-Object { Write-Host "refused detour: $_" }
 Get-ChildItem "$Out\dumps" -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "dump: $($_.Name) $($_.Length)" }
 # srcds catches its own crashes: it writes a minidump beside itself and exits
