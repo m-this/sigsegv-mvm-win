@@ -20,6 +20,7 @@ on:
       - 'tools/winport/wanted.txt'
       - 'tools/winport/pluginsigs.txt'
       - 'tools/winport/bed/disasm.*'
+      - 'tools/winport/bed/inspect.sh'
 
 concurrency:
   group: addrs-${{ github.ref }}
@@ -114,6 +115,9 @@ jobs:
         print(json.dumps(rows))
         PY
         python3 tools/winport/winsig.py game-windows/tf/bin/server.dll derived/pluginsigs.json
+    - name: The questions in inspect.sh
+      if: always()
+      run: sh tools/winport/bed/inspect.sh
     # The same queries the heapcheck job runs, last so the end of the log holds them; minutes after a push rather
     # than after a Windows server has been installed.
     - name: Disassemble the queries in disasm.txt

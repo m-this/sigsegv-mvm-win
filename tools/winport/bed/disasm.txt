@@ -7,3 +7,5 @@ server +0x36d490
 server +0x34fa56
 server +0x49e0e7
 server 0x36d470 40
+server 0x50d380 40
+server 0x508e30 40
