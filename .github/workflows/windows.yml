@@ -1,0 +1,104 @@
+name: Windows package
+
+# package-windows.zip, built from a tag rather than a laptop, the way
+# tools/winport/build.sh builds it: clang-cl and lld-link against an xwin SDK.
+# A pushed date tag (20260924) publishes a release with the zip; any other run
+# leaves the zip as an artifact, so a branch can be checked before tagging.
+
+on:
+  push:
+    tags:
+      - '2*'
+    branches:
+      - 'claude/**'
+    paths:
+      - '.github/workflows/windows.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        shell: bash
+    env:
+      XWIN: ${{ github.workspace }}/../xwin-sdk
+      BOOST: ${{ github.workspace }}/../winport-deps/boost/usr/include
+      ALLIEDMODDERS: ${{ github.workspace }}/../alliedmodders
+      OUT: ${{ github.workspace }}/../winport-build
+      # Left out of the release: /Z7 costs image size in a 32-bit process.
+      DEBUGINFO: ''
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Toolchain
+      run: |
+        sudo apt-get update -q
+        sudo apt-get install -y -q clang-18 lld-18 llvm-18
+        for t in clang-cl lld-link; do sudo ln -sf "/usr/bin/$t-18" "/usr/local/bin/$t"; done
+        clang-cl --version
+
+    - name: Windows SDK
+      run: |
+        curl -sSfL https://github.com/Jake-Shadle/xwin/releases/download/0.6.5/xwin-0.6.5-x86_64-unknown-linux-musl.tar.gz | tar -xz
+        ./xwin-0.6.5-x86_64-unknown-linux-musl/xwin --accept-license --arch x86 splat --output "$XWIN"
+
+    - name: Boost headers
+      run: |
+        mkdir -p "$(dirname "$(dirname "$(dirname "$BOOST")")")"
+        cd "$(dirname "$(dirname "$(dirname "$BOOST")")")"
+        apt-get download libboost1.83-dev
+        dpkg -x libboost1.83-dev_*.deb boost
+        test -d "$BOOST/boost"
+
+    - name: AlliedModders
+      run: |
+        mkdir -p "$ALLIEDMODDERS" && cd "$ALLIEDMODDERS"
+        git clone --recursive --depth 1 -b 1.11-dev https://github.com/alliedmodders/sourcemod
+        git clone --depth 1 -b tf2 https://github.com/alliedmodders/hl2sdk hl2sdk-tf2
+        git clone --depth 1 -b 1.11-dev https://github.com/alliedmodders/metamod-source
+        cp -r "$GITHUB_WORKSPACE/hl2sdk-manifests" hl2sdk-manifests
+
+    - name: Lua
+      run: |
+        cd libs
+        curl -sSfL https://www.lua.org/ftp/lua-5.4.4.tar.gz | tar -xz
+        mv lua-5.4.4 lua
+
+    - name: Build
+      run: |
+        JOBS=$(nproc) tools/winport/build.sh || { cat "$OUT"/errors/*.log 2>/dev/null | head -200; cat "$OUT/link.log" 2>/dev/null | head -100; exit 1; }
+
+    - name: Package
+      run: |
+        pkg="$OUT/package"
+        rm -rf "$pkg"
+        mkdir -p "$pkg/addons/sourcemod/extensions" "$pkg/addons/sourcemod/gamedata" "$pkg/cfg"
+        cp "$OUT/sigsegv.ext.2.tf2.dll" "$pkg/addons/sourcemod/extensions/"
+        cp sigsegv.autoload "$pkg/addons/sourcemod/extensions/"
+        cp -r gamedata/sigsegv "$pkg/addons/sourcemod/gamedata/"
+        cp cfg/sigsegv_convars.cfg "$pkg/cfg/"
+        (cd "$pkg" && zip -qr "$GITHUB_WORKSPACE/package-windows.zip" .)
+        sha256sum package-windows.zip | tee package-windows.zip.sha256
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: package-windows
+        path: |
+          package-windows.zip
+          package-windows.zip.sha256
+
+    - name: Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v2
+      with:
+        name: ${{ github.ref_name }} Windows build
+        files: |
+          package-windows.zip
+          package-windows.zip.sha256
