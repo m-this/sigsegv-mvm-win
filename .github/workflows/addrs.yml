@@ -1,0 +1,75 @@
+name: Address table
+
+# windows.txt from the game build Steam serves now, by the same scripts that
+# made the committed one, and how the two differ. Every entry is a fixed RVA
+# keyed to a ServerVersion, so a Valve update turns them all off until this
+# runs. The result is an artifact; committing it is a person's call.
+
+on:
+  schedule:
+    - cron: '17 5 * * 1'
+  workflow_dispatch:
+  push:
+    branches:
+      - 'claude/**'
+    paths:
+      - '.github/workflows/addrs.yml'
+      - 'tools/winport/*.py'
+      - 'tools/winport/overrides.json'
+
+jobs:
+  addrs:
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - name: Tools
+      run: |
+        pip install --quiet capstone pefile pyelftools
+        sudo apt-get install -y -q binutils > /dev/null
+        curl -sSfL --retry 3 -o dd.zip https://github.com/SteamRE/DepotDownloader/releases/latest/download/DepotDownloader-linux-x64.zip
+        unzip -q dd.zip -d dd && chmod +x dd/DepotDownloader
+    - name: The two server binaries of the current build
+      run: |
+        printf 'regex:^tf/bin/server(_srv)?\\.(so|dll)$\ntf/steam.inf\n' > files.txt
+        for os in linux windows; do
+          for attempt in 1 2 3; do
+            ./dd/DepotDownloader -app 232250 -os $os -filelist files.txt -dir game-$os && break
+            sleep 15
+          done
+        done
+        ls -la game-*/tf/bin game-*/tf/steam.inf
+        grep -h -i 'ServerVersion' game-*/tf/steam.inf
+    - name: Derive the table
+      run: |
+        ver=$(grep -i '^ServerVersion=' game-windows/tf/steam.inf | cut -d= -f2 | tr -d '\r')
+        linux_ver=$(grep -i '^ServerVersion=' game-linux/tf/steam.inf | cut -d= -f2 | tr -d '\r')
+        [ "$ver" = "$linux_ver" ] || { echo "the two builds differ: $ver vs $linux_ver"; exit 1; }
+        mkdir -p derived /tmp/sigport && cd derived
+        python3 ../tools/winport/classify.py .. > classify.log && cp /tmp/sigport/classified.json .
+        python3 ../tools/winport/dumplinuxvtables.py ../game-linux/tf/bin/server_srv.so linux-vtables > dumplinux.log
+        python3 ../tools/winport/dumpvtables.py ../game-windows/tf/bin/server.dll win-vtables > dumpwin.log
+        python3 ../tools/winport/matchvtables.py linux-vtables win-vtables classified.json > matchvtables.log
+        python3 ../tools/winport/matchfuncs.py ../game-linux/tf/bin/server_srv.so ../game-windows/tf/bin/server.dll matches.json linux-vtables win-vtables > matchfuncs.log
+        python3 ../tools/winport/datamaps.py ../game-windows/tf/bin/server.dll ../gamedata/sigsegv/datamaps.txt > datamaps.json
+        python3 ../tools/winport/emitgamedata.py matches.json "$ver" datamaps.json ../tools/winport/knownvtidx.generated.txt > windows.txt
+    - name: How it differs from the committed table
+      if: always()
+      run: |
+        cd derived
+        ver=$(grep -i '^ServerVersion=' ../game-windows/tf/steam.inf | cut -d= -f2 | tr -d '\r')
+        echo "build served now: ServerVersion $ver"
+        echo "committed table:  $(grep -m1 -o 'ServerVersion [0-9]*' ../gamedata/sigsegv/windows.txt)"
+        addrs() { grep -B4 'addr ' "$1" | grep -oE '^\s+"[^"]+"$|addr +"[^"]+"' | paste - - | sort; }
+        addrs ../gamedata/sigsegv/windows.txt > committed.tsv
+        addrs windows.txt > derived.tsv
+        echo "entries: committed $(wc -l < committed.tsv), derived $(wc -l < derived.tsv), same address $(comm -12 committed.tsv derived.tsv | wc -l)"
+        diff committed.tsv derived.tsv | head -40 || true
+        tail -8 matchvtables.log matchfuncs.log
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: derived-addrs
+        path: derived
