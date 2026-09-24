@@ -41,7 +41,10 @@ function Attach-Debugger($srcds, $n) {
     'sxe -c ".echo FIRST-CHANCE AV; r; kv 16; .echo FAULT-CODE; u @eip-10 L8; .echo STACK-WORDS; dps @esp L16; .echo ECX-WORDS; dd @ecx L12; .echo ECX-TEXT; da @ecx L40; .echo FRAME-PARAMS; kP 12; .echo MODULE-BASES; lm m server; lm m engine; lm m sigsegv*; gn" -c2 ".echo SECOND-CHANCE AV; r; kv 60; lm; q" av'
     'sxe -c ".echo HEAP CORRUPTION; kv 60; q" c0000374'
     'sxe -c ".echo STACK BUFFER OVERRUN; kv 60; q" c0000409'
-    'sxe -c ".echo PROCESS EXIT; ~* kv 30; q" epr'
+    # A C++ exception nobody catches ends in abort() and a quiet exit, so each
+    # one is logged where it is thrown; the ones SigMod catches are noise.
+    'sxe -c ".echo CPP EXCEPTION; kv 24; gn" eh'
+    'sxe -c ".echo PROCESS EXIT; .lastevent; ~* kv 30; q" epr'
     'g'
   ) | Set-Content "$out\cdb-$n.script"
   Start-Process $cdb -ArgumentList '-p', $srcds.Id, '-cf', "$out\cdb-$n.script" `
@@ -69,7 +72,10 @@ function Start-Bed {
   $script:starts++
   $n = $script:starts
   if (Test-Path "$tf\console.log") { Copy-Item "$tf\console.log" "$out\consoles\console-$($n - 1).log" }
-  Get-Process srcds, winbed -ErrorAction SilentlyContinue | Stop-Process -Force
+  Get-Process srcds, winbed, cdb -ErrorAction SilentlyContinue | Stop-Process -Force
+  # The next srcds cannot bind the port until the last one is gone.
+  Get-Process srcds -ErrorAction SilentlyContinue | Wait-Process -Timeout 60 -ErrorAction SilentlyContinue
+  Start-Sleep 5
   $script:server = Start-Process bedbin\winbed.exe -ArgumentList '-serve', '-root', $env:BED `
     -RedirectStandardOutput "$out\winbed-$n.out" -RedirectStandardError "$out\winbed-$n.err" -PassThru
   $srcds = $null
