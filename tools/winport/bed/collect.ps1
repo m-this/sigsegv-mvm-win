@@ -96,7 +96,7 @@ Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort
 }
 # Every unresolved function a mission reached, across all the server's starts.
 $unresolved = Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
-  Select-String -Pattern 'called unresolved function "([^"]+)"' | ForEach-Object { $_.Matches[0].Groups[1].Value } | Sort-Object -Unique
+  Select-String -Pattern '(?:called unresolved function|virtual function) "([^"]+)"' | ForEach-Object { $_.Matches[0].Groups[1].Value } | Sort-Object -Unique
 if ($unresolved) { Write-Host ("unresolved functions called: " + ($unresolved -join ', ')) }
 # SigMod and tf2_archipelago both detour CTFPlayer::GetMaxAmmo. Whether the two
 # still share it after SigMod reconfigures is read off these lines.

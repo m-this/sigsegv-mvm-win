@@ -92,7 +92,7 @@ public:
 	{
 #if defined _WINDOWS
 		/* the Windows address table is incomplete; name the gap instead of jumping to 0 */
-		if (link.GetFuncPtr() == nullptr) Error("SigMod: called unresolved function \"%s\"\n", link.GetFuncName());
+		if (link.GetFuncPtr() == nullptr) { Warning("SigMod: called unresolved function \"%s\"\n", link.GetFuncName()); Error("SigMod: called unresolved function \"%s\"\n", link.GetFuncName()); }
 #endif
 #ifdef DEBUG
 		assert(link.GetFuncPtr() != nullptr); 
@@ -173,7 +173,7 @@ public:
 	{
 #if defined _WINDOWS
 		/* the Windows address table is incomplete; name the gap instead of jumping to 0 */
-		if (link.GetFuncPtr() == nullptr) Error("SigMod: called unresolved function \"%s\"\n", link.GetFuncName());
+		if (link.GetFuncPtr() == nullptr) { Warning("SigMod: called unresolved function \"%s\"\n", link.GetFuncName()); Error("SigMod: called unresolved function \"%s\"\n", link.GetFuncName()); }
 #endif
 #ifdef __GNUC__
 		FPtr pFunc= (FPtr)link.GetFuncPtr();
@@ -216,7 +216,7 @@ public:
 	{
 #if defined _WINDOWS
 		/* the Windows address table is incomplete; name the gap instead of jumping to 0 */
-		if (link.GetFuncPtr() == nullptr) Error("SigMod: called unresolved function \"%s\"\n", link.GetFuncName());
+		if (link.GetFuncPtr() == nullptr) { Warning("SigMod: called unresolved function \"%s\"\n", link.GetFuncName()); Error("SigMod: called unresolved function \"%s\"\n", link.GetFuncName()); }
 #endif
 #ifdef __GNUC__
 		FPtr pFunc= (FPtr)link.GetFuncPtr();
@@ -343,7 +343,7 @@ public:
 #if defined _WINDOWS
 		/* an index of -1 would read the slot before the vtable and call whatever
 		   is there; the Windows address table is still incomplete */
-		if (vt_index == -1) Error("SigMod: virtual function \"%s\" has no vtable index\n", link.GetFuncName());
+		if (vt_index == -1) { Warning("SigMod: virtual function \"%s\" has no vtable index\n", link.GetFuncName()); Error("SigMod: virtual function \"%s\" has no vtable index\n", link.GetFuncName()); }
 #endif
 		
 		auto pVT = *reinterpret_cast<void **const *>(obj);
@@ -384,7 +384,7 @@ public:
 #if defined _WINDOWS
 		/* an index of -1 would read the slot before the vtable and call whatever
 		   is there; the Windows address table is still incomplete */
-		if (vt_index == -1) Error("SigMod: virtual function \"%s\" has no vtable index\n", link.GetFuncName());
+		if (vt_index == -1) { Warning("SigMod: virtual function \"%s\" has no vtable index\n", link.GetFuncName()); Error("SigMod: virtual function \"%s\" has no vtable index\n", link.GetFuncName()); }
 #endif
 		
 		auto pVT = *reinterpret_cast<void **const *>(obj);
