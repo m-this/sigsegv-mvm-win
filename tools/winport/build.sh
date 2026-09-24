@@ -83,6 +83,13 @@ compile_one() {
 	# Built on its own, as AMBuilder's autoversion step builds it: version.h
 	# forced in for the extern "C", none of the extension's headers.
 	version) flags=("${WIN_CFLAGS[@]}" /TP /FI"$ROOT/src/version.h") ;;
+	# The SDK's allocator override, on its own: SigMod's precompiled header is
+	# not forced into it. See the sources list for why it is here at all.
+	memoverride)
+		local f
+		flags=()
+		for f in "${WIN_CXXFLAGS[@]}"; do [[ $f == /FI*pch.h ]] || flags+=("$f"); done
+		flags+=("$OPT" /Oy- ${DEBUGINFO:+/Z7}) ;;
 	esac
 	if clang-cl "${flags[@]}" /clang:-MMD /clang:-MF"$obj.d" -c "$file" /Fo"$obj" > "$log" 2>&1; then
 		write_deps "$obj.d" "$obj.deps"
@@ -162,6 +169,14 @@ PY
 	if [ -f src/sdk/smsdk_ext.cpp ]; then echo "ext src/sdk/smsdk_ext.cpp"
 	else echo "ext $AM/sourcemod/public/smsdk_ext.cpp"; fi
 	echo "version src/version.cpp"
+	# Every malloc, free, new and delete in the extension goes through the
+	# engine's g_pMemAlloc, as it does in a Valve DLL. SigMod frees and grows
+	# memory the game allocated (a CUtlString in the population manager's file
+	# list, a CUtlVector it appends to) and hands the game objects it allocated
+	# (a CTFBotAttack the game deletes). On Linux there is one malloc; on
+	# Windows the extension's static CRT is a heap of its own, and freeing the
+	# game's string there was STATUS_HEAP_CORRUPTION at map start.
+	echo "memoverride $SDK/public/tier0/memoverride.cpp"
 	for f in libs/ann/src/*.cpp; do echo "ann $f"; done
 	for f in libs/lua/src/*.c; do
 		case "$f" in */lua.c|*/luac.c) ;; *) echo "lua $f" ;; esac
