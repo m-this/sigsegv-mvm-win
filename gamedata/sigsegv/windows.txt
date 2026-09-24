@@ -8404,10 +8404,10 @@
 				{
 					type  "fixed"
 					sym   "_ZN9CTFPlayer10RegenThinkEv"
-					addr  "0x508e30"
+					addr  "0x508eb0"
 					build "10828683"
 					lib   "server"
-					// string
+					// verified: the one site pushing "RegenThink" before ThinkSet (0x508ed0) pushes 0x508eb0 as the think function, inside 0x508eb0 itself: SetContextThink(&CTFPlayer::RegenThink, t, "RegenThink") at the top of RegenThink, as the source has it. It reads no argument. The string match had given 0x508e30, the function just before, which takes (int, float) and ends ret 8: RegenAmmoInternal, which calls GetMaxAmmo and GiveAmmo
 				}
 				"CTFPlayer::ParseSharedTauntDataFromEconItemView"
 				{

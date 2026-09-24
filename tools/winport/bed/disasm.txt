@@ -1,4 +1,1 @@
-# RegenThink: the one push of "RegenThink" followed by ThinkSet is at
-# 0x508ed0. SetContextThink pushes the think function just before.
-server +0x508ed0
-server 0x508eb0 60
+# Nothing asked this round.
