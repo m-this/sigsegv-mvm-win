@@ -108,29 +108,82 @@ namespace ExitTrace
 	TerminateProcess_t RealTerminateProcess = nullptr;
 	ExitProcess_t      RealExitProcess      = nullptr;
 	
-	void Write(const char *what, UINT code)
+	/* An address as module+offset, the way the bed report names frames. */
+	void Name(char *out, size_t size, const void *addr)
 	{
-		void *frames[48];
-		USHORT n = RtlCaptureStackBackTrace(1, 48, frames, nullptr);
+		HMODULE mod = nullptr;
+		char path[MAX_PATH] = "?";
+		if (GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+			reinterpret_cast<LPCSTR>(addr), &mod) && mod != nullptr) {
+			GetModuleFileNameA(mod, path, sizeof(path));
+		}
+		const char *base = strrchr(path, '\\');
+		snprintf(out, size, "%s+0x%x", base != nullptr ? base + 1 : path,
+			mod != nullptr ? (unsigned)((uintptr_t)addr - (uintptr_t)mod) : (unsigned)(uintptr_t)addr);
+	}
+	
+	void Write(const char *header, void *const *frames, int n)
+	{
 		FILE *f = fopen("sigsegv_exit.txt", "a");
-		char line[512];
-		snprintf(line, sizeof(line), "SigMod: %s(%u) called from:\n", what, code);
-		if (f != nullptr) fputs(line, f);
-		Warning("%s", line);
-		for (USHORT i = 0; i < n; ++i) {
-			HMODULE mod = nullptr;
-			char path[MAX_PATH] = "?";
-			if (GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
-				reinterpret_cast<LPCSTR>(frames[i]), &mod) && mod != nullptr) {
-				GetModuleFileNameA(mod, path, sizeof(path));
-			}
-			const char *base = strrchr(path, '\\');
-			snprintf(line, sizeof(line), "  %s+0x%x\n", base != nullptr ? base + 1 : path,
-				mod != nullptr ? (unsigned)((uintptr_t)frames[i] - (uintptr_t)mod) : (unsigned)(uintptr_t)frames[i]);
+		if (f != nullptr) fputs(header, f);
+		Warning("%s", header);
+		char line[512], name[MAX_PATH + 16];
+		for (int i = 0; i < n; ++i) {
+			Name(name, sizeof(name), frames[i]);
+			snprintf(line, sizeof(line), "  %s\n", name);
 			if (f != nullptr) fputs(line, f);
 			Warning("%s", line);
 		}
 		if (f != nullptr) fclose(f);
+	}
+	
+	void Write(const char *what, UINT code)
+	{
+		void *frames[48];
+		USHORT n = RtlCaptureStackBackTrace(2, 48, frames, nullptr);
+		char header[128];
+		snprintf(header, sizeof(header), "SigMod: %s(%u) called from:\n", what, code);
+		Write(header, frames, n);
+	}
+	
+	bool Readable(const void *p, size_t len)
+	{
+		MEMORY_BASIC_INFORMATION mbi;
+		if (VirtualQuery(p, &mbi, sizeof(mbi)) == 0 || mbi.State != MEM_COMMIT) return false;
+		if (mbi.Protect & (PAGE_NOACCESS | PAGE_GUARD)) return false;
+		return (uintptr_t)p + len <= (uintptr_t)mbi.BaseAddress + mbi.RegionSize;
+	}
+	
+	/* The faults that end a server: an access violation, or a jump into data.
+	 * The handler sees them first-chance, before whatever catches them, so it
+	 * records the first few and passes every one on untouched. The frames are
+	 * the EBP chain, which is what the game's own code keeps. */
+	LONG CALLBACK OnFault(EXCEPTION_POINTERS *info)
+	{
+		static LONG recorded = 0;
+		DWORD code = info->ExceptionRecord->ExceptionCode;
+		if (code != EXCEPTION_ACCESS_VIOLATION && code != EXCEPTION_PRIV_INSTRUCTION && code != EXCEPTION_ILLEGAL_INSTRUCTION) return EXCEPTION_CONTINUE_SEARCH;
+		if (InterlockedIncrement(&recorded) > 8) return EXCEPTION_CONTINUE_SEARCH;
+		
+		const CONTEXT *ctx = info->ContextRecord;
+		void *frames[40];
+		int n = 0;
+		frames[n++] = reinterpret_cast<void *>(ctx->Eip);
+		auto ebp = reinterpret_cast<const uintptr_t *>(ctx->Ebp);
+		while (n < 40 && ebp != nullptr && Readable(ebp, 8)) {
+			if (ebp[1] == 0) break;
+			frames[n++] = reinterpret_cast<void *>(ebp[1]);
+			auto next = reinterpret_cast<const uintptr_t *>(ebp[0]);
+			if (next <= ebp) break;
+			ebp = next;
+		}
+		char name[MAX_PATH + 16], header[MAX_PATH + 160];
+		Name(name, sizeof(name), reinterpret_cast<void *>(ctx->Eip));
+		ULONG_PTR target = info->ExceptionRecord->NumberParameters >= 2 ? info->ExceptionRecord->ExceptionInformation[1] : 0;
+		snprintf(header, sizeof(header), "SigMod: fault 0x%08lx at %s touching 0x%08lx (esp 0x%08lx), EBP chain:\n",
+			code, name, (unsigned long)target, (unsigned long)ctx->Esp);
+		Write(header, frames, n);
+		return EXCEPTION_CONTINUE_SEARCH;
 	}
 	
 	BOOL WINAPI HookTerminateProcess(HANDLE process, UINT code)
@@ -168,6 +221,7 @@ namespace ExitTrace
 	
 	void Install()
 	{
+		AddVectoredExceptionHandler(1, &OnFault);
 		HMODULE k32 = GetModuleHandleA("kernel32.dll");
 		HMODULE kb  = GetModuleHandleA("kernelbase.dll");
 		if (k32 == nullptr) return;
