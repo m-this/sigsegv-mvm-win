@@ -91,6 +91,11 @@ if ($unresolved) { Write-Host ("unresolved functions called: " + ($unresolved -j
 Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
   Select-String -Pattern 'detour validation failure|probably already detoured|Make it Count' |
   ForEach-Object { $_.Line.Trim() } | Sort-Object -Unique | ForEach-Object { Write-Host "shared detour: $_" }
+# Detours SigMod refused on Windows: a pop mismatch is a wrong address or a
+# wrong declaration, and each one is a mechanic that does nothing.
+Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
+  Select-String -Pattern 'DoLoad: "[^"]+": refused' | ForEach-Object { $_.Line.Trim() } |
+  Sort-Object -Unique | ForEach-Object { Write-Host "refused detour: $_" }
 Get-ChildItem "$Out\dumps" -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "dump: $($_.Name) $($_.Length)" }
 Get-Content "$Out\winbed.err" -Tail 5 -ErrorAction SilentlyContinue | Write-Host
 if (Test-Path "$Out\results.jsonl") {
