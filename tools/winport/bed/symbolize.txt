@@ -1,4 +1,2 @@
-# SigMod frames to name, as the bed report prints them. Sweep of f4b9d1f:
-# a null read under a plugin native, through server+0x4e3cee.
-sigsegv.ext.2.tf2.dll+0x15554b
-sigsegv.ext.2.tf2.dll+0x156430
+# SigMod frames to name, as the bed report prints them.
+# Nothing asked this round.

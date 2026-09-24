@@ -30,11 +30,13 @@ CTFTeam *CTFTeamManager::GetTeam(int iTeam)
 	static CHandle<CBaseEntity> cache[8];
 	if (iTeam < 0 || iTeam >= (int)ARRAYSIZE(cache)) return nullptr;
 	
-	CBaseEntity *team = cache[iTeam];
+	/* A team entity keeps its number in CTeam's own m_iTeamNum, which the
+	 * virtual reads; CBaseEntity's is left at 0 on every team. */
+	auto team = static_cast<CTeam *>(cache[iTeam].Get());
 	if (team == nullptr || team->GetTeamNumber() != iTeam) {
 		team = nullptr;
 		for (CBaseEntity *ent = servertools->FindEntityByClassname(nullptr, "tf_team"); ent != nullptr; ent = servertools->FindEntityByClassname(ent, "tf_team")) {
-			if (ent->GetTeamNumber() == iTeam) { team = ent; break; }
+			if (static_cast<CTeam *>(ent)->GetTeamNumber() == iTeam) { team = static_cast<CTeam *>(ent); break; }
 		}
 		cache[iTeam] = team;
 	}
