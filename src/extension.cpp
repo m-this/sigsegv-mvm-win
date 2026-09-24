@@ -91,12 +91,116 @@ IPhraseFile *phrasesAttribsFile = nullptr;
 IScriptManager *scriptManager = nullptr;
 
 extern int laserSprite;
+#if defined _WINDOWS
+/* Who ends the server. The engine's Error() leaves through tier0's
+ * Plat_ExitProcess, TerminateProcess on itself with status 100, and on
+ * Windows its message never reaches console.log: a server that died that way
+ * looked like one that simply stopped. Every loaded module's imports of
+ * TerminateProcess and ExitProcess are pointed here, which writes the calling
+ * stack as module+offset to sigsegv_exit.txt in the game directory and to the
+ * console, then does what was asked. */
+namespace ExitTrace
+{
+	using TerminateProcess_t = BOOL (WINAPI *)(HANDLE, UINT);
+	using ExitProcess_t      = void (WINAPI *)(UINT);
+	TerminateProcess_t RealTerminateProcess = nullptr;
+	ExitProcess_t      RealExitProcess      = nullptr;
+	
+	void Write(const char *what, UINT code)
+	{
+		void *frames[48];
+		USHORT n = RtlCaptureStackBackTrace(1, 48, frames, nullptr);
+		FILE *f = fopen("sigsegv_exit.txt", "a");
+		char line[512];
+		snprintf(line, sizeof(line), "SigMod: %s(%u) called from:\n", what, code);
+		if (f != nullptr) fputs(line, f);
+		Warning("%s", line);
+		for (USHORT i = 0; i < n; ++i) {
+			HMODULE mod = nullptr;
+			char path[MAX_PATH] = "?";
+			if (GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+				reinterpret_cast<LPCSTR>(frames[i]), &mod) && mod != nullptr) {
+				GetModuleFileNameA(mod, path, sizeof(path));
+			}
+			const char *base = strrchr(path, '\\');
+			snprintf(line, sizeof(line), "  %s+0x%x\n", base != nullptr ? base + 1 : path,
+				mod != nullptr ? (unsigned)((uintptr_t)frames[i] - (uintptr_t)mod) : (unsigned)(uintptr_t)frames[i]);
+			if (f != nullptr) fputs(line, f);
+			Warning("%s", line);
+		}
+		if (f != nullptr) fclose(f);
+	}
+	
+	BOOL WINAPI HookTerminateProcess(HANDLE process, UINT code)
+	{
+		if (process == GetCurrentProcess() || GetProcessId(process) == GetCurrentProcessId()) Write("TerminateProcess", code);
+		return RealTerminateProcess(process, code);
+	}
+	
+	void WINAPI HookExitProcess(UINT code)
+	{
+		Write("ExitProcess", code);
+		RealExitProcess(code);
+	}
+	
+	/* Point one module's import of target at hook, wherever it imports it from. */
+	void PatchImports(HMODULE mod, void *target, void *hook)
+	{
+		auto base = reinterpret_cast<uint8_t *>(mod);
+		auto dos = reinterpret_cast<IMAGE_DOS_HEADER *>(base);
+		if (dos->e_magic != IMAGE_DOS_SIGNATURE) return;
+		auto nt = reinterpret_cast<IMAGE_NT_HEADERS *>(base + dos->e_lfanew);
+		const IMAGE_DATA_DIRECTORY &dir = nt->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT];
+		if (dir.VirtualAddress == 0) return;
+		for (auto imp = reinterpret_cast<IMAGE_IMPORT_DESCRIPTOR *>(base + dir.VirtualAddress); imp->Name != 0; ++imp) {
+			for (auto thunk = reinterpret_cast<IMAGE_THUNK_DATA *>(base + imp->FirstThunk); thunk->u1.Function != 0; ++thunk) {
+				if (reinterpret_cast<void *>(thunk->u1.Function) != target) continue;
+				DWORD old;
+				if (VirtualProtect(&thunk->u1.Function, sizeof(thunk->u1.Function), PAGE_READWRITE, &old)) {
+					thunk->u1.Function = reinterpret_cast<uintptr_t>(hook);
+					VirtualProtect(&thunk->u1.Function, sizeof(thunk->u1.Function), old, &old);
+				}
+			}
+		}
+	}
+	
+	void Install()
+	{
+		HMODULE k32 = GetModuleHandleA("kernel32.dll");
+		HMODULE kb  = GetModuleHandleA("kernelbase.dll");
+		if (k32 == nullptr) return;
+		RealTerminateProcess = reinterpret_cast<TerminateProcess_t>(GetProcAddress(k32, "TerminateProcess"));
+		RealExitProcess      = reinterpret_cast<ExitProcess_t>(GetProcAddress(k32, "ExitProcess"));
+		if (RealTerminateProcess == nullptr || RealExitProcess == nullptr) return;
+		void *targets[4][2] = {
+			{ reinterpret_cast<void *>(RealTerminateProcess), reinterpret_cast<void *>(&HookTerminateProcess) },
+			{ reinterpret_cast<void *>(RealExitProcess),      reinterpret_cast<void *>(&HookExitProcess) },
+			{ kb != nullptr ? reinterpret_cast<void *>(GetProcAddress(kb, "TerminateProcess")) : nullptr, reinterpret_cast<void *>(&HookTerminateProcess) },
+			{ kb != nullptr ? reinterpret_cast<void *>(GetProcAddress(kb, "ExitProcess")) : nullptr,      reinterpret_cast<void *>(&HookExitProcess) },
+		};
+		HMODULE mods[1024];
+		DWORD needed = 0;
+		if (!EnumProcessModules(GetCurrentProcess(), mods, sizeof(mods), &needed)) return;
+		HMODULE self = nullptr;
+		GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+			reinterpret_cast<LPCSTR>(&Install), &self);
+		for (DWORD i = 0; i < needed / sizeof(HMODULE) && i < 1024; ++i) {
+			if (mods[i] == self || mods[i] == k32 || mods[i] == kb) continue;
+			for (auto &t : targets) {
+				if (t[0] != nullptr) PatchImports(mods[i], t[0], t[1]);
+			}
+		}
+	}
+}
+#endif
+
 bool CExtSigsegv::SDK_OnLoad(char *error, size_t maxlength, bool late)
 {
 #if defined _WINDOWS
 	/* A dedicated server has nobody to click an assertion dialog, which would
 	 * hang it; report to stderr and abort instead, as glibc does. */
 	_set_error_mode(_OUT_TO_STDERR);
+	ExitTrace::Install();
 #endif
 #ifndef OPTIMIZE_MODS_ONLY
 	ColorSpew::Enable();

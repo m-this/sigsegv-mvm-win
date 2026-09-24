@@ -111,6 +111,10 @@ Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyCo
 Get-ChildItem "$Out\dumps" -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "dump: $($_.Name) $($_.Length)" }
 # srcds catches its own crashes: it writes a minidump beside itself and exits
 # cleanly, so WER sees nothing. Those dumps, and how winbed saw srcds end.
+# SigMod's own record of who ended the server (ExitTrace in extension.cpp).
+foreach ($f in @("$env:BED\tf-dedicated\sigsegv_exit.txt", "$env:BED\tf-dedicated\tf\sigsegv_exit.txt")) {
+  if (Test-Path $f) { Write-Host "--- $f"; Get-Content $f -Tail 80 | Write-Host; Copy-Item $f $Out }
+}
 $mdmp = @(Get-ChildItem "$env:BED\tf-dedicated" -Recurse -Filter *.mdmp -ErrorAction SilentlyContinue) +
   @(Get-ChildItem "$env:BED\dumps\exit" -Recurse -Filter *.dmp -ErrorAction SilentlyContinue)
 New-Item -ItemType Directory -Force "$Out\mdmp" | Out-Null
