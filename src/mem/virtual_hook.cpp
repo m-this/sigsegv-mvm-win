@@ -74,6 +74,13 @@ bool CVirtualHook::DoLoad()
         DevMsg("CVirtualHook::FAIL \"%s\": can't find func ptr in vtable\n", this->m_pszFuncName);
         return false;
     }
+#if defined _WINDOWS
+    /* For the bed: where every hook went, so a fault under a vtable call can
+     * be matched to the hook in that slot. */
+    if (getenv("SIGSEGV_SURVEY_UNRESOLVED") != nullptr) {
+        Warning("CVirtualHook: \"%s\" in %s slot %d (+0x%x)\n", this->m_pszFuncName, this->m_pszVTableName, this->m_iOffset, this->m_iOffset * 4);
+    }
+#endif
     this->m_bLoaded = true;
     this->m_pVTable = pVT;
     return true;
