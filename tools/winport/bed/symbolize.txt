@@ -1,2 +1,5 @@
-# SigMod frames to name, as the bed report prints them.
-# Nothing asked this round.
+# SigMod frames to name, as the bed report prints them. Sweep of f829870:
+# faults at map load through these.
+sigsegv.ext.2.tf2.dll+0x271fc3
+sigsegv.ext.2.tf2.dll+0xf6362
+sigsegv.ext.2.tf2.dll+0xf4eaa
