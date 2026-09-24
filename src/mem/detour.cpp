@@ -369,7 +369,7 @@ bool CDetour::DoLoad()
 	 * caller-pops convention. None of them shows on Linux, where the caller
 	 * always pops, so the check is here, where the two are compiled code. */
 	int game_pop, detour_pop;
-	if (PopBytes(reinterpret_cast<const uint8_t *>(this->m_pFunc), game_pop) &&
+	if (PopBytes(reinterpret_cast<const uint8_t *>(this->GetFuncPtr()), game_pop) &&
 		PopBytes(reinterpret_cast<const uint8_t *>(this->m_pCallback), detour_pop) &&
 		game_pop != detour_pop) {
 		Warning("CDetour::DoLoad: \"%s\": refused, the game's function pops %d bytes and the detour %d\n",
