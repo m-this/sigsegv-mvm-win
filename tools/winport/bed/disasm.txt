@@ -1,10 +1,12 @@
-# NextBotCreatePlayerBot<T>: the six functions holding its error string. The
-# CTFBot one is ~227 bytes on Linux, calls CreateFakeClientEx and casts to
-# CTFBot; the others are the same template for other bot types, or callers
-# it was inlined into.
-server +0x56465a
-server +0x5658a5
-server +0x5932ab
-server +0x594f5c
-server +0x5e309d
-server +0x5ebc7e
+# NextBotCreatePlayerBot<CTFBot> is inlined into all six callers. Its pieces,
+# as the inlined copies call them:
+# CTFBot::AllocatePlayerEntity, the function handed to the override
+server 0x54f530 40
+# ClientPutInServerOverride
+server 0x271720 8
+# after the cast: SetPlayerName(name), ClearFlags(), AddFlag(FL_CLIENT|FL_FAKECLIENT)
+server 0x2e8cb0 30
+server 0x1ff9e0 20
+server 0x1ff3f0 30
+# the tail of one inlined copy, from the cast to the return
+server 0x594f40 60
