@@ -46,10 +46,10 @@ jobs:
       run:
         shell: bash
     env:
-      XWIN: ${{ github.workspace }}/../xwin-sdk
-      BOOST: ${{ github.workspace }}/../winport-deps/boost/usr/include
-      ALLIEDMODDERS: ${{ github.workspace }}/../alliedmodders
-      OUT: ${{ github.workspace }}/../winport-build
+      XWIN: /home/runner/winport/xwin-sdk
+      BOOST: /home/runner/winport/winport-deps/boost/usr/include
+      ALLIEDMODDERS: /home/runner/winport/alliedmodders
+      OUT: /home/runner/winport/winport-build
       # A .pdb beside the DLL, for the bed's debugger. The package does not ship it.
       DEBUGINFO: '1'
 
@@ -78,7 +78,7 @@ jobs:
     - uses: actions/cache@v4
       id: xwin
       with:
-        path: ${{ github.workspace }}/../xwin-sdk
+        path: /home/runner/winport/xwin-sdk
         key: xwin-0.6.5-x86
 
     - name: Windows SDK
@@ -109,12 +109,12 @@ jobs:
     - uses: actions/cache@v4
       id: am
       with:
-        path: ${{ github.workspace }}/../alliedmodders
+        path: /home/runner/winport/alliedmodders
         key: alliedmodders-1.11-dev-tf2-v1
 
     - uses: actions/cache@v4
       with:
-        path: ${{ github.workspace }}/../winport-build
+        path: /home/runner/winport/winport-build
         key: winport-obj-${{ steps.cc.outputs.version }}-${{ github.sha }}
         restore-keys: winport-obj-${{ steps.cc.outputs.version }}-
 
