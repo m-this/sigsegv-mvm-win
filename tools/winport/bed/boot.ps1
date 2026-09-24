@@ -1,0 +1,61 @@
+# Start the bed's server, wait for rcon, run -Commands into bedout/, and with
+# -Probe run the wave probe against it. Exits with the probe's code, or 1 when
+# the server dies or never answers.
+param(
+  [string[]]$Commands = @(),
+  [string]$Probe = '',
+  [int]$BootMinutes = 20
+)
+$ErrorActionPreference = 'Stop'
+$out = "$env:BED\bedout"
+New-Item -ItemType Directory -Force $out | Out-Null
+$env:SRCDS_RCONPW = $env:WAVEPROBE_RCONPW
+
+$server = Start-Process bedbin\winbed.exe -ArgumentList '-serve', '-root', $env:BED `
+  -RedirectStandardOutput "$out\winbed.out" -RedirectStandardError "$out\winbed.err" -PassThru
+
+function Dead {
+  if (-not $server.HasExited) { return $false }
+  Write-Host "the server exited with $($server.ExitCode)"
+  Get-Content "$out\winbed.out" -Tail 80 -ErrorAction SilentlyContinue | Write-Host
+  return $true
+}
+
+# srcds on a LAN reach binds rcon to the address its hostname resolves to, so
+# try loopback and every IPv4 the runner has.
+$candidates = @('127.0.0.1') + @(Get-NetIPAddress -AddressFamily IPv4 |
+  Where-Object { $_.IPAddress -ne '127.0.0.1' } | ForEach-Object { $_.IPAddress })
+$address = $null
+$deadline = (Get-Date).AddMinutes($BootMinutes)
+while (-not $address -and (Get-Date) -lt $deadline) {
+  if (Dead) { exit 1 }
+  foreach ($candidate in $candidates) {
+    $env:SRCDS_RCON_HOST = $candidate
+    & bedbin\rcon.exe status *> $null
+    if ($LASTEXITCODE -eq 0) { $address = $candidate; break }
+  }
+  if (-not $address) { Start-Sleep 10 }
+}
+if (-not $address) { Write-Host 'rcon never answered'; exit 1 }
+Write-Host "rcon answers on $address"
+$env:SRCDS_RCON_HOST = $address
+
+foreach ($command in $Commands) {
+  $name = ($command -replace '[^a-z0-9_]', '_')
+  & bedbin\rcon.exe $command > "$out\$name.txt"
+  Write-Host "$command -> $out\$name.txt"
+}
+if ($Commands.Count -gt 0) { Get-Content "$out\sig_list_mods.txt" -ErrorAction SilentlyContinue | Write-Host }
+
+if (-not $Probe) {
+  Start-Sleep 30
+  if (Dead) { exit 1 }
+  exit 0
+}
+$arguments = @('-rcon', "${address}:27015") + ($Probe -split '\s+' | Where-Object { $_ })
+& bedbin\waveprobe.exe @arguments > "$out\results.jsonl" 2> "$out\waveprobe.err"
+$code = $LASTEXITCODE
+Get-Content "$out\waveprobe.err" -Tail 40 | Write-Host
+if (Dead) { exit 1 }
+& bedbin\rcon.exe sig_list_mods > "$out\sig_list_mods_after.txt"
+exit $code

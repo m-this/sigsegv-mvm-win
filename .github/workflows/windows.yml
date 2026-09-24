@@ -4,6 +4,7 @@ name: Windows package
 # tools/winport/build.sh builds it: clang-cl and lld-link against an xwin SDK.
 # A pushed date tag (20260924) publishes a release with the zip; any other run
 # leaves the zip as an artifact, so a branch can be checked before tagging.
+# Every run also plays the SigMod missions on Windows runners: see the bed jobs.
 
 on:
   push:
@@ -11,9 +12,14 @@ on:
       - '2*'
     branches:
       - 'claude/**'
-    paths:
-      - '.github/workflows/windows.yml'
   workflow_dispatch:
+    inputs:
+      archipelago_ref:
+        description: tf2-archipelago ref the bed tools are built from
+        default: claude/sigmod-sigsegv-windows-teyse4
+      probe_args:
+        description: extra waveprobe arguments
+        default: ''
 
 permissions:
   contents: write
@@ -39,9 +45,10 @@ jobs:
 
     - name: Toolchain
       run: |
-        sudo apt-get update -q
-        sudo apt-get install -y -q clang-18 lld-18 llvm-18
-        for t in clang-cl lld-link; do sudo ln -sf "/usr/bin/$t-18" "/usr/local/bin/$t"; done
+        # The MSVC STL xwin fetches refuses a clang older than 19 (STL1000).
+        curl -sSfL https://apt.llvm.org/llvm.sh -o llvm.sh
+        sudo bash llvm.sh 20
+        for t in clang-cl lld-link; do sudo ln -sf "/usr/bin/$t-20" "/usr/local/bin/$t"; done
         clang-cl --version
 
     - name: Windows SDK
@@ -102,3 +109,89 @@ jobs:
         files: |
           package-windows.zip
           package-windows.zip.sha256
+
+  # The bed's tools come from tf2-archipelago: the launcher's own installer
+  # (winbed), Kelly's wave probe and its plugin. Built on Linux, where spcomp is.
+  bed-tools:
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        repository: m-this/tf2-archipelago
+        ref: ${{ inputs.archipelago_ref || 'claude/sigmod-sigsegv-windows-teyse4' }}
+    - uses: actions/setup-go@v5
+      with:
+        go-version-file: go.mod
+    - run: make winbed
+    - uses: actions/upload-artifact@v4
+      with:
+        name: winbed
+        path: dist/winbed
+
+  # Boot once under full page heap, the check Wine's heap does not make: a
+  # write out of bounds faults at the instruction, and WER keeps the dump.
+  heapcheck:
+    needs: [build, bed-tools]
+    runs-on: windows-2022
+    timeout-minutes: 120
+    env:
+      WAVEPROBE_RCONPW: bed-${{ github.run_id }}
+      BED: C:\bed
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/download-artifact@v4
+      with: { name: package-windows, path: pkg }
+    - uses: actions/download-artifact@v4
+      with: { name: winbed, path: bedbin }
+    - name: Install
+      shell: pwsh
+      run: tools/winport/bed/install.ps1
+    - name: Page heap and dumps
+      shell: pwsh
+      run: |
+        $ifeo = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\srcds.exe'
+        New-Item -Force $ifeo | Out-Null
+        Set-ItemProperty $ifeo GlobalFlag 0x02000000 -Type DWord
+        Set-ItemProperty $ifeo PageHeapFlags 0x3 -Type DWord
+    - name: Boot and list
+      shell: pwsh
+      run: tools/winport/bed/boot.ps1 -Commands 'sig_list_mods','sig_list_addrs','sig_list_linkage','sm exts list','meta list'
+    - if: always()
+      shell: pwsh
+      run: tools/winport/bed/collect.ps1 -Out heapcheck
+    - if: always()
+      uses: actions/upload-artifact@v4
+      with: { name: heapcheck, path: heapcheck }
+
+  # Every SigMod wave the catalog has, on Windows, with Kelly's probe.
+  bed:
+    needs: [build, bed-tools]
+    runs-on: windows-2022
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7]
+    env:
+      WAVEPROBE_RCONPW: bed-${{ github.run_id }}
+      BED: C:\bed
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/download-artifact@v4
+      with: { name: package-windows, path: pkg }
+    - uses: actions/download-artifact@v4
+      with: { name: winbed, path: bedbin }
+    - name: Install
+      shell: pwsh
+      run: tools/winport/bed/install.ps1
+    - name: Probe
+      shell: pwsh
+      run: tools/winport/bed/boot.ps1 -Commands 'sig_list_mods' -Probe "-only-sigmod -mode normal -shards 8 -shard ${{ matrix.shard }} -timeout 600s ${{ inputs.probe_args }}"
+    - if: always()
+      shell: pwsh
+      run: tools/winport/bed/collect.ps1 -Out bed-${{ matrix.shard }}
+    - if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: bed-${{ matrix.shard }}
+        path: bed-${{ matrix.shard }}
