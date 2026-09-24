@@ -44,6 +44,10 @@ function Attach-Debugger($srcds, $n) {
     # A C++ exception nobody catches ends in abort() and a quiet exit, so each
     # one is logged where it is thrown; the ones SigMod catches are noise.
     'sxe -c ".echo CPP EXCEPTION; kv 24; gn" eh'
+    # Who ends the process: a thread of its own through ExitProcess or
+    # NtTerminateProcess stops here with its stack; a kill from outside does not.
+    'bp KERNELBASE!ExitProcess ".echo EXIT CALLED; kv 40; gc"'
+    'bp ntdll!NtTerminateProcess ".echo TERMINATE CALLED; kv 40; gc"'
     'sxe -c ".echo PROCESS EXIT; .lastevent; ~* kv 30; q" epr'
     'g'
   ) | Set-Content "$out\cdb-$n.script"
