@@ -79,6 +79,29 @@ class Module:
             lines = lines[max(0, marked - 45):]
         print("\n".join(lines))
 
+    def calls_after(self, needle):
+        """Where a function pushes this exact string, the first call that
+        follows: for SetContextThink(func, time, "Context") it is ThinkSet."""
+        data = self.pe.__data__
+        md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
+        seen = {}
+        offset = data.find(needle.encode() + b"\0")
+        while offset != -1:
+            if data[offset - 1] == 0:
+                ref = (self.base + self.pe.get_rva_from_offset(offset)).to_bytes(4, "little")
+                at = self.code.find(b"\x68" + ref)
+                while at != -1:
+                    for ins in md.disasm(self.code[at:at + 60], self.base + self.text.VirtualAddress + at):
+                        if ins.mnemonic == "call":
+                            target = ins.op_str
+                            if target.startswith("0x"):
+                                target = f"{int(target, 16) - self.base:#x}"
+                            seen.setdefault(target, []).append(f"{self.text.VirtualAddress + at:#x}")
+                            break
+                    at = self.code.find(b"\x68" + ref, at + 1)
+            offset = data.find(needle.encode() + b"\0", offset + 1)
+        print(f"== first call after push {needle!r}: " + "; ".join(f"{t} from {', '.join(v)}" for t, v in seen.items()))
+
     def strings(self, needle):
         data = self.pe.__data__
         offset = data.find(needle.encode())
@@ -108,6 +131,9 @@ def main():
         mod = modules[name]
         print(f"### {line}")
         try:
+            if rest.startswith("callafter "):
+                mod.calls_after(rest[len("callafter "):])
+                continue
             if rest.startswith("string "):
                 mod.strings(rest[len("string "):])
                 continue

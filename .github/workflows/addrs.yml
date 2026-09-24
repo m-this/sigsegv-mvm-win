@@ -16,6 +16,7 @@ on:
       - '.github/workflows/addrs.yml'
       - 'tools/winport/*.py'
       - 'tools/winport/overrides.json'
+      - 'tools/winport/bed/disasm.*'
 
 concurrency:
   group: addrs-${{ github.ref }}
@@ -37,7 +38,7 @@ jobs:
         unzip -q dd.zip -d dd && chmod +x dd/DepotDownloader
     - name: The two server binaries of the current build
       run: |
-        printf 'regex:^tf/bin/server(_srv)?\\.(so|dll)$\ntf/steam.inf\n' > files.txt
+        printf 'regex:^tf/bin/server(_srv)?\\.(so|dll)$\nbin/engine.dll\ntf/steam.inf\n' > files.txt
         for os in linux windows; do
           for attempt in 1 2 3; do
             ./dd/DepotDownloader -app 232250 -os $os -filelist files.txt -dir game-$os && break
@@ -46,6 +47,11 @@ jobs:
         done
         ls -la game-*/tf/bin game-*/tf/steam.inf
         grep -h -i 'ServerVersion' game-*/tf/steam.inf
+    # The same queries the heapcheck job runs, minutes after a push rather
+    # than after a Windows server has been installed.
+    - name: Disassemble the queries in disasm.txt
+      if: always()
+      run: python3 tools/winport/bed/disasm.py game-windows tools/winport/bed/disasm.txt
     - name: Derive the table
       run: |
         ver=$(grep -i '^ServerVersion=' game-windows/tf/steam.inf | cut -d= -f2 | tr -d '\r')

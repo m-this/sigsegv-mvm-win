@@ -1,4 +1,9 @@
 # What disasm.py prints into the heapcheck job's log, at its end.
-# KeyValues::LoadFromFile around the call into LoadFromBuffer, to see the
-# CUtlBuffer it builds and passes.
-server CreateInterface+0x58c1
+# CBaseEntity::ThinkSet: SetContextThink is a macro over it, so the first call
+# after pushing a think context's name is ThinkSet. The contexts should agree.
+server callafter TeleporterContext
+server callafter RemoveThink
+server callafter ZapThink
+server callafter DieContext
+server callafter EFFECTS_THINK
+server callafter ChargeLevelDegradeThink
