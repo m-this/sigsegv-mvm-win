@@ -58,14 +58,14 @@ if ($cdbLogs) {
   Write-Host ("cdb: {0} breakpoints passed" -f ($log | Select-String '^BREAKPOINT').Count)
   $starts = @()
   for ($i = 0; $i -lt $log.Count; $i++) {
-    if ($log[$i] -match '^(FIRST-CHANCE AV|SECOND-CHANCE AV|HEAP CORRUPTION|STACK BUFFER OVERRUN|PROCESS EXIT|CPP EXCEPTION|EXIT CALLED|TERMINATE CALLED)') { $starts += $i }
+    if ($log[$i] -match '^(FIRST-CHANCE AV|SECOND-CHANCE AV|HEAP CORRUPTION|STACK BUFFER OVERRUN|PROCESS EXIT|CPP EXCEPTION|EXIT CALLED|TERMINATE CALLED|UNHANDLED STOP)') { $starts += $i }
   }
   $pick = if ($starts.Count -le 4) { $starts } else { $starts[0, 1, -2, -1] }
   foreach ($i in $pick) {
     Write-Host "--- cdb: $($log[$i])"
     $end = [Math]::Min($log.Count - 1, $i + 140)
     for ($j = $i + 1; $j -le $end; $j++) {
-      if ($log[$j] -match '^(start +end|FIRST-CHANCE|SECOND-CHANCE|PROCESS EXIT|BREAKPOINT|HEAP CORRUPTION|CPP EXCEPTION|EXIT CALLED|TERMINATE CALLED)') { break }
+      if ($log[$j] -match '^(start +end|FIRST-CHANCE|SECOND-CHANCE|PROCESS EXIT|BREAKPOINT|HEAP CORRUPTION|CPP EXCEPTION|EXIT CALLED|TERMINATE CALLED|UNHANDLED STOP)') { break }
       if ($log[$j] -match '^(eip=|\(|Access violation|Last event|  debugger time|FAULT-CODE|STACK-WORDS|ECX-WORDS|ECX-TEXT|FRAME-PARAMS|\s+[a-zA-Z_]+ = )' -or ($log[$j] -match '^[0-9a-f]{8}[ `]' -and $log[$j] -notmatch 'ntdll!|KERNEL')) {
         # A frame line is ChildEBP, RetAddr, three arguments and the frame's
         # own place; the return address is where the frame above was called.
@@ -76,6 +76,11 @@ if ($cdbLogs) {
   }
 }
 
+# What cdb itself said last: how it ended, and any stop it was not told about.
+Get-ChildItem "$Out\cdb-*.out" -ErrorAction SilentlyContinue | ForEach-Object {
+  Write-Host "--- tail of $($_.Name)"
+  Get-Content $_.FullName -Tail 12 | Write-Host
+}
 $console = Get-ChildItem "$Out\console*.log" -ErrorAction SilentlyContinue | Sort-Object LastWriteTime | Select-Object -Last 1
 if ($console) {
   Write-Host "--- console tail, without the address table"

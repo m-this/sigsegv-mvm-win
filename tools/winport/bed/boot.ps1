@@ -51,7 +51,14 @@ function Attach-Debugger($srcds, $n) {
     'sxe -c ".echo PROCESS EXIT; .lastevent; ~* kv 30; q" epr'
     'g'
   ) | Set-Content "$out\cdb-$n.script"
+  # When an event stops cdb outside the handlers above, it reads its next
+  # command from stdin; at end of file it quits and takes srcds with it, which
+  # looked like the server exiting on its own a second into a mission. A stdin
+  # of nothing but "gn" keeps it going, and each one used is logged.
+  $resume = "$out\cdb-$n.stdin"
+  Set-Content $resume ((1..5000 | ForEach-Object { '.echo UNHANDLED STOP; kv 12; gn' }) -join "`n")
   Start-Process $cdb -ArgumentList '-p', $srcds.Id, '-cf', "$out\cdb-$n.script" `
+    -RedirectStandardInput $resume `
     -RedirectStandardOutput "$out\cdb-$n.out" -RedirectStandardError "$out\cdb-$n.err" | Out-Null
 }
 
