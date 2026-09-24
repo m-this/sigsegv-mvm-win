@@ -8445,6 +8445,51 @@
 					lib   "server"
 					// verified: turned away for field disagreement, pop as expected (ret 4); returns null on a null name, then walks the definition map at +0xe8 comparing each definition's name at +0xdc with the argument, the body Linux jumps to
 				}
+				"CTFBot::AllocatePlayerEntity"
+				{
+					type  "fixed"
+					sym   "_ZN6CTFBot20AllocatePlayerEntityEP7edict_tPKc"
+					addr  "0x54f530"
+					build "10828683"
+					lib   "server"
+					// verified: the function every inlined copy of NextBotCreatePlayerBot<CTFBot> pushes to ClientPutInServerOverride before CreateFakeClientEx; stores the edict in a global and tail-jumps to create the player entity, cdecl as a static member is
+				}
+				"ClientPutInServerOverride"
+				{
+					type  "fixed"
+					sym   "_Z25ClientPutInServerOverridePFP11CBasePlayerP7edict_tPKcE"
+					addr  "0x271720"
+					build "10828683"
+					lib   "server"
+					// verified: called with CTFBot::AllocatePlayerEntity before CreateFakeClientEx and with 0 after it, in all six inlined copies of NextBotCreatePlayerBot; its whole body stores the argument in a global and returns
+				}
+				"CBasePlayer::SetPlayerName"
+				{
+					type  "fixed"
+					sym   "_ZN11CBasePlayer13SetPlayerNameEPKc"
+					addr  "0x2e8cb0"
+					build "10828683"
+					lib   "server"
+					// verified: called on the new bot with its name right after the CTFBot cast in the inlined NextBotCreatePlayerBot, as the SDK has it; returns on a null name, else copies 32 bytes into m_szNetname at +0xfb4, ret 4
+				}
+				"CBaseEntity::ClearFlags"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity10ClearFlagsEv"
+					addr  "0x1ff9e0"
+					build "10828683"
+					lib   "server"
+					// verified: called on the new bot after SetPlayerName in the inlined NextBotCreatePlayerBot; zeroes m_fFlags at +0x140 through NetworkStateChanged and reports the change to the entity list
+				}
+				"CBaseEntity::AddFlag"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity7AddFlagEi"
+					addr  "0x1ff3f0"
+					build "10828683"
+					lib   "server"
+					// verified: called with 0x300 (FL_CLIENT | FL_FAKECLIENT) after ClearFlags in the inlined NextBotCreatePlayerBot; ors the argument into m_fFlags at +0x140 and reports the change to the entity list, ret 4
+				}
 				"CTFPlayer::Spawn"
 				{
 					type  "fixed"

@@ -601,5 +601,29 @@
  "_ZN15CEconItemSchema23GetItemDefinitionByNameEPKc": {
   "rva": "0x3b9370",
   "why": "turned away for field disagreement, pop as expected (ret 4); returns null on a null name, then walks the definition map at +0xe8 comparing each definition's name at +0xdc with the argument, the body Linux jumps to"
+ },
+ "_ZN6CTFBot20AllocatePlayerEntityEP7edict_tPKc": {
+  "name": "CTFBot::AllocatePlayerEntity",
+  "rva": "0x54f530",
+  "why": "the function every inlined copy of NextBotCreatePlayerBot<CTFBot> pushes to ClientPutInServerOverride before CreateFakeClientEx; stores the edict in a global and tail-jumps to create the player entity, cdecl as a static member is"
+ },
+ "_Z25ClientPutInServerOverridePFP11CBasePlayerP7edict_tPKcE": {
+  "name": "ClientPutInServerOverride",
+  "rva": "0x271720",
+  "why": "called with CTFBot::AllocatePlayerEntity before CreateFakeClientEx and with 0 after it, in all six inlined copies of NextBotCreatePlayerBot; its whole body stores the argument in a global and returns"
+ },
+ "_ZN11CBasePlayer13SetPlayerNameEPKc": {
+  "rva": "0x2e8cb0",
+  "why": "called on the new bot with its name right after the CTFBot cast in the inlined NextBotCreatePlayerBot, as the SDK has it; returns on a null name, else copies 32 bytes into m_szNetname at +0xfb4, ret 4"
+ },
+ "_ZN11CBaseEntity10ClearFlagsEv": {
+  "name": "CBaseEntity::ClearFlags",
+  "rva": "0x1ff9e0",
+  "why": "called on the new bot after SetPlayerName in the inlined NextBotCreatePlayerBot; zeroes m_fFlags at +0x140 through NetworkStateChanged and reports the change to the entity list"
+ },
+ "_ZN11CBaseEntity7AddFlagEi": {
+  "name": "CBaseEntity::AddFlag",
+  "rva": "0x1ff3f0",
+  "why": "called with 0x300 (FL_CLIENT | FL_FAKECLIENT) after ClearFlags in the inlined NextBotCreatePlayerBot; ors the argument into m_fFlags at +0x140 and reports the change to the entity list, ret 4"
  }
 }

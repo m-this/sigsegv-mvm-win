@@ -285,4 +285,36 @@ std::map<CHandle<CTFBot>, CTFBot::ExtendedAttr> CTFBot::s_ExtAttrs;
 StaticFuncThunk<CTFBot *, CBaseEntity *> ft_ToTFBot("ToTFBot");
 
 StaticFuncThunk<CTFBot *, const char *, bool> ft_NextBotCreatePlayerBot_CTFBot("NextBotCreatePlayerBot<CTFBot>");
+#if defined _WINDOWS
+/* server.dll has no NextBotCreatePlayerBot<CTFBot>: MSVC inlined the template
+ * into all six of its callers. This is the SDK's body, calling the pieces each
+ * inlined copy calls, found by their addresses there. */
+StaticFuncThunk<void, void *> ft_ClientPutInServerOverride("ClientPutInServerOverride");
+MemberFuncThunk<CBaseEntity *, void>      ft_CBaseEntity_ClearFlags("CBaseEntity::ClearFlags");
+MemberFuncThunk<CBaseEntity *, void, int> ft_CBaseEntity_AddFlag   ("CBaseEntity::AddFlag");
+
+template<> CTFBot *NextBotCreatePlayerBot<CTFBot>(const char *name, bool fake_client)
+{
+	ft_ClientPutInServerOverride(AddrManager::GetAddr("CTFBot::AllocatePlayerEntity"));
+	edict_t *edict = engine->CreateFakeClientEx(name, fake_client);
+	ft_ClientPutInServerOverride(nullptr);
+	
+	if (edict == nullptr) {
+		Msg("CreatePlayerBot: Unable to create bot %s - CreateFakeClient() returned NULL.\n", name);
+		return nullptr;
+	}
+	
+	auto bot = rtti_cast<CTFBot *>(GetContainingEntity(edict));
+	if (bot == nullptr) {
+		Error("CreatePlayerBot: Could not Instance() from the bot edict.\n");
+		return nullptr;
+	}
+	
+	bot->SetPlayerName(name);
+	ft_CBaseEntity_ClearFlags(bot);
+	ft_CBaseEntity_AddFlag(bot, FL_CLIENT | FL_FAKECLIENT);
+	return bot;
+}
+#else
 template<> CTFBot *NextBotCreatePlayerBot<CTFBot>(const char *name, bool fake_client) { return ft_NextBotCreatePlayerBot_CTFBot(name, fake_client); }
+#endif
