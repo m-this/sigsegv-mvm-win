@@ -1,0 +1,3 @@
+# Missions the bed plays instead of all of them, one per line: shard 0 plays
+# these and the other shards stop at once. Empty is the full sweep.
+mvm_akure_rc1a_int_bronze_and_bristle

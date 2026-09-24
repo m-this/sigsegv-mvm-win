@@ -126,6 +126,15 @@ for ($i = 0; $i -lt $probeArgs.Count; $i++) {
   if ($probeArgs[$i] -eq '-only-sigmod') { continue }
   $single += $probeArgs[$i]
 }
+# focus.txt, when it names missions, is the whole run: shard 0 plays them and
+# the other shards stop here. One mission is a fix checked in minutes.
+$focus = @(Get-Content "$PSScriptRoot\focus.txt" -ErrorAction SilentlyContinue | ForEach-Object { ($_ -split '#')[0].Trim() } | Where-Object { $_ })
+if ($focus.Count -gt 0) {
+  $shard = 0
+  for ($i = 0; $i -lt $probeArgs.Count - 1; $i++) { if ($probeArgs[$i] -eq '-shard') { $shard = [int]$probeArgs[$i + 1] } }
+  if ($shard -ne 0) { Say "focus run: $($focus -join ', ') on shard 0 only"; exit 0 }
+  $missions = $focus
+}
 # The probe cannot play reverse MvM (it has no BLU objective simulator) and
 # refuses one by name, so those are counted rather than failed.
 $reverse = @($missions | Where-Object { $_ -like '*_rev_*' })
