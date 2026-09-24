@@ -296,22 +296,37 @@ jobs:
     - uses: actions/checkout@v4
       with:
         sparse-checkout: tools/winport/bed
-    - uses: actions/download-artifact@v4
+    # focus.txt naming missions makes shard 0 the whole run: the other shards
+    # stop before installing the game, which is most of a shard's time.
+    - name: Focus
+      id: focus
+      shell: pwsh
+      run: |
+        $focus = @(Get-Content tools/winport/bed/focus.txt -ErrorAction SilentlyContinue | ForEach-Object { ($_ -split '#')[0].Trim() } | Where-Object { $_ })
+        $idle = ($focus.Count -gt 0) -and (${{ matrix.shard }} -ne 0)
+        "idle=$($idle.ToString().ToLower())" >> $env:GITHUB_OUTPUT
+        if ($idle) { Write-Host "focus run on shard 0: $($focus -join ', ')" }
+    - if: steps.focus.outputs.idle != 'true'
+      uses: actions/download-artifact@v4
       with: { name: package-windows, path: pkg }
-    - uses: actions/download-artifact@v4
+    - if: steps.focus.outputs.idle != 'true'
+      uses: actions/download-artifact@v4
       with: { name: winbed, path: bedbin }
-    - uses: actions/download-artifact@v4
+    - if: steps.focus.outputs.idle != 'true'
+      uses: actions/download-artifact@v4
       with: { name: symbols, path: pkg }
     - name: Install
+      if: steps.focus.outputs.idle != 'true'
       shell: pwsh
       run: tools/winport/bed/install.ps1
     - name: Probe
+      if: steps.focus.outputs.idle != 'true'
       shell: pwsh
       run: tools/winport/bed/boot.ps1 -Commands 'sig_list_mods' -Probe "-only-sigmod -mode normal -shards 8 -shard ${{ matrix.shard }} -timeout 600s ${{ inputs.probe_args }}"
-    - if: always()
+    - if: always() && steps.focus.outputs.idle != 'true'
       shell: pwsh
       run: tools/winport/bed/collect.ps1 -Out bed-${{ matrix.shard }}
-    - if: always()
+    - if: always() && steps.focus.outputs.idle != 'true'
       uses: actions/upload-artifact@v4
       with:
         name: bed-${{ matrix.shard }}
