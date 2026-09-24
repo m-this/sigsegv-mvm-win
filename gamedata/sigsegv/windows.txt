@@ -743,6 +743,15 @@
 					lib   "server"
 					// vtable
 				}
+				"CBaseEntity::AddTimedOverlay"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity15AddTimedOverlayEPKci"
+					addr  "0x1ea560"
+					build "10828683"
+					lib   "server"
+					// call, ret 8 as its arguments say
+				}
 				"CBaseEntity::SetOwnerEntity"
 				{
 					type  "fixed"
@@ -751,6 +760,15 @@
 					build "10828683"
 					lib   "server"
 					// vtable
+				}
+				"CBaseEntity::ThinkSet"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity8ThinkSetEMS_FvvEfPKc"
+					addr  "0x2025e0"
+					build "10828683"
+					lib   "server"
+					// verified: SetContextThink is a macro over ThinkSet, and the first call after pushing a think context's name is 0x2025e0 at 34 sites across TeleporterContext, RemoveThink, ZapThink, DieContext and ChargeLevelDegradeThink; the body stores the function at +8 (m_pfnThink) when the context is null and ends ret 0xc, a 4-byte BASEPTR, a float and a context, as SigMod calls it
 				}
 				"CBaseEntity::GetMaxHealth"
 				{
@@ -1003,6 +1021,15 @@
 					build "10828683"
 					lib   "server"
 					// vtable
+				}
+				"CBaseEntity::EntityText"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity10EntityTextEiPKcfiiii"
+					addr  "0x1f07d0"
+					build "10828683"
+					lib   "server"
+					// call, ret 28 as its arguments say
 				}
 				"CBaseEntity::AcceptInput"
 				{
@@ -1445,6 +1472,15 @@
 					lib   "server"
 					// string
 				}
+				"CBaseAnimatingOverlay::SetLayerDuration"
+				{
+					type  "fixed"
+					sym   "_ZN21CBaseAnimatingOverlay16SetLayerDurationEif"
+					addr  "0x1d3260"
+					build "10828683"
+					lib   "server"
+					// call, ret 8 as its arguments say
+				}
 				"CBaseAnimating::GetAttachment [matrix]"
 				{
 					type  "fixed"
@@ -1453,6 +1489,33 @@
 					build "10828683"
 					lib   "server"
 					// vtable
+				}
+				"CBaseAnimating::GetAttachment"
+				{
+					type  "fixed"
+					sym   "_ZN14CBaseAnimating13GetAttachmentEiR6VectorR6QAngle"
+					addr  "0x1cae20"
+					build "10828683"
+					lib   "server"
+					// call, ret 12 as its arguments say
+				}
+				"CBaseAnimating::GetBonePosition"
+				{
+					type  "fixed"
+					sym   "_ZN14CBaseAnimating15GetBonePositionEiR6VectorR6QAngle"
+					addr  "0x1cb5a0"
+					build "10828683"
+					lib   "server"
+					// call, ret 12 as its arguments say
+				}
+				"CBaseAnimating::LookupPoseParameter"
+				{
+					type  "fixed"
+					sym   "_ZN14CBaseAnimating19LookupPoseParameterEP10CStudioHdrPKc"
+					addr  "0x1cef40"
+					build "10828683"
+					lib   "server"
+					// call, ret 8 as its arguments say
 				}
 				"CBaseAnimating::RefreshCollisionBounds"
 				{
@@ -1472,6 +1535,15 @@
 					lib   "server"
 					// string
 				}
+				"CBaseAnimating::SetBodygroup"
+				{
+					type  "fixed"
+					sym   "_ZN14CBaseAnimating12SetBodygroupEii"
+					addr  "0x1cf990"
+					build "10828683"
+					lib   "server"
+					// consensus, ret 8 as its arguments say
+				}
 				"CBaseAnimating::SetLightingOrigin"
 				{
 					type  "fixed"
@@ -1490,6 +1562,15 @@
 					lib   "server"
 					// string
 				}
+				"CBaseAnimating::SetModelScale"
+				{
+					type  "fixed"
+					sym   "_ZN14CBaseAnimating13SetModelScaleEff"
+					addr  "0x1cfe10"
+					build "10828683"
+					lib   "server"
+					// call, ret 8 as its arguments say
+				}
 				"CBaseAnimating::StudioFrameAdvance"
 				{
 					type  "fixed"
@@ -1498,6 +1579,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CBaseAnimating::SetPoseParameter"
+				{
+					type  "fixed"
+					sym   "_ZN14CBaseAnimating16SetPoseParameterEP10CStudioHdrif"
+					addr  "0x1cffd0"
+					build "10828683"
+					lib   "server"
+					// call, ret 12 as its arguments say
 				}
 				"CBaseAnimating::DispatchAnimEvents"
 				{
@@ -1831,6 +1921,15 @@
 					build "10828683"
 					lib   "server"
 					// vtable
+				}
+				"CBasePlayer::SetVCollisionState"
+				{
+					type  "fixed"
+					sym   "_ZN11CBasePlayer18SetVCollisionStateERK6VectorS2_i"
+					addr  "0x2e8fa0"
+					build "10828683"
+					lib   "server"
+					// consensus, ret 12 as its arguments say
 				}
 				"CBasePlayer::WantsLagCompensationOnEntity"
 				{
@@ -2957,6 +3056,15 @@
 					lib   "server"
 					// string
 				}
+				"CPropVehicleDriveable::TraceAttack"
+				{
+					type  "fixed"
+					sym   "_ZN21CPropVehicleDriveable11TraceAttackERK15CTakeDamageInfoRK6VectorP10CGameTraceP15CDmgAccumulator"
+					addr  "0x3737b0"
+					build "10828683"
+					lib   "server"
+					// consensus, ret 16 as its arguments say
+				}
 				"CSmokeStack::KeyValue"
 				{
 					type  "fixed"
@@ -3010,6 +3118,15 @@
 					build "10828683"
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: shares the string 'tf_ammo_pack' with the Linux function, and 4 of its 4 matched callees
+				}
+				"CTFAmmoPack::InitAmmoPack"
+				{
+					type  "fixed"
+					sym   "_ZN11CTFAmmoPack12InitAmmoPackEP9CTFPlayerP13CTFWeaponBaseibbf"
+					addr  "0x461070"
+					build "10828683"
+					lib   "server"
+					// consensus, ret 24 as its arguments say
 				}
 				"CTFBaseRocket::CheckForStunOnImpact"
 				{
@@ -5070,6 +5187,15 @@
 					lib   "server"
 					// verified: treats its first argument as a signed count and the second as the spawn list, 832 bytes against Linux's 856, and calls the helper holding the 'parented to itself' message that the string match had picked instead
 				}
+				"CGlobalEntityList::FindEntityByName"
+				{
+					type  "fixed"
+					sym   "_ZN17CGlobalEntityList16FindEntityByNameEP11CBaseEntityPKcS1_S1_S1_P17IEntityFindFilter"
+					addr  "0x2482f0"
+					build "10828683"
+					lib   "server"
+					// call, ret 24 as its arguments say
+				}
 				"CalculateMeleeDamageForce"
 				{
 					type  "fixed"
@@ -5412,15 +5538,6 @@
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: calls all 9 of the Linux function's matched callees, and no string disagrees
 				}
-				"CBaseEntity::ThinkSet"
-				{
-					type  "fixed"
-					sym   "_ZN11CBaseEntity8ThinkSetEMS_FvvEfPKc"
-					addr  "0x2025e0"
-					build "10828683"
-					lib   "server"
-					// verified: SetContextThink is a macro over ThinkSet, and the first call after pushing a think context's name is 0x2025e0 at 34 sites across TeleporterContext, RemoveThink, ZapThink, DieContext and ChargeLevelDegradeThink; the body stores the function at +8 (m_pfnThink) when the context is null and ends ret 0xc, a 4-byte BASEPTR, a float and a context, as SigMod calls it
-				}
 				"CTraceFilterEntity::ShouldHitEntity"
 				{
 					type  "fixed"
@@ -5717,6 +5834,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CTFGameRules::GetAssister"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules11GetAssisterEP11CBasePlayerS1_P11CBaseEntity"
+					addr  "0x48c1a0"
+					build "10828683"
+					lib   "server"
+					// call, ret 12 as its arguments say
 				}
 				"CEyeballBossIdle::OnStart"
 				{
@@ -7194,6 +7320,15 @@
 					lib   "server"
 					// call
 				}
+				"CItemGeneration::SpawnItem"
+				{
+					type  "fixed"
+					sym   "_ZN15CItemGeneration9SpawnItemEPK13CEconItemViewRK6VectorRK6QAnglePKc"
+					addr  "0x3a0550"
+					build "10828683"
+					lib   "server"
+					// consensus, ret 16 as its arguments say
+				}
 				"CTFBot::StartIdleSound"
 				{
 					type  "fixed"
@@ -7202,6 +7337,15 @@
 					build "10828683"
 					lib   "server"
 					// consensus
+				}
+				"CTFBot::IsLineOfFireClear_vec_vec"
+				{
+					type  "fixed"
+					sym   "_ZNK6CTFBot17IsLineOfFireClearERK6VectorS2_"
+					addr  "0x5576a0"
+					build "10828683"
+					lib   "server"
+					// call, ret 8 as its arguments say
 				}
 				"CTFBot::ChangeTeam"
 				{
@@ -7734,6 +7878,15 @@
 					lib   "server"
 					// string
 				}
+				"CTFPlayer::StartBuildingObjectOfType"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer25StartBuildingObjectOfTypeEii"
+					addr  "0x52c230"
+					build "10828683"
+					lib   "server"
+					// call, ret 8 as its arguments say
+				}
 				"CTFPlayer::GetLoadoutItem"
 				{
 					type  "fixed"
@@ -7787,6 +7940,15 @@
 					build "10828683"
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: shares the string 'TFPlayer_TeleportEffect' with the Linux function, and 2 of its 2 matched callees
+				}
+				"CTFPlayer::HasTheFlag"
+				{
+					type  "fixed"
+					sym   "_ZNK9CTFPlayer10HasTheFlagEP11ETFFlagTypei"
+					addr  "0x523010"
+					build "10828683"
+					lib   "server"
+					// call, ret 8 as its arguments say
 				}
 				"CTFPlayer::ManageRegularWeapons"
 				{
@@ -7860,6 +8022,15 @@
 					lib   "server"
 					// string
 				}
+				"CTFPlayer::GetObjectOfType"
+				{
+					type  "fixed"
+					sym   "_ZNK9CTFPlayer15GetObjectOfTypeEii"
+					addr  "0x4f3b40"
+					build "10828683"
+					lib   "server"
+					// call, ret 8 as its arguments say
+				}
 				"CTFPlayer::FindPartnerTauntInitiator"
 				{
 					type  "fixed"
@@ -7877,6 +8048,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CTFPlayer::CreateRagdollEntity [args]"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer19CreateRagdollEntityEbbbbbbbbib"
+					addr  "0x4e76a0"
+					build "10828683"
+					lib   "server"
+					// consensus, ret 40 as its arguments say
 				}
 				"CTFPlayer::ClientCommand"
 				{
@@ -7940,6 +8120,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CTFPlayer::AddCustomAttribute"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer18AddCustomAttributeEPKcff"
+					addr  "0x4e0340"
+					build "10828683"
+					lib   "server"
+					// call, ret 12 as its arguments say
 				}
 				"CTFPlayer::OnNavAreaChanged"
 				{
@@ -8148,6 +8337,15 @@
 					lib   "server"
 					// string
 				}
+				"CTFPlayer::GetEntityForLoadoutSlot"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer23GetEntityForLoadoutSlotEib"
+					addr  "0x522050"
+					build "10828683"
+					lib   "server"
+					// consensus, ret 8 as its arguments say
+				}
 				"CTFPlayer::CanAirDash"
 				{
 					type  "fixed"
@@ -8346,6 +8544,15 @@
 					lib   "server"
 					// consensus
 				}
+				"CTFPlayerShared::SetPlayerDominated"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFPlayerShared18SetPlayerDominatedEP9CTFPlayerb"
+					addr  "0x52b660"
+					build "10828683"
+					lib   "server"
+					// consensus, ret 8 as its arguments say
+				}
 				"CTFPlayerShared::ConditionGameRulesThink"
 				{
 					type  "fixed"
@@ -8453,6 +8660,15 @@
 					build "10828683"
 					lib   "server"
 					// consensus
+				}
+				"CTFPlayer::ValidateWeapons"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer15ValidateWeaponsEP19TFPlayerClassData_tb"
+					addr  "0x5147e0"
+					build "10828683"
+					lib   "server"
+					// call, ret 8 as its arguments say
 				}
 				"CTFPlayer::OnTauntSucceeded"
 				{
