@@ -30,6 +30,19 @@ if (Test-Path "$Out\sig_list_addrs.txt") {
 $cdbLogs = Get-ChildItem "$Out\cdb*.log" -ErrorAction SilentlyContinue | Sort-Object LastWriteTime
 if ($cdbLogs) {
   $log = $cdbLogs | ForEach-Object { Get-Content $_.FullName }
+  # Where each module was loaded, from the lm lines the fault handler prints,
+  # so a return address can be written as module+RVA: server.dll has no
+  # symbols, and the export names cdb puts on its frames are the nearest
+  # export, not the function.
+  $bases = @{}
+  foreach ($line in $log) {
+    if ($line -match '^([0-9a-f]{8}) ([0-9a-f]{8}) +(server|engine|sigsegv\S*) ') { $bases[$Matches[3]] = @([Convert]::ToUInt32($Matches[1], 16), [Convert]::ToUInt32($Matches[2], 16)) }
+  }
+  function Rva([string]$hex) {
+    $a = [Convert]::ToUInt32($hex, 16)
+    foreach ($k in $bases.Keys) { if ($a -ge $bases[$k][0] -and $a -lt $bases[$k][1]) { return ('{0}+0x{1:x}' -f $k, ($a - $bases[$k][0])) } }
+    return $hex
+  }
   Write-Host ("cdb: {0} breakpoints passed" -f ($log | Select-String '^BREAKPOINT').Count)
   $starts = @()
   for ($i = 0; $i -lt $log.Count; $i++) {
@@ -42,7 +55,10 @@ if ($cdbLogs) {
     for ($j = $i + 1; $j -le $end; $j++) {
       if ($log[$j] -match '^(start +end|FIRST-CHANCE|SECOND-CHANCE|PROCESS EXIT|BREAKPOINT|HEAP CORRUPTION)') { break }
       if ($log[$j] -match '^(eip=|\(|Access violation|FAULT-CODE|STACK-WORDS|ECX-WORDS|ECX-TEXT|FRAME-PARAMS|\s+[a-zA-Z_]+ = )' -or ($log[$j] -match '^[0-9a-f]{8}[ `]' -and $log[$j] -notmatch 'ntdll!|KERNEL')) {
-        Write-Host ($log[$j] -replace '^[0-9a-f]{8} [0-9a-f]{8} +([0-9a-f]{8} ){3}', '' -replace ' \(FPO: [^)]*\)', '' -replace ' \(CONV: [a-z]+\)', '' -replace '/home/runner/work/sigsegv-mvm-win/sigsegv-mvm-win/', '')
+        # A frame line is ChildEBP, RetAddr, three arguments and the frame's
+        # own place; the return address is where the frame above was called.
+        $ret = if ($log[$j] -match '^[0-9a-f]{8} ([0-9a-f]{8}) ') { '  (returns to ' + (Rva $Matches[1]) + ')' } else { '' }
+        Write-Host (($log[$j] -replace '^[0-9a-f]{8} [0-9a-f]{8} +([0-9a-f]{8} ){3}', '' -replace ' \(FPO: [^)]*\)', '' -replace ' \(CONV: [a-z]+\)', '' -replace '/home/runner/work/sigsegv-mvm-win/sigsegv-mvm-win/', '') + $ret)
       }
     }
   }

@@ -20,6 +20,7 @@ $cdb = 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x86\cdb.exe'
 $script:server = $null
 $script:starts = 0
 $script:address = $null
+$script:srcdsId = $null
 
 function Attach-Debugger($srcds, $n) {
   # cdb follows srcds from the moment it exists: every access violation, a
@@ -37,7 +38,7 @@ function Attach-Debugger($srcds, $n) {
     # cdb reading an empty stdin is a server that never answers rcon.
     'sxn *'
     'sxe -c ".echo BREAKPOINT; kv 20; gh" bpe'
-    'sxe -c ".echo FIRST-CHANCE AV; r; kv 16; .echo FAULT-CODE; u @eip-10 L8; .echo STACK-WORDS; dps @esp L16; .echo ECX-WORDS; dd @ecx L12; .echo ECX-TEXT; da @ecx L40; .echo FRAME-PARAMS; kP 12; gn" -c2 ".echo SECOND-CHANCE AV; r; kv 60; lm; q" av'
+    'sxe -c ".echo FIRST-CHANCE AV; r; kv 16; .echo FAULT-CODE; u @eip-10 L8; .echo STACK-WORDS; dps @esp L16; .echo ECX-WORDS; dd @ecx L12; .echo ECX-TEXT; da @ecx L40; .echo FRAME-PARAMS; kP 12; .echo MODULE-BASES; lm m server; lm m engine; lm m sigsegv*; gn" -c2 ".echo SECOND-CHANCE AV; r; kv 60; lm; q" av'
     'sxe -c ".echo HEAP CORRUPTION; kv 60; q" c0000374'
     'sxe -c ".echo STACK BUFFER OVERRUN; kv 60; q" c0000409'
     'sxe -c ".echo PROCESS EXIT; ~* kv 30; q" epr'
@@ -47,7 +48,10 @@ function Attach-Debugger($srcds, $n) {
     -RedirectStandardOutput "$out\cdb-$n.out" -RedirectStandardError "$out\cdb-$n.err" | Out-Null
 }
 
-function Alive { return $script:server -and -not $script:server.HasExited }
+# The srcds this script started and attached to, not winbed, which can
+# outlive it, and not whatever srcds is running, which after a crash can be a
+# fresh one no debugger is on.
+function Alive { return $script:srcdsId -and [bool](Get-Process -Id $script:srcdsId -ErrorAction SilentlyContinue) }
 
 # Why the last server stopped, from the console it left: the unresolved
 # function SigMod refused to call, or the last lines before it went quiet.
@@ -65,7 +69,7 @@ function Start-Bed {
   $script:starts++
   $n = $script:starts
   if (Test-Path "$tf\console.log") { Copy-Item "$tf\console.log" "$out\consoles\console-$($n - 1).log" }
-  Get-Process srcds -ErrorAction SilentlyContinue | Stop-Process -Force
+  Get-Process srcds, winbed -ErrorAction SilentlyContinue | Stop-Process -Force
   $script:server = Start-Process bedbin\winbed.exe -ArgumentList '-serve', '-root', $env:BED `
     -RedirectStandardOutput "$out\winbed-$n.out" -RedirectStandardError "$out\winbed-$n.err" -PassThru
   $srcds = $null
@@ -74,6 +78,7 @@ function Start-Bed {
     $srcds = Get-Process srcds -ErrorAction SilentlyContinue | Select-Object -First 1
     if (-not $srcds) { Start-Sleep -Milliseconds 200 }
   }
+  $script:srcdsId = if ($srcds) { $srcds.Id } else { $null }
   if ($srcds -and (Test-Path $cdb)) { Attach-Debugger $srcds $n }
   # srcds on a LAN reach binds rcon to the address its hostname resolves to,
   # so try loopback and every IPv4 the runner has.
