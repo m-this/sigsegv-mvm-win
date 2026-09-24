@@ -190,7 +190,7 @@ namespace Mod::Pop::Wave_Extensions
 		return nullptr;
 	}
 
-	DETOUR_DECL_MEMBER(void, CWave_dtor0)
+	DETOUR_DECL_DTOR(CWave_dtor0)
 	{
 		auto wave = reinterpret_cast<CWave *>(this);
 		
@@ -198,17 +198,17 @@ namespace Mod::Pop::Wave_Extensions
 		WaveCleanup(wave);
 		waves.erase(wave);
 		
-		DETOUR_MEMBER_CALL();
+		DETOUR_DTOR_CALL();
 	}
 	
-	DETOUR_DECL_MEMBER(void, CWave_dtor2)
+	DETOUR_DECL_DTOR(CWave_dtor2)
 	{
 		auto wave = reinterpret_cast<CWave *>(this);
 		WaveCleanup(wave);
 //		DevMsg("CWave %08x: dtor2\n", (uintptr_t)wave);
 		waves.erase(wave);
 		
-		DETOUR_MEMBER_CALL();
+		DETOUR_DTOR_CALL();
 	}
 	
 	

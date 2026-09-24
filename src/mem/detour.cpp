@@ -368,12 +368,14 @@ bool CDetour::DoLoad()
 	 * when MSVC's whole-program optimisation gave the game's function a
 	 * caller-pops convention. None of them shows on Linux, where the caller
 	 * always pops, so the check is here, where the two are compiled code. */
-	int game_pop, detour_pop;
-	if (PopBytes(reinterpret_cast<const uint8_t *>(this->GetFuncPtr()), game_pop) &&
-		PopBytes(reinterpret_cast<const uint8_t *>(this->m_pCallback), detour_pop) &&
-		game_pop != detour_pop) {
+	/* The detour's side comes from its declared type (DetourPopOf): its code
+	 * can end in a tail jump, and a scan for `ret` then reads the next function. */
+	int game_pop;
+	if (this->m_iCallbackPop >= 0 &&
+		PopBytes(reinterpret_cast<const uint8_t *>(this->GetFuncPtr()), game_pop) &&
+		game_pop != this->m_iCallbackPop) {
 		Warning("CDetour::DoLoad: \"%s\": refused, the game's function pops %d bytes and the detour %d\n",
-			this->GetName(), game_pop, detour_pop);
+			this->GetName(), game_pop, this->m_iCallbackPop);
 		return false;
 	}
 #endif

@@ -17,24 +17,24 @@ namespace Mod::Pop::Mission_Extensions
 	std::map<CMissionPopulator *, MissionData> missions;
 	
 	
-	DETOUR_DECL_MEMBER(void, CMissionPopulator_dtor0)
+	DETOUR_DECL_DTOR(CMissionPopulator_dtor0)
 	{
 		auto mission = reinterpret_cast<CMissionPopulator *>(this);
 		
 	//	DevMsg("CMissionPopulator %08x: dtor0\n", (uintptr_t)mission);
 		missions.erase(mission);
 		
-		DETOUR_MEMBER_CALL();
+		DETOUR_DTOR_CALL();
 	}
 	
-	DETOUR_DECL_MEMBER(void, CMissionPopulator_dtor2)
+	DETOUR_DECL_DTOR(CMissionPopulator_dtor2)
 	{
 		auto mission = reinterpret_cast<CMissionPopulator *>(this);
 		
 	//	DevMsg("CMissionPopulator %08x: dtor2\n", (uintptr_t)mission);
 		missions.erase(mission);
 		
-		DETOUR_MEMBER_CALL();
+		DETOUR_DTOR_CALL();
 	}
 	
 	

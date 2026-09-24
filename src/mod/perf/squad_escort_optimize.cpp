@@ -118,18 +118,18 @@ namespace Mod::Perf::Squad_Escort_Optimize
         }
     }
     
-    DETOUR_DECL_MEMBER(void, CTFBotEscortSquadLeader_dtor0)
+    DETOUR_DECL_DTOR(CTFBotEscortSquadLeader_dtor0)
 	{
         auto ai = reinterpret_cast<CTFBotEscortSquadLeader *>(this);
         OnDestroy(ai);
-        DETOUR_MEMBER_CALL();
+        DETOUR_DTOR_CALL();
     }
 
-    DETOUR_DECL_MEMBER(void, CTFBotEscortSquadLeader_dtor2)
+    DETOUR_DECL_DTOR(CTFBotEscortSquadLeader_dtor2)
 	{
         auto ai = reinterpret_cast<CTFBotEscortSquadLeader *>(this);
         OnDestroy(ai);
-        DETOUR_MEMBER_CALL();
+        DETOUR_DTOR_CALL();
     }
 
 	class CMod : public IMod, public IModCallbackListener

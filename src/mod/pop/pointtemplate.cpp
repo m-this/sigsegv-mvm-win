@@ -634,18 +634,18 @@ namespace Mod::Pop::PointTemplate
 		}
 	}
 	/* */
-	DETOUR_DECL_MEMBER(void, CUpgrades_D2)
+	DETOUR_DECL_DTOR(CUpgrades_D2)
 	{
 		OnDestroyUpgrades(reinterpret_cast<CUpgrades *>(this));
 
-		DETOUR_MEMBER_CALL();
+		DETOUR_DTOR_CALL();
 	}
 
-	DETOUR_DECL_MEMBER(void, CUpgrades_D0)
+	DETOUR_DECL_DTOR(CUpgrades_D0)
 	{
 		OnDestroyUpgrades(reinterpret_cast<CUpgrades *>(this));
 
-		DETOUR_MEMBER_CALL();
+		DETOUR_DTOR_CALL();
 	}
 
 	

@@ -85,7 +85,7 @@ namespace Mod::Pop::Tank_Extensions
 	}
 	
 	
-	DETOUR_DECL_MEMBER(void, CTankSpawner_dtor0)
+	DETOUR_DECL_DTOR(CTankSpawner_dtor0)
 	{
 		auto spawner = reinterpret_cast<CTankSpawner *>(this);
 		
@@ -93,10 +93,10 @@ namespace Mod::Pop::Tank_Extensions
 		
 		spawners.erase(spawner);
 		
-		DETOUR_MEMBER_CALL();
+		DETOUR_DTOR_CALL();
 	}
 	
-	DETOUR_DECL_MEMBER(void, CTankSpawner_dtor2)
+	DETOUR_DECL_DTOR(CTankSpawner_dtor2)
 	{
 		auto spawner = reinterpret_cast<CTankSpawner *>(this);
 		
@@ -104,7 +104,7 @@ namespace Mod::Pop::Tank_Extensions
 
 		spawners.erase(spawner);
 		
-		DETOUR_MEMBER_CALL();
+		DETOUR_DTOR_CALL();
 	}
 	
 	void Parse_Model(KeyValues *kv, SpawnerData &spawner) {

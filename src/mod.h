@@ -258,13 +258,13 @@ protected:
 };
 
 #define MOD_ADD_DETOUR_MEMBER(detour, addr) \
-	this->AddDetour(new CDetour(addr, GET_MEMBER_CALLBACK(detour), GET_MEMBER_INNERPTR(detour)))
+	this->AddDetour((new CDetour(addr, GET_MEMBER_CALLBACK(detour), GET_MEMBER_INNERPTR(detour)))->ExpectPop(DetourPopOf(&Detour_##detour::callback)))
 #define MOD_ADD_DETOUR_MEMBER_PRIORITY(detour, addr, priority) \
-	this->AddDetour(new CDetour(addr, GET_MEMBER_CALLBACK(detour), GET_MEMBER_INNERPTR(detour), IDetour::priority))
+	this->AddDetour((new CDetour(addr, GET_MEMBER_CALLBACK(detour), GET_MEMBER_INNERPTR(detour), IDetour::priority))->ExpectPop(DetourPopOf(&Detour_##detour::callback)))
 #define MOD_ADD_DETOUR_STATIC(detour, addr) \
-	this->AddDetour(new CDetour(addr, GET_STATIC_CALLBACK(detour), GET_STATIC_INNERPTR(detour)))
+	this->AddDetour((new CDetour(addr, GET_STATIC_CALLBACK(detour), GET_STATIC_INNERPTR(detour)))->ExpectPop(DetourPopOf(&detour_ns_##detour::Detour_##detour)))
 #define MOD_ADD_DETOUR_STATIC_PRIORITY(detour, addr, priority) \
-	this->AddDetour(new CDetour(addr, GET_STATIC_CALLBACK(detour), GET_STATIC_INNERPTR(detour), IDetour::priority))
+	this->AddDetour((new CDetour(addr, GET_STATIC_CALLBACK(detour), GET_STATIC_INNERPTR(detour), IDetour::priority))->ExpectPop(DetourPopOf(&detour_ns_##detour::Detour_##detour)))
 #define MOD_ADD_VHOOK(detour, class_name, func_name) \
 	this->AddVirtualHook(new CVirtualHook(class_name, func_name, GET_VHOOK_CALLBACK(detour), GET_VHOOK_INNERPTR(detour)))
 #define MOD_ADD_VHOOK2(detour, class_name, class_name_for_offset_calc, func_name) \

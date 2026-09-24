@@ -257,14 +257,14 @@ namespace Mod::AI::EngieBot_Dispensers
 	
 	std::unordered_map<Action<CTFBot> *, IHotplugAction<CTFBot> *> build_actions;
 
-	DETOUR_DECL_MEMBER(void, CTFBotMvMEngineerIdle_dtor0)
+	DETOUR_DECL_DTOR(CTFBotMvMEngineerIdle_dtor0)
 	{
 		auto action = reinterpret_cast<Action<CTFBot> *>(this);
 		if (build_actions.find(action) != build_actions.end()) {
 			delete build_actions[action];
 			build_actions.erase(action);
 		}
-		DETOUR_MEMBER_CALL();
+		DETOUR_DTOR_CALL();
 	}
 
 	DETOUR_DECL_MEMBER(void, CTFBotMvMEngineerIdle_dtor1)
@@ -277,14 +277,14 @@ namespace Mod::AI::EngieBot_Dispensers
 		DETOUR_MEMBER_CALL();
 	}
 
-	DETOUR_DECL_MEMBER(void, CTFBotMvMEngineerIdle_dtor2)
+	DETOUR_DECL_DTOR(CTFBotMvMEngineerIdle_dtor2)
 	{
 		auto action = reinterpret_cast<Action<CTFBot> *>(this);
 		if (build_actions.find(action) != build_actions.end()) {
 			delete build_actions[action];
 			build_actions.erase(action);
 		}
-		DETOUR_MEMBER_CALL();
+		DETOUR_DTOR_CALL();
 	}
 
 	RefCount rc_CTFBotMvMEngineerIdle_Update;

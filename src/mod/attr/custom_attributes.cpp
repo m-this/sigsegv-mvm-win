@@ -5840,7 +5840,7 @@ namespace Mod::Attr::Custom_Attributes
 		}
 	}
 	
-	DETOUR_DECL_MEMBER(void, CBaseProjectile_D2)
+	DETOUR_DECL_DTOR(CBaseProjectile_D2)
 	{
 		auto projectile = reinterpret_cast<CBaseProjectile *>(this);
 		auto weapon = ToBaseCombatWeapon(projectile->GetOriginalLauncher());
@@ -5850,7 +5850,7 @@ namespace Mod::Attr::Custom_Attributes
 				projectile->StopSound(sound);
 			}
 		}
-        DETOUR_MEMBER_CALL();
+        DETOUR_DTOR_CALL();
     }
 
 	std::map<CHandle<CTFWeaponBaseGun>, float> applyGunDelay;

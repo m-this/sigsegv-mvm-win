@@ -441,14 +441,14 @@ namespace Mod::Etc::Misc
 		DETOUR_MEMBER_CALL();
 	}
 
-	DETOUR_DECL_MEMBER(void, CHeadlessHatman_D2)
+	DETOUR_DECL_DTOR(CHeadlessHatman_D2)
 	{
 		auto npc = reinterpret_cast<CHeadlessHatman *>(this);
 		if (g_pMonsterResource.GetRef() != nullptr && g_pMonsterResource)
 		{
 			g_pMonsterResource->m_iBossHealthPercentageByte = 0;
 		}
-		DETOUR_MEMBER_CALL();
+		DETOUR_DTOR_CALL();
 	}
 
 	class CMod_HHHHealthBar : public IMod

@@ -2,6 +2,7 @@
 #define _INCLUDE_SIGSEGV_MEM_DETOUR_H_
 
 
+#include <type_traits>
 #include "abi.h"
 #include "library.h"
 #include "util/scope.h"
@@ -102,9 +103,22 @@ private:
 };
 
 
+/* How many argument bytes a detour callback pops, from its type: a member
+ * callback is __thiscall and pops its arguments, each rounded to 4, plus the
+ * hidden return pointer MSVC passes for any class returned by value; a plain
+ * function is __cdecl and pops nothing. Anything else, another convention or
+ * a variadic, is -1 and not checked. */
+template<class A> constexpr int DetourArgBytes() { return std::is_reference_v<A> ? 4 : (int)((sizeof(A) + 3) & ~3); }
+template<class T> constexpr int DetourPopOf(T) { return -1; }
+template<class R, class... A> constexpr int DetourPopOf(R (*)(A...)) { return 0; }
+template<class C, class R, class... A> constexpr int DetourPopOf(R (C::*)(A...)) { return (0 + ... + DetourArgBytes<A>()) + (std::is_class_v<R> ? 4 : 0); }
+
 class CDetour : public IDetour_SymNormal
 {
 public:
+	/* what the callback pops, for DoLoad to hold against the game's function */
+	CDetour *ExpectPop(int pop) { this->m_iCallbackPop = pop; return this; }
+	
 	/* by pointer */
 	CDetour(const char *name, void *func_ptr, void *callback, void **inner_ptr, DetourPriority priority = NORMAL) :
 		IDetour_SymNormal(name, func_ptr), m_pCallback(callback), m_pInner(inner_ptr) { SetPriority(priority); }
@@ -123,6 +137,7 @@ private:
 	
 	void *m_pCallback;
 	void **m_pInner;
+	int m_iCallbackPop = -1;
 	
 	static inline std::list<CDetour *> s_LoadedDetours;
 	static inline std::list<CDetour *> s_ActiveDetours;
@@ -358,6 +373,18 @@ public:
 #define DETOUR_MEMBER_CALL(...) (this->*Actual)(__VA_ARGS__)
 #endif
 #define DETOUR_STATIC_CALL(...) (Actual)(__VA_ARGS__)
+
+/* A detour on a deleting destructor, the [D0] and [D2] a Linux symbol names.
+ * MSVC has one of them, the scalar deleting destructor, and it takes a flags
+ * word saying whether to free: a detour declared without it pops 4 bytes too
+ * few, which CDetour::DoLoad refuses on Windows. */
+#if defined(_WINDOWS) && !defined(PLATFORM_64BITS)
+#define DETOUR_DECL_DTOR(name) DETOUR_DECL_MEMBER(void, name, unsigned int dtor_flags)
+#define DETOUR_DTOR_CALL() DETOUR_MEMBER_CALL(dtor_flags)
+#else
+#define DETOUR_DECL_DTOR(name) DETOUR_DECL_MEMBER(void, name)
+#define DETOUR_DTOR_CALL() DETOUR_MEMBER_CALL()
+#endif
 
 #define __DETOUR_DECL_STATIC(prefix, name, ...) \
 namespace detour_ns_##name {\

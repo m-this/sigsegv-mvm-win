@@ -358,24 +358,24 @@ namespace Mod::Pop::TFBot_Extensions
 	}
 	
 	
-	DETOUR_DECL_MEMBER(void, CTFBotSpawner_dtor0)
+	DETOUR_DECL_DTOR(CTFBotSpawner_dtor0)
 	{
 		auto spawner = reinterpret_cast<CTFBotSpawner *>(this);
 		
 	//	DevMsg("CTFBotSpawner %08x: dtor0, clearing data\n", (uintptr_t)spawner);
 		RemoveSpawner(spawner);
 		
-		DETOUR_MEMBER_CALL();
+		DETOUR_DTOR_CALL();
 	}
 	
-	DETOUR_DECL_MEMBER(void, CTFBotSpawner_dtor2)
+	DETOUR_DECL_DTOR(CTFBotSpawner_dtor2)
 	{
 		auto spawner = reinterpret_cast<CTFBotSpawner *>(this);
 		
 	//	DevMsg("CTFBotSpawner %08x: dtor2, clearing data\n", (uintptr_t)spawner);
 		RemoveSpawner(spawner);
 		
-		DETOUR_MEMBER_CALL();
+		DETOUR_DTOR_CALL();
 	}
 	
 	
@@ -439,24 +439,24 @@ namespace Mod::Pop::TFBot_Extensions
 	}
 	
 	
-	DETOUR_DECL_MEMBER(void, CTFBot_dtor0)
+	DETOUR_DECL_DTOR(CTFBot_dtor0)
 	{
 		auto bot = reinterpret_cast<CTFBot *>(this);
 		
 	//	DevMsg("CTFBot %08x: dtor0, clearing data\n", (uintptr_t)bot);
 		ClearDataForBot(bot);
 		
-		DETOUR_MEMBER_CALL();
+		DETOUR_DTOR_CALL();
 	}
 	
-	DETOUR_DECL_MEMBER(void, CTFBot_dtor2)
+	DETOUR_DECL_DTOR(CTFBot_dtor2)
 	{
 		auto bot = reinterpret_cast<CTFBot *>(this);
 		
 	//	DevMsg("CTFBot %08x: dtor2, clearing data\n", (uintptr_t)bot);
 		ClearDataForBot(bot);
 		
-		DETOUR_MEMBER_CALL();
+		DETOUR_DTOR_CALL();
 	}
 	
 	THINK_FUNC_DECL(HideBossBar)

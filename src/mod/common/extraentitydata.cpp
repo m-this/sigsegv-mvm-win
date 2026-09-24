@@ -75,7 +75,7 @@ namespace Mod::Etc::ExtraEntityData
         }*/
     }
 
-    DETOUR_DECL_MEMBER(void, CBaseEntity_D2)
+    DETOUR_DECL_DTOR(CBaseEntity_D2)
 	{
         
         auto entity = reinterpret_cast<CBaseEntity *>(this);
@@ -83,7 +83,7 @@ namespace Mod::Etc::ExtraEntityData
             delete entity->m_extraEntityData;
             entity->m_extraEntityData = nullptr;
         }
-        DETOUR_MEMBER_CALL();
+        DETOUR_DTOR_CALL();
     }
 
     class CMod : public IMod

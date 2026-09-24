@@ -1167,16 +1167,16 @@ namespace Mod::Etc::Mapentity_Additions
         }
     }
 
-    DETOUR_DECL_MEMBER(void, CTriggerCamera_D0)
+    DETOUR_DECL_DTOR(CTriggerCamera_D0)
 	{
         OnCameraRemoved(reinterpret_cast<CTriggerCamera *>(this));
-        DETOUR_MEMBER_CALL();
+        DETOUR_DTOR_CALL();
     }
 
-    DETOUR_DECL_MEMBER(void, CTriggerCamera_D2)
+    DETOUR_DECL_DTOR(CTriggerCamera_D2)
 	{
         OnCameraRemoved(reinterpret_cast<CTriggerCamera *>(this));
-        DETOUR_MEMBER_CALL();
+        DETOUR_DTOR_CALL();
     }
 
     DETOUR_DECL_MEMBER(void, CFuncRotating_InputStop, inputdata_t *inputdata)

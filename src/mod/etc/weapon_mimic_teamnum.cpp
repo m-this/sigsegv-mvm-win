@@ -333,18 +333,18 @@ namespace Mod::Etc::Weapon_Mimic_Teamnum
 		}
 	}
 
-	DETOUR_DECL_MEMBER(void, CTFPointWeaponMimic_dtor0)
+	DETOUR_DECL_DTOR(CTFPointWeaponMimic_dtor0)
 	{
 		OnRemove(reinterpret_cast<CTFPointWeaponMimic *>(this));
 		
-        DETOUR_MEMBER_CALL();
+        DETOUR_DTOR_CALL();
 	}
 	
-	DETOUR_DECL_MEMBER(void, CTFPointWeaponMimic_dtor2)
+	DETOUR_DECL_DTOR(CTFPointWeaponMimic_dtor2)
 	{
 		OnRemove(reinterpret_cast<CTFPointWeaponMimic *>(this));
 		
-        DETOUR_MEMBER_CALL();
+        DETOUR_DTOR_CALL();
 	}
 
 	DETOUR_DECL_MEMBER(void, CTFPointWeaponMimic_Spawn)

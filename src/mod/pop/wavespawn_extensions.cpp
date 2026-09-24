@@ -548,24 +548,24 @@ namespace Mod::Pop::WaveSpawn_Extensions
 	std::unordered_map<CWaveSpawnPopulator *, WaveSpawnData> wavespawns;
 	
 
-	DETOUR_DECL_MEMBER(void, CWaveSpawnPopulator_dtor0)
+	DETOUR_DECL_DTOR(CWaveSpawnPopulator_dtor0)
 	{
 		auto wavespawn = reinterpret_cast<CWaveSpawnPopulator *>(this);
 		
 	//	DevMsg("CWaveSpawnPopulator %08x: dtor0\n", (uintptr_t)wavespawn);
 		wavespawns.erase(wavespawn);
 
-		DETOUR_MEMBER_CALL();
+		DETOUR_DTOR_CALL();
 	}
 	
-	DETOUR_DECL_MEMBER(void, CWaveSpawnPopulator_dtor2)
+	DETOUR_DECL_DTOR(CWaveSpawnPopulator_dtor2)
 	{
 		auto wavespawn = reinterpret_cast<CWaveSpawnPopulator *>(this);
 		
 	//	DevMsg("CWaveSpawnPopulator %08x: dtor2\n", (uintptr_t)wavespawn);
 		wavespawns.erase(wavespawn);
 
-		DETOUR_MEMBER_CALL();
+		DETOUR_DTOR_CALL();
 	}
 
 	void DisplayMessages(std::vector<std::string> &messages ) {
