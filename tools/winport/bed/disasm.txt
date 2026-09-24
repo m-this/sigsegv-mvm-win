@@ -1,6 +1,12 @@
-# BASEPTR, void (CBaseEntity::*)(), declared before CBaseEntity is complete:
-# how wide is it in the game? ThinkSet(BASEPTR, float, const char *) returns
-# BASEPTR too; its ret N and its callers' pushes say.
-server 0x2025e0 80
-# RegenThink's own ThinkSet call
-server 0x508eb0 40
+# Candidates the matcher turned away, for functions the sweep reaches.
+# CCollisionProperty::SetSolid(SolidType_t), ret 4 expected
+server +0x22be10
+server 0x22be10 150
+# MannVsMachineStats_GetAcquiredCredits(int, bool), cdecl
+server 0x5e02a0 40
+# GetUpgradeStepData(CTFPlayer *, int, int, int &, bool &), cdecl
+server 0x5f65b0 40
+# UTIL_StringToVector(float *, const char *), cdecl
+server 0x370520 20
+# CBasePlayer::ChangeTeam(int, bool, bool, bool), ret 16 expected
+server 0x2dde10 160
