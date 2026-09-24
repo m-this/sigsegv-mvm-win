@@ -211,9 +211,11 @@ jobs:
       uses: actions/upload-artifact@v4
       with: { name: heapcheck, path: heapcheck }
 
-  # Every SigMod wave the catalog has, on Windows, with Kelly's probe.
+  # Every SigMod wave the catalog has, on Windows, with Kelly's probe. Only
+  # once the server has booted and loaded a map under heapcheck: eight runners
+  # finding the same crash eight times tells nothing heapcheck did not.
   bed:
-    needs: [build, bed-tools]
+    needs: [build, bed-tools, heapcheck]
     runs-on: windows-2022
     timeout-minutes: 350
     strategy:
