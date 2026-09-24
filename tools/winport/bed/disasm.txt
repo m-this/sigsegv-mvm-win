@@ -1,3 +1,4 @@
-# The two DispenseAmmo bodies, and whether the robot's is a stub MSVC folded.
-server 0x4c6940 120
-server 0x152770 60
+# Sweep of aea8dac: servers return into eip=1 with these return addresses
+# left on the stack. The call before each is the callee whose pop is off.
+server +0x5166a7
+server +0x516d4e
