@@ -17,6 +17,10 @@ on:
       - 'tools/winport/*.py'
       - 'tools/winport/overrides.json'
 
+concurrency:
+  group: addrs-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   addrs:
     runs-on: ubuntu-24.04
