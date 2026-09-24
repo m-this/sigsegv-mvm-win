@@ -39,7 +39,7 @@ if ($srcds -and (Test-Path $cdb)) {
     # cdb reading an empty stdin is a server that never answers rcon.
     'sxn *'
     'sxe -c ".echo BREAKPOINT; kv 20; gh" bpe'
-    'sxe -c ".echo FIRST-CHANCE AV; r; kv 16; gn" -c2 ".echo SECOND-CHANCE AV; r; kv 60; lm; .dump /ma C:/bed/dumps/av.dmp; q" av'
+    'sxe -c ".echo FIRST-CHANCE AV; r; kv 16; .echo FAULT-CODE; u @eip-10 L8; .echo STACK-WORDS; dps @esp L16; gn" -c2 ".echo SECOND-CHANCE AV; r; kv 60; lm; .dump /ma C:/bed/dumps/av.dmp; q" av'
     'sxe -c ".echo HEAP CORRUPTION; kv 60; .dump /ma C:/bed/dumps/heap.dmp; q" c0000374'
     'sxe -c ".echo STACK BUFFER OVERRUN; kv 60; .dump /ma C:/bed/dumps/gs.dmp; q" c0000409'
     'sxe -c ".echo PROCESS EXIT; ~* kv 30; q" epr'
