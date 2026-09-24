@@ -81,6 +81,11 @@ jobs:
         diff -u ../gamedata/sigsegv/windows.txt windows.txt > windows.patch || true
         if [ $(wc -l < windows.patch) -le 2000 ]; then cat windows.patch; else echo "windows.patch: $(wc -l < windows.patch) lines, in the artifact"; fi
         tail -n 8 matchvtables.log matchfuncs.log; cat argsize.log
+        # String matches a vtable pair contradicts, among the symbols the table uses.
+        grep -o 'sym   "[^"]*"' ../gamedata/sigsegv/windows.txt | cut -d'"' -f2 | sort -u > used.txt
+        grep '  string vs vtable: ' matchfuncs.log | while read -r _ _ _ _ sym s v; do
+          grep -qx "$sym" used.txt && echo "table uses a string match the vtable contradicts: $sym string $s vtable $v"
+        done || true
         # Against the build it was made for, the committed table is what the
         # scripts make: an address added by hand without its override, or an
         # override the table lacks, fails here. Against another build the

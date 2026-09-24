@@ -715,6 +715,13 @@ def main():
         disagree = sum(1 for l, w in vt.items() if l in seeds and seeds[l] != w)
         agree = sum(1 for l, w in vt.items() if l in seeds and seeds[l] == w)
         print(f"vtable pairs: {len(vt)}; against string matches: {agree} agree, {disagree} disagree")
+        # Each disagreement, for the report to hold against the table. A string
+        # can be alone in one function on each side and still sit in different
+        # functions when one compiler inlined its holder: CTFPlayer::Spawn
+        # named ShouldTransmit that way.
+        for l, w in sorted(vt.items()):
+            if l in seeds and seeds[l] != w:
+                print(f"  string vs vtable: {linux.functions[l][0]} {seeds[l] - windows.base:#x} {w - windows.base:#x}")
         taken = set(seeds.values())
         for l, w in vt.items():
             name = linux.functions.get(l, (None,))[0]
