@@ -6,6 +6,7 @@
 #include "mod/pop/popmgr_extensions.h"
 #include "stub/extraentitydata.h"
 #include "mod/etc/mapentity_additions.h"
+#include "util/ucs2.h"
 
 std::vector<ItemDefLanguage> g_ItemLanguages;
 
@@ -274,13 +275,9 @@ CON_COMMAND(sig_gen_extra_names, "")
         KeyValues *kvin = new KeyValues("Lang");
         kvin->UsesEscapeSequences(true);
 
-        CUtlBuffer file( 0, 0, CUtlBuffer::TEXT_BUFFER );
-        filesystem->ReadFile(CFmtStr("resource/tf_%s.txt", langFileName.c_str()), "GAME", file);
-        
-        char *buf = new char[file.TellPut() * 2];
-        int sizec = _V_UCS2ToUTF8( (const ucs2*) (file.String() + 2), buf, file.TellPut() * 2 );
+        std::string buf = ReadUCS2ResourceAsUTF8(CFmtStr("resource/tf_%s.txt", langFileName.c_str()), "GAME");
 
-        if (kvin->LoadFromBuffer(langFileName.c_str(), buf)/**/) {
+        if (kvin->LoadFromBuffer(langFileName.c_str(), buf.c_str())/**/) {
             uint lindex = 0;
             translator->GetLanguageByName(langName.c_str(), &lindex);
 
@@ -376,13 +373,9 @@ void GenerateItemNames() {
         KeyValues *kvin = new KeyValues("Lang");
         kvin->UsesEscapeSequences(true);
 
-        CUtlBuffer file( 0, 0, CUtlBuffer::TEXT_BUFFER );
-        filesystem->ReadFile(CFmtStr("resource/tf_%s.txt", langFileName.c_str()), "GAME", file);
-        
-        char *buf = new char[file.TellPut() * 2];
-        int sizec = _V_UCS2ToUTF8( (const ucs2*) (file.String() + 2), buf, file.TellPut() * 2 );
+        std::string buf = ReadUCS2ResourceAsUTF8(CFmtStr("resource/tf_%s.txt", langFileName.c_str()), "GAME");
 
-        if (kvin->LoadFromBuffer(langFileName.c_str(), buf)/**/) {
+        if (kvin->LoadFromBuffer(langFileName.c_str(), buf.c_str())/**/) {
             uint lindex = 0;
             translator->GetLanguageByName(langName.c_str(), &lindex);
             auto &lang = g_ItemLanguages[lindex];
@@ -450,7 +443,6 @@ void GenerateItemNames() {
 
         }
         kvin->deleteThis();
-        delete[] buf;
     }
 }
 

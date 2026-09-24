@@ -1,4 +1,5 @@
 #include "mod/pop/common.h"
+#include "util/ucs2.h"
 #include "stub/gamerules.h"
 #include "stub/misc.h"
 #include "util/iterate.h"
@@ -1185,14 +1186,12 @@ void GenerateReferences()
     KeyValues *kvin = new KeyValues("Lang");
     kvin->UsesEscapeSequences(true);
 
-    CUtlBuffer file( 0, 0, CUtlBuffer::TEXT_BUFFER );
-    filesystem->ReadFile("resource/tf_english.txt", "GAME", file);
-    
-    char buf[4000000];
-    _V_UCS2ToUTF8( (const ucs2*) (file.String() + 2), buf, 4000000 );
+    /* It was a 4 MB array on the stack, which is four times the stack a
+     * Windows thread gets. */
+    std::string buf = ReadUCS2ResourceAsUTF8("resource/tf_english.txt", "GAME");
 
     std::map<std::string, std::string> itemname_global;
-    if (kvin->LoadFromBuffer("english", buf)/**/) {
+    if (kvin->LoadFromBuffer("english", buf.c_str())/**/) {
 
         KeyValues *tokens = kvin->FindKey("Tokens");
         std::unordered_map<int, std::string> strings;
