@@ -122,7 +122,7 @@ jobs:
         python3 tools/winport/winsig.py game-windows/tf/bin/server.dll derived/pluginsigs.json
     - name: The questions in inspect.sh
       if: always()
-      run: sh tools/winport/bed/inspect.sh
+      run: bash tools/winport/bed/inspect.sh
     # The same queries the heapcheck job runs, last so the end of the log holds them; minutes after a push rather
     # than after a Windows server has been installed.
     - name: Disassemble the queries in disasm.txt
