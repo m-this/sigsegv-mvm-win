@@ -1,8 +1,5 @@
-# The access violation to eip=1 right after a map loads, on every shard since
-# the 24 argsize addresses went in. Return addresses from the stack, innermost
-# first as printed.
-server +0x2ef182
-server +0x2ef121
-server +0x2c5d32
-server +0x2c5d9b
-server +0x2c01b7
+# CBaseEntity::DispatchUpdateTransmitState: the call-graph match turned away
+# for want of field evidence. Linux tests the byte at +0x18c
+# (m_nTransmitStateOwnedCounter) and otherwise calls UpdateTransmitState.
+server 0x1eebd0 40
+server 0x14f960 30

@@ -9,10 +9,10 @@
 namespace Mod::Pop::EventPopfile_Improvements
 {
 	RefCount rc_CMissionPopulator_UpdateMissionDestroySentries;
-	DETOUR_DECL_MEMBER(int, CMissionPopulator_UpdateMissionDestroySentries, const Vector& where, CUtlVector<CHandle<CBaseEntity>> *ents)
+	DETOUR_DECL_MEMBER(int, CMissionPopulator_UpdateMissionDestroySentries)
 	{
 		SCOPED_INCREMENT(rc_CMissionPopulator_UpdateMissionDestroySentries);
-		return DETOUR_MEMBER_CALL(where, ents);
+		return DETOUR_MEMBER_CALL();
 	}
 	
 	DETOUR_DECL_MEMBER(void, CTFBot_AddItem, const char *item)

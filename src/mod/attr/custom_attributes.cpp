@@ -3551,7 +3551,7 @@ namespace Mod::Attr::Custom_Attributes
 		return DETOUR_MEMBER_CALL( pEconItemView, pszErrorMessage, cubErrorMessage);
 	}
 
-	DETOUR_DECL_MEMBER(bool, CTFWeaponBase_DeflectEntity, CBaseEntity *pTarget, CTFPlayer *pOwner, Vector &vecForward, Vector &vecCenter, Vector &vecSize)
+	DETOUR_DECL_MEMBER(bool, CTFWeaponBase_DeflectEntity, CBaseEntity *pTarget, CTFPlayer *pOwner, Vector &vecForward)
 	{
 		int team = pTarget->GetTeamNumber();
 		CBaseEntity *projOwner = pTarget->GetOwnerEntity();
@@ -3570,7 +3570,7 @@ namespace Mod::Attr::Custom_Attributes
 				return true;
 			}
 		}
-		auto result = DETOUR_MEMBER_CALL(pTarget, pOwner, vecForward, vecCenter, vecSize);
+		auto result = DETOUR_MEMBER_CALL(pTarget, pOwner, vecForward);
 		if (result) {
 			int deflectKeepTeam = 0;
 			CALL_ATTRIB_HOOK_INT_ON_OTHER ( weapon, deflectKeepTeam, reflect_keep_team );
@@ -5782,7 +5782,7 @@ namespace Mod::Attr::Custom_Attributes
 		return DETOUR_MEMBER_CALL();
 	}
 
-	DETOUR_DECL_MEMBER(bool, CTFWeaponBase_Holster)
+	DETOUR_DECL_MEMBER(bool, CTFWeaponBase_Holster, CBaseCombatWeapon *pSwitchingTo)
 	{
 		auto weapon = reinterpret_cast<CTFWeaponBase *>(this);
 
@@ -5811,7 +5811,7 @@ namespace Mod::Attr::Custom_Attributes
 			RemoveOnActiveAttributes(weapon, attributes);
 		}
 		weapon->GetOrCreateEntityModule<WeaponModule>("weapon")->consecutiveShotsScore = 0.0f;
-		auto result = DETOUR_MEMBER_CALL();
+		auto result = DETOUR_MEMBER_CALL(pSwitchingTo);
 		if (GetFastAttributeInt(weapon, 0, PASSIVE_RELOAD) != 0) {
 			weapon->m_bInReload = true;
 		}

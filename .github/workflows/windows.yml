@@ -56,6 +56,11 @@ jobs:
       with:
         submodules: recursive
 
+    # A member detour declared with the wrong parameters is silent under
+    # Linux cdecl and unbalances the stack under __thiscall.
+    - name: Detour parameters against the game's symbols
+      run: python3 tools/winport/detourargs.py
+
     - name: Toolchain
       run: |
         # The MSVC STL xwin fetches refuses a clang older than 19 (STL1000).
