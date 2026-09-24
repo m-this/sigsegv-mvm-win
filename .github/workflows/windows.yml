@@ -289,6 +289,8 @@ jobs:
     env:
       WAVEPROBE_RCONPW: bed-${{ github.run_id }}
       BED: C:\bed
+      # Without cdb: attached, it stops the server a second into a mission.
+      BED_DEBUGGER: none
     steps:
     # Only the scripts: mvm-reversed has paths longer than Windows allows.
     - uses: actions/checkout@v4

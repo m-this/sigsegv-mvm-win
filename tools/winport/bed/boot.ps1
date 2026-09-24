@@ -96,7 +96,10 @@ function Start-Bed {
     if (-not $srcds) { Start-Sleep -Milliseconds 200 }
   }
   $script:srcdsId = if ($srcds) { $srcds.Id } else { $null }
-  if ($srcds -and (Test-Path $cdb)) { Attach-Debugger $srcds $n }
+  # BED_DEBUGGER=none plays without cdb: the bed's servers die a second into
+  # a mission with cdb attached, and whether they do without it says whose
+  # fault that is. A crash still leaves a WER dump.
+  if ($srcds -and (Test-Path $cdb) -and $env:BED_DEBUGGER -ne 'none') { Attach-Debugger $srcds $n }
   # srcds on a LAN reach binds rcon to the address its hostname resolves to,
   # so try loopback and every IPv4 the runner has.
   $candidates = @('127.0.0.1') + @(Get-NetIPAddress -AddressFamily IPv4 |
