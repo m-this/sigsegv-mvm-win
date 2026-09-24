@@ -1,8 +1,4 @@
 # What disasm.py prints into the heapcheck job's log, at its end.
-# The map-load access violation, frame by frame from the fault outwards,
-# below SigMod's Detour_KeyValues_LoadFromBuffer.
-engine CreateInterface+0xaccc2
-server CreateInterface+0x989e
-server CreateInterface+0x650d
-server CreateInterface+0x687a
-server CreateInterface+0x5489
+# KeyValues::LoadFromFile around the call into LoadFromBuffer, to see the
+# CUtlBuffer it builds and passes.
+server CreateInterface+0x58c1
