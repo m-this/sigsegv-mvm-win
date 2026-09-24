@@ -440,6 +440,16 @@ CDetouredFunc::~CDetouredFunc()
 	
 	this->RemoveAllDetours();
 	this->DestroyWrapper();
+#if defined _WINDOWS
+	/* Under another plugin's hook the stub and the trampoline are still
+	 * reached through its copy of our jump: RemoveAllDetours pointed the stub
+	 * at the trampoline, and both are left where they are. */
+	if (this->m_bJumpInstalled && this->m_pStub != nullptr && !this->ValidateCurrentPrologue()) return;
+	if (this->m_pStub != nullptr) {
+		TheExecMemManager()->FreeTrampoline(this->m_pStub);
+		this->m_pStub = nullptr;
+	}
+#endif
 	this->DestroyTrampoline();
 }
 
@@ -649,6 +659,12 @@ void CDetouredFunc::Reconfigure()
 
 	TRACE("[this: %08x] with %zu detour(s)", (uintptr_t)this, this->m_Detours.size());
 	
+#if defined _WINDOWS
+	if (this->ReconfigureUnderForeignHook()) {
+		return;
+	}
+#endif
+	
 	this->DestroyWrapper();
 
 	this->UninstallJump();
@@ -660,8 +676,14 @@ void CDetouredFunc::Reconfigure()
 		//Msg("Installing detour %s\n", AddrManager::ReverseLookup(this->m_pFunc));
 		CDetour *first = this->m_Detours.front();
 		CDetour *last  = this->m_Detours.back();
+#if defined _WINDOWS
+		this->EnsureStub();
+		this->m_bJumpIsRelative = Jump_ShouldUseRelativeJump((intptr_t)this->m_pFunc, (intptr_t)this->m_pStub);
+		this->m_zJumpSize = Jump_CalculateSize((intptr_t)this->m_pFunc, (intptr_t)this->m_pStub);
+#else
 		this->m_bJumpIsRelative = Jump_ShouldUseRelativeJump((intptr_t)this->m_pFunc, (intptr_t)first->m_pCallback);
 		this->m_zJumpSize = Jump_CalculateSize((intptr_t)this->m_pFunc, (intptr_t)first->m_pCallback);
+#endif
 		this->CreateTrampoline();
 		TRACE_MSG("detour[\"%s\"].inner [%08x] -> trampoline [%08x]\n",
 			last->GetName(), (uintptr_t)last->m_pInner, (uintptr_t)this->m_pTrampoline);
@@ -708,9 +730,71 @@ void CDetouredFunc::Reconfigure()
 #endif
 	
 	if (jump_to != nullptr) {
+#if defined _WINDOWS
+		this->SetStubTarget(jump_to);
+		this->InstallJump(this->m_pStub);
+#else
 		this->InstallJump(jump_to);
+#endif
 	}
 }
+
+#if defined _WINDOWS
+void CDetouredFunc::EnsureStub()
+{
+	if (this->m_pStub != nullptr) return;
+	
+	this->m_pStub = TheExecMemManager()->AllocTrampoline(JmpIndirectMem32::Size() + sizeof(void *));
+	MemProtModifier_RX_RWX(this->m_pStub, JmpIndirectMem32::Size() + sizeof(void *));
+	JmpIndirectMem32(this->m_pStub, (uint32_t)(this->m_pStub + JmpIndirectMem32::Size())).Write();
+	*reinterpret_cast<void **>(this->m_pStub + JmpIndirectMem32::Size()) = nullptr;
+}
+
+void CDetouredFunc::SetStubTarget(void *target)
+{
+	MemProtModifier_RX_RWX(this->m_pStub, JmpIndirectMem32::Size() + sizeof(void *));
+	*reinterpret_cast<void **>(this->m_pStub + JmpIndirectMem32::Size()) = target;
+}
+
+/* Our jump is installed and the prologue no longer holds it: another plugin
+ * detoured the function after us, and its trampoline starts with a copy of
+ * our jump to the stub. Restoring the original bytes, which a reconfigure used
+ * to do, deleted that plugin's hook without a word to it, and the conflict
+ * warning was the only trace. So the prologue and the trampoline stay as they
+ * are, the chain is relinked, and the stub is pointed at its head, or straight
+ * at the original function when no detour is left. */
+bool CDetouredFunc::ReconfigureUnderForeignHook()
+{
+	if (!this->m_bJumpInstalled || this->m_pStub == nullptr || this->m_pTrampoline == nullptr) return false;
+	if (this->ValidateCurrentPrologue()) return false;
+	
+	for (auto &[pVFuncPtr, pVT] : this->m_FoundFuncPtrAndVTablePtr) {
+		auto vhook = CVirtualHookFunc::FindOptional(pVFuncPtr);
+		if (vhook != nullptr) {
+			vhook->RemoveVirtualHook(&this->m_VirtualHookOptional);
+		}
+	}
+	
+	if (this->m_Detours.empty()) {
+		this->SetStubTarget(this->m_pTrampoline);
+		return true;
+	}
+	
+	CDetour *first = this->m_Detours.front();
+	CDetour *last  = this->m_Detours.back();
+	*last->m_pInner = this->m_pTrampoline;
+	for (int i = this->m_Detours.size() - 2; i >= 0; --i) {
+		*this->m_Detours[i]->m_pInner = this->m_Detours[i + 1]->m_pCallback;
+	}
+	
+	this->m_VirtualHookOptional = CVirtualHookBase(first->m_pCallback, CVirtualHookBase::DETOUR_HOOK, first->GetName());
+	for (auto &[pVFuncPtr, pVT] : this->m_FoundFuncPtrAndVTablePtr) {
+		CVirtualHookFunc::Find(pVFuncPtr, pVT).AddVirtualHook(&this->m_VirtualHookOptional);
+	}
+	this->SetStubTarget(first->m_pCallback);
+	return true;
+}
+#endif
 
 
 void CDetouredFunc::InstallJump(void *target)
