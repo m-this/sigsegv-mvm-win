@@ -1,4 +1,11 @@
-# CTFPlayer::GetMaxHealth (vtable +0x1ec, called just before the eip=1 faults)
-# and GetMaxHealthForBuffing 0x30 after it, which SigMod detours.
-server 0x4f3500 40
-server 0x4f3530 60
+# Candidates for the functions the d6c6c5f sweep reached unresolved.
+# NextBotCreatePlayerBot<T>: one per bot type, the same strings in each.
+server string CreatePlayerBot: Could not Instance
+# CTFPlayer::Weapon_OwnsThisID, ranked first by its callers.
+server 0x52f670 40
+# CBaseEntity::AddEffects, turned away (no field agreement), pop as expected.
+server 0x1ff3b0 120
+# CCollisionProperty::SetSolid, turned away.
+server 0x22be10 140
+# CEconItemSchema::GetItemDefinitionByName, turned away.
+server 0x3b9370 40

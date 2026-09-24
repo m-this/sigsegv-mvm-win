@@ -341,7 +341,13 @@ public:
 	void SetNextThink(int nContextIndex, float thinkTime)                                                                   {        ft_SetNextThink_index            (this, nContextIndex, thinkTime); }
 	int DispatchUpdateTransmitState()                                                                                       { return ft_DispatchUpdateTransmitState   (this); }
 	void SetEffects(int nEffects)                                                                                           {        ft_SetEffects                    (this, nEffects); }
+#if defined _WINDOWS
+	/* No such function in server.dll: MSVC inlined it. The body is the SDK's,
+	 * the mirror of RemoveEffects below. */
+	void AddEffects(int nEffects)                                                                                           { this->m_fEffects |= nEffects; if ((nEffects & EF_NODRAW) != 0) this->DispatchUpdateTransmitState(); }
+#else
 	void AddEffects(int nEffects)                                                                                           {        ft_AddEffects                    (this, nEffects); }
+#endif
 	bool ReadKeyField(const char *name, variant_t *var)                                                                     { return ft_ReadKeyField                  (this, name, var); }
 	IPhysicsObject *VPhysicsInitStatic()                                                                                    { return ft_VPhysicsInitStatic            (this); }
 	void *GetDataObject(int type)                                                                                           { return ft_GetDataObject                 (this, type); }
