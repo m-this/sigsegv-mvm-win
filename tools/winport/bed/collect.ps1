@@ -38,6 +38,18 @@ if ($cdbLogs) {
   foreach ($line in $log) {
     if ($line -match '^([0-9a-f]{8}) ([0-9a-f]{8}) +(server|engine|sigsegv\S*) ') { $bases[$Matches[3]] = @([Convert]::ToUInt32($Matches[1], 16), [Convert]::ToUInt32($Matches[2], 16)) }
   }
+  # A frame cdb already wrote as module+offset gives that module's base too:
+  # its place is the return address printed on the frame before it.
+  $prev = $null
+  foreach ($line in $log) {
+    if ($line -match '^[0-9a-f]{8} ([0-9a-f]{8}) ') {
+      if ($prev -and $line -match ' (server|engine)\+0x([0-9a-f]+)' -and -not $bases.ContainsKey($Matches[1])) {
+        $base = $prev - [Convert]::ToUInt32($Matches[2], 16)
+        $bases[$Matches[1]] = @($base, $base + 0x2000000)
+      }
+      $prev = [Convert]::ToUInt32(($line -split ' ')[1], 16)
+    } else { $prev = $null }
+  }
   function Rva([string]$hex) {
     $a = [Convert]::ToUInt32($hex, 16)
     foreach ($k in $bases.Keys) { if ($a -ge $bases[$k][0] -and $a -lt $bases[$k][1]) { return ('{0}+0x{1:x}' -f $k, ($a - $bases[$k][0])) } }
