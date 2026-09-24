@@ -468,7 +468,7 @@ public:
 	CBaseObject *GetObjectOfType(int iType, int iMode)           { return ft_GetObjectOfType                  (this, iType, iMode); }
 	int GetMaxAmmo(int iAmmoIndex, int iClassNumber = -1)        { return ft_GetMaxAmmo                       (this, iAmmoIndex, iClassNumber); }
 	CTFWearable *GetEquippedWearableForLoadoutSlot(int iSlot)    { return ft_GetEquippedWearableForLoadoutSlot(this, iSlot); }
-	CBaseEntity *GetEntityForLoadoutSlot(int iSlot)    { return ft_GetEntityForLoadoutSlot(this, iSlot); }
+	CBaseEntity *GetEntityForLoadoutSlot(int iSlot, bool bForceUseLoadout = false) { return ft_GetEntityForLoadoutSlot(this, iSlot, bForceUseLoadout); }
 	void RemoveInvisibility()                                    {        ft_RemoveInvisibility               (this); }
 	void DoAnimationEvent(PlayerAnimEvent_t event, int nData = 0){        ft_DoAnimationEvent                 (this, event, nData); }
 	void PlaySpecificSequence (const char *sequence)             {        ft_PlaySpecificSequence   (this, sequence); }
@@ -516,7 +516,7 @@ public:
 	void HolsterOffHandWeapon()                                                      {        ft_HolsterOffHandWeapon   (this); }
 	
 	bool TryToPickupBuilding()                         { return ft_TryToPickupBuilding(this); }
-	void DetonateObjectOfType(int building, int mode)  { ft_DetonateObjectOfType(this, building, mode); }
+	void DetonateObjectOfType(int building, int mode, bool bIgnoreSapperState = false) { ft_DetonateObjectOfType(this, building, mode, bIgnoreSapperState); }
 
 	bool IsReadyToPlay()                               { return ft_IsReadyToPlay(this); }
 	
@@ -528,7 +528,7 @@ public:
 	
 	int GetRuneHealthBonus()       { return ft_GetRuneHealthBonus (this); }
 	void ClearDisguiseWeaponList() { ft_ClearDisguiseWeaponList(this); }
-	CEconItemView *GetLoadoutItem(int classIndex, int slot) { return ft_GetLoadoutItem(this, classIndex, slot); }
+	CEconItemView *GetLoadoutItem(int classIndex, int slot, bool bReportWhitelistFails = false) { return ft_GetLoadoutItem(this, classIndex, slot, bReportWhitelistFails); }
 
 	float GetDesiredHeadScale() { return ft_GetDesiredHeadScale(this); }
 	float GetDesiredHandScale() { return ft_GetDesiredHandScale(this); }
@@ -605,7 +605,7 @@ private:
 	static MemberFuncThunk<      CTFPlayer *, CBaseObject *, int, int         > ft_GetObjectOfType;
 	static MemberFuncThunk<      CTFPlayer *, int, int, int                   > ft_GetMaxAmmo;
 	static MemberFuncThunk<      CTFPlayer *, CTFWearable *, int              > ft_GetEquippedWearableForLoadoutSlot;
-	static MemberFuncThunk<      CTFPlayer *, CBaseEntity *, int              > ft_GetEntityForLoadoutSlot;
+	static MemberFuncThunk<      CTFPlayer *, CBaseEntity *, int, bool        > ft_GetEntityForLoadoutSlot;
 	static MemberFuncThunk<      CTFPlayer *, void, const char *              > ft_HandleCommand_JoinTeam;
 	static MemberFuncThunk<      CTFPlayer *, void, const char *              > ft_HandleCommand_JoinTeam_NoMenus;
 	static MemberFuncThunk<      CTFPlayer *, void, const char *, bool        > ft_HandleCommand_JoinClass;
@@ -636,7 +636,7 @@ private:
 	static MemberFuncThunk<		 CTFPlayer *, void                      	  > ft_GiveDefaultItems;
 	static MemberFuncThunk<		 CTFPlayer *, float, const char *, float, void *, IRecipientFilter *	  > ft_PlayScene;
 	static MemberFuncThunk<		 CTFPlayer *, bool                      	  > ft_TryToPickupBuilding;
-	static MemberFuncThunk<		 CTFPlayer *, void, int, int                  > ft_DetonateObjectOfType;
+	static MemberFuncThunk<		 CTFPlayer *, void, int, int, bool            > ft_DetonateObjectOfType;
 	static MemberFuncThunk<		 CTFPlayer *, void, CUtlVector<CTFWeaponBase *> &> ft_GetPassiveWeapons;
 	static MemberFuncThunk<		 CTFPlayer *, bool                            > ft_IsReadyToPlay;
 	static MemberFuncThunk<      CTFPlayer *, void, const Vector &            > ft_ApplyAbsVelocityImpulse;
@@ -645,7 +645,7 @@ private:
     static MemberFuncThunk<      CTFPlayer *, bool                            > ft_CanMoveDuringTaunt;
     static MemberFuncThunk<      CTFPlayer *, int                             > ft_GetRuneHealthBonus;
     static MemberFuncThunk<      CTFPlayer *, void                            > ft_ClearDisguiseWeaponList;
-    static MemberFuncThunk<      CTFPlayer *, CEconItemView *, int, int       > ft_GetLoadoutItem;
+    static MemberFuncThunk<      CTFPlayer *, CEconItemView *, int, int, bool > ft_GetLoadoutItem;
     static MemberFuncThunk<const CTFPlayer *, int                             > ft_GetMaxHealthForBuffing;
 	static MemberFuncThunk<      CTFPlayer *, bool                            > ft_DoClassSpecialSkill;
 	static MemberFuncThunk<      CTFPlayer *, float                           > ft_GetDesiredHeadScale;

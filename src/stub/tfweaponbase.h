@@ -138,13 +138,13 @@ class CTFGrenadeLauncher : public CTFWeaponBaseGun {};
 
 class CTFSpellBook : public CTFWeaponBaseGun {
 public:
-	void RollNewSpell(int tier) { ft_RollNewSpell(this, tier); }
+	void RollNewSpell(int tier, bool bForceReroll = false) { ft_RollNewSpell(this, tier, bForceReroll); }
 	
 public:
 	DECL_SENDPROP(int, m_iSelectedSpellIndex);
 	DECL_SENDPROP(int, m_iSpellCharges);
 private:
-	static MemberFuncThunk<CTFSpellBook *, void, int> ft_RollNewSpell;
+	static MemberFuncThunk<CTFSpellBook *, void, int, bool> ft_RollNewSpell;
 };
 
 class CTFCompoundBow : public CTFPipebombLauncher

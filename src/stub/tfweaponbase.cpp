@@ -146,7 +146,7 @@ IMPL_SENDPROP(float, CTFSniperRifle, m_flChargedDamage, CTFSniperRifle);
 IMPL_SENDPROP(int, CTFPipebombLauncher, m_iPipebombCount, CTFPipebombLauncher);
 IMPL_REL_AFTER(CUtlVector<EHANDLE>, CTFPipebombLauncher, m_Pipebombs, m_iPipebombCount);
 
-MemberFuncThunk<CTFSpellBook *, void, int>                  CTFSpellBook::ft_RollNewSpell("CTFSpellBook::RollNewSpell");
+MemberFuncThunk<CTFSpellBook *, void, int, bool>            CTFSpellBook::ft_RollNewSpell("CTFSpellBook::RollNewSpell");
 
 IMPL_SENDPROP(int, CTFSpellBook, m_iSelectedSpellIndex, CTFSpellBook);
 IMPL_SENDPROP(int, CTFSpellBook, m_iSpellCharges, CTFSpellBook);

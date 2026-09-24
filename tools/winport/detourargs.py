@@ -55,6 +55,34 @@ def macro_args(text, start):
     return None, start
 
 
+def template_args(text, start):
+    """The text between the angle brackets opening at start, and where it ends."""
+    depth = 0
+    for i in range(start, len(text)):
+        if text[i] == "<":
+            depth += 1
+        elif text[i] == ">":
+            depth -= 1
+            if depth == 0:
+                return text[start + 1:i], i
+    return None, start
+
+
+def tf2_only(text):
+    """The text with the #else branch of every `#ifdef SE_IS_TF2` blanked, lines kept."""
+    out, stack = [], []
+    for line in text.split("\n"):
+        s = line.strip()
+        if s.startswith("#if"):
+            stack.append(["SE_IS_TF2" in s and not s.startswith("#ifndef"), False])
+        elif s.startswith("#else") and stack:
+            stack[-1][1] = True
+        elif s.startswith("#endif") and stack:
+            stack.pop()
+        out.append("" if any(tf2 and in_else for tf2, in_else in stack) else line)
+    return "\n".join(out)
+
+
 def main():
     symbol_of = {}
     for path in sorted((root / "gamedata/sigsegv").glob("*.txt")):
@@ -92,6 +120,23 @@ def main():
                 for params, line in decls[detour]:
                     wanted.append((path.relative_to(root), line, detour, name, symbol_of[name], params))
 
+    # Thunks: SigMod calling the game. A member thunk declared with fewer
+    # parameters than the game's function pushes fewer than it pops, so the
+    # caller's stack is short by the difference after every call. Linux's
+    # caller pops and never shows it; GetEntityForLoadoutSlot(int) for the
+    # game's (int, bool) was called from a Spawn path on every map load.
+    for path in sorted((root / "src").rglob("*.cpp")):
+        text = tf2_only(path.read_text(errors="replace"))
+        for m in re.finditer(r"\b(?:MemberFuncThunk|MemberVFuncThunk)\s*<", text):
+            args, end = template_args(text, m.end() - 1)
+            if args is None:
+                continue
+            name = re.match(r'\s*[\w:]+\s*\(\s*(?:TypeName<\w+>\(\)\s*,\s*|"[^"]*"\s*,\s*)?"([^"]+)"\s*\)', text[end + 1:])
+            if name is None or name[1].startswith("[client]") or name[1] not in symbol_of:
+                continue
+            params = [p.strip() for p in re.split(r",(?![^<>()]*[>)])", args)][2:]
+            wanted.append((path.relative_to(root), text.count("\n", 0, m.start()) + 1, "thunk", name[1], symbol_of[name[1]], params))
+
     symbols = sorted({w[4] for w in wanted})
     plain = dict(zip(symbols, subprocess.run(["c++filt"], input="\n".join(symbols), capture_output=True, text=True, check=True).stdout.splitlines()))
 
@@ -112,7 +157,7 @@ def main():
             continue
         bad += 1
         print(f"{path}:{line}: {detour} takes {len(params)} parameters, {name} is {demangled}")
-    print(f"{len(wanted)} member detours and virtual hooks checked, {bad} with the wrong number of parameters")
+    print(f"{len(wanted)} member detours, virtual hooks and thunks checked, {bad} with the wrong number of parameters")
     sys.exit(1 if bad else 0)
 
 
