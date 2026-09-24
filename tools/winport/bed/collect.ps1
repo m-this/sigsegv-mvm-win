@@ -1,68 +1,61 @@
 # Stop the bed and gather what it left: console logs, SourceMod logs, crash
-# dumps, the probe's results and the rcon dumps.
+# dumps, the probe's results and the rcon dumps. The job log gets a short
+# report, since it is what can be read without downloading the artifact.
 param([Parameter(Mandatory)][string]$Out)
 $ErrorActionPreference = 'Continue'
-Get-Process srcds, winbed -ErrorAction SilentlyContinue | Stop-Process -Force
+Get-Process srcds, winbed, cdb -ErrorAction SilentlyContinue | Stop-Process -Force
 Start-Sleep 3
 $tf = "$env:BED\tf-dedicated\tf"
 New-Item -ItemType Directory -Force $Out | Out-Null
 Copy-Item "$env:BED\bedout\*" $Out -ErrorAction SilentlyContinue
 Copy-Item "$tf\console*.log" $Out -ErrorAction SilentlyContinue
 Copy-Item "$tf\debug.log" $Out -ErrorAction SilentlyContinue
-Copy-Item "$env:BED\tf-dedicated\debug.log" "$Out\debug-root.log" -ErrorAction SilentlyContinue
 Copy-Item -Recurse "$tf\addons\sourcemod\logs" "$Out\sm-logs" -ErrorAction SilentlyContinue
 Copy-Item -Recurse "$env:BED\dumps" "$Out\dumps" -ErrorAction SilentlyContinue
-Get-ChildItem -Recurse $Out | Select-Object FullName, Length | Format-Table -AutoSize | Out-String -Width 200 | Write-Host
 
-# The job log is what can be read without downloading the artifact, so the
-# findings go there too.
-if (Test-Path "$Out\results.jsonl") {
-  Write-Host '=== WAVES ==='
-  Get-Content "$Out\results.jsonl" | ForEach-Object {
-    try {
-      $r = $_ | ConvertFrom-Json
-      $error_text = if ($r.error) { $r.error.Substring(0, [Math]::Min(160, $r.error.Length)) } else { '' }
-      Write-Host ("WAVE {0} w{1} {2} {3} bots={4}/{5} tanks={6}/{7} {8}s {9}" -f $r.mission, $r.wave, $r.state, $r.outcome, $r.bots, $r.bot_spawns, $r.tanks, $r.tank_spawns, [int]$r.wall_seconds, $error_text)
-    } catch { Write-Host "UNPARSED $_" }
-  }
-}
-foreach ($file in 'sig_list_mods.txt', 'sig_list_mods_after.txt') {
-  if (Test-Path "$Out\$file") { Write-Host "=== $file ==="; Get-Content "$Out\$file" | Write-Host }
+Write-Host '=== REPORT ==='
+if (Test-Path "$Out\sig_list_mods.txt") {
+  $mods = Get-Content "$Out\sig_list_mods.txt"
+  Write-Host ("mods: {0} OK, {1} FAILED" -f ($mods | Select-String '\bOK\b').Count, ($mods | Select-String 'FAILED').Count)
 }
 if (Test-Path "$Out\sig_list_addrs.txt") {
   $lines = Get-Content "$Out\sig_list_addrs.txt"
-  Write-Host ("=== sig_list_addrs: {0} lines, {1} FAIL ===" -f $lines.Count, ($lines | Select-String 'FAIL').Count)
-}
-$console = Get-ChildItem "$Out\console*.log" -ErrorAction SilentlyContinue | Sort-Object LastWriteTime | Select-Object -Last 1
-if ($console) {
-  Write-Host "=== $($console.Name): warnings ==="
-  Get-Content $console.FullName | Select-String -Pattern 'FAIL|error|Error|crash|unresolved|Parse Failed|Unknown attribute|Invalid populator|SigMod|sigsegv' |
-    ForEach-Object { $_.Line } | Sort-Object -Unique | Select-Object -First 200 | Write-Host
-  Write-Host "=== $($console.Name): tail ==="
-  Get-Content $console.FullName -Tail 60 | Write-Host
-}
-Get-ChildItem "$Out\sm-logs\errors_*.log" -ErrorAction SilentlyContinue | ForEach-Object {
-  Write-Host "=== $($_.Name) ==="; Get-Content $_.FullName -Tail 150 | Write-Host
-}
-Get-ChildItem "$Out\dumps" -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "DUMP $($_.Name) $($_.Length)" }
-foreach ($file in 'debug.log', 'debug-root.log') {
-  if (Test-Path "$Out\$file") { Write-Host "=== $file ==="; Get-Content "$Out\$file" -Tail 80 | Write-Host }
+  Write-Host ("addrs: {0} lines, {1} FAIL" -f $lines.Count, ($lines | Select-String 'FAIL').Count)
 }
 
-# Last, so the end of the job log says what happened.
+# Each debugger event with the stack under it, without the module lists.
 if (Test-Path "$Out\cdb.log") {
   $log = Get-Content "$Out\cdb.log"
-  Write-Host ("=== cdb.log: {0} lines, {1} first-chance AVs ===" -f $log.Count, ($log | Select-String 'FIRST-CHANCE AV').Count)
-  $log | Select-Object -First 80 | Write-Host
-  Write-Host '=== cdb.log: tail ==='
-  $log | Select-Object -Last 160 | Write-Host
+  $events = 0
+  for ($i = 0; $i -lt $log.Count -and $events -lt 6; $i++) {
+    if ($log[$i] -match '^(FIRST-CHANCE AV|SECOND-CHANCE AV|HEAP CORRUPTION|STACK BUFFER OVERRUN|PROCESS EXIT)') {
+      $events++
+      Write-Host "--- cdb: $($log[$i])"
+      $end = [Math]::Min($log.Count - 1, $i + 40)
+      for ($j = $i + 1; $j -le $end; $j++) {
+        if ($log[$j] -match '^(start +end|FIRST-CHANCE|SECOND-CHANCE|PROCESS EXIT)') { break }
+        if ($log[$j] -match '^(ChildEBP|[0-9a-f]{8} [0-9a-f]{8}|eax=|eip=|\(|[a-z_0-9]+!|Access violation)') { Write-Host $log[$j] }
+      }
+    }
+  }
 }
-Write-Host '=== winbed.out: tail ==='
-Get-Content "$Out\winbed.out" -Tail 15 -ErrorAction SilentlyContinue | Write-Host
-Get-Content "$Out\winbed.err" -Tail 15 -ErrorAction SilentlyContinue | Write-Host
+
+$console = Get-ChildItem "$Out\console*.log" -ErrorAction SilentlyContinue | Sort-Object LastWriteTime | Select-Object -Last 1
+if ($console) {
+  Write-Host "--- console tail, without the address table"
+  Get-Content $console.FullName | Where-Object { $_ -notmatch 'AddrManager|IDetour_Sym|LoadDetours|Link FAIL|KeyValues Error|Lang, ' } |
+    Select-Object -Last 25 | Write-Host
+}
+Get-ChildItem "$Out\dumps" -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "dump: $($_.Name) $($_.Length)" }
+Get-Content "$Out\winbed.err" -Tail 5 -ErrorAction SilentlyContinue | Write-Host
+if (Test-Path "$Out\results.jsonl") {
+  Get-Content "$Out\results.jsonl" | ForEach-Object {
+    try {
+      $r = $_ | ConvertFrom-Json
+      $why = if ($r.error) { $r.error.Substring(0, [Math]::Min(120, $r.error.Length)) } else { '' }
+      Write-Host ("wave {0} w{1} {2} {3} {4}s {5}" -f $r.mission, $r.wave, $r.state, $r.outcome, [int]$r.wall_seconds, $why)
+    } catch {}
+  }
+}
 Write-Host '=== VERDICT ==='
 Get-Content "$Out\boot.txt" -ErrorAction SilentlyContinue | Write-Host
-if (Test-Path "$Out\results.jsonl") {
-  $rows = Get-Content "$Out\results.jsonl" | ForEach-Object { try { $_ | ConvertFrom-Json } catch {} }
-  $rows | Group-Object state | ForEach-Object { Write-Host ("{0,-14} {1}" -f $_.Name, $_.Count) }
-}
