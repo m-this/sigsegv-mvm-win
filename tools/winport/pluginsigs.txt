@@ -1,4 +1,7 @@
 # Functions tf2-archipelago's plugin finds by symbol on Linux and has no
 # Windows signature for. The address job cuts one from each match (winsig.py).
-CObjectDispenser::DispenseAmmo _ZN16CObjectDispenser12DispenseAmmoEP9CTFPlayer
-CRobotDispenser::DispenseAmmo _ZN15CRobotDispenser12DispenseAmmoEP9CTFPlayer
+# A third field names the Windows vtable slot for a virtual the matcher leaves
+# out: DispenseAmmo is 0x6a4 on Linux and 0x66c on Windows in both dispensers,
+# the five overrides CRobotDispenser makes past OnGoActive lining up one to one.
+CObjectDispenser::DispenseAmmo _ZN16CObjectDispenser12DispenseAmmoEP9CTFPlayer CObjectDispenser+0x66c
+CRobotDispenser::DispenseAmmo _ZN15CRobotDispenser12DispenseAmmoEP9CTFPlayer CRobotDispenser+0x66c

@@ -1,8 +1,3 @@
-# The slots where the Windows CRobotDispenser vtable differs from
-# CObjectDispenser's at its end: one of each pair is DispenseAmmo.
-server 0x4c76b0 80
-server 0x372920 80
-server 0x4c7630 40
-server 0x3dab90 40
-server 0x4c7d40 40
-server 0x130b50 40
+# The two DispenseAmmo bodies, and whether the robot's is a stub MSVC folded.
+server 0x4c6940 120
+server 0x152770 60

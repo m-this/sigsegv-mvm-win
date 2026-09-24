@@ -112,8 +112,17 @@ jobs:
         rows = []
         for line in open("tools/winport/pluginsigs.txt"):
             if line.strip() and not line.startswith("#"):
-                name, sym = line.split()
+                name, sym, *slot = line.split()
                 m = matches.get(sym)
+                if not m and slot:
+                    # Class+0xOFF: the Windows primary vtable slot, read off
+                    # this build's dump so an update moves it with the table.
+                    cls, off = slot[0].split("+")
+                    for row in open(f"derived/win-vtables/{cls}.txt"):
+                        if row.startswith("// vtable") and "offset 0x0000" not in row:
+                            break
+                        if row.startswith(f"+{int(off, 16):#06x}:"):
+                            m = {"rva": int(row.split()[1], 16) - 0x10000000, "via": "vtable slot " + slot[0]}
                 print(name, sym, m and {k: m[k] for k in ("rva", "via") if k in m}, file=__import__("sys").stderr)
                 if m:
                     rows.append({"name": name, "sym": sym, "rva": m["rva"]})
