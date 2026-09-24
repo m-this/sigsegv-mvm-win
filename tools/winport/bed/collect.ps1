@@ -111,7 +111,8 @@ Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyCo
 Get-ChildItem "$Out\dumps" -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "dump: $($_.Name) $($_.Length)" }
 # srcds catches its own crashes: it writes a minidump beside itself and exits
 # cleanly, so WER sees nothing. Those dumps, and how winbed saw srcds end.
-$mdmp = @(Get-ChildItem "$env:BED\tf-dedicated" -Recurse -Filter *.mdmp -ErrorAction SilentlyContinue)
+$mdmp = @(Get-ChildItem "$env:BED\tf-dedicated" -Recurse -Filter *.mdmp -ErrorAction SilentlyContinue) +
+  @(Get-ChildItem "$env:BED\dumps\exit" -Recurse -Filter *.dmp -ErrorAction SilentlyContinue)
 New-Item -ItemType Directory -Force "$Out\mdmp" | Out-Null
 $mdmp | ForEach-Object { Copy-Item $_.FullName "$Out\mdmp\"; Write-Host "minidump: $($_.FullName) $($_.Length)" }
 # The crash in each dump, read by cdb here: the faulting context and its stack,
@@ -120,9 +121,9 @@ $cdbExe = 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x86\cdb.exe'
 if (Test-Path $cdbExe) {
   $mdmp | Select-Object -Last 2 | ForEach-Object {
     Write-Host "--- crash in $($_.Name)"
-    & $cdbExe -z $_.FullName -y "$env:BED\tf-dedicated\tf\addons\sourcemod\extensions" -c ".lines -e; .ecxr; r; kv 40; lm m server; lm m engine; q" 2>&1 |
+    & $cdbExe -z $_.FullName -y "$env:BED\tf-dedicated\tf\addons\sourcemod\extensions" -c ".lines -e; .ecxr; r; kv 40; ~* kv 25; lm m server; lm m engine; q" 2>&1 |
       Where-Object { $_ -match '^(eip=|[0-9a-f]{8} [0-9a-f]{8} |ExceptionAddress|ExceptionCode|Attempt to|[0-9a-f]{8} [0-9a-f]{8} +(server|engine) )' } |
-      Select-Object -First 45 | Write-Host
+      Select-Object -First 160 | Write-Host
   }
 }
 Get-ChildItem "$Out\winbed-*.out", "$Out\winbed-*.err" -ErrorAction SilentlyContinue | ForEach-Object {
