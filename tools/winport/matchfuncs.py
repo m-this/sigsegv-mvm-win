@@ -715,6 +715,28 @@ def main():
         disagree = sum(1 for l, w in vt.items() if l in seeds and seeds[l] != w)
         agree = sum(1 for l, w in vt.items() if l in seeds and seeds[l] == w)
         print(f"vtable pairs: {len(vt)}; against string matches: {agree} agree, {disagree} disagree")
+        # Where the two disagree the vtable wins. A string can be alone in one
+        # function on each side and still sit in different functions, when one
+        # compiler inlined the function that holds it: that is how
+        # CTFPlayer::Spawn came to name ShouldTransmit, the slot before it,
+        # and a detour declared for Spawn unbalanced the stack on every
+        # transmit check. A vtable pair is kept only when every class that
+        # holds the function agrees on its slot.
+        for l, w in vt.items():
+            if l in seeds and seeds[l] != w:
+                name = linux.functions[l][0]
+                print(f"  vtable over string: {name} {seeds[l] - windows.base:#x} -> {w - windows.base:#x}")
+                seeds[l] = w
+                result[name] = {"rva": w - windows.base, "via": "vtable", "evidence": []}
+        # A string match left holding a vtable pair's Windows function is the
+        # other half of the same mistake.
+        owner = {w: l for l, w in vt.items()}
+        for l2, w2 in list(seeds.items()):
+            if w2 in owner and owner[w2] != l2:
+                name = linux.functions[l2][0]
+                print(f"  string match dropped, its function is {linux.functions[owner[w2]][0]}'s: {name}")
+                del seeds[l2]
+                result.pop(name, None)
         taken = set(seeds.values())
         for l, w in vt.items():
             name = linux.functions.get(l, (None,))[0]
