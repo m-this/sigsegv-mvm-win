@@ -1,11 +1,6 @@
-# eip=1 under CPlayerResource::UpdatePlayerData, still there with the detour
-# parameters fixed. Frame locations, innermost first, from the bases the
-# frames themselves give (server 0x71f00000, engine 0x74c40000).
-server +0x5166a7
-engine +0x13acb8
-server +0x36d490
-server +0x34fa56
-server +0x49e0e7
-server 0x36d470 40
-server 0x50d380 40
-server 0x508e30 40
+# CTFPlayer::Spawn from the vtable (slot +0x60, Linux +0x64): should end plain ret.
+server 0x50d510 400
+# RegenThink: SetContextThink(&CTFPlayer::RegenThink, t, "RegenThink") pushes
+# the function right before calling ThinkSet (0x2025e0).
+server string RegenThink
+server callafter RegenThink
