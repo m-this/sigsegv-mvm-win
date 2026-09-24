@@ -82,6 +82,13 @@ if ($console) {
   Get-Content $console.FullName | Where-Object { $_ -notmatch 'AddrManager|IDetour_Sym|LoadDetours|Link FAIL|KeyValues Error|Lang, ' } |
     Select-Object -Last 12 | Write-Host
 }
+# Each server that stopped, its last words: a clean exit with no fatal line
+# still says what it was doing, a map change, a plugin, an Error() dialog.
+Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort-Object Name | ForEach-Object {
+  Write-Host "--- last lines of $($_.Name)"
+  Get-Content $_.FullName | Where-Object { $_ -notmatch 'AddrManager|IDetour_Sym|LoadDetours|Link FAIL|KeyValues Error|Lang, |\[AP\] debug|tf2_archipelago.smx\] The (death|message) request|cannot get the (unlock set|mission list)' } |
+    Select-Object -Last 15 | Write-Host
+}
 # Every unresolved function a mission reached, across all the server's starts.
 $unresolved = Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
   Select-String -Pattern 'called unresolved function "([^"]+)"' | ForEach-Object { $_.Matches[0].Groups[1].Value } | Sort-Object -Unique
