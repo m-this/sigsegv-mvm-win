@@ -1,5 +1,9 @@
-# CBaseEntity::DispatchUpdateTransmitState: the call-graph match turned away
-# for want of field evidence. Linux tests the byte at +0x18c
-# (m_nTransmitStateOwnedCounter) and otherwise calls UpdateTransmitState.
-server 0x1eebd0 40
-server 0x14f960 30
+# eip=1 under CPlayerResource::UpdatePlayerData, still there with the detour
+# parameters fixed. Frame locations, innermost first, from the bases the
+# frames themselves give (server 0x71f00000, engine 0x74c40000).
+server +0x5166a7
+engine +0x13acb8
+server +0x36d490
+server +0x34fa56
+server +0x49e0e7
+server 0x36d470 40
