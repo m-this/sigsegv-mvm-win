@@ -69,3 +69,12 @@
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
 #endif
+
+/* A pointer to a member of a class not yet defined takes MSVC's most general
+ * layout, 16 bytes, and the SDK declares BASEPTR, USEPTR and inputfunc_t
+ * before CBaseEntity is. server.dll has them at 4: ThinkSet takes one pushed
+ * dword and returns in eax, ret 0xc. At 16 every ThinkSet call passed a hidden
+ * return pointer where the think function belongs and left the stack 16 bytes
+ * short, and the next think jumped into the stack. Declared single inheritance
+ * here, ahead of every SDK header, they are 4 bytes as in the game. */
+class __single_inheritance CBaseEntity;
