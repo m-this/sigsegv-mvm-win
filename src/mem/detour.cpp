@@ -235,7 +235,7 @@ bool IDetour_SymNormal::DoLoad()
 	}
 
 #if defined _WINDOWS
-	if (IsFoldableTrivialFunction(this->m_pFunc)) {
+	if (IsFoldableTrivialFunction(reinterpret_cast<const uint8_t *>(this->m_pFunc))) {
 		Warning("IDetour_SymNormal::DoLoad: \"%s\": refused, a trivial function MSVC may have merged with others (%s)\n",
 			this->GetName(), this->m_bFuncByName ? this->m_strFuncName.c_str() : "by pointer");
 		return false;
