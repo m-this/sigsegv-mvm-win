@@ -16,6 +16,7 @@ symbols for:
     server 0x6e8340              the function at this RVA, at most 200 instructions
     server 0x6e8340 40           at most 40
     server CreateInterface+0x989e    the function holding that address, through it
+    server +0x2ef182             the same for an RVA, as collect.ps1 prints a return address
     server string KeyValues::    the functions referencing a string containing this
 """
 
@@ -43,7 +44,7 @@ class Module:
     def rva(self, expr):
         if "+" in expr:
             name, off = expr.split("+", 1)
-            return self.exports[name] + int(off, 16)
+            return (self.exports[name] if name else 0) + int(off, 16)
         return int(expr, 16)
 
     def function_start(self, rva):

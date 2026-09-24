@@ -19,6 +19,7 @@ on:
       - 'tools/winport/bed/disasm.txt'
       - 'tools/winport/*.py'
       - 'tools/winport/overrides.json'
+      - 'tools/winport/wanted.txt'
   workflow_dispatch:
     inputs:
       archipelago_ref:
