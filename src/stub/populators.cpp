@@ -1,5 +1,6 @@
 #include "stub/populators.h"
 #include "mem/extract.h"
+#include "stub/tfplayer.h"
 
 #if defined _LINUX
 
@@ -202,6 +203,21 @@ MemberFuncThunk<CPopulationManager *, PlayerUpgradeHistory *, CSteamID> CPopulat
 MemberFuncThunk<CPopulationManager *, void, int>         CPopulationManager::ft_SetCheckpoint("CPopulationManager::SetCheckpoint");
 
 StaticFuncThunk<int, CUtlVector<CTFPlayer *> *> CPopulationManager::ft_CollectMvMBots("CPopulationManager::CollectMvMBots");
+#if defined _WINDOWS
+/* The Linux body: every connected bot with an edict that is not on RED. */
+int CPopulationManager::CollectMvMBots(CUtlVector<CTFPlayer *> *mvm_bots)
+{
+	mvm_bots->RemoveAll();
+	for (int i = 1; i <= gpGlobals->maxClients; ++i) {
+		CTFPlayer *player = ToTFPlayer(UTIL_PlayerByIndex(i));
+		if (player == nullptr || player->edict() == nullptr) continue;
+		if (!player->IsBot() || !player->IsConnected()) continue;
+		if (player->GetTeamNumber() == TF_TEAM_RED) continue;
+		mvm_bots->AddToTail(player);
+	}
+	return mvm_bots->Count();
+}
+#endif
 StaticFuncThunk<void, CUtlVector<CUtlString> &> CPopulationManager::ft_FindDefaultPopulationFileShortNames("CPopulationManager::FindDefaultPopulationFileShortNames");
 
 IMPL_EXTRACT(CPopulationManager::SteamIDMap, CPopulationManager, m_RespecPoints,   new CExtract_CPopulationManager_m_RespecPoints());

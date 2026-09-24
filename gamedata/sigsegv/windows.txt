@@ -8490,6 +8490,51 @@
 					lib   "server"
 					// verified: called with 0x300 (FL_CLIENT | FL_FAKECLIENT) after ClearFlags in the inlined NextBotCreatePlayerBot; ors the argument into m_fFlags at +0x140 and reports the change to the entity list, ret 4
 				}
+				"CCollisionProperty::SetSolid"
+				{
+					type  "fixed"
+					sym   "_ZN18CCollisionProperty8SetSolidE11SolidType_t"
+					addr  "0x22be10"
+					build "10828683"
+					lib   "server"
+					// verified: turned away (fields 0.18); returns when m_nSolidType (+0x41) already equals the argument, notes IsSolid from FSOLID_NOT_SOLID (+0x3c & 4), marks the surrounding bounds dirty (0x22b360), then special-cases SOLID_BSP through the move parent, the SDK's body
+				}
+				"MannVsMachineStats_GetAcquiredCredits"
+				{
+					type  "fixed"
+					sym   "_Z37MannVsMachineStats_GetAcquiredCreditsib"
+					addr  "0x5e02a0"
+					build "10828683"
+					lib   "server"
+					// verified: turned away (consensus, no evidence); returns 0 without g_pMVMStats, else GetWaveStats(wave) into a local and returns acquired, plus bonus when the bool is set: the Linux body line for line, cdecl
+				}
+				"GetUpgradeStepData"
+				{
+					type  "fixed"
+					sym   "_Z18GetUpgradeStepDataP9CTFPlayeriiRiRb"
+					addr  "0x5f65b0"
+					build "10828683"
+					lib   "server"
+					// verified: turned away (consensus); returns on a null player, looks up the loadout slot's entity, indexes the upgrade table by upgrade * 0x19c and reads its attribute definition from the item schema, as the Linux body does; cdecl
+				}
+				"UTIL_StringToVector"
+				{
+					type  "fixed"
+					sym   "_Z19UTIL_StringToVectorPfPKc"
+					addr  "0x370520"
+					build "10828683"
+					lib   "server"
+					// verified: turned away (call match); takes (float *, const char *), copies the string into a 128-byte local and parses floats from it: UTIL_StringToFloatArray(v, 3, s) inlined into its wrapper; cdecl
+				}
+				"CBasePlayer::ChangeTeam [int, bool, bool, bool]"
+				{
+					type  "fixed"
+					sym   "_ZN11CBasePlayer10ChangeTeamEibbb"
+					addr  "0x2dde10"
+					build "10828683"
+					lib   "server"
+					// verified: turned away (string overlap 0.43, the other overload shares the strings); warns 'invalid team index' when GetGlobalTeam(iTeam) is null and ends ret 0x10, the four-argument overload
+				}
 				"CTFPlayer::Spawn"
 				{
 					type  "fixed"

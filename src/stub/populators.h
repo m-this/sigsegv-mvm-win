@@ -28,7 +28,12 @@ public:
 	void UnpauseSpawning()             {        ft_UnpauseSpawning (this); }
 	void AllocateBots()	               {        ft_AllocateBots (this); }
 	bool IsInEndlessWaves()	           { return ft_IsInEndlessWaves (this); }
+#if defined _WINDOWS
+	/* No body in server.dll: MSVC inlined it into its callers. */
+	static int CollectMvMBots(CUtlVector<CTFPlayer *> *mvm_bots);
+#else
 	static int CollectMvMBots(CUtlVector<CTFPlayer *> *mvm_bots)                 { return ft_CollectMvMBots(mvm_bots); }
+#endif
 	void RemovePlayerAndItemUpgradesFromHistory( CTFPlayer *pPlayer )            { return ft_RemovePlayerAndItemUpgradesFromHistory(this, pPlayer); }
 	static void FindDefaultPopulationFileShortNames(CUtlVector<CUtlString> &vec) { return ft_FindDefaultPopulationFileShortNames(vec); }
 	CUtlVector< CUpgradeInfo > * GetPlayerUpgradeHistory(CTFPlayer *player)      { return ft_GetPlayerUpgradeHistory(this, player); }

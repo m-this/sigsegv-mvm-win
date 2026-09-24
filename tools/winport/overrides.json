@@ -105,8 +105,8 @@
   "why": "string lead, agreed by strings+callees: 1 shared string(s), 6/7 matched callees, windows/linux size 640/729"
  },
  "_ZN11CBasePlayer10ChangeTeamEibbb": {
-  "bad": true,
-  "why": "address 0x2dde10 is right (it owns the 'CBasePlayer::ChangeTeam( %d ) - invalid team index.' string), but detouring it on Windows makes the call from CTFPlayer::ChangeTeam land in .data, so it is left undetoured until the trampoline path is understood"
+  "rva": "0x2dde10",
+  "why": "turned away (string overlap 0.43, the other overload shares the strings); warns 'invalid team index' when GetGlobalTeam(iTeam) is null and ends ret 0x10, the four-argument overload"
  },
  "_ZN11CEconEntity18UpdateModelToClassEv": {
   "rva": "0x3a0270",
@@ -625,5 +625,21 @@
   "name": "CBaseEntity::AddFlag",
   "rva": "0x1ff3f0",
   "why": "called with 0x300 (FL_CLIENT | FL_FAKECLIENT) after ClearFlags in the inlined NextBotCreatePlayerBot; ors the argument into m_fFlags at +0x140 and reports the change to the entity list, ret 4"
+ },
+ "_ZN18CCollisionProperty8SetSolidE11SolidType_t": {
+  "rva": "0x22be10",
+  "why": "turned away (fields 0.18); returns when m_nSolidType (+0x41) already equals the argument, notes IsSolid from FSOLID_NOT_SOLID (+0x3c & 4), marks the surrounding bounds dirty (0x22b360), then special-cases SOLID_BSP through the move parent, the SDK's body"
+ },
+ "_Z37MannVsMachineStats_GetAcquiredCreditsib": {
+  "rva": "0x5e02a0",
+  "why": "turned away (consensus, no evidence); returns 0 without g_pMVMStats, else GetWaveStats(wave) into a local and returns acquired, plus bonus when the bool is set: the Linux body line for line, cdecl"
+ },
+ "_Z18GetUpgradeStepDataP9CTFPlayeriiRiRb": {
+  "rva": "0x5f65b0",
+  "why": "turned away (consensus); returns on a null player, looks up the loadout slot's entity, indexes the upgrade table by upgrade * 0x19c and reads its attribute definition from the item schema, as the Linux body does; cdecl"
+ },
+ "_Z19UTIL_StringToVectorPfPKc": {
+  "rva": "0x370520",
+  "why": "turned away (call match); takes (float *, const char *), copies the string into a 128-byte local and parses floats from it: UTIL_StringToFloatArray(v, 3, s) inlined into its wrapper; cdecl"
  }
 }
