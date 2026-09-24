@@ -179,11 +179,20 @@ private:
 	std::string m_szName;
 };
 
+/* On Windows the original is __thiscall and is called as a member function,
+ * as DETOUR_MEMBER_CALL does: a plain function pointer is cdecl, passes `this`
+ * on the stack and pops the arguments the callee already popped, and the
+ * caller then returned into an argument (eip=1) at every map load. */
+#if !defined(_WINDOWS) || defined(PLATFORM_64BITS)
 #define VHOOK_CALL(...) (Actual)(this, ## __VA_ARGS__)
+#else
+#define VHOOK_CALL(...) (this->*Actual)(__VA_ARGS__)
+#endif
 
 // For per object virtual hooks
 #define VHOOK_CALL_OBJSPEC(name, ...) (this->*MakePtrToMemberFunc<Vhook_##name, __VA_ARGS__>((*((void ***)this)-5)[vhook_##name->GetOffset()]))
 
+#if !defined(_WINDOWS) || defined(PLATFORM_64BITS)
 #define VHOOK_DECL(ret, name, ...) \
 	class Vhook_##name \
 	{ \
@@ -194,6 +203,18 @@ private:
 	static CVirtualHook *vhook_##name = nullptr; \
 	ret (* Vhook_##name::Actual)(Vhook_##name *, ##__VA_ARGS__) = nullptr; \
 	ret Vhook_##name::callback(__VA_ARGS__)
+#else
+#define VHOOK_DECL(ret, name, ...) \
+	class Vhook_##name \
+	{ \
+	public: \
+		ret callback(__VA_ARGS__); \
+		static ret (Vhook_##name::* Actual)(__VA_ARGS__); \
+	}; \
+	static CVirtualHook *vhook_##name = nullptr; \
+	ret (Vhook_##name::* Vhook_##name::Actual)(__VA_ARGS__) = nullptr; \
+	ret Vhook_##name::callback(__VA_ARGS__)
+#endif
 
 #define GET_VHOOK_CALLBACK(name) GetAddrOfMemberFunc(&Vhook_##name::callback)
 #define GET_VHOOK_INNERPTR(name) reinterpret_cast<void **>(&Vhook_##name::Actual)
