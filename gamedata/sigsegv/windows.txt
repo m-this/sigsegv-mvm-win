@@ -797,6 +797,15 @@
 					lib   "server"
 					// vtable
 				}
+				"CBaseEntity::DispatchUpdateTransmitState"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity27DispatchUpdateTransmitStateEv"
+					addr  "0x1eebd0"
+					build "10828683"
+					lib   "server"
+					// verified: the call-graph match (via CInfoTarget::Spawn), turned away for want of field evidence and read by hand: it tests the byte counter at +0x174 (Linux +0x18c, m_nTransmitStateOwnedCounter) and, when set, returns the edict's first word (m_fStateFlags) or 0, else goes on to UpdateTransmitState, as the source does; plain ret, no arguments. The bed's servers died calling it unresolved
+				}
 				"CBaseEntity::TakeDamage"
 				{
 					type  "fixed"
