@@ -56,10 +56,23 @@ jobs:
         for t in clang-cl lld-link; do sudo ln -sf "/usr/bin/$t-20" "/usr/local/bin/$t"; done
         clang-cl --version
 
+    # The SDK comes from Microsoft's CDN, which drops a download now and then:
+    # kept between runs, and fetched with retries when it is not.
+    - uses: actions/cache@v4
+      id: xwin
+      with:
+        path: ${{ github.workspace }}/../xwin-sdk
+        key: xwin-0.6.5-x86
+
     - name: Windows SDK
+      if: steps.xwin.outputs.cache-hit != 'true'
       run: |
-        curl -sSfL https://github.com/Jake-Shadle/xwin/releases/download/0.6.5/xwin-0.6.5-x86_64-unknown-linux-musl.tar.gz | tar -xz
-        ./xwin-0.6.5-x86_64-unknown-linux-musl/xwin --accept-license --arch x86 splat --output "$XWIN"
+        curl -sSfL --retry 3 https://github.com/Jake-Shadle/xwin/releases/download/0.6.5/xwin-0.6.5-x86_64-unknown-linux-musl.tar.gz | tar -xz
+        for attempt in 1 2 3; do
+          ./xwin-0.6.5-x86_64-unknown-linux-musl/xwin --accept-license --arch x86 splat --output "$XWIN" && exit 0
+          echo "xwin failed (attempt $attempt)"; sleep 10
+        done
+        exit 1
 
     - name: Boost headers
       run: |
