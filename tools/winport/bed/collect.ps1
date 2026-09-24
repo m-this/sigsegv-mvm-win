@@ -108,6 +108,10 @@ Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyCo
 Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
   Select-String -Pattern '(?:DoLoad|CVirtualHook): "[^"]+": refused' | ForEach-Object { $_.Line.Trim() } |
   Sort-Object -Unique | ForEach-Object { Write-Host "refused detour: $_" }
+# Where each virtual hook went (the bed sets SIGSEGV_SURVEY_UNRESOLVED).
+Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
+  Select-String -Pattern 'CVirtualHook: "[^"]+" in ' | ForEach-Object { $_.Line.Trim() } |
+  Sort-Object -Unique | ForEach-Object { Write-Host "vhook: $_" }
 Get-ChildItem "$Out\dumps" -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "dump: $($_.Name) $($_.Length)" }
 # srcds catches its own crashes: it writes a minidump beside itself and exits
 # cleanly, so WER sees nothing. Those dumps, and how winbed saw srcds end.
