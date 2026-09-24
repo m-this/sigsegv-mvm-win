@@ -71,7 +71,7 @@ jobs:
         addrs windows.txt > derived.tsv
         echo "entries: committed $(wc -l < committed.tsv), derived $(wc -l < derived.tsv), same address $(comm -12 committed.tsv derived.tsv | wc -l)"
         diff committed.tsv derived.tsv | head -40 || true
-        tail -8 matchvtables.log matchfuncs.log
+        tail -n 8 matchvtables.log matchfuncs.log
     - uses: actions/upload-artifact@v4
       if: always()
       with:
