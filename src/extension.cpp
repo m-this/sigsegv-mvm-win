@@ -188,17 +188,29 @@ namespace ExitTrace
 		 * popped. The words just above ESP still hold the return addresses of
 		 * the frames that were running, so name the ones that point into
 		 * code, closest first. */
-		void *words[24];
-		int m = 0;
 		auto esp = reinterpret_cast<void *const *>(ctx->Esp);
+		FILE *f = fopen("sigsegv_exit.txt", "a");
+		char line[MAX_PATH + 64];
+		/* The words the bad ret left: the one it popped sat just below ESP. */
+		for (int i = -2; i < 8; ++i) {
+			if (!Readable(esp + i, sizeof(void *))) continue;
+			snprintf(line, sizeof(line), "  [esp%+d] 0x%08lx\n", i * 4, (unsigned long)(uintptr_t)esp[i]);
+			if (f != nullptr) fputs(line, f);
+			Warning("%s", line);
+		}
+		int m = 0;
 		for (int i = 0; i < 256 && m < 24 && Readable(esp + i, sizeof(void *)); ++i) {
 			MEMORY_BASIC_INFORMATION mbi;
 			if (VirtualQuery(esp[i], &mbi, sizeof(mbi)) != 0 && mbi.State == MEM_COMMIT && mbi.Type == MEM_IMAGE
 				&& (mbi.Protect & (PAGE_EXECUTE | PAGE_EXECUTE_READ | PAGE_EXECUTE_READWRITE | PAGE_EXECUTE_WRITECOPY))) {
-				words[m++] = esp[i];
+				Name(name, sizeof(name), esp[i]);
+				snprintf(line, sizeof(line), "  [esp+0x%x] %s\n", i * 4, name);
+				if (f != nullptr) fputs(line, f);
+				Warning("%s", line);
+				++m;
 			}
 		}
-		Write("  code addresses on the stack above ESP:\n", words, m);
+		if (f != nullptr) fclose(f);
 		return EXCEPTION_CONTINUE_SEARCH;
 	}
 	
