@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - 'claude/**'
+      - 'sigmod-windows-bed'
     paths:
       - '.github/workflows/addrs.yml'
       - 'tools/winport/*.py'
