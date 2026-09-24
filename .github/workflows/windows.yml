@@ -101,11 +101,12 @@ jobs:
         cp -r translations "$pkg/addons/sourcemod/translations"
         (cd "$pkg" && zip -qr "$GITHUB_WORKSPACE/package-windows.zip" .)
         sha256sum package-windows.zip | tee package-windows.zip.sha256
+        cp "$OUT/sigsegv.ext.2.tf2.pdb" .
 
     - uses: actions/upload-artifact@v4
       with:
         name: symbols
-        path: ${{ env.OUT }}/sigsegv.ext.2.tf2.pdb
+        path: sigsegv.ext.2.tf2.pdb
 
     - uses: actions/upload-artifact@v4
       with:
