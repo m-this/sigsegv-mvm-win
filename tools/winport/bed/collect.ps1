@@ -66,3 +66,7 @@ if (Test-Path "$Out\results.jsonl") {
 }
 Write-Host '=== VERDICT ==='
 Get-Content "$Out\boot.txt" -ErrorAction SilentlyContinue | Write-Host
+if (Test-Path "$Out\disasm.txt") {
+  Write-Host '=== DISASM ==='
+  Get-Content "$Out\disasm.txt" | Write-Host
+}
