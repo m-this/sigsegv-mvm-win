@@ -183,6 +183,22 @@ namespace ExitTrace
 		snprintf(header, sizeof(header), "SigMod: fault 0x%08lx at %s touching 0x%08lx (esp 0x%08lx), EBP chain:\n",
 			code, name, (unsigned long)target, (unsigned long)ctx->Esp);
 		Write(header, frames, n);
+		
+		/* A return into an argument (eip=1) leaves no chain: EBP was already
+		 * popped. The words just above ESP still hold the return addresses of
+		 * the frames that were running, so name the ones that point into
+		 * code, closest first. */
+		void *words[24];
+		int m = 0;
+		auto esp = reinterpret_cast<void *const *>(ctx->Esp);
+		for (int i = 0; i < 256 && m < 24 && Readable(esp + i, sizeof(void *)); ++i) {
+			MEMORY_BASIC_INFORMATION mbi;
+			if (VirtualQuery(esp[i], &mbi, sizeof(mbi)) != 0 && mbi.State == MEM_COMMIT && mbi.Type == MEM_IMAGE
+				&& (mbi.Protect & (PAGE_EXECUTE | PAGE_EXECUTE_READ | PAGE_EXECUTE_READWRITE | PAGE_EXECUTE_WRITECOPY))) {
+				words[m++] = esp[i];
+			}
+		}
+		Write("  code addresses on the stack above ESP:\n", words, m);
 		return EXCEPTION_CONTINUE_SEARCH;
 	}
 	

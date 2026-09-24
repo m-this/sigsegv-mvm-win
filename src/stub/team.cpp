@@ -24,4 +24,22 @@ MemberFuncThunk<CTFTeamManager *, CTFTeam *, int> CTFTeamManager::ft_GetTeam    
 
 GlobalThunk<CTFTeamManager> s_TFTeamManager("s_TFTeamManager");
 
+#if defined _WINDOWS
+CTFTeam *CTFTeamManager::GetTeam(int iTeam)
+{
+	static CHandle<CBaseEntity> cache[8];
+	if (iTeam < 0 || iTeam >= (int)ARRAYSIZE(cache)) return nullptr;
+	
+	CBaseEntity *team = cache[iTeam];
+	if (team == nullptr || team->GetTeamNumber() != iTeam) {
+		team = nullptr;
+		for (CBaseEntity *ent = servertools->FindEntityByClassname(nullptr, "tf_team"); ent != nullptr; ent = servertools->FindEntityByClassname(ent, "tf_team")) {
+			if (ent->GetTeamNumber() == iTeam) { team = ent; break; }
+		}
+		cache[iTeam] = team;
+	}
+	return static_cast<CTFTeam *>(team);
+}
+#endif
+
 #endif
