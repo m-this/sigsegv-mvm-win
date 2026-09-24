@@ -213,6 +213,41 @@ static bool IsFoldableTrivialFunction(const uint8_t *func)
 	}
 	return false;
 }
+
+/* How many argument bytes a function pops, read from its returns: every `ret`
+ * up to the int3 padding after it must agree, or the answer is unknown. A
+ * jump at the entry, an ILT thunk or someone else's hook, is followed once. */
+static bool PopBytes(const uint8_t *func, int &pop)
+{
+	ud_t ud;
+	ud_init(&ud);
+	ud_set_mode(&ud, 32);
+	ud_set_pc(&ud, (uint64_t)func);
+	ud_set_input_buffer(&ud, func, 0x10);
+	if (ud_decode(&ud) != 0 && ud_insn_mnemonic(&ud) == UD_Ijmp) {
+		const ud_operand_t *op = ud_insn_opr(&ud, 0);
+		if (op != nullptr && op->type == UD_OP_JIMM) {
+			func = func + ud_insn_len(&ud) + (op->size == 8 ? op->lval.sbyte : op->lval.sdword);
+		}
+	}
+	
+	ud_init(&ud);
+	ud_set_mode(&ud, 32);
+	ud_set_pc(&ud, (uint64_t)func);
+	ud_set_input_buffer(&ud, func, 0x4000);
+	
+	pop = -1;
+	while (ud_decode(&ud) != 0) {
+		enum ud_mnemonic_code mnemonic = ud_insn_mnemonic(&ud);
+		if (mnemonic == UD_Iint3 || mnemonic == UD_Iinvalid) break;
+		if (mnemonic != UD_Iret) continue;
+		const ud_operand_t *op = ud_insn_opr(&ud, 0);
+		int here = (op != nullptr && op->type == UD_OP_IMM) ? op->lval.uword : 0;
+		if (pop != -1 && pop != here) return false;
+		pop = here;
+	}
+	return pop != -1;
+}
 #endif
 
 bool IDetour_SymNormal::DoLoad()
@@ -323,6 +358,25 @@ bool CDetour::DoLoad()
 	if (!IDetour_SymNormal::DoLoad()) {
 		return false;
 	}
+	
+#if defined _WINDOWS
+	/* A __thiscall or __stdcall function pops its own arguments, and a detour
+	 * has to pop exactly what the game's function does or every call through
+	 * it leaves the caller's stack off. The two differ when the address is the
+	 * wrong function (CTFPlayer::Spawn was ShouldTransmit, one slot over),
+	 * when the detour declares the wrong parameters (Holster with none), or
+	 * when MSVC's whole-program optimisation gave the game's function a
+	 * caller-pops convention. None of them shows on Linux, where the caller
+	 * always pops, so the check is here, where the two are compiled code. */
+	int game_pop, detour_pop;
+	if (PopBytes(reinterpret_cast<const uint8_t *>(this->m_pFunc), game_pop) &&
+		PopBytes(reinterpret_cast<const uint8_t *>(this->m_pCallback), detour_pop) &&
+		game_pop != detour_pop) {
+		Warning("CDetour::DoLoad: \"%s\": refused, the game's function pops %d bytes and the detour %d\n",
+			this->GetName(), game_pop, detour_pop);
+		return false;
+	}
+#endif
 	
 	if (!this->EnsureUniqueInnerPtrs()) {
 		return false;
