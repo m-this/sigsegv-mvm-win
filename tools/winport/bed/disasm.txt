@@ -1,6 +1,4 @@
-# CTFPlayer::Spawn from the vtable (slot +0x60, Linux +0x64): should end plain ret.
-server 0x50d510 400
-# RegenThink: SetContextThink(&CTFPlayer::RegenThink, t, "RegenThink") pushes
-# the function right before calling ThinkSet (0x2025e0).
-server string RegenThink
-server callafter RegenThink
+# RegenThink: the one push of "RegenThink" followed by ThinkSet is at
+# 0x508ed0. SetContextThink pushes the think function just before.
+server +0x508ed0
+server 0x508eb0 60

@@ -8422,10 +8422,10 @@
 				{
 					type  "fixed"
 					sym   "_ZN9CTFPlayer5SpawnEv"
-					addr  "0x50d380"
+					addr  "0x50d510"
 					build "10828683"
 					lib   "server"
-					// string
+					// verified: virtual, CTFPlayer's vtable slot +0x60 (Linux +0x64, one destructor fewer on Windows; the slots around it, ShouldTransmit, UpdateTransmitState, SetTransmit, GetTracerType and Precache, line up one for one). The string match had given 0x50d380, which is ShouldTransmit(CCheckTransmitInfo const*): every Spawn detour then sat on a function the engine calls per entity per client per tick and popped 4 bytes too few, the eip=1 fault after map load. 0x50d510 reads no argument in its first 400 instructions and opens with the VPROF scope
 				}
 				"CTFPlayer::CheckInstantLoadoutRespawn"
 				{
