@@ -1,3 +1,4 @@
 # Linux symbols the bed found SigMod calling unresolved. The address job ranks
 # server.dll candidates for each (candidates.py) and prints any match the
 # emitter turned away, so an address can be read and put in overrides.json.
+_ZN11CBasePlayer12GetViewModelEib
