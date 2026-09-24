@@ -28,12 +28,12 @@ if (Test-Path "$Out\cdb.log") {
   $log = Get-Content "$Out\cdb.log"
   $events = 0
   for ($i = 0; $i -lt $log.Count -and $events -lt 6; $i++) {
-    if ($log[$i] -match '^(FIRST-CHANCE AV|SECOND-CHANCE AV|HEAP CORRUPTION|STACK BUFFER OVERRUN|PROCESS EXIT)') {
+    if ($log[$i] -match '^(FIRST-CHANCE AV|SECOND-CHANCE AV|HEAP CORRUPTION|STACK BUFFER OVERRUN|PROCESS EXIT|BREAKPOINT)') {
       $events++
       Write-Host "--- cdb: $($log[$i])"
       $end = [Math]::Min($log.Count - 1, $i + 40)
       for ($j = $i + 1; $j -le $end; $j++) {
-        if ($log[$j] -match '^(start +end|FIRST-CHANCE|SECOND-CHANCE|PROCESS EXIT)') { break }
+        if ($log[$j] -match '^(start +end|FIRST-CHANCE|SECOND-CHANCE|PROCESS EXIT|BREAKPOINT)') { break }
         if ($log[$j] -match '^(ChildEBP|[0-9a-f]{8} [0-9a-f]{8}|eax=|eip=|\(|[a-z_0-9]+!|Access violation)') { Write-Host $log[$j] }
       }
     }
