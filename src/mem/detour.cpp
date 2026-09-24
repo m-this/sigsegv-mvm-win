@@ -184,6 +184,37 @@ void IDetour::DoDisable()
 }
 
 
+#if defined _WINDOWS
+/* A function of a few instructions that returns without calling or branching:
+ * `return false`, `return 0`, a getter. MSVC's /OPT:ICF gives every function
+ * with the same code one address, so the address a vtable or a match hands us
+ * for one of them is the address of all of them, and detouring it hooks every
+ * one. CBaseServerVehicle::IsPassengerVisible is CUtlBuffer::GetOverflow in
+ * server.dll: Util:Vehicle_Fix's detour ran for every buffer read to its end,
+ * with a CUtlBuffer for a vehicle, and a map load died calling through text.
+ * Such a function is often shorter than the jump a detour writes, too. */
+static bool IsFoldableTrivialFunction(const uint8_t *func)
+{
+	ud_t ud;
+	ud_init(&ud);
+	ud_set_mode(&ud, 32);
+	ud_set_pc(&ud, (uint64_t)func);
+	ud_set_input_buffer(&ud, func, 0x40);
+	
+	for (int i = 0; i < 4; ++i) {
+		if (ud_decode(&ud) == 0) return false;
+		
+		enum ud_mnemonic_code mnemonic = ud_insn_mnemonic(&ud);
+		if (mnemonic == UD_Iret) return true;
+		if (mnemonic == UD_Icall || mnemonic == UD_Ijmp) return false;
+		
+		const ud_operand_t *op = ud_insn_opr(&ud, 0);
+		if (op != nullptr && op->type == UD_OP_JIMM) return false;
+	}
+	return false;
+}
+#endif
+
 bool IDetour_SymNormal::DoLoad()
 {
 	TRACE("[this: %08x \"%s\"]", (uintptr_t)this, this->GetName());
@@ -203,6 +234,14 @@ bool IDetour_SymNormal::DoLoad()
 		}
 	}
 
+#if defined _WINDOWS
+	if (IsFoldableTrivialFunction(this->m_pFunc)) {
+		Warning("IDetour_SymNormal::DoLoad: \"%s\": refused, a trivial function MSVC may have merged with others (%s)\n",
+			this->GetName(), this->m_bFuncByName ? this->m_strFuncName.c_str() : "by pointer");
+		return false;
+	}
+#endif
+	
 	CDetouredFunc::Find(this->m_pFunc);
 	
 	return true;
