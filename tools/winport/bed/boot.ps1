@@ -9,6 +9,8 @@ param(
 $ErrorActionPreference = 'Stop'
 $out = "$env:BED\bedout"
 New-Item -ItemType Directory -Force $out | Out-Null
+# collect.ps1 prints this last, so the verdict is at the end of the job log.
+function Say($text) { Write-Host $text; Add-Content "$out\boot.txt" $text }
 $env:SRCDS_RCONPW = $env:WAVEPROBE_RCONPW
 
 $server = Start-Process bedbin\winbed.exe -ArgumentList '-serve', '-root', $env:BED `
@@ -16,7 +18,7 @@ $server = Start-Process bedbin\winbed.exe -ArgumentList '-serve', '-root', $env:
 
 function Dead {
   if (-not $server.HasExited) { return $false }
-  Write-Host "the server exited with $($server.ExitCode)"
+  Say "the server exited with $($server.ExitCode)"
   Get-Content "$out\winbed.out" -Tail 80 -ErrorAction SilentlyContinue | Write-Host
   return $true
 }
@@ -36,8 +38,8 @@ while (-not $address -and (Get-Date) -lt $deadline) {
   }
   if (-not $address) { Start-Sleep 10 }
 }
-if (-not $address) { Write-Host 'rcon never answered'; exit 1 }
-Write-Host "rcon answers on $address"
+if (-not $address) { Say 'rcon never answered'; exit 1 }
+Say "rcon answers on $address"
 $env:SRCDS_RCON_HOST = $address
 
 foreach ($command in $Commands) {
@@ -55,7 +57,8 @@ if (-not $Probe) {
 $arguments = @('-rcon', "${address}:27015") + ($Probe -split '\s+' | Where-Object { $_ })
 & bedbin\waveprobe.exe @arguments > "$out\results.jsonl" 2> "$out\waveprobe.err"
 $code = $LASTEXITCODE
-Get-Content "$out\waveprobe.err" -Tail 40 | Write-Host
+Say "waveprobe exited with $code"
+Get-Content "$out\waveprobe.err" -Tail 40 | ForEach-Object { Say "waveprobe: $_" }
 if (Dead) { exit 1 }
 & bedbin\rcon.exe sig_list_mods > "$out\sig_list_mods_after.txt"
 exit $code

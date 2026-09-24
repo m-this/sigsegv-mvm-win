@@ -37,9 +37,9 @@ $console = Get-ChildItem "$Out\console*.log" -ErrorAction SilentlyContinue | Sor
 if ($console) {
   Write-Host "=== $($console.Name): warnings ==="
   Get-Content $console.FullName | Select-String -Pattern 'FAIL|error|Error|crash|unresolved|Parse Failed|Unknown attribute|Invalid populator|SigMod|sigsegv' |
-    Select-Object -First 400 | ForEach-Object { Write-Host $_.Line }
+    ForEach-Object { $_.Line } | Sort-Object -Unique | Select-Object -First 200 | Write-Host
   Write-Host "=== $($console.Name): tail ==="
-  Get-Content $console.FullName -Tail 120 | Write-Host
+  Get-Content $console.FullName -Tail 60 | Write-Host
 }
 Get-ChildItem "$Out\sm-logs\errors_*.log" -ErrorAction SilentlyContinue | ForEach-Object {
   Write-Host "=== $($_.Name) ==="; Get-Content $_.FullName -Tail 150 | Write-Host
@@ -47,4 +47,12 @@ Get-ChildItem "$Out\sm-logs\errors_*.log" -ErrorAction SilentlyContinue | ForEac
 Get-ChildItem "$Out\dumps" -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "DUMP $($_.Name) $($_.Length)" }
 foreach ($file in 'debug.log', 'debug-root.log') {
   if (Test-Path "$Out\$file") { Write-Host "=== $file ==="; Get-Content "$Out\$file" -Tail 80 | Write-Host }
+}
+
+# Last, so the end of the job log says what happened.
+Write-Host '=== VERDICT ==='
+Get-Content "$Out\boot.txt" -ErrorAction SilentlyContinue | Write-Host
+if (Test-Path "$Out\results.jsonl") {
+  $rows = Get-Content "$Out\results.jsonl" | ForEach-Object { try { $_ | ConvertFrom-Json } catch {} }
+  $rows | Group-Object state | ForEach-Object { Write-Host ("{0,-14} {1}" -f $_.Name, $_.Count) }
 }
