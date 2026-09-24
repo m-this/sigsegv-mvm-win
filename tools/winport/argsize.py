@@ -22,6 +22,7 @@ the ones known to be right, against the same matches shuffled, which are not.
 The distance between the two is what the test is worth.
 """
 
+import collections
 import json
 import random
 import re
@@ -128,11 +129,26 @@ def main():
     random.Random(1).shuffle(shuffled)
     chance = sum(1 for (n, _), e in zip(known, shuffled) if pop(e) == expected_pop(n, plain[n]))
     print(f"known matches with an expected pop of 4 or more: {len(known)}; the test holds on {held}, and on {chance} shuffled")
+    by = collections.defaultdict(lambda: [0, 0, 0])
+    for (n, e), other in zip(known, shuffled):
+        row = by[expected_pop(n, plain[n])]
+        row[0] += 1
+        row[1] += pop(e) == expected_pop(n, plain[n])
+        row[2] += pop(other) == expected_pop(n, plain[n])
+    for expect, (count, ok, wrong) in sorted(by.items()):
+        print(f"  expect {expect:3}: {count:5} known, holds on {ok}, on {wrong} shuffled")
 
     structural = [e for e in matches.values() if e.get("via") in STRUCTURAL]
     passed = sum(1 for e in structural if (e["expect"] or 0) >= 4 and e["pop"] == e["expect"])
     failed = sum(1 for e in structural if (e["expect"] or 0) >= 4 and e["pop"] != e["expect"])
     print(f"structural matches: {len(structural)}; pop as expected {passed}, not as expected {failed}, no expectation {len(structural) - passed - failed}")
+    by = collections.defaultdict(lambda: [0, 0])
+    for e in structural:
+        if (e["expect"] or 0) >= 4:
+            by[(e["via"], e["expect"])][0] += 1
+            by[(e["via"], e["expect"])][1] += e["pop"] == e["expect"]
+    for (via, expect), (count, ok) in sorted(by.items()):
+        print(f"  {via:9} expect {expect:3}: {count:5}, pop as expected {ok}")
     json.dump(matches, open(sys.argv[2], "w"), indent=1)
 
 
