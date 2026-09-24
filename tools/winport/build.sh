@@ -183,7 +183,9 @@ mapfile -t objects < <(sed -E 's/^[a-z0-9]+ //' "$OUT/sources" | while read -r f
 objects+=("$OUT/pch.obj")
 # /BASE well above the engine's own modules: loaded in the middle of the free
 # space, a 6 MB module splits what the engine needs for a big map in one piece.
-lld-link /nologo /DLL /MACHINE:X86 /BASE:0x66000000 ${DEBUGINFO:+/DEBUG} /errorlimit:0 /OUT:"$OUT/sigsegv.ext.2.tf2.dll" \
+# /DEBUG alone turns off /OPT:REF,ICF in lld-link; asked back, a build with
+# symbols is the same image as one without, plus a .pdb beside it.
+lld-link /nologo /DLL /MACHINE:X86 /BASE:0x66000000 ${DEBUGINFO:+/DEBUG /OPT:REF /OPT:ICF} /errorlimit:0 /OUT:"$OUT/sigsegv.ext.2.tf2.dll" \
 	/LIBPATH:"$XWIN/crt/lib/x86" /LIBPATH:"$XWIN/sdk/lib/um/x86" /LIBPATH:"$XWIN/sdk/lib/ucrt/x86" \
 	"${objects[@]}" \
 	"$SDK/lib/public/x86/tier0.lib" "$SDK/lib/public/x86/tier1.lib" \

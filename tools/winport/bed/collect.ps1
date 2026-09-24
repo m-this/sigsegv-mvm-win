@@ -50,6 +50,16 @@ foreach ($file in 'debug.log', 'debug-root.log') {
 }
 
 # Last, so the end of the job log says what happened.
+if (Test-Path "$Out\cdb.log") {
+  $log = Get-Content "$Out\cdb.log"
+  Write-Host ("=== cdb.log: {0} lines, {1} first-chance AVs ===" -f $log.Count, ($log | Select-String 'FIRST-CHANCE AV').Count)
+  $log | Select-Object -First 80 | Write-Host
+  Write-Host '=== cdb.log: tail ==='
+  $log | Select-Object -Last 160 | Write-Host
+}
+Write-Host '=== winbed.out: tail ==='
+Get-Content "$Out\winbed.out" -Tail 15 -ErrorAction SilentlyContinue | Write-Host
+Get-Content "$Out\winbed.err" -Tail 15 -ErrorAction SilentlyContinue | Write-Host
 Write-Host '=== VERDICT ==='
 Get-Content "$Out\boot.txt" -ErrorAction SilentlyContinue | Write-Host
 if (Test-Path "$Out\results.jsonl") {
