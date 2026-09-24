@@ -183,7 +183,7 @@ jobs:
     - name: Name the SigMod frames in symbolize.txt
       if: always()
       run: |
-        grep -o '0x[0-9a-fA-F]*' tools/winport/bed/symbolize.txt | while read -r rva; do
+        { grep -o '0x[0-9a-fA-F]*' tools/winport/bed/symbolize.txt || true; } | while read -r rva; do
           printf '%s ' "$rva"
           llvm-symbolizer-20 --obj="$OUT/sigsegv.ext.2.tf2.dll" --relative-address --inlines --pretty-print "$rva" | tr '\n' ' '
           echo
