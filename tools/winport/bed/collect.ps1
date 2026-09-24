@@ -7,7 +7,7 @@ Get-Process srcds, winbed, cdb -ErrorAction SilentlyContinue | Stop-Process -For
 Start-Sleep 3
 $tf = "$env:BED\tf-dedicated\tf"
 New-Item -ItemType Directory -Force $Out | Out-Null
-Copy-Item "$env:BED\bedout\*" $Out -ErrorAction SilentlyContinue
+Copy-Item "$env:BED\bedout\*" $Out -Recurse -ErrorAction SilentlyContinue
 Copy-Item "$tf\console*.log" $Out -ErrorAction SilentlyContinue
 Copy-Item "$tf\debug.log" $Out -ErrorAction SilentlyContinue
 Copy-Item -Recurse "$tf\addons\sourcemod\logs" "$Out\sm-logs" -ErrorAction SilentlyContinue
@@ -27,8 +27,9 @@ if (Test-Path "$Out\sig_list_addrs.txt") {
 # breakpoints are the engine noticing a debugger (DebuggerBreakIfDebugging)
 # and only counted; the first two faults and the last two are printed, since
 # the last one is the crash.
-if (Test-Path "$Out\cdb.log") {
-  $log = Get-Content "$Out\cdb.log"
+$cdbLogs = Get-ChildItem "$Out\cdb*.log" -ErrorAction SilentlyContinue | Sort-Object LastWriteTime
+if ($cdbLogs) {
+  $log = $cdbLogs | ForEach-Object { Get-Content $_.FullName }
   Write-Host ("cdb: {0} breakpoints passed" -f ($log | Select-String '^BREAKPOINT').Count)
   $starts = @()
   for ($i = 0; $i -lt $log.Count; $i++) {
@@ -53,6 +54,10 @@ if ($console) {
   Get-Content $console.FullName | Where-Object { $_ -notmatch 'AddrManager|IDetour_Sym|LoadDetours|Link FAIL|KeyValues Error|Lang, ' } |
     Select-Object -Last 12 | Write-Host
 }
+# Every unresolved function a mission reached, across all the server's starts.
+$unresolved = Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
+  Select-String -Pattern 'called unresolved function "([^"]+)"' | ForEach-Object { $_.Matches[0].Groups[1].Value } | Sort-Object -Unique
+if ($unresolved) { Write-Host ("unresolved functions called: " + ($unresolved -join ', ')) }
 Get-ChildItem "$Out\dumps" -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "dump: $($_.Name) $($_.Length)" }
 Get-Content "$Out\winbed.err" -Tail 5 -ErrorAction SilentlyContinue | Write-Host
 if (Test-Path "$Out\results.jsonl") {
