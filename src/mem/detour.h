@@ -282,6 +282,20 @@ private:
 
 	bool m_bModifiedByPatch = false;
 
+#if defined _WINDOWS
+	/* The prologue jumps here: a jmp through the pointer stored right after
+	 * it, in the same executable block. A plugin that detours the function
+	 * after us (DHooks on CTFPlayer::GetMaxAmmo, from tf2-archipelago) copies
+	 * our jump into its own trampoline; changing where SigMod's chain starts
+	 * then only changes that pointer, and the prologue with the other hook on
+	 * it is left alone. The pointer lives in the block and not in this object
+	 * because the other hook can outlive this object (CleanUp). */
+	uint8_t *m_pStub = nullptr;
+	void EnsureStub();
+	void SetStubTarget(void *target);
+	bool ReconfigureUnderForeignHook();
+#endif
+
 	CVirtualHookBase m_VirtualHookOptional;
 	void *m_pVirtualHookInner;
 	std::set<std::pair<void **, void *>> m_FoundFuncPtrAndVTablePtr;
