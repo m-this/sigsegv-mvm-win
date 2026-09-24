@@ -1,10 +1,7 @@
-# What disasm.py prints into the heapcheck job's log, at its end.
+# What disasm.py prints, at the end of the address-table and heapcheck logs.
 # (queries are read top to bottom; each prints its own block)
-# CBaseEntity::ThinkSet: SetContextThink is a macro over it, so the first call
-# after pushing a think context's name is ThinkSet. The contexts should agree.
-server callafter TeleporterContext
-server callafter RemoveThink
-server callafter ZapThink
-server callafter DieContext
-server callafter EFFECTS_THINK
-server callafter ChargeLevelDegradeThink
+# CBaseEntity::ThinkSet is 0x2025e0: 34 call sites after pushing five
+# different think contexts all call it. Its ret and one call site say how
+# BASEPTR is passed: 16 bytes and a return pointer, or 4.
+server 0x2025e0 80
+server 0x4d0690 14
