@@ -58,6 +58,11 @@ if ($console) {
 $unresolved = Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
   Select-String -Pattern 'called unresolved function "([^"]+)"' | ForEach-Object { $_.Matches[0].Groups[1].Value } | Sort-Object -Unique
 if ($unresolved) { Write-Host ("unresolved functions called: " + ($unresolved -join ', ')) }
+# SigMod and tf2_archipelago both detour CTFPlayer::GetMaxAmmo. Whether the two
+# still share it after SigMod reconfigures is read off these lines.
+Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
+  Select-String -Pattern 'detour validation failure|probably already detoured|Make it Count' |
+  ForEach-Object { $_.Line.Trim() } | Sort-Object -Unique | ForEach-Object { Write-Host "shared detour: $_" }
 Get-ChildItem "$Out\dumps" -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "dump: $($_.Name) $($_.Length)" }
 Get-Content "$Out\winbed.err" -Tail 5 -ErrorAction SilentlyContinue | Write-Host
 if (Test-Path "$Out\results.jsonl") {
