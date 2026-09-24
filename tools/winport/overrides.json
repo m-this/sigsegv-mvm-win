@@ -589,5 +589,17 @@
  "_ZN9CTFPlayer10RegenThinkEv": {
   "rva": "0x508eb0",
   "why": "the one site pushing \"RegenThink\" before ThinkSet (0x508ed0) pushes 0x508eb0 as the think function, inside 0x508eb0 itself: SetContextThink(&CTFPlayer::RegenThink, t, \"RegenThink\") at the top of RegenThink, as the source has it. It reads no argument. The string match had given 0x508e30, the function just before, which takes (int, float) and ends ret 8: RegenAmmoInternal, which calls GetMaxAmmo and GiveAmmo"
+ },
+ "_ZNK9CTFPlayer17Weapon_OwnsThisIDEi": {
+  "rva": "0x52f670",
+  "why": "first of the candidates, called by 29 of its 30 matched callers; walks the 48 weapon handles at +0x770 (Linux +0x788), calls each weapon's GetWeaponID through vtable +0x5f8 and compares it with the argument, the Linux body"
+ },
+ "_ZN11CBaseEntity10AddEffectsEi": {
+  "rva": "0x1ff3b0",
+  "why": "turned away for field disagreement, pop as expected (ret 4); ors the argument into m_fEffects at +0xd4 through NetworkStateChanged and calls DispatchUpdateTransmitState (0x1eebd0) on EF_NODRAW (0x20), the SDK's body"
+ },
+ "_ZN15CEconItemSchema23GetItemDefinitionByNameEPKc": {
+  "rva": "0x3b9370",
+  "why": "turned away for field disagreement, pop as expected (ret 4); returns null on a null name, then walks the definition map at +0xe8 comparing each definition's name at +0xdc with the argument, the body Linux jumps to"
  }
 }

@@ -165,8 +165,17 @@ public:
 	void DebugDescribe() { ft_DebugDescribe(this); }
 	
 	// GetAttributeContainer really ought to be in IHasAttributes...
+#if defined _WINDOWS
+	/* Both virtuals are `return &m_AttributeManager`, a body MSVC shares with
+	 * every other one-line getter at that offset, so neither has a slot this
+	 * port can name. The member is a network table of DT_EconEntity, whose
+	 * entry carries its offset. */
+	CAttributeManager *GetAttributeManager()	 { return reinterpret_cast<CAttributeManager *>(&this->m_AttributeManager); }
+	CAttributeContainer *GetAttributeContainer() { return reinterpret_cast<CAttributeContainer *>(&this->m_AttributeManager); }
+#else
 	CAttributeManager *GetAttributeManager()	 { return vt_GetAttributeManager  (this); }
 	CAttributeContainer *GetAttributeContainer() { return vt_GetAttributeContainer(this); }
+#endif
 	void GiveTo(CBaseEntity *ent)                {        vt_GiveTo(this, ent); }
 	void ReapplyProvision()                      {        vt_ReapplyProvision(this); }
 	bool UpdateBodygroups(CBaseCombatCharacter *owner, bool enable) { return vt_UpdateBodygroups(this, owner, enable); }
@@ -175,6 +184,9 @@ public:
 	CEconItemView *GetItem();
 	
 	DECL_SENDPROP_RW(bool, m_bValidatedAttachedEntity);
+#if defined _WINDOWS
+	DECL_SENDPROP(uint8_t, m_AttributeManager);
+#endif
 	
 	// make the model visible for other players
 	void Validate();

@@ -8418,6 +8418,33 @@
 					lib   "server"
 					// string
 				}
+				"CTFPlayer::Weapon_OwnsThisID"
+				{
+					type  "fixed"
+					sym   "_ZNK9CTFPlayer17Weapon_OwnsThisIDEi"
+					addr  "0x52f670"
+					build "10828683"
+					lib   "server"
+					// verified: first of the candidates, called by 29 of its 30 matched callers; walks the 48 weapon handles at +0x770 (Linux +0x788), calls each weapon's GetWeaponID through vtable +0x5f8 and compares it with the argument, the Linux body
+				}
+				"CBaseEntity::AddEffects"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity10AddEffectsEi"
+					addr  "0x1ff3b0"
+					build "10828683"
+					lib   "server"
+					// verified: turned away for field disagreement, pop as expected (ret 4); ors the argument into m_fEffects at +0xd4 through NetworkStateChanged and calls DispatchUpdateTransmitState (0x1eebd0) on EF_NODRAW (0x20), the SDK's body
+				}
+				"CEconItemSchema::GetItemDefinitionByName"
+				{
+					type  "fixed"
+					sym   "_ZN15CEconItemSchema23GetItemDefinitionByNameEPKc"
+					addr  "0x3b9370"
+					build "10828683"
+					lib   "server"
+					// verified: turned away for field disagreement, pop as expected (ret 4); returns null on a null name, then walks the definition map at +0xe8 comparing each definition's name at +0xdc with the argument, the body Linux jumps to
+				}
 				"CTFPlayer::Spawn"
 				{
 					type  "fixed"

@@ -71,6 +71,9 @@ MemberFuncThunk<CBaseAnimatingOverlay *, void, int, float> CBaseAnimatingOverlay
 
 #ifdef SE_IS_TF2
 IMPL_SENDPROP(bool, CEconEntity, m_bValidatedAttachedEntity, CEconEntity);
+#if defined _WINDOWS
+IMPL_SENDPROP(uint8_t, CEconEntity, m_AttributeManager, CEconEntity);
+#endif
 
 MemberFuncThunk<CEconEntity *, void> CEconEntity::ft_DebugDescribe("CEconEntity::DebugDescribe");
 
