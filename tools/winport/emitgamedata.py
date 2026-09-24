@@ -142,9 +142,14 @@ for name, entry in found + [x for x in extra if x[0] not in found_names]:
     # missing address is named out loud when something calls it; a wrong one
     # corrupts quietly, and the two runs with every structural match in both
     # ended in a silent crash that took a bisection to find. FIELDS_MIN=0
-    # includes them all.
-    if match["via"] in ("call", "consensus", "table") and (match.get("fields") or 0) < float(os.environ.get("FIELDS_MIN", 0.3)):
-        continue
+    # includes them all. argsize.py is the other way in: a member whose Linux
+    # symbol says how many argument bytes it pops, and whose candidate pops
+    # exactly that, at least 4.
+    via = match["via"]
+    if via in ("call", "consensus", "table") and (match.get("fields") or 0) < float(os.environ.get("FIELDS_MIN", 0.3)):
+        if (match.get("expect") or 0) < 4 or match.get("pop") != match["expect"]:
+            continue
+        via += f', ret {match["pop"]} as its arguments say'
     out += [
         f'\t\t\t\t"{name}"', "\t\t\t\t{",
         '\t\t\t\t\ttype  "fixed"',
@@ -152,7 +157,7 @@ for name, entry in found + [x for x in extra if x[0] not in found_names]:
         f'\t\t\t\t\taddr  "0x{match["rva"]:x}"',
         f'\t\t\t\t\tbuild "{version}"',
         f'\t\t\t\t\tlib   "{lib}"',
-        f'\t\t\t\t\t// {match["via"]}',
+        f'\t\t\t\t\t// {via}',
         "\t\t\t\t}",
     ]
     count += 1

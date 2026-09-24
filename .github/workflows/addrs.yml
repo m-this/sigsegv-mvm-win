@@ -58,6 +58,7 @@ jobs:
         python3 ../tools/winport/dumpvtables.py ../game-windows/tf/bin/server.dll win-vtables > dumpwin.log
         python3 ../tools/winport/matchvtables.py linux-vtables win-vtables classified.json > matchvtables.log
         python3 ../tools/winport/matchfuncs.py ../game-linux/tf/bin/server_srv.so ../game-windows/tf/bin/server.dll matches.json linux-vtables win-vtables > matchfuncs.log
+        python3 ../tools/winport/argsize.py ../game-windows/tf/bin/server.dll matches.json > argsize.log
         python3 ../tools/winport/datamaps.py ../game-windows/tf/bin/server.dll ../gamedata/sigsegv/datamaps.txt > datamaps.json
         python3 ../tools/winport/emitgamedata.py matches.json "$ver" datamaps.json ../tools/winport/knownvtidx.generated.txt > windows.txt
     - name: How it differs from the committed table
@@ -71,7 +72,12 @@ jobs:
         addrs ../gamedata/sigsegv/windows.txt > committed.tsv
         addrs windows.txt > derived.tsv
         echo "entries: committed $(wc -l < committed.tsv), derived $(wc -l < derived.tsv), same address $(comm -12 committed.tsv derived.tsv | wc -l)"
-        tail -n 8 matchvtables.log matchfuncs.log
+        tail -n 8 matchvtables.log matchfuncs.log argsize.log
+        # The derived table, compressed into the log: the artifact store is not
+        # reachable from everywhere the port is worked on, and the log is.
+        echo "derived windows.txt, gzip+base64:"
+        gzip -9c windows.txt | base64 -w 0; echo
+        echo "end of derived windows.txt"
         # Against the build it was made for, the committed table is what the
         # scripts make: an address added by hand without its override, or an
         # override the table lacks, fails here. Against another build the
