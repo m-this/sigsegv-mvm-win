@@ -577,5 +577,9 @@
  "_ZN11CBaseEntity8ThinkSetEMS_FvvEfPKc": {
   "rva": "0x2025e0",
   "why": "SetContextThink is a macro over ThinkSet, and the first call after pushing a think context's name is 0x2025e0 at 34 sites across TeleporterContext, RemoveThink, ZapThink, DieContext and ChargeLevelDegradeThink; the body stores the function at +8 (m_pfnThink) when the context is null and ends ret 0xc, a 4-byte BASEPTR, a float and a context, as SigMod calls it"
+ },
+ "_ZN11CBaseEntity27DispatchUpdateTransmitStateEv": {
+  "rva": "0x1eebd0",
+  "why": "the call-graph match (via CInfoTarget::Spawn), turned away for want of field evidence and read by hand: it tests the byte counter at +0x174 (Linux +0x18c, m_nTransmitStateOwnedCounter) and, when set, returns the edict's first word (m_fStateFlags) or 0, else goes on to UpdateTransmitState, as the source does; plain ret, no arguments. The bed's servers died calling it unresolved"
  }
 }
