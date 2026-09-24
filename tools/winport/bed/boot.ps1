@@ -81,7 +81,7 @@ function Start-Bed {
     Where-Object { $_.IPAddress -ne '127.0.0.1' } | ForEach-Object { $_.IPAddress })
   $deadline = (Get-Date).AddMinutes($BootMinutes)
   while ((Get-Date) -lt $deadline) {
-    if (-not (Alive)) { Say "start $n: the server exited while booting: $(Death-Reason)"; return $false }
+    if (-not (Alive)) { Say "start ${n}: the server exited while booting: $(Death-Reason)"; return $false }
     foreach ($candidate in $candidates) {
       $env:SRCDS_RCON_HOST = $candidate
       & bedbin\rcon.exe status *> $null
@@ -89,7 +89,7 @@ function Start-Bed {
     }
     Start-Sleep 10
   }
-  Say "start $n: rcon never answered"
+  Say "start ${n}: rcon never answered"
   return $false
 }
 
@@ -115,13 +115,17 @@ for ($i = 0; $i -lt $probeArgs.Count; $i++) {
   if ($probeArgs[$i] -eq '-only-sigmod') { continue }
   $single += $probeArgs[$i]
 }
-Say "$($missions.Count) missions in this shard"
+# The probe cannot play reverse MvM (it has no BLU objective simulator) and
+# refuses one by name, so those are counted rather than failed.
+$reverse = @($missions | Where-Object { $_ -like '*_rev_*' })
+$missions = @($missions | Where-Object { $_ -notlike '*_rev_*' })
+Say "$($missions.Count) missions in this shard, $($reverse.Count) reverse ones left out"
 $failed = 0
 foreach ($mission in $missions) {
-  if (-not (Alive) -and -not (Start-Bed)) { Say "giving up at $mission: the server does not start"; $failed++; break }
+  if (-not (Alive) -and -not (Start-Bed)) { Say "giving up at ${mission}: the server does not start"; $failed++; break }
   & bedbin\waveprobe.exe -rcon "$($script:address):27015" -mission $mission @single >> "$out\results.jsonl" 2>> "$out\waveprobe.err"
   if ($LASTEXITCODE -ne 0) { $failed++ }
-  if (-not (Alive)) { Say "died in $mission: $(Death-Reason)" }
+  if (-not (Alive)) { Say "died in ${mission}: $(Death-Reason)" }
 }
 Copy-Item "$tf\console.log" "$out\consoles\console-$($script:starts).log" -ErrorAction SilentlyContinue
 Say "$failed of $($missions.Count) missions failed, $($script:starts) server starts"
