@@ -72,18 +72,18 @@ jobs:
         addrs ../gamedata/sigsegv/windows.txt > committed.tsv
         addrs windows.txt > derived.tsv
         echo "entries: committed $(wc -l < committed.tsv), derived $(wc -l < derived.tsv), same address $(comm -12 committed.tsv derived.tsv | wc -l)"
-        tail -n 8 matchvtables.log matchfuncs.log argsize.log
         # The derived table, compressed into the log: the artifact store is not
         # reachable from everywhere the port is worked on, and the log is.
         echo "derived windows.txt, gzip+base64:"
         gzip -9c windows.txt | base64 -w 0; echo
         echo "end of derived windows.txt"
+        tail -n 8 matchvtables.log matchfuncs.log argsize.log
         # Against the build it was made for, the committed table is what the
         # scripts make: an address added by hand without its override, or an
         # override the table lacks, fails here. Against another build the
         # difference is the point, and the derived table is the artifact.
-        if grep -q "ServerVersion $ver" ../gamedata/sigsegv/windows.txt && ! diff committed.tsv derived.tsv; then
-          echo "windows.txt is not what the scripts derive from ServerVersion $ver"
+        if grep -q "ServerVersion $ver" ../gamedata/sigsegv/windows.txt && ! diff committed.tsv derived.tsv > differ.txt; then
+          echo "windows.txt is not what the scripts derive from ServerVersion $ver: $(grep -c '^<' differ.txt) entries only committed, $(grep -c '^>' differ.txt) only derived"
           exit 1
         fi
     # The same queries the heapcheck job runs, last so the end of the log holds them; minutes after a push rather
