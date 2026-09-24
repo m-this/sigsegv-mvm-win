@@ -24,6 +24,11 @@ on:
 permissions:
   contents: write
 
+# A newer push supersedes a bed run still playing an older build.
+concurrency:
+  group: windows-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+
 jobs:
   build:
     runs-on: ubuntu-24.04
@@ -91,6 +96,9 @@ jobs:
         cp sigsegv.autoload "$pkg/addons/sourcemod/extensions/"
         cp -r gamedata/sigsegv "$pkg/addons/sourcemod/gamedata/"
         cp cfg/sigsegv_convars.cfg "$pkg/cfg/"
+        # SourceMod reads these for every menu SigMod draws; without them the
+        # log opens with "Fatal error encountered parsing sigsegv.phrases.txt".
+        cp -r translations "$pkg/addons/sourcemod/translations"
         (cd "$pkg" && zip -qr "$GITHUB_WORKSPACE/package-windows.zip" .)
         sha256sum package-windows.zip | tee package-windows.zip.sha256
 
@@ -149,13 +157,23 @@ jobs:
     - name: Install
       shell: pwsh
       run: tools/winport/bed/install.ps1
-    - name: Page heap and dumps
+    - name: Page heap on SigMod's allocations
       shell: pwsh
       run: |
-        $ifeo = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\srcds.exe'
-        New-Item -Force $ifeo | Out-Null
-        Set-ItemProperty $ifeo GlobalFlag 0x02000000 -Type DWord
-        Set-ItemProperty $ifeo PageHeapFlags 0x3 -Type DWord
+        # Full page heap on every allocation leaves a 32-bit srcds with no
+        # address space ("Out of memory or address space"). The extension links
+        # the CRT statically, so its allocations are its own and can be the
+        # only ones checked.
+        $gflags = Get-ChildItem 'C:\Program Files (x86)\Windows Kits\10\Debuggers' -Recurse -Filter gflags.exe -ErrorAction SilentlyContinue | Select-Object -First 1
+        if ($gflags) {
+          & $gflags.FullName /p /enable srcds.exe /full /dlls sigsegv.ext.2.tf2.dll
+        } else {
+          Write-Host 'no gflags.exe: standard page heap on the whole process'
+          $ifeo = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\srcds.exe'
+          New-Item -Force $ifeo | Out-Null
+          Set-ItemProperty $ifeo GlobalFlag 0x02000000 -Type DWord
+          Set-ItemProperty $ifeo PageHeapFlags 0x0 -Type DWord
+        }
     - name: Boot and list
       shell: pwsh
       run: tools/winport/bed/boot.ps1 -Commands 'sig_list_mods','sig_list_addrs','sig_list_linkage','sm exts list','meta list'
