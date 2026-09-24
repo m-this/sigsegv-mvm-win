@@ -332,9 +332,12 @@ namespace Mod::Perf::Func_Optimize
         }
 	}
 
-    DETOUR_DECL_MEMBER(CBaseEntity *, CTFPlayer_GetEntityForLoadoutSlot, int slot)
+    // The game's function is (int, bool). Declaring only the int is harmless
+    // under cdecl, where the caller pops, and fatal under __thiscall, where
+    // this pops 4 bytes of the caller's 8 and returns into the bool.
+    DETOUR_DECL_MEMBER(CBaseEntity *, CTFPlayer_GetEntityForLoadoutSlot, int slot, bool flag)
 	{
-        if (useOrig) return DETOUR_MEMBER_CALL(slot);
+        if (useOrig) return DETOUR_MEMBER_CALL(slot, flag);
         
         auto player = reinterpret_cast<CTFPlayer *>(this);
         auto data = GetExtraPlayerData(player, false);
@@ -342,7 +345,7 @@ namespace Mod::Perf::Func_Optimize
             auto handle = data->quickItemInLoadoutSlot[slot];
             auto ent = handle.Get();
             if (handle.IsValid() && (ent == nullptr || ent->GetOwnerEntity() != player)) {
-                ent = static_cast<CEconEntity *>(DETOUR_MEMBER_CALL(slot));
+                ent = static_cast<CEconEntity *>(DETOUR_MEMBER_CALL(slot, flag));
                 data->quickItemInLoadoutSlot[slot] = ent;
             }
             return ent;

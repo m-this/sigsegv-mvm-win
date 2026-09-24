@@ -1,0 +1,106 @@
+#!/usr/bin/env python3
+"""Refuse a member detour whose parameters are not the function's.
+
+A member detour on Windows is __thiscall: it pops its own arguments. Declared
+with fewer parameters than the game passes, it pops too few, the caller's
+stack is off by the difference, and the next `ret` lands on an argument.
+Under Linux cdecl the caller pops and nothing shows, which is how
+func_optimize.cpp's GetEntityForLoadoutSlot(int), for a function taking
+(int, bool), shipped: on Windows it returned to eip=1, the bool.
+
+    detourargs.py            from the repository root, or anywhere under it
+
+Pairs every DETOUR_DECL_MEMBER with the MOD_ADD_DETOUR_MEMBER in the same file
+that names its gamedata entry, reads that entry's Linux symbol from
+gamedata/sigsegv, and compares parameter counts with the demangled symbol.
+Exits 1 on any mismatch. Every entry is checked, resolved on Windows or not
+yet, so resolving one cannot bring back a detour that was never checked.
+"""
+
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+root = Path(__file__).resolve().parents[2]
+
+
+def split_params(text):
+    out, depth, current = [], 0, ""
+    for ch in text:
+        if ch in "<([":
+            depth += 1
+        elif ch in ">)]":
+            depth -= 1
+        if ch == "," and depth == 0:
+            out.append(current.strip())
+            current = ""
+        else:
+            current += ch
+    if current.strip():
+        out.append(current.strip())
+    return [p for p in out if p not in ("", "void")]
+
+
+def macro_args(text, start):
+    """The text between the parentheses opening at start, and where it ends."""
+    depth = 0
+    for i in range(start, len(text)):
+        if text[i] == "(":
+            depth += 1
+        elif text[i] == ")":
+            depth -= 1
+            if depth == 0:
+                return text[start + 1:i], i
+    return None, start
+
+
+def main():
+    symbol_of = {}
+    for path in sorted((root / "gamedata/sigsegv").glob("*.txt")):
+        table = path.read_text(errors="replace")
+        for m in re.finditer(r'\n\s*"([^"]+)"\s*\n\s*\{[^{}]*?\bsym\s+"(_Z[^"]+)"', table):
+            symbol_of.setdefault(m[1], m[2])
+
+    wanted = []
+    for path in sorted((root / "src").rglob("*.cpp")) + sorted((root / "src").rglob("*.h")):
+        text = path.read_text(errors="replace")
+        decls = {}
+        for m in re.finditer(r"\bDETOUR_DECL_MEMBER\s*(?=\()", text):
+            args, _ = macro_args(text, m.end())
+            if args is None:
+                continue
+            parts = split_params(args)
+            if len(parts) >= 2:
+                decls.setdefault(parts[1], []).append((parts[2:], text.count("\n", 0, m.start()) + 1))
+        for m in re.finditer(r'\bMOD_ADD_DETOUR_MEMBER(?:_PRIORITY)?\s*\(\s*(\w+)\s*,\s*"([^"]+)"', text):
+            detour, name = m[1], m[2]
+            if name in symbol_of and detour in decls:
+                for params, line in decls[detour]:
+                    wanted.append((path.relative_to(root), line, detour, name, symbol_of[name], params))
+
+    symbols = sorted({w[4] for w in wanted})
+    plain = dict(zip(symbols, subprocess.run(["c++filt"], input="\n".join(symbols), capture_output=True, text=True, check=True).stdout.splitlines()))
+
+    bad = 0
+    for path, line, detour, name, symbol, params in wanted:
+        demangled = plain.get(symbol, "")
+        body = demangled[:-len(" const")] if demangled.endswith(" const") else demangled
+        if not symbol.startswith("_ZN") or not body.endswith(")"):
+            continue
+        depth = 0
+        for i in range(len(body) - 1, -1, -1):
+            depth += body[i] == ")"
+            depth -= body[i] == "("
+            if depth == 0:
+                break
+        game = split_params(body[i + 1:-1])
+        if "..." in game or len(game) == len(params):
+            continue
+        bad += 1
+        print(f"{path}:{line}: {detour} takes {len(params)} parameters, {name} is {demangled}")
+    print(f"{len(wanted)} member detours checked, {bad} with the wrong number of parameters")
+    sys.exit(1 if bad else 0)
+
+
+main()

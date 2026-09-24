@@ -4,9 +4,9 @@
 
 namespace Mod::Debug::Revive_Fast
 {
-	DETOUR_DECL_MEMBER(CTFReviveMarker *, CTFReviveMarker_Create)
+	DETOUR_DECL_STATIC(CTFReviveMarker *, CTFReviveMarker_Create, CTFPlayer *player)
 	{
-		CTFReviveMarker *marker = DETOUR_MEMBER_CALL();
+		CTFReviveMarker *marker = DETOUR_STATIC_CALL(player);
 		
 		if (marker != nullptr) {
 			DevMsg("[%8.3f] CTFReviveMarker::Create\n"
@@ -50,7 +50,7 @@ namespace Mod::Debug::Revive_Fast
 	public:
 		CMod() : IMod("Debug:Revive_Fast")
 		{
-			MOD_ADD_DETOUR_MEMBER(CTFReviveMarker_Create,          "CTFReviveMarker::Create");
+			MOD_ADD_DETOUR_STATIC(CTFReviveMarker_Create,          "CTFReviveMarker::Create");
 			MOD_ADD_DETOUR_MEMBER(CTFReviveMarker_AddMarkerHealth, "CTFReviveMarker::AddMarkerHealth");
 			MOD_ADD_DETOUR_MEMBER(CTFReviveMarker_ReviveThink,     "CTFReviveMarker::ReviveThink");
 		}
