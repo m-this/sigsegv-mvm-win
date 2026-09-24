@@ -178,6 +178,17 @@ jobs:
         sha256sum package-windows.zip | tee package-windows.zip.sha256
         cp "$OUT/sigsegv.ext.2.tf2.pdb" .
 
+    # A bed report names SigMod's frames as sigsegv.ext.2.tf2.dll+0xRVA. The
+    # build that has the .pdb is the one place that can name them.
+    - name: Name the SigMod frames in symbolize.txt
+      if: always()
+      run: |
+        grep -o '0x[0-9a-fA-F]*' tools/winport/bed/symbolize.txt | while read -r rva; do
+          printf '%s ' "$rva"
+          llvm-symbolizer-20 --obj="$OUT/sigsegv.ext.2.tf2.dll" --relative-address --inlines --pretty-print "$rva" | tr '\n' ' '
+          echo
+        done
+
     - uses: actions/upload-artifact@v4
       with:
         name: symbols

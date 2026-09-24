@@ -1,0 +1,7 @@
+# SigMod frames to name, as the bed report prints them. The server of
+# mvm_akure_rc1a_int_bronze_and_bristle ends through Error() when bots join:
+# TerminateProcess(100) called from these.
+sigsegv.ext.2.tf2.dll+0xd32b
+sigsegv.ext.2.tf2.dll+0x5c9c1
+sigsegv.ext.2.tf2.dll+0xcf6c3
+sigsegv.ext.2.tf2.dll+0x25b4ad
