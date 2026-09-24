@@ -1,7 +1,8 @@
-# What disasm.py prints, at the end of the address-table and heapcheck logs.
-# (queries are read top to bottom; each prints its own block)
-# CBaseEntity::ThinkSet is 0x2025e0: 34 call sites after pushing five
-# different think contexts all call it. Its ret and one call site say how
-# BASEPTR is passed: 16 bytes and a return pointer, or 4.
-server 0x2025e0 80
-server 0x4d0690 14
+# The access violation to eip=1 right after a map loads, on every shard since
+# the 24 argsize addresses went in. Return addresses from the stack, innermost
+# first as printed.
+server +0x2ef182
+server +0x2ef121
+server +0x2c5d32
+server +0x2c5d9b
+server +0x2c01b7
