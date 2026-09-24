@@ -1,4 +1,2 @@
-# Sweep of aea8dac: servers return into eip=1 with these return addresses
-# left on the stack. The call before each is the callee whose pop is off.
-server +0x5166a7
-server +0x516d4e
+# The function under the eip=1 faults, whole: which of its callees does SigMod hook?
+server 0x516480 700
