@@ -17,6 +17,7 @@ on:
     paths-ignore:
       - '.github/workflows/addrs.yml'
       - 'tools/winport/bed/disasm.txt'
+      - 'tools/winport/bed/inspect.sh'
       - 'tools/winport/*.py'
       - 'tools/winport/overrides.json'
       - 'tools/winport/wanted.txt'
