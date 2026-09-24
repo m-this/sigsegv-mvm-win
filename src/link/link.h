@@ -7,6 +7,30 @@
 #include "util/rtti.h"
 
 
+#if defined _WINDOWS
+/* A call through a thunk the Windows address table has no entry for. It ends
+ * the server with the function's name, unless SIGSEGV_SURVEY_UNRESOLVED is set
+ * in the environment: then it names the function once and the call returns
+ * zero, so one bed sweep lists every missing function the missions reach
+ * rather than the first. The survey is for the bed; a player never sets it. */
+void UnresolvedCall(const char *what, const char *name);
+
+template<typename R>
+inline R UnresolvedValue()
+{
+	if constexpr (std::is_void_v<R>) {
+		return;
+	} else if constexpr (std::is_reference_v<R>) {
+		static auto *zero = static_cast<std::remove_reference_t<R> *>(calloc(1, sizeof(std::remove_reference_t<R>)));
+		return *zero;
+	} else {
+		alignas(R) static const unsigned char zero[sizeof(R)] = {};
+		return *reinterpret_cast<const R *>(zero);
+	}
+}
+#endif
+
+
 class ILinkage : public AutoListNoDelete<ILinkage>
 {
 public:
@@ -92,7 +116,7 @@ public:
 	{
 #if defined _WINDOWS
 		/* the Windows address table is incomplete; name the gap instead of jumping to 0 */
-		if (link.GetFuncPtr() == nullptr) { Warning("SigMod: called unresolved function \"%s\"\n", link.GetFuncName()); Error("SigMod: called unresolved function \"%s\"\n", link.GetFuncName()); }
+		if (link.GetFuncPtr() == nullptr) { UnresolvedCall("called unresolved function", link.GetFuncName()); return UnresolvedValue<RET>(); }
 #endif
 #ifdef DEBUG
 		assert(link.GetFuncPtr() != nullptr); 
@@ -173,7 +197,7 @@ public:
 	{
 #if defined _WINDOWS
 		/* the Windows address table is incomplete; name the gap instead of jumping to 0 */
-		if (link.GetFuncPtr() == nullptr) { Warning("SigMod: called unresolved function \"%s\"\n", link.GetFuncName()); Error("SigMod: called unresolved function \"%s\"\n", link.GetFuncName()); }
+		if (link.GetFuncPtr() == nullptr) { UnresolvedCall("called unresolved function", link.GetFuncName()); return UnresolvedValue<RET>(); }
 #endif
 #ifdef __GNUC__
 		FPtr pFunc= (FPtr)link.GetFuncPtr();
@@ -216,7 +240,7 @@ public:
 	{
 #if defined _WINDOWS
 		/* the Windows address table is incomplete; name the gap instead of jumping to 0 */
-		if (link.GetFuncPtr() == nullptr) { Warning("SigMod: called unresolved function \"%s\"\n", link.GetFuncName()); Error("SigMod: called unresolved function \"%s\"\n", link.GetFuncName()); }
+		if (link.GetFuncPtr() == nullptr) { UnresolvedCall("called unresolved function", link.GetFuncName()); return UnresolvedValue<RET>(); }
 #endif
 #ifdef __GNUC__
 		FPtr pFunc= (FPtr)link.GetFuncPtr();
@@ -343,7 +367,7 @@ public:
 #if defined _WINDOWS
 		/* an index of -1 would read the slot before the vtable and call whatever
 		   is there; the Windows address table is still incomplete */
-		if (vt_index == -1) { Warning("SigMod: virtual function \"%s\" has no vtable index\n", link.GetFuncName()); Error("SigMod: virtual function \"%s\" has no vtable index\n", link.GetFuncName()); }
+		if (vt_index == -1) { UnresolvedCall("virtual function with no vtable index", link.GetFuncName()); return UnresolvedValue<RET>(); }
 #endif
 		
 		auto pVT = *reinterpret_cast<void **const *>(obj);
@@ -384,7 +408,7 @@ public:
 #if defined _WINDOWS
 		/* an index of -1 would read the slot before the vtable and call whatever
 		   is there; the Windows address table is still incomplete */
-		if (vt_index == -1) { Warning("SigMod: virtual function \"%s\" has no vtable index\n", link.GetFuncName()); Error("SigMod: virtual function \"%s\" has no vtable index\n", link.GetFuncName()); }
+		if (vt_index == -1) { UnresolvedCall("virtual function with no vtable index", link.GetFuncName()); return UnresolvedValue<RET>(); }
 #endif
 		
 		auto pVT = *reinterpret_cast<void **const *>(obj);

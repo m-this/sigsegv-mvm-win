@@ -302,6 +302,10 @@ jobs:
       BED: C:\bed
       # Without cdb: attached, it stops the server a second into a mission.
       BED_DEBUGGER: none
+      # A call SigMod has no Windows address for names itself and returns zero
+      # instead of ending the server, so one sweep lists every one a mission
+      # reaches. link.h, UnresolvedCall.
+      SIGSEGV_SURVEY_UNRESOLVED: 1
     steps:
     # Only the scripts: mvm-reversed has paths longer than Windows allows.
     - uses: actions/checkout@v4
