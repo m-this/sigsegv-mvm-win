@@ -7705,11 +7705,11 @@ namespace Mod::Attr::Custom_Attributes
 	DETOUR_DECL_MEMBER_PROJ_DAMAGE_MULT(CTFProjectile_ThrowableBreadMonster);
 	DETOUR_DECL_MEMBER_PROJ_DAMAGE_MULT(CTFStunBall);
 
-	VHOOK_DECL(bool, PlayerLocomotion_IsOnGround, const CCommand& args)
+	VHOOK_DECL(bool, PlayerLocomotion_IsOnGround)
 	{
         auto loco = reinterpret_cast<ILocomotion *>(this);
 		if (loco->GetBot()->GetEntity()->GetMoveType() == MOVETYPE_NOCLIP) return true;
-        return VHOOK_CALL(args);
+        return VHOOK_CALL();
     }
 
 	DETOUR_DECL_MEMBER(void, CGameMovement_FullNoClipMove, float speed, float accel)

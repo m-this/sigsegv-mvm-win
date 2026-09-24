@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Refuse a member detour whose parameters are not the function's.
+"""Refuse a member detour or virtual hook whose parameters are not the function's.
 
 A member detour on Windows is __thiscall: it pops its own arguments. Declared
 with fewer parameters than the game passes, it pops too few, the caller's
@@ -66,15 +66,28 @@ def main():
     for path in sorted((root / "src").rglob("*.cpp")) + sorted((root / "src").rglob("*.h")):
         text = path.read_text(errors="replace")
         decls = {}
-        for m in re.finditer(r"\bDETOUR_DECL_MEMBER\s*(?=\()", text):
+        for m in re.finditer(r"\b(?:DETOUR_DECL_MEMBER|VHOOK_DECL)\s*(?=\()", text):
             args, _ = macro_args(text, m.end())
             if args is None:
                 continue
             parts = split_params(args)
             if len(parts) >= 2:
                 decls.setdefault(parts[1], []).append((parts[2:], text.count("\n", 0, m.start()) + 1))
-        for m in re.finditer(r'\bMOD_ADD_DETOUR_MEMBER(?:_PRIORITY)?\s*\(\s*(\w+)\s*,\s*"([^"]+)"', text):
-            detour, name = m[1], m[2]
+        # A virtual hook sits in a vtable slot with no pop check at load, so
+        # its declaration is checked here or nowhere: MOD_ADD_VHOOK(name,
+        # class, "Func") and MOD_ADD_VHOOK2(name, class, class, "Func").
+        adds = [(m[1], m[2]) for m in re.finditer(r'\bMOD_ADD_DETOUR_MEMBER(?:_PRIORITY)?\s*\(\s*(\w+)\s*,\s*"([^"]+)"', text)]
+        for m in re.finditer(r"\b(?:MOD_ADD_VHOOK\w*|CVirtualHook\w*)\s*(?=\()", text):
+            args, _ = macro_args(text, m.end())
+            if args is None:
+                continue
+            parts = split_params(args)
+            cb = re.search(r"GET_VHOOK_CALLBACK\(\s*(\w+)\s*\)", args)
+            names = [p.strip('"') for p in parts if re.fullmatch(r'"[A-Za-z_][\w:]*::~?\w+(?: \[\w+\])?"', p)]
+            detour = cb[1] if cb else (parts[0] if parts and m[0].startswith("MOD_ADD") else None)
+            if detour and names:
+                adds.append((detour, names[-1]))
+        for detour, name in adds:
             if name in symbol_of and detour in decls:
                 for params, line in decls[detour]:
                     wanted.append((path.relative_to(root), line, detour, name, symbol_of[name], params))
@@ -99,7 +112,7 @@ def main():
             continue
         bad += 1
         print(f"{path}:{line}: {detour} takes {len(params)} parameters, {name} is {demangled}")
-    print(f"{len(wanted)} member detours checked, {bad} with the wrong number of parameters")
+    print(f"{len(wanted)} member detours and virtual hooks checked, {bad} with the wrong number of parameters")
     sys.exit(1 if bad else 0)
 
 
