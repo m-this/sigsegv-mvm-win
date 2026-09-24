@@ -92,6 +92,8 @@ IScriptManager *scriptManager = nullptr;
 
 extern int laserSprite;
 #if defined _WINDOWS
+#include <psapi.h>
+
 /* Who ends the server. The engine's Error() leaves through tier0's
  * Plat_ExitProcess, TerminateProcess on itself with status 100, and on
  * Windows its message never reaches console.log: a server that died that way
