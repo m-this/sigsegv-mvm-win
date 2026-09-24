@@ -3,11 +3,12 @@
 # investigation like disasm.txt. Runs from the repository root after the table
 # is derived; the dumps are under derived/.
 #
-# eip=1 under UpdateConnectedPlayer, right after a no-argument virtual call on
-# the player at vtable +0x1ec (slot 123). The table gives CTFPlayer::Spawn and
-# RegenThink, both without arguments, addresses that end ret 4 and ret 8.
+# The table's CTFPlayer::Spawn (0x50d380) and RegenThink (0x508e30) are string
+# matches that take arguments. Spawn is virtual: where do both sides put it?
 v=derived/win-vtables/CTFPlayer.txt
 l=derived/linux-vtables/CTFPlayer.txt
-echo "== windows CTFPlayer vtable, slots 118-128"; sed -n '1,3p' "$v"; grep -n '' "$v" | sed -n '118,132p'
-echo "== linux CTFPlayer vtable: Spawn, RegenThink, and slots 118-128"; grep -n 'Spawn\|RegenThink' "$l" | head; grep -n '' "$l" | sed -n '118,132p'
-echo "== where 0x50d380 and 0x508e30 sit in the windows vtables"; grep -rl '50d380\|508e30' derived/win-vtables | head
+echo "== windows CTFPlayer, lines 1-34"; sed -n '1,34p' "$v"
+echo "== linux CTFPlayer, lines 1-34"; sed -n '1,34p' "$l"
+echo "== windows lines holding the suspects"; grep -n '50d380\|508e30\|4f3530\|4f3500' "$v"
+echo "== matches.json and vtable-index entries for Spawn"; grep -n '_ZN9CTFPlayer5SpawnEv\|_ZN9CTFPlayer10RegenThinkEv' -A4 derived/matches.json | head -20
+grep -n 'CTFPlayer::Spawn\|CTFPlayer::RegenThink' tools/winport/knownvtidx.generated.txt derived/*.txt 2>/dev/null | head
