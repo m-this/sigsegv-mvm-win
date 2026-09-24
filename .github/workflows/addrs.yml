@@ -72,11 +72,10 @@ jobs:
         addrs ../gamedata/sigsegv/windows.txt > committed.tsv
         addrs windows.txt > derived.tsv
         echo "entries: committed $(wc -l < committed.tsv), derived $(wc -l < derived.tsv), same address $(comm -12 committed.tsv derived.tsv | wc -l)"
-        # The derived table, compressed into the log: the artifact store is not
-        # reachable from everywhere the port is worked on, and the log is.
-        echo "derived windows.txt, gzip+base64:"
-        gzip -9c windows.txt | base64 -w 0; echo
-        echo "end of derived windows.txt"
+        # The change to the table as a patch in the log: the artifact store is
+        # not reachable from everywhere the port is worked on, and the log is.
+        diff -u ../gamedata/sigsegv/windows.txt windows.txt > windows.patch || true
+        if [ $(wc -l < windows.patch) -le 2000 ]; then cat windows.patch; else echo "windows.patch: $(wc -l < windows.patch) lines, in the artifact"; fi
         tail -n 8 matchvtables.log matchfuncs.log; cat argsize.log
         # Against the build it was made for, the committed table is what the
         # scripts make: an address added by hand without its override, or an
