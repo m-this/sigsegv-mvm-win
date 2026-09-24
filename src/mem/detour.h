@@ -108,7 +108,7 @@ private:
  * hidden return pointer MSVC passes for any class returned by value; a plain
  * function is __cdecl and pops nothing. Anything else, another convention or
  * a variadic, is -1 and not checked. */
-template<class A> constexpr int DetourArgBytes() { return std::is_reference_v<A> ? 4 : (int)((sizeof(A) + 3) & ~3); }
+template<class A> constexpr int DetourArgBytes() { if constexpr (std::is_reference_v<A>) return 4; else return (int)((sizeof(A) + 3) & ~3); }
 template<class T> constexpr int DetourPopOf(T) { return -1; }
 template<class R, class... A> constexpr int DetourPopOf(R (*)(A...)) { return 0; }
 template<class C, class R, class... A> constexpr int DetourPopOf(R (C::*)(A...)) { return (0 + ... + DetourArgBytes<A>()) + (std::is_class_v<R> ? 4 : 0); }
