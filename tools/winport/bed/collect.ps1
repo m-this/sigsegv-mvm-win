@@ -23,18 +23,25 @@ if (Test-Path "$Out\sig_list_addrs.txt") {
   Write-Host ("addrs: {0} lines, {1} FAIL" -f $lines.Count, ($lines | Select-String 'FAIL').Count)
 }
 
-# Each debugger event with the stack under it, without the module lists.
+# Each crash event with the stack under it, without the module lists. The
+# breakpoints are the engine noticing a debugger (DebuggerBreakIfDebugging)
+# and only counted; the first two faults and the last two are printed, since
+# the last one is the crash.
 if (Test-Path "$Out\cdb.log") {
   $log = Get-Content "$Out\cdb.log"
-  $events = 0
-  for ($i = 0; $i -lt $log.Count -and $events -lt 6; $i++) {
-    if ($log[$i] -match '^(FIRST-CHANCE AV|SECOND-CHANCE AV|HEAP CORRUPTION|STACK BUFFER OVERRUN|PROCESS EXIT|BREAKPOINT)') {
-      $events++
-      Write-Host "--- cdb: $($log[$i])"
-      $end = [Math]::Min($log.Count - 1, $i + 40)
-      for ($j = $i + 1; $j -le $end; $j++) {
-        if ($log[$j] -match '^(start +end|FIRST-CHANCE|SECOND-CHANCE|PROCESS EXIT|BREAKPOINT)') { break }
-        if ($log[$j] -match '^(ChildEBP|[0-9a-f]{8} [0-9a-f]{8}|eax=|eip=|\(|[a-z_0-9]+!|Access violation)') { Write-Host $log[$j] }
+  Write-Host ("cdb: {0} breakpoints passed" -f ($log | Select-String '^BREAKPOINT').Count)
+  $starts = @()
+  for ($i = 0; $i -lt $log.Count; $i++) {
+    if ($log[$i] -match '^(FIRST-CHANCE AV|SECOND-CHANCE AV|HEAP CORRUPTION|STACK BUFFER OVERRUN|PROCESS EXIT)') { $starts += $i }
+  }
+  $pick = if ($starts.Count -le 4) { $starts } else { $starts[0, 1, -2, -1] }
+  foreach ($i in $pick) {
+    Write-Host "--- cdb: $($log[$i])"
+    $end = [Math]::Min($log.Count - 1, $i + 40)
+    for ($j = $i + 1; $j -le $end; $j++) {
+      if ($log[$j] -match '^(start +end|FIRST-CHANCE|SECOND-CHANCE|PROCESS EXIT|BREAKPOINT|HEAP CORRUPTION)') { break }
+      if ($log[$j] -match '^(eip=|\(|Access violation)' -or ($log[$j] -match '^[0-9a-f]{8} [0-9a-f]{8}' -and $log[$j] -notmatch 'ntdll!|KERNEL')) {
+        Write-Host ($log[$j] -replace '^[0-9a-f]{8} [0-9a-f]{8} +([0-9a-f]{8} ){3}', '' -replace ' \(FPO: [^)]*\)', '' -replace ' \(CONV: [a-z]+\)', '' -replace '/home/runner/work/sigsegv-mvm-win/sigsegv-mvm-win/', '')
       }
     }
   }
@@ -44,7 +51,7 @@ $console = Get-ChildItem "$Out\console*.log" -ErrorAction SilentlyContinue | Sor
 if ($console) {
   Write-Host "--- console tail, without the address table"
   Get-Content $console.FullName | Where-Object { $_ -notmatch 'AddrManager|IDetour_Sym|LoadDetours|Link FAIL|KeyValues Error|Lang, ' } |
-    Select-Object -Last 25 | Write-Host
+    Select-Object -Last 12 | Write-Host
 }
 Get-ChildItem "$Out\dumps" -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "dump: $($_.Name) $($_.Length)" }
 Get-Content "$Out\winbed.err" -Tail 5 -ErrorAction SilentlyContinue | Write-Host
