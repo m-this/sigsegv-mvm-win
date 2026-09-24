@@ -16,6 +16,7 @@ on:
       - '.github/workflows/addrs.yml'
       - 'tools/winport/*.py'
       - 'tools/winport/overrides.json'
+      - 'gamedata/sigsegv/windows.txt'
       - 'tools/winport/bed/disasm.*'
 
 concurrency:
