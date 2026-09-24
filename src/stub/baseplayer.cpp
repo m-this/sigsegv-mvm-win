@@ -137,6 +137,12 @@ MemberFuncThunk<CBasePlayer *, void, Vector *, Vector *, Vector *> CBasePlayer::
 MemberFuncThunk<CBasePlayer *, bool, CSteamID *>                   CBasePlayer::ft_GetSteamID    ("CBasePlayer::GetSteamID");
 MemberFuncThunk<CBasePlayer *, void, const char *>                 CBasePlayer::ft_SetPlayerName ("CBasePlayer::SetPlayerName");
 MemberFuncThunk<CBasePlayer *, CBaseViewModel *, int, bool>        CBasePlayer::ft_GetViewModel  ("CBasePlayer::GetViewModel");
+#if defined _WINDOWS
+CBaseViewModel *CBasePlayer::GetViewModel(int viewmodelindex, bool bObserverOK)
+{
+	return reinterpret_cast<CBaseViewModel *>(this->m_hViewModel[viewmodelindex].Get());
+}
+#endif
 MemberFuncThunk<CBasePlayer *, void, int>                          CBasePlayer::ft_DisableButtons("CBasePlayer::DisableButtons");
 MemberFuncThunk<CBasePlayer *, void, int>                          CBasePlayer::ft_EnableButtons ("CBasePlayer::EnableButtons");
 MemberFuncThunk<CBasePlayer *, void, int>                          CBasePlayer::ft_ForceButtons  ("CBasePlayer::ForceButtons");

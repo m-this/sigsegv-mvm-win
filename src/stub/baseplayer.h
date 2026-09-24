@@ -184,7 +184,14 @@ public:
 	bool GetSteamID(CSteamID *pID)                                                     { return ft_GetSteamID    (this, pID); }
 	CSteamID GetSteamID()                                                              { CSteamID id; this->GetSteamID(&id); return id; }
 	void SetPlayerName(const char *name)                                               {        ft_SetPlayerName (this, name); }
+#if defined _WINDOWS
+	/* No such function in server.dll: MSVC inlined it into its callers, and
+	 * calling the unresolved thunk ended the server as bots spawned. The
+	 * Linux body is the handle lookup, bObserverOK unused on the server. */
+	CBaseViewModel *GetViewModel(int viewmodelindex = 0, bool bObserverOK = true);
+#else
 	CBaseViewModel *GetViewModel(int viewmodelindex = 0, bool bObserverOK = true)      { return ft_GetViewModel  (this, viewmodelindex, bObserverOK); }
+#endif
 	void DisableButtons(int nButtons)                                                  {        ft_DisableButtons(this, nButtons); }
 	void EnableButtons(int nButtons)                                                   {        ft_EnableButtons (this, nButtons); }
 	void ForceButtons(int nButtons)                                                    {        ft_ForceButtons  (this, nButtons); }
