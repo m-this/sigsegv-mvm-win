@@ -1,2 +1,4 @@
-# The function in CTFPlayer vtable slot +0x1ec, called with no arguments.
-# Filled in once inspect.sh names it.
+# CTFPlayer::GetMaxHealth (vtable +0x1ec, called just before the eip=1 faults)
+# and GetMaxHealthForBuffing 0x30 after it, which SigMod detours.
+server 0x4f3500 40
+server 0x4f3530 60
