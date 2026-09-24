@@ -144,10 +144,11 @@ for name, entry in found + [x for x in extra if x[0] not in found_names]:
     # ended in a silent crash that took a bisection to find. FIELDS_MIN=0
     # includes them all. argsize.py is the other way in: a member whose Linux
     # symbol says how many argument bytes it pops, and whose candidate pops
-    # exactly that, at least 4.
+    # exactly that, at least 8. A shuffled pair passes at 4 more often than not;
+    # at 8 one in six does, and at 20 or more none did.
     via = match["via"]
     if via in ("call", "consensus", "table") and (match.get("fields") or 0) < float(os.environ.get("FIELDS_MIN", 0.3)):
-        if (match.get("expect") or 0) < 4 or match.get("pop") != match["expect"]:
+        if (match.get("expect") or 0) < 8 or match.get("pop") != match["expect"]:
             continue
         via += f', ret {match["pop"]} as its arguments say'
     out += [

@@ -10,9 +10,9 @@ about call graphs or field offsets.
 
 emitgamedata.py leaves a structural match out unless its field offsets agree
 (FIELDS_MIN). This gives such a match a second way in: an expected pop of at
-least 4 bytes, met exactly. `ret` alone proves nothing, since every free
-function and every member without arguments ends that way, so an expected 0
-admits nothing.
+least 8 bytes, met exactly. Below that the test is too easy to pass by chance:
+against build 10828683 a shuffled pair met an expected 4 in 57 % of cases, 8 in
+16 %, and 20 or more in none.
 
     argsize.py server.dll matches.json
 
