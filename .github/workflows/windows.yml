@@ -40,8 +40,8 @@ jobs:
       BOOST: ${{ github.workspace }}/../winport-deps/boost/usr/include
       ALLIEDMODDERS: ${{ github.workspace }}/../alliedmodders
       OUT: ${{ github.workspace }}/../winport-build
-      # Left out of the release: /Z7 costs image size in a 32-bit process.
-      DEBUGINFO: ''
+      # A .pdb beside the DLL, for the bed's debugger. The package does not ship it.
+      DEBUGINFO: '1'
 
     steps:
     - uses: actions/checkout@v4
@@ -104,6 +104,11 @@ jobs:
 
     - uses: actions/upload-artifact@v4
       with:
+        name: symbols
+        path: ${{ env.OUT }}/sigsegv.ext.2.tf2.pdb
+
+    - uses: actions/upload-artifact@v4
+      with:
         name: package-windows
         path: |
           package-windows.zip
@@ -154,6 +159,8 @@ jobs:
       with: { name: package-windows, path: pkg }
     - uses: actions/download-artifact@v4
       with: { name: winbed, path: bedbin }
+    - uses: actions/download-artifact@v4
+      with: { name: symbols, path: pkg }
     - name: Install
       shell: pwsh
       run: tools/winport/bed/install.ps1
@@ -164,7 +171,7 @@ jobs:
         # address space ("Out of memory or address space"). The extension links
         # the CRT statically, so its allocations are its own and can be the
         # only ones checked.
-        $gflags = Get-ChildItem 'C:\Program Files (x86)\Windows Kits\10\Debuggers' -Recurse -Filter gflags.exe -ErrorAction SilentlyContinue | Select-Object -First 1
+        $gflags = Get-ChildItem 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64' -Filter gflags.exe -ErrorAction SilentlyContinue | Select-Object -First 1
         if ($gflags) {
           & $gflags.FullName /p /enable srcds.exe /full /dlls sigsegv.ext.2.tf2.dll
         } else {
@@ -205,6 +212,8 @@ jobs:
       with: { name: package-windows, path: pkg }
     - uses: actions/download-artifact@v4
       with: { name: winbed, path: bedbin }
+    - uses: actions/download-artifact@v4
+      with: { name: symbols, path: pkg }
     - name: Install
       shell: pwsh
       run: tools/winport/bed/install.ps1

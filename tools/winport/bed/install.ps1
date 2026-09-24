@@ -15,3 +15,9 @@ Set-ItemProperty $wer DumpFolder "$env:BED\dumps" -Type ExpandString
 Set-ItemProperty $wer DumpType 1 -Type DWord
 Set-ItemProperty $wer DumpCount 10 -Type DWord
 Get-PSDrive C | Format-Table -AutoSize | Out-String | Write-Host
+
+# The debugger in boot.ps1 names SigMod's functions from this.
+$pdb = 'pkg\sigsegv.ext.2.tf2.pdb'
+if (Test-Path $pdb) {
+  Copy-Item $pdb "$env:BED\tf-dedicated\tf\addons\sourcemod\extensions\"
+}

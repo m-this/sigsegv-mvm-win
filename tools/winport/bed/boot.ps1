@@ -16,6 +16,36 @@ $env:SRCDS_RCONPW = $env:WAVEPROBE_RCONPW
 $server = Start-Process bedbin\winbed.exe -ArgumentList '-serve', '-root', $env:BED `
   -RedirectStandardOutput "$out\winbed.out" -RedirectStandardError "$out\winbed.err" -PassThru
 
+# cdb follows srcds from the moment it exists: every access violation, a heap
+# corruption and the process's own exit are logged with a stack, and a crash
+# leaves a full dump. srcds catches its own crashes and writes nothing useful.
+$cdb = 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x86\cdb.exe'
+$debugger = $null
+$srcds = $null
+$waitUntil = (Get-Date).AddMinutes(5)
+while (-not $srcds -and (Get-Date) -lt $waitUntil -and -not $server.HasExited) {
+  $srcds = Get-Process srcds -ErrorAction SilentlyContinue | Select-Object -First 1
+  if (-not $srcds) { Start-Sleep -Milliseconds 200 }
+}
+if ($srcds -and (Test-Path $cdb)) {
+  $extensions = "$env:BED\tf-dedicated\tf\addons\sourcemod\extensions"
+  @(
+    ".logopen $out\cdb.log"
+    ".sympath $extensions"
+    '.reload'
+    'sxe -c ".echo FIRST-CHANCE AV; r; kv 16; gn" -c2 ".echo SECOND-CHANCE AV; r; kv 60; lm; .dump /ma C:\bed\dumps\av.dmp; q" av'
+    'sxe -c ".echo HEAP CORRUPTION; kv 60; .dump /ma C:\bed\dumps\heap.dmp; q" c0000374'
+    'sxe -c ".echo STACK BUFFER OVERRUN; kv 60; .dump /ma C:\bed\dumps\gs.dmp; q" c0000409'
+    'sxe -c ".echo PROCESS EXIT; ~* kv 30; q" epr'
+    'g'
+  ) | Set-Content "$out\cdb.script"
+  $debugger = Start-Process $cdb -ArgumentList '-p', $srcds.Id, '-cf', "$out\cdb.script" `
+    -RedirectStandardOutput "$out\cdb.out" -RedirectStandardError "$out\cdb.err" -PassThru
+  Say "cdb attached to srcds $($srcds.Id)"
+} else {
+  Say "no debugger: srcds=$($srcds.Id) cdb=$(Test-Path $cdb)"
+}
+
 function Dead {
   if (-not $server.HasExited) { return $false }
   Say "the server exited with $($server.ExitCode)"
