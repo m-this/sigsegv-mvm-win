@@ -138,7 +138,10 @@ jobs:
       WAVEPROBE_RCONPW: bed-${{ github.run_id }}
       BED: C:\bed
     steps:
+    # Only the scripts: mvm-reversed has paths longer than Windows allows.
     - uses: actions/checkout@v4
+      with:
+        sparse-checkout: tools/winport/bed
     - uses: actions/download-artifact@v4
       with: { name: package-windows, path: pkg }
     - uses: actions/download-artifact@v4
@@ -176,7 +179,10 @@ jobs:
       WAVEPROBE_RCONPW: bed-${{ github.run_id }}
       BED: C:\bed
     steps:
+    # Only the scripts: mvm-reversed has paths longer than Windows allows.
     - uses: actions/checkout@v4
+      with:
+        sparse-checkout: tools/winport/bed
     - uses: actions/download-artifact@v4
       with: { name: package-windows, path: pkg }
     - uses: actions/download-artifact@v4
