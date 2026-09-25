@@ -143,11 +143,11 @@ def main():
         if not line:
             continue
         name, rest = line.split(None, 1)
-        if name not in modules:
-            modules[name] = Module(os.path.join(game, MODULES.get(name, name)))
-        mod = modules[name]
         print(f"### {line}")
         try:
+            if name not in modules:
+                modules[name] = Module(os.path.join(game, MODULES.get(name, name)))
+            mod = modules[name]
             if rest.startswith("callafter "):
                 mod.calls_after(rest[len("callafter "):])
                 continue
