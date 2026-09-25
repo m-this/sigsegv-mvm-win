@@ -1288,8 +1288,10 @@ namespace Mod::Attr::Custom_Attributes
 		for (const auto &loaded : loaded_attribute_names) {
 			if (GetItemSchema()->GetAttributeDefinitionByName(loaded.c_str()) == nullptr) ++missing;
 		}
-		Warning("SigMod: custom attributes: \"%s\" not found at a kill; schema %p, %p at load; %d of %zu loaded names not found now\n",
-			name, (void *)GetItemSchema(), loaded_attribute_schema, missing, loaded_attribute_names.size());
+		Warning("SigMod: custom attributes: \"%s\" not found at a kill; schema %p, %p at load; %d of %zu loaded names not found now; \"is extra loadout item\" %s, definition 4529 %s\n",
+			name, (void *)GetItemSchema(), loaded_attribute_schema, missing, loaded_attribute_names.size(),
+			GetItemSchema()->GetAttributeDefinitionByName("is extra loadout item") != nullptr ? "found" : "not found",
+			GetItemSchema()->GetAttributeDefinition(4529) != nullptr ? "found" : "not found");
 	}
 #endif
 	DETOUR_DECL_MEMBER(void, CTFPlayer_Event_Killed, const CTakeDamageInfo& info)
@@ -10400,6 +10402,11 @@ namespace Mod::Attr::Custom_Attributes
 			 * the popfile parser reading null definitions. Load them again when
 			 * the last of the file is missing; the indices are the file's, so
 			 * every cached index stays right. */
+			static bool said_running = false;
+			if (!said_running) {
+				said_running = true;
+				Warning("SigMod: custom attributes: the schema check runs\n");
+			}
 			if (gpGlobals->tickcount % 8 == 0 && GetItemSchema() != nullptr
 				&& GetItemSchema()->GetAttributeDefinitionByName("is extra loadout item") == nullptr) {
 				Warning("SigMod: custom attributes: the schema lost them, loading again\n");
