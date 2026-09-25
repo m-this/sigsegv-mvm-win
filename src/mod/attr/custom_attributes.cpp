@@ -10226,8 +10226,25 @@ namespace Mod::Attr::Custom_Attributes
 			if (kv->LoadFromFile(filesystem, path)) {
 				DevMsg("Loaded attrs\n");
 				CUtlVector<CUtlString> err;
-				GetItemSchema()->BInitAttributes(kv, &err);
+				bool ok = GetItemSchema()->BInitAttributes(kv, &err);
+#if defined _WINDOWS
+				/* The bed found "is extra loadout item" missing from the schema
+				 * after this ran: say what the schema made of the file. */
+				if (!ok || err.Count() > 0 || GetItemSchema()->GetAttributeDefinitionByName("is extra loadout item") == nullptr) {
+					Warning("SigMod: custom attributes: BInitAttributes %s, %d errors, \"is extra loadout item\" %s\n",
+						ok ? "succeeded" : "failed", err.Count(),
+						GetItemSchema()->GetAttributeDefinitionByName("is extra loadout item") != nullptr ? "present" : "missing");
+					for (int i = 0; i < err.Count() && i < 8; ++i) {
+						Warning("SigMod: custom attributes: %s\n", err[i].Get());
+					}
+				}
+#endif
 			}
+#if defined _WINDOWS
+			else {
+				Warning("SigMod: custom attributes: cannot read %s\n", path);
+			}
+#endif
 			static bool attributeCallbackInstalled = false;
 			if (!attributeCallbackInstalled) {
 				attributeCallbackInstalled = true;

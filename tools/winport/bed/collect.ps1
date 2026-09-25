@@ -136,6 +136,10 @@ Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort
     Write-Host "repeated in ${name}: $($_.Count)x $line"
   }
 }
+# What the schema made of SigMod's custom attributes, once per distinct line.
+$attrs = Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
+  Select-String -Pattern '^SigMod: custom attributes: .*' | ForEach-Object { $_.Line } | Sort-Object -Unique | Select-Object -First 12
+$attrs | ForEach-Object { Write-Host "attributes: $_" }
 # Every unresolved function a mission reached, across all the server's starts.
 $unresolved = Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
   Select-String -Pattern '(?:called unresolved function|no vtable index) "([^"]+)"' | ForEach-Object { $_.Matches[0].Groups[1].Value } | Sort-Object -Unique
