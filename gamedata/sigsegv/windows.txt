@@ -920,6 +920,24 @@
 					lib   "server"
 					// verified: read by hand: copies the CEffectData (its fifth argument) field by field into the global effect dispatch temp entity and looks up the effect name (its fourth) in the string table, the SDK body; cdecl
 				}
+				"CBaseCombatCharacter::AddGlowEffect"
+				{
+					type  "fixed"
+					sym   "_ZN20CBaseCombatCharacter13AddGlowEffectEv"
+					addr  "0x1d4640"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: SetTransmitState(8) (0x1fceb0), then sets m_bGlowEnabled (+0x6a8, Linux +0x6c0) through its NetworkStateChanged when it is not already set, the Linux body; no arguments
+				}
+				"CTFPlayer::GetObject"
+				{
+					type  "fixed"
+					sym   "_ZNK9CTFPlayer9GetObjectEi"
+					addr  "0x4f3a30"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: resolves the handle at the argument's index of m_aObjects (+0x2340, Linux +0x2348), whose count at +0x234c is what GetObjectCount (0x4f3b30) returns, the Linux body; thiscall, one argument
+				}
 				"CBaseEntity::TakeDamage"
 				{
 					type  "fixed"

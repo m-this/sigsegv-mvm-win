@@ -736,5 +736,13 @@
  "_Z17TE_DispatchEffectR16IRecipientFilterfRK6VectorPKcRK11CEffectData": {
   "rva": "0x43e390",
   "why": "read by hand: copies the CEffectData (its fifth argument) field by field into the global effect dispatch temp entity and looks up the effect name (its fourth) in the string table, the SDK body; cdecl"
+ },
+ "_ZN20CBaseCombatCharacter13AddGlowEffectEv": {
+  "rva": "0x1d4640",
+  "why": "read by hand: SetTransmitState(8) (0x1fceb0), then sets m_bGlowEnabled (+0x6a8, Linux +0x6c0) through its NetworkStateChanged when it is not already set, the Linux body; no arguments"
+ },
+ "_ZNK9CTFPlayer9GetObjectEi": {
+  "rva": "0x4f3a30",
+  "why": "read by hand: resolves the handle at the argument's index of m_aObjects (+0x2340, Linux +0x2348), whose count at +0x234c is what GetObjectCount (0x4f3b30) returns, the Linux body; thiscall, one argument"
  }
 }
