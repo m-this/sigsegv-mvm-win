@@ -860,6 +860,15 @@
 					lib   "server"
 					// verified: read by hand: returns string_t through a hidden pointer with the string as its one argument, and inserts it with itself as the value into the global pooled string hashtable (0x10a35508) through 0x2815c0, keeping the answer when it is a non-empty string, the Linux body; cdecl
 				}
+				"CTFGameRules::DropSpellPickup"
+				{
+					type  "fixed"
+					sym   "_ZNK12CTFGameRules15DropSpellPickupERK6Vectori"
+					addr  "0x48a100"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: tests IsUsingSpells as Linux does (a global's +0x30, the rules' +0x11b8 against 4, +0xc82), then CreateNoSpawn (0x1ee780) of "tf_spell_pickup" at the position raised by a constant, and stores the tier (its second argument) in the pickup, the Linux body; thiscall, (const Vector &, int). The other function creating the pickup (0x495900) has it inlined
+				}
 				"CBaseEntity::TakeDamage"
 				{
 					type  "fixed"
