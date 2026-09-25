@@ -42,6 +42,11 @@ WIN_CXXFLAGS=(
 	# AMBuildScript's -Wno-narrowing and -Wno-deprecated-register, in clang's
 	# spelling: both are errors in clang by default and only warnings in gcc.
 	-Wno-c++11-narrowing -Wno-register
+	# The precompiled header without its sources' mtimes: CI dates every
+	# unchanged file to 2000 for the object cache, and a header rebuilt in an
+	# earlier run then no longer matches the mtime the PCH recorded, which
+	# refuses every source that uses it.
+	-Xclang -fno-pch-timestamp
 	# pch.h is the prelude and src/common.h. The Linux build force-includes
 	# common.h into every source, AMBuilder:546, and almost nothing here names
 	# it: src/util/buf.h calls DevMsg with no include chain that declares it.
