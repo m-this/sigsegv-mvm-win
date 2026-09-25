@@ -1,4 +1,4 @@
-# CNavMesh::GetNavArea(const Vector &, float): the functions naming its VPROF scope
-server string CNavMesh::GetNavArea
-# CTFPlayerClassShared::SetCustomModel(const char *, bool): does it end ret 8?
-server 0x532230 140
+# CNavMesh::GetNavArea: the two functions naming its VPROF scope, one per
+# overload; the vector one takes (const Vector &, float) and ends ret 8.
+server +0x408817
+server +0x40887c

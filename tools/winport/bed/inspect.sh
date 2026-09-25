@@ -3,12 +3,10 @@
 # investigation like disasm.txt. Runs from the repository root after the table
 # is derived; the dumps are under derived/.
 #
-# CBaseCombatWeapon::SetSubType is virtual and its neighbours are shared stubs.
-# CTFWeaponBuilder overrides it: the Windows slot where the builder's table
-# differs from the base weapon's near +0x3b8 is it.
-primary() { awk '/^\/\/ vtable/{n++} n==1 && /^\+0x/' "$1"; }
-for side in linux win; do
-  echo "== $side: CTFWeaponBuilder against CTFWeaponBase, +0x380..+0x3f0"
-  diff <(primary derived/$side-vtables/CTFWeaponBase.txt | awk '$1>="+0x0380:" && $1<="+0x03f0:"') \
-       <(primary derived/$side-vtables/CTFWeaponBuilder.txt | awk '$1>="+0x0380:" && $1<="+0x03f0:"')
+# The Linux bodies of the functions the sweep reaches unresolved.
+so=game-linux/tf/bin/server_srv.so
+for s in _ZN14CBaseAnimating10LookupBoneEPKc _ZNK12CTFGameRules15DropSpellPickupERK6Vectori \
+         _Z22GetLoadoutPositionName19loadout_positions_t _Z22PrecacheParticleSystemPKc; do
+  echo "== linux $s"
+  objdump -d --no-show-raw-insn -M intel --disassemble="$s" "$so" | sed -n '/>:$/,$p' | head -60
 done
