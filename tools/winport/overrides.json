@@ -714,5 +714,15 @@
  "_ZN15CItemGeneration9SpawnItemEiRK6VectorRK6QAngleiiPKc": {
   "rva": "0x3a0650",
   "why": "read by hand: the function after ItemGeneration (0x3a0640), and the Linux body step by step: the item definition of the index through ItemSystem, CreateEntityByName of the classname argument or the definition's (+0xd0), CEconItemView::Init of the item, SetAbsOrigin, SetAbsAngles, Spawn and Activate through the vtable; thiscall, ret 0x18, this unused"
+ },
+ "TheNavMesh": {
+  "name": "TheNavMesh",
+  "rva": "0xa8ddf8",
+  "why": "90 of the matched functions that read the Linux global read this one, far ahead of any other candidate; in CSimpleBotRoam::Update and ChasePath::PredictSubjectPosition it is the one global each reads, where Linux reads TheNavMesh"
+ },
+ "_ZN23CSoundEmitterSystemBase17AddSoundsFromFileEPKcbbb": {
+  "rva": "0x3af0",
+  "why": "read by hand in SoundEmitterSystem.dll: the function holding the 'CSoundEmitterSystem::AddSoundsFromFile:  No such file' message; asks the filesystem for the name's handle through its vtable +0x8c and appends it to the vector at +0x78 (count +0x84), as the Linux body does at the same offsets; thiscall, ret 0x10",
+  "lib": "soundemittersystem"
  }
 }
