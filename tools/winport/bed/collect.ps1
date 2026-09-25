@@ -102,10 +102,12 @@ Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort
 $symbolizer = @('C:\Program Files\LLVM\bin\llvm-symbolizer.exe', (Get-Command llvm-symbolizer -ErrorAction SilentlyContinue).Source) | Where-Object { $_ -and (Test-Path $_) } | Select-Object -First 1
 $dll = "$env:BED\tf-dedicated\tf\addons\sourcemod\extensions\sigsegv.ext.2.tf2.dll"
 $names = @{}
-function Name-Frame($line) {
+function Name-Frame($line, [switch]$Return) {
   $m = [regex]::Match($line, 'sigsegv\.ext\.2\.tf2\.dll\+(0x[0-9a-f]+)')
   if (-not $m.Success -or -not $symbolizer -or -not (Test-Path $dll)) { return $line }
   $rva = $m.Groups[1].Value
+  # a return address points past its call: name the call itself
+  if ($Return) { $rva = '0x{0:x}' -f ([Convert]::ToInt64($rva, 16) - 1) }
   if (-not $names.ContainsKey($rva)) {
     # function and file:line of each inlined frame, innermost first: the
     # innermost is what ran, the outermost is the function the address is in
@@ -126,7 +128,7 @@ Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort
     $lines = @()
     foreach ($l in $_.Context.PostContext) { if ($l -notmatch '^\s') { break }; $lines += $l }
     if (-not $first) { $lines = $lines | Select-Object -First 6 }
-    $lines | ForEach-Object { Write-Host "  $(Name-Frame $_)" }
+    $lines | ForEach-Object { Write-Host "  $(Name-Frame $_ -Return)" }
     $first = $false
   }
 }
@@ -177,7 +179,7 @@ Get-ChildItem "$Out\dumps" -ErrorAction SilentlyContinue | ForEach-Object { Writ
 # cleanly, so WER sees nothing. Those dumps, and how winbed saw srcds end.
 # SigMod's own record of who ended the server (ExitTrace in extension.cpp).
 foreach ($f in @("$env:BED\tf-dedicated\sigsegv_exit.txt", "$env:BED\tf-dedicated\tf\sigsegv_exit.txt")) {
-  if (Test-Path $f) { Write-Host "--- $f"; Get-Content $f -Tail 80 | ForEach-Object { Write-Host (Name-Frame $_) }; Copy-Item $f $Out }
+  if (Test-Path $f) { Write-Host "--- $f"; Get-Content $f -Tail 80 | ForEach-Object { Write-Host (Name-Frame $_ -Return) }; Copy-Item $f $Out }
 }
 # An Error() ends the server through the same exit, and its message is the
 # srcds output just before SigMod's trace of it.
