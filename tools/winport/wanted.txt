@@ -3,3 +3,5 @@
 # emitter turned away, so an address can be read and put in overrides.json.
 _ZN11CBaseEntity12SetNextThinkEfPKc
 _ZN17CBaseEntityOutput16ParseEventActionEPKc
+_Z14ItemGenerationv
+_ZN15CItemGeneration9SpawnItemEiRK6VectorRK6QAngleiiPKc
