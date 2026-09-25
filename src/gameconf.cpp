@@ -561,6 +561,9 @@ SMCResult CSigsegvGameConf::AddrEntry_Load_Func_KnownVTIdx()
 	int idx            = stoi(kv.at("idx"), nullptr, 0);
 	
 	auto a = new CAddr_Func_KnownVTIdx(name, sym, vtable, idx);
+	/* The slot is what names the virtual when MSVC folded its body with others,
+	 * and a hook or a thunk on that body needs it (link.h, virtual_hook.cpp). */
+	a->SetVTIndex(idx);
 	this->AddrEntry_Load_Common(a);
 	this->m_AddrPtrs.push_back(std::unique_ptr<IAddr>(a));
 	return SMCResult_Continue;
