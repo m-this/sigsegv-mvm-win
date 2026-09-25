@@ -1,1 +1,4 @@
 # Turned-away candidates for the next functions the sweep reached.
+server 0x561100 4
+server 0x561130 4
+server 0x5611a0 4
