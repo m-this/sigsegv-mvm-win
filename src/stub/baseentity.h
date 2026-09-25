@@ -120,7 +120,13 @@ class CBaseEntityOutput
 public:
 
 	void FireOutput( variant_t Value, CBaseEntity *pActivator, CBaseEntity *pCaller, float fDelay = 0 ) { ft_FireOutput(this, Value, pActivator, pCaller, fDelay); }
+#if defined _WINDOWS
+	/* Inlined into its callers on Windows. What is left is a helper taking the
+	 * output by pointer to pointer, and it pops its own two arguments. */
+	void ParseEventAction( const char *EventData ) { CBaseEntityOutput *self = this; ft_ParseEventAction_Windows(this, &self, EventData); }
+#else
 	void ParseEventAction( const char *EventData ) { ft_ParseEventAction(this, EventData); }
+#endif
 	void DeleteAllElements() { ft_DeleteAllElements(this); }
 
 	variant_t m_Value;
@@ -129,6 +135,9 @@ public:
 private:
 	static MemberFuncThunk<CBaseEntityOutput *, void, variant_t, CBaseEntity *, CBaseEntity *, float> ft_FireOutput;
 	static MemberFuncThunk<CBaseEntityOutput *, void, const char *> ft_ParseEventAction;
+#if defined _WINDOWS
+	static MemberFuncThunk<CBaseEntityOutput *, bool, CBaseEntityOutput **, const char *> ft_ParseEventAction_Windows;
+#endif
 	static MemberFuncThunk<CBaseEntityOutput *, void> ft_DeleteAllElements;
 	
 };

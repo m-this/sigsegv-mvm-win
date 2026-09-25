@@ -1004,6 +1004,24 @@
 					lib   "server"
 					// verified: read by hand: the call match; opens with EquipRequiredWeapon inlined (the last handle of the required weapon stack at +0x28ac, count +0x28b8, switched to through vtable +0x44c), then the weapon slots through the vtable as the Linux body does; thiscall, one argument
 				}
+				"CBaseEntityOutput::ParseEventAction [windows]"
+				{
+					type  "fixed"
+					sym   "win_CBaseEntityOutput_ParseEventAction_helper"
+					addr  "0x2248c0"
+					build "10828683"
+					lib   "server"
+					// verified: ParseEventAction is inlined on Windows; this helper holds its body: from the output its first argument points at, a 0x1c Alloc from CEventAction's pool (0x10a096b4, thiscall 0x6ee3e0), CEventAction's constructor (0x224e40) on the string, linked in front of m_ActionList (+0x14) as the Linux body does; returns true and pops its two arguments (ret 8), ecx unused
+				}
+				"CZombie::SpawnAtPos"
+				{
+					type  "fixed"
+					sym   "_ZN7CZombie10SpawnAtPosERK6VectorfiP11CBaseEntityNS_14SkeletonType_tE"
+					addr  "0x5bfa50"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the one function pushing "tf_zombie" and -1 for CreateEntityByName, then vtable +0x184 (Linux +0x188) with the team, DispatchSpawn(1), SetAbsOrigin with the position, vtable +0x48 (Linux +0x4c) with the owner, and the lifetime compared with zero, the Linux body; cdecl
+				}
 				"CBaseEntity::TakeDamage"
 				{
 					type  "fixed"
