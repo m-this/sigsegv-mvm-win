@@ -893,114 +893,6 @@
 					lib   "server"
 					// verified: turned away for field disagreement, pop as expected (ret 4); ors the argument into m_fEffects at +0xd4 through NetworkStateChanged and calls DispatchUpdateTransmitState (0x1eebd0) on EF_NODRAW (0x20), the SDK's body
 				}
-				"CBaseGrenade::GetThrower"
-				{
-					type  "fixed"
-					sym   "_ZN12CBaseGrenade10GetThrowerEv"
-					addr  "0x20ad30"
-					build "10828683"
-					lib   "server"
-					// verified: read by hand: resolves m_hThrower (+0x504, Linux +0x51c) and returns it when its vtable +0x128 (Linux +0x12c) says player, else falls back to the owner handle at +0x210 (Linux +0x228), the Linux body; no arguments
-				}
-				"GetWeaponId"
-				{
-					type  "fixed"
-					sym   "_Z11GetWeaponIdPKc"
-					addr  "0x53eda0"
-					build "10828683"
-					lib   "server"
-					// verified: read by hand: compares its argument with each of the 0x6e weapon alias strings through V_stricmp (0x6e4a80) and returns the index, 0 when none matches, the Linux body; cdecl
-				}
-				"CNavMesh::GetNavArea [vec]"
-				{
-					type  "fixed"
-					sym   "_ZNK8CNavMesh10GetNavAreaERK6Vectorf"
-					addr  "0x4087f0"
-					build "10828683"
-					lib   "server"
-					// verified: GetNearestNavArea (0x408de0, the function naming its VPROF 'CNavMesh::GetNearestNavArea') calls it first with (pos, a float constant) when neither checkLOS nor checkGround is set and returns its answer when not null, as the SDK does; thiscall, ret 8. Linux finds it by signature, so it has no symbol to match
-				}
-				"CBaseAnimating::LookupBone"
-				{
-					type  "fixed"
-					sym   "_ZN14CBaseAnimating10LookupBoneEPKc"
-					addr  "0x1ceef0"
-					build "10828683"
-					lib   "server"
-					// verified: read by hand: the function after LookupAttachment (0x1ceea0) and shaped like it; locks the studio header at +0x498 when missing, returns -1 without one, else Studio_BoneIndexByName (0x21ca90) on it and the name, the SDK body; thiscall, ret 4
-				}
-				"AllocPooledString_StaticConstantStringPointer"
-				{
-					type  "fixed"
-					sym   "_Z45AllocPooledString_StaticConstantStringPointerPKc"
-					addr  "0x281590"
-					build "10828683"
-					lib   "server"
-					// verified: read by hand: returns string_t through a hidden pointer with the string as its one argument, and inserts it with itself as the value into the global pooled string hashtable (0x10a35508) through 0x2815c0, keeping the answer when it is a non-empty string, the Linux body; cdecl
-				}
-				"CTFGameRules::DropSpellPickup"
-				{
-					type  "fixed"
-					sym   "_ZNK12CTFGameRules15DropSpellPickupERK6Vectori"
-					addr  "0x48a100"
-					build "10828683"
-					lib   "server"
-					// verified: read by hand: tests IsUsingSpells as Linux does (a global's +0x30, the rules' +0x11b8 against 4, +0xc82), then CreateNoSpawn (0x1ee780) of "tf_spell_pickup" at the position raised by a constant, and stores the tier (its second argument) in the pickup, the Linux body; thiscall, (const Vector &, int). The other function creating the pickup (0x495900) has it inlined
-				}
-				"CBaseAnimating::LookupAttachment"
-				{
-					type  "fixed"
-					sym   "_ZN14CBaseAnimating16LookupAttachmentEPKc"
-					addr  "0x1ceea0"
-					build "10828683"
-					lib   "server"
-					// verified: read by hand: the function before LookupBone (0x1ceef0) and shaped like it; locks the studio header at +0x498 when missing, returns 0 without one, else Studio_FindAttachment (0x21d000) on it and the name plus one, the SDK body; thiscall, ret 4
-				}
-				"CBaseEntity::SetNextThink [name]"
-				{
-					type  "fixed"
-					sym   "_ZN11CBaseEntity12SetNextThinkEfPKc"
-					addr  "0x202310"
-					build "10828683"
-					lib   "server"
-					// verified: read by hand: the candidate with 237 matched callers; turns the time into a tick (-1 for TICK_NEVER_THINK), writes m_nNextThinkTick (+0xd0) through its NetworkStateChanged when the context is null, else finds or registers the context (0x200e50, 0x201ef0) and writes that think function's tick, then CheckHasThinkFunction (0x1ff950), the SDK body; thiscall, ret 8
-				}
-				"ItemGeneration"
-				{
-					type  "fixed"
-					sym   "_Z14ItemGenerationv"
-					addr  "0x3a0640"
-					build "10828683"
-					lib   "server"
-					// verified: read by hand: mov eax, 0x10a89114; ret, the one candidate all four matched callers agree on, and the function after it reads the item schema as SpawnItem does; returns the static item generation system as the Linux body does
-				}
-				"CItemGeneration::SpawnItem [defIndex]"
-				{
-					type  "fixed"
-					sym   "_ZN15CItemGeneration9SpawnItemEiRK6VectorRK6QAngleiiPKc"
-					addr  "0x3a0650"
-					build "10828683"
-					lib   "server"
-					// verified: read by hand: the function after ItemGeneration (0x3a0640), and the Linux body step by step: the item definition of the index through ItemSystem, CreateEntityByName of the classname argument or the definition's (+0xd0), CEconItemView::Init of the item, SetAbsOrigin, SetAbsAngles, Spawn and Activate through the vtable; thiscall, ret 0x18, this unused
-				}
-				"TheNavMesh"
-				{
-					type  "fixed"
-					sym   "TheNavMesh"
-					addr  "0xa8ddf8"
-					build "10828683"
-					lib   "server"
-					// verified: 90 of the matched functions that read the Linux global read this one, far ahead of any other candidate; in CSimpleBotRoam::Update and ChasePath::PredictSubjectPosition it is the one global each reads, where Linux reads TheNavMesh
-				}
-				"CSoundEmitterSystemBase::AddSoundsFromFile"
-				{
-					type  "fixed"
-					sym   "_ZN23CSoundEmitterSystemBase17AddSoundsFromFileEPKcbbb"
-					addr  "0x3af0"
-					build "10828683"
-					lib   "soundemittersystem"
-					// verified: read by hand in SoundEmitterSystem.dll: the function holding the 'CSoundEmitterSystem::AddSoundsFromFile:  No such file' message; asks the filesystem for the name's handle through its vtable +0x8c and appends it to the vector at +0x78 (count +0x84), as the Linux body does at the same offsets; thiscall, ret 0x10
-				}
 				"CBaseEntity::TakeDamage"
 				{
 					type  "fixed"
@@ -1397,6 +1289,15 @@
 					vtidx "93"
 					// vtable index
 				}
+				"CBaseEntity::SetNextThink [name]"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity12SetNextThinkEfPKc"
+					addr  "0x202310"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the candidate with 237 matched callers; turns the time into a tick (-1 for TICK_NEVER_THINK), writes m_nNextThinkTick (+0xd0) through its NetworkStateChanged when the context is null, else finds or registers the context (0x200e50, 0x201ef0) and writes that think function's tick, then CheckHasThinkFunction (0x1ff950), the SDK body; thiscall, ret 8
+				}
 				"CBaseEntity::DrawDebugTextOverlays"
 				{
 					type  "fixed"
@@ -1777,6 +1678,24 @@
 					build "10828683"
 					lib   "server"
 					// call, ret 12 as its arguments say
+				}
+				"CBaseAnimating::LookupAttachment"
+				{
+					type  "fixed"
+					sym   "_ZN14CBaseAnimating16LookupAttachmentEPKc"
+					addr  "0x1ceea0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the function before LookupBone (0x1ceef0) and shaped like it; locks the studio header at +0x498 when missing, returns 0 without one, else Studio_FindAttachment (0x21d000) on it and the name plus one, the SDK body; thiscall, ret 4
+				}
+				"CBaseAnimating::LookupBone"
+				{
+					type  "fixed"
+					sym   "_ZN14CBaseAnimating10LookupBoneEPKc"
+					addr  "0x1ceef0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the function after LookupAttachment (0x1ceea0) and shaped like it; locks the studio header at +0x498 when missing, returns -1 without one, else Studio_BoneIndexByName (0x21ca90) on it and the name, the SDK body; thiscall, ret 4
 				}
 				"CBaseAnimating::LookupPoseParameter"
 				{
@@ -2794,6 +2713,15 @@
 					build "10828683"
 					lib   "server"
 					// vtable
+				}
+				"CBaseGrenade::GetThrower"
+				{
+					type  "fixed"
+					sym   "_ZN12CBaseGrenade10GetThrowerEv"
+					addr  "0x20ad30"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: resolves m_hThrower (+0x504, Linux +0x51c) and returns it when its vtable +0x128 (Linux +0x12c) says player, else falls back to the owner handle at +0x210 (Linux +0x228), the Linux body; no arguments
 				}
 				"CBaseGrenade::SetDamage"
 				{
@@ -4499,6 +4427,15 @@
 					lib   "server"
 					// data
 				}
+				"TheNavMesh"
+				{
+					type  "fixed"
+					sym   "TheNavMesh"
+					addr  "0xa8ddf8"
+					build "10828683"
+					lib   "server"
+					// verified: 90 of the matched functions that read the Linux global read this one, far ahead of any other candidate; in CSimpleBotRoam::Update and ChasePath::PredictSubjectPosition it is the one global each reads, where Linux reads TheNavMesh
+				}
 				"TheNavAreas"
 				{
 					type  "fixed"
@@ -4776,6 +4713,15 @@
 					lib   "server"
 					// string
 				}
+				"CTFGameRules::DropSpellPickup"
+				{
+					type  "fixed"
+					sym   "_ZNK12CTFGameRules15DropSpellPickupERK6Vectori"
+					addr  "0x48a100"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: tests IsUsingSpells as Linux does (a global's +0x30, the rules' +0x11b8 against 4, +0xc82), then CreateNoSpawn (0x1ee780) of "tf_spell_pickup" at the position raised by a constant, and stores the tier (its second argument) in the pickup, the Linux body; thiscall, (const Vector &, int). The other function creating the pickup (0x495900) has it inlined
+				}
 				"KeyValues::LoadFromFile"
 				{
 					type  "fixed"
@@ -5032,6 +4978,15 @@
 					lib   "server"
 					// verified: addresses g_GameStringPool+4 (0xa3550c) as the Linux body addresses the pool's +4; next to CC_DumpGameStringTable in the string-pool code
 				}
+				"AllocPooledString_StaticConstantStringPointer"
+				{
+					type  "fixed"
+					sym   "_Z45AllocPooledString_StaticConstantStringPointerPKc"
+					addr  "0x281590"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: returns string_t through a hidden pointer with the string as its one argument, and inserts it with itself as the value into the global pooled string hashtable (0x10a35508) through 0x2815c0, keeping the answer when it is a non-empty string, the Linux body; cdecl
+				}
 				"CEventQueue::ServiceEvents"
 				{
 					type  "fixed"
@@ -5058,6 +5013,15 @@
 					build "10828683"
 					lib   "server"
 					// verified: references both 'Gamerules: entering state' strings and compares this+0x3cc against the argument first, as Linux does; the other referrer is an inlined copy
+				}
+				"GetWeaponId"
+				{
+					type  "fixed"
+					sym   "_Z11GetWeaponIdPKc"
+					addr  "0x53eda0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: compares its argument with each of the 0x6e weapon alias strings through V_stricmp (0x6e4a80) and returns the index, 0 when none matches, the Linux body; cdecl
 				}
 				"CTFGameRules::ApplyOnDamageModifyRules"
 				{
@@ -5176,6 +5140,15 @@
 					build "10828683"
 					lib   "server"
 					// consensus
+				}
+				"ItemGeneration"
+				{
+					type  "fixed"
+					sym   "_Z14ItemGenerationv"
+					addr  "0x3a0640"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: mov eax, 0x10a89114; ret, the one candidate all four matched callers agree on, and the function after it reads the item schema as SpawnItem does; returns the static item generation system as the Linux body does
 				}
 				"CTFGameRules::SetCustomUpgradesFile"
 				{
@@ -5380,6 +5353,15 @@
 					build "10828683"
 					lib   "server"
 					// verified: turned away (consensus); returns on a null player, looks up the loadout slot's entity, indexes the upgrade table by upgrade * 0x19c and reads its attribute definition from the item schema, as the Linux body does; cdecl
+				}
+				"CItemGeneration::SpawnItem [defIndex]"
+				{
+					type  "fixed"
+					sym   "_ZN15CItemGeneration9SpawnItemEiRK6VectorRK6QAngleiiPKc"
+					addr  "0x3a0650"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the function after ItemGeneration (0x3a0640), and the Linux body step by step: the item definition of the index through ItemSystem, CreateEntityByName of the classname argument or the definition's (+0xd0), CEconItemView::Init of the item, SetAbsOrigin, SetAbsAngles, Spawn and Activate through the vtable; thiscall, ret 0x18, this unused
 				}
 				"CMannVsMachineStats::PlayerEvent_Upgraded"
 				{
@@ -5823,6 +5805,15 @@
 					lib   "server"
 					vtidx "3"
 					// vtable index
+				}
+				"CSoundEmitterSystemBase::AddSoundsFromFile"
+				{
+					type  "fixed"
+					sym   "_ZN23CSoundEmitterSystemBase17AddSoundsFromFileEPKcbbb"
+					addr  "0x3af0"
+					build "10828683"
+					lib   "soundemittersystem"
+					// verified: read by hand in SoundEmitterSystem.dll: the function holding the 'CSoundEmitterSystem::AddSoundsFromFile:  No such file' message; asks the filesystem for the name's handle through its vtable +0x8c and appends it to the vector at +0x78 (count +0x84), as the Linux body does at the same offsets; thiscall, ret 0x10
 				}
 				"CQuestItemTracker::FireGameEvent"
 				{
@@ -6608,6 +6599,15 @@
 					lib   "server"
 					vtidx "44"
 					// vtable index
+				}
+				"CNavMesh::GetNavArea [vec]"
+				{
+					type  "fixed"
+					sym   "_ZNK8CNavMesh10GetNavAreaERK6Vectorf"
+					addr  "0x4087f0"
+					build "10828683"
+					lib   "server"
+					// verified: GetNearestNavArea (0x408de0, the function naming its VPROF 'CNavMesh::GetNearestNavArea') calls it first with (pos, a float constant) when neither checkLOS nor checkGround is set and returns its answer when not null, as the SDK does; thiscall, ret 8. Linux finds it by signature, so it has no symbol to match
 				}
 				"CNavMesh::GetNearestNavArea [vec]"
 				{
