@@ -1,2 +1,3 @@
-# CTFPlayer::TeamFortress_SetSpeed: the call match turned away, from CTFGameRules::SetupOnRoundRunning
-server 0x52d120 260
+# CTFWeaponBase::StartEffectBarRegen: the candidates holding 'effectbar_recharge_rate'
+server 0x638750 120
+server 0x634eb0 70
