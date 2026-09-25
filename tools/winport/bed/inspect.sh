@@ -3,12 +3,14 @@
 # investigation like disasm.txt. Runs from the repository root after the table
 # is derived; the dumps are under derived/.
 #
-# The Linux bodies of the functions the sweep reaches unresolved, to write
-# where MSVC inlined them.
-so=game-linux/tf/bin/server_srv.so
-for s in _ZNK9CTFPlayer14GetObjectCountEv _ZN11CTFBaseBoss16GetCurrencyValueEv \
-         _ZN5CWave25IsDoneWithNonSupportWavesEv _ZN11CBaseEntity19ClassMatchesComplexEPKc \
-         _Z45AllocPooledString_StaticConstantStringPointerPKc _ZN17CBaseCombatWeapon10SetSubTypeEi; do
-  echo "== linux $s"
-  objdump -d --no-show-raw-insn -M intel --disassemble="$s" "$so" | sed -n '/>:$/,$p' | head -70
+# Two virtuals the sweep reaches with no Windows address: where do they sit?
+primary() { awk '/^\/\/ vtable/{n++} n==1' "$1"; }
+for pair in "CTFBaseBoss GetCurrencyValue" "CTFTankBoss GetCurrencyValue" "CBaseCombatWeapon SetSubType"; do
+  set -- $pair
+  l=derived/linux-vtables/$1.txt; w=derived/win-vtables/$1.txt
+  n=$(primary "$l" | grep -n "::$2(" | head -1 | cut -d: -f1)
+  echo "== $1::$2, linux row $n"
+  [ -n "$n" ] && primary "$l" | sed -n "$((n-4)),$((n+4))p"
+  echo "-- windows rows $((n-6))..$((n+2))"
+  [ -n "$n" ] && primary "$w" | sed -n "$((n-6)),$((n+2))p"
 done
