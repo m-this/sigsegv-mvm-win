@@ -3,7 +3,7 @@
 # investigation like disasm.txt. Runs from the repository root after the table
 # is derived; the dumps are under derived/.
 so=game-linux/tf/bin/server_srv.so
-for s in _ZNK12CTFGameRules15DropSpellPickupERK6Vectori _Z45AllocPooledString_StaticConstantStringPointerPKc; do
+for s in _ZNK12CTFGameRules15DropSpellPickupERK6Vectori.part.0; do
   echo "== linux $s"
   objdump -d --no-show-raw-insn -M intel --disassemble="$s" "$so" | sed -n '/>:$/,$p' | head -60
 done

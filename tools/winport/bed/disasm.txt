@@ -1,5 +1,5 @@
 # Turned-away candidates for the next functions the sweep reached.
-# CTFGameRules::DropSpellPickup(const Vector &, int) const: creates "tf_spell_pickup"
-server string tf_spell_pickup
-# AllocPooledString_StaticConstantStringPointer(const char *): the unverified candidate
-server 0x281590 60
+# CTFGameRules::DropSpellPickup(const Vector &, int) const: the functions pushing "tf_spell_pickup"
+server +0x48a157
+server +0x495d89
+server callers 0x48a157
