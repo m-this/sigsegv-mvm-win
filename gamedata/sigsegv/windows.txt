@@ -580,6 +580,24 @@
 					lib   "server"
 					// string
 				}
+				"PathFollower::PathFollower [C1]"
+				{
+					type  "fixed"
+					sym   "_ZN12PathFollowerC1Ev"
+					addr  "0x42a940"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: of the three functions writing PathFollower's vtable 0x10839800, the one with no argument and a plain ret; it calls Path's constructor (0x427bb0) first and sets the look-ahead distances to -1.0f, and ChasePath's constructor (0x573ca0) calls it first. 0x42a9e0 and 0x42aa30 are the destructors
+				}
+				"PathFollower::PathFollower [C2]"
+				{
+					type  "fixed"
+					sym   "_ZN12PathFollowerC2Ev"
+					addr  "0x42a940"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: of the three functions writing PathFollower's vtable 0x10839800, the one with no argument and a plain ret; it calls Path's constructor (0x427bb0) first and sets the look-ahead distances to -1.0f, and ChasePath's constructor (0x573ca0) calls it first. 0x42a9e0 and 0x42aa30 are the destructors
+				}
 				"PathFollower::~PathFollower [D1]"
 				{
 					type  "fixed"
@@ -8444,6 +8462,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CTFBotFetchFlag::CTFBotFetchFlag [C1]"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFBotFetchFlagC1Eb"
+					addr  "0x589b30"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the first candidate, and of the two functions writing CTFBotFetchFlag's vtable 0x1089d6f0 the one that zeroes the Action fields and constructs the PathFollower member (+0x38), popping the bool (ret 4); 0x589bd0 is the deleting destructor
 				}
 				"CTFBotFetchFlag::Update"
 				{
