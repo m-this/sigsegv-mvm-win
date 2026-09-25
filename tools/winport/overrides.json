@@ -784,5 +784,17 @@
  "_ZN7CZombie10SpawnAtPosERK6VectorfiP11CBaseEntityNS_14SkeletonType_tE": {
   "rva": "0x5bfa50",
   "why": "read by hand: the one function pushing \"tf_zombie\" and -1 for CreateEntityByName, then vtable +0x184 (Linux +0x188) with the team, DispatchSpawn(1), SetAbsOrigin with the position, vtable +0x48 (Linux +0x4c) with the owner, and the lifetime compared with zero, the Linux body; cdecl"
+ },
+ "_ZN19CWaveSpawnPopulator25GetCurrencyAmountPerDeathEv": {
+  "rva": "0x5eda00",
+  "why": "read by hand: tests the byte at +0x4cc and the state at +0x4d4 against 3 and reads +0x4bc, the Linux body at the same offsets; no arguments"
+ },
+ "_ZN6CTFBot19EquipRequiredWeaponEv": {
+  "rva": "0x5512f0",
+  "why": "read by hand: the last handle of the required weapon stack (+0x28ac, count +0x28b8, the Linux offsets) switched to, the body EquipBestWeaponForThreat (0x550d40) has inlined; no arguments"
+ },
+ "_ZN11CBaseEntity11SetMoveTypeE10MoveType_t13MoveCollide_t": {
+  "rva": "0x1fc460",
+  "why": "read by hand: the call match, the function CServerTools::SetMoveType forwards its two arguments to; pops 8"
  }
 }

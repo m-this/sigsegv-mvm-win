@@ -1022,6 +1022,33 @@
 					lib   "server"
 					// verified: read by hand: the one function pushing "tf_zombie" and -1 for CreateEntityByName, then vtable +0x184 (Linux +0x188) with the team, DispatchSpawn(1), SetAbsOrigin with the position, vtable +0x48 (Linux +0x4c) with the owner, and the lifetime compared with zero, the Linux body; cdecl
 				}
+				"CWaveSpawnPopulator::GetCurrencyAmountPerDeath"
+				{
+					type  "fixed"
+					sym   "_ZN19CWaveSpawnPopulator25GetCurrencyAmountPerDeathEv"
+					addr  "0x5eda00"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: tests the byte at +0x4cc and the state at +0x4d4 against 3 and reads +0x4bc, the Linux body at the same offsets; no arguments
+				}
+				"CTFBot::EquipRequiredWeapon"
+				{
+					type  "fixed"
+					sym   "_ZN6CTFBot19EquipRequiredWeaponEv"
+					addr  "0x5512f0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the last handle of the required weapon stack (+0x28ac, count +0x28b8, the Linux offsets) switched to, the body EquipBestWeaponForThreat (0x550d40) has inlined; no arguments
+				}
+				"CBaseEntity::SetMoveType"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity11SetMoveTypeE10MoveType_t13MoveCollide_t"
+					addr  "0x1fc460"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the call match, the function CServerTools::SetMoveType forwards its two arguments to; pops 8
+				}
 				"CBaseEntity::TakeDamage"
 				{
 					type  "fixed"
