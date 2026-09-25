@@ -2,34 +2,27 @@
 # Questions for the address job that need its derived files, rewritten for each
 # investigation like disasm.txt. Runs from the repository root after the table
 # is derived; the dumps are under derived/.
-so=game-linux/tf/bin/server_srv.so
-for s in _ZN20CBaseCombatCharacter13AddGlowEffectEv _ZNK9CTFPlayer9GetObjectEi _ZN9CTFPlayer16DoAnimationEventE17PlayerAnimEvent_ti; do
-  echo "== linux $s"
-  objdump -d --no-show-raw-insn -M intel --disassemble="$s" "$so" | sed -n '/>:$/,$p' | head -40
+# CEconEntity::GiveTo (Linux +0x390) and CTFBaseBoss::UpdateCollisionBounds
+# (Linux +0x54c) are empty on Linux; their Windows slots by alignment, with the
+# first bytes of each slot's function, for the classes and a derived one each.
+for c in CEconEntity CTFWearable CTFBaseBoss CTFTankBoss; do
+  echo "== linux $c"; grep -n "" "derived/linux-vtables/$c.txt" | sed -n '/+0x0370:/,/+0x03b0:/p;/+0x0530:/,/+0x0570:/p' | head -40
 done
-# CTFPlayer::UpdateModel: on Linux SetModel through vtable +0x6c, then +0x580 and
-# +0x57c, SetCollisionBounds, and a tail jump to OnNewModel. On Windows one
-# destructor fewer: the callers of SetCollisionBounds calling [reg+0x57c] and [reg+0x578].
 python3 - <<'PY'
-import json, re, pefile
+import pefile, struct, re, glob
 pe = pefile.PE("game-windows/tf/bin/server.dll")
-text = next(s for s in pe.sections if s.Name.rstrip(b"\0") == b".text")
-code, va = text.get_data(), text.VirtualAddress
-m = json.load(open("derived/matches.json"))
-scb = m["_ZN11CBaseEntity18SetCollisionBoundsERK6VectorS2_"]["rva"]
-def start(rva):
-    at = rva - va
-    while at > 0 and not (code[at - 1] in (0xCC, 0x90) and code[at - 2] in (0xCC, 0x90)):
-        at -= 1
-    return va + at
-seen = set()
-for x in re.finditer(rb"\xe8", code):
-    src = va + x.start()
-    if src + 5 + int.from_bytes(code[x.start()+1:x.start()+5], "little", signed=True) != scb: continue
-    f = start(src)
-    if f in seen: continue
-    seen.add(f)
-    body = code[f - va:src - va + 40]
-    if re.search(rb"\xff[\x50-\x57\x90-\x97]\x7c\x05\x00\x00", body) and re.search(rb"\xff[\x50-\x57\x90-\x97]\x78\x05\x00\x00", body):
-        print(f"UpdateModel candidate {f:#x}, SetCollisionBounds call at {src:#x}, {src - f:#x} in")
+base = pe.OPTIONAL_HEADER.ImageBase
+def rd(va, n): return pe.get_data(va - base, n)
+for c, lo, hi in (("CEconEntity", 228, 246), ("CTFWearable", 228, 246), ("CTFBaseBoss", 336, 356), ("CTFTankBoss", 336, 356)):
+    f = f"derived/win-vtables/{c}.txt"
+    try: head = open(f).read(400)
+    except OSError: print("no", f); continue
+    m = re.search(r"vtable at (0x[0-9a-f]+) offset 0x0000", head)
+    vt = int(m.group(1), 16)
+    print(f"== windows {c} vtable {vt:#x}")
+    for i in range(lo, hi):
+        fn = struct.unpack("<I", rd(vt + 4 * i, 4))[0]
+        try: b = rd(fn, 8).hex(" ")
+        except Exception: b = "?"
+        print(f"  slot {i} (+{4*i:#x}): {fn:#x}  {b}")
 PY
