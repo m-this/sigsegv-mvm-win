@@ -342,7 +342,11 @@ public:
 	void NetworkStateChanged();
 	void NetworkStateChanged(void *pVar);
 	
+#if defined _WINDOWS
+	CTFPlayer *GetOuter();
+#else
 	CTFPlayer *GetOuter()          { return this->m_pOuter; }
+#endif
 	int GetState() const           { return this->m_nPlayerState; }
 	void SetState(int nState)      { this->m_nPlayerState = nState; }
 	bool InState(int nState) const { return (this->m_nPlayerState == nState); }
@@ -687,11 +691,17 @@ inline void CTFPlayerClassShared::NetworkStateChanged()           { this->GetOut
 inline void CTFPlayerClassShared::NetworkStateChanged(void *pVar) { this->GetOuter()->NetworkStateChanged(pVar); }
 
 
-//inline CTFPlayer *CTFPlayerShared::GetOuter()
-//{
-//	static int off = Prop::FindOffsetAssert("CTFPlayer", "m_Shared");
-//	return (CTFPlayer *)((uintptr_t)this - off);
-//}
+#if defined _WINDOWS
+/* m_pOuter's extractor reads Linux code and has no Windows pattern, and
+ * without it every GetOuter returned null. CTFPlayerShared lives only as
+ * CTFPlayer::m_Shared, so its outer player is this less m_Shared's offset,
+ * which DT_TFPlayer carries. */
+inline CTFPlayer *CTFPlayerShared::GetOuter()
+{
+	static int off = Prop::FindOffsetAssert("CTFPlayer", "m_Shared");
+	return (CTFPlayer *)((uintptr_t)this - off);
+}
+#endif
 
 inline void CTFPlayerShared::NetworkStateChanged()           { this->GetOuter()->NetworkStateChanged(); }
 inline void CTFPlayerShared::NetworkStateChanged(void *pVar) { this->GetOuter()->NetworkStateChanged(pVar); }

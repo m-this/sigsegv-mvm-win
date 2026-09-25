@@ -114,7 +114,9 @@ namespace Prop
 	int FindOffsetAssert(const char *obj, const char *var)
 	{
 		int off = -1;
-		assert(FindOffset(off, obj, var));
+		/* The lookup outside assert(), so NDEBUG cannot compile it out. */
+		bool found = FindOffset(off, obj, var);
+		assert(found); (void)found;
 		return off;
 	}
 	

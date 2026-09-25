@@ -87,7 +87,8 @@ uintptr_t UnresolvedPropAddr(IProp *prop);
 inline int IProp::GetOffsetAssert()
 {
 	int off = -1;
-	assert(this->GetOffset(off));
+	bool found = this->GetOffset(off);
+	assert(found); (void)found;
 	return off;
 }
 
