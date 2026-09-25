@@ -15,3 +15,9 @@ sigsegv.ext.2.tf2.dll+0x18390d
 sigsegv.ext.2.tf2.dll+0x18f89b
 # server.dll+0x3f4d31 touching 0 under cbasenpc.ext, with SigMod below it:
 sigsegv.ext.2.tf2.dll+0x170c57
+# sigsegv+0x11ec70 touching 0x22c, called back from server.dll+0x63eb51:
+sigsegv.ext.2.tf2.dll+0x11ec70
+sigsegv.ext.2.tf2.dll+0x1a73b5
+sigsegv.ext.2.tf2.dll+0x18932f
+sigsegv.ext.2.tf2.dll+0x11e67b
+sigsegv.ext.2.tf2.dll+0x27df43
