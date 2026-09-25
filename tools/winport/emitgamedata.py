@@ -113,11 +113,18 @@ if len(sys.argv) > 3:
 # matchvtables.py wrote a Windows address for each virtual function it could
 # align. The gamedata's own "func knownvtidx" entries carry Linux indices,
 # which are not the Windows ones, so those names are taken from here instead.
+#
+# The index goes in the table as well. MSVC folds identical functions, so one
+# address can fill several slots of a vtable, and a thunk that looked for the
+# first slot holding it called whichever virtual came first: IsPlayer shares
+# its body with others that return false, and read as false for every player.
 by_name = {}
+vtidx = {}
 if len(sys.argv) > 4:
     text = open(sys.argv[4]).read()
-    for m in re.finditer(r'"([^"]+)"\n\{\n(?:[^}]*?)// [^\n]*windows (0x[0-9a-f]+)', text):
-        by_name[m.group(1)] = int(m.group(2), 16) - 0x10000000
+    for m in re.finditer(r'"([^"]+)"\n\{\n(?:[^}]*?)idx +"(\d+)"\n(?:[^}]*?)// [^\n]*windows (0x[0-9a-f]+)', text):
+        by_name[m.group(1)] = int(m.group(3), 16) - 0x10000000
+        vtidx[m.group(1)] = (int(m.group(2)), by_name[m.group(1)])
 
 # A named override takes the place of the Linux entry of that name: a function
 # Linux finds by signature ("func ebpprologue vprof") has no symbol to match.
@@ -161,6 +168,10 @@ for name, entry in found + [x for x in extra if x[0] in named]:
         f'\t\t\t\t\taddr  "0x{match["rva"]:x}"',
         f'\t\t\t\t\tbuild "{version}"',
         f'\t\t\t\t\tlib   "{lib}"',
+    ]
+    if name in vtidx and vtidx[name][1] == match["rva"]:
+        out += [f'\t\t\t\t\tvtidx "{vtidx[name][0]}"']
+    out += [
         f'\t\t\t\t\t// {via}',
         "\t\t\t\t}",
     ]

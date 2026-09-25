@@ -31,7 +31,18 @@ bool CVirtualHook::DoLoad()
     }
     
     bool found = false;
-    for (int i = 0; i < 0x1000; ++i) {
+#if defined _WINDOWS
+    /* The slot the table names, when it holds the address: a folded body
+     * fills several slots, and the index says which one this hook is for. */
+    int idx = AddrManager::GetVTIndex(this->m_pszFuncName);
+    bool named = (idx >= 0 && idx < 0x1000 && pVTForCalcOffset[idx] == pFunc);
+    if (named) {
+        this->m_pFuncPtr = const_cast<void **>(pVT + idx);
+        this->m_iOffset = idx;
+        found = true;
+    }
+#endif
+    for (int i = 0; !found && i < 0x1000; ++i) {
         if (pVTForCalcOffset[i] == pFunc) {
             this->m_pFuncPtr = const_cast<void **>(pVT + i);
             this->m_iOffset = i;
@@ -44,8 +55,9 @@ bool CVirtualHook::DoLoad()
      * IBody::Update, INextBotComponent::Upkeep and IBody::ClearPendingAimReply
      * are one `ret` in server.dll. The first slot holding it is then only one
      * of them, and a hook put there runs in place of another virtual with
-     * other arguments. Refused, unless the address fills that one slot. */
-    if (found) {
+     * other arguments. Refused, unless the address fills that one slot or
+     * the table names the slot. */
+    if (found && !named) {
         size_t slots = 0;
         for (const auto &[vtname, info] : RTTI::GetAllVTableInfo()) {
             if ((const void **)info.vtable == pVTForCalcOffset) { slots = info.size / sizeof(void *); break; }

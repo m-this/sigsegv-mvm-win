@@ -492,6 +492,9 @@ SMCResult CSigsegvGameConf::AddrEntry_Load_Fixed()
 	int build       = stoi(kv.at("build"), nullptr, 0);
 	
 	auto a = new CAddr_FixedAddr(name, sym, addr, build);
+	if (kv.find("vtidx") != kv.end()) {
+		a->SetVTIndex(stoi(kv.at("vtidx"), nullptr, 0));
+	}
 	this->AddrEntry_Load_Common(a);
 	this->m_AddrPtrs.push_back(std::unique_ptr<IAddr>(a));
 	return SMCResult_Continue;

@@ -1014,13 +1014,17 @@ public:
 			return false;
 		}
 		
-		CScan<StrRefScanner> scan1(CLibSegBounds(this->GetLibrary(), Segment::RODATA), p_str);
-		if (!scan1.ExactlyOneMatch()) {
-			DevMsg("CAddr_g_aConditionNames: \"%s\": %u string ref matches\n", this->GetName(), scan1.Matches().size());
-			return false;
+		/* The array is not const, so MSVC puts it in .data; the strings it
+		 * points at are in .rdata. */
+		for (Segment seg : { Segment::DATA, Segment::RODATA }) {
+			CScan<StrRefScanner> scan1(CLibSegBounds(this->GetLibrary(), seg), p_str);
+			if (scan1.ExactlyOneMatch()) {
+				addr = (uintptr_t)scan1.FirstMatch();
+				return true;
+			}
+			DevMsg("CAddr_g_aConditionNames: \"%s\": %u string ref matches in segment %d\n", this->GetName(), scan1.Matches().size(), (int)seg);
 		}
-		
-		addr = (uintptr_t)scan1.FirstMatch();
+		return false;
 #endif
 		return true;
 	}

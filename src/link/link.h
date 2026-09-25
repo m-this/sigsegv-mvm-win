@@ -291,8 +291,18 @@ public:
 			}
 			
 			bool found = false;
+#if defined _WINDOWS
+			/* MSVC folds identical functions, so the address may fill several
+			 * slots and the first is not necessarily this one: the table names
+			 * the slot. It is checked against the vtable, not trusted. */
+			int idx = AddrManager::GetVTIndex(this->m_pszFuncName);
+			if (this->m_iEntryNumber == 0 && idx >= 0 && idx < 0x1000 && pVT[idx] == pFunc) {
+				this->m_iVTIndex = idx;
+				found = true;
+			}
+#endif
 			int num = 0;
-			for (int i = 0; i < 0x1000; ++i) {
+			for (int i = 0; !found && i < 0x1000; ++i) {
 				if (pVT[i] == pFunc) {
 					if(num++ >= m_iEntryNumber) {
 						this->m_iVTIndex = i;
@@ -484,8 +494,10 @@ public:
 	
 	inline T& GetRef() const
 	{
-		/* An array of unknown bound or a function has no size to zero. */
-		if constexpr (!std::is_function_v<T> && !std::is_unbounded_array_v<T>) {
+		/* A function has no size to zero. An array of unknown bound has none
+		 * either, so it reads the shared zero block: g_aConditionNames reads
+		 * as an empty list rather than as a null dereference. */
+		if constexpr (!std::is_function_v<T>) {
 			if (link.m_pObjPtr == nullptr) {
 				return this->Unresolved();
 			}
@@ -505,7 +517,12 @@ private:
 	T& Unresolved() const
 	{
 		if (this->m_pUnresolved == nullptr) {
-			this->m_pUnresolved = static_cast<T *>(calloc(1, sizeof(T)));
+			if constexpr (std::is_unbounded_array_v<T>) {
+				alignas(16) static unsigned char zero[0x10000] = {};
+				this->m_pUnresolved = reinterpret_cast<T *>(zero);
+			} else {
+				this->m_pUnresolved = static_cast<T *>(calloc(1, sizeof(T)));
+			}
 			Warning("GlobalThunk: \"%s\" is unresolved and reads as zero\n", link.GetObjName());
 		}
 		return *this->m_pUnresolved;

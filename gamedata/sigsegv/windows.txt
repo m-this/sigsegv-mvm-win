@@ -21,6 +21,7 @@
 					addr  "0x5bd70"
 					build "10828683"
 					lib   "server"
+					vtidx "53"
 					// vtable index
 				}
 				"IBody::GetHeadSteadyDuration"
@@ -30,6 +31,7 @@
 					addr  "0x15d760"
 					build "10828683"
 					lib   "server"
+					vtidx "54"
 					// vtable index
 				}
 				"IBody::ClearPendingAimReply"
@@ -39,6 +41,7 @@
 					addr  "0x130b50"
 					build "10828683"
 					lib   "server"
+					vtidx "57"
 					// vtable index
 				}
 				"IBody::SetDesiredPosture"
@@ -48,6 +51,7 @@
 					addr  "0x130ba0"
 					build "10828683"
 					lib   "server"
+					vtidx "64"
 					// vtable index
 				}
 				"IBody::GetDesiredPosture"
@@ -57,6 +61,7 @@
 					addr  "0x157970"
 					build "10828683"
 					lib   "server"
+					vtidx "65"
 					// vtable index
 				}
 				"IBody::IsDesiredPosture"
@@ -66,6 +71,7 @@
 					addr  "0x1595e0"
 					build "10828683"
 					lib   "server"
+					vtidx "66"
 					// vtable index
 				}
 				"IBody::GetActualPosture"
@@ -75,6 +81,7 @@
 					addr  "0x157970"
 					build "10828683"
 					lib   "server"
+					vtidx "68"
 					// vtable index
 				}
 				"IBody::IsActualPosture"
@@ -84,6 +91,7 @@
 					addr  "0x1595e0"
 					build "10828683"
 					lib   "server"
+					vtidx "69"
 					// vtable index
 				}
 				"IBody::GetHeadAimSubjectLeadTime"
@@ -93,6 +101,7 @@
 					addr  "0x15d760"
 					build "10828683"
 					lib   "server"
+					vtidx "55"
 					// vtable index
 				}
 				"IBody::GetActivity"
@@ -102,6 +111,7 @@
 					addr  "0x169170"
 					build "10828683"
 					lib   "server"
+					vtidx "61"
 					// vtable index
 				}
 				"IBody::IsActivity"
@@ -111,6 +121,7 @@
 					addr  "0x152770"
 					build "10828683"
 					lib   "server"
+					vtidx "62"
 					// vtable index
 				}
 				"IBody::StartActivity"
@@ -120,6 +131,7 @@
 					addr  "0x131730"
 					build "10828683"
 					lib   "server"
+					vtidx "59"
 					// vtable index
 				}
 				"IBody::GetEyePosition"
@@ -129,6 +141,7 @@
 					addr  "0x41fca0"
 					build "10828683"
 					lib   "server"
+					vtidx "48"
 					// vtable
 				}
 				"IBody::GetViewVector"
@@ -138,6 +151,7 @@
 					addr  "0x41fcf0"
 					build "10828683"
 					lib   "server"
+					vtidx "49"
 					// vtable
 				}
 				"IBody::GetHullHeight"
@@ -147,6 +161,7 @@
 					addr  "0x40ee60"
 					build "10828683"
 					lib   "server"
+					vtidx "76"
 					// vtable
 				}
 				"IBody::GetHullWidth"
@@ -156,6 +171,7 @@
 					addr  "0x40ef20"
 					build "10828683"
 					lib   "server"
+					vtidx "75"
 					// vtable
 				}
 				"IBody::GetStandHullHeight"
@@ -165,6 +181,7 @@
 					addr  "0x40f080"
 					build "10828683"
 					lib   "server"
+					vtidx "77"
 					// vtable
 				}
 				"IBody::GetCrouchHullHeight"
@@ -174,6 +191,7 @@
 					addr  "0x40ee30"
 					build "10828683"
 					lib   "server"
+					vtidx "78"
 					// vtable
 				}
 				"IBody::GetHullMaxs"
@@ -183,6 +201,7 @@
 					addr  "0x40eeb0"
 					build "10828683"
 					lib   "server"
+					vtidx "80"
 					// vtable
 				}
 				"IBody::GetHullMins"
@@ -192,6 +211,7 @@
 					addr  "0x40eef0"
 					build "10828683"
 					lib   "server"
+					vtidx "79"
 					// vtable
 				}
 				"IBody::Update"
@@ -201,6 +221,7 @@
 					addr  "0x130b50"
 					build "10828683"
 					lib   "server"
+					vtidx "43"
 					// vtable index
 				}
 				"IBody::IsHeadAimingOnTarget"
@@ -210,6 +231,7 @@
 					addr  "0x157e70"
 					build "10828683"
 					lib   "server"
+					vtidx "52"
 					// vtable index
 				}
 				"CBotNPCBody::GetSolidMask"
@@ -219,6 +241,7 @@
 					addr  "0x597d60"
 					build "10828683"
 					lib   "server"
+					vtidx "81"
 					// vtable index
 				}
 				"CBotNPCBody::AimHeadTowards [Vector]"
@@ -228,6 +251,7 @@
 					addr  "0x597ce0"
 					build "10828683"
 					lib   "server"
+					vtidx "50"
 					// vtable
 				}
 				"CBotNPCBody::AimHeadTowards [CBaseEntity *]"
@@ -237,6 +261,7 @@
 					addr  "0x597c70"
 					build "10828683"
 					lib   "server"
+					vtidx "51"
 					// vtable
 				}
 				"PlayerBody::GetEntity"
@@ -246,6 +271,7 @@
 					addr  "0x425390"
 					build "10828683"
 					lib   "server"
+					vtidx "83"
 					// vtable index
 				}
 				"ChasePath::~ChasePath [D2]"
@@ -255,6 +281,7 @@
 					addr  "0x5697e0"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"ChasePath::~ChasePath [D0]"
@@ -264,6 +291,7 @@
 					addr  "0x5697e0"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"ChasePath::Update"
@@ -273,6 +301,7 @@
 					addr  "0x56a380"
 					build "10828683"
 					lib   "server"
+					vtidx "31"
 					// vtable
 				}
 				"CTFBaseBossLocomotion::FaceTowards"
@@ -282,6 +311,7 @@
 					addr  "0x5de0a0"
 					build "10828683"
 					lib   "server"
+					vtidx "74"
 					// vtable
 				}
 				"CTFBaseBossLocomotion::GetStepHeight"
@@ -291,6 +321,7 @@
 					addr  "0x522cf0"
 					build "10828683"
 					lib   "server"
+					vtidx "80"
 					// vtable
 				}
 				"CZombieLocomotion::GetRunSpeed"
@@ -300,6 +331,7 @@
 					addr  "0x5b7ac0"
 					build "10828683"
 					lib   "server"
+					vtidx "83"
 					// vtable index
 				}
 				"CHeadlessHatmanLocomotion::GetRunSpeed"
@@ -309,6 +341,7 @@
 					addr  "0x59b6a0"
 					build "10828683"
 					lib   "server"
+					vtidx "83"
 					// vtable
 				}
 				"CHeadlessHatmanLocomotion::ShouldCollideWith"
@@ -318,6 +351,7 @@
 					addr  "0x59c9d0"
 					build "10828683"
 					lib   "server"
+					vtidx "100"
 					// vtable
 				}
 				"CMerasmusLocomotion::GetRunSpeed"
@@ -327,6 +361,7 @@
 					addr  "0x5acd50"
 					build "10828683"
 					lib   "server"
+					vtidx "83"
 					// vtable index
 				}
 				"CEyeballBossLocomotion::Approach"
@@ -336,6 +371,7 @@
 					addr  "0x5a14d0"
 					build "10828683"
 					lib   "server"
+					vtidx "47"
 					// vtable
 				}
 				"ILocomotion::StuckMonitor"
@@ -345,6 +381,7 @@
 					addr  "0x424130"
 					build "10828683"
 					lib   "server"
+					vtidx "102"
 					// string
 				}
 				"PlayerLocomotion::GetDesiredSpeed"
@@ -354,6 +391,7 @@
 					addr  "0x432030"
 					build "10828683"
 					lib   "server"
+					vtidx "61"
 					// vtable
 				}
 				"NextBotGroundLocomotion::GetGroundNormal"
@@ -363,6 +401,7 @@
 					addr  "0x411e20"
 					build "10828683"
 					lib   "server"
+					vtidx "66"
 					// vtable
 				}
 				"NextBotGroundLocomotion::GetMaxAcceleration"
@@ -372,6 +411,7 @@
 					addr  "0x411e40"
 					build "10828683"
 					lib   "server"
+					vtidx "85"
 					// vtable index
 				}
 				"NextBotGroundLocomotion::GetGravity"
@@ -381,6 +421,7 @@
 					addr  "0x40f060"
 					build "10828683"
 					lib   "server"
+					vtidx "106"
 					// vtable index
 				}
 				"NextBotGroundLocomotion::GetMaxDeceleration"
@@ -390,6 +431,7 @@
 					addr  "0x411e40"
 					build "10828683"
 					lib   "server"
+					vtidx "86"
 					// vtable index
 				}
 				"NextBotGroundLocomotion::IsOnGround"
@@ -399,6 +441,7 @@
 					addr  "0x411fe0"
 					build "10828683"
 					lib   "server"
+					vtidx "64"
 					// vtable index
 				}
 				"NextBotGroundLocomotion::Approach"
@@ -408,6 +451,7 @@
 					addr  "0x411630"
 					build "10828683"
 					lib   "server"
+					vtidx "47"
 					// vtable
 				}
 				"NextBotGroundLocomotion::Update"
@@ -417,6 +461,7 @@
 					addr  "0x413260"
 					build "10828683"
 					lib   "server"
+					vtidx "43"
 					// vtable
 				}
 				"NextBotGroundLocomotion::GetMaxYawRate"
@@ -426,6 +471,7 @@
 					addr  "0x411e60"
 					build "10828683"
 					lib   "server"
+					vtidx "109"
 					// vtable index
 				}
 				"NextBotGroundLocomotion::GetMaxJumpHeight"
@@ -435,6 +481,7 @@
 					addr  "0x411e50"
 					build "10828683"
 					lib   "server"
+					vtidx "81"
 					// vtable
 				}
 				"NextBotGroundLocomotion::GetDeathDropHeight"
@@ -444,6 +491,7 @@
 					addr  "0x275220"
 					build "10828683"
 					lib   "server"
+					vtidx "82"
 					// vtable index
 				}
 				"NextBotGroundLocomotion::GetWalkSpeed"
@@ -453,6 +501,7 @@
 					addr  "0x411f60"
 					build "10828683"
 					lib   "server"
+					vtidx "84"
 					// vtable
 				}
 				"NextBotGroundLocomotion::ClimbUpToLedge"
@@ -462,6 +511,7 @@
 					addr  "0x1655c0"
 					build "10828683"
 					lib   "server"
+					vtidx "49"
 					// vtable index
 				}
 				"NextBotGroundLocomotion::ApplyAccumulatedApproach"
@@ -480,6 +530,7 @@
 					addr  "0x413150"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable
 				}
 				"NextBotManager::Update"
@@ -489,6 +540,7 @@
 					addr  "0x4156d0"
 					build "10828683"
 					lib   "server"
+					vtidx "1"
 					// string
 				}
 				"NextBotManager::ShouldUpdate"
@@ -507,6 +559,7 @@
 					addr  "0x4152d0"
 					build "10828683"
 					lib   "server"
+					vtidx "8"
 					// string
 				}
 				"Path::IsValid"
@@ -534,6 +587,7 @@
 					addr  "0x42aa30"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"PathFollower::~PathFollower [D0]"
@@ -543,6 +597,7 @@
 					addr  "0x42aa30"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"PathFollower::~PathFollower [D2]"
@@ -552,6 +607,7 @@
 					addr  "0x42aa30"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"PathFollower::Update"
@@ -561,6 +617,7 @@
 					addr  "0x42e8c0"
 					build "10828683"
 					lib   "server"
+					vtidx "27"
 					// string
 				}
 				"PathFollower::Invalidate"
@@ -570,6 +627,7 @@
 					addr  "0x42d920"
 					build "10828683"
 					lib   "server"
+					vtidx "16"
 					// vtable
 				}
 				"PathFollower::SetMinLookAheadDistance"
@@ -579,6 +637,7 @@
 					addr  "0x42e7f0"
 					build "10828683"
 					lib   "server"
+					vtidx "28"
 					// vtable
 				}
 				"PlayerBody::GetMaxHeadAngularVelocity"
@@ -588,6 +647,7 @@
 					addr  "0x42fd30"
 					build "10828683"
 					lib   "server"
+					vtidx "58"
 					// vtable
 				}
 				"PlayerBody::GetHullWidth"
@@ -597,6 +657,7 @@
 					addr  "0x42fce0"
 					build "10828683"
 					lib   "server"
+					vtidx "75"
 					// vtable
 				}
 				"PlayerBody::Upkeep"
@@ -606,6 +667,7 @@
 					addr  "0x42ff60"
 					build "10828683"
 					lib   "server"
+					vtidx "44"
 					// vtable
 				}
 				"PlayerLocomotion::Update"
@@ -615,6 +677,7 @@
 					addr  "0x432690"
 					build "10828683"
 					lib   "server"
+					vtidx "43"
 					// string
 				}
 				"PlayerLocomotion::Jump"
@@ -624,6 +687,7 @@
 					addr  "0x432200"
 					build "10828683"
 					lib   "server"
+					vtidx "51"
 					// vtable
 				}
 				"PlayerLocomotion::Approach"
@@ -633,6 +697,7 @@
 					addr  "0x430ab0"
 					build "10828683"
 					lib   "server"
+					vtidx "47"
 					// string
 				}
 				"PlayerLocomotion::IsOnGround"
@@ -642,6 +707,7 @@
 					addr  "0x411fe0"
 					build "10828683"
 					lib   "server"
+					vtidx "64"
 					// vtable index
 				}
 				"IVision::Update"
@@ -651,6 +717,7 @@
 					addr  "0x4264a0"
 					build "10828683"
 					lib   "server"
+					vtidx "43"
 					// string
 				}
 				"IVision::UpdateKnownEntities"
@@ -669,6 +736,7 @@
 					addr  "0x424c10"
 					build "10828683"
 					lib   "server"
+					vtidx "55"
 					// vtable
 				}
 				"IVision::ForgetEntity"
@@ -678,6 +746,7 @@
 					addr  "0x424ee0"
 					build "10828683"
 					lib   "server"
+					vtidx "56"
 					// vtable
 				}
 				"IVision::ForgetAllKnownEntities"
@@ -687,6 +756,7 @@
 					addr  "0x424ea0"
 					build "10828683"
 					lib   "server"
+					vtidx "57"
 					// vtable
 				}
 				"IVision::IsLineOfSightClear"
@@ -696,6 +766,7 @@
 					addr  "0x425ca0"
 					build "10828683"
 					lib   "server"
+					vtidx "70"
 					// string
 				}
 				"IVision::IsAbleToSee"
@@ -714,6 +785,7 @@
 					addr  "0x425850"
 					build "10828683"
 					lib   "server"
+					vtidx "61"
 					// vtable
 				}
 				"IVision::IsLineOfSightClearToEntity"
@@ -723,6 +795,7 @@
 					addr  "0x425e20"
 					build "10828683"
 					lib   "server"
+					vtidx "71"
 					// string
 				}
 				"NDebugOverlay::EntityBounds"
@@ -741,6 +814,7 @@
 					addr  "0x20c060"
 					build "10828683"
 					lib   "server"
+					vtidx "473"
 					// vtable
 				}
 				"CBaseEntity::AddTimedOverlay"
@@ -759,6 +833,7 @@
 					addr  "0x1fc5a0"
 					build "10828683"
 					lib   "server"
+					vtidx "18"
 					// vtable
 				}
 				"CBaseEntity::ThinkSet"
@@ -777,6 +852,7 @@
 					addr  "0x160690"
 					build "10828683"
 					lib   "server"
+					vtidx "123"
 					// vtable
 				}
 				"CBaseEntity::IsDeflectable"
@@ -786,6 +862,7 @@
 					addr  "0x157e70"
 					build "10828683"
 					lib   "server"
+					vtidx "159"
 					// vtable index
 				}
 				"CBaseEntity::IsAlive"
@@ -795,6 +872,7 @@
 					addr  "0x1630e0"
 					build "10828683"
 					lib   "server"
+					vtidx "67"
 					// vtable
 				}
 				"CBaseEntity::DispatchUpdateTransmitState"
@@ -939,6 +1017,7 @@
 					addr  "0x178920"
 					build "10828683"
 					lib   "server"
+					vtidx "138"
 					// vtable
 				}
 				"CBaseEntity::CalcAbsolutePosition"
@@ -957,6 +1036,7 @@
 					addr  "0x1ffbb0"
 					build "10828683"
 					lib   "server"
+					vtidx "137"
 					// vtable
 				}
 				"CBaseEntity::KeyValue"
@@ -975,6 +1055,7 @@
 					addr  "0x200ec0"
 					build "10828683"
 					lib   "server"
+					vtidx "34"
 					// vtable
 				}
 				"CBaseEntity::SetAbsOrigin"
@@ -1029,6 +1110,7 @@
 					addr  "0x2c5e00"
 					build "10828683"
 					lib   "server"
+					vtidx "110"
 					// string
 				}
 				"CBaseEntity::GetVelocity"
@@ -1038,6 +1120,7 @@
 					addr  "0x1f1b40"
 					build "10828683"
 					lib   "server"
+					vtidx "147"
 					// vtable
 				}
 				"CBaseEntity::WorldSpaceCenter"
@@ -1047,6 +1130,7 @@
 					addr  "0x203300"
 					build "10828683"
 					lib   "server"
+					vtidx "156"
 					// vtable
 				}
 				"CBaseEntity::IsCombatItem"
@@ -1056,6 +1140,7 @@
 					addr  "0x157e70"
 					build "10828683"
 					lib   "server"
+					vtidx "88"
 					// vtable index
 				}
 				"CBaseEntity::GetModelIndex"
@@ -1065,6 +1150,7 @@
 					addr  "0x1606b0"
 					build "10828683"
 					lib   "server"
+					vtidx "6"
 					// vtable
 				}
 				"CBaseEntity::MyCombatCharacterPointer"
@@ -1074,6 +1160,7 @@
 					addr  "0x157970"
 					build "10828683"
 					lib   "server"
+					vtidx "74"
 					// vtable index
 				}
 				"CBaseEntity::PhysicsRunSpecificThink"
@@ -1101,6 +1188,7 @@
 					addr  "0x202470"
 					build "10828683"
 					lib   "server"
+					vtidx "17"
 					// vtable
 				}
 				"CBaseEntity::DrawDebugGeometryOverlays"
@@ -1110,6 +1198,7 @@
 					addr  "0x1eefd0"
 					build "10828683"
 					lib   "server"
+					vtidx "40"
 					// vtable
 				}
 				"CBaseEntity::ChangeTeam"
@@ -1119,6 +1208,7 @@
 					addr  "0x1ed330"
 					build "10828683"
 					lib   "server"
+					vtidx "97"
 					// vtable
 				}
 				"CBaseEntity::SetModelIndexOverride"
@@ -1128,6 +1218,7 @@
 					addr  "0x1fc3d0"
 					build "10828683"
 					lib   "server"
+					vtidx "13"
 					// vtable
 				}
 				"CBaseEntity::SetModelIndex"
@@ -1137,6 +1228,7 @@
 					addr  "0x1fc240"
 					build "10828683"
 					lib   "server"
+					vtidx "8"
 					// vtable
 				}
 				"CBaseEntity::GetModelName"
@@ -1146,6 +1238,7 @@
 					addr  "0x1606c0"
 					build "10828683"
 					lib   "server"
+					vtidx "7"
 					// vtable
 				}
 				"CBaseEntity::EntityText"
@@ -1164,6 +1257,7 @@
 					addr  "0x1e9c70"
 					build "10828683"
 					lib   "server"
+					vtidx "38"
 					// string
 				}
 				"CBaseEntity::SetModel"
@@ -1173,6 +1267,7 @@
 					addr  "0x1fc1e0"
 					build "10828683"
 					lib   "server"
+					vtidx "26"
 					// string
 				}
 				"CBaseEntity::PerformCustomPhysics"
@@ -1182,6 +1277,7 @@
 					addr  "0x157b90"
 					build "10828683"
 					lib   "server"
+					vtidx "176"
 					// vtable index
 				}
 				"CBaseEntity::PrecacheScriptSound"
@@ -1218,6 +1314,7 @@
 					addr  "0x201e80"
 					build "10828683"
 					lib   "server"
+					vtidx "30"
 					// vtable
 				}
 				"CBaseEntity::Activate"
@@ -1227,6 +1324,7 @@
 					addr  "0x1ea250"
 					build "10828683"
 					lib   "server"
+					vtidx "35"
 					// vtable
 				}
 				"CBaseEntity::GetDamage"
@@ -1236,6 +1334,7 @@
 					addr  "0x15d760"
 					build "10828683"
 					lib   "server"
+					vtidx "135"
 					// vtable index
 				}
 				"CBaseEntity::SetDamage"
@@ -1245,6 +1344,7 @@
 					addr  "0x130ba0"
 					build "10828683"
 					lib   "server"
+					vtidx "136"
 					// vtable index
 				}
 				"CBaseEntity::FVisible [ent]"
@@ -1254,6 +1354,7 @@
 					addr  "0x1f09f0"
 					build "10828683"
 					lib   "server"
+					vtidx "148"
 					// vtable
 				}
 				"CBaseEntity::FVisible [vec]"
@@ -1263,6 +1364,7 @@
 					addr  "0x1f0b20"
 					build "10828683"
 					lib   "server"
+					vtidx "149"
 					// vtable
 				}
 				"CBaseEntity::Touch"
@@ -1272,6 +1374,7 @@
 					addr  "0x1fe2d0"
 					build "10828683"
 					lib   "server"
+					vtidx "105"
 					// vtable
 				}
 				"CBaseEntity::IsBaseCombatWeapon"
@@ -1281,6 +1384,7 @@
 					addr  "0x157e70"
 					build "10828683"
 					lib   "server"
+					vtidx "92"
 					// vtable index
 				}
 				"CBaseEntity::IsWearable"
@@ -1290,6 +1394,7 @@
 					addr  "0x157e70"
 					build "10828683"
 					lib   "server"
+					vtidx "93"
 					// vtable index
 				}
 				"CBaseEntity::DrawDebugTextOverlays"
@@ -1299,6 +1404,7 @@
 					addr  "0x1efb30"
 					build "10828683"
 					lib   "server"
+					vtidx "41"
 					// string
 				}
 				"CBaseEntity::MyNextBotPointer"
@@ -1308,6 +1414,7 @@
 					addr  "0x157970"
 					build "10828683"
 					lib   "server"
+					vtidx "75"
 					// vtable index
 				}
 				"CBaseEntity::Teleport"
@@ -1317,6 +1424,7 @@
 					addr  "0x1fdd60"
 					build "10828683"
 					lib   "server"
+					vtidx "114"
 					// string
 				}
 				"CBaseEntity::SetParent"
@@ -1326,6 +1434,7 @@
 					addr  "0x1fc660"
 					build "10828683"
 					lib   "server"
+					vtidx "36"
 					// string
 				}
 				"CBaseEntity::UpdateOnRemove"
@@ -1335,6 +1444,7 @@
 					addr  "0x1fe350"
 					build "10828683"
 					lib   "server"
+					vtidx "111"
 					// string
 				}
 				"CBaseEntity::IsPlayer"
@@ -1344,6 +1454,7 @@
 					addr  "0x157e70"
 					build "10828683"
 					lib   "server"
+					vtidx "83"
 					// vtable index
 				}
 				"CBaseEntity::IsBaseObject"
@@ -1353,6 +1464,7 @@
 					addr  "0x157e70"
 					build "10828683"
 					lib   "server"
+					vtidx "86"
 					// vtable index
 				}
 				"CBaseEntity::MyCombatWeaponPointer"
@@ -1362,6 +1474,7 @@
 					addr  "0x157970"
 					build "10828683"
 					lib   "server"
+					vtidx "94"
 					// vtable index
 				}
 				"CBaseEntity::OnTakeDamage"
@@ -1371,6 +1484,7 @@
 					addr  "0x1f7ff0"
 					build "10828683"
 					lib   "server"
+					vtidx "64"
 					// vtable
 				}
 				"CBaseEntity::FireBullets"
@@ -1380,6 +1494,7 @@
 					addr  "0x1ffc40"
 					build "10828683"
 					lib   "server"
+					vtidx "118"
 					// string
 				}
 				"CBaseEntity::ModifyFireBulletsDamage"
@@ -1389,6 +1504,7 @@
 					addr  "0x130ba0"
 					build "10828683"
 					lib   "server"
+					vtidx "120"
 					// vtable index
 				}
 				"CBaseEntity::GetServerClass"
@@ -1398,6 +1514,7 @@
 					addr  "0x1f1a40"
 					build "10828683"
 					lib   "server"
+					vtidx "9"
 					// vtable
 				}
 				"CBaseEntity::CBaseEntity"
@@ -1416,6 +1533,7 @@
 					addr  "0x157970"
 					build "10828683"
 					lib   "server"
+					vtidx "52"
 					// vtable index
 				}
 				"CBaseEntity::TakeHealth"
@@ -1425,6 +1543,7 @@
 					addr  "0x1fdc10"
 					build "10828683"
 					lib   "server"
+					vtidx "66"
 					// string
 				}
 				"CBaseEntity::PassesDamageFilter"
@@ -1434,6 +1553,7 @@
 					addr  "0x1f8350"
 					build "10828683"
 					lib   "server"
+					vtidx "61"
 					// vtable
 				}
 				"CBaseEntity::PhysicsSolidMaskForEntity"
@@ -1443,6 +1563,7 @@
 					addr  "0x2c61f0"
 					build "10828683"
 					lib   "server"
+					vtidx "174"
 					// vtable
 				}
 				"CBaseEntity::ShouldTransmit"
@@ -1452,6 +1573,7 @@
 					addr  "0x1fcfe0"
 					build "10828683"
 					lib   "server"
+					vtidx "20"
 					// vtable
 				}
 				"CBaseEntity::StartTouch"
@@ -1461,6 +1583,7 @@
 					addr  "0x1fd170"
 					build "10828683"
 					lib   "server"
+					vtidx "104"
 					// vtable
 				}
 				"CBaseEntity::EndTouch"
@@ -1470,6 +1593,7 @@
 					addr  "0x1f03e0"
 					build "10828683"
 					lib   "server"
+					vtidx "106"
 					// vtable
 				}
 				"CBaseEntity::FireNamedOutput"
@@ -1488,6 +1612,7 @@
 					addr  "0x1f0930"
 					build "10828683"
 					lib   "server"
+					vtidx "68"
 					// vtable
 				}
 				"CBaseEntity::VPhysicsDestroyObject"
@@ -1497,6 +1622,7 @@
 					addr  "0x202b00"
 					build "10828683"
 					lib   "server"
+					vtidx "163"
 					// vtable
 				}
 				"CBaseEntity::ApplyAbsVelocityImpulse"
@@ -1542,6 +1668,7 @@
 					addr  "0x15fff0"
 					build "10828683"
 					lib   "server"
+					vtidx "5"
 					// vtable index
 				}
 				"CBaseEntity::GetNetworkable"
@@ -1551,6 +1678,7 @@
 					addr  "0x1607e0"
 					build "10828683"
 					lib   "server"
+					vtidx "4"
 					// vtable
 				}
 				"CBaseEntity::GetCollideable"
@@ -1560,6 +1688,7 @@
 					addr  "0x160080"
 					build "10828683"
 					lib   "server"
+					vtidx "3"
 					// vtable
 				}
 				"CBaseEntity::GetRefEHandle"
@@ -1569,6 +1698,7 @@
 					addr  "0x160860"
 					build "10828683"
 					lib   "server"
+					vtidx "2"
 					// vtable
 				}
 				"CBaseEntity::TraceAttack"
@@ -1578,6 +1708,7 @@
 					addr  "0x2026d0"
 					build "10828683"
 					lib   "server"
+					vtidx "62"
 					// vtable
 				}
 				"CBaseEntity::GetTracerType"
@@ -1587,6 +1718,7 @@
 					addr  "0x157970"
 					build "10828683"
 					lib   "server"
+					vtidx "60"
 					// vtable index
 				}
 				"CBaseEntity::SetTransmit"
@@ -1596,6 +1728,7 @@
 					addr  "0x1fcdf0"
 					build "10828683"
 					lib   "server"
+					vtidx "22"
 					// vtable
 				}
 				"CBaseAnimatingOverlay::StudioFrameAdvance"
@@ -1605,6 +1738,7 @@
 					addr  "0x1d3990"
 					build "10828683"
 					lib   "server"
+					vtidx "201"
 					// string
 				}
 				"CBaseAnimatingOverlay::SetLayerDuration"
@@ -1623,6 +1757,7 @@
 					addr  "0x1cb080"
 					build "10828683"
 					lib   "server"
+					vtidx "216"
 					// vtable
 				}
 				"CBaseAnimating::GetAttachment"
@@ -1659,6 +1794,7 @@
 					addr  "0x1cf120"
 					build "10828683"
 					lib   "server"
+					vtidx "219"
 					// vtable
 				}
 				"CBaseAnimating::ResetSequence"
@@ -1686,6 +1822,7 @@
 					addr  "0x16bdd0"
 					build "10828683"
 					lib   "server"
+					vtidx "226"
 					// vtable
 				}
 				"CBaseAnimating::SetModel"
@@ -1875,6 +2012,7 @@
 					addr  "0x2df600"
 					build "10828683"
 					lib   "server"
+					vtidx "453"
 					// vtable
 				}
 				"CBasePlayer::GetSteamID"
@@ -1992,6 +2130,7 @@
 					addr  "0x20d780"
 					build "10828683"
 					lib   "server"
+					vtidx "412"
 					// vtable
 				}
 				"CBasePlayer::UpdatePlayerSound"
@@ -2010,6 +2149,7 @@
 					addr  "0x2e6870"
 					build "10828683"
 					lib   "server"
+					vtidx "431"
 					// vtable
 				}
 				"CBasePlayer::Touch"
@@ -2019,6 +2159,7 @@
 					addr  "0x2ea360"
 					build "10828683"
 					lib   "server"
+					vtidx "105"
 					// vtable
 				}
 				"CBasePlayer::ClientCommand"
@@ -2028,6 +2169,7 @@
 					addr  "0x2dec10"
 					build "10828683"
 					lib   "server"
+					vtidx "380"
 					// string
 				}
 				"CBasePlayer::ForceRespawn"
@@ -2037,6 +2179,7 @@
 					addr  "0x2e1460"
 					build "10828683"
 					lib   "server"
+					vtidx "337"
 					// vtable
 				}
 				"CBasePlayer::CreateViewModel"
@@ -2046,6 +2189,7 @@
 					addr  "0x2dfb00"
 					build "10828683"
 					lib   "server"
+					vtidx "333"
 					// vtable
 				}
 				"CBasePlayer::EquipWearable"
@@ -2091,6 +2235,7 @@
 					addr  "0x2eb6f0"
 					build "10828683"
 					lib   "server"
+					vtidx "335"
 					// vtable
 				}
 				"CBasePlayer::ShouldTransmit"
@@ -2100,6 +2245,7 @@
 					addr  "0x2e9500"
 					build "10828683"
 					lib   "server"
+					vtidx "20"
 					// vtable
 				}
 				"CBasePlayer::UpdateOnRemove"
@@ -2109,6 +2255,7 @@
 					addr  "0x2eab90"
 					build "10828683"
 					lib   "server"
+					vtidx "111"
 					// vtable
 				}
 				"CBasePlayer::Event_Killed"
@@ -2118,6 +2265,7 @@
 					addr  "0x2e0a80"
 					build "10828683"
 					lib   "server"
+					vtidx "68"
 					// vtable
 				}
 				"CBasePlayer::Spawn"
@@ -2127,6 +2275,7 @@
 					addr  "0x2e9720"
 					build "10828683"
 					lib   "server"
+					vtidx "24"
 					// string
 				}
 				"CBasePlayer::Activate"
@@ -2397,6 +2546,7 @@
 					addr  "0x208b80"
 					build "10828683"
 					lib   "server"
+					vtidx "230"
 					// vtable
 				}
 				"CBaseObject::AttachObjectToObject"
@@ -2433,6 +2583,7 @@
 					addr  "0x626420"
 					build "10828683"
 					lib   "server"
+					vtidx "236"
 					// vtable
 				}
 				"CTFBaseRocket::GetRadius"
@@ -2442,6 +2593,7 @@
 					addr  "0x63fcc0"
 					build "10828683"
 					lib   "server"
+					vtidx "244"
 					// vtable
 				}
 				"CTFBaseRocket::Destroy"
@@ -2451,6 +2603,7 @@
 					addr  "0x6395c0"
 					build "10828683"
 					lib   "server"
+					vtidx "233"
 					// vtable index
 				}
 				"CTFProjectile_Flare::Explode_Air"
@@ -2469,6 +2622,7 @@
 					addr  "0x5a1fa0"
 					build "10828683"
 					lib   "server"
+					vtidx "135"
 					// vtable index
 				}
 				"CTFProjectile_ThrowableBreadMonster::GetDamage"
@@ -2478,6 +2632,7 @@
 					addr  "0x62e510"
 					build "10828683"
 					lib   "server"
+					vtidx "135"
 					// vtable
 				}
 				"CTFProjectile_ThrowableRepel::GetDamage"
@@ -2487,6 +2642,7 @@
 					addr  "0x62d950"
 					build "10828683"
 					lib   "server"
+					vtidx "135"
 					// vtable
 				}
 				"CTFProjectile_ThrowableBrick::GetDamage"
@@ -2496,6 +2652,7 @@
 					addr  "0x62dca0"
 					build "10828683"
 					lib   "server"
+					vtidx "135"
 					// vtable
 				}
 				"CTFStunBall::GetDamage"
@@ -2505,6 +2662,7 @@
 					addr  "0x600020"
 					build "10828683"
 					lib   "server"
+					vtidx "135"
 					// vtable
 				}
 				"CTFBall_Ornament::Explode"
@@ -2541,6 +2699,7 @@
 					addr  "0x6395c0"
 					build "10828683"
 					lib   "server"
+					vtidx "233"
 					// vtable index
 				}
 				"CTFPipebombLauncher::FireProjectile"
@@ -2595,6 +2754,7 @@
 					addr  "0x258a90"
 					build "10828683"
 					lib   "server"
+					vtidx "61"
 					// vtable
 				}
 				"CBaseFilter::PassesDamageFilterImpl"
@@ -2604,6 +2764,7 @@
 					addr  "0x258ac0"
 					build "10828683"
 					lib   "server"
+					vtidx "200"
 					// vtable
 				}
 				"CBaseFilter::PassesFilterImpl"
@@ -2613,6 +2774,7 @@
 					addr  "0x1636f0"
 					build "10828683"
 					lib   "server"
+					vtidx "199"
 					// vtable index
 				}
 				"CBaseFlex::AddSceneEvent"
@@ -2640,6 +2802,7 @@
 					addr  "0x208ce0"
 					build "10828683"
 					lib   "server"
+					vtidx "136"
 					// vtable
 				}
 				"CBaseGrenade::GetDamageRadius"
@@ -2649,6 +2812,7 @@
 					addr  "0x208cd0"
 					build "10828683"
 					lib   "server"
+					vtidx "242"
 					// vtable
 				}
 				"CBaseObject::GetMaxHealthForCurrentLevel"
@@ -2685,6 +2849,7 @@
 					addr  "0x20f610"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"CBaseProjectile::GetCollideWithTeammatesDelay"
@@ -2694,6 +2859,7 @@
 					addr  "0x208b90"
 					build "10828683"
 					lib   "server"
+					vtidx "231"
 					// vtable
 				}
 				"CBaseProjectile::GetProjectileType"
@@ -2703,6 +2869,7 @@
 					addr  "0x169170"
 					build "10828683"
 					lib   "server"
+					vtidx "228"
 					// vtable index
 				}
 				"CBaseProjectile::SetLauncher"
@@ -2712,6 +2879,7 @@
 					addr  "0x20f950"
 					build "10828683"
 					lib   "server"
+					vtidx "234"
 					// vtable
 				}
 				"CBaseProjectile::Spawn"
@@ -2721,6 +2889,7 @@
 					addr  "0x20fd50"
 					build "10828683"
 					lib   "server"
+					vtidx "24"
 					// vtable
 				}
 				"CBaseServerVehicle::GetDriver"
@@ -2730,6 +2899,7 @@
 					addr  "0x374850"
 					build "10828683"
 					lib   "server"
+					vtidx "60"
 					// vtable
 				}
 				"CBaseServerVehicle::GetExitAnimToUse"
@@ -2739,6 +2909,7 @@
 					addr  "0x3749f0"
 					build "10828683"
 					lib   "server"
+					vtidx "21"
 					// vtable
 				}
 				"CBaseServerVehicle::GetVehicleEnt"
@@ -2748,6 +2919,7 @@
 					addr  "0x3728c0"
 					build "10828683"
 					lib   "server"
+					vtidx "8"
 					// vtable
 				}
 				"CBaseServerVehicle::HandleEntryExitFinish"
@@ -2757,6 +2929,7 @@
 					addr  "0x375940"
 					build "10828683"
 					lib   "server"
+					vtidx "22"
 					// vtable
 				}
 				"CBaseServerVehicle::HandlePassengerEntry"
@@ -2766,6 +2939,7 @@
 					addr  "0x375b90"
 					build "10828683"
 					lib   "server"
+					vtidx "17"
 					// vtable
 				}
 				"CBaseServerVehicle::HandlePassengerExit"
@@ -2775,6 +2949,7 @@
 					addr  "0x375cb0"
 					build "10828683"
 					lib   "server"
+					vtidx "18"
 					// vtable
 				}
 				"CBaseServerVehicle::IsPassengerUsingStandardWeapons"
@@ -2784,6 +2959,7 @@
 					addr  "0x152770"
 					build "10828683"
 					lib   "server"
+					vtidx "3"
 					// vtable index
 				}
 				"CBaseServerVehicle::IsPassengerVisible"
@@ -2793,6 +2969,7 @@
 					addr  "0x152770"
 					build "10828683"
 					lib   "server"
+					vtidx "10"
 					// vtable index
 				}
 				"CBaseServerVehicle::ItemPostFrame"
@@ -2802,6 +2979,7 @@
 					addr  "0x3762e0"
 					build "10828683"
 					lib   "server"
+					vtidx "7"
 					// vtable
 				}
 				"CBaseServerVehicle::SetupMove"
@@ -2811,6 +2989,7 @@
 					addr  "0x3788f0"
 					build "10828683"
 					lib   "server"
+					vtidx "4"
 					// vtable
 				}
 				"CBaseTrigger::Activate"
@@ -2820,6 +2999,7 @@
 					addr  "0x360270"
 					build "10828683"
 					lib   "server"
+					vtidx "35"
 					// vtable
 				}
 				"CBaseTrigger::EndTouch"
@@ -2829,6 +3009,7 @@
 					addr  "0x360910"
 					build "10828683"
 					lib   "server"
+					vtidx "106"
 					// vtable
 				}
 				"CBaseTrigger::InputEndTouch"
@@ -2838,6 +3019,7 @@
 					addr  "0x360630"
 					build "10828683"
 					lib   "server"
+					vtidx "206"
 					// vtable
 				}
 				"CBaseTrigger::InputStartTouch"
@@ -2847,6 +3029,7 @@
 					addr  "0x360610"
 					build "10828683"
 					lib   "server"
+					vtidx "205"
 					// vtable
 				}
 				"CBaseTrigger::StartTouch"
@@ -2856,6 +3039,7 @@
 					addr  "0x360860"
 					build "10828683"
 					lib   "server"
+					vtidx "104"
 					// vtable
 				}
 				"CCaptureFlag::Drop"
@@ -2883,6 +3067,7 @@
 					addr  "0x453230"
 					build "10828683"
 					lib   "server"
+					vtidx "212"
 					// vtable
 				}
 				"CCurrencyPack::MyTouch"
@@ -2928,6 +3113,7 @@
 					addr  "0x3ae150"
 					build "10828683"
 					lib   "server"
+					vtidx "1"
 					// string
 				}
 				"CEconItemDefinition::BInitVisualBlockFromKV"
@@ -3000,6 +3186,7 @@
 					addr  "0x3be550"
 					build "10828683"
 					lib   "server"
+					vtidx "18"
 					// vtable
 				}
 				"CEconItemView::CEconItemView [C1]"
@@ -3018,6 +3205,7 @@
 					addr  "0x39f620"
 					build "10828683"
 					lib   "server"
+					vtidx "19"
 					// vtable
 				}
 				"CEconItemView::GetStaticData"
@@ -3036,6 +3224,7 @@
 					addr  "0x3c4860"
 					build "10828683"
 					lib   "server"
+					vtidx "10"
 					// vtable
 				}
 				"CEconItemView::Init"
@@ -3054,6 +3243,7 @@
 					addr  "0x3c4ba0"
 					build "10828683"
 					lib   "server"
+					vtidx "18"
 					// vtable
 				}
 				"CFuncIllusionary::Spawn"
@@ -3063,6 +3253,7 @@
 					addr  "0x2138e0"
 					build "10828683"
 					lib   "server"
+					vtidx "24"
 					// vtable
 				}
 				"CGameText::KeyValue"
@@ -3072,6 +3263,7 @@
 					addr  "0x201d30"
 					build "10828683"
 					lib   "server"
+					vtidx "31"
 					// vtable index
 				}
 				"CGameUI::Deactivate"
@@ -3216,6 +3408,7 @@
 					addr  "0x2fb380"
 					build "10828683"
 					lib   "server"
+					vtidx "35"
 					// string
 				}
 				"CPopulationManager::IsValidPopfile"
@@ -3279,6 +3472,7 @@
 					addr  "0x33cf80"
 					build "10828683"
 					lib   "server"
+					vtidx "209"
 					// vtable
 				}
 				"CTeam::RemovePlayer"
@@ -3288,6 +3482,7 @@
 					addr  "0x33d370"
 					build "10828683"
 					lib   "server"
+					vtidx "210"
 					// vtable
 				}
 				"CTFAmmoPack::Create"
@@ -3333,6 +3528,7 @@
 					addr  "0x63ff30"
 					build "10828683"
 					lib   "server"
+					vtidx "239"
 					// vtable
 				}
 				"CTFBaseRocket::SetDamage"
@@ -3342,6 +3538,7 @@
 					addr  "0x4ce3a0"
 					build "10828683"
 					lib   "server"
+					vtidx "136"
 					// vtable
 				}
 				"CTFBat_Wood::SecondaryAttack"
@@ -3432,6 +3629,7 @@
 					addr  "0x60c700"
 					build "10828683"
 					lib   "server"
+					vtidx "24"
 					// vtable
 				}
 				"CTFFlameManager::OnCollide"
@@ -3504,6 +3702,7 @@
 					addr  "0x5bd70"
 					build "10828683"
 					lib   "server"
+					vtidx "159"
 					// vtable index
 				}
 				"CTFGrenadePipebombProjectile::OnTakeDamage"
@@ -3513,6 +3712,7 @@
 					addr  "0x610270"
 					build "10828683"
 					lib   "server"
+					vtidx "64"
 					// vtable
 				}
 				"CTFGrenadePipebombProjectile::PipebombTouch"
@@ -3522,6 +3722,7 @@
 					addr  "0x610750"
 					build "10828683"
 					lib   "server"
+					vtidx "261"
 					// vtable
 				}
 				"CTFGrenadePipebombProjectile::SetPipebombMode"
@@ -3531,6 +3732,7 @@
 					addr  "0x610f40"
 					build "10828683"
 					lib   "server"
+					vtidx "260"
 					// vtable
 				}
 				"CTFGrenadePipebombProjectile::StickybombTouch"
@@ -3540,6 +3742,7 @@
 					addr  "0x130ba0"
 					build "10828683"
 					lib   "server"
+					vtidx "262"
 					// vtable index
 				}
 				"CTFGrenadePipebombProjectile::DetonateStickies"
@@ -3549,6 +3752,7 @@
 					addr  "0x60fb60"
 					build "10828683"
 					lib   "server"
+					vtidx "259"
 					// vtable
 				}
 				"CTFGrenadePipebombProjectile::VPhysicsCollision"
@@ -3558,6 +3762,7 @@
 					addr  "0x611130"
 					build "10828683"
 					lib   "server"
+					vtidx "168"
 					// vtable
 				}
 				"CTFKnife::GetMeleeDamage"
@@ -3657,6 +3862,7 @@
 					addr  "0x5e1650"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"CTFPointWeaponMimic::~CTFPointWeaponMimic [D2]"
@@ -3666,6 +3872,7 @@
 					addr  "0x5e1650"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"CTFPointWeaponMimic::Spawn"
@@ -3675,6 +3882,7 @@
 					addr  "0x5e2530"
 					build "10828683"
 					lib   "server"
+					vtidx "24"
 					// vtable
 				}
 				"CTFPowerup::DropSingleInstance"
@@ -3738,6 +3946,7 @@
 					addr  "0x157e70"
 					build "10828683"
 					lib   "server"
+					vtidx "250"
 					// vtable index
 				}
 				"CTFProjectile_EnergyBall::Explode"
@@ -3747,6 +3956,7 @@
 					addr  "0x5fbfe0"
 					build "10828683"
 					lib   "server"
+					vtidx "240"
 					// vtable
 				}
 				"CTFProjectile_EnergyBall::IsDeflectable"
@@ -3756,6 +3966,7 @@
 					addr  "0x5bd70"
 					build "10828683"
 					lib   "server"
+					vtidx "159"
 					// vtable index
 				}
 				"CTFProjectile_Flare::Explode"
@@ -3783,6 +3994,7 @@
 					addr  "0x613ca0"
 					build "10828683"
 					lib   "server"
+					vtidx "236"
 					// vtable
 				}
 				"CTFProjectile_MechanicalArmOrb::CheckForProjectiles"
@@ -3819,6 +4031,7 @@
 					addr  "0x5bb8b0"
 					build "10828683"
 					lib   "server"
+					vtidx "284"
 					// vtable
 				}
 				"CTFProjectile_Throwable::GetVelocityVector"
@@ -3828,6 +4041,7 @@
 					addr  "0x62d4a0"
 					build "10828683"
 					lib   "server"
+					vtidx "285"
 					// vtable
 				}
 				"CTFProjectile_ThrowableRepel::SetCustomPipebombModel"
@@ -3837,6 +4051,7 @@
 					addr  "0x62d5f0"
 					build "10828683"
 					lib   "server"
+					vtidx "256"
 					// vtable
 				}
 				"CTFScatterGun::ApplyPostHitEffects"
@@ -3918,6 +4133,7 @@
 					addr  "0x600fa0"
 					build "10828683"
 					lib   "server"
+					vtidx "267"
 					// vtable
 				}
 				"CTFTankBoss::Event_Killed"
@@ -3954,6 +4170,7 @@
 					addr  "0x5f39c0"
 					build "10828683"
 					lib   "server"
+					vtidx "24"
 					// vtable
 				}
 				"CTFTeam::AddPlayer"
@@ -3963,6 +4180,7 @@
 					addr  "0x540790"
 					build "10828683"
 					lib   "server"
+					vtidx "209"
 					// vtable
 				}
 				"CTFTeam::RemovePlayer"
@@ -3972,6 +4190,7 @@
 					addr  "0x540d10"
 					build "10828683"
 					lib   "server"
+					vtidx "210"
 					// vtable
 				}
 				"CTFWeaponBaseGrenadeProj::Explode"
@@ -3981,6 +4200,7 @@
 					addr  "0x6399e0"
 					build "10828683"
 					lib   "server"
+					vtidx "236"
 					// vtable
 				}
 				"CTFWeaponBaseGrenadeProj::GetWeaponID"
@@ -3990,6 +4210,7 @@
 					addr  "0x157970"
 					build "10828683"
 					lib   "server"
+					vtidx "246"
 					// vtable index
 				}
 				"CTFWeaponBaseGrenadeProj::InitGrenade"
@@ -3999,6 +4220,7 @@
 					addr  "0x63a170"
 					build "10828683"
 					lib   "server"
+					vtidx "244"
 					// vtable
 				}
 				"CTFWeaponBaseGrenadeProj::SetDetonateTimerLength"
@@ -4107,6 +4329,7 @@
 					addr  "0x362d60"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"~CTriggerCamera [D2]"
@@ -4116,6 +4339,7 @@
 					addr  "0x362d60"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"CTriggerCamera::Enable"
@@ -4152,6 +4376,7 @@
 					addr  "0x37d210"
 					build "10828683"
 					lib   "server"
+					vtidx "24"
 					// vtable
 				}
 				"CWeaponMedigun::AllowedToHealTarget"
@@ -4215,6 +4440,7 @@
 					addr  "0x423af0"
 					build "10828683"
 					lib   "server"
+					vtidx "92"
 					// vtable
 				}
 				"CTFPlayer::PlayerRunCommand"
@@ -4233,6 +4459,7 @@
 					addr  "0x278040"
 					build "10828683"
 					lib   "server"
+					vtidx "20"
 					// vtable index
 				}
 				"CGameMovement::AirAccelerate"
@@ -4242,6 +4469,7 @@
 					addr  "0x274e30"
 					build "10828683"
 					lib   "server"
+					vtidx "16"
 					// vtable index
 				}
 				"CTFPowerupBottle::SetNumCharges"
@@ -4636,6 +4864,7 @@
 					addr  "0x4131d0"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable
 				}
 				"GetItemSchema"
@@ -4672,6 +4901,7 @@
 					addr  "0x36f2e0"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable
 				}
 				"CTFGameRules::PlayerReadyStatus_HaveMinPlayersToEnable"
@@ -4708,6 +4938,7 @@
 					addr  "0x4753a0"
 					build "10828683"
 					lib   "server"
+					vtidx "1"
 					// vtable
 				}
 				"CTraceFilterDeflection::ShouldHitEntity"
@@ -4762,6 +4993,7 @@
 					addr  "0x472c20"
 					build "10828683"
 					lib   "server"
+					vtidx "39"
 					// string
 				}
 				"MapEntity_ParseAllEntities"
@@ -4879,6 +5111,7 @@
 					addr  "0x2ec880"
 					build "10828683"
 					lib   "server"
+					vtidx "3"
 					// vtable
 				}
 				"CTFGameRules::DistributeCurrencyAmount"
@@ -4960,6 +5193,7 @@
 					addr  "0x26ff70"
 					build "10828683"
 					lib   "server"
+					vtidx "4"
 					// vtable
 				}
 				"CEventQueue::AddEvent"
@@ -5023,6 +5257,7 @@
 					addr  "0x202550"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable
 				}
 				"CTFGameRules::ClientConnected"
@@ -5059,6 +5294,7 @@
 					addr  "0x4720e0"
 					build "10828683"
 					lib   "server"
+					vtidx "29"
 					// vtable index
 				}
 				"GetParticleSystemIndex"
@@ -5077,6 +5313,7 @@
 					addr  "0x439c80"
 					build "10828683"
 					lib   "server"
+					vtidx "38"
 					// vtable
 				}
 				"CMatchInfo::GetNumActiveMatchPlayers"
@@ -5113,6 +5350,7 @@
 					addr  "0x434c20"
 					build "10828683"
 					lib   "server"
+					vtidx "4"
 					// vtable
 				}
 				"CBaseTempEntity::GetServerClass"
@@ -5122,6 +5360,7 @@
 					addr  "0x434c80"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable
 				}
 				"TF_IsHolidayActive"
@@ -5167,6 +5406,7 @@
 					addr  "0x475870"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable
 				}
 				"CServerGameEnts::CheckTransmit"
@@ -5176,6 +5416,7 @@
 					addr  "0x271020"
 					build "10828683"
 					lib   "server"
+					vtidx "6"
 					// vtable
 				}
 				"CAttributeManager::~CAttributeManager [D2]"
@@ -5185,6 +5426,7 @@
 					addr  "0x39d560"
 					build "10828683"
 					lib   "server"
+					vtidx "3"
 					// vtable index
 				}
 				"CAttributeManager::~CAttributeManager [D0]"
@@ -5194,6 +5436,7 @@
 					addr  "0x39d560"
 					build "10828683"
 					lib   "server"
+					vtidx "3"
 					// vtable index
 				}
 				"CAttributeManager::ApplyAttributeFloat"
@@ -5203,6 +5446,7 @@
 					addr  "0x39d9a0"
 					build "10828683"
 					lib   "server"
+					vtidx "5"
 					// string
 				}
 				"FX_FireBullets"
@@ -5221,6 +5465,7 @@
 					addr  "0x5ba60"
 					build "10828683"
 					lib   "server"
+					vtidx "45"
 					// vtable index
 				}
 				"INextBotComponent::Upkeep"
@@ -5230,6 +5475,7 @@
 					addr  "0x130b50"
 					build "10828683"
 					lib   "server"
+					vtidx "44"
 					// vtable index
 				}
 				"CTFGameRules::GetKillingWeaponName"
@@ -5248,6 +5494,7 @@
 					addr  "0x270a50"
 					build "10828683"
 					lib   "server"
+					vtidx "38"
 					// vtable
 				}
 				"CAttributeManager::OnAttributeValuesChanged"
@@ -5257,6 +5504,7 @@
 					addr  "0x39e6f0"
 					build "10828683"
 					lib   "server"
+					vtidx "13"
 					// vtable
 				}
 				"CAttributeContainer::OnAttributeValuesChanged"
@@ -5266,6 +5514,7 @@
 					addr  "0x39fb10"
 					build "10828683"
 					lib   "server"
+					vtidx "13"
 					// vtable
 				}
 				"CAttributeContainerPlayer::OnAttributeValuesChanged"
@@ -5311,6 +5560,7 @@
 					addr  "0x459cb0"
 					build "10828683"
 					lib   "server"
+					vtidx "21"
 					// vtable
 				}
 				"CTFBotSquad::Leave"
@@ -5356,6 +5606,7 @@
 					addr  "0x5a57b0"
 					build "10828683"
 					lib   "server"
+					vtidx "46"
 					// string
 				}
 				"CEyeballBossLaunchRockets::Update"
@@ -5365,6 +5616,7 @@
 					addr  "0x5a7d70"
 					build "10828683"
 					lib   "server"
+					vtidx "46"
 					// string
 				}
 				"CSchemaAttributeType_Default::ConvertStringToEconAttributeValue"
@@ -5374,6 +5626,7 @@
 					addr  "0x3aaf30"
 					build "10828683"
 					lib   "server"
+					vtidx "4"
 					// vtable
 				}
 				"SpawnHierarchicalList"
@@ -5446,6 +5699,7 @@
 					addr  "0x476370"
 					build "10828683"
 					lib   "server"
+					vtidx "10"
 					// vtable
 				}
 				"CMannVsMachineChangeChallengeIssue::ExecuteCommand"
@@ -5455,6 +5709,7 @@
 					addr  "0x543a20"
 					build "10828683"
 					lib   "server"
+					vtidx "11"
 					// string
 				}
 				"CTFPlayerInventory::GetItemInLoadout"
@@ -5464,6 +5719,7 @@
 					addr  "0x3ca690"
 					build "10828683"
 					lib   "server"
+					vtidx "10"
 					// vtable
 				}
 				"CCollisionProperty::SetCollisionBounds"
@@ -5500,6 +5756,7 @@
 					addr  "0x281450"
 					build "10828683"
 					lib   "server"
+					vtidx "8"
 					// vtable
 				}
 				"CPlayerMove::SetupMove"
@@ -5509,6 +5766,7 @@
 					addr  "0x2ec590"
 					build "10828683"
 					lib   "server"
+					vtidx "1"
 					// vtable
 				}
 				"CalculatePhysicsImpactDamage"
@@ -5563,6 +5821,7 @@
 					addr  "0x26fca0"
 					build "10828683"
 					lib   "server"
+					vtidx "3"
 					// vtable index
 				}
 				"CQuestItemTracker::FireGameEvent"
@@ -5581,6 +5840,7 @@
 					addr  "0x474de0"
 					build "10828683"
 					lib   "server"
+					vtidx "47"
 					// vtable
 				}
 				"CTFGameMovement::FullWalkMove"
@@ -5608,6 +5868,7 @@
 					addr  "0x471270"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// string
 				}
 				"CLagCompensationManager::FrameUpdatePostEntityThink"
@@ -5635,6 +5896,7 @@
 					addr  "0x2747a0"
 					build "10828683"
 					lib   "server"
+					vtidx "39"
 					// vtable
 				}
 				"CTFGameStats::SendStatsToPlayer"
@@ -5671,6 +5933,7 @@
 					addr  "0x26eb30"
 					build "10828683"
 					lib   "server"
+					vtidx "2"
 					// string
 				}
 				"CTFGCServerSystem::ClientDisconnected"
@@ -5689,6 +5952,7 @@
 					addr  "0x478d80"
 					build "10828683"
 					lib   "server"
+					vtidx "1"
 					// vtable
 				}
 				"CVoiceGameMgrHelper::ClientCommand"
@@ -5707,6 +5971,7 @@
 					addr  "0x5ba60"
 					build "10828683"
 					lib   "server"
+					vtidx "4"
 					// vtable index
 				}
 				"CTFGameRules::PowerupModeKillCountCompare"
@@ -5734,6 +5999,7 @@
 					addr  "0x473000"
 					build "10828683"
 					lib   "server"
+					vtidx "40"
 					// vtable
 				}
 				"CVoiceGameMgr::UpdateMasks"
@@ -5752,6 +6018,7 @@
 					addr  "0x26edf0"
 					build "10828683"
 					lib   "server"
+					vtidx "4"
 					// vtable
 				}
 				"DispatchSpawn"
@@ -5770,6 +6037,7 @@
 					addr  "0x36efc0"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable
 				}
 				"CTFTankBossBody::GetSolidMask"
@@ -5779,6 +6047,7 @@
 					addr  "0x1e15f0"
 					build "10828683"
 					lib   "server"
+					vtidx "81"
 					// vtable index
 				}
 				"CTFGameRules::SendWinPanelInfo"
@@ -5833,6 +6102,7 @@
 					addr  "0x273fb0"
 					build "10828683"
 					lib   "server"
+					vtidx "44"
 					// vtable
 				}
 				"CTFGameMovement::GrapplingHookMove"
@@ -5905,6 +6175,7 @@
 					addr  "0x39e030"
 					build "10828683"
 					lib   "server"
+					vtidx "6"
 					// string
 				}
 				"CTFGameRules::SetupOnRoundStart"
@@ -5932,6 +6203,7 @@
 					addr  "0x3ab050"
 					build "10828683"
 					lib   "server"
+					vtidx "4"
 					// vtable
 				}
 				"CEconItemAttributeIterator_ApplyAttributeString::OnIterateAttributeValue"
@@ -5941,6 +6213,7 @@
 					addr  "0x39e840"
 					build "10828683"
 					lib   "server"
+					vtidx "4"
 					// vtable
 				}
 				"COM_BufferToBufferDecompress"
@@ -6040,6 +6313,7 @@
 					addr  "0x157de0"
 					build "10828683"
 					lib   "server"
+					vtidx "166"
 					// vtable index
 				}
 				"CTeamplayRules::SetWinningTeam"
@@ -6049,6 +6323,7 @@
 					addr  "0x349310"
 					build "10828683"
 					lib   "server"
+					vtidx "165"
 					// vtable
 				}
 				"CTFGameRules::CTFGameRules [C1]"
@@ -6076,6 +6351,7 @@
 					addr  "0x5a7200"
 					build "10828683"
 					lib   "server"
+					vtidx "45"
 					// vtable
 				}
 				"CEyeballBossIdle::OnStart"
@@ -6085,6 +6361,7 @@
 					addr  "0x5a7200"
 					build "10828683"
 					lib   "server"
+					vtidx "45"
 					// vtable
 				}
 				"CEyeballBossIdle::Update"
@@ -6319,6 +6596,7 @@
 					addr  "0x360860"
 					build "10828683"
 					lib   "server"
+					vtidx "104"
 					// vtable index
 				}
 				"CGameMovement::CheckFalling"
@@ -6328,6 +6606,7 @@
 					addr  "0x273fb0"
 					build "10828683"
 					lib   "server"
+					vtidx "44"
 					// vtable index
 				}
 				"CNavMesh::GetNearestNavArea [vec]"
@@ -6355,6 +6634,7 @@
 					addr  "0x3f4d10"
 					build "10828683"
 					lib   "server"
+					vtidx "8"
 					// string
 				}
 				"CNavMesh::BeginGeneration"
@@ -6400,6 +6680,7 @@
 					addr  "0x3e1970"
 					build "10828683"
 					lib   "server"
+					vtidx "20"
 					// vtable
 				}
 				"CNavArea::GetZ [float float]"
@@ -6418,6 +6699,7 @@
 					addr  "0x3e4cb0"
 					build "10828683"
 					lib   "server"
+					vtidx "32"
 					// vtable
 				}
 				"CNavArea::IsOverlapping"
@@ -6436,6 +6718,7 @@
 					addr  "0x3e36e0"
 					build "10828683"
 					lib   "server"
+					vtidx "17"
 					// vtable
 				}
 				"CNavArea::IsPotentiallyVisibleToTeam"
@@ -6445,6 +6728,7 @@
 					addr  "0x3e4df0"
 					build "10828683"
 					lib   "server"
+					vtidx "33"
 					// vtable
 				}
 				"CNavArea::IsCompletelyVisible"
@@ -6454,6 +6738,7 @@
 					addr  "0x3e3720"
 					build "10828683"
 					lib   "server"
+					vtidx "34"
 					// string
 				}
 				"CTFNavArea::GetCombatIntensity"
@@ -6481,6 +6766,7 @@
 					addr  "0x557aa0"
 					build "10828683"
 					lib   "server"
+					vtidx "3"
 					// vtable
 				}
 				"Path::Compute<CTFBotPathCost> [ent]"
@@ -6670,6 +6956,7 @@
 					addr  "0x5ecb00"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"CMissionPopulator::~CMissionPopulator [D2]"
@@ -6679,6 +6966,7 @@
 					addr  "0x5ecb00"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"CMissionPopulator::Parse"
@@ -6688,6 +6976,7 @@
 					addr  "0x5edfb0"
 					build "10828683"
 					lib   "server"
+					vtidx "1"
 					// string
 				}
 				"CMissionPopulator::Update"
@@ -6697,6 +6986,7 @@
 					addr  "0x5ef810"
 					build "10828683"
 					lib   "server"
+					vtidx "3"
 					// vtable
 				}
 				"CMissionPopulator::UpdateMission"
@@ -6724,6 +7014,7 @@
 					addr  "0x5ecbe0"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"CWave::~CWave [D2]"
@@ -6733,6 +7024,7 @@
 					addr  "0x5ecbe0"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"CWave::ActiveWaveUpdate"
@@ -6751,6 +7043,7 @@
 					addr  "0x5ee640"
 					build "10828683"
 					lib   "server"
+					vtidx "1"
 					// string
 				}
 				"CWave::WaveCompleteUpdate"
@@ -6769,6 +7062,7 @@
 					addr  "0x5ecd00"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"CWaveSpawnPopulator::~CWaveSpawnPopulator [D2]"
@@ -6778,6 +7072,7 @@
 					addr  "0x5ecd00"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"CWaveSpawnPopulator::Parse"
@@ -6787,6 +7082,7 @@
 					addr  "0x5eec40"
 					build "10828683"
 					lib   "server"
+					vtidx "1"
 					// string
 				}
 				"CWaveSpawnPopulator::SetState"
@@ -6805,6 +7101,7 @@
 					addr  "0x5efcc0"
 					build "10828683"
 					lib   "server"
+					vtidx "3"
 					// string
 				}
 				"IPopulationSpawner::GetClassIcon"
@@ -6814,6 +7111,7 @@
 					addr  "0x5e8ba0"
 					build "10828683"
 					lib   "server"
+					vtidx "6"
 					// vtable
 				}
 				"IPopulationSpawner::HasAttribute"
@@ -6823,6 +7121,7 @@
 					addr  "0x131730"
 					build "10828683"
 					lib   "server"
+					vtidx "9"
 					// vtable index
 				}
 				"IPopulationSpawner::IsMiniBoss"
@@ -6832,6 +7131,7 @@
 					addr  "0x152770"
 					build "10828683"
 					lib   "server"
+					vtidx "8"
 					// vtable index
 				}
 				"IPopulationSpawner::ParseSpawner"
@@ -6850,6 +7150,7 @@
 					addr  "0x5e8830"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"CTankSpawner::~CTankSpawner [D2]"
@@ -6859,6 +7160,7 @@
 					addr  "0x5e8830"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"CTankSpawner::GetClassIcon"
@@ -6868,6 +7170,7 @@
 					addr  "0x5e8b90"
 					build "10828683"
 					lib   "server"
+					vtidx "6"
 					// vtable
 				}
 				"CTankSpawner::IsMiniBoss"
@@ -6877,6 +7180,7 @@
 					addr  "0x1595e0"
 					build "10828683"
 					lib   "server"
+					vtidx "8"
 					// vtable index
 				}
 				"CTankSpawner::Parse"
@@ -6886,6 +7190,7 @@
 					addr  "0x5e9810"
 					build "10828683"
 					lib   "server"
+					vtidx "1"
 					// string
 				}
 				"CTankSpawner::Spawn"
@@ -6895,6 +7200,7 @@
 					addr  "0x5ec5f0"
 					build "10828683"
 					lib   "server"
+					vtidx "2"
 					// string
 				}
 				"CTFBotSpawner::~CTFBotSpawner [D0]"
@@ -6904,6 +7210,7 @@
 					addr  "0x5e87b0"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"CTFBotSpawner::~CTFBotSpawner [D2]"
@@ -6913,6 +7220,7 @@
 					addr  "0x5e87b0"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"CTFBotSpawner::Parse"
@@ -6922,6 +7230,7 @@
 					addr  "0x5e94c0"
 					build "10828683"
 					lib   "server"
+					vtidx "1"
 					// string
 				}
 				"CTFBotSpawner::Spawn"
@@ -6931,6 +7240,7 @@
 					addr  "0x5eb4c0"
 					build "10828683"
 					lib   "server"
+					vtidx "2"
 					// string
 				}
 				"CTFBotSpawner::ParseEventChangeAttributes"
@@ -6949,6 +7259,7 @@
 					addr  "0x5e8750"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"CSquadSpawner::~CSquadSpawner [D2]"
@@ -6958,6 +7269,7 @@
 					addr  "0x5e8750"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"CSquadSpawner::GetClassIcon"
@@ -6967,6 +7279,7 @@
 					addr  "0x5e8ae0"
 					build "10828683"
 					lib   "server"
+					vtidx "6"
 					// vtable
 				}
 				"CSquadSpawner::IsMiniBoss"
@@ -6976,6 +7289,7 @@
 					addr  "0x5e8fa0"
 					build "10828683"
 					lib   "server"
+					vtidx "8"
 					// vtable
 				}
 				"CSquadSpawner::HasAttribute"
@@ -6985,6 +7299,7 @@
 					addr  "0x5e8d80"
 					build "10828683"
 					lib   "server"
+					vtidx "9"
 					// vtable
 				}
 				"CSquadSpawner::Parse"
@@ -6994,6 +7309,7 @@
 					addr  "0x5e9400"
 					build "10828683"
 					lib   "server"
+					vtidx "1"
 					// string
 				}
 				"CSquadSpawner::Spawn"
@@ -7003,6 +7319,7 @@
 					addr  "0x5eb140"
 					build "10828683"
 					lib   "server"
+					vtidx "2"
 					// string
 				}
 				"CRandomChoiceSpawner::GetClassIcon"
@@ -7012,6 +7329,7 @@
 					addr  "0x5e8a30"
 					build "10828683"
 					lib   "server"
+					vtidx "6"
 					// vtable
 				}
 				"CRandomChoiceSpawner::IsMiniBoss"
@@ -7021,6 +7339,7 @@
 					addr  "0x5e8ef0"
 					build "10828683"
 					lib   "server"
+					vtidx "8"
 					// vtable
 				}
 				"CRandomChoiceSpawner::HasAttribute"
@@ -7030,6 +7349,7 @@
 					addr  "0x5e8cd0"
 					build "10828683"
 					lib   "server"
+					vtidx "9"
 					// vtable
 				}
 				"CRandomChoiceSpawner::Parse"
@@ -7039,6 +7359,7 @@
 					addr  "0x5e9250"
 					build "10828683"
 					lib   "server"
+					vtidx "1"
 					// string
 				}
 				"CRandomChoiceSpawner::GetClass"
@@ -7048,6 +7369,7 @@
 					addr  "0x5e8920"
 					build "10828683"
 					lib   "server"
+					vtidx "5"
 					// vtable
 				}
 				"CRandomChoiceSpawner::GetHealth"
@@ -7057,6 +7379,7 @@
 					addr  "0x5e8bb0"
 					build "10828683"
 					lib   "server"
+					vtidx "7"
 					// vtable
 				}
 				"CSpawnLocation::Parse"
@@ -7219,6 +7542,7 @@
 					addr  "0x5ecb00"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"CMissionPopulator::~CMissionPopulator [D2]"
@@ -7228,6 +7552,7 @@
 					addr  "0x5ecb00"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"CMissionPopulator::Parse"
@@ -7237,6 +7562,7 @@
 					addr  "0x5edfb0"
 					build "10828683"
 					lib   "server"
+					vtidx "1"
 					// string
 				}
 				"CMissionPopulator::Update"
@@ -7246,6 +7572,7 @@
 					addr  "0x5ef810"
 					build "10828683"
 					lib   "server"
+					vtidx "3"
 					// vtable
 				}
 				"CMissionPopulator::UpdateMission"
@@ -7273,6 +7600,7 @@
 					addr  "0x5ecbe0"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"CWave::~CWave [D2]"
@@ -7282,6 +7610,7 @@
 					addr  "0x5ecbe0"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"CWave::ActiveWaveUpdate"
@@ -7300,6 +7629,7 @@
 					addr  "0x5ee640"
 					build "10828683"
 					lib   "server"
+					vtidx "1"
 					// string
 				}
 				"CWave::WaveCompleteUpdate"
@@ -7318,6 +7648,7 @@
 					addr  "0x5ecd00"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"CWaveSpawnPopulator::~CWaveSpawnPopulator [D2]"
@@ -7327,6 +7658,7 @@
 					addr  "0x5ecd00"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"CWaveSpawnPopulator::Parse"
@@ -7336,6 +7668,7 @@
 					addr  "0x5eec40"
 					build "10828683"
 					lib   "server"
+					vtidx "1"
 					// string
 				}
 				"IPopulationSpawner::GetClassIcon"
@@ -7345,6 +7678,7 @@
 					addr  "0x5e8ba0"
 					build "10828683"
 					lib   "server"
+					vtidx "6"
 					// vtable
 				}
 				"IPopulationSpawner::HasAttribute"
@@ -7354,6 +7688,7 @@
 					addr  "0x131730"
 					build "10828683"
 					lib   "server"
+					vtidx "9"
 					// vtable index
 				}
 				"IPopulationSpawner::IsMiniBoss"
@@ -7363,6 +7698,7 @@
 					addr  "0x152770"
 					build "10828683"
 					lib   "server"
+					vtidx "8"
 					// vtable index
 				}
 				"CTankSpawner::~CTankSpawner [D0]"
@@ -7372,6 +7708,7 @@
 					addr  "0x5e8830"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"CTankSpawner::~CTankSpawner [D2]"
@@ -7381,6 +7718,7 @@
 					addr  "0x5e8830"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"CTankSpawner::GetClassIcon"
@@ -7390,6 +7728,7 @@
 					addr  "0x5e8b90"
 					build "10828683"
 					lib   "server"
+					vtidx "6"
 					// vtable
 				}
 				"CTankSpawner::IsMiniBoss"
@@ -7399,6 +7738,7 @@
 					addr  "0x1595e0"
 					build "10828683"
 					lib   "server"
+					vtidx "8"
 					// vtable index
 				}
 				"CTankSpawner::Parse"
@@ -7408,6 +7748,7 @@
 					addr  "0x5e9810"
 					build "10828683"
 					lib   "server"
+					vtidx "1"
 					// string
 				}
 				"CTankSpawner::Spawn"
@@ -7417,6 +7758,7 @@
 					addr  "0x5ec5f0"
 					build "10828683"
 					lib   "server"
+					vtidx "2"
 					// string
 				}
 				"CTFBotSpawner::~CTFBotSpawner [D0]"
@@ -7426,6 +7768,7 @@
 					addr  "0x5e87b0"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"CTFBotSpawner::~CTFBotSpawner [D2]"
@@ -7435,6 +7778,7 @@
 					addr  "0x5e87b0"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"CTFBotSpawner::Parse"
@@ -7444,6 +7788,7 @@
 					addr  "0x5e94c0"
 					build "10828683"
 					lib   "server"
+					vtidx "1"
 					// string
 				}
 				"CTFBotSpawner::Spawn"
@@ -7453,6 +7798,7 @@
 					addr  "0x5eb4c0"
 					build "10828683"
 					lib   "server"
+					vtidx "2"
 					// string
 				}
 				"CSquadSpawner::GetClassIcon"
@@ -7462,6 +7808,7 @@
 					addr  "0x5e8ae0"
 					build "10828683"
 					lib   "server"
+					vtidx "6"
 					// vtable
 				}
 				"CSquadSpawner::IsMiniBoss"
@@ -7471,6 +7818,7 @@
 					addr  "0x5e8fa0"
 					build "10828683"
 					lib   "server"
+					vtidx "8"
 					// vtable
 				}
 				"CSquadSpawner::HasAttribute"
@@ -7480,6 +7828,7 @@
 					addr  "0x5e8d80"
 					build "10828683"
 					lib   "server"
+					vtidx "9"
 					// vtable
 				}
 				"CRandomChoiceSpawner::GetClassIcon"
@@ -7489,6 +7838,7 @@
 					addr  "0x5e8a30"
 					build "10828683"
 					lib   "server"
+					vtidx "6"
 					// vtable
 				}
 				"CRandomChoiceSpawner::IsMiniBoss"
@@ -7498,6 +7848,7 @@
 					addr  "0x5e8ef0"
 					build "10828683"
 					lib   "server"
+					vtidx "8"
 					// vtable
 				}
 				"CRandomChoiceSpawner::HasAttribute"
@@ -7507,6 +7858,7 @@
 					addr  "0x5e8cd0"
 					build "10828683"
 					lib   "server"
+					vtidx "9"
 					// vtable
 				}
 				"CSpawnLocation::Parse"
@@ -7651,6 +8003,7 @@
 					addr  "0x568520"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable
 				}
 				"CTFBot::PhysicsSimulate"
@@ -7714,6 +8067,7 @@
 					addr  "0x5748d0"
 					build "10828683"
 					lib   "server"
+					vtidx "46"
 					// string
 				}
 				"CTFBotScenarioMonitor::DesiredScenarioAndClassAction"
@@ -7723,6 +8077,7 @@
 					addr  "0x573f90"
 					build "10828683"
 					lib   "server"
+					vtidx "91"
 					// string
 				}
 				"CTFBotScenarioMonitor::InitialContainedAction"
@@ -7732,6 +8087,7 @@
 					addr  "0x5747b0"
 					build "10828683"
 					lib   "server"
+					vtidx "50"
 					// vtable
 				}
 				"CTFBotMvMEngineerIdle::Update"
@@ -7786,6 +8142,7 @@
 					addr  "0x576fe0"
 					build "10828683"
 					lib   "server"
+					vtidx "45"
 					// vtable
 				}
 				"CTFBotUseItem::Update"
@@ -7795,6 +8152,7 @@
 					addr  "0x5770b0"
 					build "10828683"
 					lib   "server"
+					vtidx "46"
 					// string
 				}
 				"CTFBotUseItem::OnEnd"
@@ -7804,6 +8162,7 @@
 					addr  "0x576fd0"
 					build "10828683"
 					lib   "server"
+					vtidx "47"
 					// vtable
 				}
 				"CTFBotTacticalMonitor::Update"
@@ -7813,6 +8172,7 @@
 					addr  "0x5763e0"
 					build "10828683"
 					lib   "server"
+					vtidx "46"
 					// string
 				}
 				"CTFBotTacticalMonitor::OnCommandString"
@@ -7822,6 +8182,7 @@
 					addr  "0x575d50"
 					build "10828683"
 					lib   "server"
+					vtidx "82"
 					// string
 				}
 				"CTFBotTacticalMonitor::InitialContainedAction"
@@ -7831,6 +8192,7 @@
 					addr  "0x575a60"
 					build "10828683"
 					lib   "server"
+					vtidx "50"
 					// vtable
 				}
 				"CTFBotTacticalMonitor::OnNavAreaChanged"
@@ -7840,6 +8202,7 @@
 					addr  "0x576280"
 					build "10828683"
 					lib   "server"
+					vtidx "71"
 					// vtable
 				}
 				"CTFBotSpyAttack::Update"
@@ -7903,6 +8266,7 @@
 					addr  "0x588e90"
 					build "10828683"
 					lib   "server"
+					vtidx "46"
 					// string
 				}
 				"CTFBotDead::OnStart"
@@ -7912,6 +8276,7 @@
 					addr  "0x56dd60"
 					build "10828683"
 					lib   "server"
+					vtidx "45"
 					// vtable
 				}
 				"CTFBotUseItem::~CTFBotUseItem [D2]"
@@ -7921,6 +8286,7 @@
 					addr  "0x576f90"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"CTFBotDeliverFlag::UpgradeOverTime"
@@ -7939,6 +8305,7 @@
 					addr  "0x56dd90"
 					build "10828683"
 					lib   "server"
+					vtidx "46"
 					// vtable
 				}
 				"CTFBotEscortFlagCarrier::Update"
@@ -7948,6 +8315,7 @@
 					addr  "0x5896b0"
 					build "10828683"
 					lib   "server"
+					vtidx "46"
 					// string
 				}
 				"CTFBotEscortSquadLeader::Update"
@@ -7957,6 +8325,7 @@
 					addr  "0x5912f0"
 					build "10828683"
 					lib   "server"
+					vtidx "46"
 					// string
 				}
 				"CTFBotEscortSquadLeader::OnEnd"
@@ -7966,6 +8335,7 @@
 					addr  "0x14fa90"
 					build "10828683"
 					lib   "server"
+					vtidx "47"
 					// vtable index
 				}
 				"CTFBotEscortSquadLeader::~CTFBotEscortSquadLeader [D0]"
@@ -7975,6 +8345,7 @@
 					addr  "0x5911f0"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"CTFBotEscortSquadLeader::~CTFBotEscortSquadLeader [D2]"
@@ -7984,6 +8355,7 @@
 					addr  "0x5911f0"
 					build "10828683"
 					lib   "server"
+					vtidx "0"
 					// vtable index
 				}
 				"CTFBotSpyInfiltrate::Update"
@@ -8020,6 +8392,7 @@
 					addr  "0x564b50"
 					build "10828683"
 					lib   "server"
+					vtidx "56"
 					// vtable
 				}
 				"CTFBotLocomotion::Approach"
@@ -8029,6 +8402,7 @@
 					addr  "0x564be0"
 					build "10828683"
 					lib   "server"
+					vtidx "47"
 					// vtable
 				}
 				"CTFBotLocomotion::IsEntityTraversable"
@@ -8038,6 +8412,7 @@
 					addr  "0x564d10"
 					build "10828683"
 					lib   "server"
+					vtidx "95"
 					// vtable
 				}
 				"CTFBotLocomotion::GetRunSpeed"
@@ -8047,6 +8422,7 @@
 					addr  "0x564c30"
 					build "10828683"
 					lib   "server"
+					vtidx "83"
 					// vtable
 				}
 				"CTFBotLocomotion::Update"
@@ -8056,6 +8432,7 @@
 					addr  "0x564f40"
 					build "10828683"
 					lib   "server"
+					vtidx "43"
 					// vtable
 				}
 				"CTFBotVision::Update"
@@ -8065,6 +8442,7 @@
 					addr  "0x5676b0"
 					build "10828683"
 					lib   "server"
+					vtidx "43"
 					// vtable
 				}
 				"CTFBotVision::CollectPotentiallyVisibleEntities"
@@ -8074,6 +8452,7 @@
 					addr  "0x566fb0"
 					build "10828683"
 					lib   "server"
+					vtidx "58"
 					// string
 				}
 				"CTFBotVision::IsIgnored"
@@ -8083,6 +8462,7 @@
 					addr  "0x5672b0"
 					build "10828683"
 					lib   "server"
+					vtidx "63"
 					// vtable
 				}
 				"CTFBotVision::IsVisibleEntityNoticed"
@@ -8092,6 +8472,7 @@
 					addr  "0x567500"
 					build "10828683"
 					lib   "server"
+					vtidx "64"
 					// vtable
 				}
 				"CTFPlayer::ApplyGenericPushbackImpulse"
@@ -8587,6 +8968,7 @@
 					addr  "0x5323d0"
 					build "10828683"
 					lib   "server"
+					vtidx "3"
 					// vtable
 				}
 				"CTFPlayerMove::SetupMove"
@@ -8596,6 +8978,7 @@
 					addr  "0x5323e0"
 					build "10828683"
 					lib   "server"
+					vtidx "1"
 					// vtable
 				}
 				"CTFPlayer::PainSound"
