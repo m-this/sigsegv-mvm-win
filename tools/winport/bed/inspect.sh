@@ -3,14 +3,12 @@
 # investigation like disasm.txt. Runs from the repository root after the table
 # is derived; the dumps are under derived/.
 #
-# Two virtuals the sweep reaches with no Windows address: where do they sit?
-primary() { awk '/^\/\/ vtable/{n++} n==1' "$1"; }
-for pair in "CTFBaseBoss GetCurrencyValue" "CTFTankBoss GetCurrencyValue" "CBaseCombatWeapon SetSubType"; do
-  set -- $pair
-  l=derived/linux-vtables/$1.txt; w=derived/win-vtables/$1.txt
-  n=$(primary "$l" | grep -n "::$2(" | head -1 | cut -d: -f1)
-  echo "== $1::$2, linux row $n"
-  [ -n "$n" ] && primary "$l" | sed -n "$((n-4)),$((n+4))p"
-  echo "-- windows rows $((n-6))..$((n+2))"
-  [ -n "$n" ] && primary "$w" | sed -n "$((n-6)),$((n+2))p"
+# CBaseCombatWeapon::SetSubType is virtual and its neighbours are shared stubs.
+# CTFWeaponBuilder overrides it: the Windows slot where the builder's table
+# differs from the base weapon's near +0x3b8 is it.
+primary() { awk '/^\/\/ vtable/{n++} n==1 && /^\+0x/' "$1"; }
+for side in linux win; do
+  echo "== $side: CTFWeaponBuilder against CTFWeaponBase, +0x380..+0x3f0"
+  diff <(primary derived/$side-vtables/CTFWeaponBase.txt | awk '$1>="+0x0380:" && $1<="+0x03f0:"') \
+       <(primary derived/$side-vtables/CTFWeaponBuilder.txt | awk '$1>="+0x0380:" && $1<="+0x03f0:"')
 done

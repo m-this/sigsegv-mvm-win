@@ -1,11 +1,4 @@
-# Candidates for the functions the ed0004e sweep reached unresolved.
-# CBaseAnimating::LookupBone(const char *), ret 4 expected
-server 0x1cef70 40
-# CNavMesh::GetNavArea(const Vector &, float) const, ret 8 expected
-server 0x408770 40
-# CTFPlayer::GetObjectCount() const: m_aObjects.Count()
-server 0x4f3b30 8
-# CTFPlayerClassShared::SetCustomModel(const char *, bool), ret 8 expected
-server 0x532230 40
-# AllocPooledString_StaticConstantStringPointer: the hash's 0x7ed55d16
-server 0x281590 30
+# CNavMesh::GetNavArea(const Vector &, float): the functions naming its VPROF scope
+server string CNavMesh::GetNavArea
+# CTFPlayerClassShared::SetCustomModel(const char *, bool): does it end ret 8?
+server 0x532230 140
