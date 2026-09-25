@@ -1,7 +1,1 @@
 # Turned-away candidates for the next functions the sweep reached.
-# CTFBot::EquipBestWeaponForThreat(const CKnownEntity *): the call match
-server 0x550d40 40
-# CAttributeList::SetRuntimeAttributeValue(const CEconItemAttributeDefinition *, float)
-server 0x3c52f0 70
-# CZombie::SpawnAtPos: CreateEntityByName("tf_zombie", -1) first
-server string tf_zombie
