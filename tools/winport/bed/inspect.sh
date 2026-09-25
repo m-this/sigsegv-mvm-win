@@ -2,24 +2,46 @@
 # Questions for the address job that need its derived files, rewritten for each
 # investigation like disasm.txt. Runs from the repository root after the table
 # is derived; the dumps are under derived/.
-so=game-linux/tf/bin/server_srv.so
-for s in _ZNK13CTFBaseRocket14GetOwnerPlayerEv _ZN9CTFPlayer33GetEquippedWearableForLoadoutSlotEi _ZN9CTFPlayer11UpdateModelEv _Z17TE_DispatchEffectR16IRecipientFilterfRK6VectorPKcRK11CEffectData; do
-  echo "== linux $s"
-  objdump -d --no-show-raw-insn -M intel --disassemble="$s" "$so" | sed -n '/>:$/,$p' | head -70
-done
-# NextBotPlayer<CTFPlayer>::Release*Button: on Linux `and [this+buttons], ~BIT;
-# mov [this+timer], -1.0f; ret`. The Windows bodies by their bytes:
-# and dword ptr [ecx+X], imm8/imm32; mov dword ptr [ecx+Y], 0xbf800000; ret
 python3 - <<'PY'
-import re, pefile
+import json, re, pefile
 pe = pefile.PE("game-windows/tf/bin/server.dll")
 text = next(s for s in pe.sections if s.Name.rstrip(b"\0") == b".text")
 code, va = text.get_data(), text.VirtualAddress
-pat = re.compile(rb"\x83\xa1(....)(.)\xc7\x81(....)\x00\x00\x80\xbf\xc3|\x81\xa1(....)(....)\xc7\x81(....)\x00\x00\x80\xbf\xc3", re.S)
-for m in pat.finditer(code):
-    if m.group(1):
-        buttons, mask, timer = int.from_bytes(m.group(1), "little"), int.from_bytes(m.group(2), "little", signed=True) & 0xffffffff, int.from_bytes(m.group(3), "little")
-    else:
-        buttons, mask, timer = int.from_bytes(m.group(4), "little"), int.from_bytes(m.group(5), "little"), int.from_bytes(m.group(6), "little")
-    print(f"release body at rva {va + m.start():#x}: buttons +{buttons:#x} &= {mask:#010x}, timer +{timer:#x} = -1.0f")
+m = json.load(open("derived/matches.json"))
+def start(rva):
+    at = rva - va
+    while at > 0 and not (code[at - 1] in (0xCC, 0x90) and code[at - 2] in (0xCC, 0x90)):
+        at -= 1
+    return va + at
+def callers(rva):
+    out = set()
+    for x in re.finditer(rb"\xe8", code):
+        src = va + x.start()
+        if src + 5 + int.from_bytes(code[x.start()+1:x.start()+5], "little", signed=True) == rva:
+            out.add(start(src))
+    return out
+# CTFPlayer::UpdateModel: SetModel(GetModelName()), SetCollisionBounds, then OnNewModel
+sets = []
+for sym in ["_ZNK20CTFPlayerClassShared12GetModelNameEv", "_ZN11CBaseEntity18SetCollisionBoundsERK6VectorS2_", "_ZN21CMultiPlayerAnimState10OnNewModelEv"]:
+    e = m.get(sym)
+    print(sym, e)
+    if e: sets.append(callers(e["rva"]))
+if sets:
+    common = set.intersection(*sets) if len(sets) > 1 else sets[0]
+    print("UpdateModel candidates, calling all of them:", sorted(hex(x) for x in common))
+    if len(sets) > 1:
+        print("calling the first two:", sorted(hex(x) for x in sets[0] & sets[1]))
+# NextBotPlayer<CTFPlayer>::Release*Button, any encoding: an and on [ecx+X] then a store of -1.0f to [ecx+Y], within a few bytes
+for x in re.finditer(rb"\x00\x00\x80\xbf", code):
+    lo = max(0, x.start() - 20)
+    window = code[lo:x.start() + 6]
+    if (b"\x83\xa1" in window or b"\x81\xa1" in window or b"\x83\x61" in window or b"\x81\x61" in window) and b"\xc7\x81" in window or b"\xc7\x41" in window and (b"\x83\x61" in window or b"\x83\xa1" in window):
+        if window.find(b"\xc3", window.find(b"\x00\x00\x80\xbf")) != -1:
+            print(f"release-shaped at rva {va + lo:#x}: {window.hex(' ')}")
 PY
+# The vtable slots of CEconEntity::GiveTo and CTFBaseBoss::UpdateCollisionBounds, both empty bodies
+ls derived/linux-vtables | head -3; ls derived/win-vtables | head -3
+for c in CEconEntity CTFBaseBoss; do
+  f=$(ls derived/linux-vtables | grep -i "^${c}[._]" | head -1); echo "== linux $c ($f)"; grep -n -i "GiveTo\|UpdateCollisionBounds" "derived/linux-vtables/$f" | head; 
+  g=$(ls derived/win-vtables | grep -i "${c}@@\|^${c}[._]" | head -1); echo "== windows $c ($g)"; head -3 "derived/win-vtables/$g"
+done
