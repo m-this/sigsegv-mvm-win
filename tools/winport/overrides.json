@@ -838,5 +838,9 @@
  "_ZN15CTFBotFetchFlagC1Eb": {
   "rva": "0x589b30",
   "why": "read by hand: the first candidate, and of the two functions writing CTFBotFetchFlag's vtable 0x1089d6f0 the one that zeroes the Action fields and constructs the PathFollower member (+0x38), popping the bool (ret 4); 0x589bd0 is the deleting destructor"
+ },
+ "_ZN13CTFWeaponBase19StartEffectBarRegenEv": {
+  "rva": "0x638750",
+  "why": "read by hand: the first candidate, holding 'effectbar_recharge_rate', and the SDK's body: bWasFull when the owner's GetAmmoCount(GetEffectBarAmmo()) + 1 is GetMaxAmmo (0x522500), then m_flEffectBarRegenTime (+0x6c8, Linux +0x6d4) set to curtime plus InternalGetEffectBarRechargeTime when it is past or the bar was full; thiscall, no arguments, ret"
  }
 }
