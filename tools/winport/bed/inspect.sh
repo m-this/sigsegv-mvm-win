@@ -3,29 +3,32 @@
 # investigation like disasm.txt. Runs from the repository root after the table
 # is derived; the dumps are under derived/.
 so=game-linux/tf/bin/server_srv.so
-for s in _ZN14CAttributeList24SetRuntimeAttributeValueEPK28CEconItemAttributeDefinitionf _ZN9variant_t8SetOtherEPv _ZN17CBaseEntityOutput16ParseEventActionEPKc; do
+for s in _ZN6CTFBot24EquipBestWeaponForThreatEPK12CKnownEntity _ZN7CZombie10SpawnAtPosERK6VectorfiP11CBaseEntityNS_14SkeletonType_tE; do
   echo "== linux $s"
-  objdump -d --no-show-raw-insn -M intel --disassemble="$s" "$so" | sed -n '/>:$/,$p' | head -40
+  objdump -d --no-show-raw-insn -M intel --disassemble="$s" "$so" | sed -n '/>:$/,$p' | head -45
 done
-# CEconEntity::GiveTo is empty on Linux: the slot where CEconEntity has an
-# empty ret 4 and CTFWearable its own code. CTFBonesaw::GetWeaponID is
-# `mov eax, 11; ret`: the slots of CTFBonesaw holding exactly that.
 python3 - <<'PY'
-import pefile, struct, re
+import json, re, pefile
 pe = pefile.PE("game-windows/tf/bin/server.dll")
-base = pe.OPTIONAL_HEADER.ImageBase
-def rd(va, n): return pe.get_data(va - base, n)
-def vt(c):
-    m = re.search(r"vtable at (0x[0-9a-f]+) offset 0x0000", open(f"derived/win-vtables/{c}.txt").read(400))
-    return int(m.group(1), 16)
-e, w = vt("CEconEntity"), vt("CTFWearable")
-for i in range(200, 231):
-    fe = struct.unpack("<I", rd(e + 4 * i, 4))[0]; fw = struct.unpack("<I", rd(w + 4 * i, 4))[0]
-    print(f"  slot {i}: CEconEntity {fe:#x} {rd(fe, 6).hex(' ')} | CTFWearable {fw:#x} {rd(fw, 6).hex(' ')}")
-b = vt("CTFBonesaw")
-for i in range(0, 700):
-    try: f = struct.unpack("<I", rd(b + 4 * i, 4))[0]; code = rd(f, 6)
-    except Exception: break
-    if code == bytes.fromhex("b80b000000c3"):
-        print(f"CTFBonesaw slot {i}: {f:#x} returns 11")
+text = next(s for s in pe.sections if s.Name.rstrip(b"\0") == b".text")
+code, va = text.get_data(), text.VirtualAddress
+m = json.load(open("derived/matches.json"))
+def start(rva):
+    at = rva - va
+    while at > 0 and not (code[at - 1] in (0xCC, 0x90) and code[at - 2] in (0xCC, 0x90)):
+        at -= 1
+    return va + at
+# variant_t::SetOther(void *): opens on `cmp dword ptr [reg+0x10], 0xf; ja`
+for x in re.finditer(rb"\x83[\x78-\x7f]\x10\x0f\x77", code):
+    print(f"SetOther-shaped cmp at {va + x.start():#x} in {start(va + x.start()):#x}")
+# CBaseEntityOutput::ParseEventAction: a 0x1c pool Alloc, then CEventAction's constructor
+ctor = m.get("_ZN12CEventActionC1EPKc") or m.get("_ZN12CEventActionC2EPKc")
+print("CEventAction ctor", ctor)
+for x in re.finditer(rb"\x6a\x1c\x68(....)\xe8", code, re.S):
+    at = va + x.start()
+    near = code[x.start():x.start() + 48]
+    if ctor:
+        calls = [va + x.start() + i + 5 + int.from_bytes(near[i+1:i+5], "little", signed=True) for i in range(len(near) - 5) if near[i] == 0xE8]
+        if ctor["rva"] not in calls: continue
+    print(f"pool alloc of 0x1c at {at:#x} in {start(at):#x}, pool {int.from_bytes(x.group(1), 'little'):#x}")
 PY
