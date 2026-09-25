@@ -4,6 +4,7 @@
 #include "util/misc.h"
 #include "mem/extract.h"
 #include "util/rtti.h"
+#include "stub/baseentity.h"
 
 #include <boost/algorithm/string.hpp>
 
@@ -216,6 +217,18 @@ MemberFuncThunk<CAttributeManager *, void>  CAttributeManager::ft_ClearCache("CA
 MemberFuncThunk<CAttributeManager *, void, CBaseEntity *> CAttributeManager::ft_AddProvider("CAttributeManager::AddProvider");
 MemberFuncThunk<CAttributeManager *, void, CBaseEntity *> CAttributeManager::ft_RemoveProvider("CAttributeManager::RemoveProvider");
 MemberFuncThunk<CAttributeManager *, bool, CBaseEntity *> CAttributeManager::ft_IsProvidingTo("CAttributeManager::IsProvidingTo");
+
+#if defined _WINDOWS
+bool CAttributeManager::IsProvidingTo(CBaseEntity *receiver)
+{
+	IHasAttributes *attributes = receiver != nullptr ? (IHasAttributes *)receiver->m_pAttributes : nullptr;
+	if (attributes == nullptr) return false;
+	
+	auto &providers = attributes->GetAttributeManager()->m_Providers.Get();
+	CHandle<CBaseEntity> outer = this->m_hOuter;
+	return providers.Find(outer) != providers.InvalidIndex();
+}
+#endif
 
 MemberVFuncThunk<CAttributeManager *, float, float, CBaseEntity *, string_t, CUtlVector<CBaseEntity*> *> CAttributeManager::vt_ApplyAttributeFloatWrapper(TypeName<CAttributeManager>(), "CAttributeManager::ApplyAttributeFloatWrapper");
 MemberVFuncThunk<CAttributeManager *, string_t, string_t, CBaseEntity *, string_t, CUtlVector<CBaseEntity*> *> CAttributeManager::vt_ApplyAttributeStringWrapper(TypeName<CAttributeManager>(), "CAttributeManager::ApplyAttributeStringWrapper");

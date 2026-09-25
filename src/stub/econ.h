@@ -30,7 +30,12 @@ public:
 
 	void AddProvider(CBaseEntity *provider)    {        ft_AddProvider(this, provider);}
 	void RemoveProvider(CBaseEntity *provider) {        ft_RemoveProvider(this, provider);}
+#if defined _WINDOWS
+	/* Inlined in server.dll. The SDK's body, in econ.cpp. */
+	bool IsProvidingTo(CBaseEntity *receiver);
+#else
 	bool IsProvidingTo(CBaseEntity *receiver)  { return ft_IsProvidingTo(this, receiver);}
+#endif
 
 	float ApplyAttributeFloatWrapperFunc(float flValue, CBaseEntity *pInitiator, string_t iszAttribHook, CUtlVector<CBaseEntity*> *pItemList = nullptr) { return ft_ApplyAttributeFloatWrapper(this, flValue, pInitiator, iszAttribHook, pItemList);}
 
