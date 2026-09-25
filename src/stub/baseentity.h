@@ -324,7 +324,13 @@ public:
 	void CalcAbsolutePosition()                                                                                             {        ft_CalcAbsolutePosition          (this); }
 	void CalcAbsoluteVelocity()                                                                                             {        ft_CalcAbsoluteVelocity          (this); }
 	bool NameMatchesComplex(const char *pszNameOrWildcard)                                                                  { return ft_NameMatchesComplex            (this, pszNameOrWildcard); }
+#if defined _WINDOWS
+	/* No body in server.dll: MSVC inlined it. Written in baseentity.cpp from
+	 * the Linux body, the SDK's Matcher_NamesMatch on m_iClassname. */
+	bool ClassMatchesComplex(const char *pszClassOrWildcard);
+#else
 	bool ClassMatchesComplex(const char *pszClassOrWildcard)                                                                { return ft_ClassMatchesComplex           (this, pszClassOrWildcard); }
+#endif
 	void SetAbsOrigin(const Vector& absOrigin)                                                                              {        ft_SetAbsOrigin                  (this, absOrigin); }
 	void SetAbsAngles(const QAngle& absAngles)                                                                              {        ft_SetAbsAngles                  (this, absAngles); }
 	void SetAbsVelocity(const Vector& absVelocity)                                                                          {        ft_SetAbsVelocity                (this, absVelocity); }

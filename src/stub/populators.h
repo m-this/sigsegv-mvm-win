@@ -196,7 +196,19 @@ public:
 	void ForceFinish()                                              { ft_ForceFinish       (this); }
 	void ActiveWaveUpdate()                                         { ft_ActiveWaveUpdate  (this); }
 	void WaveCompleteUpdate()                                       { ft_WaveCompleteUpdate(this); }
+#if defined _WINDOWS
+	/* No body in server.dll: MSVC inlined it. The Linux one: done when every
+	 * wave spawn is either support or finished. */
+	bool IsDoneWithNonSupportWaves()
+	{
+		for (CWaveSpawnPopulator *ws : this->m_WaveSpawns) {
+			if (ws != nullptr && !ws->m_bSupportWave && ws->m_state != CWaveSpawnPopulator::DONE) return false;
+		}
+		return true;
+	}
+#else
 	bool IsDoneWithNonSupportWaves()                                { return ft_IsDoneWithNonSupportWaves(this); }
+#endif
 	//CUtlVector<CWaveSpawnPopulator *> GetWaveSpawns()	            { return reinterpret_cast<T>((uintptr_t)this + 0x18 - 0x0c); }
 	
 	CUtlVector<CWaveSpawnPopulator *> m_WaveSpawns;

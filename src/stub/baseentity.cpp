@@ -328,3 +328,24 @@ void UnloadAllCustomThinkFunc()
 		}
 	}
 }
+
+
+#if defined _WINDOWS
+/* A null classname matches a null, empty or "*" query. Otherwise compare
+ * letter by letter ignoring case; the query matches if it ends with the name
+ * or reaches a '*' where they differ. */
+bool CBaseEntity::ClassMatchesComplex(const char *pszClassOrWildcard)
+{
+	const char *name = STRING(this->m_iClassname);
+	if (name == nullptr) {
+		return pszClassOrWildcard == nullptr || *pszClassOrWildcard == '\0' || *pszClassOrWildcard == '*';
+	}
+	const char *query = pszClassOrWildcard;
+	if (query == name) return true;
+	for (; *name != '\0'; ++name, ++query) {
+		if (*query == '\0') return false;
+		if (*name != *query && tolower((unsigned char)*name) != tolower((unsigned char)*query)) return *query == '*';
+	}
+	return *query == '\0' || *query == '*';
+}
+#endif
