@@ -10230,7 +10230,7 @@ namespace Mod::Attr::Custom_Attributes
 #if defined _WINDOWS
 				/* The bed found "is extra loadout item" missing from the schema
 				 * after this ran: say what the schema made of the file. */
-				if (!ok || err.Count() > 0 || GetItemSchema()->GetAttributeDefinitionByName("is extra loadout item") == nullptr) {
+				{
 					Warning("SigMod: custom attributes: BInitAttributes %s, %d errors, \"is extra loadout item\" %s\n",
 						ok ? "succeeded" : "failed", err.Count(),
 						GetItemSchema()->GetAttributeDefinitionByName("is extra loadout item") != nullptr ? "present" : "missing");
@@ -10298,6 +10298,9 @@ namespace Mod::Attr::Custom_Attributes
 
 		virtual bool OnLoad() override
 		{
+#if defined _WINDOWS
+			Warning("SigMod: custom attributes: OnLoad, item schema %s\n", GetItemSchema() != nullptr ? "present" : "absent");
+#endif
 			if (GetItemSchema() != nullptr)
 				LoadAttributes();
 			
