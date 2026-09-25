@@ -698,5 +698,9 @@
  "_ZNK12CTFGameRules15DropSpellPickupERK6Vectori": {
   "rva": "0x48a100",
   "why": "read by hand: tests IsUsingSpells as Linux does (a global's +0x30, the rules' +0x11b8 against 4, +0xc82), then CreateNoSpawn (0x1ee780) of \"tf_spell_pickup\" at the position raised by a constant, and stores the tier (its second argument) in the pickup, the Linux body; thiscall, (const Vector &, int). The other function creating the pickup (0x495900) has it inlined"
+ },
+ "_ZN14CBaseAnimating16LookupAttachmentEPKc": {
+  "rva": "0x1ceea0",
+  "why": "read by hand: the function before LookupBone (0x1ceef0) and shaped like it; locks the studio header at +0x498 when missing, returns 0 without one, else Studio_FindAttachment (0x21d000) on it and the name plus one, the SDK body; thiscall, ret 4"
  }
 }
