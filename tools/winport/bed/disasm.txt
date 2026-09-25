@@ -1,3 +1,1 @@
 # Turned-away candidates for the next functions the sweep reached.
-# CSoundEmitterSystemBase::AddSoundsFromFile: the function after the hash (ends ret 4 at 0x3aed), which ends ret 0x10 after the "No such file" message
-bin/SoundEmitterSystem.dll 0x3af0 45
