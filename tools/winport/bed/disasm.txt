@@ -1,4 +1,2 @@
-# CBaseEntity::StopSound(const char *): the call match turned away, from CPasstimeGun::Throw
-server 0x32f2c0 90
 # CTFPlayer::TeamFortress_SetSpeed: the call match turned away, from CTFGameRules::SetupOnRoundRunning
-server 0x52d120 60
+server 0x52d120 260

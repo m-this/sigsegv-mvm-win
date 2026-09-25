@@ -1079,6 +1079,15 @@
 					vtidx "262"
 					// verified: read by hand from the vtables: Linux slot 268 less 6, as CanHolster (265, 259) is; CTFCompoundBow inherits it there, CTFWeaponBuilder has its own Deploy in the same slot, and CanDeploy and Holster beside it differ between the two as on Linux
 				}
+				"CBaseEntity::StopSound"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity9StopSoundEPKc"
+					addr  "0x32f2c0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the call match turned away, and the newer SDK's body: entindex from the edict, soundemitterbase->GetSoundIndex(name) through the same slot as Linux (+0x1c), and on a valid handle g_SoundEmitterSystem.StopSoundByHandle(entindex, name, handle); pops 4
+				}
 				"CBaseEntity::TakeDamage"
 				{
 					type  "fixed"
