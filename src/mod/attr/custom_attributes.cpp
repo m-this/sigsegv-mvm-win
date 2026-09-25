@@ -10394,6 +10394,18 @@ namespace Mod::Attr::Custom_Attributes
 
 		virtual void FrameUpdatePostEntityThink() override
 		{
+#if defined _WINDOWS
+			/* The bed saw the item schema reinitialised in place after
+			 * LoadAttributes, every custom attribute gone by the first kill and
+			 * the popfile parser reading null definitions. Load them again when
+			 * the last of the file is missing; the indices are the file's, so
+			 * every cached index stays right. */
+			if (gpGlobals->tickcount % 8 == 0 && GetItemSchema() != nullptr
+				&& GetItemSchema()->GetAttributeDefinitionByName("is extra loadout item") == nullptr) {
+				Warning("SigMod: custom attributes: the schema lost them, loading again\n");
+				LoadAttributes();
+			}
+#endif
 			if (!respawnTimesForId.empty() && TFGameRules()->State_Get() != GR_STATE_RND_RUNNING) {
 				respawnTimesForId.clear();
 			}
