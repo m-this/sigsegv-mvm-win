@@ -534,9 +534,17 @@ public:
 	void ClearDisguiseWeaponList() { ft_ClearDisguiseWeaponList(this); }
 	CEconItemView *GetLoadoutItem(int classIndex, int slot, bool bReportWhitelistFails = false) { return ft_GetLoadoutItem(this, classIndex, slot, bReportWhitelistFails); }
 
+#if defined _WINDOWS
+	/* Each is AttribHookValue<float>(1.0f, "head_scale", this), which MSVC
+	 * inlined into every caller. The same call through SigMod's own. */
+	float GetDesiredHeadScale();
+	float GetDesiredHandScale();
+	float GetDesiredTorsoScale();
+#else
 	float GetDesiredHeadScale() { return ft_GetDesiredHeadScale(this); }
 	float GetDesiredHandScale() { return ft_GetDesiredHandScale(this); }
 	float GetDesiredTorsoScale() { return ft_GetDesiredTorsoScale(this); }
+#endif
 
 	void SetGrapplingHookTarget(CBaseEntity *target, bool bleed) {        ft_SetGrapplingHookTarget   (this, target, bleed); }
 

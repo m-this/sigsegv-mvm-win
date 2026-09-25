@@ -374,6 +374,11 @@ MemberFuncThunk<      CTFPlayer *, bool                            > CTFPlayer::
 MemberFuncThunk<      CTFPlayer *, float                           > CTFPlayer::ft_GetDesiredHeadScale         ("CTFPlayer::GetDesiredHeadScale");
 MemberFuncThunk<      CTFPlayer *, float                           > CTFPlayer::ft_GetDesiredHandScale         ("CTFPlayer::GetDesiredHandScale");
 MemberFuncThunk<      CTFPlayer *, float                           > CTFPlayer::ft_GetDesiredTorsoScale        ("CTFPlayer::GetDesiredTorsoScale");
+#if defined _WINDOWS
+float CTFPlayer::GetDesiredHeadScale()  { return CAttributeManager::AttribHookValue<float>(1.0f, "head_scale",  this); }
+float CTFPlayer::GetDesiredHandScale()  { return CAttributeManager::AttribHookValue<float>(1.0f, "hand_scale",  this); }
+float CTFPlayer::GetDesiredTorsoScale() { return CAttributeManager::AttribHookValue<float>(1.0f, "torso_scale", this); }
+#endif
 MemberFuncThunk<      CTFPlayer *, void, CBaseEntity *, bool       > CTFPlayer::ft_SetGrapplingHookTarget      ("CTFPlayer::SetGrapplingHookTarget");
 
 
