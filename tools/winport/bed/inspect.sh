@@ -3,28 +3,21 @@
 # investigation like disasm.txt. Runs from the repository root after the table
 # is derived; the dumps are under derived/.
 #
-# g_aPlayerClassNames_NonLocalized: an array of pointers to "Undefined",
-# "Scout", "Sniper", ... Every array of pointers in server.dll whose entries 1
-# to 9 name the nine classes, with what each entry points to.
+# Action<CZombie>'s destructor: slot 0 of its table is the scalar deleting
+# destructor; the destructor proper is the first function it calls.
+ls derived/win-vtables | grep -i 'czombie' | grep -i action
 python3 - <<'PY'
-import struct, pefile
+import re, capstone, pefile
 pe = pefile.PE("game-windows/tf/bin/server.dll", fast_load=True)
 base = pe.OPTIONAL_HEADER.ImageBase
-img = pe.get_memory_mapped_image()
-def cstr(va):
-    off = va - base
-    if not 0 <= off < len(img): return None
-    end = img.find(b"\0", off, off + 64)
-    return img[off:end].decode("latin1") if end > 0 else None
-classes = ["scout", "sniper", "soldier", "demoman", "medic", "heavy", "pyro", "spy", "engineer"]
-for sec in pe.sections:
-    name = sec.Name.rstrip(b"\0").decode()
-    if name not in (".data", ".rdata"): continue
-    start = sec.VirtualAddress
-    data = img[start:start + sec.Misc_VirtualSize]
-    for off in range(0, len(data) - 13 * 4, 4):
-        ptrs = struct.unpack_from("<13I", data, off)
-        names = [cstr(p) for p in ptrs[1:10]]
-        if all(n and n.lower().startswith(c) for n, c in zip(names, classes)):
-            print(f"{name} rva 0x{start + off:x}: " + ", ".join(repr(cstr(p)) for p in ptrs))
+text = next(s for s in pe.sections if s.Name.rstrip(b"\0") == b".text")
+code = text.get_data(); tva = base + text.VirtualAddress
+md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
+for f in ["VCZombie____Action.txt", "VCTFBot____Action.txt"]:
+    try: rows = [l for l in open("derived/win-vtables/" + f) if l.startswith("+0x0000:")]
+    except FileNotFoundError: print("no", f); continue
+    va = int(rows[0].split()[1], 16)
+    print(f"== {f} slot 0 at rva 0x{va - base:x}")
+    for i in list(md.disasm(code[va - tva:va - tva + 0x60], va))[:14]:
+        print(f"  0x{i.address - base:x}  {i.mnemonic} {i.op_str}")
 PY
