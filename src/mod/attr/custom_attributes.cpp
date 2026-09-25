@@ -7022,7 +7022,13 @@ namespace Mod::Attr::Custom_Attributes
 		if (clipAttr != 0) {
 			return clipAttr;
 		}
+#if defined _WINDOWS
+		/* GetWpnData is inlined everywhere in server.dll, and the game's own
+		 * GetMaxClip1 is exactly GetWpnData().iMaxClip1. */
+		return DETOUR_MEMBER_CALL();
+#else
 		return weapon->GetWpnData().iMaxClip1;
+#endif
 		//return DETOUR_MEMBER_CALL();
 	}
 

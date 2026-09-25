@@ -496,8 +496,15 @@ public:
 	void RemoveCurrency(int currency)                           { ft_RemoveCurrency  (this, currency);  }
 	bool DoClassSpecialSkill()									{ return ft_DoClassSpecialSkill(this); }
 
+#if defined _WINDOWS
+	/* Inlined in server.dll; MSVC keeps IHasAttributes in its own vtable, and
+	 * the call goes through it, in tfplayer.cpp. */
+	CAttributeList *GetAttributeList();
+	CAttributeManager *GetAttributeManager();
+#else
 	CAttributeList *GetAttributeList()								{ return ft_GetAttributeList  (this); }
 	CAttributeManager *GetAttributeManager()						{ return ft_GetAttributeManager  (this); }
+#endif
 	CBaseEntity *GiveNamedItem(const char *pszName, int iSubType, CEconItemView *pItem, bool bDontTranslateForClass) { return vt_GiveNamedItem(this, pszName, iSubType, pItem, bDontTranslateForClass); }
 
 	void Taunt(taunts_t taunt, int taunt_concept)                                 { ft_Taunt                   (this, taunt, taunt_concept); }

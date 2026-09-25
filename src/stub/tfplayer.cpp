@@ -7,6 +7,7 @@
 #include "util/misc.h"
 #include "mem/extract.h"
 #include "util/iterate.h"
+#include "util/rtti.h"
 
 #if defined _LINUX
 
@@ -340,6 +341,10 @@ MemberFuncThunk<      CTFPlayer *, void                            > CTFPlayer::
 MemberFuncThunk<      CTFPlayer *, void                            > CTFPlayer::ft_UseActionSlotItemReleased            ("CTFPlayer::UseActionSlotItemReleased");
 MemberFuncThunk<      CTFPlayer *, CAttributeManager *             > CTFPlayer::ft_GetAttributeManager              ("CTFPlayer::GetAttributeManager");
 MemberFuncThunk<      CTFPlayer *, CAttributeList*                 > CTFPlayer::ft_GetAttributeList                    ("CTFPlayer::GetAttributeList");
+#if defined _WINDOWS
+CAttributeList *CTFPlayer::GetAttributeList()       { return rtti_cast<IHasAttributes *>(this)->GetAttributeList(); }
+CAttributeManager *CTFPlayer::GetAttributeManager() { return rtti_cast<IHasAttributes *>(this)->GetAttributeManager(); }
+#endif
 MemberFuncThunk<      CTFPlayer *, CBaseEntity *, int, bool        > CTFPlayer::ft_GetEntityForLoadoutSlot            ("CTFPlayer::GetEntityForLoadoutSlot");
 MemberFuncThunk<      CTFPlayer *, void                            > CTFPlayer::ft_RemoveInvisibility               ("CTFPlayer::RemoveInvisibility");
 MemberFuncThunk<      CTFPlayer *, void, PlayerAnimEvent_t, int    > CTFPlayer::ft_DoAnimationEvent            ("CTFPlayer::DoAnimationEvent");

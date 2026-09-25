@@ -3,6 +3,7 @@
 #include "stub/strings.h"
 #include "util/misc.h"
 #include "mem/extract.h"
+#include "util/rtti.h"
 
 #include <boost/algorithm/string.hpp>
 
@@ -211,7 +212,14 @@ MemberFuncThunk<const CEconItemDefinition *, void, IEconItemAttributeIterator *>
 MemberFuncThunk<CAttributeManager *, float, float, CBaseEntity *, string_t, CUtlVector<CBaseEntity*> *> CAttributeManager::ft_ApplyAttributeFloatWrapper("CAttributeManager::ApplyAttributeFloatWrapper");
 MemberFuncThunk<CAttributeManager *, string_t, string_t, CBaseEntity *, string_t, CUtlVector<CBaseEntity*> *> CAttributeManager::ft_ApplyAttributeStringWrapper("CAttributeManager::ApplyAttributeStringWrapper");
 MemberFuncThunk<const CAttributeManager *, int> CAttributeManager::ft_GetGlobalCacheVersion("CAttributeManager::GetGlobalCacheVersion");
+#if defined _WINDOWS
+/* ClearCache is a GCC clone on Linux and has no body of its own in server.dll:
+ * CAttributeManager::OnAttributeValuesChanged is { ClearCache(); } and MSVC
+ * inlined it there, so calling that one non-virtually is ClearCache. */
+MemberFuncThunk<CAttributeManager *, void>  CAttributeManager::ft_ClearCache("CAttributeManager::OnAttributeValuesChanged");
+#else
 MemberFuncThunk<CAttributeManager *, void>  CAttributeManager::ft_ClearCache("CAttributeManager::ClearCache [clone]");
+#endif
 MemberFuncThunk<CAttributeManager *, void, CBaseEntity *> CAttributeManager::ft_AddProvider("CAttributeManager::AddProvider");
 MemberFuncThunk<CAttributeManager *, void, CBaseEntity *> CAttributeManager::ft_RemoveProvider("CAttributeManager::RemoveProvider");
 MemberFuncThunk<CAttributeManager *, bool, CBaseEntity *> CAttributeManager::ft_IsProvidingTo("CAttributeManager::IsProvidingTo");
@@ -219,7 +227,17 @@ MemberFuncThunk<CAttributeManager *, bool, CBaseEntity *> CAttributeManager::ft_
 MemberVFuncThunk<CAttributeManager *, float, float, CBaseEntity *, string_t, CUtlVector<CBaseEntity*> *> CAttributeManager::vt_ApplyAttributeFloatWrapper(TypeName<CAttributeManager>(), "CAttributeManager::ApplyAttributeFloatWrapper");
 MemberVFuncThunk<CAttributeManager *, string_t, string_t, CBaseEntity *, string_t, CUtlVector<CBaseEntity*> *> CAttributeManager::vt_ApplyAttributeStringWrapper(TypeName<CAttributeManager>(), "CAttributeManager::ApplyAttributeStringWrapper");
 MemberVFuncThunk<CAttributeManager *, float, float, CBaseEntity *, string_t, CUtlVector<CBaseEntity*> *> CAttributeManager::vt_ApplyAttributeFloat(TypeName<CAttributeManager>(), "CAttributeManager::ApplyAttributeFloat");
+MemberVFuncThunk<CAttributeManager *, void> CAttributeManager::vt_OnAttributeValuesChanged(TypeName<CAttributeManager>(), "CAttributeManager::OnAttributeValuesChanged");
 MemberVFuncThunk<CAttributeManager *, string_t, string_t, CBaseEntity *, string_t, CUtlVector<CBaseEntity*> *> CAttributeManager::vt_ApplyAttributeString(TypeName<CAttributeManager>(), "CAttributeManager::ApplyAttributeString");
+
+#if defined _WINDOWS
+void CAttributeList::NotifyManagerOfAttributeValueChanges()
+{
+	if (this->m_pManager != nullptr) {
+		CAttributeManager::vt_OnAttributeValuesChanged(this->m_pManager);
+	}
+}
+#endif
 
 StaticFuncThunk<int, int, const char *, const CBaseEntity *, CUtlVector<CBaseEntity *> *, bool>     CAttributeManager::ft_AttribHookValue_int  ("CAttributeManager::AttribHookValue<int>");
 StaticFuncThunk<float, float, const char *, const CBaseEntity *, CUtlVector<CBaseEntity *> *, bool> CAttributeManager::ft_AttribHookValue_float("CAttributeManager::AttribHookValue<float>");
@@ -302,6 +320,18 @@ void CEconItemAttributeDefinition::ConvertValueToString(const attribute_data_uni
 
 
 MemberFuncThunk<      CEconItemAttribute *, void>                           CEconItemAttribute::ft_ctor         ("CEconItemAttribute::CEconItemAttribute [C1]");
+
+#if defined _WINDOWS
+void CEconItemAttribute::Ctor(CEconItemAttribute *ptr)
+{
+	/* The embedded network var's vtable, then Init(). */
+	ptr->__pad00                     = (void *)RTTI::GetVTable<CEconItemAttribute>();
+	ptr->m_iAttributeDefinitionIndex = INVALID_ATTRIB_DEF_INDEX;
+	ptr->m_iRawValue32               = 0.0f;
+	ptr->m_nRefundableCurrency       = 0;
+}
+#endif
+
 MemberFuncThunk<const CEconItemAttribute *, CEconItemAttributeDefinition *> CEconItemAttribute::ft_GetStaticData("CEconItemAttribute::GetStaticData");
 
 

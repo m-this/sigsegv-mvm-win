@@ -55,6 +55,7 @@ public:
 	static MemberVFuncThunk<CAttributeManager *, float, float, CBaseEntity *, string_t, CUtlVector<CBaseEntity*> *> vt_ApplyAttributeFloatWrapper;
 	static MemberVFuncThunk<CAttributeManager *, string_t, string_t, CBaseEntity *, string_t, CUtlVector<CBaseEntity*> *> vt_ApplyAttributeString;
 	static MemberVFuncThunk<CAttributeManager *, float, float, CBaseEntity *, string_t, CUtlVector<CBaseEntity*> *> vt_ApplyAttributeFloat;
+	static MemberVFuncThunk<CAttributeManager *, void> vt_OnAttributeValuesChanged;
 
 	static StaticFuncThunk<int, int, const char *, const CBaseEntity *, CUtlVector<CBaseEntity *> *, bool>     ft_AttribHookValue_int;
 	static StaticFuncThunk<float, float, const char *, const CBaseEntity *, CUtlVector<CBaseEntity *> *, bool> ft_AttribHookValue_float;
@@ -257,7 +258,12 @@ public:
 	void DestroyAllAttributes()                                        {        ft_DestroyAllAttributes  (this); }
 	void SetRuntimeAttributeValue(CEconItemAttributeDefinition *pAttrDef, float value) {        ft_SetRuntimeAttributeValue  (this, pAttrDef, value); }
 	void SetRuntimeAttributeRefundableCurrency(CEconItemAttributeDefinition *pAttrDef, int value) {        ft_SetRuntimeAttributeRefundableCurrency  (this, pAttrDef, value); }
+#if defined _WINDOWS
+	/* Inlined into every caller in server.dll. The SDK's body, in econ.cpp. */
+	void NotifyManagerOfAttributeValueChanges();
+#else
 	void NotifyManagerOfAttributeValueChanges()                        {        ft_NotifyManagerOfAttributeValueChanges  (this); }
+#endif
 
 	CUtlVector<CEconItemAttribute>& Attributes() { return this->m_Attributes; }
 	void AddStringAttribute(CEconItemAttributeDefinition *pAttrDef, std::string value);
@@ -511,7 +517,7 @@ public:
 		/* using an arbitrary buffer size that's basically guaranteed to always
 		 * be big enough, even if CEconItemAttribute grows in the future */
 		auto ptr = reinterpret_cast<CEconItemAttribute *>(::operator new(0x20));
-		ft_ctor(ptr);
+		Ctor(ptr);
 		ptr->m_iAttributeDefinitionIndex = iDefIndex;
 		return ptr;
 	}
@@ -522,12 +528,12 @@ public:
 	}
 	CEconItemAttribute() 
 	{
-		ft_ctor(this);
+		Ctor(this);
 	}
 
 	CEconItemAttribute( const attrib_definition_index_t iAttributeIndex, float flValue ) 
 	{
-		ft_ctor(this); 
+		Ctor(this); 
 		m_iAttributeDefinitionIndex = iAttributeIndex; 
 		m_iRawValue32 = flValue;
 	}
@@ -541,6 +547,13 @@ public:
 
 	friend class CAttributeList;
 private:
+#if defined _WINDOWS
+	/* server.dll has no out-of-line constructor: MSVC inlined it. The SDK's
+	 * body, in econ.cpp. */
+	static void Ctor(CEconItemAttribute *ptr);
+#else
+	static void Ctor(CEconItemAttribute *ptr) { ft_ctor(ptr); }
+#endif
 	static MemberFuncThunk<      CEconItemAttribute *, void>                           ft_ctor;
 	static MemberFuncThunk<const CEconItemAttribute *, CEconItemAttributeDefinition *> ft_GetStaticData;
 	
