@@ -94,6 +94,16 @@ Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort
   Get-Content $_.FullName | Where-Object { $_ -notmatch 'AddrManager|IDetour_Sym|LoadDetours|Link FAIL|KeyValues Error|Lang, |\[AP\] debug|tf2_archipelago.smx\] The (death|message) request|cannot get the (unlock set|mission list)' } |
     Select-Object -Last 15 | Write-Host
 }
+# The tails above are cut before a fault's header when the stack dump is long,
+# and the artifact is not reachable from everywhere the port is worked on:
+# each fault header with the first frames of its chain, per console.
+Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort-Object Name | ForEach-Object {
+  $name = $_.Name
+  Select-String -Path $_.FullName -Pattern '^SigMod: fault ' -Context 0,6 | Select-Object -First 4 | ForEach-Object {
+    Write-Host "fault in ${name}: $($_.Line)"
+    $_.Context.PostContext | ForEach-Object { Write-Host "  $_" }
+  }
+}
 # Every unresolved function a mission reached, across all the server's starts.
 $unresolved = Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
   Select-String -Pattern '(?:called unresolved function|no vtable index) "([^"]+)"' | ForEach-Object { $_.Matches[0].Groups[1].Value } | Sort-Object -Unique
