@@ -44,6 +44,7 @@ MemberVFuncThunk<CTeamplayRoundBasedRules *, float, int, CBasePlayer *>   CTeamp
 IMPL_SENDPROP(bool,           CTFGameRules, m_bPlayingMedieval,      CTFGameRulesProxy);
 IMPL_SENDPROP(bool,           CTFGameRules, m_bPowerupMode,          CTFGameRulesProxy);
 IMPL_SENDPROP(bool,           CTFGameRules, m_bPlayingMannVsMachine, CTFGameRulesProxy);
+IMPL_SENDPROP(int,            CTFGameRules, m_iGlobalAttributeCacheVersion, CTFGameRulesProxy);
 IMPL_SENDPROP(char[MAX_PATH], CTFGameRules, m_pszCustomUpgradesFile, CTFGameRulesProxy);
 IMPL_SENDPROP(float,           CTFGameRules, m_flRestartRoundTime, CTFGameRulesProxy);
 IMPL_SENDPROP(int[MAX_PLAYERS + 1],         CTFGameRules, m_ePlayerWantsRematch, CTFGameRulesProxy);

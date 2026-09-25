@@ -25,7 +25,12 @@ public:
 	float ApplyAttributeFloat( float flValue, CBaseEntity *pInitiator, string_t iszAttribHook, CUtlVector<CBaseEntity*> *pItemList = NULL ) { return vt_ApplyAttributeFloat(this, flValue, pInitiator, iszAttribHook, pItemList);}
 	string_t ApplyAttributeStringWrapper( string_t strValue, CBaseEntity *pInitiator, string_t iszAttribHook, CUtlVector<CBaseEntity*> *pItemList = NULL ) { return ft_ApplyAttributeStringWrapper(this, strValue, pInitiator, iszAttribHook, pItemList);}
 	string_t ApplyAttributeString( string_t strValue, CBaseEntity *pInitiator, string_t iszAttribHook, CUtlVector<CBaseEntity*> *pItemList = NULL ) { return vt_ApplyAttributeString(this, strValue, pInitiator, iszAttribHook, pItemList);}
+#if defined _WINDOWS
+	/* Inlined in server.dll: the game rules' networked cache version, or 0. In econ.cpp. */
+	int GetGlobalCacheVersion( ) const;
+#else
 	int GetGlobalCacheVersion( ) const                                  { return ft_GetGlobalCacheVersion(this);}
+#endif
 	void ClearCache() { ft_ClearCache(this);}
 
 	void AddProvider(CBaseEntity *provider)    {        ft_AddProvider(this, provider);}

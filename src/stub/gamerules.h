@@ -190,6 +190,7 @@ class CTFGameRules : public CTeamplayRoundBasedRules
 public:
 	bool IsInMedievalMode() const                { NULL_RET(false); return this->m_bPlayingMedieval; }
 	bool IsMannVsMachineMode() const             { NULL_RET(false); return this->m_bPlayingMannVsMachine; }
+	int GetGlobalAttributeCacheVersion() const   { NULL_RET(0);     return this->m_iGlobalAttributeCacheVersion; }
 	const char *GetCustomUpgradesFile() const    { NULL_RET(""   ); return this->m_pszCustomUpgradesFile; }
 	float GetRestartRoundTime()                  { NULL_RET(    0); return this->m_flRestartRoundTime; }
 	bool IsCompetitive() const                { NULL_RET(false); return this->m_bPlayingMedieval; }
@@ -229,6 +230,7 @@ public:
 private:
 	DECL_SENDPROP(bool,           m_bPlayingMedieval);
 	DECL_SENDPROP(bool,           m_bPlayingMannVsMachine);
+	DECL_SENDPROP(int,            m_iGlobalAttributeCacheVersion);
 	DECL_SENDPROP(char[MAX_PATH], m_pszCustomUpgradesFile);
 	DECL_SENDPROP(float,           m_flRestartRoundTime);
 	

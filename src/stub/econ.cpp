@@ -5,6 +5,7 @@
 #include "mem/extract.h"
 #include "util/rtti.h"
 #include "stub/baseentity.h"
+#include "stub/gamerules.h"
 
 #include <boost/algorithm/string.hpp>
 
@@ -219,6 +220,11 @@ MemberFuncThunk<CAttributeManager *, void, CBaseEntity *> CAttributeManager::ft_
 MemberFuncThunk<CAttributeManager *, bool, CBaseEntity *> CAttributeManager::ft_IsProvidingTo("CAttributeManager::IsProvidingTo");
 
 #if defined _WINDOWS
+int CAttributeManager::GetGlobalCacheVersion() const
+{
+	return TFGameRules() != nullptr ? TFGameRules()->GetGlobalAttributeCacheVersion() : 0;
+}
+
 bool CAttributeManager::IsProvidingTo(CBaseEntity *receiver)
 {
 	IHasAttributes *attributes = receiver != nullptr ? (IHasAttributes *)receiver->m_pAttributes : nullptr;
