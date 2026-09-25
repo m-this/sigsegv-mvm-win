@@ -690,5 +690,9 @@
   "name": "CNavMesh::GetNavArea [vec]",
   "rva": "0x4087f0",
   "why": "GetNearestNavArea (0x408de0, the function naming its VPROF 'CNavMesh::GetNearestNavArea') calls it first with (pos, a float constant) when neither checkLOS nor checkGround is set and returns its answer when not null, as the SDK does; thiscall, ret 8. Linux finds it by signature, so it has no symbol to match"
+ },
+ "_ZN14CBaseAnimating10LookupBoneEPKc": {
+  "rva": "0x1ceef0",
+  "why": "read by hand: the function after LookupAttachment (0x1ceea0) and shaped like it; locks the studio header at +0x498 when missing, returns -1 without one, else Studio_BoneIndexByName (0x21ca90) on it and the name, the SDK body; thiscall, ret 4"
  }
 }
