@@ -1,1 +1,8 @@
 # Turned-away candidates for the next functions the sweep reached.
+# CTFBaseRocket::GetOwnerPlayer() const: the call match
+server 0x63fc60 45
+# CTFPlayer::GetEquippedWearableForLoadoutSlot(int)
+server 0x5222c0 70
+# TE_DispatchEffect(IRecipientFilter &, float, const Vector &, const char *, const CEffectData &): the two that copy the effect data first
+server 0x43e390 60
+server 0x440370 40
