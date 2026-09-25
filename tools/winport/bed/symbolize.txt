@@ -1,11 +1,17 @@
 # SigMod frames to name, as the bed report prints them.
-# The stack of the fault every console of shard 5 ended on (mvm_akure first)
-sigsegv.ext.2.tf2.dll+0x2ee793
-sigsegv.ext.2.tf2.dll+0x2ee7af
-sigsegv.ext.2.tf2.dll+0x2ef6f0
-sigsegv.ext.2.tf2.dll+0x2ee73c
-sigsegv.ext.2.tf2.dll+0x2ee655
-sigsegv.ext.2.tf2.dll+0x2ee595
-sigsegv.ext.2.tf2.dll+0x2fce57
-sigsegv.ext.2.tf2.dll+0x2fd00d
-sigsegv.ext.2.tf2.dll+0x2fd703
+# server.dll+0x40888c (GetNavArea [vec]) touching 0x14, called from:
+sigsegv.ext.2.tf2.dll+0x11fb93
+sigsegv.ext.2.tf2.dll+0xfe695
+sigsegv.ext.2.tf2.dll+0x1a6737
+sigsegv.ext.2.tf2.dll+0x19ca85
+# a call to 0x40800000 (4.0f read as a function), from:
+sigsegv.ext.2.tf2.dll+0x1c1343
+sigsegv.ext.2.tf2.dll+0x1a1857
+# a null read inside SigMod:
+sigsegv.ext.2.tf2.dll+0x243b66
+sigsegv.ext.2.tf2.dll+0x243b0b
+sigsegv.ext.2.tf2.dll+0x243c2d
+sigsegv.ext.2.tf2.dll+0x18390d
+sigsegv.ext.2.tf2.dll+0x18f89b
+# server.dll+0x3f4d31 touching 0 under cbasenpc.ext, with SigMod below it:
+sigsegv.ext.2.tf2.dll+0x170c57
