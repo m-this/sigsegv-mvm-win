@@ -2,30 +2,34 @@
 # Questions for the address job that need its derived files, rewritten for each
 # investigation like disasm.txt. Runs from the repository root after the table
 # is derived; the dumps are under derived/.
-# INextBotPlayerInput's vtable in NextBotPlayer<CTFPlayer>: the slots holding the
-# release bodies at 0x10561100 (and ~IN_BACK) and 0x10561130 (and ~IN_FORWARD),
-# and the 27 slots from where the declaration order puts slot 0.
+so=game-linux/tf/bin/server_srv.so
+for s in _ZN20CBaseCombatCharacter13AddGlowEffectEv _ZNK9CTFPlayer9GetObjectEi _ZN9CTFPlayer16DoAnimationEventE17PlayerAnimEvent_ti; do
+  echo "== linux $s"
+  objdump -d --no-show-raw-insn -M intel --disassemble="$s" "$so" | sed -n '/>:$/,$p' | head -40
+done
+# CTFPlayer::UpdateModel: on Linux SetModel through vtable +0x6c, then +0x580 and
+# +0x57c, SetCollisionBounds, and a tail jump to OnNewModel. On Windows one
+# destructor fewer: the callers of SetCollisionBounds calling [reg+0x57c] and [reg+0x578].
 python3 - <<'PY'
-import pefile, struct
+import json, re, pefile
 pe = pefile.PE("game-windows/tf/bin/server.dll")
-base = pe.OPTIONAL_HEADER.ImageBase
-for s in pe.sections:
-    name = s.Name.rstrip(b"\0").decode()
-    if name not in (".rdata", ".data"): continue
-    data = s.get_data()
-    for target in (0x10561100, 0x10561130):
-        at = data.find(struct.pack("<I", target))
-        while at != -1:
-            if at % 4 == 0:
-                va = base + s.VirtualAddress + at
-                print(f"{name}: {target:#x} at {va:#x}")
-            at = data.find(struct.pack("<I", target), at + 1)
-    at = data.find(struct.pack("<I", 0x10561100))
-    if at != -1 and at % 4 == 0:
-        start = at - 15 * 4
-        slots = struct.unpack_from("<27I", data, start)
-        col = struct.unpack_from("<I", data, start - 4)[0]
-        print(f"vtable guess at {base + s.VirtualAddress + start:#x}, locator {col:#x}")
-        for i, v in enumerate(slots):
-            print(f"  slot {i:2d}: {v:#x}")
+text = next(s for s in pe.sections if s.Name.rstrip(b"\0") == b".text")
+code, va = text.get_data(), text.VirtualAddress
+m = json.load(open("derived/matches.json"))
+scb = m["_ZN11CBaseEntity18SetCollisionBoundsERK6VectorS2_"]["rva"]
+def start(rva):
+    at = rva - va
+    while at > 0 and not (code[at - 1] in (0xCC, 0x90) and code[at - 2] in (0xCC, 0x90)):
+        at -= 1
+    return va + at
+seen = set()
+for x in re.finditer(rb"\xe8", code):
+    src = va + x.start()
+    if src + 5 + int.from_bytes(code[x.start()+1:x.start()+5], "little", signed=True) != scb: continue
+    f = start(src)
+    if f in seen: continue
+    seen.add(f)
+    body = code[f - va:src - va + 40]
+    if re.search(rb"\xff[\x50-\x57\x90-\x97]\x7c\x05\x00\x00", body) and re.search(rb"\xff[\x50-\x57\x90-\x97]\x78\x05\x00\x00", body):
+        print(f"UpdateModel candidate {f:#x}, SetCollisionBounds call at {src:#x}, {src - f:#x} in")
 PY
