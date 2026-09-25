@@ -1049,6 +1049,36 @@
 					lib   "server"
 					// verified: read by hand: the call match, the function CServerTools::SetMoveType forwards its two arguments to; pops 8
 				}
+				"CEconEntity::TranslateViewmodelHandActivityInternal"
+				{
+					type  "fixed"
+					sym   "_ZN11CEconEntity38TranslateViewmodelHandActivityInternalE8Activity"
+					addr  "0x1d7380"
+					build "10828683"
+					lib   "server"
+					vtidx "230"
+					// verified: read by hand from the vtables: MSVC keeps IHasAttributes' five virtuals in their own table and has one destructor, so past them Windows is Linux less 6 (CanHolster, SetSubType and Equip agree); slot 230, the last of CEconEntity's table, where CTFWeaponBase has its own
+				}
+				"CTFWeaponBase::SendWeaponAnim"
+				{
+					type  "fixed"
+					sym   "_ZN13CTFWeaponBase14SendWeaponAnimEi"
+					addr  "0x638020"
+					build "10828683"
+					lib   "server"
+					vtidx "250"
+					// verified: read by hand from the vtables: Linux slot 256 less 6, as CanHolster (265, 259) is; CTFWeaponBuilder inherits it there and CTFCompoundBow, which overrides it on Linux, holds another body in the same slot
+				}
+				"CTFPipebombLauncher::Deploy"
+				{
+					type  "fixed"
+					sym   "_ZN19CTFPipebombLauncher6DeployEv"
+					addr  "0x623240"
+					build "10828683"
+					lib   "server"
+					vtidx "262"
+					// verified: read by hand from the vtables: Linux slot 268 less 6, as CanHolster (265, 259) is; CTFCompoundBow inherits it there, CTFWeaponBuilder has its own Deploy in the same slot, and CanDeploy and Holster beside it differ between the two as on Linux
+				}
 				"CBaseEntity::TakeDamage"
 				{
 					type  "fixed"
