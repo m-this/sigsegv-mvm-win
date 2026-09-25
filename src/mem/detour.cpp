@@ -227,10 +227,14 @@ static bool FillsSeveralSlotIndices(const void *func)
 	static bool built = false;
 	if (!built && !RTTI::GetAllVTableInfo().empty()) {
 		built = true;
+		const SegInfo& text = LibMgr::GetInfo(Library::SERVER).GetSeg(Segment::TEXT);
 		for (const auto &[name, info] : RTTI::GetAllVTableInfo()) {
 			auto vt = reinterpret_cast<const void *const *>(info.vtable);
 			int n = (int)(info.size / sizeof(void *));
-			for (int i = 0; i < n; ++i) {
+			/* The size RTTI gives can run past the table into the next one's
+			 * locator and slots, which would put its functions at shifted
+			 * indices: a table ends at its first entry that is not code. */
+			for (int i = 0; i < n && text.ContainsAddr(vt[i], 1); ++i) {
 				auto [it, inserted] = index_of.emplace(vt[i], i);
 				if (!inserted && it->second != i) it->second = -1;
 			}
