@@ -277,6 +277,12 @@ void IMod::Toggle(bool enable)
 	
 	if (this->m_bFailed && enable) {
 		Msg("IMod::Toggle: \"%s\" %s [WARNING: mod is in FAILED state, so patches/detours will NOT be enabled!\n", this->GetName(), (enable ? "ON" : "OFF"));
+#if defined _WINDOWS
+		/* The TODO above, met: a score of mods fail on Windows while the
+		 * address table is incomplete, and one enabled anyway ran its level
+		 * callbacks without ever having run OnLoad. Such a mod stays off. */
+		return;
+#endif
 	} else {
 		DevMsg("IMod::Toggle: \"%s\" %s\n", this->GetName(), (enable ? "ON" : "OFF"));
 	}

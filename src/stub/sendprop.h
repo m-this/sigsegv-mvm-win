@@ -22,7 +22,12 @@ typedef intptr_t PackedEntityHandle_t;
 class CVEngineServer : public IVEngineServer
 {
 public:
+#if defined _WINDOWS
+    /* engine.dll exports no non-virtual body to call; the virtual one is the same function. */
+    IChangeInfoAccessor *GetChangeAccessorStatic(const edict_t *pEdict)                      { return this->GetChangeAccessor(pEdict); }
+#else
     IChangeInfoAccessor *GetChangeAccessorStatic(const edict_t *pEdict)                      { return ft_GetChangeAccessor(this, pEdict); }
+#endif
     
 private:
     static MemberFuncThunk<CVEngineServer *, IChangeInfoAccessor *, const edict_t *>              ft_GetChangeAccessor;
