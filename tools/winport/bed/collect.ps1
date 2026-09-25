@@ -97,24 +97,33 @@ Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort
 # The tails above are cut before a fault's header when the stack dump is long,
 # and the artifact is not reachable from everywhere the port is worked on:
 # each fault header with the first frames of its chain, per console.
-$frames = @{}
-Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort-Object Name | ForEach-Object {
-  $name = $_.Name
-  Select-String -Path $_.FullName -Pattern '^SigMod: fault ' -Context 0,24 | Select-Object -First 4 | ForEach-Object {
-    Write-Host "fault in ${name}: $($_.Line)"
-    $_.Context.PostContext | Select-Object -First 6 | ForEach-Object { Write-Host "  $_" }
-    @($_.Line) + $_.Context.PostContext | Select-String -Pattern 'sigsegv\.ext\.2\.tf2\.dll\+(0x[0-9a-f]+)' -AllMatches |
-      ForEach-Object { $_.Matches } | ForEach-Object { $frames[$_.Groups[1].Value] = $true }
-  }
-}
 # Named here, against the DLL and .pdb this bed ran: a later build moves every
 # function, so naming these addresses anywhere else names the wrong code.
 $symbolizer = @('C:\Program Files\LLVM\bin\llvm-symbolizer.exe', (Get-Command llvm-symbolizer -ErrorAction SilentlyContinue).Source) | Where-Object { $_ -and (Test-Path $_) } | Select-Object -First 1
 $dll = "$env:BED\tf-dedicated\tf\addons\sourcemod\extensions\sigsegv.ext.2.tf2.dll"
-if ($symbolizer -and (Test-Path $dll) -and $frames.Count) {
-  foreach ($rva in ($frames.Keys | Sort-Object)) {
-    $where = (& $symbolizer "--obj=$dll" --relative-address --inlines --pretty-print $rva 2>&1) -join ' '
-    Write-Host "frame sigsegv+${rva}: $where"
+$names = @{}
+function Name-Frame($line) {
+  $m = [regex]::Match($line, 'sigsegv\.ext\.2\.tf2\.dll\+(0x[0-9a-f]+)')
+  if (-not $m.Success -or -not $symbolizer -or -not (Test-Path $dll)) { return $line }
+  $rva = $m.Groups[1].Value
+  if (-not $names.ContainsKey($rva)) {
+    $names[$rva] = ((& $symbolizer "--obj=$dll" --relative-address $rva 2>&1) | Select-Object -First 1)
+  }
+  return "$line = $($names[$rva])"
+}
+# The first fault of each console in full, the chain, the registers and the
+# code addresses on the stack, which name the caller a frameless function
+# leaves out of the chain; later faults by their header and first frames.
+Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort-Object Name | ForEach-Object {
+  $name = $_.Name
+  $first = $true
+  Select-String -Path $_.FullName -Pattern '^SigMod: fault ' -Context 0,60 | Select-Object -First 4 | ForEach-Object {
+    Write-Host "fault in ${name}: $(Name-Frame $_.Line)"
+    $lines = @()
+    foreach ($l in $_.Context.PostContext) { if ($l -notmatch '^\s') { break }; $lines += $l }
+    if (-not $first) { $lines = $lines | Select-Object -First 6 }
+    $lines | ForEach-Object { Write-Host "  $(Name-Frame $_)" }
+    $first = $false
   }
 }
 # A wave that runs a few game seconds in ten minutes is a server spending its
