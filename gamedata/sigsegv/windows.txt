@@ -4767,6 +4767,15 @@
 					lib   "server"
 					// named data
 				}
+				"g_aPlayerClassNames_NonLocalized"
+				{
+					type  "fixed"
+					sym   "g_aPlayerClassNames_NonLocalized"
+					addr  "0x9cdcbc"
+					build "10828683"
+					lib   "server"
+					// verified: the only array of pointers in server.dll whose entries name the nine classes capitalized: Undefined, Scout, Sniper, Soldier, Demoman, Medic, Heavy, Pyro, Spy, Engineer, Civilian, an empty string and Random, the SDK's declaration of it
+				}
 				"g_aRawPlayerClassNames"
 				{
 					type  "fixed"

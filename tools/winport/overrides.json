@@ -861,5 +861,10 @@
  "_ZN6CTFBot26SelectRandomReachableEnemyEv": {
   "rva": "0x561c00",
   "why": "read by hand: the consensus match turned away, and the Linux body step for step: GetTeamNumber, the enemy team (2 and 3 swapped), CollectPlayers(&vec, team, true, false), per player WorldSpaceCenter (vtable +0x270, Linux +0x274) and PointInRespawnRoom(player, center, false), AddToTail, then RandomInt(0, n-1) or null; thiscall, no arguments, ret"
+ },
+ "g_aPlayerClassNames_NonLocalized": {
+  "name": "g_aPlayerClassNames_NonLocalized",
+  "rva": "0x9cdcbc",
+  "why": "the only array of pointers in server.dll whose entries name the nine classes capitalized: Undefined, Scout, Sniper, Soldier, Demoman, Medic, Heavy, Pyro, Spy, Engineer, Civilian, an empty string and Random, the SDK's declaration of it"
  }
 }
