@@ -710,5 +710,9 @@
  "_Z14ItemGenerationv": {
   "rva": "0x3a0640",
   "why": "read by hand: mov eax, 0x10a89114; ret, the one candidate all four matched callers agree on, and the function after it reads the item schema as SpawnItem does; returns the static item generation system as the Linux body does"
+ },
+ "_ZN15CItemGeneration9SpawnItemEiRK6VectorRK6QAngleiiPKc": {
+  "rva": "0x3a0650",
+  "why": "read by hand: the function after ItemGeneration (0x3a0640), and the Linux body step by step: the item definition of the index through ItemSystem, CreateEntityByName of the classname argument or the definition's (+0xd0), CEconItemView::Init of the item, SetAbsOrigin, SetAbsAngles, Spawn and Activate through the vtable; thiscall, ret 0x18, this unused"
  }
 }
