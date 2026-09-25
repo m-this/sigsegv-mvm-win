@@ -1,3 +1,4 @@
 # SigMod frames to name, as the bed report prints them.
 # a null read under actions.ext (sweep 444218a, shard 0):
 sigsegv.ext.2.tf2.dll+0x2d13b1
+sigsegv.ext.2.tf2.dll+0x30a270
