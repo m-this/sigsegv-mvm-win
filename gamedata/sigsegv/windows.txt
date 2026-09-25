@@ -5614,6 +5614,15 @@
 					vtidx "6"
 					// vtable
 				}
+				"CAttributeManager::ClearCache"
+				{
+					type  "fixed"
+					sym   "_ZN17CAttributeManager10ClearCacheEv"
+					addr  "0x39e400"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: CAttributeManager::OnAttributeValuesChanged (0x39e6f0) is { ClearCache(); } in the SDK and on Windows a lone jmp here; the whole function, where Linux detours the .part clone GCC split after its early return
+				}
 				"CAttributeManager::~CAttributeManager [D2]"
 				{
 					type  "fixed"
