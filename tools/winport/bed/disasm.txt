@@ -1,3 +1,5 @@
 # Turned-away candidates for the next functions the sweep reached.
-# CBaseAnimating::LookupBone(const char *): the function after LookupAttachment (0x1ceea0), holding the call to Studio_BoneIndexByName at 0x1cef2b
-server +0x1cef2b
+# CTFGameRules::DropSpellPickup(const Vector &, int) const: creates "tf_spell_pickup"
+server string tf_spell_pickup
+# AllocPooledString_StaticConstantStringPointer(const char *): the unverified candidate
+server 0x281590 60
