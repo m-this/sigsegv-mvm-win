@@ -336,7 +336,7 @@ void UnloadAllCustomThinkFunc()
  * or reaches a '*' where they differ. */
 bool CBaseEntity::ClassMatchesComplex(const char *pszClassOrWildcard)
 {
-	const char *name = STRING(this->m_iClassname);
+	const char *name = STRING((string_t)this->m_iClassname);
 	if (name == nullptr) {
 		return pszClassOrWildcard == nullptr || *pszClassOrWildcard == '\0' || *pszClassOrWildcard == '*';
 	}
