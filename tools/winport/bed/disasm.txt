@@ -1,4 +1,2 @@
-# The think dispatch that jumps to 0xc072xxxx: what does the caller at
-# server+0x2c16aa call through, and what does 0x2c1522 around it do?
-server +0x2c16aa
-server +0x2c1522
+# Physics_SimulateEntity: what esi holds when it tail-jumps through [vtable+0x68].
+server 0x2c1550 110
