@@ -16,13 +16,14 @@ md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
 starts = [m.end() for m in re.finditer(rb"\xcc\xcc+", code)]
 for i in range(len(starts) - 1):
     a, b = starts[i], starts[i + 1]
-    if b - a > 600 or b - a < 60: continue
+    if b - a > 2500 or b - a < 60: continue
     body = code[a:b]
     if not re.search(rb"[\x60-\x80]\x07\x00\x00", body): continue
     if not re.search(rb"\x83[\xf8-\xff]\x30", body): continue
-    if not (b"\x50\x04\x00\x00" in body or b"\x48\x04\x00\x00" in body): continue
+    # the loop compares a handle it looked up with the argument
+    if not re.search(rb"\x3b[\x40-\x7f]\x08|\x39[\x40-\x7f]\x08", body): continue
     print(f"candidate {va + a:#x} ({b - a} bytes)")
     for k, ins in enumerate(md.disasm(body, base + va + a)):
         print(f"  {ins.address - base:#x}  {ins.mnemonic} {ins.op_str}")
-        if k >= 50: break
+        if k >= 14: break
 PY
