@@ -1,7 +1,4 @@
 # Turned-away candidates for the next functions the sweep reached.
-# CItemGeneration::SpawnItem(int, const Vector &, const QAngle &, int, int, const char *): the function after ItemGeneration
-server 0x3a0650 90
-# CSoundEmitterSystemBase::AddSoundsFromFile(const char *, bool, bool, bool), in the sound emitter library
-bin/SoundEmitterSystem.dll string AddSoundsFromFile
-bin/SoundEmitterSystem.dll string game_sounds_manifest
-bin/SoundEmitterSystem.dll string precache_file
+# CSoundEmitterSystemBase::AddSoundsFromFile(const char *, bool, bool, bool): the function holding the "No such file" message
+bin/SoundEmitterSystem.dll func 0x3f48 70
+bin/SoundEmitterSystem.dll +0x3f48
