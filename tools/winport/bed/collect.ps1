@@ -102,6 +102,7 @@ Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort
 $symbolizer = @('C:\Program Files\LLVM\bin\llvm-symbolizer.exe', (Get-Command llvm-symbolizer -ErrorAction SilentlyContinue).Source) | Where-Object { $_ -and (Test-Path $_) } | Select-Object -First 1
 $dll = "$env:BED\tf-dedicated\tf\addons\sourcemod\extensions\sigsegv.ext.2.tf2.dll"
 $names = @{}
+$callers = @{}
 function Name-Frame($line, [switch]$Return) {
   $m = [regex]::Match($line, 'sigsegv\.ext\.2\.tf2\.dll\+(0x[0-9a-f]+)')
   if (-not $m.Success -or -not $symbolizer -or -not (Test-Path $dll)) { return $line }
@@ -127,9 +128,39 @@ Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort
     Write-Host "fault in ${name}: $(Name-Frame $_.Line)"
     $lines = @()
     foreach ($l in $_.Context.PostContext) { if ($l -notmatch '^\s') { break }; $lines += $l }
+    if ($first) {
+      # SigMod's first frame under the faulting one, the call that led there
+      $m = $lines | Select-Object -Skip 1 | Select-String -Pattern 'sigsegv\.ext\.2\.tf2\.dll\+(0x[0-9a-f]+)' | Select-Object -First 1
+      if ($m) { $callers[$m.Matches[0].Groups[1].Value] = $name }
+    }
     if (-not $first) { $lines = $lines | Select-Object -First 6 }
     $lines | ForEach-Object { Write-Host "  $(Name-Frame $_ -Return)" }
     $first = $false
+  }
+}
+# The code just before each of those calls, with its source lines: a line
+# number alone does not say which call on a line crashed.
+$objdump = if ($symbolizer) { Join-Path (Split-Path $symbolizer) 'llvm-objdump.exe' }
+if ($objdump -and (Test-Path $objdump) -and (Test-Path $dll)) {
+  $base = 0x10000000
+  $hdr = & $objdump -p $dll 2>$null | Select-String -Pattern '^ImageBase\s+([0-9a-fA-F]+)' | Select-Object -First 1
+  if ($hdr) { $base = [Convert]::ToInt64($hdr.Matches[0].Groups[1].Value, 16) }
+  $callers.Keys | Select-Object -First 4 | ForEach-Object {
+    $rva = [Convert]::ToInt64($_, 16)
+    Write-Host ("--- code before sigsegv.ext.2.tf2.dll+{0} ({1})" -f $_, $callers[$_])
+    # each instruction with the source line the .pdb gives it, and each call
+    # with the function it reaches
+    & $objdump -d --no-show-raw-insn --start-address=$('0x{0:x}' -f ($base + $rva - 0x40)) --stop-address=$('0x{0:x}' -f ($base + $rva + 2)) $dll 2>$null |
+      Where-Object { $_ -match '^\s*[0-9a-f]+:' } | ForEach-Object {
+        $at = [Convert]::ToInt64(($_ -replace '^\s*([0-9a-f]+):.*$', '$1'), 16) - $base
+        $where = (Name-Frame ('sigsegv.ext.2.tf2.dll+0x{0:x}' -f $at)) -replace '^[^=]*= ', ''
+        $to = ''
+        if ($_ -match 'call\s+0x([0-9a-f]+)') {
+          $t = [Convert]::ToInt64($Matches[1], 16) - $base
+          $to = ' -> ' + (@(& $symbolizer "--obj=$dll" --relative-address ('0x{0:x}' -f $t) 2>$null) | Select-Object -First 1)
+        }
+        Write-Host ("  {0}{1}   [{2}]" -f $_.Trim(), $to, $where)
+      }
   }
 }
 # A wave that runs a few game seconds in ten minutes is a server spending its
