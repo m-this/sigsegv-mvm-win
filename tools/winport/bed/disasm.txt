@@ -1,11 +1,13 @@
 # Turned-away candidates for the next functions the sweep reached.
-# CSoundEmitterSystemBase::AddSoundsFromFile(const char *, bool, bool, bool), in the sound emitter library
-bin/soundemittersystem.dll string AddSoundsFromFile
-bin/soundemittersystem.dll string Unable to load
-bin/soundemittersystem.dll string scripts/game_sounds_manifest.txt
 # CTFBot m_nBotAttrs and m_nMission: ChangeTeam zeroes both on Linux
 server 0x5505f0 120
 # CTFBot m_Tags: HasTag walks it
 server 0x553ae0 60
 # CTFBot m_nMission: the function comparing it with 2 before pushing "mission_sentry_buster"
 server string mission_sentry_buster
+# CBaseEntity::SetNextThink(float, const char *): the candidate with 237 matched callers
+server 0x202310 70
+# CSoundEmitterSystemBase::AddSoundsFromFile(const char *, bool, bool, bool), in the sound emitter library
+bin/soundemittersystem.dll string AddSoundsFromFile
+bin/soundemittersystem.dll string Unable to load
+bin/soundemittersystem.dll string game_sounds_manifest
