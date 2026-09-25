@@ -107,9 +107,11 @@ function Name-Frame($line) {
   if (-not $m.Success -or -not $symbolizer -or -not (Test-Path $dll)) { return $line }
   $rva = $m.Groups[1].Value
   if (-not $names.ContainsKey($rva)) {
-    # function and file:line of the innermost inlined frame, the one that ran
-    $out = @(& $symbolizer "--obj=$dll" --relative-address $rva 2>&1)
-    $names[$rva] = ($out | Select-Object -First 2) -join ' at '
+    # function and file:line of each inlined frame, innermost first: the
+    # innermost is what ran, the outermost is the function the address is in
+    $out = @(& $symbolizer "--obj=$dll" --relative-address $rva 2>&1 | Where-Object { $_ -ne '' })
+    $frames = for ($i = 0; $i + 1 -lt $out.Count; $i += 2) { "$($out[$i]) at $($out[$i + 1] -replace '^.*[/\\]src[/\\]', 'src/')" }
+    $names[$rva] = $frames -join ' <- '
   }
   return "$line = $($names[$rva])"
 }
@@ -145,7 +147,7 @@ Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyCo
   Sort-Object -Unique | ForEach-Object { Write-Host "mod: $_" }
 # What the schema made of SigMod's custom attributes, once per distinct line.
 $attrs = Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
-  Select-String -Pattern 'SigMod: custom attributes: .*' | ForEach-Object { $_.Matches[0].Value } | Sort-Object -Unique | Select-Object -First 12
+  Select-String -Pattern 'SigMod: custom attributes: .*' | ForEach-Object { $_.Matches[0].Value } | Sort-Object -Unique | Select-Object -First 30
 $attrs | ForEach-Object { Write-Host "attributes: $_" }
 # Every unresolved function a mission reached, across all the server's starts.
 $unresolved = Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |

@@ -10243,6 +10243,20 @@ namespace Mod::Attr::Custom_Attributes
 					for (int i = 0; i < err.Count() && i < 8; ++i) {
 						Warning("SigMod: custom attributes: %s\n", err[i].Get());
 					}
+					/* "attachment name" read back null after this. Every name
+					 * of the file the schema cannot find, and how many. */
+					int missing = 0, total = 0;
+					FOR_EACH_TRUE_SUBKEY(kv, def) {
+						const char *name = def->GetString("name", nullptr);
+						if (name == nullptr) continue;
+						++total;
+						if (GetItemSchema()->GetAttributeDefinitionByName(name) == nullptr) {
+							if (missing++ < 12) {
+								Warning("SigMod: custom attributes: %s \"%s\" not found by name\n", def->GetName(), name);
+							}
+						}
+					}
+					Warning("SigMod: custom attributes: %d of %d names not found\n", missing, total);
 				}
 #endif
 			}

@@ -819,5 +819,10 @@
  "_ZN9CTFPlayer21TeamFortress_SetSpeedEv": {
   "rva": "0x52d120",
   "why": "read by hand: the call match turned away, and the Linux body's passtime branch laid out first by MSVC: gamerules state 7 and the passtime logic present, GetPackSpeed(this), and a changed speed written to m_flMaxspeed (+0xf04, Linux +0xf1c) through NetworkStateChanged; thiscall, no arguments, ret"
+ },
+ "_ZN17CAttributeManager10ClearCacheEv": {
+  "name": "CAttributeManager::ClearCache [clone]",
+  "rva": "0x39e400",
+  "why": "read by hand: CAttributeManager::OnAttributeValuesChanged (0x39e6f0) is { ClearCache(); } in the SDK and on Windows a lone jmp here; the whole function, where Linux detours the .part clone GCC split after its early return"
  }
 }
