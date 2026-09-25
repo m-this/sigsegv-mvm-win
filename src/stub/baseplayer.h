@@ -28,7 +28,13 @@ public:
 #endif
 	bool IsAbleToSee(const CBaseEntity *entity, FieldOfViewCheckType checkFOV)  { return ft_IsAbleToSee_ent   (this, entity, checkFOV); }
 	bool IsAbleToSee(CBaseCombatCharacter *pBCC, FieldOfViewCheckType checkFOV) { return ft_IsAbleToSee_bcc   (this, pBCC, checkFOV); }
+#if defined _WINDOWS
+	/* No Windows address matched it, and none is needed: the Linux body
+	 * writes this datamap field and nothing else. */
+	void SetBloodColor(int nBloodColor)                                         { this->m_bloodColor = nBloodColor; }
+#else
 	void SetBloodColor(int nBloodColor)                                         {        ft_SetBloodColor     (this, nBloodColor); }
+#endif
 	bool Weapon_Detach(CBaseCombatWeapon *pWeapon)                              { return ft_Weapon_Detach     (this, pWeapon); }
 	bool SwitchToNextBestWeapon(CBaseCombatWeapon *weapon)                      { return ft_SwitchToNextBestWeapon(this, weapon); }
 	void SetAmmoCount(int count, int ammoIndex)                                 {        ft_SetAmmoCount      (this, count, ammoIndex); }
@@ -58,6 +64,9 @@ public:
 private:
 	DECL_SENDPROP(CHandle<CBaseCombatWeapon>,              m_hActiveWeapon);
 	DECL_SENDPROP(CHandle<CBaseCombatWeapon>[MAX_WEAPONS], m_hMyWeapons);
+#if defined _WINDOWS
+	DECL_DATAMAP(int, m_bloodColor);
+#endif
 	
 #ifdef SE_IS_TF2
 	static MemberFuncThunk<CBaseCombatCharacter *, void>                                               ft_AddGlowEffect;

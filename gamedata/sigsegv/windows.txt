@@ -893,6 +893,33 @@
 					lib   "server"
 					// verified: turned away for field disagreement, pop as expected (ret 4); ors the argument into m_fEffects at +0xd4 through NetworkStateChanged and calls DispatchUpdateTransmitState (0x1eebd0) on EF_NODRAW (0x20), the SDK's body
 				}
+				"CTFBaseRocket::GetOwnerPlayer"
+				{
+					type  "fixed"
+					sym   "_ZNK13CTFBaseRocket14GetOwnerPlayerEv"
+					addr  "0x63fc60"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the call match; resolves the owner handle (+0x210, Linux +0x228), dynamic_casts it and tail-calls its vtable +0x538 (Linux +0x53c, one destructor more), returning the owner itself when the cast fails, the Linux body; no arguments
+				}
+				"CTFPlayer::GetEquippedWearableForLoadoutSlot"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer33GetEquippedWearableForLoadoutSlotEi"
+					addr  "0x5222c0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: walks m_hMyWearables (+0xef0, count +0xefc; Linux +0xf08, +0xf14), dynamic_casts each, and returns the one whose item definition's GetLoadoutSlot for the player's class (+0x22d0, Linux +0x22d8) is the argument, the Linux body; thiscall
+				}
+				"TE_DispatchEffect"
+				{
+					type  "fixed"
+					sym   "_Z17TE_DispatchEffectR16IRecipientFilterfRK6VectorPKcRK11CEffectData"
+					addr  "0x43e390"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: copies the CEffectData (its fifth argument) field by field into the global effect dispatch temp entity and looks up the effect name (its fourth) in the string table, the SDK body; cdecl
+				}
 				"CBaseEntity::TakeDamage"
 				{
 					type  "fixed"

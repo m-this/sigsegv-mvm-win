@@ -44,6 +44,9 @@ using CExtract_CBasePlayer_SetVCollisionState = IExtractStub;
 IMPL_SENDPROP(CHandle<CBaseCombatWeapon>,              CBaseCombatCharacter, m_hActiveWeapon, CBaseCombatCharacter);
 IMPL_SENDPROP(CHandle<CBaseCombatWeapon>[MAX_WEAPONS], CBaseCombatCharacter, m_hMyWeapons,    CBaseCombatCharacter);
 IMPL_SENDPROP(float,                                   CBaseCombatCharacter, m_flNextAttack,  CBaseCombatCharacter);
+#if defined _WINDOWS
+IMPL_DATAMAP(int,                                      CBaseCombatCharacter, m_bloodColor);
+#endif
 
 #ifdef SE_IS_TF2
 MemberFuncThunk<CBaseCombatCharacter *, void>                                                                     CBaseCombatCharacter::ft_AddGlowEffect     ("CBaseCombatCharacter::AddGlowEffect");

@@ -724,5 +724,17 @@
   "rva": "0x3af0",
   "why": "read by hand in SoundEmitterSystem.dll: the function holding the 'CSoundEmitterSystem::AddSoundsFromFile:  No such file' message; asks the filesystem for the name's handle through its vtable +0x8c and appends it to the vector at +0x78 (count +0x84), as the Linux body does at the same offsets; thiscall, ret 0x10",
   "lib": "soundemittersystem"
+ },
+ "_ZNK13CTFBaseRocket14GetOwnerPlayerEv": {
+  "rva": "0x63fc60",
+  "why": "read by hand: the call match; resolves the owner handle (+0x210, Linux +0x228), dynamic_casts it and tail-calls its vtable +0x538 (Linux +0x53c, one destructor more), returning the owner itself when the cast fails, the Linux body; no arguments"
+ },
+ "_ZN9CTFPlayer33GetEquippedWearableForLoadoutSlotEi": {
+  "rva": "0x5222c0",
+  "why": "read by hand: walks m_hMyWearables (+0xef0, count +0xefc; Linux +0xf08, +0xf14), dynamic_casts each, and returns the one whose item definition's GetLoadoutSlot for the player's class (+0x22d0, Linux +0x22d8) is the argument, the Linux body; thiscall"
+ },
+ "_Z17TE_DispatchEffectR16IRecipientFilterfRK6VectorPKcRK11CEffectData": {
+  "rva": "0x43e390",
+  "why": "read by hand: copies the CEffectData (its fifth argument) field by field into the global effect dispatch temp entity and looks up the effect name (its fourth) in the string table, the SDK body; cdecl"
  }
 }
