@@ -824,6 +824,24 @@
 					lib   "server"
 					// verified: read by hand: resolves m_hThrower (+0x504, Linux +0x51c) and returns it when its vtable +0x128 (Linux +0x12c) says player, else falls back to the owner handle at +0x210 (Linux +0x228), the Linux body; no arguments
 				}
+				"GetWeaponId"
+				{
+					type  "fixed"
+					sym   "_Z11GetWeaponIdPKc"
+					addr  "0x53eda0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: compares its argument with each of the 0x6e weapon alias strings through V_stricmp (0x6e4a80) and returns the index, 0 when none matches, the Linux body; cdecl
+				}
+				"CNavMesh::GetNavArea [vec]"
+				{
+					type  "fixed"
+					sym   "_ZNK8CNavMesh10GetNavAreaERK6Vectorf"
+					addr  "0x4087f0"
+					build "10828683"
+					lib   "server"
+					// verified: GetNearestNavArea (0x408de0, the function naming its VPROF 'CNavMesh::GetNearestNavArea') calls it first with (pos, a float constant) when neither checkLOS nor checkGround is set and returns its answer when not null, as the SDK does; thiscall, ret 8. Linux finds it by signature, so it has no symbol to match
+				}
 				"CBaseEntity::TakeDamage"
 				{
 					type  "fixed"

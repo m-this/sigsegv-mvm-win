@@ -1,7 +1,5 @@
 # Turned-away candidates for the next functions the sweep reached.
-# GetWeaponId(const char *): 0x53ed20 lowers a name and hands it to 0x53eda0
-server 0x53eda0 40
-# CBaseAnimating::LookupBone(const char *): a thin caller of Studio_BoneIndexByName (0x21ca90)
-server callers 0x21ca90
-# CNavMesh::GetNavArea(const Vector &, float): the first thing GetNearestNavArea asks
-server func 0x408e1f 120
+# CBaseAnimating::LookupBone(const char *): the callers of Studio_BoneIndexByName (0x21ca90)
+server 0x1ceea0 50
+server 0x2ba6c0 60
+server 0x30d9d0 40

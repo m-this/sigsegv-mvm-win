@@ -119,8 +119,11 @@ if len(sys.argv) > 4:
     for m in re.finditer(r'"([^"]+)"\n\{\n(?:[^}]*?)// [^\n]*windows (0x[0-9a-f]+)', text):
         by_name[m.group(1)] = int(m.group(2), 16) - 0x10000000
 
-found_names = {name for name, _ in found}
-for name, entry in found + [x for x in extra if x[0] not in found_names]:
+# A named override takes the place of the Linux entry of that name: a function
+# Linux finds by signature ("func ebpprologue vprof") has no symbol to match.
+named = dict(extra)
+found = [(name, named.pop(name, entry)) for name, entry in found]
+for name, entry in found + [x for x in extra if x[0] in named]:
     lib = entry.get("lib", "server")
     if entry.get("type") != "sym" or (lib != "server" and "verified" not in matches.get(entry.get("sym"), {}).get("via", "")):
         continue
