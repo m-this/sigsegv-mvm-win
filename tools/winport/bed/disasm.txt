@@ -1,9 +1,9 @@
-# CNavMesh::GetNavArea: both VPROF references are in 0x408790. Which overload:
-# (const Vector &, float) ends ret 8.
-server 0x408790 220
-# GetLoadoutPositionName(loadout_positions_t): g_szLoadoutStrings[pos], "" on -1
-server 0x4b1a40 12
-# CBaseEntity::PrecacheScriptSound(const char *), static
-server 0x32eed0 20
-# PrecacheParticleSystem(const char *): the particle string table's AddString
-server 0x272940 20
+# Turned-away candidates for the next functions the sweep reached.
+# GetWeaponId(const char *): V_stricmp over the 0x6e weapon names
+server 0x53ed20 30
+# CBaseGrenade::GetThrower(): m_hThrower, then the original owner
+server 0x20ad30 40
+# Studio_BoneIndexByName(const CStudioHdr *, const char *), cdecl
+server 0x21ca90 30
+# CNavMesh::GetNavArea(const Vector &, float): who calls it on Linux, to find its Windows callers
+server string CNavMesh::GetNearestNavArea
