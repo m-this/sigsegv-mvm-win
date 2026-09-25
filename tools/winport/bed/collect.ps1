@@ -112,6 +112,11 @@ Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyCo
 Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
   Select-String -Pattern 'CVirtualHook: "[^"]+" in ' | ForEach-Object { $_.Line.Trim() } |
   Sort-Object -Unique | ForEach-Object { Write-Host "vhook: $_" }
+# Props SigMod could not place: each one is read and written through a
+# scratch block on Windows, and a mechanic that uses it does nothing.
+Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
+  Select-String -Pattern 'CProp_\w+: \S+ FAIL|unresolved prop ' | ForEach-Object { $_.Line.Trim() } |
+  Sort-Object -Unique | ForEach-Object { Write-Host "prop: $_" }
 Get-ChildItem "$Out\dumps" -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "dump: $($_.Name) $($_.Length)" }
 # srcds catches its own crashes: it writes a minidump beside itself and exits
 # cleanly, so WER sees nothing. Those dumps, and how winbed saw srcds end.

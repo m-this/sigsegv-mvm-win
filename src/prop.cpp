@@ -428,3 +428,18 @@ bool CProp_Relative::CalcOffset(int& off) const
 	
 	return true;
 }
+
+
+#if defined _WINDOWS
+uintptr_t UnresolvedPropAddr(IProp *prop)
+{
+	alignas(16) static uint8_t scratch[0x10000];
+	static std::unordered_set<IProp *> named;
+	if (named.insert(prop).second) {
+		Warning("SigMod: unresolved prop %s::%s (%s) reads and writes a scratch block\n",
+			prop->GetObjectName(), prop->GetMemberName(), prop->GetKind());
+	}
+	memset(scratch, 0, 64);
+	return reinterpret_cast<uintptr_t>(scratch);
+}
+#endif
