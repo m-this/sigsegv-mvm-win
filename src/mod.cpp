@@ -239,6 +239,10 @@ void IMod::InvokeLoad()
 #endif
 	
 	if (!ok_patch || !ok_detour || !ok_hooks) {
+#if defined _WINDOWS
+		Warning("IMod::InvokeLoad: \"%s\": failed:%s%s, OnLoad never runs\n", this->GetName(),
+			ok_patch ? "" : " a patch", ok_hooks ? "" : " a virtual hook");
+#endif
 		this->m_bFailed = true;
 		return;
 	}

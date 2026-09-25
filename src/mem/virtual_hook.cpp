@@ -4,6 +4,14 @@
 #include "util/rtti.h"
 #include "stub/server.h"
 
+#if defined _WINDOWS
+/* A hook that does not load fails its whole mod, and the bed runs without
+ * developer on: say it where the bed reads. */
+#define FailMsg Warning
+#else
+#define FailMsg DevMsg
+#endif
+
 bool CVirtualHook::DoLoad()
 {
     if (this->m_bLoaded) return true;
@@ -14,19 +22,19 @@ bool CVirtualHook::DoLoad()
 
     pVT = RTTI::GetVTable(this->m_pszVTableName);
     if (pVT == nullptr) {
-        DevMsg("CVirtualHook::FAIL \"%s\": can't find vtable\n", this->m_pszFuncName);
+        FailMsg("CVirtualHook::FAIL \"%s\": can't find vtable\n", this->m_pszFuncName);
         return false;
     }
 
     pVTForCalcOffset = RTTI::GetVTable(this->m_pszVTableNameForCalcOffset);
     if (pVTForCalcOffset == nullptr) {
-        DevMsg("CVirtualHook::FAIL \"%s\": can't find vtable\n", this->m_pszFuncName);
+        FailMsg("CVirtualHook::FAIL \"%s\": can't find vtable\n", this->m_pszFuncName);
         return false;
     }
     
     pFunc = AddrManager::GetAddr(this->m_pszFuncName);
     if (pFunc == nullptr) {
-        DevMsg("CVirtualHook::FAIL \"%s\": can't find func addr\n", this->m_pszFuncName);
+        FailMsg("CVirtualHook::FAIL \"%s\": can't find func addr\n", this->m_pszFuncName);
         return false;
     }
     
@@ -83,7 +91,7 @@ bool CVirtualHook::DoLoad()
     }
     
     if (!found) {
-        DevMsg("CVirtualHook::FAIL \"%s\": can't find func ptr in vtable\n", this->m_pszFuncName);
+        FailMsg("CVirtualHook::FAIL \"%s\": can't find func ptr in vtable\n", this->m_pszFuncName);
         return false;
     }
 #if defined _WINDOWS
@@ -169,7 +177,7 @@ bool CVirtualHookAll::DoLoad()
     
     pFunc = AddrManager::GetAddr(this->m_pszFuncName);
     if (pFunc == nullptr) {
-        DevMsg("CVirtualHook::FAIL \"%s\": can't find func addr\n", this->m_pszFuncName);
+        FailMsg("CVirtualHook::FAIL \"%s\": can't find func addr\n", this->m_pszFuncName);
         return false;
     }
     
@@ -187,7 +195,7 @@ bool CVirtualHookAll::DoLoad()
     }
 
     if (!found) {
-        DevMsg("CVirtualHook::FAIL \"%s\": can't find func ptr in any vtable\n", this->m_pszFuncName);
+        FailMsg("CVirtualHook::FAIL \"%s\": can't find func ptr in any vtable\n", this->m_pszFuncName);
         return false;
     }
 

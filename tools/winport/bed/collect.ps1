@@ -138,9 +138,14 @@ Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort
     Write-Host "repeated in ${name}: $($_.Count)x $line"
   }
 }
+# A mod whose patch or virtual hook did not load never runs its OnLoad, and
+# every one of its detours sits there disabled.
+Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
+  Select-String -Pattern 'CVirtualHook::FAIL .*|IMod::InvokeLoad: .*failed.*' | ForEach-Object { $_.Matches[0].Value } |
+  Sort-Object -Unique | ForEach-Object { Write-Host "mod: $_" }
 # What the schema made of SigMod's custom attributes, once per distinct line.
 $attrs = Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
-  Select-String -Pattern '^SigMod: custom attributes: .*' | ForEach-Object { $_.Line } | Sort-Object -Unique | Select-Object -First 12
+  Select-String -Pattern 'SigMod: custom attributes: .*' | ForEach-Object { $_.Matches[0].Value } | Sort-Object -Unique | Select-Object -First 12
 $attrs | ForEach-Object { Write-Host "attributes: $_" }
 # Every unresolved function a mission reached, across all the server's starts.
 $unresolved = Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
@@ -170,7 +175,20 @@ Get-ChildItem "$Out\dumps" -ErrorAction SilentlyContinue | ForEach-Object { Writ
 # cleanly, so WER sees nothing. Those dumps, and how winbed saw srcds end.
 # SigMod's own record of who ended the server (ExitTrace in extension.cpp).
 foreach ($f in @("$env:BED\tf-dedicated\sigsegv_exit.txt", "$env:BED\tf-dedicated\tf\sigsegv_exit.txt")) {
-  if (Test-Path $f) { Write-Host "--- $f"; Get-Content $f -Tail 80 | Write-Host; Copy-Item $f $Out }
+  if (Test-Path $f) { Write-Host "--- $f"; Get-Content $f -Tail 80 | ForEach-Object { Write-Host (Name-Frame $_) }; Copy-Item $f $Out }
+}
+# An Error() ends the server through the same exit, and its message is the
+# srcds output just before SigMod's trace of it.
+Get-ChildItem "$Out\winbed-*.out" -ErrorAction SilentlyContinue | ForEach-Object {
+  $name = $_.Name
+  $said = @(Get-Content $_.FullName | Where-Object { $_ -match 'source=srcds' } |
+    ForEach-Object { if ($_ -match 'line="(.*)"$') { $Matches[1] } })
+  for ($i = 0; $i -lt $said.Count; $i++) {
+    if ($said[$i] -match 'TerminateProcess\(') {
+      Write-Host "--- before the exit in ${name}"
+      $said[[Math]::Max(0, $i - 10)..$i] | Write-Host
+    }
+  }
 }
 $mdmp = @(Get-ChildItem "$env:BED\tf-dedicated" -Recurse -Filter *.mdmp -ErrorAction SilentlyContinue) +
   @(Get-ChildItem "$env:BED\dumps\exit" -Recurse -Filter *.dmp -ErrorAction SilentlyContinue)
