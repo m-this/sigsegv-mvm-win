@@ -744,5 +744,18 @@
  "_ZNK9CTFPlayer9GetObjectEi": {
   "rva": "0x4f3a30",
   "why": "read by hand: resolves the handle at the argument's index of m_aObjects (+0x2340, Linux +0x2348), whose count at +0x234c is what GetObjectCount (0x4f3b30) returns, the Linux body; thiscall, one argument"
+ },
+ "_ZN9CTFPlayer11UpdateModelEv": {
+  "rva": "0x514190",
+  "why": "read by hand: SetModel through vtable +0x68 with the class's model name (m_PlayerClass +0x22cc, 0x531ff0), the two vtable calls +0x57c and +0x578 (Linux +0x580, +0x57c) into SetCollisionBounds (0x1fba30), then OnNewModel on the anim state (+0x2264, Linux +0x226c), the Linux body; the two functions before it (0x50c2f0, 0x50c500) are the same after setting the class; no arguments"
+ },
+ "_ZN9CTFPlayer16DoAnimationEventE17PlayerAnimEvent_ti": {
+  "rva": "0x4e8420",
+  "why": "read by hand: the call match; the global's vtable +0x64, then the anim state (+0x2264, Linux +0x226c) DoAnimationEvent through +8 (Linux +0xc, one destructor fewer) with (event, data), then the player anim temp entity built inline, the Linux body; thiscall, two arguments"
+ },
+ "_ZN11CTFBaseBoss21UpdateCollisionBoundsEv": {
+  "rva": "0x130b50",
+  "why": "read by hand: empty on Linux (a lone ret), so on Windows it is the shared empty body, and only the slot says which virtual it is: slot 336 of CTFBaseBoss, the one before GetCurrencyValue (337, 0x5de290), where CTFTankBoss has its own bounds code (0x5f5010); Linux has two INextBot virtuals between them that MSVC keeps in the INextBot vtable",
+  "vtidx": 336
  }
 }
