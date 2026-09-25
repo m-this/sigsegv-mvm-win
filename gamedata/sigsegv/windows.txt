@@ -8544,6 +8544,24 @@
 					lib   "server"
 					// verified: first of the candidates, called by 5 of its 7 matched callers; the Linux body test for test with every member 0x18 lower, as m_bAllocatedBots is: the byte at +0x5ac (Linux +0x5c4), the wave count at +0x5e0 (+0x5f8), the byte at +0x60e (+0x626)
 				}
+				"CTFPlayer::GetObjectCount"
+				{
+					type  "fixed"
+					sym   "_ZNK9CTFPlayer14GetObjectCountEv"
+					addr  "0x4f3b30"
+					build "10828683"
+					lib   "server"
+					// verified: called by 4 of its 5 matched callers; mov eax, [ecx+0x234c]; ret, the Linux body (m_aObjects.Count(), +0x2354 there)
+				}
+				"CTFBaseBoss::GetCurrencyValue"
+				{
+					type  "fixed"
+					sym   "_ZN11CTFBaseBoss16GetCurrencyValueEv"
+					addr  "0x5de290"
+					build "10828683"
+					lib   "server"
+					// verified: virtual, CTFBaseBoss's vtable slot +0x544: the Windows tank table lines up with Linux five slots lower over GetCurrencyValue, ModifyDamage, SetSkin and GetBodyInterface, and the base's +0x548 is ModifyDamage's shared stub. Given its address, the thunk finds the slot and calls each boss's own override
+				}
 				"CTFPlayer::Spawn"
 				{
 					type  "fixed"
