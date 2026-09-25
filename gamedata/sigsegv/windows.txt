@@ -1088,6 +1088,15 @@
 					lib   "server"
 					// verified: read by hand: the call match turned away, and the newer SDK's body: entindex from the edict, soundemitterbase->GetSoundIndex(name) through the same slot as Linux (+0x1c), and on a valid handle g_SoundEmitterSystem.StopSoundByHandle(entindex, name, handle); pops 4
 				}
+				"CTFPlayer::TeamFortress_SetSpeed"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer21TeamFortress_SetSpeedEv"
+					addr  "0x52d120"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the call match turned away, and the Linux body's passtime branch laid out first by MSVC: gamerules state 7 and the passtime logic present, GetPackSpeed(this), and a changed speed written to m_flMaxspeed (+0xf04, Linux +0xf1c) through NetworkStateChanged; thiscall, no arguments, ret
+				}
 				"CBaseEntity::TakeDamage"
 				{
 					type  "fixed"
