@@ -1,3 +1,4 @@
-# CAttributeManager::OnAttributeValuesChanged, which ClearCache is taken to be
-# inlined into on Windows
-server 0x39e6f0 80
+# CBaseEntity::StopSound(const char *): the call match turned away, from CPasstimeGun::Throw
+server 0x32f2c0 90
+# CTFPlayer::TeamFortress_SetSpeed: the call match turned away, from CTFGameRules::SetupOnRoundRunning
+server 0x52d120 60
