@@ -1274,6 +1274,24 @@ namespace Mod::Attr::Custom_Attributes
 
 	CBaseEntity *killer_weapon = nullptr;
 	bool is_ice = false;
+#if defined _WINDOWS
+	/* The bed read "attachment name" back null at a kill, after every name of
+	 * the file had been found at load. What the schema is by then. */
+	std::vector<std::string> loaded_attribute_names;
+	void *loaded_attribute_schema = nullptr;
+	void SayWhatTheSchemaLost(const char *name)
+	{
+		static bool said = false;
+		if (said) return;
+		said = true;
+		int missing = 0;
+		for (const auto &loaded : loaded_attribute_names) {
+			if (GetItemSchema()->GetAttributeDefinitionByName(loaded.c_str()) == nullptr) ++missing;
+		}
+		Warning("SigMod: custom attributes: \"%s\" not found at a kill; schema %p, %p at load; %d of %zu loaded names not found now\n",
+			name, (void *)GetItemSchema(), loaded_attribute_schema, missing, loaded_attribute_names.size());
+	}
+#endif
 	DETOUR_DECL_MEMBER(void, CTFPlayer_Event_Killed, const CTakeDamageInfo& info)
 	{
 		auto player = reinterpret_cast<CTFPlayer *>(this);
@@ -1302,6 +1320,12 @@ namespace Mod::Attr::Custom_Attributes
 		killer_weapon = nullptr;
 
 		ForEachTFPlayerEconEntity(player, [&](CEconEntity *entity){
+#if defined _WINDOWS
+			if (GetItemSchema()->GetAttributeDefinitionByName("attachment name") == nullptr) {
+				SayWhatTheSchemaLost("attachment name");
+				return;
+			}
+#endif
 			static int attachment_name_def = GetItemSchema()->GetAttributeDefinitionByName("attachment name")->GetIndex();
 			if (entity->GetItem() != nullptr && entity->GetItem()->GetAttributeList().GetAttributeByID(attachment_name_def) != nullptr) {
 				entity->AddEffects(EF_NODRAW);
@@ -10246,10 +10270,13 @@ namespace Mod::Attr::Custom_Attributes
 					/* "attachment name" read back null after this. Every name
 					 * of the file the schema cannot find, and how many. */
 					int missing = 0, total = 0;
+					loaded_attribute_names.clear();
+					loaded_attribute_schema = GetItemSchema();
 					FOR_EACH_TRUE_SUBKEY(kv, def) {
 						const char *name = def->GetString("name", nullptr);
 						if (name == nullptr) continue;
 						++total;
+						loaded_attribute_names.emplace_back(name);
 						if (GetItemSchema()->GetAttributeDefinitionByName(name) == nullptr) {
 							if (missing++ < 12) {
 								Warning("SigMod: custom attributes: %s \"%s\" not found by name\n", def->GetName(), name);
