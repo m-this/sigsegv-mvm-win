@@ -1,3 +1,1 @@
-# CEconItemSchema::GetAttributeDefinitionByName past its null-argument return:
-# at a kill it finds none of the custom names it found at load
-server 0x3b8ebc 160
+# nothing this round
