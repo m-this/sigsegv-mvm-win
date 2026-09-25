@@ -1,1 +1,3 @@
-# nothing this round
+# CTFBot::SelectRandomReachableEnemy: the consensus match turned away, and the first candidate
+server 0x561c00 130
+server 0x5895d0 90
