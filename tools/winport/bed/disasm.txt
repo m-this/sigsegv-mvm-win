@@ -1,1 +1,5 @@
 # Turned-away candidates for the next functions the sweep reached.
+# CEconItemSchema::GetAttributeDefinitionByName: matched by a string only, and returns null for attributes the schema has
+server 0x3b8ea0 60
+# the GetItemDefinitionByName verified by hand, for its shape
+server 0x3b9370 40
