@@ -104,6 +104,16 @@ Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort
     $_.Context.PostContext | ForEach-Object { Write-Host "  $_" }
   }
 }
+# A wave that runs a few game seconds in ten minutes is a server spending its
+# frames somewhere; a line printed every frame is the first thing to rule out.
+Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort-Object Name | ForEach-Object {
+  $name = $_.Name
+  Get-Content $_.FullName | Group-Object | Where-Object { $_.Count -ge 200 } | Sort-Object Count -Descending | Select-Object -First 3 | ForEach-Object {
+    $line = $_.Name
+    if ($line.Length -gt 160) { $line = $line.Substring(0, 160) }
+    Write-Host "repeated in ${name}: $($_.Count)x $line"
+  }
+}
 # Every unresolved function a mission reached, across all the server's starts.
 $unresolved = Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
   Select-String -Pattern '(?:called unresolved function|no vtable index) "([^"]+)"' | ForEach-Object { $_.Matches[0].Groups[1].Value } | Sort-Object -Unique
