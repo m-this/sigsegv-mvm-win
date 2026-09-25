@@ -69,7 +69,7 @@ def template_args(text, start):
 
 
 def tf2_only(text):
-    """The text with the #else branch of every `#ifdef SE_IS_TF2` blanked, lines kept."""
+    """The text with the #else branch of every `#ifdef SE_IS_TF2` and every line comment blanked, lines kept."""
     out, stack = [], []
     for line in text.split("\n"):
         s = line.strip()
@@ -79,7 +79,10 @@ def tf2_only(text):
             stack[-1][1] = True
         elif s.startswith("#endif") and stack:
             stack.pop()
-        out.append("" if any(tf2 and in_else for tf2, in_else in stack) else line)
+        # A commented-out line declares nothing: projectiles.cpp keeps two
+        # thunks named for GetOwnerPlayer behind //, with other signatures.
+        commented = s.startswith("//")
+        out.append("" if commented or any(tf2 and in_else for tf2, in_else in stack) else line)
     return "\n".join(out)
 
 
