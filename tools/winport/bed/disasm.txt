@@ -1,5 +1,3 @@
 # Turned-away candidates for the next functions the sweep reached.
-# CBaseAnimating::LookupBone(const char *): the callers of Studio_BoneIndexByName (0x21ca90)
-server 0x1ceea0 50
-server 0x2ba6c0 60
-server 0x30d9d0 40
+# CBaseAnimating::LookupBone(const char *): the function after LookupAttachment (0x1ceea0), holding the call to Studio_BoneIndexByName at 0x1cef2b
+server +0x1cef2b
