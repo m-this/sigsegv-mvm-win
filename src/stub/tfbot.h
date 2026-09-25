@@ -382,10 +382,19 @@ public:
 	void SetMission(MissionType val) { this->m_nMission = val; }
 	
 	/* thunk */
+#if defined _WINDOWS
+	/* Trivial getters MSVC folded with others, so no address names them;
+	 * INextBot's virtuals reach the same members, as NextBotCombatCharacter does. */
+	ILocomotion *GetLocomotionInterface() const                        { return this->MyNextBotPointer()->GetLocomotionInterface(); }
+	IBody *GetBodyInterface() const                                    { return this->MyNextBotPointer()->GetBodyInterface(); }
+	IVision *GetVisionInterface() const                                { return this->MyNextBotPointer()->GetVisionInterface(); }
+	IIntention *GetIntentionInterface() const                          { return this->MyNextBotPointer()->GetIntentionInterface(); }
+#else
 	ILocomotion *GetLocomotionInterface() const                        { return ft_GetLocomotionInterface      (this); }
 	IBody *GetBodyInterface() const                                    { return ft_GetBodyInterface            (this); }
 	IVision *GetVisionInterface() const                                { return ft_GetVisionInterface          (this); }
 	IIntention *GetIntentionInterface() const                          { return ft_GetIntentionInterface       (this); }
+#endif
 	float GetDesiredPathLookAheadRange() const                         { return ft_GetDesiredPathLookAheadRange(this); }
 	void PushRequiredWeapon(CTFWeaponBase *weapon)                     { return ft_PushRequiredWeapon          (this, weapon); }
 	void PopRequiredWeapon()                                           { return ft_PopRequiredWeapon           (this); }

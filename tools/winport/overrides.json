@@ -852,5 +852,10 @@
   "name": "IGameSystem::Remove",
   "rva": "0x28d2cf",
   "why": "read by hand: the other function pushing IGameSystemPerFrame's type descriptor, right after a 15-byte atexit registration with no padding between them; it walks s_GameSystems (count 0x109930e4) for its argument, the SDK's FindAndRemove, then the per-frame list; cdecl, ret"
+ },
+ "_ZNK13CTFWeaponBase14IsEnergyWeaponEv": {
+  "rva": "0x157e70",
+  "vtidx": 446,
+  "why": "read by hand from the vtables: Linux slot 453 less 7, as ApplyFireDelay (421, 414), ApplyOnHitAttributes (426, 419) and DeflectEntity (431, 424) are; the shared return-false body, and the slot names it. Slots 448 and 449 share one body as Energy_GetShotCost and Energy_GetRechargeCost do, both returning 4"
  }
 }

@@ -1124,6 +1124,16 @@
 					lib   "server"
 					// verified: read by hand: the first candidate, holding 'effectbar_recharge_rate', and the SDK's body: bWasFull when the owner's GetAmmoCount(GetEffectBarAmmo()) + 1 is GetMaxAmmo (0x522500), then m_flEffectBarRegenTime (+0x6c8, Linux +0x6d4) set to curtime plus InternalGetEffectBarRechargeTime when it is past or the bar was full; thiscall, no arguments, ret
 				}
+				"CTFWeaponBase::IsEnergyWeapon"
+				{
+					type  "fixed"
+					sym   "_ZNK13CTFWeaponBase14IsEnergyWeaponEv"
+					addr  "0x157e70"
+					build "10828683"
+					lib   "server"
+					vtidx "446"
+					// verified: read by hand from the vtables: Linux slot 453 less 7, as ApplyFireDelay (421, 414), ApplyOnHitAttributes (426, 419) and DeflectEntity (431, 424) are; the shared return-false body, and the slot names it. Slots 448 and 449 share one body as Energy_GetShotCost and Energy_GetRechargeCost do, both returning 4
+				}
 				"IGameSystem::Add"
 				{
 					type  "fixed"
