@@ -757,5 +757,15 @@
   "rva": "0x130b50",
   "why": "read by hand: empty on Linux (a lone ret), so on Windows it is the shared empty body, and only the slot says which virtual it is: slot 336 of CTFBaseBoss, the one before GetCurrencyValue (337, 0x5de290), where CTFTankBoss has its own bounds code (0x5f5010); Linux has two INextBot virtuals between them that MSVC keeps in the INextBot vtable",
   "vtidx": 336
+ },
+ "_ZN11CEconEntity6GiveToEP11CBaseEntity": {
+  "rva": "0x130ba0",
+  "vtidx": 227,
+  "why": "read by hand: empty on Linux, so on Windows it is the shared empty `ret 4`, and only the slot says which virtual it is: slot 227 of CEconEntity, where CTFWearable has its own code (0x3c73b0, CEconWearable::GiveTo), just before CalculateVisibleClassFor; the IHasAttributes virtuals Linux has after it are in their own vtable on Windows"
+ },
+ "_ZNK10CTFBonesaw11GetWeaponIDEv": {
+  "rva": "0x3d3770",
+  "vtidx": 382,
+  "why": "read by hand: `mov eax, 11; ret`, the Linux body, and the one slot of CTFBonesaw's vtable holding a function that returns 11"
  }
 }
