@@ -97,11 +97,24 @@ Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort
 # The tails above are cut before a fault's header when the stack dump is long,
 # and the artifact is not reachable from everywhere the port is worked on:
 # each fault header with the first frames of its chain, per console.
+$frames = @{}
 Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort-Object Name | ForEach-Object {
   $name = $_.Name
-  Select-String -Path $_.FullName -Pattern '^SigMod: fault ' -Context 0,6 | Select-Object -First 4 | ForEach-Object {
+  Select-String -Path $_.FullName -Pattern '^SigMod: fault ' -Context 0,24 | Select-Object -First 4 | ForEach-Object {
     Write-Host "fault in ${name}: $($_.Line)"
-    $_.Context.PostContext | ForEach-Object { Write-Host "  $_" }
+    $_.Context.PostContext | Select-Object -First 6 | ForEach-Object { Write-Host "  $_" }
+    @($_.Line) + $_.Context.PostContext | Select-String -Pattern 'sigsegv\.ext\.2\.tf2\.dll\+(0x[0-9a-f]+)' -AllMatches |
+      ForEach-Object { $_.Matches } | ForEach-Object { $frames[$_.Groups[1].Value] = $true }
+  }
+}
+# Named here, against the DLL and .pdb this bed ran: a later build moves every
+# function, so naming these addresses anywhere else names the wrong code.
+$symbolizer = @('C:\Program Files\LLVM\bin\llvm-symbolizer.exe', (Get-Command llvm-symbolizer -ErrorAction SilentlyContinue).Source) | Where-Object { $_ -and (Test-Path $_) } | Select-Object -First 1
+$dll = "$env:BED\tf-dedicated\tf\addons\sourcemod\extensions\sigsegv.ext.2.tf2.dll"
+if ($symbolizer -and (Test-Path $dll) -and $frames.Count) {
+  foreach ($rva in ($frames.Keys | Sort-Object)) {
+    $where = (& $symbolizer "--obj=$dll" --relative-address --inlines --pretty-print $rva 2>&1) -join ' '
+    Write-Host "frame sigsegv+${rva}: $where"
   }
 }
 # A wave that runs a few game seconds in ten minutes is a server spending its
