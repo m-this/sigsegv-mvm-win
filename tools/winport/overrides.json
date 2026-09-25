@@ -767,5 +767,13 @@
   "rva": "0x3d3770",
   "vtidx": 382,
   "why": "read by hand: `mov eax, 11; ret`, the Linux body, and the one slot of CTFBonesaw's vtable holding a function that returns 11"
+ },
+ "_ZN14CAttributeList24SetRuntimeAttributeValueEPK28CEconItemAttributeDefinitionf": {
+  "rva": "0x3c52f0",
+  "why": "read by hand: walks m_Attributes (base +4, count +0x10, 0x10 an attribute) for the definition's index (+4) and sets its value, else builds a CEconItemAttribute (vtable 0x10828138) and adds it, the Linux body at the same offsets; thiscall, (const CEconItemAttributeDefinition *, float)"
+ },
+ "_ZN6CTFBot24EquipBestWeaponForThreatEPK12CKnownEntity": {
+  "rva": "0x550d40",
+  "why": "read by hand: the call match; opens with EquipRequiredWeapon inlined (the last handle of the required weapon stack at +0x28ac, count +0x28b8, switched to through vtable +0x44c), then the weapon slots through the vtable as the Linux body does; thiscall, one argument"
  }
 }

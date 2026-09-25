@@ -112,7 +112,30 @@ void variant_t::SetOther(void *data) {
 		return;
 	}
 
+#if defined _WINDOWS
+	/* No Windows address: every caller inlines it. The SDK's body (cbase.cpp),
+	 * which reads nothing but the variant. */
+	switch (this->fieldType) {
+	case FIELD_BOOLEAN:   *((bool *)data)         = bVal != 0; break;
+	case FIELD_CHARACTER: *((char *)data)         = iVal;      break;
+	case FIELD_SHORT:     *((short *)data)        = iVal;      break;
+	case FIELD_INTEGER:   *((int *)data)          = iVal;      break;
+	case FIELD_STRING:    *((string_t *)data)     = iszVal;    break;
+	case FIELD_FLOAT:     *((float *)data)        = flVal;     break;
+	case FIELD_COLOR32:   *((color32 *)data)      = rgbaVal;   break;
+	case FIELD_VECTOR:
+	case FIELD_POSITION_VECTOR:
+		((float *)data)[0] = vecVal[0];
+		((float *)data)[1] = vecVal[1];
+		((float *)data)[2] = vecVal[2];
+		break;
+	case FIELD_EHANDLE:   *((EHANDLE *)data)      = eVal;      break;
+	case FIELD_CLASSPTR:  *((CBaseEntity **)data) = eVal;      break;
+	default: break;
+	}
+#else
 	ft_VariantSetOther(this, data);
+#endif
 }
 
 void variant_t::SetEntity( CBaseEntity *val ) 
