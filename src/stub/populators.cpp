@@ -180,7 +180,31 @@ struct CExtract_CWave_m_waveSpawnVector : public IExtract<CUtlVector< CWaveSpawn
 #elif defined _WINDOWS
 
 using CExtract_CPopulationManager_m_RespecPoints   = IExtractStub;
-using CExtract_CPopulationManager_m_bAllocatedBots = IExtractStub;
+/* AllocateBots opens with the same test on Windows, through eax:
+ * cmp byte ptr [eax+m_bAllocatedBots], 0 then jne, 0x5ad in build 10828683. */
+static constexpr uint8_t s_Buf_CPopulationManager_m_bAllocatedBots[] = {
+	0x80, 0xb8, 0x00, 0x00, 0x00, 0x00, 0x00, // +0000  cmp byte ptr [eax+0xVVVVVVVV],0
+	0x0f, 0x85,                               // +0007  jne
+};
+
+struct CExtract_CPopulationManager_m_bAllocatedBots : public IExtract<uint32_t>
+{
+	using T = uint32_t;
+	
+	CExtract_CPopulationManager_m_bAllocatedBots() : IExtract<T>(sizeof(s_Buf_CPopulationManager_m_bAllocatedBots)) {}
+	
+	virtual bool GetExtractInfo(ByteBuf& buf, ByteBuf& mask) const override
+	{
+		buf.CopyFrom(s_Buf_CPopulationManager_m_bAllocatedBots);
+		mask.SetRange(0x00 + 2, 4, 0x00);
+		return true;
+	}
+	
+	virtual const char *GetFuncName() const override   { return "CPopulationManager::AllocateBots"; }
+	virtual uint32_t GetFuncOffMin() const override    { return 0x0000; }
+	virtual uint32_t GetFuncOffMax() const override    { return 0x0020; } // @ +0x000b
+	virtual uint32_t GetExtractOffset() const override { return 0x0000 + 2; }
+};
 using CExtract_CPopulationManager_m_pTemplates = IExtractStub;
 
 #endif
