@@ -1,3 +1,1 @@
 # Turned-away candidates for the next functions the sweep reached.
-# CBaseCombatCharacter::Weapon_Detach: walks m_hMyWeapons (+0x770)
-server 0x1daee0 90
