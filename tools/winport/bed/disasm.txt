@@ -1,3 +1,3 @@
-# CEconItemSchema::GetAttributeDefinitionByName, matched by a string only: at a
-# kill it finds none of the custom names it found at load
-server func 0x3b8ea0 200
+# CEconItemSchema::GetAttributeDefinitionByName past its null-argument return:
+# at a kill it finds none of the custom names it found at load
+server 0x3b8ebc 160
