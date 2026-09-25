@@ -1,2 +1,11 @@
 # SigMod frames to name, as the bed report prints them.
-# Nothing asked this round.
+# The stack of the fault every console of shard 5 ended on (mvm_akure first)
+sigsegv.ext.2.tf2.dll+0x2ee793
+sigsegv.ext.2.tf2.dll+0x2ee7af
+sigsegv.ext.2.tf2.dll+0x2ef6f0
+sigsegv.ext.2.tf2.dll+0x2ee73c
+sigsegv.ext.2.tf2.dll+0x2ee655
+sigsegv.ext.2.tf2.dll+0x2ee595
+sigsegv.ext.2.tf2.dll+0x2fce57
+sigsegv.ext.2.tf2.dll+0x2fd00d
+sigsegv.ext.2.tf2.dll+0x2fd703
