@@ -1124,6 +1124,24 @@
 					lib   "server"
 					// verified: read by hand: the first candidate, holding 'effectbar_recharge_rate', and the SDK's body: bWasFull when the owner's GetAmmoCount(GetEffectBarAmmo()) + 1 is GetMaxAmmo (0x522500), then m_flEffectBarRegenTime (+0x6c8, Linux +0x6d4) set to curtime plus InternalGetEffectBarRechargeTime when it is past or the bar was full; thiscall, no arguments, ret
 				}
+				"IGameSystem::Add"
+				{
+					type  "fixed"
+					sym   "_ZN11IGameSystem3AddEPS_"
+					addr  "0x28cd80"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: one of the two functions pushing IGameSystemPerFrame's type descriptor (0x109e0424) for a dynamic_cast, and the SDK's body: AddToTail on s_GameSystems (count 0x109930e4, allocation 0x109930dc, growing when full), then the per-frame list when the cast succeeds; cdecl, ret
+				}
+				"IGameSystem::Remove"
+				{
+					type  "fixed"
+					sym   "_ZN11IGameSystem6RemoveEPS_"
+					addr  "0x28d2cf"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the other function pushing IGameSystemPerFrame's type descriptor, right after a 15-byte atexit registration with no padding between them; it walks s_GameSystems (count 0x109930e4) for its argument, the SDK's FindAndRemove, then the per-frame list; cdecl, ret
+				}
 				"CAttributeManager::ClearCache [clone]"
 				{
 					type  "fixed"
