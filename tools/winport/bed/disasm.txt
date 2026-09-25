@@ -1,10 +1,1 @@
 # Turned-away candidates for the next functions the sweep reached.
-# CTFPlayer::DoAnimationEvent(PlayerAnimEvent_t, int): the call match
-server 0x4e8420 40
-# CTFPlayer::UpdateModel(): the short callers of SetCollisionBounds that make the two vtable calls
-server 0x50c2f0 30
-server 0x50c500 30
-server 0x514190 30
-# CTFPlayer::GetObject(int) const and CBaseCombatCharacter::AddGlowEffect()
-server 0x4f3a30 25
-server 0x1d4640 30
