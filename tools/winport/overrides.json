@@ -60,8 +60,8 @@
   "why": "(dest, destLen*, source, sourceLen): checks source for the LZSS and SNAP tags and decompresses into dest"
  },
  "_Z45AllocPooledString_StaticConstantStringPointerPKc": {
-  "bad": true,
-  "why": "0x281590 looks like the right code but MSVC compiled it as a member of the string pool, with the pool in ecx, while the tree calls it as a free function; bisect showed including it kills the server during a mission"
+  "rva": "0x281590",
+  "why": "read by hand: returns string_t through a hidden pointer with the string as its one argument, and inserts it with itself as the value into the global pooled string hashtable (0x10a35508) through 0x2815c0, keeping the answer when it is a non-empty string, the Linux body; cdecl"
  },
  "_ZL10ParseEventP9KeyValues": {
   "rva": "0x5ea190",

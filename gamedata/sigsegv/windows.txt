@@ -851,6 +851,15 @@
 					lib   "server"
 					// verified: read by hand: the function after LookupAttachment (0x1ceea0) and shaped like it; locks the studio header at +0x498 when missing, returns -1 without one, else Studio_BoneIndexByName (0x21ca90) on it and the name, the SDK body; thiscall, ret 4
 				}
+				"AllocPooledString_StaticConstantStringPointer"
+				{
+					type  "fixed"
+					sym   "_Z45AllocPooledString_StaticConstantStringPointerPKc"
+					addr  "0x281590"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: returns string_t through a hidden pointer with the string as its one argument, and inserts it with itself as the value into the global pooled string hashtable (0x10a35508) through 0x2815c0, keeping the answer when it is a non-empty string, the Linux body; cdecl
+				}
 				"CBaseEntity::TakeDamage"
 				{
 					type  "fixed"
