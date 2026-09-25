@@ -824,5 +824,19 @@
   "name": "CAttributeManager::ClearCache [clone]",
   "rva": "0x39e400",
   "why": "read by hand: CAttributeManager::OnAttributeValuesChanged (0x39e6f0) is { ClearCache(); } in the SDK and on Windows a lone jmp here; the whole function, where Linux detours the .part clone GCC split after its early return"
+ },
+ "_ZN12PathFollowerC1Ev": {
+  "name": "PathFollower::PathFollower [C1]",
+  "rva": "0x42a940",
+  "why": "read by hand: of the three functions writing PathFollower's vtable 0x10839800, the one with no argument and a plain ret; it calls Path's constructor (0x427bb0) first and sets the look-ahead distances to -1.0f, and ChasePath's constructor (0x573ca0) calls it first. 0x42a9e0 and 0x42aa30 are the destructors"
+ },
+ "_ZN12PathFollowerC2Ev": {
+  "name": "PathFollower::PathFollower [C2]",
+  "rva": "0x42a940",
+  "why": "read by hand: of the three functions writing PathFollower's vtable 0x10839800, the one with no argument and a plain ret; it calls Path's constructor (0x427bb0) first and sets the look-ahead distances to -1.0f, and ChasePath's constructor (0x573ca0) calls it first. 0x42a9e0 and 0x42aa30 are the destructors"
+ },
+ "_ZN15CTFBotFetchFlagC1Eb": {
+  "rva": "0x589b30",
+  "why": "read by hand: the first candidate, and of the two functions writing CTFBotFetchFlag's vtable 0x1089d6f0 the one that zeroes the Action fields and constructs the PathFollower member (+0x38), popping the bool (ret 4); 0x589bd0 is the deleting destructor"
  }
 }
