@@ -3,3 +3,9 @@
 bin/soundemittersystem.dll string AddSoundsFromFile
 bin/soundemittersystem.dll string Unable to load
 bin/soundemittersystem.dll string scripts/game_sounds_manifest.txt
+# CTFBot m_nBotAttrs and m_nMission: ChangeTeam zeroes both on Linux
+server 0x5505f0 120
+# CTFBot m_Tags: HasTag walks it
+server 0x553ae0 60
+# CTFBot m_nMission: the function comparing it with 2 before pushing "mission_sentry_buster"
+server string mission_sentry_buster
