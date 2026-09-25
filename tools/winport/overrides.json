@@ -702,5 +702,13 @@
  "_ZN14CBaseAnimating16LookupAttachmentEPKc": {
   "rva": "0x1ceea0",
   "why": "read by hand: the function before LookupBone (0x1ceef0) and shaped like it; locks the studio header at +0x498 when missing, returns 0 without one, else Studio_FindAttachment (0x21d000) on it and the name plus one, the SDK body; thiscall, ret 4"
+ },
+ "_ZN11CBaseEntity12SetNextThinkEfPKc": {
+  "rva": "0x202310",
+  "why": "read by hand: the candidate with 237 matched callers; turns the time into a tick (-1 for TICK_NEVER_THINK), writes m_nNextThinkTick (+0xd0) through its NetworkStateChanged when the context is null, else finds or registers the context (0x200e50, 0x201ef0) and writes that think function's tick, then CheckHasThinkFunction (0x1ff950), the SDK body; thiscall, ret 8"
+ },
+ "_Z14ItemGenerationv": {
+  "rva": "0x3a0640",
+  "why": "read by hand: mov eax, 0x10a89114; ret, the one candidate all four matched callers agree on, and the function after it reads the item schema as SpawnItem does; returns the static item generation system as the Linux body does"
  }
 }

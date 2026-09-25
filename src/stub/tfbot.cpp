@@ -55,37 +55,40 @@ struct CExtract_CTFBot_m_nMission : public IExtract<uint32_t>
 
 #elif defined _WINDOWS
 
-static constexpr uint8_t s_Buf_CTFBot_m_nMission[] = {
-	0x83, 0xbf, 0x00, 0x00, 0x00, 0x00, 0x02, // +0000  cmp dword ptr [edi+0xVVVVVVVV],0x2
-	0x75, 0x00,                               // +0007  jnz 0xXX
-	0x68, 0x00, 0x00, 0x00, 0x00,             // +0009  push offset "mission_sentry_buster"
+/* CTFBot::ChangeTeam, in Mann vs Machine, clears the mission and then the
+ * attributes as Linux does; build 10828683 has them at 0x28a0 and 0x27b8, the
+ * same 0xe8 apart as on Linux:
+ *   cmp dword ptr [esi+0x28f0],0
+ *   mov dword ptr [esi+m_nMission],0
+ *   mov dword ptr [esi+m_nBotAttrs],0
+ *   je ... */
+static constexpr uint8_t s_Buf_CTFBot_ChangeTeam_Clears[] = {
+	0x83, 0xbe, 0x00, 0x00, 0x00, 0x00, 0x00,                   // +0000  cmp dword ptr [esi+0xVVVVVVVV],0
+	0xc7, 0x86, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // +0007  mov dword ptr [esi+m_nMission],0
+	0xc7, 0x86, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // +0011  mov dword ptr [esi+m_nBotAttrs],0
+	0x74,                                                       // +001B  je
 };
 
-struct CExtract_CTFBot_m_nMission : public IExtract<uint32_t>
+template<uint32_t OFFSET>
+struct CExtract_CTFBot_ChangeTeam_Clears : public IExtract<uint32_t>
 {
-	using T = uint32_t;
-	
-	CExtract_CTFBot_m_nMission() : IExtract<T>(sizeof(s_Buf_CTFBot_m_nMission)) {}
+	CExtract_CTFBot_ChangeTeam_Clears() : IExtract<uint32_t>(sizeof(s_Buf_CTFBot_ChangeTeam_Clears)) {}
 	
 	virtual bool GetExtractInfo(ByteBuf& buf, ByteBuf& mask) const override
 	{
-		const char *str = Scan::FindUniqueConstStr(Library::SERVER, "mission_sentry_buster");
-		if (str == nullptr) return false;
-		
-		buf.CopyFrom(s_Buf_CTFBot_m_nMission);
-		buf.SetDword(0x09 + 1, (uint32_t)str);
-		
+		buf.CopyFrom(s_Buf_CTFBot_ChangeTeam_Clears);
 		mask.SetRange(0x00 + 2, 4, 0x00);
-		mask.SetRange(0x07 + 1, 1, 0x00);
-		
+		mask.SetRange(0x07 + 2, 4, 0x00);
+		mask.SetRange(0x11 + 2, 4, 0x00);
 		return true;
 	}
 	
-	virtual const char *GetFuncName() const override   { return "CFuncNavCost::IsApplicableTo"; }
+	virtual const char *GetFuncName() const override   { return "CTFBot::ChangeTeam"; }
 	virtual uint32_t GetFuncOffMin() const override    { return 0x0000; }
-	virtual uint32_t GetFuncOffMax() const override    { return 0x0200; }
-	virtual uint32_t GetExtractOffset() const override { return 0x0000 + 2; }
+	virtual uint32_t GetFuncOffMax() const override    { return 0x0060; } // @ +0x0025
+	virtual uint32_t GetExtractOffset() const override { return OFFSET; }
 };
+using CExtract_CTFBot_m_nMission = CExtract_CTFBot_ChangeTeam_Clears<0x07 + 2>;
 
 #endif
 
@@ -141,7 +144,36 @@ struct CExtract_CTFBot_m_Tags : public IExtract<int32_t>
 
 #elif defined _WINDOWS
 
-using CExtract_CTFBot_m_Tags = IExtractStub;
+/* CTFBot::HasTag opens by comparing the vector's count with zero; the count
+ * follows the CUtlMemory, so the vector starts sizeof(CUtlMemory) before it:
+ *   push ebp; mov ebp,esp; push ebx; mov ebx,ecx; push esi; xor esi,esi; push edi
+ *   cmp [ebx+m_Tags.m_Size],esi
+ *   jle ... */
+static constexpr uint8_t s_Buf_CTFBot_m_Tags[] = {
+	0x39, 0xb3, 0x00, 0x00, 0x00, 0x00, // +0000  cmp [ebx+0xVVVVVVVV],esi
+	0x7e,                               // +0006  jle
+};
+
+struct CExtract_CTFBot_m_Tags : public IExtract<int32_t>
+{
+	using T = int32_t;
+	
+	CExtract_CTFBot_m_Tags() : IExtract<T>(sizeof(s_Buf_CTFBot_m_Tags)) {}
+	
+	virtual bool GetExtractInfo(ByteBuf& buf, ByteBuf& mask) const override
+	{
+		buf.CopyFrom(s_Buf_CTFBot_m_Tags);
+		mask.SetRange(0x00 + 2, 4, 0x00);
+		return true;
+	}
+	
+	virtual const char *GetFuncName() const override   { return "CTFBot::HasTag"; }
+	virtual uint32_t GetFuncOffMin() const override    { return 0x0000; }
+	virtual uint32_t GetFuncOffMax() const override    { return 0x0020; } // @ +0x000a
+	virtual uint32_t GetExtractOffset() const override { return 0x0000 + 2; }
+	
+	virtual T AdjustValue(T val) const { return reinterpret_cast<T>((int32_t)val - (int32_t)sizeof(CUtlMemory<int>)); }
+};
 
 #endif
 
@@ -196,7 +228,7 @@ struct CExtract_CTFBot_m_nBotAttrs : public IExtract<uint32_t>
 
 #elif defined _WINDOWS
 
-using CExtract_CTFBot_m_nBotAttrs = IExtractStub;
+using CExtract_CTFBot_m_nBotAttrs = CExtract_CTFBot_ChangeTeam_Clears<0x11 + 2>;
 
 #endif
 
