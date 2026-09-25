@@ -1,2 +1,2 @@
-# Physics_SimulateEntity: what esi holds when it tail-jumps through [vtable+0x68].
-server 0x2c1550 110
+# CPopulationManager::AllocateBots: the m_bAllocatedBots test at its start.
+server 0x5e2ec0 30
