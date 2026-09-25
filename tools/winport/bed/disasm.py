@@ -18,6 +18,8 @@ symbols for:
     server CreateInterface+0x989e    the function holding that address, through it
     server +0x2ef182             the same for an RVA, as collect.ps1 prints a return address
     server string KeyValues::    the functions referencing a string containing this
+    server func 0x408e1f 300     the whole function holding this address, from its start
+    server callers 0x21ca90      every direct call to this RVA, each with the function holding it
 """
 
 import os
@@ -103,6 +105,20 @@ class Module:
             offset = data.find(needle.encode() + b"\0", offset + 1)
         print(f"== first call after push {needle!r}: " + "; ".join(f"{t} from {', '.join(v)}" for t, v in seen.items()))
 
+    def callers(self, target):
+        """Every E8 call whose destination is target, with the start of the
+        function holding it and how far into it the call is: a thin wrapper
+        calls its callee a few bytes in."""
+        found = []
+        at = self.code.find(b"\xe8")
+        while at != -1:
+            src = self.text.VirtualAddress + at
+            if src + 5 + int.from_bytes(self.code[at + 1:at + 5], "little", signed=True) == target:
+                start = self.function_start(src)
+                found.append(f"{src:#x} in {start:#x}+{src - start:#x}")
+            at = self.code.find(b"\xe8", at + 1)
+        print(f"== {len(found)} calls to {target:#x}: " + ", ".join(found))
+
     def strings(self, needle):
         data = self.pe.__data__
         offset = data.find(needle.encode())
@@ -137,6 +153,13 @@ def main():
                 continue
             if rest.startswith("string "):
                 mod.strings(rest[len("string "):])
+                continue
+            if rest.startswith("callers "):
+                mod.callers(mod.rva(rest.split()[1]))
+                continue
+            if rest.startswith("func "):
+                parts = rest.split()
+                mod.disasm(mod.function_start(mod.rva(parts[1])), limit=int(parts[2]) if len(parts) > 2 else 200)
                 continue
             parts = rest.split()
             target = mod.rva(parts[0])

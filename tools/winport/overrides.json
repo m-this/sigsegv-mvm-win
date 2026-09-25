@@ -677,5 +677,9 @@
  "_Z22PrecacheParticleSystemPKc": {
   "rva": "0x272940",
   "why": "turned away (call match); calls the particle effect string table's AddString(true, name, -1, 0) through its vtable at +0x20 (Linux +0x24, one destructor fewer), the Linux body; cdecl"
+ },
+ "_ZN12CBaseGrenade10GetThrowerEv": {
+  "rva": "0x20ad30",
+  "why": "read by hand: resolves m_hThrower (+0x504, Linux +0x51c) and returns it when its vtable +0x128 (Linux +0x12c) says player, else falls back to the owner handle at +0x210 (Linux +0x228), the Linux body; no arguments"
  }
 }
