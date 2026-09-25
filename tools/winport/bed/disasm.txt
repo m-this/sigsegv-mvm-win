@@ -1,4 +1,9 @@
-# CNavMesh::GetNavArea: the two functions naming its VPROF scope, one per
-# overload; the vector one takes (const Vector &, float) and ends ret 8.
-server +0x408817
-server +0x40887c
+# CNavMesh::GetNavArea: both VPROF references are in 0x408790. Which overload:
+# (const Vector &, float) ends ret 8.
+server 0x408790 220
+# GetLoadoutPositionName(loadout_positions_t): g_szLoadoutStrings[pos], "" on -1
+server 0x4b1a40 12
+# CBaseEntity::PrecacheScriptSound(const char *), static
+server 0x32eed0 20
+# PrecacheParticleSystem(const char *): the particle string table's AddString
+server 0x272940 20
