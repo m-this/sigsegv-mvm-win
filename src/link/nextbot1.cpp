@@ -220,7 +220,12 @@ template<>  MemberFuncThunk<      Action<CBotNPCArcher> *, AR,               CBo
 template<>  MemberFuncThunk<const Action<CBotNPCArcher> *, char *,           char[256], const Action<CBotNPCArcher> *>                             ft_Action_BuildDecoratedName<CBotNPCArcher>{                 "Action<CZombie>::BuildDecoratedName [clone]"};
 //template<>  MemberFuncThunk<const Action<CBotNPCArcher> *, char *>                                                                          ft_Action_DebugString<CBotNPCArcher>{                        "Action<CZombie>::DebugString [clone]"};
 template<>  MemberFuncThunk<const Action<CBotNPCArcher> *, void>                                                                            ft_Action_PrintStateToConsole<CBotNPCArcher>{                "Action<CZombie>::PrintStateToConsole"};
+#if defined _WINDOWS
+/* Not the [D2] entry, which reads slot 0: the scalar deleting destructor. */
+template<>  MemberFuncThunk<      Action<CBotNPCArcher> *, void>                                                                            ft_Action_DeleteThis<CBotNPCArcher>{                "Action<CZombie>::~Action [D2 windows]"};
+#else
 template<>  MemberFuncThunk<      Action<CBotNPCArcher> *, void>                                                                            ft_Action_DeleteThis<CBotNPCArcher>{                "Action<CZombie>::~Action [D2]"};
+#endif
 
 #define AR   ActionResult<CTFBot>
 #define EDR  EventDesiredResult<CTFBot>

@@ -1141,6 +1141,15 @@
 					lib   "server"
 					// verified: read by hand: the function slot 0 of Action<CTFBot>'s table (0x54e840, the scalar deleting destructor: flags test, free, ret 4) calls before freeing, and the one CTFBotFetchFlag's deleting destructor (0x589bd0) calls after its PathFollower member's; no argument, ret
 				}
+				"Action<CZombie>::~Action [D2 windows]"
+				{
+					type  "fixed"
+					sym   "win_Action_CZombie_dtor"
+					addr  "0x5bdcb0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the function slot 0 of Action<CZombie>'s table (0x5bddc0, the scalar deleting destructor: flags test, frees 0x34 bytes, ret 4) calls before freeing, as Action<CTFBot>'s slot 0 calls 0x54e3f0; no argument, ret
+				}
 				"CTFWeaponBase::IsEnergyWeapon"
 				{
 					type  "fixed"

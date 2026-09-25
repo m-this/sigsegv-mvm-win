@@ -92,7 +92,7 @@ template<> Action<CTFBot>::~Action() { ft_Action_dtor_D2(this); }
 
 /* Action<CBotNPCArcher> shares its code with Action<CZombie>, as the thunks in
  * nextbot1.cpp already assume. */
-static MemberFuncThunk<Action<CBotNPCArcher> *, void> ft_Action_CBotNPCArcher_dtor_D2("Action<CZombie>::~Action [D2]");
+static MemberFuncThunk<Action<CBotNPCArcher> *, void> ft_Action_CBotNPCArcher_dtor_D2("Action<CZombie>::~Action [D2 windows]");
 template<> Action<CBotNPCArcher>::~Action() { ft_Action_CBotNPCArcher_dtor_D2(this); }
 
 /* not implemented */

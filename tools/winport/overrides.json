@@ -876,5 +876,10 @@
   "name": "PathFollower::~PathFollower [D1]",
   "rva": "0x42a9e0",
   "why": "read by hand: of the three functions writing PathFollower's vtable 0x10839800, the one that tears down the path with a plain ret; 0x42aa30 is the deleting destructor (flags, ret 4), and ChasePath's destructors call this one for their PathFollower"
+ },
+ "win_Action_CZombie_dtor": {
+  "name": "Action<CZombie>::~Action [D2 windows]",
+  "rva": "0x5bdcb0",
+  "why": "read by hand: the function slot 0 of Action<CZombie>'s table (0x5bddc0, the scalar deleting destructor: flags test, frees 0x34 bytes, ret 4) calls before freeing, as Action<CTFBot>'s slot 0 calls 0x54e3f0; no argument, ret"
  }
 }
