@@ -601,7 +601,7 @@
 				"PathFollower::~PathFollower [D1]"
 				{
 					type  "fixed"
-					sym   "_ZN12PathFollowerD1Ev"
+					sym   "win_PathFollower_dtor"
 					addr  "0x42aa30"
 					build "10828683"
 					lib   "server"
@@ -1145,7 +1145,7 @@
 				"PathFollower::~PathFollower [D1]"
 				{
 					type  "fixed"
-					sym   "_ZN12PathFollowerD1Ev"
+					sym   "win_PathFollower_dtor"
 					addr  "0x42a9e0"
 					build "10828683"
 					lib   "server"

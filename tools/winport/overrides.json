@@ -872,7 +872,7 @@
   "rva": "0x54e3f0",
   "why": "read by hand: the function slot 0 of Action<CTFBot>'s table (0x54e840, the scalar deleting destructor: flags test, free, ret 4) calls before freeing, and the one CTFBotFetchFlag's deleting destructor (0x589bd0) calls after its PathFollower member's; no argument, ret"
  },
- "_ZN12PathFollowerD1Ev": {
+ "win_PathFollower_dtor": {
   "name": "PathFollower::~PathFollower [D1]",
   "rva": "0x42a9e0",
   "why": "read by hand: of the three functions writing PathFollower's vtable 0x10839800, the one that tears down the path with a plain ret; 0x42aa30 is the deleting destructor (flags, ret 4), and ChasePath's destructors call this one for their PathFollower"
