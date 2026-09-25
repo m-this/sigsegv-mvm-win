@@ -319,7 +319,14 @@ template<>  MemberFuncThunk<      Action<CTFBot> *, AR,               CTFBot *, 
 template<>  MemberFuncThunk<const Action<CTFBot> *, char *,           char[256], const Action<CTFBot> *>                             ft_Action_BuildDecoratedName<CTFBot>{                 "Action<CTFBot>::BuildDecoratedName [clone]"};
 //template<>  MemberFuncThunk<const Action<CTFBot> *, char *>                                                                          ft_Action_DebugString<CTFBot>{                        "Action<CTFBot>::DebugString [clone]"};
 template<>  MemberFuncThunk<const Action<CTFBot> *, void>                                                                            ft_Action_PrintStateToConsole<CTFBot>{                "Action<CTFBot>::PrintStateToConsole"};
+#if defined _WINDOWS
+/* Slot 0 of the Windows table, which the [D2] entry reads, is the scalar
+ * deleting destructor: it takes a flags argument, frees on bit 0, and pops 4.
+ * This is the destructor that one calls. */
+template<>  MemberFuncThunk<      Action<CTFBot> *, void>                                                                            ft_Action_DeleteThis<CTFBot>{                         "Action<CTFBot>::~Action [D2 windows]"};
+#else
 template<>  MemberFuncThunk<      Action<CTFBot> *, void>                                                                            ft_Action_DeleteThis<CTFBot>{                         "Action<CTFBot>::~Action [D2]"};
+#endif
 
 /* NextBotManager */
 static MemberFuncThunk<NextBotManager *, void, CUtlVector<INextBot *> *> ft_NextBotManager_CollectAllBots("NextBotManager::CollectAllBots");

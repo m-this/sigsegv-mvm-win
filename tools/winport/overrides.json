@@ -866,5 +866,15 @@
   "name": "g_aPlayerClassNames_NonLocalized",
   "rva": "0x9cdcbc",
   "why": "the only array of pointers in server.dll whose entries name the nine classes capitalized: Undefined, Scout, Sniper, Soldier, Demoman, Medic, Heavy, Pyro, Spy, Engineer, Civilian, an empty string and Random, the SDK's declaration of it"
+ },
+ "win_Action_CTFBot_dtor": {
+  "name": "Action<CTFBot>::~Action [D2 windows]",
+  "rva": "0x54e3f0",
+  "why": "read by hand: the function slot 0 of Action<CTFBot>'s table (0x54e840, the scalar deleting destructor: flags test, free, ret 4) calls before freeing, and the one CTFBotFetchFlag's deleting destructor (0x589bd0) calls after its PathFollower member's; no argument, ret"
+ },
+ "_ZN12PathFollowerD1Ev": {
+  "name": "PathFollower::~PathFollower [D1]",
+  "rva": "0x42a9e0",
+  "why": "read by hand: of the three functions writing PathFollower's vtable 0x10839800, the one that tears down the path with a plain ret; 0x42aa30 is the deleting destructor (flags, ret 4), and ChasePath's destructors call this one for their PathFollower"
  }
 }

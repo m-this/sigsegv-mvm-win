@@ -1133,6 +1133,24 @@
 					lib   "server"
 					// verified: read by hand: the consensus match turned away, and the Linux body step for step: GetTeamNumber, the enemy team (2 and 3 swapped), CollectPlayers(&vec, team, true, false), per player WorldSpaceCenter (vtable +0x270, Linux +0x274) and PointInRespawnRoom(player, center, false), AddToTail, then RandomInt(0, n-1) or null; thiscall, no arguments, ret
 				}
+				"Action<CTFBot>::~Action [D2 windows]"
+				{
+					type  "fixed"
+					sym   "win_Action_CTFBot_dtor"
+					addr  "0x54e3f0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the function slot 0 of Action<CTFBot>'s table (0x54e840, the scalar deleting destructor: flags test, free, ret 4) calls before freeing, and the one CTFBotFetchFlag's deleting destructor (0x589bd0) calls after its PathFollower member's; no argument, ret
+				}
+				"PathFollower::~PathFollower [D1]"
+				{
+					type  "fixed"
+					sym   "_ZN12PathFollowerD1Ev"
+					addr  "0x42a9e0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: of the three functions writing PathFollower's vtable 0x10839800, the one that tears down the path with a plain ret; 0x42aa30 is the deleting destructor (flags, ret 4), and ChasePath's destructors call this one for their PathFollower
+				}
 				"CTFWeaponBase::IsEnergyWeapon"
 				{
 					type  "fixed"

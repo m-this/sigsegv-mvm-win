@@ -78,7 +78,10 @@ THUNK_VTABLE(9ChasePath, 0x200);
 #include "re/path.h"
 #include "stub/nextbot_cc.h"
 
-static MemberFuncThunk<Action<CTFBot> *, void> ft_Action_dtor_D2("Action<CTFBot>::~Action [D2]");
+/* Not the [D2] entry: on Windows it reads slot 0, the scalar deleting
+ * destructor, which takes flags, may free, and pops 4. Called without the
+ * flags it freed actions at random and unbalanced the stack under them. */
+static MemberFuncThunk<Action<CTFBot> *, void> ft_Action_dtor_D2("Action<CTFBot>::~Action [D2 windows]");
 
 /* oh god... good luck declaring mangled symbols in C for MSVC++, given that
  * they use wonderful characters like "@$?"... */
