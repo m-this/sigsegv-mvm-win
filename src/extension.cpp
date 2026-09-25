@@ -191,6 +191,32 @@ namespace ExitTrace
 		auto esp = reinterpret_cast<void *const *>(ctx->Esp);
 		FILE *f = fopen("sigsegv_exit.txt", "a");
 		char line[MAX_PATH + 64];
+		/* Each register, where it points, and for one that points at an
+		 * object, its first word (a vtable) and that table's slots 0x64 and
+		 * 0x68: a call through a bad slot is read off these. */
+		const struct { const char *name; DWORD value; } regs[] = {
+			{"eax", ctx->Eax}, {"ebx", ctx->Ebx}, {"ecx", ctx->Ecx}, {"edx", ctx->Edx},
+			{"esi", ctx->Esi}, {"edi", ctx->Edi}, {"ebp", ctx->Ebp},
+		};
+		for (const auto &r : regs) {
+			char where[MAX_PATH + 16], vt[MAX_PATH + 16] = "-";
+			Name(where, sizeof(where), reinterpret_cast<void *>(r.value));
+			auto obj = reinterpret_cast<void *const *>(r.value);
+			unsigned long w0 = 0, s64 = 0, s68 = 0;
+			if (Readable(obj, sizeof(void *))) {
+				w0 = (unsigned long)(uintptr_t)obj[0];
+				Name(vt, sizeof(vt), obj[0]);
+				auto table = reinterpret_cast<void *const *>(obj[0]);
+				if (Readable(table + 0x68 / 4, sizeof(void *))) {
+					s64 = (unsigned long)(uintptr_t)table[0x64 / 4];
+					s68 = (unsigned long)(uintptr_t)table[0x68 / 4];
+				}
+			}
+			snprintf(line, sizeof(line), "  %s 0x%08lx %s -> 0x%08lx %s [+0x64] 0x%08lx [+0x68] 0x%08lx\n",
+				r.name, (unsigned long)r.value, where, w0, vt, s64, s68);
+			if (f != nullptr) fputs(line, f);
+			Warning("%s", line);
+		}
 		/* The words the bad ret left: the one it popped sat just below ESP. */
 		for (int i = -2; i < 8; ++i) {
 			if (!Readable(esp + i, sizeof(void *))) continue;
