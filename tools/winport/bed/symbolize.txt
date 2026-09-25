@@ -2,3 +2,9 @@
 # a null read under actions.ext (sweep 444218a, shard 0):
 sigsegv.ext.2.tf2.dll+0x2d13b1
 sigsegv.ext.2.tf2.dll+0x30a270
+# a read at 4 under server.dll+0x5e5cb9 (sweep 444218a shard 1):
+sigsegv.ext.2.tf2.dll+0x1b1cc3
+sigsegv.ext.2.tf2.dll+0x1b20b1
+sigsegv.ext.2.tf2.dll+0x1bbe1b
+sigsegv.ext.2.tf2.dll+0x1bd72a
+sigsegv.ext.2.tf2.dll+0x1b6139
