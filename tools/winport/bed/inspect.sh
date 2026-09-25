@@ -13,7 +13,7 @@ base = pe.OPTIONAL_HEADER.ImageBase
 text = next(s for s in pe.sections if s.Name.rstrip(b"\0") == b".text")
 code = text.get_data(); tva = base + text.VirtualAddress
 md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32); md.detail = False
-for cls in ["PathFollower", "Path", "ChasePath"]:
+for cls in ["PathFollower", "Path", "ChasePath", "CTFBotFetchFlag"]:
     try:
         first = next(l for l in open(f"derived/win-vtables/{cls}.txt") if l.startswith("// vtable"))
     except (FileNotFoundError, StopIteration):
