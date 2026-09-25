@@ -1,5 +1,5 @@
 # Turned-away candidates for the next functions the sweep reached.
-# CTFGameRules::DropSpellPickup(const Vector &, int) const: the functions pushing "tf_spell_pickup"
-server +0x48a157
-server +0x495d89
-server callers 0x48a157
+# CSoundEmitterSystemBase::AddSoundsFromFile(const char *, bool, bool, bool), in the sound emitter library
+bin/soundemittersystem.dll string AddSoundsFromFile
+bin/soundemittersystem.dll string Unable to load
+bin/soundemittersystem.dll string scripts/game_sounds_manifest.txt
