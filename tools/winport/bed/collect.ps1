@@ -107,7 +107,9 @@ function Name-Frame($line) {
   if (-not $m.Success -or -not $symbolizer -or -not (Test-Path $dll)) { return $line }
   $rva = $m.Groups[1].Value
   if (-not $names.ContainsKey($rva)) {
-    $names[$rva] = ((& $symbolizer "--obj=$dll" --relative-address $rva 2>&1) | Select-Object -First 1)
+    # function and file:line of the innermost inlined frame, the one that ran
+    $out = @(& $symbolizer "--obj=$dll" --relative-address $rva 2>&1)
+    $names[$rva] = ($out | Select-Object -First 2) -join ' at '
   }
   return "$line = $($names[$rva])"
 }
