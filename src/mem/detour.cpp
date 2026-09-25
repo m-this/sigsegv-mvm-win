@@ -9,6 +9,7 @@
 #include "util/demangle.h"
 #include "util/misc.h"
 #include "stub/server.h"
+#include "util/rtti.h"
 
 #include <udis86.h>
 
@@ -214,6 +215,31 @@ static bool IsFoldableTrivialFunction(const uint8_t *func)
 	return false;
 }
 
+/* A body MSVC folded with other virtuals sits at more than one slot index
+ * across the game's vtables, while a virtual that is only itself keeps one
+ * index in every class that has it. Action<CTFBot>::OnCommandString is one
+ * body with twenty others: a detour on it ran for every one of them, and
+ * EngieBot_Wrangler's read Update's interval as the command string. Built
+ * once, over every vtable RTTI names. */
+static bool FillsSeveralSlotIndices(const void *func)
+{
+	static std::unordered_map<const void *, int> index_of;
+	static bool built = false;
+	if (!built && !RTTI::GetAllVTableInfo().empty()) {
+		built = true;
+		for (const auto &[name, info] : RTTI::GetAllVTableInfo()) {
+			auto vt = reinterpret_cast<const void *const *>(info.vtable);
+			int n = (int)(info.size / sizeof(void *));
+			for (int i = 0; i < n; ++i) {
+				auto [it, inserted] = index_of.emplace(vt[i], i);
+				if (!inserted && it->second != i) it->second = -1;
+			}
+		}
+	}
+	auto it = index_of.find(func);
+	return it != index_of.end() && it->second == -1;
+}
+
 /* How many argument bytes a function pops, read from its returns: every `ret`
  * up to the int3 padding after it must agree, or the answer is unknown. A
  * jump at the entry, an ILT thunk or someone else's hook, is followed once. */
@@ -272,6 +298,11 @@ bool IDetour_SymNormal::DoLoad()
 #if defined _WINDOWS
 	if (IsFoldableTrivialFunction(reinterpret_cast<const uint8_t *>(this->m_pFunc))) {
 		Warning("IDetour_SymNormal::DoLoad: \"%s\": refused, a trivial function MSVC may have merged with others (%s)\n",
+			this->GetName(), this->m_bFuncByName ? this->m_strFuncName.c_str() : "by pointer");
+		return false;
+	}
+	if (FillsSeveralSlotIndices(this->m_pFunc)) {
+		Warning("IDetour_SymNormal::DoLoad: \"%s\": refused, its body is shared by virtuals at several vtable slots (%s)\n",
 			this->GetName(), this->m_bFuncByName ? this->m_strFuncName.c_str() : "by pointer");
 		return false;
 	}
