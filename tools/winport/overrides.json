@@ -857,5 +857,9 @@
   "rva": "0x157e70",
   "vtidx": 446,
   "why": "read by hand from the vtables: Linux slot 453 less 7, as ApplyFireDelay (421, 414), ApplyOnHitAttributes (426, 419) and DeflectEntity (431, 424) are; the shared return-false body, and the slot names it. Slots 448 and 449 share one body as Energy_GetShotCost and Energy_GetRechargeCost do, both returning 4"
+ },
+ "_ZN6CTFBot26SelectRandomReachableEnemyEv": {
+  "rva": "0x561c00",
+  "why": "read by hand: the consensus match turned away, and the Linux body step for step: GetTeamNumber, the enemy team (2 and 3 swapped), CollectPlayers(&vec, team, true, false), per player WorldSpaceCenter (vtable +0x270, Linux +0x274) and PointInRespawnRoom(player, center, false), AddToTail, then RandomInt(0, n-1) or null; thiscall, no arguments, ret"
  }
 }

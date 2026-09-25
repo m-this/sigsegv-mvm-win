@@ -1124,6 +1124,15 @@
 					lib   "server"
 					// verified: read by hand: the first candidate, holding 'effectbar_recharge_rate', and the SDK's body: bWasFull when the owner's GetAmmoCount(GetEffectBarAmmo()) + 1 is GetMaxAmmo (0x522500), then m_flEffectBarRegenTime (+0x6c8, Linux +0x6d4) set to curtime plus InternalGetEffectBarRechargeTime when it is past or the bar was full; thiscall, no arguments, ret
 				}
+				"CTFBot::SelectRandomReachableEnemy"
+				{
+					type  "fixed"
+					sym   "_ZN6CTFBot26SelectRandomReachableEnemyEv"
+					addr  "0x561c00"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the consensus match turned away, and the Linux body step for step: GetTeamNumber, the enemy team (2 and 3 swapped), CollectPlayers(&vec, team, true, false), per player WorldSpaceCenter (vtable +0x270, Linux +0x274) and PointInRespawnRoom(player, center, false), AddToTail, then RandomInt(0, n-1) or null; thiscall, no arguments, ret
+				}
 				"CTFWeaponBase::IsEnergyWeapon"
 				{
 					type  "fixed"
