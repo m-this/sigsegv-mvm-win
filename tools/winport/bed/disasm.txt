@@ -1,6 +1,16 @@
-# Path::Compute<CostT>(goal): every instance, and who calls the one candidates.py
-# ranked first, to tell the CTFBotPathCost one from the others
-server string Path::Compute(goal)
-server callers 0x5689e0
-# CAttributeList::RemoveAttribute candidate: a loop over m_Attributes
-server 0x3c51c0 80
+# Path::Compute(goal) instances (each ~0x27 before its string reference): callers of each
+server callers 0x415b10
+server callers 0x5399f0
+server callers 0x567c30
+server callers 0x595ba0
+server callers 0x59d2e0
+server callers 0x5b1e00
+# the head of each, to confirm the start
+server 0x415b10 6
+server 0x5399f0 6
+server 0x567c30 6
+server 0x595ba0 6
+server 0x59d2e0 6
+server 0x5b1e00 6
+# RemoveAttribute candidate past its first ret
+server 0x3c5203 30
