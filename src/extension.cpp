@@ -94,6 +94,7 @@ extern int laserSprite;
 #if defined _WINDOWS
 #include <psapi.h>
 #include <intrin.h>
+#include <algorithm>
 
 /* Who ends the server. The engine's Error() leaves through tier0's
  * Plat_ExitProcess, TerminateProcess on itself with status 100, and on
@@ -388,6 +389,121 @@ namespace ExitTrace
 	 * well; the report is capped at three. */
 	HANDLE MainThread = nullptr;
 	
+	/* For the bed: tier0's allocator holds a few hundred MB of what the
+	 * servers run out of, so the rest is taken from the heap directly, by a
+	 * module with its own CRT. Each module's imports of the heap functions
+	 * are pointed at these, which count the bytes the calling module holds;
+	 * modules loaded later are picked up at each report. */
+	namespace HeapCount
+	{
+		using Alloc_t   = void *(NTAPI *)(void *, ULONG, SIZE_T);
+		using Free_t    = BOOLEAN (NTAPI *)(void *, ULONG, void *);
+		using ReAlloc_t = void *(NTAPI *)(void *, ULONG, void *, SIZE_T);
+		using Size_t    = SIZE_T (NTAPI *)(void *, ULONG, const void *);
+		Alloc_t RealAlloc; Free_t RealFree; ReAlloc_t RealReAlloc; Size_t RealSize;
+		
+		struct Module { uintptr_t base, end; char name[48]; volatile LONG64 net; };
+		Module modules[160];
+		volatile LONG used = 0;
+		volatile LONG64 unknown = 0;
+		
+		volatile LONG64 *Of(void *ret)
+		{
+			auto at = reinterpret_cast<uintptr_t>(ret);
+			LONG n = used;
+			for (LONG i = 0; i < n; ++i) {
+				if (at >= modules[i].base && at < modules[i].end) return &modules[i].net;
+			}
+			return &unknown;
+		}
+		
+		void *NTAPI HookAlloc(void *heap, ULONG flags, SIZE_T size)
+		{
+			void *p = RealAlloc(heap, flags, size);
+			if (p != nullptr) InterlockedAdd64(Of(_ReturnAddress()), (LONG64)size);
+			return p;
+		}
+		BOOLEAN NTAPI HookFree(void *heap, ULONG flags, void *mem)
+		{
+			if (mem != nullptr) {
+				SIZE_T size = RealSize(heap, 0, mem);
+				if (size != (SIZE_T)-1) InterlockedAdd64(Of(_ReturnAddress()), -(LONG64)size);
+			}
+			return RealFree(heap, flags, mem);
+		}
+		/* kernel32's HeapFree is a function of its own, not a forwarder to
+		 * ntdll as HeapAlloc and HeapReAlloc are. */
+		BOOL WINAPI HookHeapFree(HANDLE heap, DWORD flags, LPVOID mem)
+		{
+			return HookFree(heap, flags, mem) ? TRUE : FALSE;
+		}
+		void *NTAPI HookReAlloc(void *heap, ULONG flags, void *mem, SIZE_T size)
+		{
+			SIZE_T old = mem != nullptr ? RealSize(heap, 0, mem) : 0;
+			void *p = RealReAlloc(heap, flags, mem, size);
+			if (p != nullptr) InterlockedAdd64(Of(_ReturnAddress()), (LONG64)size - (old != (SIZE_T)-1 ? (LONG64)old : 0));
+			return p;
+		}
+		
+		/* Every module not yet counted gets a row and its imports pointed here. */
+		void Patch()
+		{
+			HMODULE ntdll = GetModuleHandleA("ntdll.dll");
+			if (ntdll == nullptr) return;
+			if (RealAlloc == nullptr) {
+				RealAlloc   = reinterpret_cast<Alloc_t>  (GetProcAddress(ntdll, "RtlAllocateHeap"));
+				RealFree    = reinterpret_cast<Free_t>   (GetProcAddress(ntdll, "RtlFreeHeap"));
+				RealReAlloc = reinterpret_cast<ReAlloc_t>(GetProcAddress(ntdll, "RtlReAllocateHeap"));
+				RealSize    = reinterpret_cast<Size_t>   (GetProcAddress(ntdll, "RtlSizeHeap"));
+				if (RealAlloc == nullptr || RealFree == nullptr || RealReAlloc == nullptr || RealSize == nullptr) return;
+			}
+			HMODULE mods[512];
+			DWORD needed = 0;
+			if (!EnumProcessModules(GetCurrentProcess(), mods, sizeof(mods), &needed)) return;
+			HMODULE k32 = GetModuleHandleA("kernel32.dll"), kb = GetModuleHandleA("kernelbase.dll");
+			for (DWORD i = 0; i < needed / sizeof(HMODULE) && i < 512; ++i) {
+				if (mods[i] == ntdll || mods[i] == k32 || mods[i] == kb) continue;
+				MODULEINFO info;
+				if (!GetModuleInformation(GetCurrentProcess(), mods[i], &info, sizeof(info))) continue;
+				auto base = reinterpret_cast<uintptr_t>(info.lpBaseOfDll);
+				bool known = false;
+				for (LONG j = 0; j < used; ++j) if (modules[j].base == base) { known = true; break; }
+				if (known || used >= LONG(sizeof(modules) / sizeof(modules[0]))) continue;
+				Module &m = modules[used];
+				m.base = base; m.end = base + info.SizeOfImage; m.net = 0;
+				char path[MAX_PATH];
+				GetModuleFileNameA(mods[i], path, sizeof(path));
+				const char *slash = strrchr(path, '\\');
+				snprintf(m.name, sizeof(m.name), "%s", slash != nullptr ? slash + 1 : path);
+				InterlockedIncrement(&used);
+				PatchImports(mods[i], reinterpret_cast<void *>(RealAlloc),   reinterpret_cast<void *>(&HookAlloc));
+				PatchImports(mods[i], reinterpret_cast<void *>(RealFree),    reinterpret_cast<void *>(&HookFree));
+				PatchImports(mods[i], reinterpret_cast<void *>(RealReAlloc), reinterpret_cast<void *>(&HookReAlloc));
+				for (HMODULE from : { k32, kb }) {
+					void *heapfree = from != nullptr ? reinterpret_cast<void *>(GetProcAddress(from, "HeapFree")) : nullptr;
+					if (heapfree != nullptr) PatchImports(mods[i], heapfree, reinterpret_cast<void *>(&HookHeapFree));
+				}
+			}
+		}
+		
+		/* The modules holding the most, largest first. */
+		void Report(char *out, size_t size)
+		{
+			int order[160];
+			LONG n = used;
+			for (LONG i = 0; i < n; ++i) order[i] = i;
+			std::sort(order, order + n, [](int a, int b) { return modules[a].net > modules[b].net; });
+			size_t len = 0;
+			out[0] = '\0';
+			for (LONG i = 0; i < n && i < 8 && len < size - 80; ++i) {
+				const Module &m = modules[order[i]];
+				if (m.net < (LONG64(4) << 20)) break;
+				len += snprintf(out + len, size - len, " %s %lld MB", m.name, (long long)(m.net >> 20));
+			}
+			if (len < size - 40) snprintf(out + len, size - len, " unknown caller %lld MB", (long long)(unknown >> 20));
+		}
+	}
+	
 	/* For the bed: servers end in "Out of memory or address space" a few
 	 * missions in. Once a minute, what the process holds and what is left of
 	 * its address space, so a leak reads as a climb across missions and a
@@ -435,11 +551,13 @@ namespace ExitTrace
 			len += snprintf(classes + len, sizeof(classes) - len, " %uK:%ux=%uMB",
 				(unsigned)((size_t(0x10000) << c) >> 10), (unsigned)count_class[c], (unsigned)(by_class[c] >> 20));
 		}
-		char owners[512];
+		char owners[512], heap[768];
 		MemCount::Report(owners, sizeof(owners));
-		Warning("SigMod: memory: private %u MB, working set %u MB, reserved %u MB, free %u MB, largest free %u MB; by allocation size:%s; net since load by caller:%s\n",
+		HeapCount::Patch();
+		HeapCount::Report(heap, sizeof(heap));
+		Warning("SigMod: memory: private %u MB, working set %u MB, reserved %u MB, free %u MB, largest free %u MB; by allocation size:%s; net since load by caller:%s; heap held by caller:%s\n",
 			(unsigned)(pmc.PrivateUsage >> 20), (unsigned)(pmc.WorkingSetSize >> 20), (unsigned)(reserved >> 20),
-			(unsigned)(free_total >> 20), (unsigned)(free_largest >> 20), classes, owners);
+			(unsigned)(free_total >> 20), (unsigned)(free_largest >> 20), classes, owners, heap);
 	}
 	
 	DWORD WINAPI Watchdog(void *)
@@ -496,7 +614,7 @@ namespace ExitTrace
 	void Install()
 	{
 		AddVectoredExceptionHandler(1, &OnFault);
-		if (getenv("SIGSEGV_SURVEY_UNRESOLVED") != nullptr) MemCount::Install();
+		if (getenv("SIGSEGV_SURVEY_UNRESOLVED") != nullptr) { MemCount::Install(); HeapCount::Patch(); }
 		if (getenv("SIGSEGV_SURVEY_UNRESOLVED") != nullptr
 			&& DuplicateHandle(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), &MainThread, 0, FALSE, DUPLICATE_SAME_ACCESS)) {
 			CreateThread(nullptr, 0, &Watchdog, nullptr, 0, nullptr);
