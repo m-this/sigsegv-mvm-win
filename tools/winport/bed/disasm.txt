@@ -1,3 +1,4 @@
-# Path::Compute<CTFBotPathCost>(goal) at 0x567c30: a call site's pushes and the function's ret, against SigMod's six arguments
-server +0x56a338
-server 0x567c30 400
+# CBaseEntity::SetEffects candidate: compares its argument with m_fEffects (+0xd4)
+server 0x2021c0 80
+# CTFBotPushToCapturePoint::CTFBotPushToCapturePoint candidate: the Action constructor, then two vtables
+server 0x5883f0 40

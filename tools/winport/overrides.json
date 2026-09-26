@@ -889,5 +889,9 @@
  "_ZN4Path7ComputeI14CTFBotPathCostEEbP8INextBotRK6VectorRT_fbb": {
   "rva": "0x567c30",
   "why": "read by hand: seven functions reference 'Path::Compute(goal)', one per cost functor; this one has 46 callers, all in the TFBot behaviours (0x56a284 to 0x57xxxx), where each of the other six has one"
+ },
+ "_ZN6CTFBot10LeaveSquadEv": {
+  "rva": "0x557bd0",
+  "why": "read by hand: thiscall, no argument; reads the squad at +0x27d0 (Linux +0x27d0 too), and when there is one calls the squad's Leave (0x566af0) with the bot and clears the field, the Linux body"
  }
 }
