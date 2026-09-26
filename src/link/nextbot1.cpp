@@ -4,6 +4,7 @@
 #include "re/path.h"
 #include "stub/tfbot.h"
 #include "stub/nextbot_cc.h"
+#include "util/rtti.h"
 
 
 #define INER INextBotEventResponder
@@ -435,6 +436,13 @@ void PathFollower::SetMinLookAheadDistance(float dist) { vt_PathFollower_SetMinL
 
 /* ChasePath */
 void ChasePath::Update(INextBot *bot, CBaseEntity *subject, const IPathCost &cost, Vector *pPredictedSubjectPos = nullptr) { vt_ChasePath_Update (this, bot, subject, cost, pPredictedSubjectPos); }
+#if defined _WINDOWS
+void ChasePath::UseGameVTable()
+{
+	const void **vt = RTTI::GetVTable<ChasePath>();
+	if (vt != nullptr) *reinterpret_cast<const void ***>(this) = vt;
+}
+#endif
 
 /* CTFBotPathCost */
 float CTFBotPathCost::operator()(CNavArea *area1, CNavArea *area2, const CNavLadder *ladder, const CFuncElevator *elevator, float f1) const { return ft_CTFBotPathCost_op_func(this, area1, area2, ladder, elevator, f1); }
