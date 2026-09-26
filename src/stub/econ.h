@@ -664,11 +664,22 @@ inline CItemGeneration *ItemGeneration() { return ft_ItemGeneration(); }
 
 extern StaticFuncThunk<void, const CAttribute_String *, const char **> ft_CopyStringAttributeValueToCharPointerOutput;
 
+#if defined _WINDOWS
+/* Inlined into every caller on Windows. value_ is the std::string * at +0x10,
+ * as on Linux (CAttribute_String::Clear reads it there); an MSVC std::string
+ * keeps its characters in place until its capacity, at +0x14, passes 15. */
+inline void CopyStringAttributeValueToCharPointerOutput(const CAttribute_String *attr_str, const char **p_cstr)
+{
+	auto str = *(const char **)((uintptr_t)attr_str + 0x10);
+	*p_cstr = *(const size_t *)(str + 0x14) > 15 ? *(const char **)str : str;
+}
+#else
 inline void CopyStringAttributeValueToCharPointerOutput(const CAttribute_String *attr_str, const char **p_cstr) { ft_CopyStringAttributeValueToCharPointerOutput(attr_str, p_cstr); }
+#endif
 inline const char *GetStringAttributeValue(const CAttribute_String *attr_str) 
 { 
 	const char *p_cstr;
-	ft_CopyStringAttributeValueToCharPointerOutput(attr_str, &p_cstr);
+	CopyStringAttributeValueToCharPointerOutput(attr_str, &p_cstr);
 	return  p_cstr;
 }
 
