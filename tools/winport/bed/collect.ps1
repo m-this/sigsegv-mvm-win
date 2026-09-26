@@ -195,6 +195,24 @@ Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort
     if ($l -notmatch '^SigMod' -or $i % 5 -eq 0 -or $i -eq $lines.Count) { Write-Host "memory in ${name}: $l" }
   }
 }
+# How much of SigMod resolves on Windows, from its own lists: sig_list_addrs
+# says OK or FAIL per address, sig_list_linkage gives each thunk's address,
+# 0 when nothing resolved it (0xfffffffc for a virtual with no slot).
+$addrs = "$Out\sig_list_addrs.txt"
+if (Test-Path $addrs) {
+  $rows = @(Get-Content $addrs | Where-Object { $_ -match '^\S+\s+(\S+)\s+\S' } | ForEach-Object { ($_ -split '\s+')[1] })
+  $fail = @($rows | Where-Object { $_ -eq 'FAIL' }).Count
+  $init = @($rows | Where-Object { $_ -eq 'INITIAL' }).Count
+  Write-Host ("coverage: addresses {0} listed, {1} FAIL, {2} not looked up, {3} resolved" -f $rows.Count, $fail, $init, ($rows.Count - $fail - $init))
+}
+$links = "$Out\sig_list_linkage.txt"
+if (Test-Path $links) {
+  $rows = @(Get-Content $links | Where-Object { $_ -match '^\S+\s+0x[0-9a-f]+\s+\S' })
+  $rows | Group-Object { ($_ -split '\s+')[0] } | ForEach-Object {
+    $none = @($_.Group | Where-Object { ($_ -split '\s+')[1] -match '^0x0+$|^0xfffffffc$' }).Count
+    Write-Host ("coverage: linkage {0}: {1} of {2} unresolved" -f $_.Name, $none, $_.Count)
+  }
+}
 # What the schema made of SigMod's custom attributes, once per distinct line.
 $attrs = Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
   Select-String -Pattern 'SigMod: custom attributes: .*' | ForEach-Object { $_.Matches[0].Value } | Sort-Object -Unique | Select-Object -First 30
