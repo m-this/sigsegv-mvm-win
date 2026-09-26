@@ -4692,6 +4692,15 @@
 					lib   "server"
 					// data
 				}
+				"g_MannVsMachineUpgrades"
+				{
+					type  "fixed"
+					sym   "g_MannVsMachineUpgrades"
+					addr  "0xb96ad4"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: GetUpgradeStepData indexes the upgrade table through the pointer at 0x10b96ae0, and the upgrade parser (0x5f6b80) reaches that same vector at +0xc from the manager and its count at +0x18: m_Upgrades after CAutoGameSystem's vtable, m_pNext and m_pszName, as on Linux. Unresolved, SigMod appended its extended upgrades to a scratch block and the game's table stayed short, so RestoreCheckpoint's GetUpgradeStepData read a name past its end
+				}
 				"g_pPopulationManager"
 				{
 					type  "fixed"
