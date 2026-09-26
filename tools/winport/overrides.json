@@ -910,5 +910,30 @@
   "rva": "0x15e390",
   "vtidx": 276,
   "why": "read by hand from the vtables: Linux slot 277 less 1, as the pairs around it are (CreateViewModel 334/333, StudioFrameAdvance 202/201); the body calls the EyePosition slot (+0x224) into the returned vector and pops the hidden pointer, the Linux body"
+ },
+ "_ZNK16CTFWeaponBaseGun23GetWeaponProjectileTypeEv": {
+  "rva": "0x5bb950",
+  "vtidx": 472,
+  "why": "read by hand from the vtables: CTFWeaponBaseGun's own run of slots sits 7 below Linux (GetWeaponProjectileType 479/472, whose body indexes the weapon info at +0x6d8 by the mode at +0x6cc and returns the entry's projectile type; FireFlameRocket's two overloads 486-487/479-480 both return null); slot 472"
+ },
+ "_ZN16CTFWeaponBaseGun18GetProjectileSpeedEv": {
+  "rva": "0x15d760",
+  "vtidx": 484,
+  "why": "read by hand from the vtables: CTFWeaponBaseGun's own run of slots sits 7 below Linux (GetWeaponProjectileType 479/472, whose body indexes the weapon info at +0x6d8 by the mode at +0x6cc and returns the entry's projectile type; FireFlameRocket's two overloads 486-487/479-480 both return null); Linux 491, the shared fldz; ret, as the Linux body returns 0"
+ },
+ "_ZN16CTFWeaponBaseGun20RemoveProjectileAmmoEP9CTFPlayer": {
+  "rva": "0x63c3e0",
+  "vtidx": 474,
+  "why": "read by hand from the vtables: CTFWeaponBaseGun's own run of slots sits 7 below Linux (GetWeaponProjectileType 479/472, whose body indexes the weapon info at +0x6d8 by the mode at +0x6cc and returns the entry's projectile type; FireFlameRocket's two overloads 486-487/479-480 both return null); Linux 481"
+ },
+ "_ZN16CTFWeaponBaseGun16ModifyProjectileEP11CBaseEntity": {
+  "rva": "0x130ba0",
+  "vtidx": 475,
+  "why": "read by hand from the vtables: CTFWeaponBaseGun's own run of slots sits 7 below Linux (GetWeaponProjectileType 479/472, whose body indexes the weapon info at +0x6d8 by the mode at +0x6cc and returns the entry's projectile type; FireFlameRocket's two overloads 486-487/479-480 both return null); Linux 482, the shared empty body popping one argument"
+ },
+ "_ZN16CTFWeaponBaseGun18ShouldPlayFireAnimEv": {
+  "rva": "0x5bd70",
+  "vtidx": 489,
+  "why": "read by hand from the vtables: CTFWeaponBaseGun's own run of slots sits 7 below Linux (GetWeaponProjectileType 479/472, whose body indexes the weapon info at +0x6d8 by the mode at +0x6cc and returns the entry's projectile type; FireFlameRocket's two overloads 486-487/479-480 both return null); Linux 496, the shared return true"
  }
 }
