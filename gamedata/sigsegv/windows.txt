@@ -994,6 +994,15 @@
 					lib   "server"
 					// verified: verified next to SetAbsOrigin: same first call and the same compare-then-store shape as the Linux body, with all six matched callees called here too
 				}
+				"CBaseEntity::SetAbsVelocity"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity14SetAbsVelocityERK6Vector"
+					addr  "0x1fb7d0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the Linux body at offsets 0x18 lower; thiscall, ret 4. Returns when the argument equals m_vecAbsVelocity (+0x250, Linux +0x268), else InvalidatePhysicsRecursive(4) (0x201520), clears EFL_DIRTY_ABSVELOCITY in m_iEFlags (+0x13c), stores it, and with a move parent (+0x178) subtracts the parent's abs velocity (CalcAbsoluteVelocity 0x1ec810 when dirty), VectorIRotate through its coordinate frame (+0x268, CalcAbsolutePosition when dirty) and writes m_vecVelocity (+0x2c4) through the NetworkStateChanged slot (+0x2f8, Linux +0x300); without one it writes the argument there. CBaseEntity::ApplyAbsVelocityImpulse (0x1ff4b0) calls it with GetAbsVelocity plus the impulse, as on Linux
+				}
 				"CBaseEntity::EmitSound [member: normal]"
 				{
 					type  "fixed"
