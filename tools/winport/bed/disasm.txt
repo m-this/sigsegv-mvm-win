@@ -1,1 +1,3 @@
-# nothing asked
+# Weapon_Detach among the base Weapon_Drop's calls: the one walking m_hMyWeapons
+server 0x1edd20 60
+server 0x36d470 60
