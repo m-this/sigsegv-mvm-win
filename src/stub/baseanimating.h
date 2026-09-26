@@ -40,6 +40,9 @@ public:
 	int LookupBone(const char *name)                                       { return ft_LookupBone          (this, name); }
 	int LookupAttachment(const char *name)                                 { return ft_LookupAttachment    (this, name); }
 	int LookupSequence(const char *name)                                   { return ft_LookupSequence      (this, name); }
+#if defined _WINDOWS
+	int LookupActivity(const char *name)                                   { return ft_LookupActivity      (this, name); }
+#endif
 	void GetBonePosition(int id, Vector& vec, QAngle& ang)                 {        ft_GetBonePosition     (this, id, vec, ang); }
 	bool GetAttachment(int id, Vector& vec, QAngle& ang)                   { return ft_GetAttachment       (this, id, vec, ang); }
 	bool GetAttachment(int id, matrix3x4_t &transform)                     { return ft_GetAttachment2       (this, id, transform); }
@@ -98,6 +101,9 @@ private:
 	static MemberFuncThunk<CBaseAnimating *, int, int>                        ft_GetAttachmentBone;
 	static MemberFuncThunk<CBaseAnimating *, int, const char *>               ft_LookupAttachment;
 	static MemberFuncThunk<CBaseAnimating *, int, const char *>               ft_LookupSequence;
+#if defined _WINDOWS
+	static MemberFuncThunk<CBaseAnimating *, int, const char *>               ft_LookupActivity;
+#endif
 #ifdef SE_IS_TF2
 	static MemberFuncThunk<CBaseAnimating *, float, int>                      ft_SequenceDuration;
 #endif

@@ -359,7 +359,13 @@ public:
 	bool IsInvulnerable() const                                                         { return ft_IsInvulnerable            (this); }
 	void StunPlayer(float duration, float amount, int flags, CTFPlayer *stunner)        {        ft_StunPlayer                (this, duration, amount, flags, stunner); }
 	void GetConditionsBits(CBitVec<192>& bitvec)                                        {        ft_GetConditionsBits         (this, bitvec); }
+#if defined _WINDOWS
+	/* No such function in server.dll: MSVC inlined it into its one caller.
+	 * The Linux body is the condition's expire time while it is in effect. */
+	float GetConditionDuration(ETFCond cond)                                            { return this->InCond(cond) ? this->m_ConditionData.Get()[cond].m_flExpireTime : 0.0f; }
+#else
 	float GetConditionDuration(ETFCond cond)                                            { return ft_GetConditionDuration      (this, cond); }
+#endif
 	CBaseEntity *GetConditionProvider(ETFCond cond)                                     { return ft_GetConditionProvider      (this, cond); }
 	int GetDisguiseTeam() const                                                         { return ft_GetDisguiseTeam           (this); }
 	bool IsStealthed() const                                                            { return ft_IsStealthed               (this); }
@@ -475,7 +481,24 @@ public:
 	CBaseEntity *GetEntityForLoadoutSlot(int iSlot, bool bForceUseLoadout = false) { return ft_GetEntityForLoadoutSlot(this, iSlot, bForceUseLoadout); }
 	void RemoveInvisibility()                                    {        ft_RemoveInvisibility               (this); }
 	void DoAnimationEvent(PlayerAnimEvent_t event, int nData = 0){        ft_DoAnimationEvent                 (this, event, nData); }
+#if defined _WINDOWS
+	/* No such function in server.dll: MSVC inlined it into its callers. The
+	 * Linux body plays the name as an activity, else as a sequence. */
+	void PlaySpecificSequence (const char *sequence)
+	{
+		int activity = this->LookupActivity(sequence);
+		if (activity != -1) {
+			this->DoAnimationEvent(PLAYERANIMEVENT_CUSTOM, activity);
+			return;
+		}
+		int seq = this->LookupSequence(sequence);
+		if (seq != -1) {
+			this->DoAnimationEvent(PLAYERANIMEVENT_CUSTOM_SEQUENCE, seq);
+		}
+	}
+#else
 	void PlaySpecificSequence (const char *sequence)             {        ft_PlaySpecificSequence   (this, sequence); }
+#endif
 	CBaseObject *GetObject(int id)                               { return ft_GetObject                      (this, id); }
 	int GetObjectCount()                                         { return ft_GetObjectCount                 (this); }
 	void StateTransition(int state)                              {        ft_StateTransition                (this, state); }

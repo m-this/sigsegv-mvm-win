@@ -187,7 +187,33 @@ struct CExtract_CTFPlayerShared_m_ConditionData : public IExtract<uint8_t>
 
 using CExtract_CTFPlayerShared_m_pOuter   = IExtractStub;
 using CExtract_CTFPlayer_m_bFeigningDeath = IExtractStub;
-using CExtract_CTFPlayerShared_m_ConditionData = IExtractStub;
+
+/* GetConditionDuration is inlined into its one caller on Windows; its
+ * neighbour GetConditionProvider indexes the same vector. */
+static constexpr uint8_t s_Buf_CTFPlayerShared_m_ConditionData[] = {
+	0x8b, 0x47, 0x00,       // +0000  mov eax,[edi+m_ConditionData]
+	0x8d, 0x0c, 0xb6,       // +0003  lea ecx,[esi+esi*4]
+	0x8b, 0x4c, 0x88, 0x0c, // +0006  mov ecx,[eax+ecx*4+m_pProvider]
+};
+
+struct CExtract_CTFPlayerShared_m_ConditionData : public IExtract<uint8_t>
+{
+	CExtract_CTFPlayerShared_m_ConditionData() : IExtract<uint8_t>(sizeof(s_Buf_CTFPlayerShared_m_ConditionData)) {}
+	
+	virtual bool GetExtractInfo(ByteBuf& buf, ByteBuf& mask) const override
+	{
+		buf.CopyFrom(s_Buf_CTFPlayerShared_m_ConditionData);
+		
+		mask.SetRange(0x00 + 2, 1, 0x00);
+		
+		return true;
+	}
+	
+	virtual const char *GetFuncName() const override   { return "CTFPlayerShared::GetConditionProvider"; }
+	virtual uint32_t GetFuncOffMin() const override    { return 0x0000; }
+	virtual uint32_t GetFuncOffMax() const override    { return 0x0040; }
+	virtual uint32_t GetExtractOffset() const override { return 0x0000 + 2; }
+};
 
 #endif
 

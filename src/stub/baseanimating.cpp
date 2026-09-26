@@ -45,6 +45,9 @@ MemberFuncThunk<CBaseAnimating *, void, int, matrix3x4_t&>         CBaseAnimatin
 MemberFuncThunk<CBaseAnimating *, int, const char *>               CBaseAnimating::ft_LookupBone          ("CBaseAnimating::LookupBone");
 MemberFuncThunk<CBaseAnimating *, int, const char *>               CBaseAnimating::ft_LookupAttachment    ("CBaseAnimating::LookupAttachment");
 MemberFuncThunk<CBaseAnimating *, int, const char *>               CBaseAnimating::ft_LookupSequence      ("CBaseAnimating::LookupSequence");
+#if defined _WINDOWS
+MemberFuncThunk<CBaseAnimating *, int, const char *>               CBaseAnimating::ft_LookupActivity      ("CBaseAnimating::LookupActivity");
+#endif
 MemberFuncThunk<CBaseAnimating *, void, int, Vector&, QAngle&>     CBaseAnimating::ft_GetBonePosition     ("CBaseAnimating::GetBonePosition");
 MemberFuncThunk<CBaseAnimating *, bool, int, Vector&, QAngle&>     CBaseAnimating::ft_GetAttachment       ("CBaseAnimating::GetAttachment");
 MemberFuncThunk<CBaseAnimating *, bool, int, matrix3x4_t&>         CBaseAnimating::ft_GetAttachment2      ("CBaseAnimating::GetAttachment [matrix]");
