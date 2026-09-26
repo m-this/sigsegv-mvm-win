@@ -1,8 +1,8 @@
-# The game calling AttributeIteratorWrapper with a bad this (lua GetItemAttribute)
-server func +0x3c4fa4 260
-# The fault under Extended_Upgrades' GetUpgradeStepData detour
-server +0x6e4a92
-server +0x3b8f9b
-server +0x5f65fa
-# A call to 0x4222c0c4 (a float) from CreateEntityByName under cbasenpc
-server +0x39c1da
+# GetUpgradeStepData in full: the fields of a 0x19c upgrade entry on Windows
+server 0x5f65b0 200
+# CMannVsMachineUpgradeManager's parser: where each key of an upgrade lands
+server string Increment
+# The game's attribute iterator forwarding to SigMod's (after its first ret)
+server 0x3c4f96 60
+# What the entity factory calls on its member at +0x184 before the jump to a float
+server 0x22be10 60
