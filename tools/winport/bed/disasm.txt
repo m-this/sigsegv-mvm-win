@@ -1,4 +1,6 @@
-# CMannVsMachineUpgradeManager's parser, which reads "increment" and "ui_group":
-# the offset each key of a 0x19c upgrade entry is written to
-server +0x5f6dce 200
-server +0x5f6e1e 120
+# Path::Compute<CostT>(goal): every instance, and who calls the one candidates.py
+# ranked first, to tell the CTFBotPathCost one from the others
+server string Path::Compute(goal)
+server callers 0x5689e0
+# CAttributeList::RemoveAttribute candidate: a loop over m_Attributes
+server 0x3c51c0 80
