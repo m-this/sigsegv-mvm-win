@@ -1,9 +1,7 @@
 #!/bin/bash
-# DispatchParticleEffect's overloads, CTraceFilterSimple's constructor,
-# CopyStringAttributeValueToCharPointerOutput, DecrementMannVsMachineWaveClassCount
-# and CollectBuiltObjects: the Linux bodies with their calls named, and the
-# Windows functions calling the same known callees or called by the same
-# known callers.
+# CAttribute_String's layout on Windows, the Windows functions walking the
+# objective resource's wave class arrays, and CollectBuiltObjects among the
+# callees of CTFBotMedicHeal::Update.
 python3 - <<'PY'
 import re, bisect, collections, capstone, pefile
 from elftools.elf.elffile import ELFFile
@@ -112,66 +110,44 @@ def study(name, show=2, callers_show=0):
     for f, _ in [x for x in cc.most_common(40) if x[0] not in kname][:callers_show]: wdis(f)
     return kc
 
-# DispatchParticleEffect: every overload, so the ones known on Windows anchor the rest
-for n in sorted(k for k in byname if k.startswith("_Z22DispatchParticleEffect")):
-    study(n, show=1, callers_show=3)
-wdis(0x30efd0, 60)
+# CAttribute_String: where value_ lives, read off the Windows virtuals and
+# GetCustomProjectileModel, against Linux
+print(open("derived/linux-vtables/CAttribute_String.txt").read()[:3000])
+wrows = [int(m.group(1), 16) for m in re.finditer(r"^\+0x[0-9a-f]+:\s+([0-9a-f]+)", open("derived/win-vtables/CAttribute_String.txt").read(), re.M)]
+for n, va in enumerate(wrows[:24]):
+    print(f"-- windows slot {n}"); wdis(va - base, 45)
+for n in ("_ZN17CAttribute_String5ClearEv", "_ZN17CAttribute_String9MergeFromERKS_", "_ZN17CAttribute_String4SwapEPS_", "_ZN16CTFWeaponBaseGun24GetCustomProjectileModelEP17CAttribute_String"):
+    ldis(n, 90)
+wdis(known["_ZN16CTFWeaponBaseGun24GetCustomProjectileModelEP17CAttribute_String"], 120)
 
-# CTraceFilterSimple
-for n in sorted(k for k in byname if "18CTraceFilterSimple" in k):
-    ldis(n, 80)
-print("== CTraceFilterSimple tables")
-for side in ("linux", "win"):
-    try: print(open(f"derived/{side}-vtables/CTraceFilterSimple.txt").read()[:1500])
-    except Exception as e: print(side, e)
-vt = None
-try:
-    for l in open("derived/win-vtables/CTraceFilterSimple.txt"):
-        m = re.match(r'//.*vtable.*?(0x[0-9a-f]+)', l)
-        if m and vt is None: vt = int(m.group(1), 16); vt = vt if vt >= base else vt + base; break
-except Exception: pass
-print("windows CTraceFilterSimple vtable va:", hex(vt) if vt else None)
-if "_ZN18CTraceFilterSimple15ShouldHitEntityEP13IHandleEntityi" in known:
-    wdis(known["_ZN18CTraceFilterSimple15ShouldHitEntityEP13IHandleEntityi"], 80)
-if vt:
-    pat = vt.to_bytes(4, "little"); sites = []
-    at = code.find(pat)
-    while at != -1 and len(sites) < 400:
-        sites.append(tv + at); at = code.find(pat, at + 1)
-    print(f"  {len(sites)} code references to the vtable")
-    funcs = sorted({wstart(s) for s in sites})
-    print("  in functions: " + ", ".join(hex(f) for f in funcs[:60]))
-    for s in sites[:6]:
-        f = wstart(s)
-        print(f"-- site {s:#x} in {f:#x}")
-        ins = list(md.disasm(code[f-tv:s-tv+60], base + f))
-        k = next((j for j, i in enumerate(ins) if i.address - base >= s - 8), 0)
-        for i in ins[max(0, k-6):k+8]: print(f"  {i.address-base:#x}  {i.mnemonic} {i.op_str}")
-
-# CopyStringAttributeValueToCharPointerOutput, and small Windows functions of
-# its shape: an MSVC std::string's c_str is a compare of the capacity at +0x14
-# with 16
-study("_Z43CopyStringAttributeValueToCharPointerOutputPK17CAttribute_StringPPKc", show=2)
-small = set()
-for m in re.finditer(rb"\x83[\x78-\x7f]\x14\x10", code):
-    f = wstart(tv + m.start())
-    if tv + m.start() - f < 24: small.add(f)
-print(f"== {len(small)} Windows functions comparing [r+0x14] with 16 in their first 24 bytes")
-for f in sorted(small)[:25]:
-    ins = []
-    for i in md.disasm(code[f-tv:f-tv+64], base + f):
-        ins.append(f"{i.mnemonic} {i.op_str}".strip())
-        if i.mnemonic in ("ret", "int3") or len(ins) > 14: break
-    print(f"  {f:#x} ({len(wg.get(f, ()))} callers): " + "; ".join(ins))
-for n in ("_ZNK16CAttribute_String5valueEv", "_ZN16CAttribute_String9MergeFromERKS_"):
+# The wave class arrays: cmp name, [obj + i*4 + D], then and flags, [obj + i*4 + D + 0x60]
+print("== windows functions walking a string_t[12] and the flags 0x60 past it")
+hits = collections.defaultdict(set)
+for m in re.finditer(rb"[\x39\x3b][\x84\x8c\x94\x9c\xa4\xac\xb4\xbc][\x80-\xbf]", code):
+    at = m.start(); d = int.from_bytes(code[at+3:at+7], "little")
+    if not 0x800 <= d < 0x2000: continue
+    if (d + 0x60).to_bytes(4, "little") in code[at+7:at+48]:
+        hits[wstart(tv + at)].add(d)
+for f in sorted(hits):
+    print(f"  {f:#x} names at {sorted(hex(d) for d in hits[f])}, {len(wg.get(f, ()))} callers, called from " + ", ".join(sorted({hex(wstart(s)) + (' ' + kname[wstart(s)] if wstart(s) in kname else '') for s in wg.get(f, ())})[:12]))
+for f in sorted(hits): wdis(f, 160)
+for n in ("_ZN20CTFObjectiveResource31SetMannVsMachineWaveClassActiveE8string_tb", "_ZN20CTFObjectiveResource36IncrementMannVsMachineWaveClassCountE8string_tj"):
     if n in byname: ldis(n, 60)
-for n in sorted(k for k in byname if "17CAttribute_String" in k)[:30]: print("  linux sym", n, byname[n])
+for n in ("_ZN11CTFTankBoss14UpdateOnRemoveEv", "_ZN20CTFObjectiveResource24DecrementTeleporterCountEv", "_ZN9CTFPlayer12Event_KilledERK15CTakeDamageInfo"):
+    print(n, hex(known[n]) if n in known else "not known on Windows", [hex(f) for f in hits if n in known and f in set(wcallees(known[n], 30000))])
 
-# DecrementMannVsMachineWaveClassCount and its helpers
-kc = study("_ZN20CTFObjectiveResource36DecrementMannVsMachineWaveClassCountE8string_tj", show=3, callers_show=3)
-for n in sorted(k for k in byname if k.startswith("_ZN20CTFObjectiveResource")):
-    print("  linux sym", n, byname[n])
-
-# CollectBuiltObjects
-study("_ZN10CTFNavMesh19CollectBuiltObjectsEP10CUtlVectorIP11CBaseObject10CUtlMemoryIS2_iEEi", show=3, callers_show=3)
+# CollectBuiltObjects: a callee of CTFBotMedicHeal::Update comparing the team
+# with -2 (TEAM_ANY) and popping 8
+for f in sorted(set(wcallees(known["_ZN15CTFBotMedicHeal6UpdateEP6CTFBotf"], 20000))):
+    if not tv <= f < tv + len(code): continue
+    txt = []
+    for i in md.disasm(code[f-tv:f-tv+1500], base + f):
+        txt.append(f"{i.mnemonic} {i.op_str}".strip())
+        if i.mnemonic == "int3": break
+    if any(", -2" in t for t in txt) and "ret 8" in txt:
+        wdis(f, 160)
+# Who calls the CTraceFilterSimple constructor and DispatchParticleEffect [overload 3]
+for f in (0x36ea30, 0x2a9a10):
+    hs = sorted({wstart(s) for s in wg.get(f, ())})
+    print(f"== {f:#x}: {len(wg.get(f, ()))} calls from {len(hs)} functions; known: " + ", ".join(kname[h] for h in hs if h in kname))
 PY
