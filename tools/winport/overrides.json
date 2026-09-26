@@ -944,5 +944,21 @@
  "g_MannVsMachineUpgrades": {
   "rva": "0xb96ad4",
   "why": "read by hand: GetUpgradeStepData indexes the upgrade table through the pointer at 0x10b96ae0, and the upgrade parser (0x5f6b80) reaches that same vector at +0xc from the manager and its count at +0x18: m_Upgrades after CAutoGameSystem's vtable, m_pNext and m_pszName, as on Linux. Unresolved, SigMod appended its extended upgrades to a scratch block and the game's table stayed short, so RestoreCheckpoint's GetUpgradeStepData read a name past its end"
+ },
+ "_Z22DispatchParticleEffectPKc6Vector6QAngleP11CBaseEntity": {
+  "rva": "0x2a9a10",
+  "why": "read by hand: GetParticleSystemIndex(name), then overload 5 inlined: a CEffectData with the origin as both m_vOrigin and m_vStart, the angles, the entity's index and PARTICLE_DISPATCH_FROM_ENTITY when there is one, dispatched as ParticleEffect; cdecl with the entity at +0x24, as the Linux body passes the origin twice to overload 5. Called by 8 of the 11 Linux callers known on Windows (CTFBaseRocket::Explode, CTFPlayer::Event_Killed, CItem::ItemTouch...). 0x30efd0, the earlier candidate, is a destructor"
+ },
+ "_ZN18CTraceFilterSimpleC1EPK13IHandleEntityiPFbPS0_iE": {
+  "rva": "0x36ea30",
+  "why": "read by hand: stores its three arguments at +4, +8 and +0xc and CTraceFilterSimple's vtable (0x10813e78, the table whose slot 0 is the known ShouldHitEntity) at +0, then ret 0xc; the Linux C1 does the same. One of the two code references to that vtable; 290 calls, from UTIL_TraceLine, FireBullets, IVision::IsLineOfSightClear..."
+ },
+ "_ZN10CTFNavMesh19CollectBuiltObjectsEP10CUtlVectorIP11CBaseObject10CUtlMemoryIS2_iEEi": {
+  "rva": "0x5d8770",
+  "why": "read by hand: empties the vector, walks IBaseObjectAutoList (count at +0xc of 0x10b7eb4c), turns each entry into its CBaseObject (-0x87c), keeps it when the team is -2 (TEAM_ANY) or GetTeamNumber matches, AddToTail; ret 8 for (vector, team), the Linux body's shape. Called from CTFBotMedicHeal::Update, as on Linux"
+ },
+ "_ZN19IBaseObjectAutoList29m_IBaseObjectAutoListAutoListE": {
+  "rva": "0xb7eb4c",
+  "why": "the CUtlVector CTFNavMesh::CollectBuiltObjects (0x5d8770) walks: elements read from 0x10b7eb4c, count from 0x10b7eb58, where the Linux body reads m_IBaseObjectAutoListAutoList and its +0xc"
  }
 }

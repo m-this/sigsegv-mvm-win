@@ -1,7 +1,6 @@
 #!/bin/bash
-# CAttribute_String's layout on Windows, the Windows functions walking the
-# objective resource's wave class arrays, and CollectBuiltObjects among the
-# callees of CTFBotMedicHeal::Update.
+# DecrementMannVsMachineWaveClassCount among the functions CTFPlayer::Event_Killed
+# reaches, by the offsets of the wave class arrays it walks.
 python3 - <<'PY'
 import re, bisect, collections, capstone, pefile
 from elftools.elf.elffile import ELFFile
@@ -110,44 +109,34 @@ def study(name, show=2, callers_show=0):
     for f, _ in [x for x in cc.most_common(40) if x[0] not in kname][:callers_show]: wdis(f)
     return kc
 
-# CAttribute_String: where value_ lives, read off the Windows virtuals and
-# GetCustomProjectileModel, against Linux
-print(open("derived/linux-vtables/CAttribute_String.txt").read()[:3000])
-wrows = [int(m.group(1), 16) for m in re.finditer(r"^\+0x[0-9a-f]+:\s+([0-9a-f]+)", open("derived/win-vtables/CAttribute_String.txt").read(), re.M)]
-for n, va in enumerate(wrows[:24]):
-    print(f"-- windows slot {n}"); wdis(va - base, 45)
-for n in ("_ZN17CAttribute_String5ClearEv", "_ZN17CAttribute_String9MergeFromERKS_", "_ZN17CAttribute_String4SwapEPS_", "_ZN16CTFWeaponBaseGun24GetCustomProjectileModelEP17CAttribute_String"):
-    ldis(n, 90)
-wdis(known["_ZN16CTFWeaponBaseGun24GetCustomProjectileModelEP17CAttribute_String"], 120)
-
-# The wave class arrays: cmp name, [obj + i*4 + D], then and flags, [obj + i*4 + D + 0x60]
-print("== windows functions walking a string_t[12] and the flags 0x60 past it")
-hits = collections.defaultdict(set)
-for m in re.finditer(rb"[\x39\x3b][\x84\x8c\x94\x9c\xa4\xac\xb4\xbc][\x80-\xbf]", code):
-    at = m.start(); d = int.from_bytes(code[at+3:at+7], "little")
-    if not 0x800 <= d < 0x2000: continue
-    if (d + 0x60).to_bytes(4, "little") in code[at+7:at+48]:
-        hits[wstart(tv + at)].add(d)
-for f in sorted(hits):
-    print(f"  {f:#x} names at {sorted(hex(d) for d in hits[f])}, {len(wg.get(f, ()))} callers, called from " + ", ".join(sorted({hex(wstart(s)) + (' ' + kname[wstart(s)] if wstart(s) in kname else '') for s in wg.get(f, ())})[:12]))
-for f in sorted(hits): wdis(f, 160)
-for n in ("_ZN20CTFObjectiveResource31SetMannVsMachineWaveClassActiveE8string_tb", "_ZN20CTFObjectiveResource36IncrementMannVsMachineWaveClassCountE8string_tj"):
-    if n in byname: ldis(n, 60)
-for n in ("_ZN11CTFTankBoss14UpdateOnRemoveEv", "_ZN20CTFObjectiveResource24DecrementTeleporterCountEv", "_ZN9CTFPlayer12Event_KilledERK15CTakeDamageInfo"):
-    print(n, hex(known[n]) if n in known else "not known on Windows", [hex(f) for f in hits if n in known and f in set(wcallees(known[n], 30000))])
-
-# CollectBuiltObjects: a callee of CTFBotMedicHeal::Update comparing the team
-# with -2 (TEAM_ANY) and popping 8
-for f in sorted(set(wcallees(known["_ZN15CTFBotMedicHeal6UpdateEP6CTFBotf"], 20000))):
-    if not tv <= f < tv + len(code): continue
-    txt = []
-    for i in md.disasm(code[f-tv:f-tv+1500], base + f):
-        txt.append(f"{i.mnemonic} {i.op_str}".strip())
+# DecrementMannVsMachineWaveClassCount: among what CTFPlayer::Event_Killed
+# calls, two levels down, a function reading two string_t[12] 0x30 apart and
+# the flags 0x60 past each (Linux: names 0x1058/0x1088, flags 0x10b8/0x10e8,
+# counts 0xff8/0x1028)
+def disps(f, limit=4000):
+    out = set()
+    for i in md.disasm(code[f-tv:f-tv+limit], base + f):
+        for m in re.finditer(r"\+ (0x[0-9a-f]+)\]", i.op_str):
+            out.add(int(m.group(1), 16))
         if i.mnemonic == "int3": break
-    if any(", -2" in t for t in txt) and "ret 8" in txt:
-        wdis(f, 160)
-# Who calls the CTraceFilterSimple constructor and DispatchParticleEffect [overload 3]
-for f in (0x36ea30, 0x2a9a10):
-    hs = sorted({wstart(s) for s in wg.get(f, ())})
-    print(f"== {f:#x}: {len(wg.get(f, ()))} calls from {len(hs)} functions; known: " + ", ".join(kname[h] for h in hs if h in kname))
+    return out
+seen, frontier = set(), [known["_ZN9CTFPlayer12Event_KilledERK15CTakeDamageInfo"]]
+for depth in range(2):
+    nxt = []
+    for f in frontier:
+        for c in set(wcallees(f, 40000)):
+            if tv <= c < tv + len(code) and c not in seen:
+                seen.add(c); nxt.append(c)
+    frontier = nxt
+print(f"== {len(seen)} functions reached from CTFPlayer::Event_Killed")
+found = []
+for f in sorted(seen):
+    ds = disps(f)
+    for d in sorted(ds):
+        if 0x800 <= d < 0x2000 and {d + 0x30, d + 0x60, d + 0x90} <= ds:
+            found.append(f); print(f"  {f:#x}: names at {d:#x}, {len(wg.get(f, ()))} callers"); break
+for f in found: wdis(f, 450)
+# whoever else calls them
+for f in found:
+    print(f"  callers of {f:#x}: " + ", ".join(sorted({hex(wstart(s)) + (' ' + kname[wstart(s)] if wstart(s) in kname else '') for s in wg.get(f, ())})))
 PY
