@@ -93,6 +93,7 @@ IScriptManager *scriptManager = nullptr;
 extern int laserSprite;
 #if defined _WINDOWS
 #include <psapi.h>
+#include <new>
 
 /* Who ends the server. The engine's Error() leaves through tier0's
  * Plat_ExitProcess, TerminateProcess on itself with status 100, and on
@@ -103,6 +104,37 @@ extern int laserSprite;
  * console, then does what was asked. */
 /* Frames the main thread has run, counted by CModManager for the watchdog. */
 volatile LONG g_WatchdogFrames = 0;
+
+/* SigMod's own live operator new bytes, for the memory report. The CRT is
+ * linked statically, so these replace new and delete for this DLL alone, and
+ * the servers' heap growth can be told apart from the game's. */
+static volatile LONG64 g_NewBytesLive = 0;
+void *operator new(size_t n)
+{
+	void *p = malloc(n != 0 ? n : 1);
+	if (p == nullptr) throw std::bad_alloc();
+	InterlockedAdd64(&g_NewBytesLive, (LONG64)_msize(p));
+	return p;
+}
+void *operator new[](size_t n) { return ::operator new(n); }
+void *operator new(size_t n, const std::nothrow_t &) noexcept
+{
+	void *p = malloc(n != 0 ? n : 1);
+	if (p != nullptr) InterlockedAdd64(&g_NewBytesLive, (LONG64)_msize(p));
+	return p;
+}
+void *operator new[](size_t n, const std::nothrow_t &t) noexcept { return ::operator new(n, t); }
+void operator delete(void *p) noexcept
+{
+	if (p == nullptr) return;
+	InterlockedAdd64(&g_NewBytesLive, -(LONG64)_msize(p));
+	free(p);
+}
+void operator delete[](void *p) noexcept                        { ::operator delete(p); }
+void operator delete(void *p, size_t) noexcept                  { ::operator delete(p); }
+void operator delete[](void *p, size_t) noexcept                { ::operator delete(p); }
+void operator delete(void *p, const std::nothrow_t &) noexcept  { ::operator delete(p); }
+void operator delete[](void *p, const std::nothrow_t &) noexcept { ::operator delete(p); }
 
 namespace ExitTrace
 {
@@ -331,9 +363,9 @@ namespace ExitTrace
 			len += snprintf(classes + len, sizeof(classes) - len, " %uK:%ux=%uMB",
 				(unsigned)((size_t(0x10000) << c) >> 10), (unsigned)count_class[c], (unsigned)(by_class[c] >> 20));
 		}
-		Warning("SigMod: memory: private %u MB, working set %u MB, reserved %u MB, free %u MB, largest free %u MB; by allocation size:%s\n",
+		Warning("SigMod: memory: private %u MB, working set %u MB, reserved %u MB, free %u MB, largest free %u MB, SigMod's new %u MB; by allocation size:%s\n",
 			(unsigned)(pmc.PrivateUsage >> 20), (unsigned)(pmc.WorkingSetSize >> 20), (unsigned)(reserved >> 20),
-			(unsigned)(free_total >> 20), (unsigned)(free_largest >> 20), classes);
+			(unsigned)(free_total >> 20), (unsigned)(free_largest >> 20), (unsigned)(g_NewBytesLive >> 20), classes);
 	}
 	
 	DWORD WINAPI Watchdog(void *)
