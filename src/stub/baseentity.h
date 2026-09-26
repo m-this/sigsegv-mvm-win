@@ -351,7 +351,12 @@ public:
 	void EntityText(int text_offset, const char *text, float duration, int r, int g, int b, int a)                          {        ft_EntityText                    (this, text_offset, text, duration, r, g, b, a); }
 	int TakeDamage(const CTakeDamageInfo& info)                                                                             { return ft_TakeDamage                    (this, info); }
 	void SetMoveType(MoveType_t val, MoveCollide_t moveCollide = MOVECOLLIDE_DEFAULT)                                       {        ft_SetMoveType                   (this, val, moveCollide); }
+#if defined _WINDOWS
+	/* No Windows address, and none needed: the Linux body is the const one above. */
+	model_t *GetModel()                                                                                                     { return const_cast<model_t *>(modelinfo->GetModel(this->GetModelIndex())); }
+#else
 	model_t *GetModel()                                                                                                     { return ft_GetModel                      (this); }
+#endif
 	void SetNextThink(float nextThinkTime, const char *szContext = nullptr)                                                 {        ft_SetNextThink_name             (this, nextThinkTime, szContext); }
 	void SetNextThink(int nContextIndex, float thinkTime)                                                                   {        ft_SetNextThink_index            (this, nContextIndex, thinkTime); }
 	int DispatchUpdateTransmitState()                                                                                       { return ft_DispatchUpdateTransmitState   (this); }
