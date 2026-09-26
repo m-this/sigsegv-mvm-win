@@ -74,51 +74,10 @@ def lbody(name, limit=60):
         if n >= limit:
             break
         print(f"      {i.address:#x}: {i.mnemonic} {i.op_str}")
-def refs_to_string(text):
-    return sorted(site for site, t in wstr_sites.items() if t == text)
-
-wstr_sites = {}
-for site in win.relocs:
-    if win.in_text(site):
-        continue
-    try:
-        v = win.read_u32(site)
-    except Exception:
-        continue
-    raw = wread(v, 96).split(b"\0")[0]
-    if all(32 <= c < 127 for c in raw) and win.in_text(v) is False:
-        wstr_sites[site] = raw.decode("latin-1")
-
-print("==== A. the class name tables")
-for text in ["heavyweapons", "demoman", "Heavy", "heavy"]:
-    for site in refs_to_string(text):
-        row = [wstr_sites.get(site + 4 * i, "-") for i in range(-6, 8)]
-        print(f"   {text!r} at {site - B:#x}: {row}")
-for text in ["heavyweapons", "demoman"]:
-    hits = wfind(text.encode() + b"\0")
-    print(f"   string {text!r}: {[(n, hex(r)) for n, r in hits][:10]}")
-print("   g_szLoadoutStrings at 0x9c1768:", [wstr_sites.get(B + 0x9c1768 + 4 * i, "-") for i in range(19)])
-print("   raw", wread(B + 0x9c1768, 19 * 4).hex())
-
-print("==== D. code naming a vtable")
-for cls in ["IPredictionSystem", "CRecipientFilter"]:
-    try:
-        rows = open(f"derived/win-vtables/{cls}.txt").read().splitlines()
-    except OSError:
-        print(f"   {cls}: no table")
-        continue
-    heads = [r for r in rows if r.startswith("// vtable")]
-    print(f"   {cls}: {heads}")
-    for h in heads:
-        vt = int(h.split()[3], 16)
-        for s in text_refs(vt)[:12]:
-            f, text = insn_at(s)
-            print(f"      vtable {vt - B:#x} named in {f - B:#x}  {text}")
-import os
-print("   tables:", [f for f in os.listdir("derived/win-vtables") if "redict" in f])
-
-print("==== G. Linux bodies")
-lbody("_GLOBAL__sub_I__ZN16CRecipientFilterC2Ev", 40)
-lbody("_ZN16CRecipientFilter18UsePredictionRulesEv", 40)
-lbody("_GLOBAL__sub_I_sv_unlag", 60)
+print("==== IPredictionSystem objects and who reads their fields")
+for obj in [0x9857dc, 0x9a97a8, 0x9c4070]:
+    for off in (0, 4, 8, 0xc, 0x10):
+        for site in text_refs(B + obj + off)[:10]:
+            f, text = insn_at(site)
+            print(f"   {obj:#x}+{off:#x} in {f - B:#x}  {text}")
 PY

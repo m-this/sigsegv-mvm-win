@@ -1,6 +1,2 @@
-# CCurrencyPack's constructor and destructors, for its auto list
-server 0x44b6b0 60
-server 0x44ba60 60
-server func 0x44b9e2 200
-# who constructs the lag compensation manager
-server callers 0x2ed4c0
+# the static initializer that builds the lag compensation manager
+server 0x1aca0 30

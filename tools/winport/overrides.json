@@ -944,5 +944,157 @@
  "g_MannVsMachineUpgrades": {
   "rva": "0xb96ad4",
   "why": "read by hand: GetUpgradeStepData indexes the upgrade table through the pointer at 0x10b96ae0, and the upgrade parser (0x5f6b80) reaches that same vector at +0xc from the manager and its count at +0x18: m_Upgrades after CAutoGameSystem's vtable, m_pNext and m_pszName, as on Linux. Unresolved, SigMod appended its extended upgrades to a scratch block and the game's table stayed short, so RestoreCheckpoint's GetUpgradeStepData read a name past its end"
+ },
+ "g_EventQueue": {
+  "rva": "0x97f91c",
+  "why": "read by hand: CEventQueue_SaveRestoreBlockHandler::Save and Restore, CEventQueueSaveLoadProxy::Save and Restore and CLogicRelay::InputCancelPending each load this address into ecx for the queue's own method where Linux passes g_EventQueue; 17 matched functions agree"
+ },
+ "_ZN19IBaseObjectAutoList29m_IBaseObjectAutoListAutoListE": {
+  "rva": "0xb7eb4c",
+  "why": "read by hand: the building loops of CFuncNoBuild::SetActive, CTFGameRules::BetweenRounds_Start, CollectTargets, CTFBotVision::UpdatePotentiallyVisibleNPCVector and CTFBotPathCost read the element pointer here and compare the count at +0xc (0xb7eb58), the CUtlVector layout Linux reads at 0x1947df8 and +0xc; CEyeballBoss::FindClosestVisibleVictim walks it before the zombie list as on Linux"
+ },
+ "_ZN19CWaveSpawnPopulator25m_reservedPlayerSlotCountE": {
+  "rva": "0xb96664",
+  "why": "read by hand: CWaveSpawnPopulator::Update clears it when the wave spawn starts, adds it to the live count before comparing with tf_mvm_max_invaders and stores the sum, and subtracts the spawned count later, the three places the Linux body writes 0x196dee0"
+ },
+ "g_hUpgradeEntity": {
+  "rva": "0x9d3134",
+  "why": "read by hand: CTFGameRules::CleanUpMap, CTFPlayer::RememberUpgrade and ClientCommandKeyValues read the handle here, index the entity list with it and compare its serial at +2, where Linux reads g_hUpgradeEntity; the file holds 0xffffffff, an invalid handle"
+ },
+ "g_pMonsterResource": {
+  "rva": "0xb95384",
+  "why": "read by hand: CTFGameRules::CreateStandardEntities stores the new monster resource here right after g_pObjectiveResource (0xa74b20), the Linux order, and the Merasmus and Eyeball boss behaviors read it first thing as Linux reads g_pMonsterResource"
+ },
+ "g_hControlPointMasters": {
+  "rva": "0xa76484",
+  "why": "read by hand: CTeamControlPointMaster::UpdateOnRemove passes this address as the vector to FindAndRemove, and IsAttackDefenseMode, CTFBot::IsAnyPointBeingCaptured, PlaySpecialCapSounds and CTFTacticalMissionManager::OnRoundRestart test the count at +0xc (0xa76490) and read element 0 here, as Linux reads 0x1861edc and 0x1861ed0"
+ },
+ "lagcompensation": {
+  "rva": "0x9a2458",
+  "why": "read by hand: a pointer; CTFWeaponBaseMelee::Smack, CTFKnife, CWeaponMedigun, CTFFlameThrower and CTFWeaponFlameBall PrimaryAttack, CTriggerPush::Touch and DeflectProjectiles load it into ecx for the Start and FinishLagCompensation calls where Linux reads lagcompensation; the file points it into CLagCompensationManager's static object"
+ },
+ "g_pScriptVM": {
+  "rva": "0xa87ec4",
+  "why": "read by hand: CVScriptGameSystem::LevelShutdownPostEntity reads it and clears it to 0 as Linux does g_pScriptVM, and SetScriptOwnerEntity and CVScriptGameEventListener::FireGameEvent read it; 37 matched functions agree"
+ },
+ "_ZL16s_lastTeleporter": {
+  "rva": "0x9d3098",
+  "why": "read by hand: OnBotTeleported reads the handle here three times, indexing the entity list and comparing the serial at +2, where Linux reads s_lastTeleporter; s_flLastTeleportTime follows at 0x9d309c and the file holds 0xffffffff, an invalid handle"
+ },
+ "_ZN20ICaptureZoneAutoList30m_ICaptureZoneAutoListAutoListE": {
+  "rva": "0xa9aa08",
+  "why": "read by hand: CTFBot::GetFlagCaptureZone and CTFNavMesh::ComputeBombTargetDistance loop over the vector here, count at +0xc (0xa9aa14), where Linux reads 0x1866c18"
+ },
+ "_ZN24ITFBotHintEntityAutoList34m_ITFBotHintEntityAutoListAutoListE": {
+  "rva": "0xb8fc74",
+  "why": "read by hand: CTFBotHintEngineerNest::HintThink, CTFBotMvMEngineerHintFinder::FindHint and CTFBot::Event_Killed loop over the vector here, count at +0xc (0xb8fc80), where Linux reads 0x1967480"
+ },
+ "_ZN23IBaseProjectileAutoList33m_IBaseProjectileAutoListAutoListE": {
+  "rva": "0xa07fd4",
+  "why": "read by hand: CTFPlayer::RemoveOwnedProjectiles walks the vector here (count 0xa07fe0) before the flame entity and flame manager lists, the Linux order, and RemoveAllProjectilesAndBuildings walks it before the building list"
+ },
+ "_ZN22ITFFlameEntityAutoList32m_ITFFlameEntityAutoListAutoListE": {
+  "rva": "0xb998a4",
+  "why": "read by hand: the second of the three lists CTFPlayer::RemoveOwnedProjectiles walks, count at +0xc (0xb998b0), between the projectile and flame manager lists as on Linux"
+ },
+ "_ZN15IZombieAutoList25m_IZombieAutoListAutoListE": {
+  "rva": "0xb9364c",
+  "why": "read by hand: CEyeballBoss::FindClosestVisibleVictim walks the building list and then the vector here, count at +0xc (0xb93658), the Linux order"
+ },
+ "_ZN8CNavArea14m_masterMarkerE": {
+  "rva": "0x9c1c1c",
+  "why": "read by hand: ISearchSurroundingAreasFunctor::IterateAdjacentAreas compares an area's marker at +0x3c with this value and stores it there, the IsMarked and Mark the Linux body inlines on 0x17a052c; CTFNavMesh::ComputeBombTargetDistance reads it the same way"
+ },
+ "g_TFClassViewVectors": {
+  "rva": "0x9c7de0",
+  "why": "read by hand: CTFPlayer::GetClassEyeHeight reads x, y, z at eax*4 + 0x9c7de0, +4 and +8 with eax three times the class, where Linux reads 0x1908540; the file holds (0,0,72) then (0,0,65), the default and the scout view heights"
+ },
+ "_ZL13g_WorldEntity": {
+  "rva": "0xa88814",
+  "why": "read by hand: GetWorldEntity is mov eax, [0xa88814]; ret, and CWorld::Precache stores this there between clearing g_fGameOver and g_pLastSpawn as Linux does"
+ },
+ "PackRatios": {
+  "rva": "0x9cd3ac",
+  "why": "read by hand: CHealthKit::MyTouch and CHealthAmmoKit::MyTouch load a float at eax*4 + 0x9cd3ac where Linux reads PackRatios, and the 12 bytes there are 0.2, 0.5, 1.0, the Linux array's"
+ },
+ "_ZL12g_DeleteList": {
+  "rva": "0xa0d698",
+  "why": "read by hand: CGlobalEntityList::ResetDeleteList reads and clears the count at 0xa0d6a4, and CleanupDeleteList walks the elements here up to that count, the vector Linux holds at 0x17ef7c0"
+ },
+ "_ZL26s_RemoveImmediateSemaphore": {
+  "rva": "0xa7d704",
+  "why": "read by hand: UTIL_RemoveImmediate tests it after the EFL_KILLME check and, when set, hands the networkable to UTIL_Remove instead, as Linux does with 0x1841280"
+ },
+ "g_bDisableEhandleAccess": {
+  "rva": "0xa794f8",
+  "why": "read by hand: UTIL_RemoveImmediate, CGlobalEntityList::CleanupDeleteList and CBaseEntity's destructor set this byte to 1 and back to 0 around the delete, as Linux does 0x183ecc5; g_bReceivedChainedUpdateOnRemove is the byte after it, as on Linux"
+ },
+ "g_SentGameRulesMasks": {
+  "rva": "0xa80fb8",
+  "why": "read by hand: CVoiceGameMgr::ClientConnected sets the client's g_bWantModEnable bit, then clears 16 bytes at client*16 + 0xa80fb8 and then at + 0xa81608, the Linux order for g_SentGameRulesMasks then g_SentBanMasks; UpdateMasks masks the fourth dword of each with 0x1f"
+ },
+ "_ZN11CBaseEntity29m_nPredictionRandomSeedServerE": {
+  "rva": "0x97ab88",
+  "why": "read by hand: CBaseEntity::FireBullets takes the seed from 0x97ab84 (m_nPredictionRandomSeed) and cmovne from 0x97ab88 when m_bUseServerRandomSeed is set, GetPredictionRandomSeed(bUseServerRandomSeed) inlined"
+ },
+ "_ZN11CBaseEntity19m_pPredictionPlayerE": {
+  "rva": "0xa05ef8",
+  "why": "read by hand: CPlayerMove::StartCommand stores the command in the player, calls SetPredictionRandomSeed and stores the player here, the SetPredictionPlayer Linux inlines on 0x17c39a0"
+ },
+ "g_pFullFileSystem": {
+  "rva": "0xbb4a58",
+  "why": "read by hand: a pointer; CTFPowerup::GetPowerupModel, CFuncCroc::Precache, CScriptConvarAccessor::LevelInitPreEntity and CPopulationManager::LoadMissionCycleFile load the file system from here where Linux reads g_pFullFileSystem; 39 matched functions agree"
+ },
+ "steamgameserverapicontext": {
+  "rva": "0x992288",
+  "why": "read by hand: a pointer; GetSteamUGC reads it and then steamapicontext at 0x992284, as Linux reads 0x176e590 then 0x176e594, and GameServerSteamAPIActivated and Shutdown read it as Linux does; the file points it at the static context"
+ },
+ "g_szBotModels": {
+  "rva": "0x8866e0",
+  "why": "the 0xa28 bytes there are the Linux array's, byte for byte, and nowhere else in server.dll"
+ },
+ "g_szBotBossModels": {
+  "rva": "0x887108",
+  "why": "the 0xa28 bytes there are the Linux array's, byte for byte, and nowhere else in server.dll"
+ },
+ "g_szBotBossSentryBusterModel": {
+  "rva": "0x887b30",
+  "why": "the 0x104 bytes there are the Linux array's, models/bots/demo/bot_sentry_buster.mdl padded with zeros, and nowhere else in server.dll"
+ },
+ "g_szRomePromoItems_Hat": {
+  "rva": "0x887c38",
+  "why": "the 0xa28 bytes there are the Linux array's, byte for byte, and nowhere else in server.dll"
+ },
+ "g_szRomePromoItems_Misc": {
+  "rva": "0x888660",
+  "why": "the 0xa28 bytes there are the Linux array's, byte for byte, and nowhere else in server.dll"
+ },
+ "s_acttableMelee": {
+  "rva": "0x9d49e0",
+  "why": "the 0x198 bytes there are the Linux array's, byte for byte, and nowhere else in server.dll"
+ },
+ "_ZL11s_TankModel": {
+  "rva": "0x9d30d4",
+  "why": "the four pointers there name boss_tank.mdl and its three damage models in the Linux order; no other table does"
+ },
+ "_ZL15s_TankModelRome": {
+  "rva": "0x9d30e4",
+  "why": "the four pointers there name the tw2 boss_tank.mdl and its three damage models in the Linux order; no other table does"
+ },
+ "_ZL28g_CBaseCombatWeapon_ClassReg": {
+  "rva": "0x97a0d0",
+  "why": "the ServerClass record naming CBaseCombatWeapon: name, send table 0x10a05738, next, class id, baseline index 0xffff, the shape of g_CBasePlayer_ClassReg (0x9a2440) and g_CBaseCombatCharacter_ClassReg (0x97a058)"
+ },
+ "_ZN21ICurrencyPackAutoList31m_ICurrencyPackAutoListAutoListE": {
+  "rva": "0xa9a264",
+  "why": "read by hand: CCurrencyPack's constructor (0x44b8e0) sets the auto list vtable at +0x510 and appends that subobject to the vector here, growing it through the allocation count at +4 and grow size at +8, count at +0xc (0xa9a270); ICurrencyPackAutoList's destructor (0x44bab0) searches the same vector for it, the FindAndRemove the Linux destructor does"
+ },
+ "g_aRawPlayerClassNamesShort": {
+  "rva": "0x9cdcf0",
+  "why": "the 13 pointers there name undefined, scout, sniper, soldier, demo, medic, heavy, pyro, spy, engineer, civilian, an empty string and random, the Linux short table, right after g_aPlayerClassNames_NonLocalized (0x9cdcbc)"
+ },
+ "g_szLoadoutStrings": {
+  "rva": "0x9c1768",
+  "why": "the 19 pointers there name primary, secondary, melee, utility, building, pda, pda2, head, misc, action, an empty string, taunt and seven empty strings, the Linux table entry for entry"
  }
 }
