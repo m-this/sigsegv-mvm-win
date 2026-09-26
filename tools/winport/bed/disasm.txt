@@ -1,8 +1,4 @@
-# GetUpgradeStepData in full: the fields of a 0x19c upgrade entry on Windows
-server 0x5f65b0 200
-# CMannVsMachineUpgradeManager's parser: where each key of an upgrade lands
-server string Increment
-# The game's attribute iterator forwarding to SigMod's (after its first ret)
-server 0x3c4f96 60
-# What the entity factory calls on its member at +0x184 before the jump to a float
-server 0x22be10 60
+# CMannVsMachineUpgradeManager's parser: where each key of an upgrade entry
+# (0x19c on Windows, 0x15c in SigMod's struct) is written
+server string ui_group
+server string increment
