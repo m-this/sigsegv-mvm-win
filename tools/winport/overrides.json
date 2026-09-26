@@ -905,5 +905,10 @@
  "_ZN18CHalloweenBaseBoss14SpawnBossAtPosE17HalloweenBossTypeRK6VectoriP11CBaseEntity": {
   "rva": "0x59a8c0",
   "why": "read by hand: the one function referencing all three boss class names ('headless_hatman', 'eyeball_boss', 'merasmus' at 0x59a8df-0x59a8ed); cdecl, plain ret, and it opens as the Linux body does, a switch on the first argument by sub eax, 1 three times, returning null for any other type"
+ },
+ "_ZN11CBasePlayer20Weapon_ShootPositionEv": {
+  "rva": "0x15e390",
+  "vtidx": 276,
+  "why": "read by hand from the vtables: Linux slot 277 less 1, as the pairs around it are (CreateViewModel 334/333, StudioFrameAdvance 202/201); the body calls the EyePosition slot (+0x224) into the returned vector and pops the hidden pointer, the Linux body"
  }
 }
