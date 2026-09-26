@@ -95,9 +95,13 @@ template<> Action<CTFBot>::~Action() { ft_Action_dtor_D2(this); }
 static MemberFuncThunk<Action<CBotNPCArcher> *, void> ft_Action_CBotNPCArcher_dtor_D2("Action<CZombie>::~Action [D2 windows]");
 template<> Action<CBotNPCArcher>::~Action() { ft_Action_CBotNPCArcher_dtor_D2(this); }
 
-/* not implemented */
-INextBotEventResponder::~INextBotEventResponder() { assert(false); }
-IContextualQuery::~IContextualQuery()             { assert(false); }
+/* Empty, as the game's are. An MSVC destructor destroys its bases itself, so
+ * after the game's ~Action above has run them the compiler runs these two
+ * again for the wrapper; on Linux the [D2] symbol thunk replaces the whole
+ * destructor and they were never reached. As assert(false) they ended every
+ * server that removed a mod action. */
+INextBotEventResponder::~INextBotEventResponder() {}
+IContextualQuery::~IContextualQuery()             {}
 //Path::Path()                                      { assert(false); }
 //Path::~Path()                                     { assert(false); }
 //PathFollower::PathFollower()                      { assert(false); }

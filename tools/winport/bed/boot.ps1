@@ -72,7 +72,7 @@ function Alive { return $script:srcdsId -and [bool](Get-Process -Id $script:srcd
 function Death-Reason {
   $console = "$tf\console.log"
   if (-not (Test-Path $console)) { return 'no console' }
-  $fatal = Select-String -Path $console -Pattern 'called unresolved function|has no vtable index|FATAL ERROR|Host_Error|Sys_Error' |
+  $fatal = Select-String -Path $console -Pattern 'called unresolved function|has no vtable index|FATAL ERROR|Host_Error|Sys_Error|Assertion failed' |
     Select-Object -Last 1
   if ($fatal) { return $fatal.Line.Trim() }
   return 'no fatal line; last: ' + ((Get-Content $console -Tail 1) -join ' ')
