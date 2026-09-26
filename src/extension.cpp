@@ -294,21 +294,46 @@ namespace ExitTrace
 		pmc.cb = sizeof(pmc);
 		GetProcessMemoryInfo(GetCurrentProcess(), reinterpret_cast<PROCESS_MEMORY_COUNTERS *>(&pmc), sizeof(pmc));
 		size_t free_total = 0, free_largest = 0, reserved = 0;
+		/* Committed private memory by the size of the allocation it belongs
+		 * to, in powers of two from 64 KB: a leak of one kind of allocation
+		 * climbs in one class. */
+		size_t by_class[16] = {}, count_class[16] = {};
+		void *base = nullptr;
+		size_t base_committed = 0;
+		auto close_base = [&]() {
+			if (base_committed == 0) return;
+			int c = 0;
+			while (c < 15 && (size_t(0x10000) << c) < base_committed) ++c;
+			by_class[c] += base_committed;
+			++count_class[c];
+			base_committed = 0;
+		};
 		MEMORY_BASIC_INFORMATION mbi;
 		for (uintptr_t at = 0x10000; VirtualQuery(reinterpret_cast<void *>(at), &mbi, sizeof(mbi)) != 0; ) {
+			if (mbi.AllocationBase != base) { close_base(); base = mbi.AllocationBase; }
 			if (mbi.State == MEM_FREE) {
 				free_total += mbi.RegionSize;
 				if (mbi.RegionSize > free_largest) free_largest = mbi.RegionSize;
 			} else if (mbi.State == MEM_RESERVE) {
 				reserved += mbi.RegionSize;
+			} else if (mbi.Type == MEM_PRIVATE) {
+				base_committed += mbi.RegionSize;
 			}
 			uintptr_t next = reinterpret_cast<uintptr_t>(mbi.BaseAddress) + mbi.RegionSize;
 			if (next <= at) break;
 			at = next;
 		}
-		Warning("SigMod: memory: private %u MB, working set %u MB, reserved %u MB, free %u MB, largest free %u MB\n",
+		close_base();
+		char classes[512] = "";
+		size_t len = 0;
+		for (int c = 0; c < 16 && len < sizeof(classes) - 40; ++c) {
+			if (by_class[c] < (size_t(16) << 20)) continue;
+			len += snprintf(classes + len, sizeof(classes) - len, " %uK:%ux=%uMB",
+				(unsigned)((size_t(0x10000) << c) >> 10), (unsigned)count_class[c], (unsigned)(by_class[c] >> 20));
+		}
+		Warning("SigMod: memory: private %u MB, working set %u MB, reserved %u MB, free %u MB, largest free %u MB; by allocation size:%s\n",
 			(unsigned)(pmc.PrivateUsage >> 20), (unsigned)(pmc.WorkingSetSize >> 20), (unsigned)(reserved >> 20),
-			(unsigned)(free_total >> 20), (unsigned)(free_largest >> 20));
+			(unsigned)(free_total >> 20), (unsigned)(free_largest >> 20), classes);
 	}
 	
 	DWORD WINAPI Watchdog(void *)
