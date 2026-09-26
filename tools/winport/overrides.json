@@ -1150,5 +1150,10 @@
   "rva": "0x1cee50",
   "name": "CBaseAnimating::LookupActivity",
   "why": "read by hand: the twin of LookupSequence (0x1cefb0) calling the global LookupActivity(hdr, name) instead, as on Linux; thiscall, ret 4. CTFPlayer::ClientCommand's inlined PlaySpecificSequence calls it first and plays the result as PLAYERANIMEVENT_CUSTOM (0x13), the Linux shape. Only Windows needs it: its PlaySpecificSequence is written in SigMod"
+ },
+ "win_CBaseEntity_dtor": {
+  "name": "~CBaseEntity [D2 windows]",
+  "rva": "0x1e98c0",
+  "why": "read by hand: slot 0 of CBaseEntity's table (0x1e9c00, the scalar deleting destructor: flags test, free, ret 4) calls it before freeing, and CBaseAnimating's plain destructor (0x1c8b20) ends with a jmp to it; 200 direct callers. The body is the Linux D2's: stores CBaseEntity's table, the same pointer hash (0x7ed55d16, 0xc761c23c, 0x165667b1, 0xb55a4f09) removing the entity from the model load proxy table, VPhysicsDestroyObject (0x202b00), frees the object at +0x128 through slot 0x5c, clears the touched and ground lists, SetGroundEntity(0), DestroyAllDataObjects, removes the handle from gEntList, four CBaseEntityOutput destructors, then the collision and network properties; no argument, ret"
  }
 }
