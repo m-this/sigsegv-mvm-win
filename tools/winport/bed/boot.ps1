@@ -72,9 +72,12 @@ function Alive { return $script:srcdsId -and [bool](Get-Process -Id $script:srcd
 function Death-Reason {
   $console = "$tf\console.log"
   if (-not (Test-Path $console)) { return 'no console' }
-  $fatal = Select-String -Path $console -Pattern 'called unresolved function|has no vtable index|FATAL ERROR|Host_Error|Sys_Error|Assertion failed' |
+  $fatal = Select-String -Path $console -Pattern 'SigMod: fault|has no vtable index|FATAL ERROR|Host_Error|Sys_Error|Assertion failed' |
     Select-Object -Last 1
   if ($fatal) { return $fatal.Line.Trim() }
+  # An unresolved call only warns now, so it names what ran last, not the cause.
+  $unresolved = Select-String -Path $console -Pattern 'which does nothing on Windows yet' | Select-Object -Last 1
+  if ($unresolved) { return 'no fatal line; last unresolved call: ' + $unresolved.Line.Trim() }
   return 'no fatal line; last: ' + ((Get-Content $console -Tail 1) -join ' ')
 }
 
