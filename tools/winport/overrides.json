@@ -944,5 +944,18 @@
  "g_MannVsMachineUpgrades": {
   "rva": "0xb96ad4",
   "why": "read by hand: GetUpgradeStepData indexes the upgrade table through the pointer at 0x10b96ae0, and the upgrade parser (0x5f6b80) reaches that same vector at +0xc from the manager and its count at +0x18: m_Upgrades after CAutoGameSystem's vtable, m_pNext and m_pszName, as on Linux. Unresolved, SigMod appended its extended upgrades to a scratch block and the game's table stayed short, so RestoreCheckpoint's GetUpgradeStepData read a name past its end"
+ },
+ "_ZN15CTFPlayerShared4BurnEP9CTFPlayerP13CTFWeaponBasef": {
+  "rva": "0x51a2c0",
+  "why": "read by hand: SelfBurn (0x52a990) calls it with (m_pOuter, NULL, duration); the Linux body: m_pOuter IsAlive through +0x10c (Linux +0x110), TF_COND_PHASE and the other skip conditions, AddCond(TF_COND_BURNING), OnBurnOther on the attacker, the afterburn_immunity and mult_wpn_burntime attribute hooks; thiscall, ret 0xc for three arguments"
+ },
+ "_ZN17CBaseCombatWeapon7HasAmmoEv": {
+  "rva": "0x1e1b50",
+  "vtidx": 240,
+  "why": "read by hand: slot 240 of CBaseCombatWeapon, Linux 246 less the 6 SetSubType (233) agrees on; the Linux body: both ammo types -1 returns true, then the select-on-empty flag, the owner as a player, clip1, the primary ammo count, clip2 and the secondary ammo count. CTFWeaponBase's slot 240 (0x6365d0) returns true for an energy weapon and jumps here"
+ },
+ "_ZN9CTFPlayer21RemoveCustomAttributeEPKc": {
+  "rva": "0x50a220",
+  "why": "read by hand: CTriggerAddOrRemoveTFPlayerAttributes::StartTouch (0x541e60) calls it with the attribute name where it would otherwise call AddCustomAttribute (0x4e0340), the Linux shape; the body finds the name in the custom attribute map (+0x25e8, Linux +0x25f0), calls RemoveAttributeFromPlayer on m_Shared (+0x1ae8, Linux +0x1af4), unlinks the node and puts it on the free list; thiscall, ret 4"
  }
 }
