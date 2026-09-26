@@ -1096,5 +1096,13 @@
  "g_szLoadoutStrings": {
   "rva": "0x9c1768",
   "why": "the 19 pointers there name primary, secondary, melee, utility, building, pda, pda2, head, misc, action, an empty string, taunt and seven empty strings, the Linux table entry for entry"
+ },
+ "_ZL24g_LagCompensationManager": {
+  "rva": "0xa3c6e8",
+  "why": "read by hand: the static initializer at 0x1aca0 constructs it here (mov ecx, 0x10a3c6e8; call 0x2ed4c0), the constructor writes CLagCompensationManager's two vtables at +0 and +0xc, and lagcompensation (0x9a2458) holds 0x10a3c6f4, its ILagCompensationManager at +0xc"
+ },
+ "_ZL33g_RecipientFilterPredictionSystem": {
+  "rva": "0x9a97a8",
+  "why": "read by hand: of the three static IPredictionSystem objects the initializers link into g_pPredictionSystems, the only one whose fields are read, and only by CRecipientFilter's code (0x30ee70 to 0x30fa00): m_nStatusPushed at +0x10 then m_pSuppressHost at +0xc, the reads Linux UsePredictionRules makes on 0x18347d4 and 0x18347d0"
  }
 }

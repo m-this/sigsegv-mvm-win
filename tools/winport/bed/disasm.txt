@@ -1,2 +1,1 @@
-# the static initializer that builds the lag compensation manager
-server 0x1aca0 30
+# nothing asked
