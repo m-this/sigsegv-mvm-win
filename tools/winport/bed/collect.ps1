@@ -184,6 +184,17 @@ Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort
   $name = $_.Name
   Select-String -Path $_.FullName -Pattern 'SigMod: frame cost: .*' | Select-Object -Last 8 | ForEach-Object { Write-Host "frame cost in ${name}: $($_.Matches[0].Value)" }
 }
+# The process's memory over each server's life, one line in five and the last:
+# a climb across missions is a leak, a jump inside one is that mission.
+Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort-Object Name | ForEach-Object {
+  $name = $_.Name
+  $lines = @(Select-String -Path $_.FullName -Pattern 'SigMod: memory: .*|Wave #\d+ initialized of mission \S+' | ForEach-Object { $_.Matches[0].Value })
+  $i = 0
+  foreach ($l in $lines) {
+    $i++
+    if ($l -notmatch '^SigMod' -or $i % 5 -eq 0 -or $i -eq $lines.Count) { Write-Host "memory in ${name}: $l" }
+  }
+}
 # What the schema made of SigMod's custom attributes, once per distinct line.
 $attrs = Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
   Select-String -Pattern 'SigMod: custom attributes: .*' | ForEach-Object { $_.Matches[0].Value } | Sort-Object -Unique | Select-Object -First 30

@@ -284,13 +284,42 @@ namespace ExitTrace
 	 * well; the report is capped at three. */
 	HANDLE MainThread = nullptr;
 	
+	/* For the bed: servers end in "Out of memory or address space" a few
+	 * missions in. Once a minute, what the process holds and what is left of
+	 * its address space, so a leak reads as a climb across missions and a
+	 * spike as one mission. */
+	void ReportMemory()
+	{
+		PROCESS_MEMORY_COUNTERS_EX pmc = {};
+		pmc.cb = sizeof(pmc);
+		GetProcessMemoryInfo(GetCurrentProcess(), reinterpret_cast<PROCESS_MEMORY_COUNTERS *>(&pmc), sizeof(pmc));
+		size_t free_total = 0, free_largest = 0, reserved = 0;
+		MEMORY_BASIC_INFORMATION mbi;
+		for (uintptr_t at = 0x10000; VirtualQuery(reinterpret_cast<void *>(at), &mbi, sizeof(mbi)) != 0; ) {
+			if (mbi.State == MEM_FREE) {
+				free_total += mbi.RegionSize;
+				if (mbi.RegionSize > free_largest) free_largest = mbi.RegionSize;
+			} else if (mbi.State == MEM_RESERVE) {
+				reserved += mbi.RegionSize;
+			}
+			uintptr_t next = reinterpret_cast<uintptr_t>(mbi.BaseAddress) + mbi.RegionSize;
+			if (next <= at) break;
+			at = next;
+		}
+		Warning("SigMod: memory: private %u MB, working set %u MB, reserved %u MB, free %u MB, largest free %u MB\n",
+			(unsigned)(pmc.PrivateUsage >> 20), (unsigned)(pmc.WorkingSetSize >> 20), (unsigned)(reserved >> 20),
+			(unsigned)(free_total >> 20), (unsigned)(free_largest >> 20));
+	}
+	
 	DWORD WINAPI Watchdog(void *)
 	{
 		LONG last = g_WatchdogFrames;
-		int still = 0, reports = 0;
+		int still = 0, reports = 0, ticks = 0;
 		bool reported = false;
-		while (reports < 3) {
+		for (;;) {
 			Sleep(5000);
+			if (++ticks % 12 == 0) ReportMemory();
+			if (reports >= 3) continue;
 			LONG now = g_WatchdogFrames;
 			if (now != last || now == 0) { last = now; still = 0; reported = false; continue; }
 			if ((still += 5) < 45 || reported) continue;
@@ -331,7 +360,6 @@ namespace ExitTrace
 			reported = true;
 			++reports;
 		}
-		return 0;
 	}
 	
 	void Install()
