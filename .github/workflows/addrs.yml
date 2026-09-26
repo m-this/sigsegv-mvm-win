@@ -12,6 +12,9 @@ on:
   push:
     branches:
       - 'sigmod-windows-bed'
+      # One branch per investigation, so two can ask the job questions at
+      # once without writing over each other's disasm.txt and inspect.sh.
+      - 'winport-*'
     paths:
       - '.github/workflows/addrs.yml'
       - 'tools/winport/*.py'
