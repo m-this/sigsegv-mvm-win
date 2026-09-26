@@ -1,7 +1,6 @@
-# the global reads of the functions the globals are confirmed from
-server 0x37aa40 60
-server 0x2ec880 40
-server 0x36d990 60
-server 0x249890 20
-server 0x557aa0 50
-server 0x39c5d0 20
+# CCurrencyPack's constructor and destructors, for its auto list
+server 0x44b6b0 60
+server 0x44ba60 60
+server func 0x44b9e2 200
+# who constructs the lag compensation manager
+server callers 0x2ed4c0

@@ -48,64 +48,6 @@ def wread(va, n):
             return data[va - sva:va - sva + n]
     return b"\0" * n
 
-print("==== A. data found by content")
-for name in ["g_szBotModels", "g_szBotBossModels", "g_szPlayerRobotModels", "g_szBotBossSentryBusterModel",
-             "g_szRomePromoItems_Hat", "g_szRomePromoItems_Misc", "PackRatios", "g_TFClassViewVectors",
-             "g_aTeamColors", "s_acttableMelee"]:
-    addr, size = sym[name]
-    data = lbytes(addr, size)
-    if data is None:
-        print(f"{name}: in .bss")
-        continue
-    hits = wfind(data)
-    print(f"{name} size {size:#x} first {data[:40]!r}: full hits {[(n, hex(r)) for n, r in hits]}")
-    if not hits:
-        print(f"   first 0x40 bytes: {[(n, hex(r)) for n, r in wfind(data[:0x40])][:6]}")
-    if name == "s_acttableMelee":
-        print("   linux", data[:48].hex())
-
-print("==== B. pointer tables by their strings")
-wstr_sites = {}
-for site in win.relocs:
-    if win.in_text(site):
-        continue
-    try:
-        v = win.read_u32(site)
-    except Exception:
-        continue
-    t = win.string_at(v)
-    if t is None:
-        raw = wread(v, 64).split(b"\0")[0]
-        t = raw.decode("latin-1") if raw and all(32 <= c < 127 for c in raw) else None
-    if t is not None:
-        wstr_sites[site] = t
-sites_sorted = sorted(wstr_sites)
-for name in ["g_aClassNames", "g_aRawPlayerClassNamesShort", "_ZL11s_TankModel", "_ZL15s_TankModelRome",
-             "g_szLoadoutStrings", "_ZL17g_aConditionNames", "g_aRawPlayerClassNames"]:
-    if name not in sym:
-        print(f"{name}: no Linux symbol")
-        continue
-    addr, size = sym[name]
-    entries = []
-    for i in range(size // 4):
-        v = lu32(addr + 4 * i)
-        raw = lbytes(v, 80) if v else None
-        entries.append(raw.split(b"\0")[0].decode("latin-1") if raw is not None else None)
-    print(f"{name} {size // 4} entries: {entries[:14]}")
-    first = next(i for i, e in enumerate(entries) if e)
-    for site in sites_sorted:
-        if wstr_sites[site] != entries[first]:
-            continue
-        base = site - 4 * first
-        got = [wstr_sites.get(base + 4 * i) for i in range(len(entries))]
-        same = sum(1 for a, b in zip(got, entries) if a == b)
-        if same >= max(2, len(entries) // 2):
-            print(f"   at {base - B:#x}: {same}/{len(entries)} agree; windows {got[:14]}")
-
-print("==== C. values in the file")
-for rva, n in [(0x9d3134, 4), (0x9a2458, 4), (0x992288, 4), (0x9cd3ac, 12), (0x9c7de0, 24), (0x9d3098, 4)]:
-    print(f"   {rva:#x}: {wread(B + rva, n).hex()}")
-
 def text_refs(value):
     code = win.text_bytes
     out, at = [], code.find(struct.pack("<I", value))
@@ -121,48 +63,6 @@ def insn_at(site):
             return f, f"{i.address - B:#x}: {i.mnemonic} {i.op_str}"
     return f, "?"
 
-print("==== D. code naming an address")
-for rva in [0x9a2458]:
-    for s in text_refs(B + rva)[:20]:
-        f, text = insn_at(s)
-        print(f"   {rva:#x} in {f - B:#x}  {text}")
-for cls in ["CLagCompensationManager", "CRecipientFilterPredictionSystem", "CCurrencyPack"]:
-    try:
-        rows = open(f"derived/win-vtables/{cls}.txt").read().splitlines()
-    except OSError:
-        print(f"   {cls}: no table")
-        continue
-    heads = [r for r in rows if r.startswith("// vtable")]
-    print(f"   {cls}: {heads}  slot0 {rows[1] if len(rows) > 1 else ''}")
-    for h in heads:
-        vt = int(h.split()[3], 16)
-        for s in text_refs(vt)[:8]:
-            f, text = insn_at(s)
-            print(f"      vtable {vt - B:#x} named in {f - B:#x}  {text}")
-
-print("==== E. ServerClass records")
-for cname in ["CBaseCombatWeapon", "CBasePlayer", "CBaseCombatCharacter"]:
-    for site, t in wstr_sites.items():
-        if t == cname and not win.in_text(site):
-            print(f"   {cname!r} at {site - B:#x}: {wread(site, 20).hex()}")
-
-print("==== F. around a reference")
-def around(func_rva, value, before=10, after=6):
-    f = B + func_rva
-    k = bisect.bisect_right(win.starts, f)
-    end = min(win.starts[k] if k < len(win.starts) else win.text_end, f + 0x3000)
-    ins = list(cs.disasm(win.text_bytes[f - win.text_start:end - win.text_start], f))
-    pat = f"{B + value:#x}"
-    for n, i in enumerate(ins):
-        if pat in i.op_str:
-            print(f"   -- {func_rva:#x} ref {value:#x}")
-            for j in ins[max(0, n - before):n + after]:
-                print(f"      {j.address - B:#x}: {j.mnemonic} {j.op_str}")
-around(0x1ffc40, 0x97ab88)
-around(0x5efcc0, 0xb96664, 8, 4)
-around(0x37ab40, 0xa80fb8, 6, 4)
-
-print("==== G. Linux bodies")
 def lbody(name, limit=60):
     a = linux.by_name.get(name)
     if a is None:
@@ -174,9 +74,51 @@ def lbody(name, limit=60):
         if n >= limit:
             break
         print(f"      {i.address:#x}: {i.mnemonic} {i.op_str}")
-lbody("_ZN13CVoiceGameMgr15ClientConnectedEP7edict_t")
-lbody("_ZN11CBaseEntity23SetPredictionRandomSeedEPK8CUserCmd")
-lbody("_ZN11CPlayerMove12StartCommandEP11CBasePlayerP8CUserCmd", 40)
-lbody("_Z20UTIL_RemoveImmediateP11CBaseEntity")
-lbody("_ZN30ISearchSurroundingAreasFunctor20IterateAdjacentAreasEP8CNavAreaS1_f", 30)
+def refs_to_string(text):
+    return sorted(site for site, t in wstr_sites.items() if t == text)
+
+wstr_sites = {}
+for site in win.relocs:
+    if win.in_text(site):
+        continue
+    try:
+        v = win.read_u32(site)
+    except Exception:
+        continue
+    raw = wread(v, 96).split(b"\0")[0]
+    if all(32 <= c < 127 for c in raw) and win.in_text(v) is False:
+        wstr_sites[site] = raw.decode("latin-1")
+
+print("==== A. the class name tables")
+for text in ["heavyweapons", "demoman", "Heavy", "heavy"]:
+    for site in refs_to_string(text):
+        row = [wstr_sites.get(site + 4 * i, "-") for i in range(-6, 8)]
+        print(f"   {text!r} at {site - B:#x}: {row}")
+for text in ["heavyweapons", "demoman"]:
+    hits = wfind(text.encode() + b"\0")
+    print(f"   string {text!r}: {[(n, hex(r)) for n, r in hits][:10]}")
+print("   g_szLoadoutStrings at 0x9c1768:", [wstr_sites.get(B + 0x9c1768 + 4 * i, "-") for i in range(19)])
+print("   raw", wread(B + 0x9c1768, 19 * 4).hex())
+
+print("==== D. code naming a vtable")
+for cls in ["IPredictionSystem", "CRecipientFilter"]:
+    try:
+        rows = open(f"derived/win-vtables/{cls}.txt").read().splitlines()
+    except OSError:
+        print(f"   {cls}: no table")
+        continue
+    heads = [r for r in rows if r.startswith("// vtable")]
+    print(f"   {cls}: {heads}")
+    for h in heads:
+        vt = int(h.split()[3], 16)
+        for s in text_refs(vt)[:12]:
+            f, text = insn_at(s)
+            print(f"      vtable {vt - B:#x} named in {f - B:#x}  {text}")
+import os
+print("   tables:", [f for f in os.listdir("derived/win-vtables") if "redict" in f])
+
+print("==== G. Linux bodies")
+lbody("_GLOBAL__sub_I__ZN16CRecipientFilterC2Ev", 40)
+lbody("_ZN16CRecipientFilter18UsePredictionRulesEv", 40)
+lbody("_GLOBAL__sub_I_sv_unlag", 60)
 PY
