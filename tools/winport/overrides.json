@@ -957,5 +957,18 @@
  "_ZN9CTFPlayer21RemoveCustomAttributeEPKc": {
   "rva": "0x50a220",
   "why": "read by hand: CTriggerAddOrRemoveTFPlayerAttributes::StartTouch (0x541e60) calls it with the attribute name where it would otherwise call AddCustomAttribute (0x4e0340), the Linux shape; the body finds the name in the custom attribute map (+0x25e8, Linux +0x25f0), calls RemoveAttributeFromPlayer on m_Shared (+0x1ae8, Linux +0x1af4), unlinks the node and puts it on the free list; thiscall, ret 4"
+ },
+ "_ZNK15CTFPlayerShared20GetConditionProviderE7ETFCond": {
+  "rva": "0x5218c0",
+  "why": "read by hand: the Linux body: InCond, TF_COND_CRITBOOSTED (11) handed to the condition list's GetProvider (+0xe0 on both), else the provider handle at m_ConditionData (+8 on both) [cond*20 + 0xc] looked up in the entity list; thiscall, ret 4. Its m_ConditionData read is what the Windows extractor of that prop matches"
+ },
+ "_ZN14CBaseAnimating14LookupSequenceEPKc": {
+  "rva": "0x1cefb0",
+  "why": "read by hand: the Linux body: model pointer (+0x498, Linux +0x4b0) locked in through GetModel and LockStudioHdr when unset, then the global LookupSequence(hdr, name); thiscall, ret 4. CTFPlayer::ClientCommand's inlined PlaySpecificSequence calls it after LookupActivity comes back -1 and plays the result as PLAYERANIMEVENT_CUSTOM_SEQUENCE (0x15), the Linux shape"
+ },
+ "_ZN14CBaseAnimating14LookupActivityEPKc": {
+  "rva": "0x1cee50",
+  "name": "CBaseAnimating::LookupActivity",
+  "why": "read by hand: the twin of LookupSequence (0x1cefb0) calling the global LookupActivity(hdr, name) instead, as on Linux; thiscall, ret 4. CTFPlayer::ClientCommand's inlined PlaySpecificSequence calls it first and plays the result as PLAYERANIMEVENT_CUSTOM (0x13), the Linux shape. Only Windows needs it: its PlaySpecificSequence is written in SigMod"
  }
 }
