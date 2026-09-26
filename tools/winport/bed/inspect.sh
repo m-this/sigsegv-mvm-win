@@ -13,6 +13,8 @@ for s in elf.get_section_by_name(".symtab").iter_symbols():
     if s["st_info"]["type"] == "STT_FUNC" and s["st_value"]:
         byaddr.setdefault(s["st_value"], s.name); byname[s.name] = (s["st_value"], s["st_size"])
 def ldis(name, limit=80):
+    if name not in byname:
+        name = next(k for k in byname if k.endswith(name))
     a, n = byname[name]
     print(f"== linux {name} size {n}")
     for k, i in enumerate(md.disasm(lcode[a-lva:a-lva+n], a)):
@@ -43,7 +45,7 @@ def wdis(start, limit=80):
         print(line)
         if i.mnemonic == "int3" or n >= limit: break
 
-ldis("_ZN15CTFPlayerShared20GetConditionProviderE7ETFCond")
+ldis("15CTFPlayerShared20GetConditionProviderE7ETFCond")
 wdis(0x5218c0)
 ldis("_ZN14CBaseAnimating14LookupActivityEPKc")
 wdis(0x1cee50)
