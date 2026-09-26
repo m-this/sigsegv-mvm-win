@@ -1124,5 +1124,31 @@
  "_ZL33g_RecipientFilterPredictionSystem": {
   "rva": "0x9a97a8",
   "why": "read by hand: of the three static IPredictionSystem objects the initializers link into g_pPredictionSystems, the only one whose fields are read, and only by CRecipientFilter's code (0x30ee70 to 0x30fa00): m_nStatusPushed at +0x10 then m_pSuppressHost at +0xc, the reads Linux UsePredictionRules makes on 0x18347d4 and 0x18347d0"
+ },
+ "_ZN15CTFPlayerShared4BurnEP9CTFPlayerP13CTFWeaponBasef": {
+  "rva": "0x51a2c0",
+  "why": "read by hand: SelfBurn (0x52a990) calls it with (m_pOuter, NULL, duration); the Linux body: m_pOuter IsAlive through +0x10c (Linux +0x110), TF_COND_PHASE and the other skip conditions, AddCond(TF_COND_BURNING), OnBurnOther on the attacker, the afterburn_immunity and mult_wpn_burntime attribute hooks; thiscall, ret 0xc for three arguments"
+ },
+ "_ZN17CBaseCombatWeapon7HasAmmoEv": {
+  "rva": "0x1e1b50",
+  "vtidx": 240,
+  "why": "read by hand: slot 240 of CBaseCombatWeapon, Linux 246 less the 6 SetSubType (233) agrees on; the Linux body: both ammo types -1 returns true, then the select-on-empty flag, the owner as a player, clip1, the primary ammo count, clip2 and the secondary ammo count. CTFWeaponBase's slot 240 (0x6365d0) returns true for an energy weapon and jumps here"
+ },
+ "_ZN9CTFPlayer21RemoveCustomAttributeEPKc": {
+  "rva": "0x50a220",
+  "why": "read by hand: CTriggerAddOrRemoveTFPlayerAttributes::StartTouch (0x541e60) calls it with the attribute name where it would otherwise call AddCustomAttribute (0x4e0340), the Linux shape; the body finds the name in the custom attribute map (+0x25e8, Linux +0x25f0), calls RemoveAttributeFromPlayer on m_Shared (+0x1ae8, Linux +0x1af4), unlinks the node and puts it on the free list; thiscall, ret 4"
+ },
+ "_ZNK15CTFPlayerShared20GetConditionProviderE7ETFCond": {
+  "rva": "0x5218c0",
+  "why": "read by hand: the Linux body: InCond, TF_COND_CRITBOOSTED (11) handed to the condition list's GetProvider (+0xe0 on both), else the provider handle at m_ConditionData (+8 on both) [cond*20 + 0xc] looked up in the entity list; thiscall, ret 4. Its m_ConditionData read is what the Windows extractor of that prop matches"
+ },
+ "_ZN14CBaseAnimating14LookupSequenceEPKc": {
+  "rva": "0x1cefb0",
+  "why": "read by hand: the Linux body: model pointer (+0x498, Linux +0x4b0) locked in through GetModel and LockStudioHdr when unset, then the global LookupSequence(hdr, name); thiscall, ret 4. CTFPlayer::ClientCommand's inlined PlaySpecificSequence calls it after LookupActivity comes back -1 and plays the result as PLAYERANIMEVENT_CUSTOM_SEQUENCE (0x15), the Linux shape"
+ },
+ "_ZN14CBaseAnimating14LookupActivityEPKc": {
+  "rva": "0x1cee50",
+  "name": "CBaseAnimating::LookupActivity",
+  "why": "read by hand: the twin of LookupSequence (0x1cefb0) calling the global LookupActivity(hdr, name) instead, as on Linux; thiscall, ret 4. CTFPlayer::ClientCommand's inlined PlaySpecificSequence calls it first and plays the result as PLAYERANIMEVENT_CUSTOM (0x13), the Linux shape. Only Windows needs it: its PlaySpecificSequence is written in SigMod"
  }
 }
