@@ -7,7 +7,11 @@ GlobalThunk<Color[4]>        g_aTeamColors("g_aTeamColors");
 GlobalThunk<const char *[11]> g_aClassNames                   ("g_aClassNames");
 GlobalThunk<const char *[13]> g_aPlayerClassNames             ("g_aPlayerClassNames");
 GlobalThunk<const char *[13]> g_aPlayerClassNames_NonLocalized("g_aPlayerClassNames_NonLocalized");
+#if defined _WINDOWS
+const char *const g_aRawPlayerClassNames[13] = { "undefined", "scout", "sniper", "soldier", "demoman", "medic", "heavyweapons", "pyro", "spy", "engineer", "civilian", "", "random" };
+#else
 GlobalThunk<const char *[13]> g_aRawPlayerClassNames          ("g_aRawPlayerClassNames");
+#endif
 GlobalThunk<const char *[13]> g_aRawPlayerClassNamesShort     ("g_aRawPlayerClassNamesShort");
 
 GlobalThunk<const char *[]> g_aWeaponNames("g_aWeaponNames");
