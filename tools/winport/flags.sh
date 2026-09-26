@@ -34,6 +34,10 @@ WIN_CFLAGS=(
 	/imsvc "$XWIN/sdk/include/um" /imsvc "$XWIN/sdk/include/shared"
 	/DWIN32 /D_WINDOWS /D_CRT_SECURE_NO_DEPRECATE /D_CRT_SECURE_NO_WARNINGS
 	/D_CRT_NONSTDC_NO_DEPRECATE /D_ITERATOR_DEBUG_LEVEL=0
+	# An unresolved thunk returns without writing its out-parameters. Reading one
+	# uninitialised is undefined, and clang then drops the rest of the caller and
+	# runs into the next function. Zeroed locals make it a null read instead.
+	/clang:-ftrivial-auto-var-init=zero
 )
 
 WIN_CXXFLAGS=(
