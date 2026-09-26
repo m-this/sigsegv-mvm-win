@@ -178,6 +178,12 @@ Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort
 Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
   Select-String -Pattern 'CVirtualHook::FAIL .*|IMod::InvokeLoad: .*failed.*' | ForEach-Object { $_.Matches[0].Value } |
   Sort-Object -Unique | ForEach-Object { Write-Host "mod: $_" }
+# Where the frame callbacks spend a slow server's time, the last reports of
+# each console.
+Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort-Object Name | ForEach-Object {
+  $name = $_.Name
+  Select-String -Path $_.FullName -Pattern 'SigMod: frame cost: .*' | Select-Object -Last 8 | ForEach-Object { Write-Host "frame cost in ${name}: $($_.Matches[0].Value)" }
+}
 # What the schema made of SigMod's custom attributes, once per distinct line.
 $attrs = Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
   Select-String -Pattern 'SigMod: custom attributes: .*' | ForEach-Object { $_.Matches[0].Value } | Sort-Object -Unique | Select-Object -First 30

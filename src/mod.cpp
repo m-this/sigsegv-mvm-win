@@ -355,6 +355,50 @@ void CModManager::Unload()
 		} \
 	}
 
+#if defined _WINDOWS
+/* For the bed: a wave that ran eight game seconds in ten minutes of wall time
+ * came with the frame callbacks running for the first time. Where each frame
+ * callback's time goes, every thirty seconds, the costliest listeners first. */
+#include <typeinfo>
+#include <map>
+#include <string>
+static bool FrameTiming() { static bool on = getenv("SIGSEGV_SURVEY_UNRESOLVED") != nullptr; return on; }
+static std::map<std::string, double> s_FrameCost;
+static double s_FrameCostSince = 0.0;
+static void FrameCostAdd(const char *callback, const char *type, double seconds)
+{
+	std::string key = std::string(callback) + " " + type;
+	s_FrameCost[key] += seconds;
+}
+static void FrameCostReport()
+{
+	double now = Plat_FloatTime();
+	if (s_FrameCostSince == 0.0) s_FrameCostSince = now;
+	if (now - s_FrameCostSince < 30.0) return;
+	std::vector<std::pair<double, std::string>> costs;
+	for (auto &[key, seconds] : s_FrameCost) costs.emplace_back(seconds, key);
+	std::sort(costs.rbegin(), costs.rend());
+	for (size_t i = 0; i < costs.size() && i < 4; ++i) {
+		Warning("SigMod: frame cost: %.1f%% of %.0fs in %s\n", 100.0 * costs[i].first / (now - s_FrameCostSince), now - s_FrameCostSince, costs[i].second.c_str());
+	}
+	s_FrameCost.clear();
+	s_FrameCostSince = now;
+}
+#define INVOKE_FRAME_CALLBACK_FOR_ALL_ELIGIBLE_MODS(CALLBACK) \
+	VPROF_BUDGET("IModCallbackListener::" #CALLBACK, "ModCallback"); \
+	for (auto listener : AutoList<I##CALLBACK##Listener>::List()) { \
+		if (listener->ShouldReceiveCallbacks()) { \
+			if (FrameTiming()) { \
+				double start = Plat_FloatTime(); \
+				listener->CALLBACK(); \
+				FrameCostAdd(#CALLBACK, typeid(*listener).name(), Plat_FloatTime() - start); \
+			} else { \
+				listener->CALLBACK(); \
+			} \
+		} \
+	} \
+	if (FrameTiming()) FrameCostReport();
+#else
 #define INVOKE_FRAME_CALLBACK_FOR_ALL_ELIGIBLE_MODS(CALLBACK) \
 	VPROF_BUDGET("IModCallbackListener::" #CALLBACK, "ModCallback"); \
 	for (auto listener : AutoList<I##CALLBACK##Listener>::List()) { \
@@ -362,6 +406,7 @@ void CModManager::Unload()
 			listener->CALLBACK(); \
 		} \
 	}
+#endif
 
 void CModManager::LevelInitPreEntity()         { INVOKE_CALLBACK_FOR_ALL_ELIGIBLE_MODS(LevelInitPreEntity);               }
 void CModManager::LevelInitPostEntity()        { INVOKE_CALLBACK_FOR_ALL_ELIGIBLE_MODS(LevelInitPostEntity);              }
