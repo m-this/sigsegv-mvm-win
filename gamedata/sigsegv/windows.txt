@@ -901,6 +901,15 @@
 					lib   "server"
 					// verified: the call-graph match (via CInfoTarget::Spawn), turned away for want of field evidence and read by hand: it tests the byte counter at +0x174 (Linux +0x18c, m_nTransmitStateOwnedCounter) and, when set, returns the edict's first word (m_fStateFlags) or 0, else goes on to UpdateTransmitState, as the source does; plain ret, no arguments. The bed's servers died calling it unresolved
 				}
+				"CBaseEntity::SetEffects"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity10SetEffectsEi"
+					addr  "0x2021c0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: thiscall, ret 4; when the argument differs from m_fEffects (+0xd4) marks the field changed (0x14f960), stores it and updates the transmit state (0x1eebd0), the Linux body with its callee inlined
+				}
 				"CBaseEntity::AddEffects"
 				{
 					type  "fixed"
@@ -8282,6 +8291,15 @@
 					lib   "server"
 					// string
 				}
+				"CTFBot::LeaveSquad"
+				{
+					type  "fixed"
+					sym   "_ZN6CTFBot10LeaveSquadEv"
+					addr  "0x557bd0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: thiscall, no argument; reads the squad at +0x27d0 (Linux +0x27d0 too), and when there is one calls the squad's Leave (0x566af0) with the bot and clears the field, the Linux body
+				}
 				"CTFBot::HasTag"
 				{
 					type  "fixed"
@@ -8525,6 +8543,15 @@
 					build "10828683"
 					lib   "server"
 					// consensus
+				}
+				"CTFBotPushToCapturePoint::CTFBotPushToCapturePoint [C1]"
+				{
+					type  "fixed"
+					sym   "_ZN24CTFBotPushToCapturePointC1EP6ActionI6CTFBotE"
+					addr  "0x5883f0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the Action<CTFBot> constructor (0x54d940), then the two vtables derived/win-vtables names CTFBotPushToCapturePoint's, the PathFollower at +0x34, and its argument, the next action, stored at +0x4818; ret 4
 				}
 				"CTFBotPushToCapturePoint::Update"
 				{
