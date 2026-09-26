@@ -1,2 +1,1 @@
-# CBaseCombatWeapon::SetOwner: the candidate referencing BaseCombatWeapon_HideThink
-server 0x1e4230 220
+# nothing asked
