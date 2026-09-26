@@ -922,7 +922,7 @@
   "why": "read by hand from the vtables: CTFWeaponBaseGun's own run of slots sits 7 below Linux (GetWeaponProjectileType 479/472, whose body indexes the weapon info at +0x6d8 by the mode at +0x6cc and returns the entry's projectile type; FireFlameRocket's two overloads 486-487/479-480 both return null); Linux 491, the shared fldz; ret, as the Linux body returns 0"
  },
  "_ZN16CTFWeaponBaseGun20RemoveProjectileAmmoEP9CTFPlayer": {
-  "rva": "0x63c3e0",
+  "rva": "0x63ca50",
   "vtidx": 474,
   "why": "read by hand from the vtables: CTFWeaponBaseGun's own run of slots sits 7 below Linux (GetWeaponProjectileType 479/472, whose body indexes the weapon info at +0x6d8 by the mode at +0x6cc and returns the entry's projectile type; FireFlameRocket's two overloads 486-487/479-480 both return null); Linux 481"
  },
