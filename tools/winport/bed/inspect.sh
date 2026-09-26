@@ -1,6 +1,6 @@
 #!/bin/bash
-# DecrementMannVsMachineWaveClassCount among the functions CTFPlayer::Event_Killed
-# reaches, by the offsets of the wave class arrays it walks.
+# DecrementMannVsMachineWaveClassCount by the Windows offsets of the wave class
+# arrays it walks.
 python3 - <<'PY'
 import re, bisect, collections, capstone, pefile
 from elftools.elf.elffile import ELFFile
@@ -109,34 +109,33 @@ def study(name, show=2, callers_show=0):
     for f, _ in [x for x in cc.most_common(40) if x[0] not in kname][:callers_show]: wdis(f)
     return kc
 
-# DecrementMannVsMachineWaveClassCount: among what CTFPlayer::Event_Killed
-# calls, two levels down, a function reading two string_t[12] 0x30 apart and
-# the flags 0x60 past each (Linux: names 0x1058/0x1088, flags 0x10b8/0x10e8,
-# counts 0xff8/0x1028)
-def disps(f, limit=4000):
-    out = set()
-    for i in md.disasm(code[f-tv:f-tv+limit], base + f):
-        for m in re.finditer(r"\+ (0x[0-9a-f]+)\]", i.op_str):
-            out.add(int(m.group(1), 16))
-        if i.mnemonic == "int3": break
-    return out
-seen, frontier = set(), [known["_ZN9CTFPlayer12Event_KilledERK15CTakeDamageInfo"]]
-for depth in range(2):
-    nxt = []
-    for f in frontier:
-        for c in set(wcallees(f, 40000)):
-            if tv <= c < tv + len(code) and c not in seen:
-                seen.add(c); nxt.append(c)
-    frontier = nxt
-print(f"== {len(seen)} functions reached from CTFPlayer::Event_Killed")
-found = []
-for f in sorted(seen):
-    ds = disps(f)
-    for d in sorted(ds):
-        if 0x800 <= d < 0x2000 and {d + 0x30, d + 0x60, d + 0x90} <= ds:
-            found.append(f); print(f"  {f:#x}: names at {d:#x}, {len(wg.get(f, ()))} callers"); break
-for f in found: wdis(f, 450)
-# whoever else calls them
-for f in found:
-    print(f"  callers of {f:#x}: " + ", ".join(sorted({hex(wstart(s)) + (' ' + kname[wstart(s)] if wstart(s) in kname else '') for s in wg.get(f, ())})))
+# DecrementMannVsMachineWaveClassCount: the Windows offsets of the wave class
+# arrays, read off the send table's construction (the offset is pushed just
+# before the name), then the functions reading the names and the flags 0x60
+# past them
+rdata = {s.Name.rstrip(b"\0"): s for s in pe.sections}
+def cstr_va(text_):
+    for sec in pe.sections:
+        data = sec.get_data(); at = data.find(b"\0" + text_ + b"\0")
+        if at != -1: return base + sec.VirtualAddress + at + 1
+offs = {}
+for name in (b"m_nMannVsMachineWaveClassCounts", b"m_iszMannVsMachineWaveClassNames", b"m_nMannVsMachineWaveClassFlags", b"m_iszMannVsMachineWaveClassNames2", b"m_bMannVsMachineWaveClassActive"):
+    va = cstr_va(name)
+    print(f"== {name.decode()} string at {va:#x}" if va else f"== {name.decode()} not found")
+    if not va: continue
+    for m in re.finditer(re.escape(va.to_bytes(4, "little")), code):
+        s = tv + m.start(); f = wstart(s)
+        ins = list(md.disasm(code[max(f, s-80)-tv:s-tv+24], base + max(f, s-80)))
+        k = next((j for j, i in enumerate(ins) if i.address - base >= s - 1), len(ins))
+        for i in ins[max(0, k-10):k+3]: print(f"  {i.address-base:#x}  {i.mnemonic} {i.op_str}")
+        imms = [int(x, 16) for i in ins[max(0, k-10):k] for x in re.findall(r"0x[0-9a-f]+", i.op_str) if 0x800 <= int(x, 16) < 0x2000]
+        print("  offsets pushed before it:", [hex(x) for x in imms])
+        offs.setdefault(name.decode(), []).extend(imms)
+for d in sorted(set(offs.get("m_iszMannVsMachineWaveClassNames", []))):
+    funcs = collections.Counter(wstart(tv + m.start()) for m in re.finditer(re.escape(d.to_bytes(4, "little")), code))
+    both = [f for f in funcs if (d + 0x60).to_bytes(4, "little") in code[f-tv:f-tv+4000] and (d + 0x30).to_bytes(4, "little") in code[f-tv:f-tv+4000]]
+    print(f"== names at {d:#x}: {len(funcs)} functions use it; with +0x30 and +0x60 too: {[hex(f) for f in both]}")
+    for f in both:
+        print(f"  callers of {f:#x}: " + ", ".join(sorted({hex(wstart(s)) + (' ' + kname[wstart(s)] if wstart(s) in kname else '') for s in wg.get(f, ())})))
+    for f in both: wdis(f, 450)
 PY
