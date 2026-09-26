@@ -1996,6 +1996,16 @@
 					lib   "server"
 					// call
 				}
+				"CBasePlayer::Weapon_ShootPosition"
+				{
+					type  "fixed"
+					sym   "_ZN11CBasePlayer20Weapon_ShootPositionEv"
+					addr  "0x15e390"
+					build "10828683"
+					lib   "server"
+					vtidx "276"
+					// verified: read by hand from the vtables: Linux slot 277 less 1, as the pairs around it are (CreateViewModel 334/333, StudioFrameAdvance 202/201); the body calls the EyePosition slot (+0x224) into the returned vector and pops the hidden pointer, the Linux body
+				}
 				"CBasePlayer::PlayStepSound"
 				{
 					type  "fixed"
@@ -2496,6 +2506,26 @@
 					lib   "server"
 					// string
 				}
+				"CTFWeaponBaseGun::RemoveProjectileAmmo"
+				{
+					type  "fixed"
+					sym   "_ZN16CTFWeaponBaseGun20RemoveProjectileAmmoEP9CTFPlayer"
+					addr  "0x63ca50"
+					build "10828683"
+					lib   "server"
+					vtidx "474"
+					// verified: read by hand from the vtables: CTFWeaponBaseGun's own run of slots sits 7 below Linux (GetWeaponProjectileType 479/472, whose body indexes the weapon info at +0x6d8 by the mode at +0x6cc and returns the entry's projectile type; FireFlameRocket's two overloads 486-487/479-480 both return null); Linux 481
+				}
+				"CTFWeaponBaseGun::ShouldPlayFireAnim"
+				{
+					type  "fixed"
+					sym   "_ZN16CTFWeaponBaseGun18ShouldPlayFireAnimEv"
+					addr  "0x5bd70"
+					build "10828683"
+					lib   "server"
+					vtidx "489"
+					// verified: read by hand from the vtables: CTFWeaponBaseGun's own run of slots sits 7 below Linux (GetWeaponProjectileType 479/472, whose body indexes the weapon info at +0x6d8 by the mode at +0x6cc and returns the entry's projectile type; FireFlameRocket's two overloads 486-487/479-480 both return null); Linux 496, the shared return true
+				}
 				"CTFWeaponBaseGun::FirePipeBomb"
 				{
 					type  "fixed"
@@ -2522,6 +2552,36 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CTFWeaponBaseGun::GetProjectileSpeed"
+				{
+					type  "fixed"
+					sym   "_ZN16CTFWeaponBaseGun18GetProjectileSpeedEv"
+					addr  "0x15d760"
+					build "10828683"
+					lib   "server"
+					vtidx "484"
+					// verified: read by hand from the vtables: CTFWeaponBaseGun's own run of slots sits 7 below Linux (GetWeaponProjectileType 479/472, whose body indexes the weapon info at +0x6d8 by the mode at +0x6cc and returns the entry's projectile type; FireFlameRocket's two overloads 486-487/479-480 both return null); Linux 491, the shared fldz; ret, as the Linux body returns 0
+				}
+				"CTFWeaponBaseGun::GetWeaponProjectileType"
+				{
+					type  "fixed"
+					sym   "_ZNK16CTFWeaponBaseGun23GetWeaponProjectileTypeEv"
+					addr  "0x5bb950"
+					build "10828683"
+					lib   "server"
+					vtidx "472"
+					// verified: read by hand from the vtables: CTFWeaponBaseGun's own run of slots sits 7 below Linux (GetWeaponProjectileType 479/472, whose body indexes the weapon info at +0x6d8 by the mode at +0x6cc and returns the entry's projectile type; FireFlameRocket's two overloads 486-487/479-480 both return null); slot 472
+				}
+				"CTFWeaponBaseGun::ModifyProjectile"
+				{
+					type  "fixed"
+					sym   "_ZN16CTFWeaponBaseGun16ModifyProjectileEP11CBaseEntity"
+					addr  "0x130ba0"
+					build "10828683"
+					lib   "server"
+					vtidx "475"
+					// verified: read by hand from the vtables: CTFWeaponBaseGun's own run of slots sits 7 below Linux (GetWeaponProjectileType 479/472, whose body indexes the weapon info at +0x6d8 by the mode at +0x6cc and returns the entry's projectile type; FireFlameRocket's two overloads 486-487/479-480 both return null); Linux 482, the shared empty body popping one argument
 				}
 				"CTFWeaponBaseGun::PrimaryAttack"
 				{
