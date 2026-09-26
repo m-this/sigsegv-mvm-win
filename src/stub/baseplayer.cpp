@@ -46,6 +46,8 @@ IMPL_SENDPROP(CHandle<CBaseCombatWeapon>[MAX_WEAPONS], CBaseCombatCharacter, m_h
 IMPL_SENDPROP(float,                                   CBaseCombatCharacter, m_flNextAttack,  CBaseCombatCharacter);
 #if defined _WINDOWS
 IMPL_DATAMAP(int,                                      CBaseCombatCharacter, m_bloodColor);
+IMPL_SENDPROP(bool,                                    CBaseCombatCharacter, m_bGlowEnabled,  CBaseCombatCharacter);
+IMPL_SENDPROP(int[MAX_AMMO_SLOTS],                     CBaseCombatCharacter, m_iAmmo,         CBasePlayer);
 #endif
 
 #ifdef SE_IS_TF2

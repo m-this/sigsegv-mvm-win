@@ -24,7 +24,12 @@ public:
 #ifdef SE_IS_TF2
 	void AddGlowEffect()                                                        {        ft_AddGlowEffect     (this); }
 	void RemoveGlowEffect()                                                     {        ft_RemoveGlowEffect  (this); }
+#if defined _WINDOWS
+	/* No Windows address: the Linux body returns this netvar. */
+	bool IsGlowEffectActive()                                                   { return this->m_bGlowEnabled; }
+#else
 	bool IsGlowEffectActive()                                                   { return ft_IsGlowEffectActive(this); }
+#endif
 #endif
 	bool IsAbleToSee(const CBaseEntity *entity, FieldOfViewCheckType checkFOV)  { return ft_IsAbleToSee_ent   (this, entity, checkFOV); }
 	bool IsAbleToSee(CBaseCombatCharacter *pBCC, FieldOfViewCheckType checkFOV) { return ft_IsAbleToSee_bcc   (this, pBCC, checkFOV); }
@@ -37,7 +42,12 @@ public:
 #endif
 	bool Weapon_Detach(CBaseCombatWeapon *pWeapon)                              { return ft_Weapon_Detach     (this, pWeapon); }
 	bool SwitchToNextBestWeapon(CBaseCombatWeapon *weapon)                      { return ft_SwitchToNextBestWeapon(this, weapon); }
+#if defined _WINDOWS
+	/* No Windows address: the Linux body is m_iAmmo.Set(ammoIndex, count). */
+	void SetAmmoCount(int count, int ammoIndex)                                 {        this->m_iAmmo.SetIndex(count, ammoIndex); }
+#else
 	void SetAmmoCount(int count, int ammoIndex)                                 {        ft_SetAmmoCount      (this, count, ammoIndex); }
+#endif
 	Vector CalcDamageForceVector(const CTakeDamageInfo &info)                   { return ft_CalcDamageForceVector(this, info); }
 	
 	CBaseCombatWeapon *Weapon_GetSlot(int slot) const                      { return vt_Weapon_GetSlot     (this, slot); }
@@ -66,6 +76,8 @@ private:
 	DECL_SENDPROP(CHandle<CBaseCombatWeapon>[MAX_WEAPONS], m_hMyWeapons);
 #if defined _WINDOWS
 	DECL_DATAMAP(int, m_bloodColor);
+	DECL_SENDPROP(bool,                m_bGlowEnabled);
+	DECL_SENDPROP(int[MAX_AMMO_SLOTS], m_iAmmo);
 #endif
 	
 #ifdef SE_IS_TF2
