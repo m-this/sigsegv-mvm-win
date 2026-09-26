@@ -1,4 +1,1 @@
-# CBaseEntity::SetEffects candidate: compares its argument with m_fEffects (+0xd4)
-server 0x2021c0 80
-# CTFBotPushToCapturePoint::CTFBotPushToCapturePoint candidate: the Action constructor, then two vtables
-server 0x5883f0 40
+# nothing asked
