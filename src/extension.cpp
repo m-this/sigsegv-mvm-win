@@ -93,6 +93,7 @@ IScriptManager *scriptManager = nullptr;
 extern int laserSprite;
 #if defined _WINDOWS
 #include <psapi.h>
+#include <intrin.h>
 
 /* Who ends the server. The engine's Error() leaves through tier0's
  * Plat_ExitProcess, TerminateProcess on itself with status 100, and on
@@ -103,6 +104,109 @@ extern int laserSprite;
  * console, then does what was asked. */
 /* Frames the main thread has run, counted by CModManager for the watchdog. */
 volatile LONG g_WatchdogFrames = 0;
+
+/* For the bed: whose memory the servers run out of. Every module compiles the
+ * SDK's memoverride, which allocates through tier0's g_pMemAlloc, so SigMod
+ * and the game share one heap and its growth names nobody. This stands in
+ * front of the real allocator, forwards every call, and counts the bytes each
+ * calling module allocates and frees; a leak is the module whose balance
+ * climbs across missions. */
+namespace MemCount
+{
+	struct Module { const char *name; uintptr_t base = 0, end = 0; volatile LONG64 net = 0; };
+	Module modules[] = {
+		{ "sigsegv.ext.2.tf2.dll" }, { "server.dll" }, { "engine.dll" }, { "sourcemod.2.tf2.dll" },
+		{ "sourcepawn.jit.x86.dll" }, { "datacache.dll" }, { "materialsystem.dll" }, { "vstdlib.dll" },
+		{ "other" },
+	};
+	constexpr int count = sizeof(modules) / sizeof(modules[0]);
+	
+	Module &Of(void *ret)
+	{
+		auto at = reinterpret_cast<uintptr_t>(ret);
+		for (int i = 0; i < count - 1; ++i) {
+			if (at >= modules[i].base && at < modules[i].end) return modules[i];
+		}
+		return modules[count - 1];
+	}
+	
+	class Proxy : public IMemAlloc
+	{
+	public:
+		IMemAlloc *real = nullptr;
+		
+		void Add(void *ret, void *p)    { if (p != nullptr) InterlockedAdd64(&Of(ret).net,  (LONG64)real->GetSize(p)); }
+		void Remove(void *ret, void *p) { if (p != nullptr) InterlockedAdd64(&Of(ret).net, -(LONG64)real->GetSize(p)); }
+		
+		virtual void *Alloc(size_t n) override                                  { void *p = real->Alloc(n); Add(_ReturnAddress(), p); return p; }
+		virtual void *Realloc(void *m, size_t n) override                       { Remove(_ReturnAddress(), m); void *p = real->Realloc(m, n); Add(_ReturnAddress(), p); return p; }
+		virtual void Free(void *m) override                                     { Remove(_ReturnAddress(), m); real->Free(m); }
+		virtual void *Expand_NoLongerSupported(void *m, size_t n) override      { return real->Expand_NoLongerSupported(m, n); }
+		virtual void *Alloc(size_t n, const char *f, int l) override            { void *p = real->Alloc(n, f, l); Add(_ReturnAddress(), p); return p; }
+		virtual void *Realloc(void *m, size_t n, const char *f, int l) override { Remove(_ReturnAddress(), m); void *p = real->Realloc(m, n, f, l); Add(_ReturnAddress(), p); return p; }
+		virtual void Free(void *m, const char *f, int l) override               { Remove(_ReturnAddress(), m); real->Free(m, f, l); }
+		virtual void *Expand_NoLongerSupported(void *m, size_t n, const char *f, int l) override { return real->Expand_NoLongerSupported(m, n, f, l); }
+		virtual size_t GetSize(void *m) override                                { return real->GetSize(m); }
+		virtual void PushAllocDbgInfo(const char *f, int l) override            { real->PushAllocDbgInfo(f, l); }
+		virtual void PopAllocDbgInfo() override                                 { real->PopAllocDbgInfo(); }
+		virtual long CrtSetBreakAlloc(long b) override                          { return real->CrtSetBreakAlloc(b); }
+		virtual int CrtSetReportMode(int t, int m) override                     { return real->CrtSetReportMode(t, m); }
+		virtual int CrtIsValidHeapPointer(const void *m) override               { return real->CrtIsValidHeapPointer(m); }
+		virtual int CrtIsValidPointer(const void *m, unsigned int s, int a) override { return real->CrtIsValidPointer(m, s, a); }
+		virtual int CrtCheckMemory() override                                   { return real->CrtCheckMemory(); }
+		virtual int CrtSetDbgFlag(int f) override                               { return real->CrtSetDbgFlag(f); }
+		virtual void CrtMemCheckpoint(_CrtMemState *s) override                 { real->CrtMemCheckpoint(s); }
+		virtual void DumpStats() override                                       { real->DumpStats(); }
+		virtual void DumpStatsFileBase(char const *b) override                  { real->DumpStatsFileBase(b); }
+		virtual void *CrtSetReportFile(int t, void *h) override                 { return real->CrtSetReportFile(t, h); }
+		virtual void *CrtSetReportHook(void *h) override                        { return real->CrtSetReportHook(h); }
+		virtual int CrtDbgReport(int t, const char *f, int l, const char *m, const char *msg) override { return real->CrtDbgReport(t, f, l, m, msg); }
+		virtual int heapchk() override                                          { return real->heapchk(); }
+		virtual bool IsDebugHeap() override                                     { return real->IsDebugHeap(); }
+		virtual void GetActualDbgInfo(const char *&f, int &l) override          { real->GetActualDbgInfo(f, l); }
+		virtual void RegisterAllocation(const char *f, int l, int a, int b, unsigned t) override   { real->RegisterAllocation(f, l, a, b, t); }
+		virtual void RegisterDeallocation(const char *f, int l, int a, int b, unsigned t) override { real->RegisterDeallocation(f, l, a, b, t); }
+		virtual int GetVersion() override                                       { return real->GetVersion(); }
+		virtual void CompactHeap() override                                     { real->CompactHeap(); }
+		virtual MemAllocFailHandler_t SetAllocFailHandler(MemAllocFailHandler_t h) override { return real->SetAllocFailHandler(h); }
+		virtual void DumpBlockStats(void *p) override                           { real->DumpBlockStats(p); }
+#if defined( _MEMTEST )
+		virtual void SetStatsExtraInfo(const char *m, const char *c) override   { real->SetStatsExtraInfo(m, c); }
+#endif
+		virtual size_t MemoryAllocFailed() override                             { return real->MemoryAllocFailed(); }
+		virtual uint32 GetDebugInfoSize() override                              { return real->GetDebugInfoSize(); }
+		virtual void SaveDebugInfo(void *d) override                            { real->SaveDebugInfo(d); }
+		virtual void RestoreDebugInfo(const void *d) override                   { real->RestoreDebugInfo(d); }
+		virtual void InitDebugInfo(void *d, const char *f, int l) override      { real->InitDebugInfo(d, f, l); }
+		virtual void GlobalMemoryStatus(size_t *u, size_t *f) override          { real->GlobalMemoryStatus(u, f); }
+	};
+	Proxy proxy;
+	
+	void Install()
+	{
+		for (int i = 0; i < count - 1; ++i) {
+			HMODULE mod = GetModuleHandleA(modules[i].name);
+			MODULEINFO info;
+			if (mod != nullptr && GetModuleInformation(GetCurrentProcess(), mod, &info, sizeof(info))) {
+				modules[i].base = reinterpret_cast<uintptr_t>(info.lpBaseOfDll);
+				modules[i].end  = modules[i].base + info.SizeOfImage;
+			}
+		}
+		proxy.real = g_pMemAlloc;
+		g_pMemAlloc = &proxy;
+	}
+	
+	void Report(char *out, size_t size)
+	{
+		size_t len = 0;
+		out[0] = '\0';
+		for (int i = 0; i < count && len < size - 48; ++i) {
+			LONG64 net = modules[i].net;
+			if (net > -(LONG64(1) << 20) && net < (LONG64(1) << 20)) continue;
+			len += snprintf(out + len, size - len, " %s %+lld MB", modules[i].name, (long long)(net >> 20));
+		}
+	}
+}
 
 namespace ExitTrace
 {
@@ -331,9 +435,11 @@ namespace ExitTrace
 			len += snprintf(classes + len, sizeof(classes) - len, " %uK:%ux=%uMB",
 				(unsigned)((size_t(0x10000) << c) >> 10), (unsigned)count_class[c], (unsigned)(by_class[c] >> 20));
 		}
-		Warning("SigMod: memory: private %u MB, working set %u MB, reserved %u MB, free %u MB, largest free %u MB; by allocation size:%s\n",
+		char owners[512];
+		MemCount::Report(owners, sizeof(owners));
+		Warning("SigMod: memory: private %u MB, working set %u MB, reserved %u MB, free %u MB, largest free %u MB; by allocation size:%s; net since load by caller:%s\n",
 			(unsigned)(pmc.PrivateUsage >> 20), (unsigned)(pmc.WorkingSetSize >> 20), (unsigned)(reserved >> 20),
-			(unsigned)(free_total >> 20), (unsigned)(free_largest >> 20), classes);
+			(unsigned)(free_total >> 20), (unsigned)(free_largest >> 20), classes, owners);
 	}
 	
 	DWORD WINAPI Watchdog(void *)
@@ -390,6 +496,7 @@ namespace ExitTrace
 	void Install()
 	{
 		AddVectoredExceptionHandler(1, &OnFault);
+		if (getenv("SIGSEGV_SURVEY_UNRESOLVED") != nullptr) MemCount::Install();
 		if (getenv("SIGSEGV_SURVEY_UNRESOLVED") != nullptr
 			&& DuplicateHandle(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), &MainThread, 0, FALSE, DUPLICATE_SAME_ACCESS)) {
 			CreateThread(nullptr, 0, &Watchdog, nullptr, 0, nullptr);
