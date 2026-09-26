@@ -1,4 +1,3 @@
-# CHalloweenBaseBoss::SpawnBossAtPos creates one of three bosses by class name: the function referencing all three
-server string headless_hatman
-server string eyeball_boss
-server string merasmus
+# the one function naming all three bosses: SpawnBossAtPos by its Linux body
+server func 0x59a8df 120
+server callers 0x59a8a0
