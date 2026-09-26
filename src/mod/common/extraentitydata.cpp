@@ -75,7 +75,14 @@ namespace Mod::Etc::ExtraEntityData
         }*/
     }
 
+    /* On Windows the base destructor every derived one calls, not the scalar
+     * deleting destructor in slot 0, which only an entity of exactly this
+     * class reaches. It takes no flags word and returns with a plain ret. */
+#if defined _WINDOWS
+    DETOUR_DECL_MEMBER(void, CBaseEntity_D2)
+#else
     DETOUR_DECL_DTOR(CBaseEntity_D2)
+#endif
 	{
         
         auto entity = reinterpret_cast<CBaseEntity *>(this);
@@ -83,7 +90,11 @@ namespace Mod::Etc::ExtraEntityData
             delete entity->m_extraEntityData;
             entity->m_extraEntityData = nullptr;
         }
+#if defined _WINDOWS
+        DETOUR_MEMBER_CALL();
+#else
         DETOUR_DTOR_CALL();
+#endif
     }
 
     class CMod : public IMod
@@ -92,7 +103,11 @@ namespace Mod::Etc::ExtraEntityData
         CMod() : IMod("Common:ExtraEntityData")
         {
             //MOD_ADD_DETOUR_MEMBER(CBaseEntity_CBaseEntity, "CBaseEntity::CBaseEntity");
+#if defined _WINDOWS
+            MOD_ADD_DETOUR_MEMBER(CBaseEntity_D2, "~CBaseEntity [D2 windows]");
+#else
             MOD_ADD_DETOUR_MEMBER(CBaseEntity_D2, "~CBaseEntity [D2]");
+#endif
         }
         
 		virtual void OnUnload() override

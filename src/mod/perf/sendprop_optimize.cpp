@@ -1476,7 +1476,14 @@ namespace Mod::Perf::SendProp_Optimize
     }
 #endif
 
+    /* On Windows the base destructor every derived one calls, not the scalar
+     * deleting destructor in slot 0, which only an entity of exactly this
+     * class reaches. It takes no flags word and returns with a plain ret. */
+#if defined _WINDOWS
+    DETOUR_DECL_MEMBER(void, CBaseEntity_D2)
+#else
     DETOUR_DECL_DTOR(CBaseEntity_D2)
+#endif
 	{
         auto entity = reinterpret_cast<CBaseEntity *>(this);
         auto edict = entity->edict();
@@ -1485,7 +1492,11 @@ namespace Mod::Perf::SendProp_Optimize
             prop_value_old[edict->m_EdictIndex].clear();
             entity_frame_bit_size[edict->m_EdictIndex] = 0;
         }
+#if defined _WINDOWS
+        DETOUR_MEMBER_CALL();
+#else
         DETOUR_DTOR_CALL();
+#endif
     }
 
     /*DETOUR_DECL_MEMBER(int, SendTable_WriteAllDeltaProps, int iTick, int *iOutProps, int nMaxOutProps)
@@ -1709,7 +1720,11 @@ namespace Mod::Perf::SendProp_Optimize
             MOD_ADD_DETOUR_STATIC(SendTable_WritePropList,   "SendTable_WritePropList");
             MOD_ADD_DETOUR_STATIC(AllocChangeFrameList,   "AllocChangeFrameList");
 		    MOD_ADD_DETOUR_STATIC(SendTable_CullPropsFromProxies, "SendTable_CullPropsFromProxies");
+#if defined _WINDOWS
+            MOD_ADD_DETOUR_MEMBER(CBaseEntity_D2,"~CBaseEntity [D2 windows]");
+#else
             MOD_ADD_DETOUR_MEMBER(CBaseEntity_D2,"~CBaseEntity [D2]");
+#endif
 
             MOD_ADD_REPLACE_FUNC_MEMBER(CBaseEntity_SetTransmit,"CBaseEntity::SetTransmit");
             MOD_ADD_DETOUR_MEMBER(CServerGameEnts_CheckTransmit,"CServerGameEnts::CheckTransmit");
