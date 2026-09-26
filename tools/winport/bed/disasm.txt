@@ -1,1 +1,6 @@
-# nothing asked
+# SelfBurn calls Burn
+server 0x52a990
+server string mult_wpn_burntime
+server string afterburn
+server string PlaySpecificSequence
+server string RemovePlayerAttribute
