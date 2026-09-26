@@ -3,7 +3,21 @@
 
 #include <stub/gamerules.h> 
 #include <util/misc.h> 
-#include <util/autolist.h> 
+#include <util/autolist.h>
+
+#if defined _WINDOWS
+/* When the process exits without SourceMod unloading the extension, as it
+ * does after a fault, Windows still runs this module's static destructors, and
+ * by then the ConVars this module owns are destroyed. A static override
+ * restoring its value called through a dead ConVar: sig_text_print_speed's
+ * backup, 4.0, became the jump target. A dying process has nothing to restore. */
+inline bool ValueOverride_ProcessExiting()
+{
+    using RtlDllShutdownInProgress_t = BOOLEAN (NTAPI *)();
+    static auto shutdown = reinterpret_cast<RtlDllShutdownInProgress_t>(GetProcAddress(GetModuleHandleA("ntdll.dll"), "RtlDllShutdownInProgress"));
+    return shutdown != nullptr && shutdown();
+}
+#endif
 
 template<typename T>
 class IValueOverride
@@ -15,6 +29,12 @@ public:
 
     void Reset()
     {
+#if defined _WINDOWS
+        if (this->m_bOverridden && ValueOverride_ProcessExiting()) {
+            this->m_bOverridden = false;
+            return;
+        }
+#endif
         if (this->m_bOverridden) {
             this->Restore();
             this->m_bOverridden = false;

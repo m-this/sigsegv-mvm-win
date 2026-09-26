@@ -75,7 +75,7 @@ namespace Mod::Etc::ExtraEntityData
         }*/
     }
 
-    DETOUR_DECL_DTOR(CBaseEntity_D2)
+    DETOUR_DECL_BASE_DTOR(CBaseEntity_D2)
 	{
         
         auto entity = reinterpret_cast<CBaseEntity *>(this);
@@ -83,7 +83,7 @@ namespace Mod::Etc::ExtraEntityData
             delete entity->m_extraEntityData;
             entity->m_extraEntityData = nullptr;
         }
-        DETOUR_DTOR_CALL();
+        DETOUR_BASE_DTOR_CALL();
     }
 
     class CMod : public IMod
@@ -92,7 +92,11 @@ namespace Mod::Etc::ExtraEntityData
         CMod() : IMod("Common:ExtraEntityData")
         {
             //MOD_ADD_DETOUR_MEMBER(CBaseEntity_CBaseEntity, "CBaseEntity::CBaseEntity");
+#if defined _WINDOWS
+            MOD_ADD_DETOUR_MEMBER(CBaseEntity_D2, "~CBaseEntity [D2 windows]");
+#else
             MOD_ADD_DETOUR_MEMBER(CBaseEntity_D2, "~CBaseEntity [D2]");
+#endif
         }
         
 		virtual void OnUnload() override

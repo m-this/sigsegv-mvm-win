@@ -386,6 +386,18 @@ public:
 #define DETOUR_DTOR_CALL() DETOUR_MEMBER_CALL()
 #endif
 
+/* A detour on the destructor every subclass's destructor calls, the [D2] of a
+ * base class. The scalar deleting destructor above runs only for an object
+ * whose most derived class is that one; MSVC's plain destructor, named
+ * "[D2 windows]" in the gamedata, takes no flags. */
+#if defined(_WINDOWS) && !defined(PLATFORM_64BITS)
+#define DETOUR_DECL_BASE_DTOR(name) DETOUR_DECL_MEMBER(void, name)
+#define DETOUR_BASE_DTOR_CALL() DETOUR_MEMBER_CALL()
+#else
+#define DETOUR_DECL_BASE_DTOR(name) DETOUR_DECL_DTOR(name)
+#define DETOUR_BASE_DTOR_CALL() DETOUR_DTOR_CALL()
+#endif
+
 #define __DETOUR_DECL_STATIC(prefix, name, ...) \
 namespace detour_ns_##name {\
 	prefix Detour_##name(__VA_ARGS__); \

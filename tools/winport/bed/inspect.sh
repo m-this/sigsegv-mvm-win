@@ -91,18 +91,30 @@ def wdis(start, limit=250):
         print(line)
         if i.mnemonic == "int3" or n >= limit: break
 def slot0(cls):
-    for l in open(f"derived/win-vtables/{cls}.txt"):
-        m = re.match(r"\+0x0:\s+(?:0x)?([0-9a-f]+)", l.strip())
+    rows = open(f"derived/win-vtables/{cls}.txt").read().splitlines()
+    print(f"  {cls} table head: {rows[:3]}")
+    for l in rows:
+        m = re.match(r"\s*\+0x0+:\s+(?:0x)?([0-9a-fA-F]+)", l)
         if m:
             v = int(m.group(1), 16)
-            return v - base if v > base else v
+            return v - base if v >= base else v
+def known_callers(syms):
+    cnt = collections.Counter()
+    for s in syms:
+        if s not in known: print("  not known on Windows:", s); continue
+        for f in {wstart(c) for c in wg.get(known[s], ())}: cnt[f] += 1
+    print("  windows functions calling them: " + ", ".join(f"{f:#x}:{n}" for f, n in cnt.most_common(10)))
+    return cnt
 ldis("_ZN11CBaseEntityD2Ev", 400)
 ldis("_ZN14CBaseAnimatingD2Ev", 120)
+kc = known_callers(["_Z25PhysCleanupFrictionSoundsP11CBaseEntity", "_ZN11CBaseEntity21VPhysicsDestroyObjectEv", "_ZN11CBaseEntity24PhysicsRemoveTouchedListEPS_", "_ZN11CBaseEntity23PhysicsRemoveGroundListEPS_", "_ZN11CBaseEntity21DestroyAllDataObjectsEv", "_ZN15CBaseEntityList12RemoveEntityE11CBaseHandle", "_ZN18CCollisionPropertyD2Ev"])
+for f, _ in kc.most_common(2): wdis(f, 300)
 for cls in ("CBaseEntity", "CBaseAnimating", "CPointEntity", "CServerOnlyPointEntity"):
     try:
         s0 = slot0(cls)
     except Exception as e:
         print("no table", cls, e); continue
+    if s0 is None: continue
     print(f"### {cls} slot 0 = {s0:#x}")
     wdis(s0, 60)
     for t in wcallees(s0, 200)[:2]:

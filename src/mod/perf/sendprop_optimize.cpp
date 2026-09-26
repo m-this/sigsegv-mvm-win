@@ -1476,7 +1476,7 @@ namespace Mod::Perf::SendProp_Optimize
     }
 #endif
 
-    DETOUR_DECL_DTOR(CBaseEntity_D2)
+    DETOUR_DECL_BASE_DTOR(CBaseEntity_D2)
 	{
         auto entity = reinterpret_cast<CBaseEntity *>(this);
         auto edict = entity->edict();
@@ -1485,7 +1485,7 @@ namespace Mod::Perf::SendProp_Optimize
             prop_value_old[edict->m_EdictIndex].clear();
             entity_frame_bit_size[edict->m_EdictIndex] = 0;
         }
-        DETOUR_DTOR_CALL();
+        DETOUR_BASE_DTOR_CALL();
     }
 
     /*DETOUR_DECL_MEMBER(int, SendTable_WriteAllDeltaProps, int iTick, int *iOutProps, int nMaxOutProps)
@@ -1709,7 +1709,11 @@ namespace Mod::Perf::SendProp_Optimize
             MOD_ADD_DETOUR_STATIC(SendTable_WritePropList,   "SendTable_WritePropList");
             MOD_ADD_DETOUR_STATIC(AllocChangeFrameList,   "AllocChangeFrameList");
 		    MOD_ADD_DETOUR_STATIC(SendTable_CullPropsFromProxies, "SendTable_CullPropsFromProxies");
+#if defined _WINDOWS
+            MOD_ADD_DETOUR_MEMBER(CBaseEntity_D2,"~CBaseEntity [D2 windows]");
+#else
             MOD_ADD_DETOUR_MEMBER(CBaseEntity_D2,"~CBaseEntity [D2]");
+#endif
 
             MOD_ADD_REPLACE_FUNC_MEMBER(CBaseEntity_SetTransmit,"CBaseEntity::SetTransmit");
             MOD_ADD_DETOUR_MEMBER(CServerGameEnts_CheckTransmit,"CServerGameEnts::CheckTransmit");
