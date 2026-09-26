@@ -1,1 +1,5 @@
-# nothing asked
+# AttributeIteratorWrapper crash: the server frames between IterateAttributes and SigMod's iterator
+server func 0x3c4c7d 400
+server func 0x3bbae9 300
+server func 0x3bcaf5 300
+server func 0x3c4fa4 200
