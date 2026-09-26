@@ -935,5 +935,10 @@
   "rva": "0x5bd70",
   "vtidx": 489,
   "why": "read by hand from the vtables: CTFWeaponBaseGun's own run of slots sits 7 below Linux (GetWeaponProjectileType 479/472, whose body indexes the weapon info at +0x6d8 by the mode at +0x6cc and returns the entry's projectile type; FireFlameRocket's two overloads 486-487/479-480 both return null); Linux 496, the shared return true"
+ },
+ "_ZN11CBaseObject14DetonateObjectEv": {
+  "rva": "0x4c06e0",
+  "vtidx": 352,
+  "why": "read by hand from CObjectSentrygun's vtables: its slots 345-359 sit 2 below Linux, each body matching (IsUpgrading 347/345 compares the state, OnEndBeingCarried 348/346 is ret 4, ClientCommand 351/349 returns false popping 8, ShouldAutoRemove 355/353 returns true, IsDying 359/357 and ObjectType 360/358 read one field); DetonateObject is Linux 354"
  }
 }
