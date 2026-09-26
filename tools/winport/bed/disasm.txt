@@ -1,3 +1,8 @@
-# CTFBot::SelectRandomReachableEnemy: the consensus match turned away, and the first candidate
-server 0x561c00 130
-server 0x5895d0 90
+# The game calling AttributeIteratorWrapper with a bad this (lua GetItemAttribute)
+server func +0x3c4fa4 260
+# The fault under Extended_Upgrades' GetUpgradeStepData detour
+server +0x6e4a92
+server +0x3b8f9b
+server +0x5f65fa
+# A call to 0x4222c0c4 (a float) from CreateEntityByName under cbasenpc
+server +0x39c1da
