@@ -7,6 +7,22 @@
 #include "stub/econ.h"
 
 
+#if defined _WINDOWS
+/* The Windows server's parser writes the icon at +0x80 and indexes the table
+ * by 0x19c: the attribute name is twice as long there. */
+struct CMannVsMachineUpgrades
+{
+	char m_szAttribute[0x80]; // +0x000
+	char m_szIcon[MAX_PATH];  // +0x080
+	float m_flIncrement;      // +0x184
+	float m_flCap;            // +0x188
+	int m_nCost;              // +0x18c
+	int m_iUIGroup;           // +0x190
+	int m_iQuality;           // +0x194
+	int m_iTier;              // +0x198
+};
+SIZE_CHECK(CMannVsMachineUpgrades, 0x19c);
+#else
 struct CMannVsMachineUpgrades
 {
 	char m_szAttribute[0x40]; // +0x000
@@ -19,6 +35,7 @@ struct CMannVsMachineUpgrades
 	int m_iTier;              // +0x158
 };
 SIZE_CHECK(CMannVsMachineUpgrades, 0x15c);
+#endif
 
 
 class CMannVsMachineUpgradeManager;
