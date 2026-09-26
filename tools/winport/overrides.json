@@ -940,5 +940,9 @@
   "rva": "0x4c06e0",
   "vtidx": 352,
   "why": "read by hand from CObjectSentrygun's vtables: its slots 345-359 sit 2 below Linux, each body matching (IsUpgrading 347/345 compares the state, OnEndBeingCarried 348/346 is ret 4, ClientCommand 351/349 returns false popping 8, ShouldAutoRemove 355/353 returns true, IsDying 359/357 and ObjectType 360/358 read one field); DetonateObject is Linux 354"
+ },
+ "g_MannVsMachineUpgrades": {
+  "rva": "0xb96ad4",
+  "why": "read by hand: GetUpgradeStepData indexes the upgrade table through the pointer at 0x10b96ae0, and the upgrade parser (0x5f6b80) reaches that same vector at +0xc from the manager and its count at +0x18: m_Upgrades after CAutoGameSystem's vtable, m_pNext and m_pszName, as on Linux. Unresolved, SigMod appended its extended upgrades to a scratch block and the game's table stayed short, so RestoreCheckpoint's GetUpgradeStepData read a name past its end"
  }
 }
