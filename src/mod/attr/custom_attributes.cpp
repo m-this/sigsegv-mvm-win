@@ -5866,7 +5866,14 @@ namespace Mod::Attr::Custom_Attributes
 		}
 	}
 	
+	/* On Windows the base destructor every derived one calls, not the scalar
+	 * deleting destructor in slot 0, which only an entity of exactly this
+	 * class reaches. It takes no flags word and returns with a plain ret. */
+#if defined _WINDOWS
+	DETOUR_DECL_MEMBER(void, CBaseProjectile_D2)
+#else
 	DETOUR_DECL_DTOR(CBaseProjectile_D2)
+#endif
 	{
 		auto projectile = reinterpret_cast<CBaseProjectile *>(this);
 		auto weapon = ToBaseCombatWeapon(projectile->GetOriginalLauncher());
@@ -5876,7 +5883,11 @@ namespace Mod::Attr::Custom_Attributes
 				projectile->StopSound(sound);
 			}
 		}
+#if defined _WINDOWS
+        DETOUR_MEMBER_CALL();
+#else
         DETOUR_DTOR_CALL();
+#endif
     }
 
 	std::map<CHandle<CTFWeaponBaseGun>, float> applyGunDelay;
@@ -10022,7 +10033,11 @@ namespace Mod::Attr::Custom_Attributes
 			MOD_ADD_DETOUR_MEMBER(CTFGameMovement_PreventBunnyJumping,			 "CTFGameMovement::PreventBunnyJumping");
 			MOD_ADD_DETOUR_MEMBER(CTFWeaponBase_Reload,			 "CTFWeaponBase::Reload");
 			MOD_ADD_DETOUR_MEMBER(CTFWeaponBase_Holster,			 "CTFWeaponBase::Holster");
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_MEMBER(CBaseProjectile_D2, "CBaseProjectile::~CBaseProjectile [D2 windows]");
+#else
 			MOD_ADD_DETOUR_MEMBER(CBaseProjectile_D2, "CBaseProjectile::~CBaseProjectile [D2]");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CTFWeaponBaseGun_PrimaryAttack, "CTFWeaponBaseGun::PrimaryAttack");
 			MOD_ADD_DETOUR_STATIC(SV_ComputeClientPacks, "SV_ComputeClientPacks");
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_Spawn, "CTFPlayer::Spawn");
