@@ -3324,6 +3324,15 @@
 					lib   "server"
 					// string
 				}
+				"CHalloweenBaseBoss::SpawnBossAtPos"
+				{
+					type  "fixed"
+					sym   "_ZN18CHalloweenBaseBoss14SpawnBossAtPosE17HalloweenBossTypeRK6VectoriP11CBaseEntity"
+					addr  "0x59a8c0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the one function referencing all three boss class names ('headless_hatman', 'eyeball_boss', 'merasmus' at 0x59a8df-0x59a8ed); cdecl, plain ret, and it opens as the Linux body does, a switch on the first argument by sub eax, 1 three times, returning null for any other type
+				}
 				"CHeadlessHatman::Spawn"
 				{
 					type  "fixed"
