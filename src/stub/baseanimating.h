@@ -177,7 +177,13 @@ public:
 	CAttributeContainer *GetAttributeContainer() { return vt_GetAttributeContainer(this); }
 #endif
 	void GiveTo(CBaseEntity *ent)                {        vt_GiveTo(this, ent); }
+#if defined _WINDOWS
+	/* MSVC keeps IHasAttributes' virtuals in that interface's own table, not
+	 * CEconEntity's: its primary table has no slot for this one. */
+	void ReapplyProvision();
+#else
 	void ReapplyProvision()                      {        vt_ReapplyProvision(this); }
+#endif
 	bool UpdateBodygroups(CBaseCombatCharacter *owner, bool enable) { return vt_UpdateBodygroups(this, owner, enable); }
 	Activity TranslateViewmodelHandActivityInternal(Activity base) { return vt_TranslateViewmodelHandActivityInternal(this, base); }
 	

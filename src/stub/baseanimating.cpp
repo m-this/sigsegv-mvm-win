@@ -2,6 +2,7 @@
 #ifdef SE_IS_TF2
 #include "stub/econ.h"
 #include "stub/tfweaponbase.h"
+#include "util/rtti.h"
 #endif
 
 
@@ -81,6 +82,12 @@ MemberVFuncThunk<CEconEntity *, CAttributeContainer *> CEconEntity::vt_GetAttrib
 MemberVFuncThunk<CEconEntity *, CAttributeManager *>   CEconEntity::vt_GetAttributeManager  (TypeName<CEconEntity>(), "CEconEntity::GetAttributeManager");
 MemberVFuncThunk<CEconEntity *, void, CBaseEntity *>   CEconEntity::vt_GiveTo               (TypeName<CEconEntity>(), "CEconEntity::GiveTo");
 MemberVFuncThunk<CEconEntity *, void>                  CEconEntity::vt_ReapplyProvision     (TypeName<CEconEntity>(), "CEconEntity::ReapplyProvision");
+#if defined _WINDOWS
+void CEconEntity::ReapplyProvision()
+{
+	if (auto attrs = rtti_cast<IHasAttributes *>(this); attrs != nullptr) attrs->ReapplyProvision();
+}
+#endif
 MemberVFuncThunk<CEconEntity *, bool, CBaseCombatCharacter *, bool> CEconEntity::vt_UpdateBodygroups(TypeName<CEconEntity>(), "CEconEntity::UpdateBodygroups");
 MemberVFuncThunk<CEconEntity *, Activity, Activity>    CEconEntity::vt_TranslateViewmodelHandActivityInternal(TypeName<CEconEntity>(), "CEconEntity::TranslateViewmodelHandActivityInternal");
 
