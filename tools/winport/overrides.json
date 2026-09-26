@@ -901,5 +901,9 @@
  "_ZN24CTFBotPushToCapturePointC1EP6ActionI6CTFBotE": {
   "rva": "0x5883f0",
   "why": "read by hand: the Action<CTFBot> constructor (0x54d940), then the two vtables derived/win-vtables names CTFBotPushToCapturePoint's, the PathFollower at +0x34, and its argument, the next action, stored at +0x4818; ret 4"
+ },
+ "_ZN18CHalloweenBaseBoss14SpawnBossAtPosE17HalloweenBossTypeRK6VectoriP11CBaseEntity": {
+  "rva": "0x59a8c0",
+  "why": "read by hand: the one function referencing all three boss class names ('headless_hatman', 'eyeball_boss', 'merasmus' at 0x59a8df-0x59a8ed); cdecl, plain ret, and it opens as the Linux body does, a switch on the first argument by sub eax, 1 three times, returning null for any other type"
  }
 }
