@@ -1,4 +1,4 @@
-# CMannVsMachineUpgradeManager's parser: where each key of an upgrade entry
-# (0x19c on Windows, 0x15c in SigMod's struct) is written
-server string ui_group
-server string increment
+# CMannVsMachineUpgradeManager's parser, which reads "increment" and "ui_group":
+# the offset each key of a 0x19c upgrade entry is written to
+server +0x5f6dce 200
+server +0x5f6e1e 120
