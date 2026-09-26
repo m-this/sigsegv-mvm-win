@@ -10651,6 +10651,15 @@
 					lib   "server"
 					// verified: read by hand: the twin of LookupSequence (0x1cefb0) calling the global LookupActivity(hdr, name) instead, as on Linux; thiscall, ret 4. CTFPlayer::ClientCommand's inlined PlaySpecificSequence calls it first and plays the result as PLAYERANIMEVENT_CUSTOM (0x13), the Linux shape. Only Windows needs it: its PlaySpecificSequence is written in SigMod
 				}
+				"~CBaseEntity [D2 windows]"
+				{
+					type  "fixed"
+					sym   "win_CBaseEntity_dtor"
+					addr  "0x1e98c0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the function slot 0 of CBaseEntity's table (0x1e9c00, the scalar deleting destructor: flags test, free, ret 4) and of CPointEntity's (0x178000) calls before freeing; it writes CBaseEntity's vtable, clears the ehandle access byte, calls PhysicsRemoveTouchedList, PhysicsRemoveGroundList, SetGroundEntity(0) and DestroyAllDataObjects, sets the byte again, removes the handle at +0x358 from gEntList, destroys four outputs and the collision property, the Linux D2 body in order; no argument, ret
+				}
 			}
 		}
 	}
