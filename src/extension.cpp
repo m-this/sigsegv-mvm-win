@@ -101,6 +101,9 @@ extern int laserSprite;
  * TerminateProcess and ExitProcess are pointed here, which writes the calling
  * stack as module+offset to sigsegv_exit.txt in the game directory and to the
  * console, then does what was asked. */
+/* Frames the main thread has run, counted by CModManager for the watchdog. */
+volatile LONG g_WatchdogFrames = 0;
+
 namespace ExitTrace
 {
 	using TerminateProcess_t = BOOL (WINAPI *)(HANDLE, UINT);
@@ -273,9 +276,71 @@ namespace ExitTrace
 		}
 	}
 	
+	/* For the bed: a server that stops without faulting. The main thread's
+	 * frames are counted by CModManager; when none has come for 45 seconds,
+	 * a second thread suspends it, reads its EBP chain and the code addresses
+	 * on its stack, resumes it, and only then prints, so a lock the main
+	 * thread holds cannot hang the report too. A map load stalls frames as
+	 * well; the report is capped at three. */
+	HANDLE MainThread = nullptr;
+	
+	DWORD WINAPI Watchdog(void *)
+	{
+		LONG last = g_WatchdogFrames;
+		int still = 0, reports = 0;
+		bool reported = false;
+		while (reports < 3) {
+			Sleep(5000);
+			LONG now = g_WatchdogFrames;
+			if (now != last || now == 0) { last = now; still = 0; reported = false; continue; }
+			if ((still += 5) < 45 || reported) continue;
+			
+			void *frames[40], *stack[24];
+			int n = 0, m = 0;
+			CONTEXT ctx = {};
+			ctx.ContextFlags = CONTEXT_FULL;
+			if (SuspendThread(MainThread) == (DWORD)-1) continue;
+			if (GetThreadContext(MainThread, &ctx)) {
+				frames[n++] = reinterpret_cast<void *>(ctx.Eip);
+				auto ebp = reinterpret_cast<const uintptr_t *>(ctx.Ebp);
+				while (n < 40 && ebp != nullptr && Readable(ebp, 8)) {
+					if (ebp[1] == 0) break;
+					frames[n++] = reinterpret_cast<void *>(ebp[1]);
+					auto next = reinterpret_cast<const uintptr_t *>(ebp[0]);
+					if (next <= ebp) break;
+					ebp = next;
+				}
+				auto esp = reinterpret_cast<void *const *>(ctx.Esp);
+				for (int i = 0; i < 512 && m < 24 && Readable(esp + i, sizeof(void *)); ++i) {
+					MEMORY_BASIC_INFORMATION mbi;
+					if (VirtualQuery(esp[i], &mbi, sizeof(mbi)) != 0 && mbi.State == MEM_COMMIT && mbi.Type == MEM_IMAGE
+						&& (mbi.Protect & (PAGE_EXECUTE | PAGE_EXECUTE_READ | PAGE_EXECUTE_READWRITE | PAGE_EXECUTE_WRITECOPY))) {
+						stack[m++] = esp[i];
+					}
+				}
+			}
+			ResumeThread(MainThread);
+			if (n == 0) continue;
+			
+			char name[MAX_PATH + 16], header[MAX_PATH + 160];
+			Name(name, sizeof(name), frames[0]);
+			snprintf(header, sizeof(header), "SigMod: stall %d s without a frame, main thread at %s, EBP chain:\n", still, name);
+			Write(header, frames, n);
+			snprintf(header, sizeof(header), "SigMod: stall code addresses on the main thread's stack:\n");
+			Write(header, stack, m);
+			reported = true;
+			++reports;
+		}
+		return 0;
+	}
+	
 	void Install()
 	{
 		AddVectoredExceptionHandler(1, &OnFault);
+		if (getenv("SIGSEGV_SURVEY_UNRESOLVED") != nullptr
+			&& DuplicateHandle(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), &MainThread, 0, FALSE, DUPLICATE_SAME_ACCESS)) {
+			CreateThread(nullptr, 0, &Watchdog, nullptr, 0, nullptr);
+		}
 		HMODULE k32 = GetModuleHandleA("kernel32.dll");
 		HMODULE kb  = GetModuleHandleA("kernelbase.dll");
 		if (k32 == nullptr) return;

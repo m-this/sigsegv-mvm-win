@@ -124,7 +124,7 @@ function Name-Frame($line, [switch]$Return) {
 Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort-Object Name | ForEach-Object {
   $name = $_.Name
   $first = $true
-  Select-String -Path $_.FullName -Pattern '^SigMod: fault ' -Context 0,60 | Select-Object -First 4 | ForEach-Object {
+  Select-String -Path $_.FullName -Pattern '^SigMod: (fault|stall) ' -Context 0,60 | Select-Object -First 4 | ForEach-Object {
     Write-Host "fault in ${name}: $(Name-Frame $_.Line)"
     $lines = @()
     foreach ($l in $_.Context.PostContext) { if ($l -notmatch '^\s') { break }; $lines += $l }

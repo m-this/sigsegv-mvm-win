@@ -413,7 +413,12 @@ void CModManager::LevelInitPostEntity()        { INVOKE_CALLBACK_FOR_ALL_ELIGIBL
 void CModManager::LevelShutdownPreEntity()     { INVOKE_CALLBACK_FOR_ALL_ELIGIBLE_MODS(LevelShutdownPreEntity);           }
 void CModManager::LevelShutdownPostEntity()    { INVOKE_CALLBACK_FOR_ALL_ELIGIBLE_MODS(LevelShutdownPostEntity);          }
 void CModManager::FrameUpdatePreEntityThink()  { INVOKE_FRAME_CALLBACK_FOR_ALL_ELIGIBLE_MODS(FrameUpdatePreEntityThink);  }
+#if defined _WINDOWS
+extern volatile long g_WatchdogFrames;
+void CModManager::FrameUpdatePostEntityThink() { ++g_WatchdogFrames; INVOKE_FRAME_CALLBACK_FOR_ALL_ELIGIBLE_MODS(FrameUpdatePostEntityThink); }
+#else
 void CModManager::FrameUpdatePostEntityThink() { INVOKE_FRAME_CALLBACK_FOR_ALL_ELIGIBLE_MODS(FrameUpdatePostEntityThink); }
+#endif
 void CModManager::PreClientUpdate()            { INVOKE_FRAME_CALLBACK_FOR_ALL_ELIGIBLE_MODS(PreClientUpdate);            }
 
 
