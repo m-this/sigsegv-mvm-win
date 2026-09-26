@@ -2914,6 +2914,16 @@
 					vtidx "242"
 					// vtable
 				}
+				"CBaseObject::DetonateObject"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseObject14DetonateObjectEv"
+					addr  "0x4c06e0"
+					build "10828683"
+					lib   "server"
+					vtidx "352"
+					// verified: read by hand from CObjectSentrygun's vtables: its slots 345-359 sit 2 below Linux, each body matching (IsUpgrading 347/345 compares the state, OnEndBeingCarried 348/346 is ret 4, ClientCommand 351/349 returns false popping 8, ShouldAutoRemove 355/353 returns true, IsDying 359/357 and ObjectType 360/358 read one field); DetonateObject is Linux 354
+				}
 				"CBaseObject::GetMaxHealthForCurrentLevel"
 				{
 					type  "fixed"
