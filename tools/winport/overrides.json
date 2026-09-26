@@ -960,5 +960,9 @@
  "_ZN19IBaseObjectAutoList29m_IBaseObjectAutoListAutoListE": {
   "rva": "0xb7eb4c",
   "why": "the CUtlVector CTFNavMesh::CollectBuiltObjects (0x5d8770) walks: elements read from 0x10b7eb4c, count from 0x10b7eb58, where the Linux body reads m_IBaseObjectAutoListAutoList and its +0xc"
+ },
+ "_ZN20CTFObjectiveResource36DecrementMannVsMachineWaveClassCountE8string_tj": {
+  "rva": "0x4d3130",
+  "why": "read by hand: walks the 12 names at +0x1040 and then +0x1070 (the send table's offsets for m_iszMannVsMachineWaveClassNames and ...Names2) for the icon with a flag in common at +0x60 past it, decrements the matching count at +0xfe0 or +0x1010 with a state change, clamps it at 0 and calls SetMannVsMachineWaveClassActive(name, false) (0x4d34d0) when it reaches 0; ret 8 for (string_t, flags). The Linux body does the same at offsets 0x18 higher. Called from CTFPlayer::Event_Killed, as on Linux"
  }
 }
