@@ -83,14 +83,9 @@ namespace Link
 #if defined _WINDOWS
 void UnresolvedCall(const char *what, const char *name)
 {
-	static const bool survey = getenv("SIGSEGV_SURVEY_UNRESOLVED") != nullptr;
-	if (!survey) {
-		Warning("SigMod: %s \"%s\"\n", what, name);
-		Error("SigMod: %s \"%s\"\n", what, name);
-	}
 	static std::unordered_set<std::string> named;
 	if (named.insert(name).second) {
-		Warning("SigMod: survey: %s \"%s\"\n", what, name);
+		Warning("SigMod: %s \"%s\", which does nothing on Windows yet\n", what, name);
 	}
 }
 #endif

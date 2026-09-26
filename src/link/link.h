@@ -8,11 +8,11 @@
 
 
 #if defined _WINDOWS
-/* A call through a thunk the Windows address table has no entry for. It ends
- * the server with the function's name, unless SIGSEGV_SURVEY_UNRESOLVED is set
- * in the environment: then it names the function once and the call returns
- * zero, so one bed sweep lists every missing function the missions reach
- * rather than the first. The survey is for the bed; a player never sets it. */
+/* A call through a thunk the Windows address table has no entry for. It
+ * names the function once and the call returns zero. Ending the server there
+ * lost the whole run to one mechanic the table does not cover yet; a zero
+ * leaves that mechanic doing nothing and the mission playing, and the name in
+ * the console says which. */
 void UnresolvedCall(const char *what, const char *name);
 
 template<typename R>
