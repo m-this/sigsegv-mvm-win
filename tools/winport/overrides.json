@@ -1150,5 +1150,10 @@
   "rva": "0x1cee50",
   "name": "CBaseAnimating::LookupActivity",
   "why": "read by hand: the twin of LookupSequence (0x1cefb0) calling the global LookupActivity(hdr, name) instead, as on Linux; thiscall, ret 4. CTFPlayer::ClientCommand's inlined PlaySpecificSequence calls it first and plays the result as PLAYERANIMEVENT_CUSTOM (0x13), the Linux shape. Only Windows needs it: its PlaySpecificSequence is written in SigMod"
+ },
+ "win_CBaseProjectile_dtor": {
+  "name": "CBaseProjectile::~CBaseProjectile [D2 windows]",
+  "rva": "0x20f450",
+  "why": "read by hand: the function slot 0 of CBaseProjectile's table (0x20f610, the scalar deleting destructor: flags test, free, ret 4) calls before freeing, and that CTFBaseProjectile's (0x533c80), CTFBaseRocket's (0x63f250) and CBaseGrenade's (0x209f10) call after writing their own vtables; the rocket, arrow, flare, energy ball, pipebomb and jar tables reach it through their bases' plain destructors (0x63f230, 0x209ee0). It writes CBaseProjectile's vtable and its IBaseProjectileAutoList one at +0x4ac, creates a game event, looks up the attacker, sets three keys and fires it (or frees it), purges two CUtlVectors, removes itself from the auto list and jumps to ~CBaseAnimating (0x1c8b20), the Linux D2 body in order; no argument"
  }
 }
