@@ -1,1 +1,3 @@
-# nothing asked
+# Weapon_Detach and SetOwner: who calls them
+server callers 0x1d9d10
+server callers 0x1e4360

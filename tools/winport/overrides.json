@@ -944,5 +944,13 @@
  "g_MannVsMachineUpgrades": {
   "rva": "0xb96ad4",
   "why": "read by hand: GetUpgradeStepData indexes the upgrade table through the pointer at 0x10b96ae0, and the upgrade parser (0x5f6b80) reaches that same vector at +0xc from the manager and its count at +0x18: m_Upgrades after CAutoGameSystem's vtable, m_pNext and m_pszName, as on Linux. Unresolved, SigMod appended its extended upgrades to a scratch block and the game's table stayed short, so RestoreCheckpoint's GetUpgradeStepData read a name past its end"
+ },
+ "_ZN20CBaseCombatCharacter13Weapon_DetachEP17CBaseCombatWeapon": {
+  "rva": "0x1d9d10",
+  "why": "read by hand: the Linux body, not inlined after all; thiscall popping 4, it walks the 48 handles of m_hMyWeapons (+0x770, Linux +0x788) for the argument and returns false after 0x30. On a match it calls the Detach slot (+0x43c), the HolsterOnDetach slot (+0x434) and on true the Holster slot (+0x41c) with null, Linux 277, 275 and 269 less 6 as the offsets Linux calls through; writes -1 to the slot through NetworkStateChanged, calls SetOwner(null) (0x1e4360), clears the active weapon through 0x1d8d30 when m_hActiveWeapon (+0x830, Linux +0x848) was it, and returns true"
+ },
+ "_ZN17CBaseCombatWeapon8SetOwnerEP20CBaseCombatCharacter": {
+  "rva": "0x1e4360",
+  "why": "read by hand: the Linux body; thiscall popping 4. With a null owner it zeroes m_iState (+0x600, Linux +0x60c) through NetworkStateChanged, passes the old state to the OnActiveStateChanged slot (+0x430, Linux 274 less 6) and clears the 'BaseCombatWeapon_HideThink' think through ThinkSet (0x2025e0); then writes the owner's GetRefEHandle (vtable +8) to m_hOwner (+0x5b8, Linux +0x5c4) through NetworkStateChanged and ends in DispatchUpdateTransmitState (0x1eebd0). Weapon_Detach (0x1d9d10) calls it with null. The candidate at 0x1e4230 that the string ranking gave is the function before it, which has no padding between the two"
  }
 }
