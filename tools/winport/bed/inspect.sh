@@ -24,7 +24,10 @@ def rows(path):
     return out
 def body(va, n=90):
     return list(md.disasm(code[va - tva:va - tva + 0x400], va))[:n]
-for cls, fn in [("CTFPlayer", "Weapon_Drop"), ("CBaseObject", "DetonateObject")]:
+for cls, fn in [("CBaseCombatCharacter", "Weapon_Drop"), ("CObjectSentrygun", "DetonateObject")]:
+    import os
+    if not os.path.exists(f"derived/linux-vtables/{cls}.txt") or not os.path.exists(f"derived/win-vtables/{cls}.txt"):
+        print(f"=== {cls}: no table", [f for f in os.listdir("derived/win-vtables") if cls[1:8] in f][:8]); continue
     lin = rows(f"derived/linux-vtables/{cls}.txt"); win = rows(f"derived/win-vtables/{cls}.txt")
     hits = [s for s, a, n in lin if f"::{fn}(" in n]
     if not hits: print(f"=== {cls}::{fn}: not in the Linux table"); continue
