@@ -1,2 +1,1 @@
-server string RemoveAttributeFromPlayer
-server string add_attributes
+# nothing asked
