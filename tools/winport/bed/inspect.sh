@@ -8,7 +8,8 @@ echo "=== matchfuncs vtable pairs"
 grep -E '^vtable pairs|string vs vtable' matchfuncs.log
 # The matcher as main has it, on the same dumps, so the comparison below is
 # the rule and nothing else.
-mkdir -p /tmp/oldmv && curl -sSfL -o /tmp/oldmv/matchvtables.py https://raw.githubusercontent.com/m-this/sigsegv-mvm-win/d94007d/tools/winport/matchvtables.py
+mkdir -p /tmp/oldmv && curl -sSfL -o /tmp/oldmv/matchfuncs.py https://raw.githubusercontent.com/m-this/sigsegv-mvm-win/d94007d/tools/winport/matchfuncs.py
+curl -sSfL -o /tmp/oldmv/matchvtables.py https://raw.githubusercontent.com/m-this/sigsegv-mvm-win/d94007d/tools/winport/matchvtables.py
 (cd /tmp/oldmv && python3 matchvtables.py "$OLDPWD/linux-vtables" "$OLDPWD/win-vtables" "$OLDPWD/classified.json" > /dev/null) && cp /tmp/oldmv/winport_knownvtidx.txt old_knownvtidx.txt
 
 python3 - <<'PY'
@@ -59,6 +60,25 @@ for sym, sig in zip(syms, dem):
     verdict = "OK" if got[1][1] == want else "WRONG"
     print(f"  {verdict} {cls} {sig}: hand {want}, " + ", ".join(f"{l} {i} ({h})" for l, i, h in got))
 
+print("=== vtable pairs against string matches, old rule and new")
+sys.path.insert(0, "/tmp/oldmv")
+addr = {}
+for line in subprocess.run(["nm", "--defined-only", "../game-linux/tf/bin/server_srv.so"], capture_output=True, text=True).stdout.splitlines():
+    p = line.split()
+    if len(p) == 3:
+        addr.setdefault(p[2], int(p[0], 16))
+matches = json.load(open("matches.json"))
+strings = {addr[k]: v["rva"] + 0x10000000 for k, v in matches.items() if v.get("via") == "string" and k in addr}
+import importlib.util
+for label, path in (("old", "/tmp/oldmv/matchfuncs.py"), ("new", "../tools/winport/matchfuncs.py")):
+    spec = importlib.util.spec_from_file_location("mf_" + label, path)
+    mf = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mf)
+    vt = mf.vtable_pairs("linux-vtables", "win-vtables")
+    agree = sum(1 for l, w in vt.items() if strings.get(l) == w)
+    disagree = sum(1 for l, w in vt.items() if l in strings and strings[l] != w)
+    print(f"  {label}: {len(vt)} pairs, {agree} agree with a string match, {disagree} disagree")
+
 print("=== parent chains of the classes wanted")
 wanted = sorted({r["class"] for r in json.load(open("classified.json"))["virtual"]})
 for cls in wanted:
@@ -69,8 +89,13 @@ for cls in wanted:
         chain.append(f"{c}({len(corpus.tables[c])})")
         c = corpus.parent(c)
     print("  " + " < ".join(chain))
-print("moved:", dict(corpus.moved))
+print("ambiguous:", corpus.ambiguous)
 PY
+
+echo "=== side by side"
+for q in "CBaseEntity 20 45" "CBaseEntity 140 152" "CBasePlayer 270 282" "CBasePlayer 448 458" "CGameMovement 0 24" "CTFGameMovement 8 14"; do
+  python3 ../tools/winport/bed/side.py $q
+done
 
 echo "=== windows.txt with the new knownvtidx (and matchfuncs), against the committed one"
 ver=$(grep -i '^ServerVersion=' ../game-windows/tf/steam.inf | cut -d= -f2 | tr -d '\r')
