@@ -232,9 +232,6 @@ class Corpus:
             for cls, got in rows.items()
         }
         self.keys = {cls: [slot_key(n) if n else None for n in names] for cls, names in self.names.items()}
-        # Tables with nothing named but destructors: interfaces, whose slots
-        # are all pure. Nothing says which class implements one, so any class
-        # that implements every slot of it itself is taken to.
         # Every table under its last named slot: a base's last slot is where
         # the derived class's table carries the same key, so looking up each of
         # a class's slots finds its bases without walking every table. Tables
@@ -252,9 +249,7 @@ class Corpus:
             held = entry.get(tuple(keys))
             if held is None or (not self.declares_last(held) and self.declares_last(cls)):
                 entry[tuple(keys)] = cls
-        self.interfaces = [c for c, k in self.keys.items()
-                           if all(x in (None, "~") for x in k) and any(unnamed(n) for n in self.tables[c])]
-        self._orders = {}
+        self._orders, self._parents = {}, {}
         # Classes that add an overload of a name they also override, for the
         # log: the one place the order rests on an assumption (see order).
         self.ambiguous = {}
@@ -268,8 +263,31 @@ class Corpus:
         return len(theirs) < len(mine) and all(t is None or k is None or t == k for t, k in zip(theirs, mine))
 
     def parent(self, cls):
-        """The longest other table this one starts with, or None."""
-        own, keys = self.pretty[cls], self.keys[cls]
+        """The longest other table this one starts with, or None.
+
+        A table matches with its unnamed slots matching anything, so one whose
+        own new virtuals are all unnamed would match every sibling as well:
+        CGib adds two folded bodies to CBaseAnimating and so "starts" CBaseFlex.
+        A base is taken only when one of its own new virtuals is named and
+        agrees. An interface, all pure virtuals, never is: nothing tells one
+        apart from any other that starts with a destructor, and
+        google::protobuf::MessageFactory "started" CBaseEntity that way. A
+        missing boundary merges two runs, which MISSING_BASES mends where it
+        matters."""
+        if cls not in self._parents:
+            self._parents[cls] = self.find_parent(cls)
+        return self._parents[cls]
+
+    def confirmed(self, cls, other):
+        if not self.starts_with(cls, other):
+            return False
+        base = self.parent(other)
+        start = len(self.keys[base]) if base else 0
+        theirs, mine = self.keys[other], self.keys[cls]
+        return any(theirs[i] not in (None, "~") and theirs[i] == mine[i] for i in range(start, len(theirs)))
+
+    def find_parent(self, cls):
+        keys = self.keys[cls]
         candidates = {self.stem.get(split_name(n)[0]) for n in self.names[cls] if n}
         for at, key in enumerate(keys):
             if key is not None:
@@ -278,14 +296,7 @@ class Corpus:
         # Longest first, and of two the same, the one that declares its last
         # slot: the other added nothing to it (see `ending`).
         ranked = sorted(candidates, key=lambda c: (-len(self.keys[c]), not self.declares_last(c), c))
-        best = next((c for c in ranked if self.starts_with(cls, c)), None)
-        floor = len(self.keys[best]) if best else 0
-        for other in sorted(self.interfaces):
-            size = len(self.keys[other])
-            if size <= floor or other == cls or not self.starts_with(cls, other):
-                continue
-            if all(n is None or split_name(n)[0] == own for n in self.names[cls][:size]):
-                best, floor = other, size
+        best = next((c for c in ranked if self.confirmed(cls, c)), None)
         return best
 
     def order(self, cls):
@@ -331,14 +342,18 @@ class Corpus:
 
     def grouping(self, cls, start, end):
         """The names slots start..end group by. A folded body is left out of
-        every group, except where nm's name for it is an overload of a name
-        the run already has: CEconItemSpecificAttributeIterator's
-        OnIterateAttributeValue(float) is one `return true` with others, and
-        still one of seven overloads MSVC reverses as a whole."""
+        every group, except where nm's name for it is an overload, by the same
+        class, of a name the run already has, and names no other slot:
+        CEconItemSpecificAttributeIterator's OnIterateAttributeValue(float) is
+        one `return true` with others, and still one of seven overloads MSVC
+        reverses as a whole. An empty body named some other class's Spawn
+        stays out of Spawn's group."""
         names, raw = list(self.names[cls]), self.tables[cls]
-        present = {method(names[i]) for i in range(start, end) if names[i]}
+        present = {(split_name(names[i])[0], method(names[i])) for i in range(start, end) if names[i]}
+        repeated = {n for n in raw if raw.count(n) > 1}
         for i in range(start, end):
-            if names[i] is None and not unnamed(raw[i]) and member(raw[i]) and method(raw[i]) in present:
+            if (names[i] is None and not unnamed(raw[i]) and member(raw[i]) and raw[i] not in repeated
+                    and (split_name(raw[i])[0], method(raw[i])) in present):
                 names[i] = raw[i]
         return names
 

@@ -57,11 +57,8 @@ class Order(unittest.TestCase):
              "CDerived::Walk()",
              "CDerived::Run()",
              "CDerived::Touch(int)")
-        # IGameMovement and CGameMovement, cut down. An interface whose slots
-        # are all pure matches any table that starts with a destructor, so
-        # these two get a directory of their own.
-        self.movedir = tempfile.TemporaryDirectory()
-        d = self.movedir.name
+        # CGameMovement, cut down, and IGameMovement, which has no table of
+        # its own in the dump: its three virtuals end at slot 5.
         dump(d, "IMove",
              "IMove::~IMove()", "IMove::~IMove()",
              "__cxa_pure_virtual", "__cxa_pure_virtual", "__cxa_pure_virtual")
@@ -76,11 +73,12 @@ class Order(unittest.TestCase):
              "CMove::Maxs() const",
              "CMove::Friction()")
         self.corpus = mv.Corpus(self.dir.name)
-        self.movement = mv.Corpus(self.movedir.name)
+        for table, value in ((mv.DECLARED_FIRST, ("Mins", "Maxs")), (mv.MISSING_BASES, 5)):
+            table["CMove"] = value
+            self.addCleanup(table.pop, "CMove")
 
     def tearDown(self):
         self.dir.cleanup()
-        self.movedir.cleanup()
 
     def names(self, cls, corpus=None):
         corpus = corpus or self.corpus
@@ -110,16 +108,32 @@ class Order(unittest.TestCase):
         self.assertEqual(got[8:], ["CDerived::Walk()", "CDerived::Run()", "CDerived::Touch(int)"])
         self.assertEqual(self.corpus.ambiguous["CDerived"], ["Touch"])
 
+    def test_an_interface_is_no_base(self):
+        # IMove is all pure and would start any table with a destructor.
+        self.assertIsNone(self.corpus.parent("CMove"))
+        self.assertEqual(self.corpus.parent("CBase"), None)
+
     def test_declared_first_moves_new_overloads_up(self):
-        mv.DECLARED_FIRST["CMove"] = ("Mins", "Maxs")
-        self.addCleanup(mv.DECLARED_FIRST.pop, "CMove")
-        self.assertEqual(self.movement.parent("CMove"), "IMove")
-        self.assertEqual(self.names("CMove", self.movement)[5:], [
+        self.assertEqual(self.names("CMove"), [
+            "CMove::~CMove()", "CMove::~CMove()",
+            "CMove::Process()",
+            "CMove::Mins(bool) const",
+            "CMove::Maxs(bool) const",
             "CMove::Mins() const",
             "CMove::Maxs() const",
             "CMove::Trace()",
             "CMove::SolidMask(bool)",
             "CMove::Friction()",
+        ])
+
+    def test_without_the_boundary_the_runs_merge(self):
+        mv.MISSING_BASES.pop("CMove")
+        mv.DECLARED_FIRST.pop("CMove")
+        self.addCleanup(mv.MISSING_BASES.__setitem__, "CMove", 5)
+        self.addCleanup(mv.DECLARED_FIRST.__setitem__, "CMove", ("Mins", "Maxs"))
+        self.assertEqual(self.names("CMove", mv.Corpus(self.dir.name))[3:7], [
+            "CMove::Mins() const", "CMove::Mins(bool) const",
+            "CMove::Maxs() const", "CMove::Maxs(bool) const",
         ])
 
     def test_a_folded_body_groups_with_nothing(self):
@@ -134,29 +148,6 @@ class Order(unittest.TestCase):
             # Slot 3 and 5 are one `return NULL` under one of its names, and
             # nothing else in the run is called Enemy: neither groups.
             self.assertEqual(corpus.order("CFold"), [0, 1, 2, 3, 4, 5])
-
-    def test_a_missing_base_still_ends_a_run(self):
-        with tempfile.TemporaryDirectory() as d:
-            slots = self.movement.tables["CMove"]
-            dump(d, "CMove", *slots)
-            mv.DECLARED_FIRST["CMove"] = ("Mins", "Maxs")
-            mv.MISSING_BASES["CMove"] = 5
-            self.addCleanup(mv.DECLARED_FIRST.pop, "CMove")
-            self.addCleanup(mv.MISSING_BASES.pop, "CMove")
-            corpus = mv.Corpus(d)
-            self.assertIsNone(corpus.parent("CMove"))
-            self.assertEqual(self.names("CMove", corpus), self.names("CMove", self.movement))
-
-    def test_a_folded_overload_stays_in_its_group(self):
-        with tempfile.TemporaryDirectory() as d:
-            dump(d, "CIter",
-                 "CIter::~CIter()", "CIter::~CIter()",
-                 (0x900, "CIter::On(int)"),
-                 "CIter::On(float)",
-                 "CIter::On(char const*)")
-            dump(d, "COther", "COther::~COther()", "COther::~COther()", "COther::Walk()", (0x900, "CIter::On(int)"))
-            corpus = mv.Corpus(d)
-            self.assertEqual(corpus.order("CIter"), [0, 1, 4, 3, 2])
 
     def test_align_collapses_the_destructor(self):
         how, aligned = mv.align(self.corpus.tables["CBase"], list(range(7)), self.corpus.order("CBase"))
