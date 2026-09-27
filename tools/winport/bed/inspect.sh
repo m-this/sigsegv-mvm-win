@@ -1,6 +1,6 @@
 #!/bin/bash
-# Round four: datamap inputs, the game rules' slots, CTFBot's tail, and
-# neighbours for the Pop mods' remaining targets.
+# Round five: datamap records raw, the conditions' switches, the flag's touch,
+# the game rules' BroadcastSound and cleanup slots against their base class.
 python3 - <<'PY'
 import re, bisect, collections, capstone, pefile
 from elftools.elf.elffile import ELFFile
@@ -227,79 +227,45 @@ def side(cls, lo, hi, shift=0):
         ws = f"W[{k-shift}] {w:#x} ret {wpop(w)} {whead(w, 4)}" if w is not None else ""
         print(f"  L[{k}] {l[:60]:60} | {ws[:150]}")
 
-def lite(sym, show=3):
-    print(f"######## lite {sym}")
-    if sym not in byname: print("  missing"); return
-    a, n = byname[sym]
-    import io, contextlib
-    buf = io.StringIO()
-    with contextlib.redirect_stdout(buf): callees, callers = ldis(sym, 0)
-    print(f"  linux size {n}, strings {lstrings(sym)[:8]}")
-    print(f"  linux callees: {list(dict.fromkeys(callees))[:15]}")
-    print(f"  linux callers: {callers[:12]}")
-    for s in lstrings(sym)[:4]:
-        fs = wrefs(eval(s))
-        for f in fs[:4]: print(f"    {f:#x} ret {wpop(f)}  {whead(f, 5)}")
-    cnt, cc, kc = wfind(callees, callers)
-    for f, k in cnt.most_common(show): print(f"    {f:#x} votes {k} ret {wpop(f)}  {whead(f, 5)}")
 
-
-def dminput(fname):
-    """Every typedescription whose fieldName is this string: its externalName and inputFunc (+0x18)."""
-    print(f"######## datamap input {fname}")
-    import struct
+import struct
+def tdraw(fname):
+    print(f"######## td raw {fname}")
     for a in wstr(fname):
         pat = (base + a).to_bytes(4, "little")
         for va, data in rdata:
             at = data.find(pat)
             while at != -1:
-                if at >= 4:
-                    rec = struct.unpack_from("<IIIHHIII", data, at - 4)
-                    ext = wcstr(rec[5] - base) if rec[5] else None
-                    fn = rec[7] - base
-                    print(f"  td at {va+at-4:#x}: type {rec[0]} ext {ext} inputFunc {fn:#x} ret {wpop(fn) if tv <= fn < tv+len(code) else '-'} {whead(fn, 5) if tv <= fn < tv+len(code) else ''}")
+                ws = struct.unpack_from("<12I", data, at - 4)
+                print(f"  at {va+at-4:#x}: " + " ".join(f"{w:08x}" for w in ws))
+                for w in ws:
+                    r = w - base
+                    if tv <= r < tv + len(code): print(f"     code {r:#x} ret {wpop(r)} {whead(r, 5)}")
+                    elif wcstr(r): print(f"     str {r:#x} {wcstr(r)}")
                 at = data.find(pat, at + 1)
+for f in ("InputForceSpawn", "InputForceSpawnAtEntityOrigin", "InputStop", "InputSetTime"):
+    tdraw(f)
 
-for f in ("InputForceSpawn", "InputForceSpawnAtEntityOrigin", "InputStop", "InputSetTime", "InputIgnitePlayer", "InputSetCustomModel"):
-    dminput(f)
 for sym, rva in [
- ("_ZN15CEnvEntityMaker15InputForceSpawnER11inputdata_t", 0x24caf0),
- ("_ZN15CEnvEntityMaker29InputForceSpawnAtEntityOriginER11inputdata_t", 0x24cb90),
+ ("_ZN15CTFPlayerShared16OnConditionAddedE7ETFCond", 0x525a10),
+ ("_ZN15CTFPlayerShared18OnConditionRemovedE7ETFCond", 0x526680),
+ ("_ZN12CCaptureFlag9FlagTouchEP11CBaseEntity", 0x447dc0),
+ ("_ZN12CCaptureFlag9FlagTouchEP11CBaseEntity", 0x44fa30),
+ ("_Z19TE_TFParticleEffectR16IRecipientFilterfPKc6Vector6QAngleP11CBaseEntity20ParticleAttachment_t", 0x470750),
+ ("_Z19TE_TFParticleEffectR16IRecipientFilterfPKc6Vector6QAngleP11CBaseEntity20ParticleAttachment_t", 0x470860),
+ ("_ZN15CItemGeneration18GenerateRandomItemEP22CItemSelectionCriteriaRK6VectorRK6QAnglePKc", 0x3a05f0),
+ ("_Z20DoTeleporterOverrideP11CBaseEntityR6Vectorb", 0x5ed2b0),
+ ("_ZN21CTFBotTacticalMonitor20FindNearbyTeleporterEP6CTFBot", 0x575790),
+ ("_ZN12CTFGameRules24RoundCleanupShouldIgnoreEP11CBaseEntity", 0x49e2b0),
  ("_ZN12CTFGameRules14BroadcastSoundEiPKciP11CBasePlayer", 0x4836e0),
- ("_ZN12CTFGameRules19BetweenRounds_ThinkEv", 0x498ba0),
- ("_ZN12CTFGameRules19BetweenRounds_ThinkEv", 0x49e310),
- ("_ZN12CTFGameRules24RoundCleanupShouldIgnoreEP11CBaseEntity", 0x4a1c20),
- ("_ZN12CTFGameRules18ShouldCreateEntityEPKc", 0x4a1c20),
- ("_ZN15CCollisionEvent13ShouldCollideEP14IPhysicsObjectS1_PvS2_", 0x2b8410),
+ ("_ZN24CTeamplayRoundBasedRules14BroadcastSoundEiPKciP11CBasePlayer", 0x4836e0),
 ]:
     try: cmp2(sym, rva)
     except Exception as e: print("  error", e)
-side("CTFGameRules", 186, 196, 1)
-side("CTFBot", 500, 539, 44)
-side("CTFBot", 500, 539, 43)
-for s in ("_ZN13NextBotPlayerI9CTFPlayerE6UpdateEv", "_ZN13NextBotPlayerI9CTFPlayerE17PressCrouchButtonEf", "_ZN13NextBotPlayerI9CTFPlayerE19ReleaseCrouchButtonEv", "_ZN6CTFBot12AvoidPlayersEP8CUserCmd", "_ZN6CTFBot13OnWeaponFiredEP20CBaseCombatCharacterP17CBaseCombatWeapon"):
-    try: lcalls(s)
-    except Exception as e: print(e)
-for sym in [
- "_ZN12CCaptureFlag9FlagTouchEP11CBaseEntity",
- "_ZN18CFlagDetectionZone19EntityIsFlagCarrierEP11CBaseEntity",
- "_ZN16CTFMedigunShield11ShieldThinkEv",
- "_ZN10CPointPush9PushThinkEv",
- "_ZN12CEventActionC2EPKc",
- "_Z21UTIL_EntitiesInSphereRK6VectorfP20CFlaggedEntitiesEnum",
- "_ZN16CTFBotMainAction17FireWeaponAtEnemyEP6CTFBot",
- "_ZNK16CTFBotMainAction33SelectMoreDangerousThreatInternalEPK8INextBotPK20CBaseCombatCharacterPK12CKnownEntityS8_",
- "_ZN16CTFWeaponBaseGun10FireRocketEP9CTFPlayeri",
- "_Z19TE_TFParticleEffectR16IRecipientFilterfPKc6Vector6QAngleP11CBaseEntity20ParticleAttachment_t",
- "_ZN15CItemGeneration18GenerateRandomItemEP22CItemSelectionCriteriaRK6VectorRK6QAnglePKc",
- "_ZN15CTFPlayerShared16OnConditionAddedE7ETFCond",
- "_ZN15CTFPlayerShared18OnConditionRemovedE7ETFCond",
- "_Z20DoTeleporterOverrideP11CBaseEntityR6Vectorb",
- "_Z17GetBotEscortCounti",
- "_ZNK11CTFBotSquad33ShouldSquadLeaderWaitForFormationEv",
- "_ZN21CTFBotTacticalMonitor20FindNearbyTeleporterEP6CTFBot",
- "_ZN12CTFGameRules18ShouldCreateEntityEPKc",
-]:
-    try: lite(sym)
-    except Exception as e: print("  error", e)
+for sym, rva, n in [("_ZN12CTFGameRules18ShouldCreateEntityEPKc", 0x4a1c20, 14), ("_ZN12CTFGameRules24RoundCleanupShouldIgnoreEP11CBaseEntity", 0x49e2b0, 40)]:
+    ldis(sym, 40); wdis(rva, n)
+side("CTeamplayRoundBasedRules", 180, 200, 1)
+side("CTeamplayRoundBasedRules", 212, 226, 1)
+side("CTFGameRules", 212, 226, 2)
+print("CTFGameRules W218..221 vs CTRBR:", [hex(x) for x in wrows("CTFGameRules")[214:224]], [hex(x) for x in wrows("CTeamplayRoundBasedRules")[214:224]])
 PY
