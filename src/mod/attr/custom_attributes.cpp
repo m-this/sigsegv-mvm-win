@@ -3726,6 +3726,12 @@ namespace Mod::Attr::Custom_Attributes
 
 	DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, void, CUpgrades_PlayerPurchasingUpgrade, CTFPlayer *player, int itemslot, int upgradeslot, bool sell, bool free, bool refund)
 	{
+#if defined _WINDOWS
+		/* server.dll has no clone, so this detours the whole function. The
+		 * Linux wrapper returns before the clone for a null player or an
+		 * upgrade index out of range: return the same way here. */
+		if (player == nullptr || upgradeslot < 0 || upgradeslot >= CMannVsMachineUpgradeManager::Upgrades().Count()) return;
+#endif
 		if (!refund) {
 			auto upgrade = reinterpret_cast<CUpgrades *>(this);
 			
@@ -4093,6 +4099,13 @@ namespace Mod::Attr::Custom_Attributes
 	DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, int, CTFRadiusDamageInfo_ApplyToEntity, CBaseEntity *ent)
 	{
 		auto info = reinterpret_cast<CTFRadiusDamageInfo *>(this);
+#if defined _WINDOWS
+		/* server.dll has no clone, so this detours the whole function. The
+		 * Linux wrapper returns 0 before the clone for the ignored entity and
+		 * one that takes no damage: return the same way here, or a chain
+		 * explosion would reach projectiles Linux never hands the detour. */
+		if (ent == info->m_pEntityIgnore || ent->m_takedamage == DAMAGE_NO) return 0;
+#endif
 		if (hit_entities_explosive_max != 0 && hit_entities_explosive >= hit_entities_explosive_max)
 			return 0;
 		int healthpre = ent->GetHealth();
