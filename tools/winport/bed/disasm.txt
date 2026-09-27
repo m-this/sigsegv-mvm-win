@@ -1,1 +1,2 @@
-# nothing asked
+server string Physics_SimulateEntity
+server string pEntity->PhysicsSimulate

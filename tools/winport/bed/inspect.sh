@@ -79,55 +79,16 @@ class ELF:
             print(line)
             if k >= limit: break
 
-print("######## engine.dll")
-e = PE("game-windows/bin/engine.dll")
-SV = 0x5eb2a0
-# every absolute reference into sv, by field offset
-cnt = collections.Counter(); where = collections.defaultdict(set)
-for i in range(len(e.code) - 4):
-    v = int.from_bytes(e.code[i:i+4], "little") - e.base
-    if SV <= v < SV + 0x400:
-        cnt[v - SV] += 1
-        if len(where[v - SV]) < 6: where[v - SV].add(e.start(e.tv + i))
-print("sv field offsets referenced by absolute address (offset: count, functions)")
-for off in sorted(cnt):
-    print(f"  +{off:#x}: {cnt[off]}  " + " ".join(f"{f:#x}" for f in sorted(where[off])))
-for vt in e.vtable(".?AVCGameServer@@"):
-    print(f"CGameServer vtable at {vt:#x}")
-    for k in range(0, 48):
-        f = e.u32(vt + 4*k) - e.base
-        print(f"--- slot {k} ({4*k:#x}) -> {f:#x}")
-        e.dis(f, 10)
-for vt in e.vtable(".?AVCVEngineServer@@"):
-    print(f"CVEngineServer vtable at {vt:#x}")
-    for k in range(0, 40):
-        f = e.u32(vt + 4*k) - e.base
-        print(f"--- slot {k} ({4*k:#x}) -> {f:#x}")
-        e.dis(f, 12)
-e.dis(e.start(0x1bd4fd), 200, title="ED_Alloc (holds 0x1bd4fd)")
-e.dis(e.start(0x13ad2c), 60, title="CreateEdict (holds 0x13ad2c)")
-e.dis(e.start(0x1bd410), 40, title="ED_ClearFreeFlag")
-
-print("######## server.dll entity factories")
+print("######## CServerTools")
 s = PE("game-windows/tf/bin/server.dll")
-l = ELF("game-linux/tf/bin/server_srv.so")
-classes = ["CPathTrack", "CTFBotHint", "CTFBotHintSentrygun", "CTFBotHintTeleporterExit", "CFuncNavAvoid",
-    "CFuncNavPrefer", "CEnvEntityMaker", "CGameText", "CTrainingAnnotation", "CTFHudNotify", "CRagdollMagnet",
-    "CEnvShake", "CTeamplayRoundWin", "CEnvViewPunch", "CTFForceRespawn", "CPointEntity", "CPointNavInterface",
-    "CPointClientCommand", "CPointServerCommand", "CPointPopulatorInterface", "CPointHurt"]
-for c in classes:
-    mangled = f"_ZN14CEntityFactoryI{len(c)}{c}E6CreateEPKc"
-    vts = s.vtable(f".?AV?$CEntityFactory@V{c}@@@@")
-    print(f"######## {c}: windows vtables {[hex(v) for v in vts]}")
-    for vt in vts[:1]:
-        for k in range(3):
-            print(f"  slot {k}: {s.u32(vt + 4*k) - s.base:#x}")
-        s.dis(s.u32(vt) - s.base, 45, title=f"windows CEntityFactory<{c}>::Create")
-    l.dis(mangled, 45)
-# CBaseEntity::CBaseEntity(bool) as windows.txt has it, to read the argument it pops
-s.dis(0x1e8ea0, 40, title="CBaseEntity::CBaseEntity(bool)")
-l.dis("_ZN11CBaseEntityC2Eb", 30)
-for n in ("_Z22Physics_SimulateEntityP11CBaseEntity", "_ZN11CBaseEntity6RemoveEv", "_Z11UTIL_RemoveP11CBaseEntity",
-          "_Z11UTIL_RemoveP18IServerNetworkable"):
-    l.dis(n, 120)
+for name in (".?AVCServerTools@@",):
+    for vt in s.vtable(name):
+        print(f"{name} vtable at {vt:#x}")
+        for k in range(16, 24):
+            f = s.u32(vt + 4*k) - s.base
+            print(f"--- slot {k} -> {f:#x}")
+            s.dis(f, 30)
+# the matcher's CBaseEntity::Remove (turned away) and UTIL_Remove candidates
+s.dis(0x1f8b90, 60, title="Remove candidate")
+s.dis(0x2477c0, 150, title="UTIL_Remove candidate")
 PY
