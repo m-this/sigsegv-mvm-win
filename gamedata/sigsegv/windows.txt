@@ -2717,6 +2717,16 @@
 					lib   "server"
 					// verified: read by hand: the first candidate, holding 'effectbar_recharge_rate', and the SDK's body: bWasFull when the owner's GetAmmoCount(GetEffectBarAmmo()) + 1 is GetMaxAmmo (0x522500), then m_flEffectBarRegenTime (+0x6c8, Linux +0x6d4) set to curtime plus InternalGetEffectBarRechargeTime when it is past or the bar was full; thiscall, no arguments, ret
 				}
+				"CTFWeaponBase::GetAfterburnRateOnHit"
+				{
+					type  "fixed"
+					sym   "_ZNK13CTFWeaponBase21GetAfterburnRateOnHitEv"
+					addr  "0x15d760"
+					build "10828683"
+					lib   "server"
+					vtidx "460"
+					// verified: read by hand from the weapon vtables, seven below Linux from IsEnergyWeapon (453/446) and GetParticleColor (457/450) on: SetBroken(bool) 461 is the empty ret 4 at 454, GetDropSkinOverride 465 is the -1 return at 458, and CTFCompoundBow, which overrides GetInitialAfterburnDuration (466), has its own body at 459 where CTFWeaponBuilder has the base one. 460 is the base's 0.0f return, folded with IBody::GetHeadSteadyDuration, so the slot names it and the detour on it is refused as folded
+				}
 				"CTFWeaponBase::IsPassiveWeapon"
 				{
 					type  "fixed"
@@ -8616,6 +8626,24 @@
 					lib   "server"
 					// verified: read by hand: inc dword [0x9d23e8]; ret, the Linux add [m_masterTFMark], 1; ret. The same global is what TFMark (0x5d63f0) stores into +0x21c and IsTFMarked (0x5d5570) compares with it (Linux +0x220), and SelectSpawnArea (0x5ef2a0, by its VPROF string) calls it first and then GetGlobalTeam, CollectSurroundingAreas, IsTFMarked, TFMark and IsValidForWanderingPopulation, the Linux order; static, plain ret
 				}
+				"CTFNavArea::TFMark"
+				{
+					type  "fixed"
+					sym   "_ZN10CTFNavArea6TFMarkEv"
+					addr  "0x5d63f0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: mov eax, [0x9d23e8]; mov [ecx+0x21c], eax; ret, the Linux body storing m_masterTFMark (the global MakeNewTFMarker 0x5d5970 increments) into +0x220. SelectSpawnArea (0x5ef2a0) calls it right after IsTFMarked returns false, where Linux calls TFMark; thiscall with no argument, plain ret
+				}
+				"CTFNavArea::IsTFMarked"
+				{
+					type  "fixed"
+					sym   "_ZNK10CTFNavArea10IsTFMarkedEv"
+					addr  "0x5d5570"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: mov eax, [ecx+0x21c]; cmp eax, [0x9d23e8]; sete al; ret, comparing the field TFMark (0x5d63f0) writes with the global MakeNewTFMarker (0x5d5970) increments. SelectSpawnArea (0x5ef2a0) calls it on each surrounding area and skips a true result, where Linux calls IsTFMarked; thiscall with no argument, plain ret
+				}
 				"NavAreaBuildPath<CTFBotPathCost>"
 				{
 					type  "fixed"
@@ -12202,6 +12230,15 @@
 					build "10828683"
 					lib   "server"
 					// verified: read by hand: the 32 accessor pointers GetDataObject indexes, which MSVC inlined everywhere. DestroyAllDataObjects (0x2c4030, called by CBaseEntity's destructor 0x1e98c0) tests type bits 0 to 7 at +0x370 and calls slot 3 (DestroyDataObject) of [type*4 + this]; CreateDataObject (0x2c3ff0) sets the bit and jumps to slot 2 of the same entry, Linux reading 0x17fccec the same way (g_DataObjectAccessSystem at 0x17fcce0, +0xc). The static constructor 0x19070 writes the system's vtable at 0xa399c8 and zeroes 0x80 bytes here. The inlined reads call slot 1, GetDataObject
+				}
+				"CScriptConvarAccessor::SetValue"
+				{
+					type  "fixed"
+					sym   "_ZN21CScriptConvarAccessor8SetValueEPKc12CVariantBaseI24CVariantDefaultAllocatorE"
+					addr  "0x38a270"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: VScript's Convars.SetValue, the Linux body (0x89a850) in order: returns on a null or empty name, looks the name up in the allow list (+0xc) and warns when absent, ConVarRef and IsValid, the 0x20000020 flags test, a switch on the variant's type, then g_pGameRules->SaveConvar; thiscall, ret 0x14 for the name and the 16-byte variant; CMemberScriptBinding's Call thunk 0x380400 reaches it
 				}
 			}
 		}
