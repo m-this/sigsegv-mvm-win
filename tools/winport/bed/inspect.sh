@@ -4,7 +4,6 @@
 # CEconItemDefinition::IterateAttributes and GetDataObject. Linux bodies with
 # their calls named, and the Windows functions around them.
 python3 - <<'PY'
-python3 - <<'PY'
 import re, bisect, collections, capstone, pefile
 from elftools.elf.elffile import ELFFile
 
