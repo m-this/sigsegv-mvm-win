@@ -101,6 +101,10 @@ class CGameServer : public CBaseServer
 public:
 #ifdef PLATFORM_64BITS
 	int GetNumEdicts() {return *(int *)((uintptr_t)(this) + 0x218);}
+#elif defined _WINDOWS
+	/* engine.dll's GetIServer returns 0x5eb2a0 and its edict functions read
+	 * num_edicts at 0x5eb48c, eight bytes further in than on Linux. */
+	int GetNumEdicts() {return *(int *)((uintptr_t)(this) + 0x1EC);}
 #else
 	int GetNumEdicts() {return *(int *)((uintptr_t)(this) + 0x1E4);}
 #endif
