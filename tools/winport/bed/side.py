@@ -28,7 +28,7 @@ new = new or mv.collapse_destructors([linux[i] for i in corpus.order(cls)])
 old = old or mv.collapse_destructors(linux)
 print(f"--- {cls}: linux {len(linux)} win {len(win)}")
 for i in range(lo, min(hi + 1, len(win))):
-    pops, ins = head(win[i], 6)
+    pops, ins = head(win[i], 10)
     o = old[i] if i < len(old) else "-"
     n = new[i] if i < len(new) else "-"
     mark = "  " if o == n else "* "

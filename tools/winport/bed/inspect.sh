@@ -104,12 +104,36 @@ print("ambiguous:", corpus.ambiguous)
 PY
 
 echo "=== side by side"
-for q in "CBaseEntity 20 45" "CBaseEntity 140 152" "CBasePlayer 270 282" "CBasePlayer 448 458" "CGameMovement 0 14" "CTFBonesaw 0 3"; do
+for q in "CBaseCombatCharacter 150 160" "CBaseCombatCharacter 180 200" "CEconItemAttributeIterator_ApplyAttributeString 0 9" "CGameMovement 0 13" "CTFGameMovement 20 25" "CSmokeStack 30 34" "CDisableVision 60 63" "CBotNPCBody 49 52" "CTFProjectile_SpellTransposeTeleport 243 246" "CPointHurt 147 150"; do
   python3 ../tools/winport/bed/side.py $q
 done
 
-echo "=== windows.txt with the new knownvtidx (and matchfuncs), against the committed one"
+echo "=== the two IsAbleToSee overloads and the tm_fmt they reference"
+python3 - <<'PY'
+import pefile, capstone
+pe = pefile.PE("../game-windows/tf/bin/server.dll", fast_load=True)
+img = pe.get_memory_mapped_image()
+md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
+for rva in (0x425850, 0x4259a0):
+    refs, pops = [], None
+    for ins in md.disasm(img[rva:rva + 0x400], 0x10000000 + rva):
+        for want in (0x10a8fc80, 0x10a8fc8c):
+            if f"{want:#x}" in ins.op_str:
+                refs.append(f"{ins.address - 0x10000000:#x}: {ins.mnemonic} {ins.op_str}")
+        if ins.mnemonic == "ret" and pops is None:
+            pops = ins.op_str or "0"
+        if ins.mnemonic == "int3":
+            break
+    print(f"  {rva:#x} first ret {pops}: {refs}")
+PY
+
+echo "=== windows.txt from the old matcher's knownvtidx against the new one's, same matches.json"
 ver=$(grep -i '^ServerVersion=' ../game-windows/tf/steam.inf | cut -d= -f2 | tr -d '\r')
+python3 ../tools/winport/emitgamedata.py matches.json "$ver" datamaps.json old_knownvtidx.txt > windows.old.txt 2>/dev/null
 python3 ../tools/winport/emitgamedata.py matches.json "$ver" datamaps.json winport_knownvtidx.txt > windows.new.txt 2>/dev/null
-diff -u ../gamedata/sigsegv/windows.txt windows.new.txt
+diff -u windows.old.txt windows.new.txt
+echo "=== the changed names in the committed knownvtidx"
+for n in FVisible AimHeadTowards OnIterateAttributeValue "CGameMovement::A" "CGameText::KeyValue" "CSmokeStack::KeyValue" "CTFGameMovement::" InitGrenade IsAbleToSee; do
+  grep -A5 "^\"[^\"]*$n" ../tools/winport/knownvtidx.generated.txt | grep -E '^"|idx|windows' | paste - - - 
+done
 true
