@@ -1,2 +1,2 @@
 # ED_Alloc on Windows: where sv.num_edicts and g_FreeEdicts live
-engine func 0x1bd4f4 200
+engine 0x1bd43e 160

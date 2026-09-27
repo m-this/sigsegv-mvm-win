@@ -1,6 +1,6 @@
 #!/bin/bash
-# Round 3: where scopes are released on each side, the mimic's four Fire
-# functions, the CTFSword mods and TE_TFBlood by body, ED_Alloc on Linux.
+# Round 4: the sword mods as MSVC inlined them, CanDecapitate's slot, who
+# deletes the game rules on each side, GetFiringAngles.
 python3 - <<'PY'
 import re, bisect, collections, capstone, pefile
 from elftools.elf.elffile import ELFFile
@@ -176,65 +176,70 @@ def fsize(f):
         if i.mnemonic == "int3": return i.address - base - f
     return 20000
 
-print("######## scopes")
-for n in sorted(byname):
-    if ("ScriptScope" in n and ("Term" in n or "D2" in n or "D1" in n)) or n in ("_ZN11CBaseEntity14UpdateOnRemoveEv", "_ZN6CWorldD2Ev", "_ZN17CGlobalEntityList5ClearEv", "_ZN11CBaseEntityD2Ev"):
-        a, sz = byname[n]
-        cs = sorted({byaddr[lholder(x)] for x in lg.get(a, ())})
-        print(f"  {n} {a:#x} {sz} callers({len(cs)}): " + ", ".join(cs[:30]))
-for n in ("_ZN11CBaseEntity14UpdateOnRemoveEv", "_ZN11CBaseEntityD2Ev", "_ZN6CWorldD2Ev"):
+
+import struct, os
+def lro(a, n=4):
+    for sec in elf.iter_sections():
+        va = sec["sh_addr"]
+        if va and va <= a < va + sec["sh_size"] and sec["sh_type"] != "SHT_NOBITS":
+            return sec.data()[a-va:a-va+n]
+print("######## sword")
+for a in (0x1317188, 0x11abbf8):
+    b = lro(a); print(f"  linux {a:#x} = {struct.unpack('<f', b)[0] if b else None}")
+hold = collections.Counter()
+for m in re.finditer(rb"\x80[\x78-\x7f\xb8-\xbf]\x31\x08\x00\x00|\xc6[\x80-\x87]\x31\x08\x00\x00|\x0f\xb6[\x80-\xbf]\x31\x08\x00\x00", lcode):
+    hold[byaddr[lholder(lva + m.start())]] += 1
+print("  linux functions touching byte +0x831: " + ", ".join(f"{n}:{c}" for n, c in hold.most_common(40)))
+def around4(f, n=0x4000):
+    ins = list(md.disasm(code[f-tv:f-tv+n], base + f))
+    for k, i in enumerate(ins):
+        if i.mnemonic == "int3": ins = ins[:k]; break
+    for k, i in enumerate(ins):
+        if re.search(r", 4$", i.op_str) and i.mnemonic in ("cmp", "mov") and any(x.mnemonic in ("cvtsi2ss", "imul", "shl") for x in ins[k:k+8]):
+            print(f"  -- at {i.address-base:#x}")
+            for x in ins[max(0, k-45):k+14]:
+                line = f"     {x.address-base:#x}  {x.mnemonic} {x.op_str}"
+                if x.mnemonic == "call" and x.op_str.startswith("0x"):
+                    t = int(x.op_str, 16) - base
+                    if t in kname: line += "  " + kname[t]
+                print(line)
+for n in ("_ZN9CTFPlayer29TeamFortress_CalculateMaxSpeedEb", "_ZN9CTFPlayer22GetMaxHealthForBuffingEv"):
+    print("==", n, hex(known[n]) if n in known else "unknown")
+    if n in known: around4(known[n])
     if n in byname:
         a, sz = byname[n]
-        print(f"== linux callees of {n}")
-        for i in md.disasm(lcode[a-lva:a-lva+sz], a):
-            if i.mnemonic in ("call", "jmp") and i.op_str.startswith("0x") and int(i.op_str, 16) in byaddr:
-                print(f"   {i.address:#x} {byaddr[int(i.op_str, 16)]}")
-            m = re.search(r"\[e[a-d]x ([+-]) (0x[0-9a-f]+)\]", i.op_str)
-            if m:
-                d = int(m.group(2), 16) * (1 if m.group(1) == "+" else -1)
-                if got + d in objs: print(f"   {i.address:#x} {i.mnemonic} {i.op_str}  obj {objs[got + d]}")
-print("windows callers of 0x1fe240:")
-for s_ in sorted(wg.get(0x1fe240, ())):
-    f = wstart(s_)
-    print(f"  call at {s_:#x} in {f:#x}" + (" " + kname[f] if f in kname else "") + f" size {fsize(f):#x}")
+        ins = list(md.disasm(lcode[a-lva:a-lva+sz], a))
+        for k, i in enumerate(ins):
+            if "0x1f1c]" in i.op_str:
+                print("   linux:")
+                for x in ins[max(0, k-30):k+10]: print(f"     {x.address:#x}  {x.mnemonic} {x.op_str}")
+                break
+for cls in ("CTFSword", "CTFDecapitationMeleeWeaponBase"):
+    for side in ("linux", "win"):
+        path = f"derived/{side}-vtables/{cls}.txt"
+        if os.path.exists(path):
+            rows = open(path).read().splitlines()
+            print(f"== {path}")
+            for r in rows:
+                m = re.match(r"\+0x([0-9a-f]+):", r)
+                if m and 0x780 <= int(m.group(1), 16) <= 0x7c0: print("   " + r[:160])
+for l in open("tools/winport/knownvtidx.generated.txt"):
+    if "Decapitat" in l or "CTFSword" in l: print("  known:", l.rstrip()[:200])
 
-print("######## mimic")
-for n in ("_ZN19CTFPointWeaponMimic10FireRocketEv", "_ZN19CTFPointWeaponMimic11FireGrenadeEv", "_ZN19CTFPointWeaponMimic9FireArrowEv", "_ZN19CTFPointWeaponMimic17FireStickyGrenadeEv"):
-    ldis(n, 45)
-for f in (0x5e1740, 0x5e1950, 0x5e1c60, 0x5e1e60):
-    wdis2(f, 70)
+print("######## game rules")
+for n in ("_ZN6CWorldD2Ev",):
+    ldis(n, 60)
+needle = (0x17f63fc).to_bytes(4, "little")
+at = lcode.find(needle); ws = set()
+while at != -1:
+    if lcode[at-1] == 0xa3 or lcode[at-2] in (0x89, 0xc7): ws.add(byaddr[lholder(lva + at)])
+    at = lcode.find(needle, at + 1)
+print("  linux writers of [0x17f63fc]: " + ", ".join(sorted(ws)))
+for f in (0x27c1c0, 0x27c260, 0x27dff0, 0x34ea30, 0x39c460):
+    print("  windows writer", hex(f), kname.get(f, ""), "callers:", ", ".join(sorted({hex(wstart(x)) + (" " + kname[wstart(x)] if wstart(x) in kname else "") for x in wg.get(f, ())})[:8]))
+    wdis2(f, 45)
 
-print("######## sword and blood by body")
-starts2 = [tv + i for i in range(1, len(code)) if code[i-1] == 0xcc and code[i] != 0xcc and (tv + i) % 16 == 0]
-create = known["_ZN15CBaseTempEntity6CreateER16IRecipientFilterf"]
-for f in starts2:
-    txt = []
-    for i in md.disasm(code[f-tv:f-tv+0xd0], base + f):
-        if i.mnemonic == "int3": break
-        txt.append(f"{i.mnemonic} {i.op_str}")
-    else:
-        continue
-    j = "\n".join(txt)
-    four = re.search(r"(cmp|cmovl|cmovle|cmovg|cmovge) [^\n]*, 4$|mov e.x, 4$", j, re.M)
-    if four and "fld1" in j and "cvtsi2ss" in j and "mulss" in j:
-        print(f"-- speed candidate {f:#x}"); wdis2(f, 60)
-    elif four and re.search(r"imul e.., e.., 0xf$|lea e.., \[e.. \+ e..\*2\]", j, re.M) and "call dword ptr [e" in j and len(txt) < 45:
-        print(f"-- health candidate {f:#x}"); wdis2(f, 60)
-    if f"{base + create:#x}" in j and "ebp + 0x18" in j and "ebp + 0x1c" not in j and len(txt) < 50:
-        print(f"-- blood candidate {f:#x}"); wdis2(f, 60)
-
-print("######## ED_Alloc, Linux engine")
-try:
-    eelf = ELFFile(open("game-linux/bin/engine_srv.so", "rb"))
-    et = eelf.get_section_by_name(".text"); ecode = et.data(); eva = et["sh_addr"]
-    st = eelf.get_section_by_name(".symtab") or eelf.get_section_by_name(".dynsym")
-    for s in st.iter_symbols():
-        if s.name in ("_Z8ED_Allocv", "_Z8ED_Alloci", "sv", "_ZL12g_FreeEdicts", "g_FreeEdicts") or "ED_Alloc" in s.name:
-            print("  sym", s.name, hex(s["st_value"]), s["st_size"])
-            if s["st_info"]["type"] == "STT_FUNC":
-                a = s["st_value"]
-                for i in md.disasm(ecode[a-eva:a-eva+s["st_size"]], a):
-                    print(f"   {i.address:#x}  {i.mnemonic} {i.op_str}")
-except Exception as e:
-    print("engine:", e)
+print("######## GetFiringAngles")
+ldis("_ZNK19CTFPointWeaponMimic15GetFiringAnglesEv", 80)
+wdis2(0x5e22b0, 90)
 PY

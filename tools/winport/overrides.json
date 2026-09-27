@@ -1168,5 +1168,9 @@
  "_ZN11CBasePlayer6SetFOVEP11CBaseEntityifi": {
   "rva": "0x20e3a0",
   "why": "read by hand: returns false for a null requester, reads m_hZoomOwner (+0xc88, Linux +0xca0) and asks CanOverrideEnvZoomOwner (0x251300) when another owner holds it, clears it for fov 0 or sets it to the requester's handle, takes GetFOV (0x2e1a00) when zoomStart is not positive, then stores m_iFOVStart (+0xc74), curtime (+0xc78), m_iFOV (+0xc6c) and m_Local.m_flFOVRate (+0x8bc) as Linux does at +0x18 higher; thiscall, ret 0x10, 40 callers"
+ },
+ "_ZN14CTriggerCamera7DisableEv": {
+  "rva": "0x3667e0",
+  "why": "read by hand: resolves m_hPlayer (+0x384, Linux +0x39c) and asks IsAlive (vtable +0x10c, Linux +0x110), clears the not-solid flag through SetSolidFlags when spawnflags bit 0x20 is set, SetViewEntity (0x2e90c0) with the player, EnableControl(true) (0x2e04d0), shows the active weapon again and DispatchUpdateTransmitState, ThinkSet(NULL), FireOutput of m_OnEndFollow, SetLocalAngularVelocity, the Linux order; the camera's Move (0x368910) calls it when SF_CAMERA_PLAYER_INTERRUPT is set and the player's buttons changed, as Linux Move calls Disable; thiscall, plain ret"
  }
 }
