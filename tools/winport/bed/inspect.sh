@@ -6,6 +6,10 @@ echo "=== matchvtables.log"
 cat matchvtables.log
 echo "=== matchfuncs vtable pairs"
 grep -E '^vtable pairs|string vs vtable' matchfuncs.log
+# The matcher as main has it, on the same dumps, so the comparison below is
+# the rule and nothing else.
+mkdir -p /tmp/oldmv && curl -sSfL -o /tmp/oldmv/matchvtables.py https://raw.githubusercontent.com/m-this/sigsegv-mvm-win/d94007d/tools/winport/matchvtables.py
+(cd /tmp/oldmv && python3 matchvtables.py "$OLDPWD/linux-vtables" "$OLDPWD/win-vtables" "$OLDPWD/classified.json" > /dev/null) && cp /tmp/oldmv/winport_knownvtidx.txt old_knownvtidx.txt
 
 python3 - <<'PY'
 import json, re, subprocess, sys
@@ -19,8 +23,9 @@ def entries(path):
         out[m.group(1)] = (m.group(2), int(m.group(3)), m.group(6), m.group(7))
     return out
 
-old, new = entries("../tools/winport/knownvtidx.generated.txt"), entries("winport_knownvtidx.txt")
-print(f"=== knownvtidx: committed {len(old)}, derived {len(new)}")
+committed, old, new = (entries(p) for p in ("../tools/winport/knownvtidx.generated.txt", "old_knownvtidx.txt", "winport_knownvtidx.txt"))
+print(f"=== the old matcher against the committed file: {sum(1 for k in set(old) | set(committed) if old.get(k, (0,))[:3] != committed.get(k, (0,))[:3])} differ")
+print(f"=== knownvtidx: old matcher {len(old)}, new {len(new)}")
 for name in sorted(set(old) | set(new)):
     o, n = old.get(name), new.get(name)
     if o is None or n is None or o[:3] != n[:3]:
@@ -67,7 +72,7 @@ for cls in wanted:
 print("moved:", dict(corpus.moved))
 PY
 
-echo "=== windows.txt with the new knownvtidx, against the committed one"
+echo "=== windows.txt with the new knownvtidx (and matchfuncs), against the committed one"
 ver=$(grep -i '^ServerVersion=' ../game-windows/tf/steam.inf | cut -d= -f2 | tr -d '\r')
 python3 ../tools/winport/emitgamedata.py matches.json "$ver" datamaps.json winport_knownvtidx.txt > windows.new.txt 2>/dev/null
 diff -u ../gamedata/sigsegv/windows.txt windows.new.txt
