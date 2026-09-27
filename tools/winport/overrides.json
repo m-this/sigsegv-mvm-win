@@ -1957,5 +1957,9 @@
   "rva": "0x15d760",
   "vtidx": 460,
   "why": "read by hand from the weapon vtables, seven below Linux from IsEnergyWeapon (453/446) and GetParticleColor (457/450) on: SetBroken(bool) 461 is the empty ret 4 at 454, GetDropSkinOverride 465 is the -1 return at 458, and CTFCompoundBow, which overrides GetInitialAfterburnDuration (466), has its own body at 459 where CTFWeaponBuilder has the base one. 460 is the base's 0.0f return, folded with IBody::GetHeadSteadyDuration, so the slot names it and the detour on it is refused as folded"
+ },
+ "_ZN21CHeadlessHatmanAttack21RecomputeHomePositionEv": {
+  "rva": "0x59e700",
+  "why": "read by hand: the Linux body (0xec31b0) in order: the countdown at +0x4818 (Now against +0x4820, reset by +0x481c), the control point master handle, the loop over its points, then the chosen point's abs origin (CalcAbsolutePosition when dirty) stored as the home position at +0x480c; CHeadlessHatmanAttack::Update (0x59ece0) calls it right after SelectVictim (0x59e870), as Linux Update does; no argument, plain ret"
  }
 }
