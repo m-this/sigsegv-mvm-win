@@ -1216,5 +1216,10 @@
   "lib": "engine",
   "rva": "0x655dd0",
   "why": "read by hand: engine.dll's ED_ClearFreeFlag (0x1bd410) checks the index against sv.num_edicts (0x5eb48c), tests FL_EDICT_FREE in sv.edicts[index], decrements sv.free_edicts and clears bit index of this CBitVec (btr on dword index>>5), as the Linux engine clears g_FreeEdicts"
+ },
+ "_ZN6CTFBotD0Ev": {
+  "rva": "0x54e9d0",
+  "vtidx": 0,
+  "why": "read by hand: slot 0 of CTFBot's table, the scalar deleting destructor: calls the body at 0x54e470, tests the flags (&1, &4), frees through 0x1e9af0, ret 4. CTFBot has no subclass, so every bot is destroyed through it; ECAttr_Extensions clears its per-bot data here"
  }
 }
