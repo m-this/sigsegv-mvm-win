@@ -2008,11 +2008,11 @@
 				{
 					type  "fixed"
 					sym   "_ZN11CBasePlayer13CommitSuicideEbb"
-					addr  "0x2df600"
+					addr  "0x2df6f0"
 					build "10828683"
 					lib   "server"
-					vtidx "453"
-					// vtable
+					vtidx "454"
+					// verified: read by hand from the vtables: MSVC puts the two overloads in reverse declaration order, so slot 453 (0x2df600, ret 0xc) is CommitSuicide(const Vector&, bool, bool), which reads the force vector through its first argument, and slot 454 is (bool, bool), ret 8, as in CBasePlayer and CBaseMultiplayerPlayer; CTFPlayer overrides 454 with its own ret 8 body (0x4e6a90), as it overrides only (bool, bool) on Linux
 				}
 				"CBasePlayer::GetSteamID"
 				{
