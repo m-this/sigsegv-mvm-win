@@ -2481,6 +2481,16 @@
 					vtidx "240"
 					// verified: read by hand: slot 240 of CBaseCombatWeapon, Linux 246 less the 6 SetSubType (233) agrees on; the Linux body: both ammo types -1 returns true, then the select-on-empty flag, the owner as a player, clip1, the primary ammo count, clip2 and the secondary ammo count. CTFWeaponBase's slot 240 (0x6365d0) returns true for an energy weapon and jumps here
 				}
+				"CBaseCombatWeapon::GetViewModel"
+				{
+					type  "fixed"
+					sym   "_ZNK17CBaseCombatWeapon12GetViewModelEi"
+					addr  "0x1e1950"
+					build "10828683"
+					lib   "server"
+					vtidx "322"
+					// verified: read by hand: slot 322 of CBaseCombatWeapon (Linux 328; GetWorldModel +0xf6 at 323, GetAnimPrefix +0x146 at 324 and GetMaxClip1 0x1e1600 at 325 agree on the shift of 6). GetFileWeaponInfoFromHandle of m_hWeaponFileInfo (+0x642, +0x64e on Linux) plus 0xa6, szViewModel, the Linux body. CTFWeaponBase overrides the same slot (0x6361a0, AttribHookValue then GetTFWpnData) as Linux does at 328. Pops 4
+				}
 				"CBaseCombatWeapon::WeaponSound"
 				{
 					type  "fixed"
@@ -2508,6 +2518,25 @@
 					build "10828683"
 					lib   "server"
 					// verified: read by hand: the Linux body; thiscall popping 4. With a null owner it zeroes m_iState (+0x600, Linux +0x60c) through NetworkStateChanged, passes the old state to the OnActiveStateChanged slot (+0x430, Linux 274 less 6) and clears the 'BaseCombatWeapon_HideThink' think through ThinkSet (0x2025e0); then writes the owner's GetRefEHandle (vtable +8) to m_hOwner (+0x5b8, Linux +0x5c4) through NetworkStateChanged and ends in DispatchUpdateTransmitState (0x1eebd0). Weapon_Detach (0x1d9d10) calls it with null. The candidate at 0x1e4230 that the string ranking gave is the function before it, which has no padding between the two
+				}
+				"CBaseCombatWeapon::SetViewModel"
+				{
+					type  "fixed"
+					sym   "_ZN17CBaseCombatWeapon12SetViewModelEv"
+					addr  "0x1e44d0"
+					build "10828683"
+					lib   "server"
+					vtidx "252"
+					// verified: read by hand: slot 252 of CBaseCombatWeapon (Linux 258; SetViewModelIndex writing +0x5c8 at 249, SendWeaponAnim at 250 where CTFWeaponBase overrides it as Linux does at 256, HasWeaponIdleTimeElapsed at 253 agree on the shift of 6). The owner through m_hOwner, IsPlayer (+0x14c, Linux +0x150), CBasePlayer::GetViewModel(m_nViewModelIndex, false) (0x2e2490), then with m_nCustomViewmodelModelIndex (+0x65c, Linux +0x668) above 0 modelinfo GetModel and GetModelName into the view model's SetWeaponModel (+0x390, Linux +0x394), the Linux body. No argument
+				}
+				"CBaseCombatWeapon::SetCustomViewModel"
+				{
+					type  "fixed"
+					sym   "_ZN17CBaseCombatWeapon18SetCustomViewModelEPKc"
+					addr  "0x1dea90"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: for a non empty model, IsPrecacheAllowed (0x2016f0) saved, SetAllowPrecache(true) (0x2020a0), PrecacheModel(model, false) (0x1f86f0) clamped to 0 when negative into m_nCustomViewmodelModelIndex (+0x65c, Linux +0x668) with its network change, SetAllowPrecache back; else the index set to 0. The Linux body. One of the two functions in server.dll that write +0x65c. Pops 4
 				}
 				"CTFWeaponBase::DeflectEntity"
 				{
@@ -3121,6 +3150,15 @@
 					lib   "server"
 					vtidx "200"
 					// vtable
+				}
+				"CBaseFilter::PassesFilter"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseFilter12PassesFilterEP11CBaseEntityS1_"
+					addr  "0x259570"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: PassesFilterImpl(caller, entity) through slot 199 (+0x31c, the agreed slot), inverted when m_bNegated (+0x384, Linux +0x399) is set, the Linux body. CBaseTrigger::PassesTriggerFilters (0x360650) ends in it on m_hFilter (+0x400) with (this, entity), as on Linux. Pops 8
 				}
 				"CBaseFilter::PassesFilterImpl"
 				{
@@ -6846,6 +6884,15 @@
 					lib   "server"
 					vtidx "29"
 					// vtable index
+				}
+				"TE_TFExplosion"
+				{
+					type  "fixed"
+					sym   "_Z14TE_TFExplosionR16IRecipientFilterfRK6VectorS3_iiiii"
+					addr  "0x4706b0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: copies origin and normal to +0xc and +0x18 of the global at 0x10b406f0, which the static initializer builds with the name "TFExplosion", then the five ints to +0x24 through +0x34, and calls CBaseTempEntity::Create (0x434c20) with (filter, delay), the Linux body at the same offsets. 11 callers as on Linux, among them CTFBaseRocket::Explode, CTFWeaponBaseGrenadeProj::Explode, CTFProjectile_Flare::Explode_Air, CTFStickBomb::Smack and CTFPlayer::DoTauntAttack twice. cdecl, plain ret
 				}
 				"GetParticleSystemIndex"
 				{

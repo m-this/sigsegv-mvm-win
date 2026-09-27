@@ -1917,5 +1917,27 @@
  "_ZN10CTFNavArea15MakeNewTFMarkerEv": {
   "rva": "0x5d5970",
   "why": "read by hand: inc dword [0x9d23e8]; ret, the Linux add [m_masterTFMark], 1; ret. The same global is what TFMark (0x5d63f0) stores into +0x21c and IsTFMarked (0x5d5570) compares with it (Linux +0x220), and SelectSpawnArea (0x5ef2a0, by its VPROF string) calls it first and then GetGlobalTeam, CollectSurroundingAreas, IsTFMarked, TFMark and IsValidForWanderingPopulation, the Linux order; static, plain ret"
+ },
+ "_ZNK17CBaseCombatWeapon12GetViewModelEi": {
+  "rva": "0x1e1950",
+  "vtidx": 322,
+  "why": "read by hand: slot 322 of CBaseCombatWeapon (Linux 328; GetWorldModel +0xf6 at 323, GetAnimPrefix +0x146 at 324 and GetMaxClip1 0x1e1600 at 325 agree on the shift of 6). GetFileWeaponInfoFromHandle of m_hWeaponFileInfo (+0x642, +0x64e on Linux) plus 0xa6, szViewModel, the Linux body. CTFWeaponBase overrides the same slot (0x6361a0, AttribHookValue then GetTFWpnData) as Linux does at 328. Pops 4"
+ },
+ "_ZN17CBaseCombatWeapon12SetViewModelEv": {
+  "rva": "0x1e44d0",
+  "vtidx": 252,
+  "why": "read by hand: slot 252 of CBaseCombatWeapon (Linux 258; SetViewModelIndex writing +0x5c8 at 249, SendWeaponAnim at 250 where CTFWeaponBase overrides it as Linux does at 256, HasWeaponIdleTimeElapsed at 253 agree on the shift of 6). The owner through m_hOwner, IsPlayer (+0x14c, Linux +0x150), CBasePlayer::GetViewModel(m_nViewModelIndex, false) (0x2e2490), then with m_nCustomViewmodelModelIndex (+0x65c, Linux +0x668) above 0 modelinfo GetModel and GetModelName into the view model's SetWeaponModel (+0x390, Linux +0x394), the Linux body. No argument"
+ },
+ "_ZN17CBaseCombatWeapon18SetCustomViewModelEPKc": {
+  "rva": "0x1dea90",
+  "why": "read by hand: for a non empty model, IsPrecacheAllowed (0x2016f0) saved, SetAllowPrecache(true) (0x2020a0), PrecacheModel(model, false) (0x1f86f0) clamped to 0 when negative into m_nCustomViewmodelModelIndex (+0x65c, Linux +0x668) with its network change, SetAllowPrecache back; else the index set to 0. The Linux body. One of the two functions in server.dll that write +0x65c. Pops 4"
+ },
+ "_ZN11CBaseFilter12PassesFilterEP11CBaseEntityS1_": {
+  "rva": "0x259570",
+  "why": "read by hand: PassesFilterImpl(caller, entity) through slot 199 (+0x31c, the agreed slot), inverted when m_bNegated (+0x384, Linux +0x399) is set, the Linux body. CBaseTrigger::PassesTriggerFilters (0x360650) ends in it on m_hFilter (+0x400) with (this, entity), as on Linux. Pops 8"
+ },
+ "_Z14TE_TFExplosionR16IRecipientFilterfRK6VectorS3_iiiii": {
+  "rva": "0x4706b0",
+  "why": "read by hand: copies origin and normal to +0xc and +0x18 of the global at 0x10b406f0, which the static initializer builds with the name \"TFExplosion\", then the five ints to +0x24 through +0x34, and calls CBaseTempEntity::Create (0x434c20) with (filter, delay), the Linux body at the same offsets. 11 callers as on Linux, among them CTFBaseRocket::Explode, CTFWeaponBaseGrenadeProj::Explode, CTFProjectile_Flare::Explode_Air, CTFStickBomb::Smack and CTFPlayer::DoTauntAttack twice. cdecl, plain ret"
  }
 }
