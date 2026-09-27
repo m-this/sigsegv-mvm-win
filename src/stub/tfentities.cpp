@@ -170,6 +170,12 @@ IMPL_REL_AFTER(CUtlVector<CHandle<CTFGrenadePipebombProjectile>>, CTFPointWeapon
 
 MemberFuncThunk<const CTFPointWeaponMimic *, QAngle> CTFPointWeaponMimic::ft_GetFiringAngles("CTFPointWeaponMimic::GetFiringAngles");
 MemberFuncThunk<CTFPointWeaponMimic *, void> CTFPointWeaponMimic::ft_Fire("CTFPointWeaponMimic::Fire");
+#if defined _WINDOWS
+MemberFuncThunk<CTFPointWeaponMimic *, void> CTFPointWeaponMimic::ft_FireRocket       ("CTFPointWeaponMimic::FireRocket");
+MemberFuncThunk<CTFPointWeaponMimic *, void> CTFPointWeaponMimic::ft_FireGrenade      ("CTFPointWeaponMimic::FireGrenade");
+MemberFuncThunk<CTFPointWeaponMimic *, void> CTFPointWeaponMimic::ft_FireArrow        ("CTFPointWeaponMimic::FireArrow");
+MemberFuncThunk<CTFPointWeaponMimic *, void> CTFPointWeaponMimic::ft_FireStickyGrenade("CTFPointWeaponMimic::FireStickyGrenade");
+#endif
 
 
 IMPL_SENDPROP(int,      CMonsterResource, m_iBossHealthPercentageByte, CMonsterResource);

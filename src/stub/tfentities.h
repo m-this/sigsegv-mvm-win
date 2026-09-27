@@ -326,7 +326,21 @@ class CTFPointWeaponMimic : public CPointEntity
 public:
 
 	QAngle GetFiringAngles() const { return ft_GetFiringAngles(this); }
+#if defined _WINDOWS
+	/* No such function in server.dll: MSVC inlined it into both inputs. The
+	 * Linux body is this switch on the weapon type. */
+	void   Fire()
+	{
+		switch (this->m_nWeaponType) {
+		case 0: ft_FireRocket(this);        break;
+		case 1: ft_FireGrenade(this);       break;
+		case 2: ft_FireArrow(this);         break;
+		case 3: ft_FireStickyGrenade(this); break;
+		}
+	}
+#else
 	void   Fire()                  {        ft_Fire(this); }
+#endif
 
 	DECL_DATAMAP (bool, m_bCrits);
 	DECL_DATAMAP (float, m_flSpreadAngle);
@@ -344,6 +358,12 @@ public:
 private:
 	static MemberFuncThunk<const CTFPointWeaponMimic *, QAngle> ft_GetFiringAngles;
 	static MemberFuncThunk<CTFPointWeaponMimic *, void> ft_Fire;
+#if defined _WINDOWS
+	static MemberFuncThunk<CTFPointWeaponMimic *, void> ft_FireRocket;
+	static MemberFuncThunk<CTFPointWeaponMimic *, void> ft_FireGrenade;
+	static MemberFuncThunk<CTFPointWeaponMimic *, void> ft_FireArrow;
+	static MemberFuncThunk<CTFPointWeaponMimic *, void> ft_FireStickyGrenade;
+#endif
 };
 
 class CMonsterResource : public CBaseEntity
