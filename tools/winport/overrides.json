@@ -1164,5 +1164,10 @@
  "_ZN11CBaseEntity14SetAbsVelocityERK6Vector": {
   "rva": "0x1fb7d0",
   "why": "read by hand: the Linux body at offsets 0x18 lower; thiscall, ret 4. Returns when the argument equals m_vecAbsVelocity (+0x250, Linux +0x268), else InvalidatePhysicsRecursive(4) (0x201520), clears EFL_DIRTY_ABSVELOCITY in m_iEFlags (+0x13c), stores it, and with a move parent (+0x178) subtracts the parent's abs velocity (CalcAbsoluteVelocity 0x1ec810 when dirty), VectorIRotate through its coordinate frame (+0x268, CalcAbsolutePosition when dirty) and writes m_vecVelocity (+0x2c4) through the NetworkStateChanged slot (+0x2f8, Linux +0x300); without one it writes the argument there. CBaseEntity::ApplyAbsVelocityImpulse (0x1ff4b0) calls it with GetAbsVelocity plus the impulse, as on Linux"
+ },
+ "_ZN11CBasePlayer13CommitSuicideEbb": {
+  "rva": "0x2df6f0",
+  "vtidx": 454,
+  "why": "read by hand from the vtables: MSVC puts the two overloads in reverse declaration order, so slot 453 (0x2df600, ret 0xc) is CommitSuicide(const Vector&, bool, bool), which reads the force vector through its first argument, and slot 454 is (bool, bool), ret 8, as in CBasePlayer and CBaseMultiplayerPlayer; CTFPlayer overrides 454 with its own ret 8 body (0x4e6a90), as it overrides only (bool, bool) on Linux"
  }
 }
