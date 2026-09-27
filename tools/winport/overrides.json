@@ -1196,5 +1196,20 @@
   "rva": "0x5e1e60",
   "name": "CTFPointWeaponMimic::FireStickyGrenade",
   "why": "read by hand: the jump table InputFireMultiple (0x5e2460) indexes with m_nWeaponType (+0x384, Linux +0x39c) sends type 3 here, the Linux FireStickyGrenade's case; GetFiringAngles (0x5e22b0), AngleVectors, 0x1ee780 with \"tf_projectile_pipe\" (Linux: CreateNoSpawn of it), the larger of the two pipe functions as on Linux; thiscall, no arguments"
+ },
+ "_ZN8CTFSword16GetSwordSpeedModEv": {
+  "rva": "0x62c980",
+  "vtidx": 487,
+  "why": "read by hand: CTFSword's slot +0x79c (Linux +0x7bc, the same seven-slot shift as CanDecapitate +0x790 against +0x7ac): returns 1.0 while the holster flag (+0x828, Linux +0x831, the byte CTFDecapitationMeleeWeaponBase::Holster sets) is set, 0 without an owner that IsPlayer (vtable +0x14c, Linux +0x150), 1.0 when CanDecapitate (vtable +0x790) is false, else min(m_iDecapitations (+0x1f10), 4) times a constant plus a constant, the Linux body (0.08 and 1.0); thiscall, plain ret"
+ },
+ "_ZN8CTFSword17GetSwordHealthModEv": {
+  "rva": "0x62ca00",
+  "vtidx": 488,
+  "why": "read by hand: CTFSword's last primary slot +0x7a0 (Linux +0x7c0): 0 without an owner that IsPlayer (vtable +0x14c) or when CanDecapitate (vtable +0x790) is false, else min(m_iDecapitations (+0x1f10), 4) * 15 as shl 4 and sub, the Linux body; thiscall, plain ret"
+ },
+ "_ZL12g_FreeEdicts": {
+  "lib": "engine",
+  "rva": "0x655dd0",
+  "why": "read by hand: engine.dll's ED_ClearFreeFlag (0x1bd410) checks the index against sv.num_edicts (0x5eb48c), tests FL_EDICT_FREE in sv.edicts[index], decrements sv.free_edicts and clears bit index of this CBitVec (btr on dword index>>5), as the Linux engine clears g_FreeEdicts"
  }
 }
