@@ -1,5 +1,4 @@
-# Who references TeleporterThink's strings: the real TeleporterThink sets its
-# own context think, so it holds its VA.
-server string TeleporterContext
-server string bidirectional_teleport
-server string Building_Teleporter.Send
+# The function after TeleporterSend, which pushes "TeleporterContext" and
+# "bidirectional_teleport": TeleporterThink by the Linux body?
+server func 0x4d1e1d 600
+server +0x4d06a5
