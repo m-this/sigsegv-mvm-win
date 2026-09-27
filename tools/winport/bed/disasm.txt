@@ -1,10 +1,17 @@
-# PassesTriggerFilters ends in m_hFilter's PassesFilter
-server func 0x360650 300
-# who asks the schema for an attribute definition, by name and by index
-server callers 0x3b8ea0
-server callers 0x3b8e30
-# who calls SetModel and PrecacheModel (SetViewModel, SetCustomViewModel)
-server callers 0x1fc1e0
-server callers 0x1f86f0
-server string TFExplosion
-server string custom_view_model
+# the tail of PassesTriggerFilters, past its first ret: m_hFilter's PassesFilter
+server 0x36080d 60
+# slot 252 of CBaseCombatWeapon, by the shift of 6 around it: SetViewModel?
+server 0x1e44d0 120
+server 0x1e4000 60
+# GetAttributeByName? GetItemSchema then GetAttributeDefinitionByName on one argument
+server 0x52a200 80
+# the short callers of GetAttributeDefinition(int): GetStaticData?
+server 0x3a0f00 30
+server 0x3a0f70 30
+server 0x3c3b60 30
+server 0x3c4b30 30
+server 0x3a0bc0 40
+# TE_TFExplosion: CBaseTempEntity::Create's callers, and two Linux callers' calls
+server callers 0x434c20
+server 0x3a360 30
+server func 0x6022f0 300
