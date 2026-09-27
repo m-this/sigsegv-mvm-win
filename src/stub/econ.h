@@ -260,7 +260,13 @@ public:
 #else
 	CEconItemAttribute *GetAttributeByID(int def_idx) const            { return ft_GetAttributeByID      (this, def_idx); }
 #endif
+#if defined _WINDOWS
+	/* No such function in server.dll: nothing there calls it. Defined below,
+	 * once the schema is declared: the definition by name, then its index. */
+	CEconItemAttribute *GetAttributeByName(const char *name) const;
+#else
 	CEconItemAttribute *GetAttributeByName(const char *name) const     { return ft_GetAttributeByName    (this, name); }
+#endif
 	void IterateAttributes(IEconItemAttributeIterator *iter) const     {        ft_IterateAttributes     (this, iter); }
 	void AddAttribute(CEconItemAttribute *pAttr)                       {        ft_AddAttribute          (this, pAttr); }
 	void RemoveAttribute(const CEconItemAttributeDefinition *pAttrDef) {        ft_RemoveAttribute       (this, pAttrDef); }
@@ -551,7 +557,13 @@ public:
 	attribute_data_union_t *GetValuePtr() { return (attribute_data_union_t *) &this->m_iRawValue32; }
 	attribute_data_union_t GetValue() { return *(attribute_data_union_t *) &this->m_iRawValue32; }
 	
+#if defined _WINDOWS
+	/* Inlined into every caller in server.dll. Defined below, once the schema
+	 * is declared: the Linux body. */
+	CEconItemAttributeDefinition *GetStaticData() const;
+#else
 	CEconItemAttributeDefinition *GetStaticData() const { return ft_GetStaticData(this); }
+#endif
 
 	attrib_definition_index_t GetAttributeDefinitionIndex() const { return m_iAttributeDefinitionIndex; }
 
@@ -643,6 +655,19 @@ class CTFItemSchema : public CEconItemSchema {};
 
 extern StaticFuncThunk<CTFItemSchema *> ft_GetItemSchema;
 inline CTFItemSchema *GetItemSchema() { return ft_GetItemSchema(); }
+
+#if defined _WINDOWS
+inline CEconItemAttributeDefinition *CEconItemAttribute::GetStaticData() const
+{
+	return GetItemSchema()->GetAttributeDefinition(this->m_iAttributeDefinitionIndex);
+}
+
+inline CEconItemAttribute *CAttributeList::GetAttributeByName(const char *name) const
+{
+	CEconItemAttributeDefinition *pAttrDef = GetItemSchema()->GetAttributeDefinitionByName(name);
+	return pAttrDef != nullptr ? this->GetAttributeByID(pAttrDef->GetIndex()) : nullptr;
+}
+#endif
 
 class CItemGeneration
 {
