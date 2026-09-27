@@ -126,13 +126,13 @@ class Order(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             dump(d, "CFold",
                  "CFold::~CFold()", "CFold::~CFold()",
-                 "CFold::Enemy()",
+                 "CFold::Walk()",
                  (0x900, "CFold::Enemy() const"),
                  "CFold::Think()",
                  (0x900, "CFold::Enemy() const"))
             corpus = mv.Corpus(d)
-            # Slot 3 and 5 are one `return NULL` under one of its names, so
-            # neither is an Enemy overload as far as the order goes.
+            # Slot 3 and 5 are one `return NULL` under one of its names, and
+            # nothing else in the run is called Enemy: neither groups.
             self.assertEqual(corpus.order("CFold"), [0, 1, 2, 3, 4, 5])
 
     def test_a_missing_base_still_ends_a_run(self):
@@ -146,6 +146,17 @@ class Order(unittest.TestCase):
             corpus = mv.Corpus(d)
             self.assertIsNone(corpus.parent("CMove"))
             self.assertEqual(self.names("CMove", corpus), self.names("CMove", self.movement))
+
+    def test_a_folded_overload_stays_in_its_group(self):
+        with tempfile.TemporaryDirectory() as d:
+            dump(d, "CIter",
+                 "CIter::~CIter()", "CIter::~CIter()",
+                 (0x900, "CIter::On(int)"),
+                 "CIter::On(float)",
+                 "CIter::On(char const*)")
+            dump(d, "COther", "COther::~COther()", "COther::~COther()", "COther::Walk()", (0x900, "CIter::On(int)"))
+            corpus = mv.Corpus(d)
+            self.assertEqual(corpus.order("CIter"), [0, 1, 4, 3, 2])
 
     def test_align_collapses_the_destructor(self):
         how, aligned = mv.align(self.corpus.tables["CBase"], list(range(7)), self.corpus.order("CBase"))

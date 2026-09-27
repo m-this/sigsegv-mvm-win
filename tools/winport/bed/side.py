@@ -21,13 +21,19 @@ def head(va, n=60):
             break
     return pops, out
 corpus = mv.Corpus("linux-vtables")
-cls, lo, hi = sys.argv[1], int(sys.argv[2]), int(sys.argv[3])
+cls = sys.argv[1]
 linux = corpus.tables[cls]
 win = mv.read_windows(Path(f"win-vtables/{cls}.txt"))[0]
 _, new = mv.align(linux, win, corpus.order(cls))
 _, old = mv.align(linux, win)
 new = new or mv.collapse_destructors([linux[i] for i in corpus.order(cls)])
 old = old or mv.collapse_destructors(linux)
+if sys.argv[2].isdigit():
+    lo, hi = int(sys.argv[2]), int(sys.argv[3])
+else:
+    # A name: the slots around every one that holds it, old or new.
+    at = [i for i, sig in enumerate(new) if sys.argv[2] in sig] + [i for i, sig in enumerate(old) if sys.argv[2] in sig]
+    lo, hi = min(at) - 1, max(at) + 1
 print(f"--- {cls}: linux {len(linux)} win {len(win)}")
 for i in range(lo, min(hi + 1, len(win))):
     pops, ins = head(win[i], 10)

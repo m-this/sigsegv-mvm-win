@@ -78,6 +78,10 @@ for label, path in (("old", "/tmp/oldmv/matchfuncs.py"), ("new", "../tools/winpo
     agree = sum(1 for l, w in vt.items() if strings.get(l) == w)
     disagree = sum(1 for l, w in vt.items() if l in strings and strings[l] != w)
     print(f"  {label}: {len(vt)} pairs, {agree} agree with a string match, {disagree} disagree")
+    byaddr = {v: k for k, v in addr.items()}
+    for l, w in sorted(vt.items()):
+        if l in strings and strings[l] != w:
+            print(f"    {label} disagrees: {byaddr.get(l)} string {strings[l] - 0x10000000:#x} vtable {w - 0x10000000:#x}")
 
 print("=== why a base does not match")
 for cls, base in (("CBasePlayer", "CBaseCombatCharacter"), ("CBaseCombatCharacter", "CBaseFlex"), ("CBaseCombatWeapon", "CEconEntity"),
@@ -104,7 +108,7 @@ print("ambiguous:", corpus.ambiguous)
 PY
 
 echo "=== side by side"
-for q in "CBaseCombatCharacter 150 160" "CBaseCombatCharacter 180 200" "CEconItemAttributeIterator_ApplyAttributeString 0 9" "CGameMovement 0 13" "CTFGameMovement 20 25" "CSmokeStack 30 34" "CDisableVision 60 63" "CBotNPCBody 49 52" "CTFProjectile_SpellTransposeTeleport 243 246" "CPointHurt 147 150"; do
+for q in "CBaseCombatCharacter FInViewCone" "CBaseCombatCharacter RemoveAmmo" "CEconItemAttributeIterator_ApplyAttributeString 0 9" "CBasePlayer ChangeTeam" "CTFGameRules DeathNotice" "CTFProjectile_ThrowableBreadMonster Explode" "CTFPlayer RemoveAmmo"; do
   python3 ../tools/winport/bed/side.py $q
 done
 

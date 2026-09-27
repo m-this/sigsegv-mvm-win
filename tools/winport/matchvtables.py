@@ -313,20 +313,34 @@ class Corpus:
         # A base the dump lacks still ends somewhere, and its run is its own.
         cut = MISSING_BASES.get(own, 0)
         if start < cut < len(slots):
-            inherited += self.grouped(slots, start, cut)
+            inherited += self.grouped(self.grouping(cls, start, cut), start, cut)
             start = cut
 
         overridden = set()
         for j in range(start):
             if slots[j] and split_name(slots[j])[0] == own:
                 overridden.add(method(slots[j]))
-        new = self.grouped(slots, start, len(slots), DECLARED_FIRST.get(own, ()))
-        unsure = [g for g in self.group_names(slots, start, len(slots)) if g in overridden]
-        unsure = [g for g in unsure if g not in DECLARED_FIRST.get(own, ()) and g != method(slots[new[0]] or "")]
+        names = self.grouping(cls, start, len(slots))
+        new = self.grouped(names, start, len(slots), DECLARED_FIRST.get(own, ()))
+        unsure = [g for g in self.group_names(names, start, len(slots)) if g in overridden]
+        unsure = [g for g in unsure if g not in DECLARED_FIRST.get(own, ()) and g != method(names[new[0]] or "")]
         if unsure:
             self.ambiguous[cls] = unsure
         self._orders[cls] = inherited + new
         return self._orders[cls]
+
+    def grouping(self, cls, start, end):
+        """The names slots start..end group by. A folded body is left out of
+        every group, except where nm's name for it is an overload of a name
+        the run already has: CEconItemSpecificAttributeIterator's
+        OnIterateAttributeValue(float) is one `return true` with others, and
+        still one of seven overloads MSVC reverses as a whole."""
+        names, raw = list(self.names[cls]), self.tables[cls]
+        present = {method(names[i]) for i in range(start, end) if names[i]}
+        for i in range(start, end):
+            if names[i] is None and not unnamed(raw[i]) and member(raw[i]) and method(raw[i]) in present:
+                names[i] = raw[i]
+        return names
 
     @staticmethod
     def group_names(slots, start, end):
