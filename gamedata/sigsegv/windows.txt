@@ -8925,6 +8925,16 @@
 					lib   "server"
 					// call
 				}
+				"CTFBot::~CTFBot [D0]"
+				{
+					type  "fixed"
+					sym   "_ZN6CTFBotD0Ev"
+					addr  "0x54e9d0"
+					build "10828683"
+					lib   "server"
+					vtidx "0"
+					// verified: read by hand: slot 0 of CTFBot's table, the scalar deleting destructor: calls the body at 0x54e470, tests the flags (&1, &4), frees through 0x1e9af0, ret 4. CTFBot has no subclass, so every bot is destroyed through it; ECAttr_Extensions clears its per-bot data here
+				}
 				"CTFBot::GetDesiredPathLookAheadRange"
 				{
 					type  "fixed"

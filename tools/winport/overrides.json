@@ -1396,5 +1396,10 @@
  "_ZN11CBaseEntity6RemoveEv": {
   "rva": "0x1f8b90",
   "why": "read by hand: `push ecx; call 0x36d8b0; pop ecx; ret`, UTIL_Remove(this), the Linux body (a jmp to UTIL_Remove(CBaseEntity *)); 0x36d8b0 is what CServerTools::RemoveEntity (slot 21 of CServerTools, the SDK's index) calls with its argument, as the SDK's RemoveEntity does. The matcher found it through CBaseParticleEntity::Think and turned it away; thiscall, no argument"
+ },
+ "_ZN6CTFBotD0Ev": {
+  "rva": "0x54e9d0",
+  "vtidx": 0,
+  "why": "read by hand: slot 0 of CTFBot's table, the scalar deleting destructor: calls the body at 0x54e470, tests the flags (&1, &4), frees through 0x1e9af0, ret 4. CTFBot has no subclass, so every bot is destroyed through it; ECAttr_Extensions clears its per-bot data here"
  }
 }
