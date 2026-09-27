@@ -1,1 +1,2 @@
-# nothing asked
+# VScriptServerInit by its message
+server string Started VScript virtual machine
