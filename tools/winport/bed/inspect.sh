@@ -1,6 +1,6 @@
 #!/bin/bash
-# GetDataObject: who calls the loop over the accessors, and every
-# reference to the accessor array.
+# GetDataObject: every function reading the accessor array directly, and
+# the functions before DestroyAllDataObjects, where Linux keeps the rest.
 python3 - <<'PY'
 import re, bisect, collections, capstone, pefile
 from elftools.elf.elffile import ELFFile
@@ -175,20 +175,15 @@ def wafter(ref, n=40):
         print(line)
 
 print("######## GetDataObject")
-print("  callers of 0x2c4030: " + ", ".join(f"{f:#x}" for f in sorted({wstart(s) for s in wg.get(0x2c4030, ())})))
-for k, v in known.items():
-    if v in {wstart(s) for s in wg.get(0x2c4030, ())}: print(f"    known: {k} {v:#x}")
-for slot in range(9):
-    pat = (0x10a399d4 + 4 * slot).to_bytes(4, "little"); at = code.find(pat); n = 0
-    while at != -1:
-        f = wstart(tv + at)
-        ins = list(md.disasm(code[at-3:at+40], base + tv + at - 3))[:6]
-        if n < 6: print(f"  [{slot}] in {f:#x}" + (" " + kname[f] if f in kname else "") + ": " + "; ".join(f"{i.mnemonic} {i.op_str}" for i in ins))
-        n += 1; at = code.find(pat, at + 1)
-    print(f"  [{slot}] {n} references")
-for n in sorted(byname):
-    if "DataObject" in n: print(f"  linux {byname[n][0]:#x} size {byname[n][1]} {n}")
-for a, n in objs.items():
-    if "DataObjectAccess" in n: print(f"  linux object {a:#x} {n}")
-ldis("_ZN11CBaseEntity21DestroyAllDataObjectsEv", 60)
+pat = (0x10a399d4).to_bytes(4, "little"); at = code.find(pat); fs = set()
+while at != -1: fs.add(wstart(tv + at)); at = code.find(pat, at + 1)
+for f in sorted(fs): print(f"  references [0]: {f:#x} ({len(wg.get(f, ()))} callers) ret {wpop(f)}  {whead(f, 8)}")
+for i in md.disasm(code[0x2c3e40-tv:0x2c4030-tv], base + 0x2c3e40):
+    line = f"  {i.address-base:#x}  {i.mnemonic} {i.op_str}"
+    if i.mnemonic in ("call", "jmp") and i.op_str.startswith("0x"): line += f"    -> {int(i.op_str, 16) - base:#x}"
+    print(line)
+for f in (0x2c3f00, 0x2c3f40, 0x2c3f80, 0x2c3fb0, 0x2c3ff0):
+    print(f"  {f:#x}: {len(wg.get(f, ()))} direct callers: " + ", ".join(f"{wstart(s):#x}" for s in sorted(wg.get(f, ()))[:12]))
+ldis("_ZN11CBaseEntity17DestroyDataObjectEi", 40)
+ldis("_ZN11CBaseEntity16CreateDataObjectEi", 40)
 PY
