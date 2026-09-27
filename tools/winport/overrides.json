@@ -1655,10 +1655,43 @@
  "_ZN12CTFGameRules14BroadcastSoundEiPKciP11CBasePlayer": {
   "rva": "0x4836e0",
   "vtidx": 219,
-  "why": "read by hand: slot 219 of CTFGameRules' table, where CTeamplayRoundBasedRules has 0x34dab0; drops the player unless its virtual at +0x14c (Linux +0x150) says so, then fires 'teamplay_broadcast_audio' with team, sound, additional_flags and the player's user id, the Linux body; ret 16"
+  "why": "read by hand: slot 219 of CTFGameRules' table, where CTeamplayRoundBasedRules has 0x34dab0; drops the player unless its virtual at +0x14c (Linux +0x150) says so, then fires 'teamplay_broadcast_audio' with team, sound, additional_flags and the player key, the Linux body; ret 16"
  },
  "_Z19TE_TFParticleEffectR16IRecipientFilterfPKc6Vector6QAngleP11CBaseEntity20ParticleAttachment_t": {
   "rva": "0x470860",
   "why": "read by hand: GetParticleSystemIndex on the name, the Vector at +0x14 and QAngle at +0x20 by value, the entity at +0x2c and attachment at +0x30 into the temp entity, the Linux argument layout; cdecl, plain ret; 60 direct callers, the most used overload as on Linux (45). 0x470750 is the two-Vector overload (arguments up to +0x38, two callers on each side)"
+ },
+ "_ZN12CTFGameRules19BetweenRounds_ThinkEv": {
+  "rva": "0x483430",
+  "vtidx": 207,
+  "why": "read by hand: slot 207 of CTFGameRules' table (Linux 209, the two-slot shift of RoundCleanupShouldIgnore at 190 and BroadcastSound at 219); the ready-status countdown check, IsCompetitiveMode (which Linux inlines as GTFGCClientSystem and GetMatchGroupDescription), PlayerReadyStatus_HaveMinPlayersToEnable, then CheckReadyRestart (0x34dda0), the Linux body's order; ret. The matcher's 0x49e310 is slot 230, RoundRespawn"
+ },
+ "_Z22DispatchParticleEffectPKc20ParticleAttachment_tP11CBaseEntityib": {
+  "rva": "0x2a9d10",
+  "why": "read by hand: GetParticleSystemIndex on the name, the entity at +0x10 (its index, its abs origin) and the 'ParticleEffect' dispatch, with no LookupAttachment, so the integer attachment overload; cdecl, plain ret; 14 direct callers against Linux's 16, one of which is the attachment-name overload Windows inlines"
+ },
+ "_Z22DispatchParticleEffectPKc20ParticleAttachment_tP11CBaseEntityS0_6VectorS4_bb": {
+  "rva": "0x2a9b30",
+  "why": "read by hand: LookupAttachment on the attachment name, GetParticleSystemIndex and the 'ParticleEffect' dispatch with the colours, the Linux body; cdecl, plain ret; one direct caller on each side (ApplyPostHitEffects)"
+ },
+ "_Z22DispatchParticleEffectPKc6Vector6QAngleS1_S1_bP11CBaseEntityi": {
+  "rva": "0x2a9900",
+  "why": "read by hand: GetParticleSystemIndex, the origin at +0xc and the angles at +0x18 by value, the entity read at +0x40, which is where this overload (origin, angles, two colours, bool, entity, attachment) has it; 'ParticleEffect'; cdecl, plain ret; one direct caller on each side (the energy ring's impact)"
+ },
+ "_Z22CreateSpellSpawnZombieP20CBaseCombatCharacterRK6Vectori": {
+  "rva": "0x5bb460",
+  "why": "read by hand: creates 'tf_projectile_spellspawnzombie', sets the detonate time and DispatchSpawn, the Linux body; cdecl, plain ret; two direct callers as on Linux. 0x5aca40, which shares the calls, makes Merasmus' bomb"
+ },
+ "_ZN11CBaseEntity9EmitSoundER16IRecipientFilteriPKcPK6VectorfPf": {
+  "rva": "0x32e640",
+  "why": "read by hand: a null name check, the EmitSound_t built from its arguments and the call into EmitSound(filter, index, EmitSound_t&), the Linux body; cdecl, plain ret; 54 direct callers, as Linux has 54"
+ },
+ "_ZN9CTFPlayer16DropCurrencyPackE17CurrencyRewards_tibP11CBasePlayer": {
+  "rva": "0x4eba20",
+  "why": "read by hand: 'item_currencypack_small/medium/large' through CBaseEntity::Create, 'item_currencypack_custom' through CreateNoSpawn, the random spread, DispatchSpawn and CTFPowerup::DropSingleInstance, the Linux body; ret 16 for its four arguments; one direct caller (Event_Killed) as on Linux"
+ },
+ "_Z19TE_TFParticleEffectR16IRecipientFilterfPKc6VectorS3_6QAngleP11CBaseEntity": {
+  "rva": "0x470750",
+  "why": "read by hand: GetParticleSystemIndex, two Vectors and a QAngle by value and the entity at +0x38, this overload's layout; cdecl, plain ret; two direct callers on each side. 0x470860 is the attachment overload"
  }
 }

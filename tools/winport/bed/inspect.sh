@@ -1,7 +1,5 @@
 #!/bin/bash
-# Round seven: BetweenRounds_Think at slot 207, the particle dispatchers, the
-# static EmitSound, ScreenShake, DropCurrencyPack, and the callees of known
-# callers for the small ones.
+# Round eight: small targets through the callees of their known callers.
 python3 - <<'PY'
 import re, bisect, collections, capstone, pefile
 from elftools.elf.elffile import ELFFile
@@ -229,42 +227,26 @@ def side(cls, lo, hi, shift=0):
         print(f"  L[{k}] {l[:60]:60} | {ws[:150]}")
 
 
-def callees_of(rva, label=""):
-    print(f"######## callees of {rva:#x} {label}")
-    seen = []
-    for t in wcallees(rva, 0x3000):
-        if t not in seen: seen.append(t)
-    for t in seen:
-        if tv <= t < tv + len(code):
-            print(f"    {t:#x} ret {wpop(t)} {kname.get(t, '')} {whead(t, 5)}")
-
 for sym, rva in [
- ("_ZN12CTFGameRules19BetweenRounds_ThinkEv", 0x483430),
- ("_Z22DispatchParticleEffectPKc20ParticleAttachment_tP11CBaseEntityib", 0x2a9d10),
- ("_Z22DispatchParticleEffectPKc20ParticleAttachment_tP11CBaseEntityS0_6VectorS4_bb", 0x2a9b30),
- ("_Z22DispatchParticleEffectPKc6VectorS1_6QAngleP11CBaseEntity", 0x2a9900),
- ("_Z22CreateSpellSpawnZombieP20CBaseCombatCharacterRK6Vectori", 0x5aca40),
- ("_Z22CreateSpellSpawnZombieP20CBaseCombatCharacterRK6Vectori", 0x5bb460),
- ("_ZN11CBaseEntity9EmitSoundER16IRecipientFilteriPKcPK6VectorfPf", 0x32e640),
- ("_Z16UTIL_ScreenShakeRK6Vectorffff14ShakeCommand_tb", 0x288200),
- ("_ZN9CTFPlayer16DropCurrencyPackE17CurrencyRewards_tibP11CBasePlayer", 0x4eba20),
- ("_ZN15CTFGameMovement19PreventBunnyJumpingEv", 0x473000),
+ ("_ZNK20CTFPlayerClassShared16GetHandModelNameEi", 0x531fc0),
+ ("_ZN12CTFSpellBook16SetSelectedSpellEi", 0x5bc970),
+ ("_ZN14CTFSniperRifle15CreateSniperDotEv", 0x62c180),
+ ("_ZN14CTFSniperRifle15CreateSniperDotEv", 0x62b1a0),
+ ("_ZN15CTFGameMovement19PreventBunnyJumpingEv", 0x471350),
+ ("_ZNK12CTFGameRules13IsUsingSpellsEv", 0x492a30),
+ ("_ZNK12CTFGameRules13IsUsingSpellsEv", 0x492a20),
 ]:
-    try: cmp2(sym, rva)
+    try:
+        cmp2(sym, rva)
     except Exception as e: print("  error", e)
-print("######## DispatchParticleEffect overloads on Linux")
-for n in sorted(byname):
-    if n.startswith("_Z22DispatchParticleEffect"): print(f"  {n} callers {len({lholder(s) for s in lg.get(byname[n][0], ())})} size {byname[n][1]}")
-for r in (0x2a9900, 0x2a9a10, 0x2a9b30, 0x2a9d10):
-    print(f"  win {r:#x} callers {len({wstart(s) for s in wg.get(r, ())})} ret {wpop(r)}")
-for f in (0x2a9d10, 0x2a9900):
-    wdis(f, 30)
-for rva, label in [(0x5bc7e0, "RollNewSpell"), (0x3a0270, "UpdateModelToClass"), (0x62bda0, "CTFSniperRifleClassic::ItemPostFrame"), (0x3ca340, "GetBaseItemForClass"), (0x4720e0, "CheckJumpButton")]:
-    callees_of(rva, label)
-side("CTeamplayRoundBasedRules", 226, 243, 2)
-side("CTFGameRules", 226, 250, 2)
-ldis("_ZN24CTeamplayRoundBasedRules28GetMinTimeWhenPlayerMaySpawnEP11CBasePlayer", 50)
-ldis("_ZN12CTFSpellBook16SetSelectedSpellEi", 40)
-ldis("_ZNK20CTFPlayerClassShared16GetHandModelNameEi", 20)
-ldis("_ZN14CTFSniperRifle15CreateSniperDotEv", 30)
+for sym, rva, n in [
+ ("_ZNK20CTFPlayerClassShared16GetHandModelNameEi", 0x531fc0, 30),
+ ("_ZNK12CTFGameRules13IsUsingSpellsEv", 0x492a30, 30),
+ ("_ZN15CTFGameMovement19PreventBunnyJumpingEv", 0x471350, 60),
+ ("_ZN12CTFSpellBook16SetSelectedSpellEi", 0x5bc970, 50),
+]:
+    ldis(sym, 70); wdis(rva, n)
+print("callers:")
+for r in (0x531fc0, 0x5bc970, 0x62c180, 0x62b1a0, 0x471350, 0x492a30, 0x492a20):
+    wcallers(r)
 PY
