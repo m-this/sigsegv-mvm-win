@@ -355,6 +355,25 @@ bool CBaseEntity::ClassMatchesComplex(const char *pszClassOrWildcard)
 
 
 #if defined _WINDOWS
+/* Walk the datamaps from the entity's own to its bases and set var from the
+ * first key or output field whose external name matches, ignoring case. */
+bool CBaseEntity::ReadKeyField(const char *name, variant_t *var)
+{
+	if (name == nullptr) return false;
+	for (datamap_t *dmap = this->GetDataDescMap(); dmap != nullptr; dmap = dmap->baseMap) {
+		for (int i = 0; i < dmap->dataNumFields; ++i) {
+			const typedescription_t &desc = dmap->dataDesc[i];
+			if ((desc.flags & (FTYPEDESC_OUTPUT | FTYPEDESC_KEY)) && V_stricmp(desc.externalName, name) == 0) {
+				var->Set(desc.fieldType, (char *)this + desc.fieldOffset[TD_OFFSET_NORMAL]);
+				return true;
+			}
+		}
+	}
+	return false;
+}
+#endif
+
+#if defined _WINDOWS
 /* The SDK's per type object store (entitydatainstantiator.h). */
 class IEntityDataInstantiator
 {

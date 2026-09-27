@@ -362,7 +362,13 @@ public:
 	int DispatchUpdateTransmitState()                                                                                       { return ft_DispatchUpdateTransmitState   (this); }
 	void SetEffects(int nEffects)                                                                                           {        ft_SetEffects                    (this, nEffects); }
 	void AddEffects(int nEffects)                                                                                           {        ft_AddEffects                    (this, nEffects); }
+#if defined _WINDOWS
+	/* No body in server.dll: MSVC inlined it into CC_Ent_Dump, its one caller.
+	 * Written in baseentity.cpp from the Linux body. */
+	bool ReadKeyField(const char *name, variant_t *var);
+#else
 	bool ReadKeyField(const char *name, variant_t *var)                                                                     { return ft_ReadKeyField                  (this, name, var); }
+#endif
 	IPhysicsObject *VPhysicsInitStatic()                                                                                    { return ft_VPhysicsInitStatic            (this); }
 #if defined _WINDOWS
 	/* No such function in server.dll: MSVC inlined it everywhere. Written in
