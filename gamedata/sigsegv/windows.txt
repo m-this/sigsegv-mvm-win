@@ -248,21 +248,21 @@
 				{
 					type  "fixed"
 					sym   "_ZN11CBotNPCBody14AimHeadTowardsERK6VectorN5IBody18LookAtPriorityTypeEfP13INextBotReplyPKc"
-					addr  "0x597ce0"
+					addr  "0x597c70"
 					build "10828683"
 					lib   "server"
-					vtidx "50"
-					// vtable
+					vtidx "51"
+					// verified: read by hand: MSVC reverses the two AimHeadTowards overloads. Slot 51 reads three floats through its first argument and subtracts the eye position, then VectorAngles into +0x24, the Linux Vector body; ret 0x14 as both are
 				}
 				"CBotNPCBody::AimHeadTowards [CBaseEntity *]"
 				{
 					type  "fixed"
 					sym   "_ZN11CBotNPCBody14AimHeadTowardsEP11CBaseEntityN5IBody18LookAtPriorityTypeEfP13INextBotReplyPKc"
-					addr  "0x597c70"
+					addr  "0x597ce0"
 					build "10828683"
 					lib   "server"
-					vtidx "51"
-					// vtable
+					vtidx "50"
+					// verified: read by hand: MSVC reverses the two AimHeadTowards overloads. Slot 50 returns on a null first argument and calls the entity's +0x270 virtual (its eye position) before VectorAngles into +0x24, the Linux CBaseEntity* body; ret 0x14 as both are
 				}
 				"PlayerBody::GetEntity"
 				{
@@ -799,11 +799,11 @@
 				{
 					type  "fixed"
 					sym   "_ZNK7IVision11IsAbleToSeeEP11CBaseEntityNS_20FieldOfViewCheckTypeEP6Vector"
-					addr  "0x425850"
+					addr  "0x4259a0"
 					build "10828683"
 					lib   "server"
-					vtidx "61"
-					// vtable
+					vtidx "62"
+					// verified: read by hand from IVision, CDisableVision and CTFBotVision: MSVC puts the two IsAbleToSee overloads in reverse declaration order. Slot 62 pops 12 and its VPROF line is 0x23a, the Linux entity overload's; slot 61 (0x425850) pops 8 and carries line 0x269, the (const Vector&, FieldOfViewCheckType) overload
 				}
 				"IVision::IsLineOfSightClearToEntity"
 				{
@@ -964,7 +964,8 @@
 					addr  "0x2017c0"
 					build "10828683"
 					lib   "server"
-					// string
+					vtidx "33"
+					// verified: read by hand from CBaseEntity's vtable: MSVC reverses the three KeyValue overloads, so slot 31 (0x201d30) formats the Vector at the second argument's +0,+4,+8, slot 32 (0x201d90) formats a float, and slot 33 is (const char *, const char *), the address the table already had
 				}
 				"CBaseEntity::GetKeyValue"
 				{
@@ -1287,21 +1288,21 @@
 				{
 					type  "fixed"
 					sym   "_ZN11CBaseEntity8FVisibleEPS_iPS0_"
-					addr  "0x1f09f0"
+					addr  "0x1f0b20"
 					build "10828683"
 					lib   "server"
-					vtidx "148"
-					// vtable
+					vtidx "149"
+					// verified: read by hand: MSVC reverses the two FVisible overloads. Slot 149 takes the entity in its first argument, tests a flag in its +0x140 and calls EyePosition (+0x224, slot 137) on it as well as on this, the Linux CBaseEntity* body; ret 0xc like slot 148
 				}
 				"CBaseEntity::FVisible [vec]"
 				{
 					type  "fixed"
 					sym   "_ZN11CBaseEntity8FVisibleERK6VectoriPPS_"
-					addr  "0x1f0b20"
+					addr  "0x1f09f0"
 					build "10828683"
 					lib   "server"
-					vtidx "149"
-					// vtable
+					vtidx "148"
+					// verified: read by hand: MSVC reverses the two FVisible overloads. Slot 148 calls EyePosition on this only and traces to the Vector its first argument points to, with the 0x4041 to 0x2004041 mask swap of the Linux Vector body; ret 0xc like slot 149
 				}
 				"CBaseEntity::Touch"
 				{
@@ -3443,11 +3444,11 @@
 				{
 					type  "fixed"
 					sym   "_ZN9CGameText8KeyValueEPKcS1_"
-					addr  "0x201d30"
+					addr  "0x298dc0"
 					build "10828683"
 					lib   "server"
-					vtidx "31"
-					// vtable index
+					vtidx "33"
+					// verified: read by hand: slot 33 of CGameText, where CBaseEntity's (const char *, const char *) KeyValue sits once MSVC reverses the three overloads; it compares the key with two strings and otherwise calls CBaseEntity::KeyValue (0x2017c0), the Linux body's shape; ret 8. The old slot 31 (0x201d30) is CBaseEntity::KeyValue(const char *, const Vector &)
 				}
 				"CGameUI::Deactivate"
 				{
@@ -4476,11 +4477,11 @@
 				{
 					type  "fixed"
 					sym   "_ZN24CTFWeaponBaseGrenadeProj11InitGrenadeERK6VectorS2_P20CBaseCombatCharacterRK13CTFWeaponInfo"
-					addr  "0x63a170"
+					addr  "0x63a140"
 					build "10828683"
 					lib   "server"
-					vtidx "244"
-					// vtable
+					vtidx "245"
+					// verified: read by hand: MSVC reverses the two InitGrenade overloads. Slot 245 pops 16 and calls this slot 244 (+0x3d0) with the weapon info's +0x6f8 and +0x780, the Linux (..., const CTFWeaponInfo &) body; slot 244 (0x63a170) pops 20 and is the (..., int, float) overload
 				}
 				"CTFWeaponBaseGrenadeProj::SetDetonateTimerLength"
 				{
@@ -4778,21 +4779,21 @@
 				{
 					type  "fixed"
 					sym   "_ZN13CGameMovement10AccelerateER6Vectorff"
-					addr  "0x278040"
+					addr  "0x2733d0"
 					build "10828683"
 					lib   "server"
-					vtidx "20"
-					// vtable index
+					vtidx "22"
+					// verified: read by hand: slot 22 of CGameMovement, ret 12. It calls slot 21 (CanAccelerate) and then dots the wish direction with the velocity at mv+0x44..0x4c, the Linux body. Linux slot 21 is one higher on Windows because MSVC moves GetPlayerMins()/GetPlayerMaxs() up to the bool overloads; the old slot 20 (0x278040) is GetAirSpeedCap, fld; ret
 				}
 				"CGameMovement::AirAccelerate"
 				{
 					type  "fixed"
 					sym   "_ZN13CGameMovement13AirAccelerateER6Vectorff"
-					addr  "0x274e30"
+					addr  "0x273580"
 					build "10828683"
 					lib   "server"
-					vtidx "16"
-					// vtable index
+					vtidx "18"
+					// verified: read by hand: slot 18 of CGameMovement, ret 12. Returns early when the player is dead (+0xb84, Linux +0xb9c) or in a water jump (+0xf08, Linux +0xf20), then calls slot 20 (GetAirSpeedCap), as the Linux body and the one it tail-calls do. Linux slot 17 is one higher on Windows for the same GetPlayerMins/Maxs grouping; the old slot 16 (0x274e30) takes no arguments
 				}
 				"CTFPowerupBottle::SetNumCharges"
 				{
@@ -6459,11 +6460,11 @@
 				{
 					type  "fixed"
 					sym   "_ZN15CTFGameMovement15PlayerSolidMaskEb"
-					addr  "0x476370"
+					addr  "0x475320"
 					build "10828683"
 					lib   "server"
-					vtidx "10"
-					// vtable
+					vtidx "12"
+					// verified: read by hand: slot 12 of CTFGameMovement, ret 4. With m_pTFPlayer (+0x16b8) in condition 0x4d it returns 0x1400b; otherwise, unless the flag at +0x16bc is set, the team (2 or 3) picks 0x1000 or 0x800, ORed into CGameMovement::PlayerSolidMask (0x279390, CGameMovement's slot 12), the Linux body. The old 0x476370 at slot 10 is TracePlayerBBox, ret 20: MSVC lays GetPlayerMins() and GetPlayerMaxs() (Linux 27, 28) out next to the bool overloads, so slots 9 to 26 on Linux sit one higher on Windows, not one lower
 				}
 				"CMannVsMachineChangeChallengeIssue::ExecuteCommand"
 				{
@@ -7102,10 +7103,10 @@
 				{
 					type  "fixed"
 					sym   "_ZN12CTFGameRulesC1Ev"
-					addr  "0x47ad20"
+					addr  "0x47ad50"
 					build "10828683"
 					lib   "server"
-					// string
+					// verified: read by hand: the function that writes CTFGameRules' vtable (0x10860520, found through its RTTI locator) at offset 0 and the secondary one (0x10860904) at +0x25c after calling the base constructor, then fills +0x8e0..+0x8f0 with 0, +0x978..+0x988 with -1, a function pointer at +0x9c4 and clears +0xdac, as the Linux C1 body does after CTeamplayRoundBasedRules' constructor; ret. The other writer of the vtable, 0x47c750, is the destructor. The old 0x47ad20 is a small one-argument constructor of another class, ret 4
 				}
 				"CTFGameRules::GetAssister"
 				{
@@ -7320,10 +7321,10 @@
 				{
 					type  "fixed"
 					sym   "_Z17VScriptServerInitv"
-					addr  "0x38a700"
+					addr  "0x38a790"
 					build "10828683"
 					lib   "server"
-					// string
+					// verified: read by hand: the function holding both references to "VSCRIPT: Started VScript virtual machine using script language '%s'" (0x38a860, 0x38a87c); it checks scriptmanager, reads a command line parameter and compares it, creates the VM when there is none and prints the message, the Linux head in order. The old 0x38a700 just before it is a CUtlLinkedList unlink, ret 4
 				}
 				""
 				{
@@ -10387,10 +10388,10 @@
 				{
 					type  "fixed"
 					sym   "_Z17VScriptServerInitv"
-					addr  "0x38a700"
+					addr  "0x38a790"
 					build "10828683"
 					lib   "server"
-					// string
+					// verified: read by hand: the function holding both references to "VSCRIPT: Started VScript virtual machine using script language '%s'" (0x38a860, 0x38a87c); it checks scriptmanager, reads a command line parameter and compares it, creates the VM when there is none and prints the message, the Linux head in order. The old 0x38a700 just before it is a CUtlLinkedList unlink, ret 4
 				}
 				"CServerGameDLL::GetServerBrowserMapOverride"
 				{
