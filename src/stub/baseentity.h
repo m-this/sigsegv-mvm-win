@@ -364,7 +364,13 @@ public:
 	void AddEffects(int nEffects)                                                                                           {        ft_AddEffects                    (this, nEffects); }
 	bool ReadKeyField(const char *name, variant_t *var)                                                                     { return ft_ReadKeyField                  (this, name, var); }
 	IPhysicsObject *VPhysicsInitStatic()                                                                                    { return ft_VPhysicsInitStatic            (this); }
+#if defined _WINDOWS
+	/* No such function in server.dll: MSVC inlined it everywhere. Written in
+	 * baseentity.cpp from the Linux body. */
+	void *GetDataObject(int type);
+#else
 	void *GetDataObject(int type)                                                                                           { return ft_GetDataObject                 (this, type); }
+#endif
 	int SetTransmitState(int state)                                                                                         { return ft_SetTransmitState              (this, state); }
 	void FireNamedOutput(const char *pszOutput, variant_t variant, CBaseEntity *pActivator, CBaseEntity *pCaller, float flDelay) { return ft_FireNamedOutput          (this, pszOutput, variant, pActivator, pCaller, flDelay); }
 	void ApplyAbsVelocityImpulse(const Vector &impulse)                                                                     {        ft_ApplyAbsVelocityImpulse       (this, impulse); }

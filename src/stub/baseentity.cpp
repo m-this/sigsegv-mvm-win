@@ -352,3 +352,29 @@ bool CBaseEntity::ClassMatchesComplex(const char *pszClassOrWildcard)
 	return *query == '\0' || *query == '*';
 }
 #endif
+
+
+#if defined _WINDOWS
+/* The SDK's per type object store (entitydatainstantiator.h). */
+class IEntityDataInstantiator
+{
+public:
+	virtual ~IEntityDataInstantiator() {}
+	virtual void *GetDataObject(const CBaseEntity *instance) = 0;
+	virtual void *CreateDataObject(const CBaseEntity *instance) = 0;
+	virtual void DestroyDataObject(const CBaseEntity *instance) = 0;
+};
+
+static GlobalThunk<IEntityDataInstantiator *[32]> g_DataObjectAccessors("g_DataObjectAccessSystem::m_Accessors [windows]");
+
+/* The Linux body tests the type's bit in m_fDataObjectTypes before asking the
+ * type's accessor. The bit is set and cleared together with the accessor's
+ * entry, so the accessor alone gives the same answer: null when the entity
+ * has no object of that type. */
+void *CBaseEntity::GetDataObject(int type)
+{
+	if (type < 0 || type >= 32) return nullptr;
+	IEntityDataInstantiator *accessor = g_DataObjectAccessors[type];
+	return accessor != nullptr ? accessor->GetDataObject(this) : nullptr;
+}
+#endif
