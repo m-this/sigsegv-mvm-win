@@ -1,6 +1,6 @@
 #!/bin/bash
-# UseActionSlotItemReleased where the command calls it, the
-# IterateAttributes CEconItemView calls, and GetDataObject by its bit test.
+# GetDataObject: who calls the loop over the accessors, and every
+# reference to the accessor array.
 python3 - <<'PY'
 import re, bisect, collections, capstone, pefile
 from elftools.elf.elffile import ELFFile
@@ -174,27 +174,21 @@ def wafter(ref, n=40):
             if i.mnemonic == "call": line += f"  ret {wpop(t)}  {whead(t, 6)}"
         print(line)
 
-print("######## UseActionSlotItemReleased")
-wdis(0x514510, 200)
-print("  callers of 0x514510: " + ", ".join(f"{f:#x}" for f in sorted({wstart(s) for s in wg.get(0x514510, ())})))
-ldis("_ZNK12CTFGameRules20IsUsingGrapplingHookEv", 20)
-
-print("######## CEconItemDefinition::IterateAttributes")
-wdis(0x3bba50, 90)
-print("  callers of 0x3bba50: " + ", ".join(f"{f:#x}" for f in sorted({wstart(s) for s in wg.get(0x3bba50, ())})))
-
 print("######## GetDataObject")
-seen = set()
-at = code.find(b"\x0f\xa3")
-while at != -1:
-    ins = list(md.disasm(code[at:at+48], base + tv + at))[:10]
-    txt = "; ".join(f"{i.mnemonic} {i.op_str}" for i in ins)
-    if ins and ins[0].mnemonic == "bt" and "0x1f" in txt and "*4 + 0x" in txt:
+print("  callers of 0x2c4030: " + ", ".join(f"{f:#x}" for f in sorted({wstart(s) for s in wg.get(0x2c4030, ())})))
+for k, v in known.items():
+    if v in {wstart(s) for s in wg.get(0x2c4030, ())}: print(f"    known: {k} {v:#x}")
+for slot in range(9):
+    pat = (0x10a399d4 + 4 * slot).to_bytes(4, "little"); at = code.find(pat); n = 0
+    while at != -1:
         f = wstart(tv + at)
-        print(f"  bt at {tv+at:#x} in {f:#x} ({len(wg.get(f, ()))} callers) ret {wpop(f)}: {txt}")
-        seen.add(f)
-    at = code.find(b"\x0f\xa3", at + 1)
-for f in sorted(seen, key=lambda f: -len(wg.get(f, ())))[:3]: wdis(f, 40)
-for k in ("_ZN11CBaseEntity8TeleportEPK6VectorPK6QAngleS2_", "_ZN11CBaseEntity9SetParentEPS_i"):
-    print(f"  {k} calls: " + ", ".join(f"{t:#x}" for t in wcallees(known[k]) if t in seen))
+        ins = list(md.disasm(code[at-3:at+40], base + tv + at - 3))[:6]
+        if n < 6: print(f"  [{slot}] in {f:#x}" + (" " + kname[f] if f in kname else "") + ": " + "; ".join(f"{i.mnemonic} {i.op_str}" for i in ins))
+        n += 1; at = code.find(pat, at + 1)
+    print(f"  [{slot}] {n} references")
+for n in sorted(byname):
+    if "DataObject" in n: print(f"  linux {byname[n][0]:#x} size {byname[n][1]} {n}")
+for a, n in objs.items():
+    if "DataObjectAccess" in n: print(f"  linux object {a:#x} {n}")
+ldis("_ZN11CBaseEntity21DestroyAllDataObjectsEv", 60)
 PY
