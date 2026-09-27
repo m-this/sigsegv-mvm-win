@@ -4596,6 +4596,15 @@
 					lib   "server"
 					// string
 				}
+				"CTFPowerup::Spawn"
+				{
+					type  "fixed"
+					sym   "_ZN10CTFPowerup5SpawnEv"
+					addr  "0x533a30"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: SetMoveType, SetSolidFlags, the 'idle' sequence through LookupSequence and ResetSequence, the Linux body; seven direct callers as on Linux
+				}
 				"CTFPowerupBottle::ReapplyProvision"
 				{
 					type  "fixed"
@@ -4756,6 +4765,16 @@
 					vtidx "256"
 					// vtable
 				}
+				"CTFRevolver::CanFireCriticalShot"
+				{
+					type  "fixed"
+					sym   "_ZN11CTFRevolver19CanFireCriticalShotEbP11CBaseEntity"
+					addr  "0x625140"
+					build "10828683"
+					lib   "server"
+					vtidx "439"
+					// verified: read by hand: slot 439 of CTFRevolver's table, where CTFWeaponBase has 0x632b50; the 'set_weapon_mode' attribute and IsCritBoosted, the Linux body; ret 8
+				}
 				"CTFScatterGun::ApplyPostHitEffects"
 				{
 					type  "fixed"
@@ -4782,6 +4801,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CTFSniperRifle::CreateSniperDot"
+				{
+					type  "fixed"
+					sym   "_ZN14CTFSniperRifle15CreateSniperDotEv"
+					addr  "0x62b1a0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: creates 'env_sniperdot' with CSniperDot::Create inlined (SetMoveType, SetSolidFlags, AddEffects), at the owner's abs position, the Linux body; ret; two direct callers, CTFSniperRifleClassic::ItemPostFrame and the zoom, as on Linux
 				}
 				"CTFSniperRifle::ExplosiveHeadShot"
 				{
@@ -4818,6 +4846,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CTFSpellBook::SetSelectedSpell"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFSpellBook16SetSelectedSpellEi"
+					addr  "0x5bc970"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: stores the spell index at +0x820 with a state change, looks the spell up with GetSpellData inlined (three tables of 0x2c records, the forced-spell convar) and stores its charges at +0x824, the Linux body (+0x828, +0x82c there); ret 4; four direct callers, RollNewSpell among them, as on Linux. The matcher's 0x48cb30 pops nothing
 				}
 				"CTFStickBomb::Smack"
 				{
@@ -4884,6 +4921,25 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CTFTankBoss::TankBossThink"
+				{
+					type  "fixed"
+					sym   "_ZN11CTFTankBoss13TankBossThinkEv"
+					addr  "0x5f3d50"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the tank's think: 'Announcer.MVM_Tank_Alert_Halfway', 'Announcer.MVM_Tank_Alert_Near_Hatch', the 'movement' sequence, TakeDamage, StopSound, EmitSound and StopParticleEffects, the Linux body's calls; ret. CTFTankBoss' datamap, built at run time, writes 'TankBossThink' and then this address (0x4dd4b)
+				}
+				"CTFTankBoss::UpdateOnRemove"
+				{
+					type  "fixed"
+					sym   "_ZN11CTFTankBoss14UpdateOnRemoveEv"
+					addr  "0x5f51d0"
+					build "10828683"
+					lib   "server"
+					vtidx "111"
+					// verified: read by hand: slot 111 of CTFTankBoss' table (Linux 112); StopSound on the tank's loop, DecrementMannVsMachineWaveClassCount, then the base, the Linux body
 				}
 				"CTFTankDestruction::Spawn"
 				{
@@ -5026,6 +5082,16 @@
 					lib   "server"
 					// verified: vtable CTFWeaponInvis[475], agreed by strings+callees: 1 shared string(s), 5/6 matched callees, windows/linux size 432/501
 				}
+				"CTFWearable::Equip"
+				{
+					type  "fixed"
+					sym   "_ZN11CTFWearable5EquipEP11CBasePlayer"
+					addr  "0x3d1190"
+					build "10828683"
+					lib   "server"
+					vtidx "233"
+					// verified: read by hand: slot 233 of CTFWearable's table (Linux 239, after CanEquip); CEconWearable::Equip, the team check and GetDisguiseTeam, the Linux body; ret 4; the matcher's candidate too
+				}
 				"CTFWearableDemoShield::DoSpecialAction"
 				{
 					type  "fixed"
@@ -5091,6 +5157,16 @@
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: calls all 7 of the Linux function's matched callees, and no string disagrees
 				}
+				"CUpgrades::~CUpgrades [D0]"
+				{
+					type  "fixed"
+					sym   "_ZN9CUpgradesD0Ev"
+					addr  "0x5f5600"
+					build "10828683"
+					lib   "server"
+					vtidx "0"
+					// verified: read by hand: slot 0 of CUpgrades' table, the scalar deleting destructor: destroys the outputs, calls the base destructor (0x2303e0), tests the flags and frees through 0x1e9af0, ret 4. It holds ~CUpgrades' body, which has no function of its own on Windows
+				}
 				"CUpgrades::GrantOrRemoveAllUpgrades"
 				{
 					type  "fixed"
@@ -5099,6 +5175,25 @@
 					build "10828683"
 					lib   "server"
 					// consensus
+				}
+				"CUpgrades::Spawn"
+				{
+					type  "fixed"
+					sym   "_ZN9CUpgrades5SpawnEv"
+					addr  "0x5f53e0"
+					build "10828683"
+					lib   "server"
+					vtidx "24"
+					// verified: read by hand: slot 24 of CUpgrades' table (Linux 25); calls CBaseTrigger::Spawn (0x360300, CBaseTrigger's slot 24) first and InitTrigger after, the Linux body
+				}
+				"CUpgrades::UpgradeTouch"
+				{
+					type  "fixed"
+					sym   "_ZN9CUpgrades12UpgradeTouchEP11CBaseEntity"
+					addr  "0x5f64f0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: CUpgrades::Spawn (0x5f53e0) sets it as the touch function (mov [esi+0xd8], 0x105f64f0, the m_pfnTouch SetTouch writes), and CUpgrades' datamap, built at run time, writes 'UpgradeTouch' and then this address; ret 4 for the toucher
 				}
 				"CVoteController::Spawn"
 				{
