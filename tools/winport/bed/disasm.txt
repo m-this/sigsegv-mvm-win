@@ -1,2 +1,1 @@
-# VScriptServerInit, the function holding its "Started VScript" message
-server func 0x38a860 400
+# nothing asked
