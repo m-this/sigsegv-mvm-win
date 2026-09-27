@@ -1,5 +1,5 @@
 #!/bin/bash
-# Round eight: small targets through the callees of their known callers.
+# Round nine: the think, touch and input functions by their datamap records.
 python3 - <<'PY'
 import re, bisect, collections, capstone, pefile
 from elftools.elf.elffile import ELFFile
@@ -227,26 +227,27 @@ def side(cls, lo, hi, shift=0):
         print(f"  L[{k}] {l[:60]:60} | {ws[:150]}")
 
 
-for sym, rva in [
- ("_ZNK20CTFPlayerClassShared16GetHandModelNameEi", 0x531fc0),
- ("_ZN12CTFSpellBook16SetSelectedSpellEi", 0x5bc970),
- ("_ZN14CTFSniperRifle15CreateSniperDotEv", 0x62c180),
- ("_ZN14CTFSniperRifle15CreateSniperDotEv", 0x62b1a0),
- ("_ZN15CTFGameMovement19PreventBunnyJumpingEv", 0x471350),
- ("_ZNK12CTFGameRules13IsUsingSpellsEv", 0x492a30),
- ("_ZNK12CTFGameRules13IsUsingSpellsEv", 0x492a20),
-]:
-    try:
-        cmp2(sym, rva)
-    except Exception as e: print("  error", e)
-for sym, rva, n in [
- ("_ZNK20CTFPlayerClassShared16GetHandModelNameEi", 0x531fc0, 30),
- ("_ZNK12CTFGameRules13IsUsingSpellsEv", 0x492a30, 30),
- ("_ZN15CTFGameMovement19PreventBunnyJumpingEv", 0x471350, 60),
- ("_ZN12CTFSpellBook16SetSelectedSpellEi", 0x5bc970, 50),
-]:
-    ldis(sym, 70); wdis(rva, n)
-print("callers:")
-for r in (0x531fc0, 0x5bc970, 0x62c180, 0x62b1a0, 0x471350, 0x492a30, 0x492a20):
-    wcallers(r)
+import struct
+def tdraw(fname):
+    print(f"######## td raw {fname}")
+    for a in wstr(fname):
+        pat = (base + a).to_bytes(4, "little")
+        for va, data in rdata:
+            at = data.find(pat)
+            while at != -1:
+                ws = struct.unpack_from("<10I", data, at - 4)
+                print(f"  at {va+at-4:#x}: " + " ".join(f"{w:08x}" for w in ws))
+                for w in ws:
+                    r = w - base
+                    if tv <= r < tv + len(code): print(f"     code {r:#x} ret {wpop(r)} {whead(r, 6)}")
+                    elif wcstr(r): print(f"     str {r:#x} {wcstr(r)}")
+                at = data.find(pat, at + 1)
+        # code that loads the name (a record built at run time)
+        pat = (base + a).to_bytes(4, "little")
+        at = code.find(pat); fs = set()
+        while at != -1:
+            fs.add(wstart(tv + at)); at = code.find(pat, at + 1)
+        print(f"  code referencing it: {[hex(f) for f in sorted(fs)][:6]}")
+for f in ("UpgradeTouch", "FlagTouch", "PushThink", "ShieldThink", "TankBossThink", "InputSetTime", "InputStop", "InputForceSpawnAtEntityOrigin", "TeleporterTouch"):
+    tdraw(f)
 PY

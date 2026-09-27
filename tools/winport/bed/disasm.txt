@@ -1,1 +1,2 @@
-# nothing asked
+engine string SV_ComputeClientPacks
+engine string CFrameSnapshotManager
