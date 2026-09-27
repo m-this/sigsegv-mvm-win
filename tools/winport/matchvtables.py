@@ -180,10 +180,9 @@ class Corpus:
     the ones it inherits.
 
     The dumps carry no base classes, but a primary base's table is a prefix of
-    the derived class's, slot for slot by name and parameters. Of the classes
-    this one inherits a slot from, and the interfaces it implements, the one
-    with the longest table this one starts with is taken as its primary base,
-    and the slots past it are the class's own new virtuals. A base missing from
+    the derived class's, slot for slot by name and parameters. The longest
+    other table this one starts with is taken as its primary base, and the
+    slots past it are the class's own new virtuals. A base missing from
     that search merges two classes' runs into one, which only matters when
     both declare the same name.
 
@@ -218,6 +217,23 @@ class Corpus:
         # Tables with nothing named but destructors: interfaces, whose slots
         # are all pure. Nothing says which class implements one, so any class
         # that implements every slot of it itself is taken to.
+        # Every table under its last named slot: a base's last slot is where
+        # the derived class's table carries the same key, so looking up each of
+        # a class's slots finds its bases without walking every table. Tables
+        # with the same keys are one entry, and it is the class that declares
+        # that last slot itself where there is one: a class that adds nothing
+        # has its base's keys, and the base is the one whose own declarations
+        # the order has to look at.
+        self.ending = defaultdict(dict)
+        for cls in sorted(self.keys):
+            keys = self.keys[cls]
+            last = max((i for i, k in enumerate(keys) if k is not None), default=None)
+            if last is None:
+                continue
+            entry = self.ending[(last, keys[last])]
+            held = entry.get(tuple(keys))
+            if held is None or (not self.declares_last(held) and self.declares_last(cls)):
+                entry[tuple(keys)] = cls
         self.interfaces = [c for c, k in self.keys.items()
                            if all(x in (None, "~") for x in k) and any(unnamed(n) for n in self.tables[c])]
         self._orders = {}
@@ -225,19 +241,26 @@ class Corpus:
         # log: the one place the order rests on an assumption (see order).
         self.ambiguous = {}
 
+    def declares_last(self, cls):
+        named = [n for n in self.names[cls] if n]
+        return bool(named) and split_name(named[-1])[0] == self.pretty[cls]
+
     def starts_with(self, cls, other):
         mine, theirs = self.keys[cls], self.keys[other]
         return len(theirs) < len(mine) and all(t is None or k is None or t == k for t, k in zip(theirs, mine))
 
     def parent(self, cls):
         """The longest other table this one starts with, or None."""
-        own = self.pretty[cls]
-        named = [n for n in self.names[cls] if n]
-        candidates = {self.stem.get(split_name(n)[0]) for n in named} - {None, cls}
-        best = None
-        for other in sorted(candidates):
-            if self.starts_with(cls, other) and (best is None or len(self.keys[other]) > len(self.keys[best])):
-                best = other
+        own, keys = self.pretty[cls], self.keys[cls]
+        candidates = {self.stem.get(split_name(n)[0]) for n in self.names[cls] if n}
+        for at, key in enumerate(keys):
+            if key is not None:
+                candidates.update(self.ending.get((at, key), {}).values())
+        candidates -= {None, cls}
+        # Longest first, and of two the same, the one that declares its last
+        # slot: the other added nothing to it (see `ending`).
+        ranked = sorted(candidates, key=lambda c: (-len(self.keys[c]), not self.declares_last(c), c))
+        best = next((c for c in ranked if self.starts_with(cls, c)), None)
         floor = len(self.keys[best]) if best else 0
         for other in sorted(self.interfaces):
             size = len(self.keys[other])

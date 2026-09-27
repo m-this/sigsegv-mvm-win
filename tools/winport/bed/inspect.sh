@@ -79,6 +79,17 @@ for label, path in (("old", "/tmp/oldmv/matchfuncs.py"), ("new", "../tools/winpo
     disagree = sum(1 for l, w in vt.items() if l in strings and strings[l] != w)
     print(f"  {label}: {len(vt)} pairs, {agree} agree with a string match, {disagree} disagree")
 
+print("=== why a base does not match")
+for cls, base in (("CBasePlayer", "CBaseCombatCharacter"), ("CBaseCombatCharacter", "CBaseFlex"), ("CBaseCombatWeapon", "CEconEntity"),
+                  ("CTFWeaponBase", "CBaseCombatWeapon"), ("CBaseEntity", "IServerEntity"), ("CGameMovement", "IGameMovement"),
+                  ("CTFPlayer", "CBaseMultiplayerPlayer"), ("CBaseMultiplayerPlayer", "CBasePlayer"), ("CTFBotDead", "Action_CTFBot_")):
+    if cls not in corpus.keys or base not in corpus.keys:
+        print(f"  {cls} / {base}: no dump for {'both' if cls not in corpus.keys and base not in corpus.keys else cls if cls not in corpus.keys else base}")
+        continue
+    a, b = corpus.keys[cls], corpus.keys[base]
+    bad = [(i, b[i], a[i]) for i in range(min(len(a), len(b))) if a[i] is not None and b[i] is not None and a[i] != b[i]]
+    print(f"  {cls}({len(a)}) / {base}({len(b)}): parent {corpus.parent(cls)}, {len(bad)} mismatches, first {bad[:3]}")
+
 print("=== parent chains of the classes wanted")
 wanted = sorted({r["class"] for r in json.load(open("classified.json"))["virtual"]})
 for cls in wanted:
