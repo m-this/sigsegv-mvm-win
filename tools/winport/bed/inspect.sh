@@ -1,7 +1,6 @@
 #!/bin/bash
-# GetParticleColor by its team colours, PassServerEntityFilter as
-# CTraceFilterSimple calls it, what the action slot commands call, and
-# IterateAttributes and GetDataObject with their Linux bodies.
+# UseActionSlotItemReleased where the command calls it, the
+# IterateAttributes CEconItemView calls, and GetDataObject by its bit test.
 python3 - <<'PY'
 import re, bisect, collections, capstone, pefile
 from elftools.elf.elffile import ELFFile
@@ -175,31 +174,27 @@ def wafter(ref, n=40):
             if i.mnemonic == "call": line += f"  ret {wpop(t)}  {whead(t, 6)}"
         print(line)
 
-print("######## GetParticleColor")
-win = wrows("CTFWeaponBase")
-for k in range(466, len(win)): print(f"  W[{k}] {win[k]:#x} ret {wpop(win[k])}  {whead(win[k])}")
-for f in wfind_imm(0x3e147ae1, 0x3eda9fbe):
-    print(f"  holds both colours: {f:#x}; CTFWeaponBase slots {[k for k, v in enumerate(win) if v == f]}")
-    wdis(f, 160)
-
-print("######## PassServerEntityFilter")
-wdis(0x36edf0, 120)
-print("  callers of 0x36edf0: " + ", ".join(f"{f:#x}" for f in sorted({wstart(s) for s in wg.get(0x36edf0, ())})))
-
 print("######## UseActionSlotItemReleased")
-for n in sorted(byname):
-    if "UseActionSlot" in n or "IsUsingGrapplingHook" in n: print(f"  linux {byname[n][0]:#x} size {byname[n][1]} {n}")
-for s in ("-use_action_slot_item_server", "+use_action_slot_item_server"):
-    for a in wstr(s):
-        pat = (base + a).to_bytes(4, "little"); at = code.find(pat)
-        while at != -1:
-            print(f"== after the reference to {s!r} at {tv+at:#x}"); wafter(tv + at - 1, 45); at = code.find(pat, at + 1)
+wdis(0x514510, 200)
+print("  callers of 0x514510: " + ", ".join(f"{f:#x}" for f in sorted({wstart(s) for s in wg.get(0x514510, ())})))
+ldis("_ZNK12CTFGameRules20IsUsingGrapplingHookEv", 20)
 
 print("######## CEconItemDefinition::IterateAttributes")
-study("_ZNK19CEconItemDefinition17IterateAttributesEP26IEconItemAttributeIterator", 3)
-ldis("_ZNK13CEconItemView17IterateAttributesEP26IEconItemAttributeIterator", 120)
-wdis(known["_ZNK13CEconItemView17IterateAttributesEP26IEconItemAttributeIterator"], 150)
+wdis(0x3bba50, 90)
+print("  callers of 0x3bba50: " + ", ".join(f"{f:#x}" for f in sorted({wstart(s) for s in wg.get(0x3bba50, ())})))
 
 print("######## GetDataObject")
-study("_ZN11CBaseEntity13GetDataObjectEi", 3)
+seen = set()
+at = code.find(b"\x0f\xa3")
+while at != -1:
+    ins = list(md.disasm(code[at:at+48], base + tv + at))[:10]
+    txt = "; ".join(f"{i.mnemonic} {i.op_str}" for i in ins)
+    if ins and ins[0].mnemonic == "bt" and "0x1f" in txt and "*4 + 0x" in txt:
+        f = wstart(tv + at)
+        print(f"  bt at {tv+at:#x} in {f:#x} ({len(wg.get(f, ()))} callers) ret {wpop(f)}: {txt}")
+        seen.add(f)
+    at = code.find(b"\x0f\xa3", at + 1)
+for f in sorted(seen, key=lambda f: -len(wg.get(f, ())))[:3]: wdis(f, 40)
+for k in ("_ZN11CBaseEntity8TeleportEPK6VectorPK6QAngleS2_", "_ZN11CBaseEntity9SetParentEPS_i"):
+    print(f"  {k} calls: " + ", ".join(f"{t:#x}" for t in wcallees(known[k]) if t in seen))
 PY
