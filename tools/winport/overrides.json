@@ -1616,5 +1616,39 @@
   "rva": "0x2b8410",
   "vtidx": 11,
   "why": "read by hand: slot 11 of CCollisionEvent's table, the same slot as on Linux (both tables 18 long); pops its four arguments (ret 16) between AddDamageEvent (slot 10, ret 24 for six) and ShouldSolvePenetration (slot 12, ret 20 for five), as the Linux order has them"
+ },
+ "_ZN12CTFGameRules18ShouldCreateEntityEPKc": {
+  "rva": "0x4a1c20",
+  "vtidx": 191,
+  "why": "read by hand: FindInList(s_PreserveEnts at 0x109c7b40, name) returns false, else the base class's ShouldCreateEntity, the Linux body instruction for instruction; ret 4. Slot 191 of CTFGameRules' table (Linux 193): Windows keeps FireGameEvent out of the primary table, so the shift is two here"
+ },
+ "_ZN12CTFGameRules24RoundCleanupShouldIgnoreEP11CBaseEntity": {
+  "rva": "0x49e2b0",
+  "vtidx": 190,
+  "why": "read by hand: the classname (or empty string) through FindInList on the same list, then a 'tf_weapon_' prefix test, else the base class's function, the Linux body; ret 4. Slot 190 of CTFGameRules' table (Linux 192)"
+ },
+ "_ZN15CTFPlayerShared16OnConditionAddedE7ETFCond": {
+  "rva": "0x525a10",
+  "why": "read by hand: the switch on the condition; TeamFortress_SetSpeed, SetModelScale, DoAnimationEvent, AddCond and EmitSound as in the Linux body, with its per-condition helpers inlined ('Fire.Engulf', the halloween attributes); ret 4, one direct caller"
+ },
+ "_ZN15CTFPlayerShared18OnConditionRemovedE7ETFCond": {
+  "rva": "0x526680",
+  "why": "read by hand: the switch on the condition; StopHealing, TeamFortress_SetSpeed, AddCond, RemoveCond, StopSound, OnRemoveHalloweenTiny, SetFOV and EmitSound as in the Linux body, with 'started_dodging:0' and 'BumperCar.SpeedBoostStop'; ret 4, one direct caller (RemoveCond) as on Linux"
+ },
+ "_ZN12CCaptureFlag9FlagTouchEP11CBaseEntity": {
+  "rva": "0x447dc0",
+  "why": "read by hand: among CCaptureFlag's functions; the toucher's InCond, IsInvulnerable, IsStealthed and HasTheFlag checks of the Linux body; ret 4 and no direct caller, a touch function set by pointer. The other candidate (0x44fa30) plays the powerup pickup sounds"
+ },
+ "_ZN15CItemGeneration18GenerateRandomItemEP22CItemSelectionCriteriaRK6VectorRK6QAnglePKc": {
+  "rva": "0x3a05f0",
+  "why": "read by hand: calls CItemGeneration::SpawnItem as the Linux body does; pops its four arguments (ret 16); three direct callers as Linux has three (BotGenerateAndWearItem, CTFBot::AddItem, GiveNamedItem)"
+ },
+ "_Z20DoTeleporterOverrideP11CBaseEntityR6Vectorb": {
+  "rva": "0x5ed2b0",
+  "why": "read by hand: GetNearestNavArea and GetClosestPointOnArea as in the Linux body; cdecl, plain ret; one direct caller as on Linux, next to CSpawnLocation::FindSpawnLocation (0x5ed4e0)"
+ },
+ "_ZN21CTFBotTacticalMonitor20FindNearbyTeleporterEP6CTFBot": {
+  "rva": "0x575790",
+  "why": "read by hand: TheTFNavMesh()->CollectBuiltObjects as in the Linux body; ret 4, one direct caller as on Linux (the monitor's Update), among CTFBotTacticalMonitor's functions"
  }
 }
