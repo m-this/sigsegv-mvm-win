@@ -1,4 +1,2 @@
-# the dreadwood fault: the Squirrel call into the server binding
-bin/vscript.dll +0xab47
 # ED_Alloc on Windows: where sv.num_edicts and g_FreeEdicts live
-engine string ED_Alloc: no free edicts
+engine func 0x1bd4f4 200

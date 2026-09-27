@@ -1,6 +1,6 @@
 #!/bin/bash
-# Round 2: the dreadwood caller chain against Linux Convars.SetValue, the
-# CTFSword mods by body, CTriggerCamera::Disable, CTFPointWeaponMimic::Fire, TE_TFBlood.
+# Round 3: where scopes are released on each side, the mimic's four Fire
+# functions, the CTFSword mods and TE_TFBlood by body, ED_Alloc on Linux.
 python3 - <<'PY'
 import re, bisect, collections, capstone, pefile
 from elftools.elf.elffile import ELFFile
@@ -170,75 +170,71 @@ def fsize(f):
         if i.mnemonic == "int3": return i.address - base - f
     return 6000
 
-print("######## dreadwood")
-for n in sorted(byname):
-    if "ScriptConvarAccessor" in n or "SaveConvar" in n:
-        print("  sym", n, hex(byname[n][0]), byname[n][1], "windows " + hex(known[n]) if n in known else "")
-for n in sorted(byname):
-    if "ScriptConvarAccessor8SetValue" in n or "SaveConvar" in n:
-        ldis(n, 150)
-for r in (0x1fe2ae, 0x3296ed, 0x2700b3):
-    f = wstart(r)
-    print(f"#### frame {r:#x} in {f:#x}" + (" " + kname[f] if f in kname else ""))
-    s = r - 60
-    for i in md.disasm(code[s-tv:s-tv+80], base + s):
-        line = f"     {i.address-base:#x}  {i.mnemonic} {i.op_str}"
-        for m in re.finditer(r"0x[0-9a-f]{8}", i.op_str):
-            v = int(m.group(0), 16) - base
-            st = wstr(v)
-            if st: line += "    str " + st
-            elif v in kname: line += "    = " + kname[v]
-        print(line)
-wdis2(wstart(0x1fe2ae), 120)
-# who writes g_pGameRules on Windows
-gr = known.get("g_pGameRules")
-print("g_pGameRules", hex(gr) if gr else None)
-if gr:
-    for sec, at in wrefs(gr):
-        if sec != ".text": continue
-        k = code[at-tv-2:at-tv]
-        if k[:1] in (b"\x89", b"\xc7") or code[at-tv-1] == 0xa3:
-            f = wstart(at)
-            print(f"  writes at {at:#x} in {f:#x}" + (" " + kname[f] if f in kname else ""))
 
-print("######## CTriggerCamera::Disable")
-wdis2(0x3667e0, 260)
+def fsize(f):
+    for i in md.disasm(code[f-tv:f-tv+20000], base + f):
+        if i.mnemonic == "int3": return i.address - base - f
+    return 20000
 
-print("######## sword")
-hits = collections.defaultdict(list)
-for m in re.finditer(rb"\x83[\xb8-\xbf]", code):
-    at = m.start()
-    if code[at+1] == 0xbc: continue
-    d = int.from_bytes(code[at+2:at+6], "little")
-    if 0x1c00 <= d < 0x2100 and code[at+6] == 4:
-        hits[wstart(tv + at)].append(d)
-for f in sorted(hits):
-    print(f"  {f:#x} size {fsize(f):#x} disp {[hex(d) for d in hits[f]]}" + (" " + kname[f] if f in kname else ""))
-for f in sorted(hits):
-    if fsize(f) < 0xc0: wdis2(f, 80)
+print("######## scopes")
+for n in sorted(byname):
+    if ("ScriptScope" in n and ("Term" in n or "D2" in n or "D1" in n)) or n in ("_ZN11CBaseEntity14UpdateOnRemoveEv", "_ZN6CWorldD2Ev", "_ZN17CGlobalEntityList5ClearEv", "_ZN11CBaseEntityD2Ev"):
+        a, sz = byname[n]
+        cs = sorted({byaddr[lholder(x)] for x in lg.get(a, ())})
+        print(f"  {n} {a:#x} {sz} callers({len(cs)}): " + ", ".join(cs[:30]))
+for n in ("_ZN11CBaseEntity14UpdateOnRemoveEv", "_ZN11CBaseEntityD2Ev", "_ZN6CWorldD2Ev"):
+    if n in byname:
+        a, sz = byname[n]
+        print(f"== linux callees of {n}")
+        for i in md.disasm(lcode[a-lva:a-lva+sz], a):
+            if i.mnemonic in ("call", "jmp") and i.op_str.startswith("0x") and int(i.op_str, 16) in byaddr:
+                print(f"   {i.address:#x} {byaddr[int(i.op_str, 16)]}")
+            m = re.search(r"\[e[a-d]x ([+-]) (0x[0-9a-f]+)\]", i.op_str)
+            if m:
+                d = int(m.group(2), 16) * (1 if m.group(1) == "+" else -1)
+                if got + d in objs: print(f"   {i.address:#x} {i.mnemonic} {i.op_str}  obj {objs[got + d]}")
+print("windows callers of 0x1fe240:")
+for s_ in sorted(wg.get(0x1fe240, ())):
+    f = wstart(s_)
+    print(f"  call at {s_:#x} in {f:#x}" + (" " + kname[f] if f in kname else "") + f" size {fsize(f):#x}")
 
-print("######## TE_TFBlood inside OnTakeDamage_Alive")
-otda = known["_ZN9CTFPlayer18OnTakeDamage_AliveERK15CTakeDamageInfo"]
-n = fsize(otda)
-for i in md.disasm(code[otda-tv:otda-tv+n], base + otda):
-    if i.mnemonic == "call" and i.op_str.startswith("0x") and int(i.op_str, 16) - base == known["_ZN15CBaseTempEntity6CreateER16IRecipientFilterf"]:
-        s = i.address - base - 110
-        print(f"  -- call at {i.address-base:#x}")
-        for j in md.disasm(code[s-tv:s-tv+120], base + s):
-            print(f"     {j.address-base:#x}  {j.mnemonic} {j.op_str}")
-for n in sorted(byname):
-    if "TETFBlood" in n or "g_TETFBlood" in n:
-        print("  sym", n, hex(byname[n][0]))
-for a, nm in objs.items():
-    if "TETFBlood" in nm: print("  obj", nm, hex(a))
+print("######## mimic")
+for n in ("_ZN19CTFPointWeaponMimic10FireRocketEv", "_ZN19CTFPointWeaponMimic11FireGrenadeEv", "_ZN19CTFPointWeaponMimic9FireArrowEv", "_ZN19CTFPointWeaponMimic17FireStickyGrenadeEv"):
+    ldis(n, 45)
+for f in (0x5e1740, 0x5e1950, 0x5e1c60, 0x5e1e60):
+    wdis2(f, 70)
 
-print("######## CTFPointWeaponMimic")
-for n in sorted(byname):
-    if n.startswith("_ZN19CTFPointWeaponMimic"):
-        print("  sym", n, hex(byname[n][0]), byname[n][1], "windows " + hex(known[n]) if n in known else "")
-ldis("_ZN19CTFPointWeaponMimic17InputFireMultipleER11inputdata_t", 80)
-wdis2(known["_ZN19CTFPointWeaponMimic17InputFireMultipleER11inputdata_t"], 120)
-for n in sorted(byname):
-    if n.startswith("_ZN19CTFPointWeaponMimic") and "InputFireOnce" in n:
-        ldis(n, 60)
+print("######## sword and blood by body")
+starts2 = [tv + i for i in range(1, len(code)) if code[i-1] == 0xcc and code[i] != 0xcc and (tv + i) % 16 == 0]
+create = known["_ZN15CBaseTempEntity6CreateER16IRecipientFilterf"]
+for f in starts2:
+    txt = []
+    for i in md.disasm(code[f-tv:f-tv+0xd0], base + f):
+        if i.mnemonic == "int3": break
+        txt.append(f"{i.mnemonic} {i.op_str}")
+    else:
+        continue
+    j = "\n".join(txt)
+    four = re.search(r"(cmp|cmovl|cmovle|cmovg|cmovge) [^\n]*, 4$|mov e.x, 4$", j, re.M)
+    if four and "fld1" in j and "cvtsi2ss" in j and "mulss" in j:
+        print(f"-- speed candidate {f:#x}"); wdis2(f, 60)
+    elif four and re.search(r"imul e.., e.., 0xf$|lea e.., \[e.. \+ e..\*2\]", j, re.M) and "call dword ptr [e" in j and len(txt) < 45:
+        print(f"-- health candidate {f:#x}"); wdis2(f, 60)
+    if f"{base + create:#x}" in j and "ebp + 0x18" in j and "ebp + 0x1c" not in j and len(txt) < 50:
+        print(f"-- blood candidate {f:#x}"); wdis2(f, 60)
+
+print("######## ED_Alloc, Linux engine")
+try:
+    eelf = ELFFile(open("game-linux/bin/engine_srv.so", "rb"))
+    et = eelf.get_section_by_name(".text"); ecode = et.data(); eva = et["sh_addr"]
+    st = eelf.get_section_by_name(".symtab") or eelf.get_section_by_name(".dynsym")
+    for s in st.iter_symbols():
+        if s.name in ("_Z8ED_Allocv", "_Z8ED_Alloci", "sv", "_ZL12g_FreeEdicts", "g_FreeEdicts") or "ED_Alloc" in s.name:
+            print("  sym", s.name, hex(s["st_value"]), s["st_size"])
+            if s["st_info"]["type"] == "STT_FUNC":
+                a = s["st_value"]
+                for i in md.disasm(ecode[a-eva:a-eva+s["st_size"]], a):
+                    print(f"   {i.address:#x}  {i.mnemonic} {i.op_str}")
+except Exception as e:
+    print("engine:", e)
 PY

@@ -1164,5 +1164,9 @@
  "_ZN11CBaseEntity14SetAbsVelocityERK6Vector": {
   "rva": "0x1fb7d0",
   "why": "read by hand: the Linux body at offsets 0x18 lower; thiscall, ret 4. Returns when the argument equals m_vecAbsVelocity (+0x250, Linux +0x268), else InvalidatePhysicsRecursive(4) (0x201520), clears EFL_DIRTY_ABSVELOCITY in m_iEFlags (+0x13c), stores it, and with a move parent (+0x178) subtracts the parent's abs velocity (CalcAbsoluteVelocity 0x1ec810 when dirty), VectorIRotate through its coordinate frame (+0x268, CalcAbsolutePosition when dirty) and writes m_vecVelocity (+0x2c4) through the NetworkStateChanged slot (+0x2f8, Linux +0x300); without one it writes the argument there. CBaseEntity::ApplyAbsVelocityImpulse (0x1ff4b0) calls it with GetAbsVelocity plus the impulse, as on Linux"
+ },
+ "_ZN11CBasePlayer6SetFOVEP11CBaseEntityifi": {
+  "rva": "0x20e3a0",
+  "why": "read by hand: returns false for a null requester, reads m_hZoomOwner (+0xc88, Linux +0xca0) and asks CanOverrideEnvZoomOwner (0x251300) when another owner holds it, clears it for fov 0 or sets it to the requester's handle, takes GetFOV (0x2e1a00) when zoomStart is not positive, then stores m_iFOVStart (+0xc74), curtime (+0xc78), m_iFOV (+0xc6c) and m_Local.m_flFOVRate (+0x8bc) as Linux does at +0x18 higher; thiscall, ret 0x10, 40 callers"
  }
 }
