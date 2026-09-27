@@ -1,6 +1,6 @@
 #!/bin/bash
-# Round eleven: the think functions' records in full, InputSetTime and
-# InputStop against Linux, SV_ComputeClientPacks' returns and callers.
+# Round twelve: candidates common to the known callers of the remaining
+# targets; the touch CUpgrades::Spawn sets; CTFBaseBoss' think.
 python3 - <<'PY'
 import re, bisect, collections, capstone, pefile
 from elftools.elf.elffile import ELFFile
@@ -170,8 +170,49 @@ def slots(cls, fn, lo=10, hi=10):
         if 0 <= k < len(win): print(f"  W[{k}] {win[k]:#x} ret {wpop(win[k])}  {whead(win[k])}")
 
 
+def viacallers(sym, show=6):
+    a, n = byname[sym]
+    lc = sorted({byaddr[lholder(s)] for s in lg.get(a, ())})
+    kc = [c for c in lc if c in known]
+    print(f"######## {sym}: {len(lc)} linux callers, {len(kc)} known on Windows")
+    cc = collections.Counter()
+    for c in kc:
+        for t in set(wcallees(known[c], 0x3000)): cc[t] += 1
+    for t, k in cc.most_common(40):
+        if k < 2 or t in kname: continue
+        if not (tv <= t < tv + len(code)): continue
+        print(f"    {t:#x} in {k}/{len(kc)} callers, {len({wstart(s) for s in wg.get(t, ())})} callers in all, ret {wpop(t)} {whead(t, 5)}")
+        show -= 1
+        if show == 0: break
+
+for s in ["_Z21UTIL_EntitiesInSphereRK6VectorfP20CFlaggedEntitiesEnum",
+          "_Z16UTIL_ScreenShakeRK6Vectorffff14ShakeCommand_tb",
+          "_Z18IsSpaceToSpawnHereRK6Vector",
+          "_ZN9CTFPlayer10StateLeaveEv",
+          "_ZN24CTeamplayRoundBasedRules28GetMinTimeWhenPlayerMaySpawnEP11CBasePlayer",
+          "_ZN9CTFPlayer18ShouldDropAmmoPackEv",
+          "_ZN5CWave25IsDoneWithNonSupportWavesEv",
+          "_Z17GetBotEscortCounti",
+          "_ZN11CTFBaseBoss22ResolvePlayerCollisionEP9CTFPlayer",
+          "_ZN12CEventActionC2EPKc",
+          "_ZN18CFlagDetectionZone19EntityIsFlagCarrierEP11CBaseEntity",
+          "_ZNK6CTFBot21GetDesiredAttackRangeEv",
+          "_ZN16CTFBotMainAction17FireWeaponAtEnemyEP6CTFBot",
+          "_ZNK11CTFBotSquad33ShouldSquadLeaderWaitForFormationEv",
+          "_ZN21CTFBotTacticalMonitor19AvoidBumpingEnemiesEP6CTFBot",
+          "_ZN16CTFWeaponBaseGun10FireRocketEP9CTFPlayeri",
+          "_ZN21CHeadlessHatmanAttack21RecomputeHomePositionEv",
+          "_ZN15CTFReviveMarker6CreateEP9CTFPlayer",
+          "_ZNK15CTFFlameManager19GetFlameDamageScaleEPK10tf_point_tP9CTFPlayer"]:
+    try: viacallers(s)
+    except Exception as e: print("  error", s, e)
+print("######## code pointers in CUpgrades::Spawn 0x5f53e0 and CTFBaseBoss' datamap")
+for x in md.disasm(code[0x5f53e0-tv:0x5f53e0-tv+0x200], base + 0x5f53e0):
+    if x.mnemonic == "int3": break
+    for v in re.findall(r"0x10[0-9a-f]{6}", x.op_str):
+        r = int(v, 16) - base
+        if tv <= r < tv + len(code): print(f"    {x.address-base:#x} {x.mnemonic} {x.op_str}  -> ret {wpop(r)} {whead(r, 6)}")
 def dyninit2(fname, after=40):
-    """Names and code pointers written after each load of the name, in order."""
     print(f"######## datamap init {fname}")
     for a in wstr(fname):
         pat = (base + a).to_bytes(4, "little")
@@ -189,24 +230,6 @@ def dyninit2(fname, after=40):
                         elif wcstr(r): print(f"    {x.address-base:#x}  str {wcstr(r)}")
                 print("    --")
             at = code.find(pat, at + 1)
-for f in ("TankBossThink", "ShieldThink", "PushThink", "TeleporterTouch"):
-    dyninit2(f)
-for sym, rva in [("_ZN15CTeamRoundTimer12InputSetTimeER11inputdata_t", 0x34b4f0), ("_ZN13CFuncRotating9InputStopER11inputdata_t", 0x214c60)]:
-    ldis(sym, 40); wdis(rva, 40)
-print("######## engine SV_ComputeClientPacks rets")
-epe = pefile.PE("game-windows/bin/engine.dll", fast_load=True)
-etext = next(s for s in epe.sections if s.Name.rstrip(b"\0") == b".text")
-ecode = etext.get_data(); etv = etext.VirtualAddress; ebase = epe.OPTIONAL_HEADER.ImageBase
-start = 0x132620
-n = 0
-for i in md.disasm(ecode[start-etv:start-etv+0x2000], ebase + start):
-    n += 1
-    if i.mnemonic == "ret": print(f"  {i.address-ebase:#x} ret {i.op_str}")
-    if i.mnemonic == "int3": print(f"  ends at {i.address-ebase:#x} after {n} instructions"); break
-at = ecode.find(b"\xe8"); callers = set()
-while at != -1:
-    dst = etv + at + 5 + int.from_bytes(ecode[at+1:at+5], "little", signed=True)
-    if dst == start: callers.add(etv + at)
-    at = ecode.find(b"\xe8", at + 1)
-print("  direct call sites:", [hex(c) for c in sorted(callers)])
+for f in ("BossThink", "UpgradeTouch", "InputEnable"):
+    dyninit2(f, 25)
 PY
