@@ -1607,11 +1607,11 @@
  },
  "_ZN15CEnvEntityMaker15InputForceSpawnER11inputdata_t": {
   "rva": "0x24caf0",
-  "why": "read by hand: FindTemplate (0x24c530, which SpawnEntity also calls first), HasRoomToSpawn and IsPlayerLooking, an output fired, then SpawnEntity (0x24cd90), the Linux body's calls; ret 4 for the inputdata"
+  "why": "read by hand: the 'ForceSpawn' input of CEnvEntityMaker's datamap, which MSVC builds at run time (0xdbf0 writes the name, 0xdc1d this address); FindTemplate (0x24c530, which SpawnEntity also calls first), HasRoomToSpawn and IsPlayerLooking, an output fired, then SpawnEntity (0x24cd90), the Linux body's calls; ret 4 for the inputdata"
  },
  "_ZN15CEnvEntityMaker29InputForceSpawnAtEntityOriginER11inputdata_t": {
   "rva": "0x24cb90",
-  "why": "read by hand: FindEntityByName on the input's string, that entity's abs origin and angles, then SpawnEntity (0x24cd90), the Linux body; ret 4 for the inputdata"
+  "why": "read by hand: the 'ForceSpawnAtEntityOrigin' input of CEnvEntityMaker's datamap (0xdc4a writes the name, 0xdc77 this address); FindEntityByName on the input's string, that entity's abs origin and angles, then SpawnEntity (0x24cd90), the Linux body; ret 4 for the inputdata"
  },
  "_ZN15CCollisionEvent13ShouldCollideEP14IPhysicsObjectS1_PvS2_": {
   "rva": "0x2b8410",
@@ -1709,5 +1709,13 @@
  "_ZN14CTFSniperRifle15CreateSniperDotEv": {
   "rva": "0x62b1a0",
   "why": "read by hand: creates 'env_sniperdot' with CSniperDot::Create inlined (SetMoveType, SetSolidFlags, AddEffects), at the owner's abs position, the Linux body; ret; two direct callers, CTFSniperRifleClassic::ItemPostFrame and the zoom, as on Linux"
+ },
+ "_ZN13CFuncRotating9InputStopER11inputdata_t": {
+  "rva": "0x214c60",
+  "why": "read by hand: the 'Stop' input written with the rotating entity's datamap (0x214514 the name, 0x214541 this address); clears the byte at +0x3bc and calls SetTargetSpeed(0), the Linux body (+0x3d4 there); ret 4. The three other 'Stop' inputs in server.dll belong to other classes"
+ },
+ "_Z21SV_ComputeClientPacksiPP11CGameClientP14CFrameSnapshot": {
+  "rva": "0x132620",
+  "why": "read by hand, engine.dll: the only function referencing 'SV_ComputeClientPacks' (five profiler scopes); the MDL cache lock, then for each of clientCount (arg 1) clients (arg 2): SetupPackInfo(snapshot), serverGameEnts->CheckTransmit(&m_PackInfo, snapshot->m_pValidEntities, m_nValidEntities), SetupPrevPackInfo, then the entity packing, as the SDK's sv_main.cpp writes it"
  }
 }

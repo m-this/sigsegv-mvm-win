@@ -1,6 +1,6 @@
 #!/bin/bash
-# Round ten: datamap records CEnvEntityMaker, CUpgrades and the rest build at
-# run time, read off the code that writes them.
+# Round eleven: the think functions' records in full, InputSetTime and
+# InputStop against Linux, SV_ComputeClientPacks' returns and callers.
 python3 - <<'PY'
 import re, bisect, collections, capstone, pefile
 from elftools.elf.elffile import ELFFile
@@ -170,8 +170,8 @@ def slots(cls, fn, lo=10, hi=10):
         if 0 <= k < len(win): print(f"  W[{k}] {win[k]:#x} ret {wpop(win[k])}  {whead(win[k])}")
 
 
-def dyninit(fname, before=6, after=10):
-    """The code that builds a datamap record at run time: the instructions around each load of the name."""
+def dyninit2(fname, after=40):
+    """Names and code pointers written after each load of the name, in order."""
     print(f"######## datamap init {fname}")
     for a in wstr(fname):
         pat = (base + a).to_bytes(4, "little")
@@ -179,18 +179,34 @@ def dyninit(fname, before=6, after=10):
         while at != -1:
             site = tv + at
             f = wstart(site)
-            ins = list(md.disasm(code[f-tv:site-tv+0x80], base + f))
+            ins = list(md.disasm(code[f-tv:site-tv+0x200], base + f))
             k = next((i for i, x in enumerate(ins) if x.address - base <= site < x.address - base + x.size), None)
             if k is not None:
-                for x in ins[max(0, k-before):k+after]:
-                    line = f"    {x.address-base:#x}  {x.mnemonic} {x.op_str}"
+                for x in ins[max(0, k-30):k+after]:
                     for v in re.findall(r"0x10[0-9a-f]{6}", x.op_str):
                         r = int(v, 16) - base
-                        if tv <= r < tv + len(code): line += f"    code ret {wpop(r)} {whead(r, 5)}"
-                        elif wcstr(r): line += f"    str {wcstr(r)}"
-                    print(line)
+                        if tv <= r < tv + len(code) and x.mnemonic == "mov": print(f"    {x.address-base:#x}  code {r:#x} ret {wpop(r)} {whead(r, 5)}")
+                        elif wcstr(r): print(f"    {x.address-base:#x}  str {wcstr(r)}")
                 print("    --")
             at = code.find(pat, at + 1)
-for f in ("UpgradeTouch", "PushThink", "ShieldThink", "TankBossThink", "InputSetTime", "InputForceSpawnAtEntityOrigin", "InputForceSpawn", "TeleporterTouch", "InputStop", "InputIgnitePlayer"):
-    dyninit(f)
+for f in ("TankBossThink", "ShieldThink", "PushThink", "TeleporterTouch"):
+    dyninit2(f)
+for sym, rva in [("_ZN15CTeamRoundTimer12InputSetTimeER11inputdata_t", 0x34b4f0), ("_ZN13CFuncRotating9InputStopER11inputdata_t", 0x214c60)]:
+    ldis(sym, 40); wdis(rva, 40)
+print("######## engine SV_ComputeClientPacks rets")
+epe = pefile.PE("game-windows/bin/engine.dll", fast_load=True)
+etext = next(s for s in epe.sections if s.Name.rstrip(b"\0") == b".text")
+ecode = etext.get_data(); etv = etext.VirtualAddress; ebase = epe.OPTIONAL_HEADER.ImageBase
+start = 0x132620
+n = 0
+for i in md.disasm(ecode[start-etv:start-etv+0x2000], ebase + start):
+    n += 1
+    if i.mnemonic == "ret": print(f"  {i.address-ebase:#x} ret {i.op_str}")
+    if i.mnemonic == "int3": print(f"  ends at {i.address-ebase:#x} after {n} instructions"); break
+at = ecode.find(b"\xe8"); callers = set()
+while at != -1:
+    dst = etv + at + 5 + int.from_bytes(ecode[at+1:at+5], "little", signed=True)
+    if dst == start: callers.add(etv + at)
+    at = ecode.find(b"\xe8", at + 1)
+print("  direct call sites:", [hex(c) for c in sorted(callers)])
 PY
