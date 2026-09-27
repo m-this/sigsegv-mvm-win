@@ -226,6 +226,14 @@ struct NavConnect
 class CNavAreaCriticalData
 {
 protected:
+#if defined _WINDOWS
+	/* The game's CNavArea is polymorphic and this base is not, so its vtable
+	 * pointer comes first and every field below sits 4 bytes further in than
+	 * the offsets noted here: AddToOpenList reads m_openMarker at +0x50 and
+	 * m_totalCost at +0x40, SearchSurroundingAreas marks +0x3c and zeroes
+	 * m_costSoFar at +0x44, and m_connect starts at +0x58. */
+	void *m_vtable_windows;
+#endif
 	/* 0  */	Vector m_nwCorner;											// north-west corner position (2D mins)
 	/* 12 */	Vector m_seCorner;											// south-east corner position (2D maxs)
 	/* 24 */	float m_invDxCorners;
@@ -261,7 +269,7 @@ public:
 	 * m_parentHow follow the eight vector pointers and the search marker after
 	 * m_connect: SearchSurroundingAreas stores null at +0x78 and 9
 	 * (NUM_TRAVERSE_TYPES) at +0x7c on its start area. */
-	const Vector& GetCenter() const    { return CNavAreaCriticalData::m_center; }
+	const Vector& GetCenter() const    { return this->m_center; }
 	CNavArea *GetParent() const        { return *reinterpret_cast<CNavArea *const *>(reinterpret_cast<uintptr_t>(this) + 0x78); }
 	int GetParentHow() const           { return *reinterpret_cast<const int *>(reinterpret_cast<uintptr_t>(this) + 0x7c); }
 	void SetParent(CNavArea *parent)   { *reinterpret_cast<CNavArea **>(reinterpret_cast<uintptr_t>(this) + 0x78) = parent; }
