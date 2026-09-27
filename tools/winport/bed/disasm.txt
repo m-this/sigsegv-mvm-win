@@ -1,1 +1,5 @@
-# nothing asked
+# Who references TeleporterThink's strings: the real TeleporterThink sets its
+# own context think, so it holds its VA.
+server string TeleporterContext
+server string bidirectional_teleport
+server string Building_Teleporter.Send
