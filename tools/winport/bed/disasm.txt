@@ -1,2 +1,2 @@
-# CSmokeStack::KeyValue(char const*, char const*), slot 33, whole
-server func 0x437b90 400
+# CSmokeStack::KeyValue(char const*, char const*), slot 33, past its first ret
+server 0x437bf3 200
