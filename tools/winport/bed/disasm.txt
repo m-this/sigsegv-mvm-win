@@ -1,21 +1,8 @@
-# PassesTriggerFilters calls this on m_hFilter with (this, entity): PassesFilter?
-server 0x259570 40
-# calls PrecacheModel, then tests the custom view model index at +0x65c: SetCustomViewModel?
-server func 0x1dea90 250
-# GetAttributeDefinitionByName's short callers: GetAttributeByName?
-server 0x39f440 40
-server 0x39fef0 40
-server 0x3a0ec0 40
-server 0x3aa4b0 40
-server 0x51a120 40
-server 0x50b130 40
-server 0x3b0bb0 40
-server 0x3b0d50 40
-server callers 0x3c3b60
-# the TF temp entities that call CBaseTempEntity::Create: TE_TFExplosion?
-server 0x470530 100
-server 0x4706b0 60
-server 0x470750 90
-server 0x470860 90
-server 0x470970 60
-server 0x470a10 110
+# TE_TFExplosion? Called from the Linux callers (CTFBaseRocket::Explode 0x63f6d0, Smack 0x6022f0, ...)
+server callers 0x4706b0
+# the static initializer referencing "TFExplosion": which global it builds
+server +0x3a371
+# SetCustomViewModel's else branch, and the two precache helpers it calls
+server 0x1deaf3 30
+server 0x2016f0 10
+server 0x2020a0 10
