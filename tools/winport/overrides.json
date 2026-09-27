@@ -1468,5 +1468,10 @@
   "name": "g_DataObjectAccessSystem::m_Accessors [windows]",
   "rva": "0xa399d4",
   "why": "read by hand: the 32 accessor pointers GetDataObject indexes, which MSVC inlined everywhere. DestroyAllDataObjects (0x2c4030, called by CBaseEntity's destructor 0x1e98c0) tests type bits 0 to 7 at +0x370 and calls slot 3 (DestroyDataObject) of [type*4 + this]; CreateDataObject (0x2c3ff0) sets the bit and jumps to slot 2 of the same entry, Linux reading 0x17fccec the same way (g_DataObjectAccessSystem at 0x17fcce0, +0xc). The static constructor 0x19070 writes the system's vtable at 0xa399c8 and zeroes 0x80 bytes here. The inlined reads call slot 1, GetDataObject"
+ },
+ "_ZN11CSmokeStack8KeyValueEPKcS1_": {
+  "rva": "0x437b90",
+  "vtidx": 33,
+  "why": "read by hand: slot 33 of CSmokeStack, where CBaseEntity's (const char *, const char *) KeyValue sits once MSVC reverses the three overloads (as in CGameText). Pops 8; stricmp of the key with \"Wind\" parses \"%f %f %f\" into the vector at +0x3fc and returns true, a second stricmp parses an int into +0x3f4, as the Linux body's Wind/WindAngle/WindSpeed branches do. The string match 0x437b50 pops 4, has no direct caller and only releases a handle at +0x3a0"
  }
 }
