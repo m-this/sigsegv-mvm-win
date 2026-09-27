@@ -1,13 +1,20 @@
 #!/bin/bash
-# The Linux bodies of the pairs the overload rule moves in windows.txt.
-so=game-linux/tf/bin/server_srv.so
-for sym in _ZN20CBaseCombatCharacter11FInViewConeERK6Vector _ZN20CBaseCombatCharacter11FInViewConeEP11CBaseEntity \
-           _ZN20CBaseCombatCharacter10RemoveAmmoEii _ZN20CBaseCombatCharacter10RemoveAmmoEiPKc \
-           _ZN11CSmokeStack8KeyValueEPKcS1_ _ZN15CAmbientGeneric8KeyValueEPKcS1_; do
-  read -r addr size <<< "$(nm -S --defined-only $so | awk -v s=$sym '$4 == s { print $1, $2; exit }')"
-  [ -n "$addr" ] || { echo "== $sym: not found"; continue; }
-  start=$((16#$addr)); end=$((start + 16#$size))
-  echo "== $sym at 0x$addr size 0x$size"
-  objdump -d --no-show-raw-insn -M intel --start-address=$start --stop-address=$end $so | tail -n +8 | head -70 | c++filt
-done
+# Every knownvtidx row the overload rule changes, keyed by class as well as name.
+cd derived || exit 0
+mkdir -p /tmp/oldmv && curl -sSfL -o /tmp/oldmv/matchvtables.py https://raw.githubusercontent.com/m-this/sigsegv-mvm-win/d94007d/tools/winport/matchvtables.py
+(cd /tmp/oldmv && python3 matchvtables.py "$OLDPWD/linux-vtables" "$OLDPWD/win-vtables" "$OLDPWD/classified.json" > /dev/null) && cp /tmp/oldmv/winport_knownvtidx.txt old_knownvtidx.txt
+python3 - <<'PY'
+import re
+from pathlib import Path
+def rows(path):
+    out = {}
+    for m in re.finditer(r'"([^"]+)"\n\{\n\ttype +"func knownvtidx"\n\tvtable +"([^"]+)"\n\tidx +"(\d+)"\n\t// (\S+); linux \+0x([0-9a-f]+), windows (0x[0-9a-f]+)', Path(path).read_text()):
+        out[(m.group(1), m.group(2))] = (int(m.group(3)), m.group(6))
+    return out
+old, new = rows("old_knownvtidx.txt"), rows("winport_knownvtidx.txt")
+print(f"rows: old {len(old)}, new {len(new)}")
+for key in sorted(set(old) | set(new)):
+    if old.get(key) != new.get(key):
+        print("CHANGED", key, old.get(key), "->", new.get(key))
+PY
 true

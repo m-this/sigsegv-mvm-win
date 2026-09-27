@@ -1,14 +1,2 @@
-# FInViewCone(Vector const&) against FInViewCone(CBaseEntity*)
-server 0x1d5b30 70
-server 0x1d5c30 70
-# RemoveAmmo(int, int) against RemoveAmmo(int, char const*)
-server 0x1dc400 70
-server 0x1dc470 70
-# CSmokeStack::KeyValue: the string match and the vtable slot
-server 0x437b50 40
-server 0x437b90 80
-server callers 0x437b50
-# CAmbientGeneric::KeyValue, the same question
-server 0x32b600 30
-server 0x32ba60 30
-server callers 0x32b600
+# CSmokeStack::KeyValue(char const*, char const*), slot 33, whole
+server func 0x437b90 400

@@ -32,7 +32,7 @@ somebody fills by hand is much cheaper than that.
     python3 matchvtables.py <linux-dump-dir> <windows-dump-dir> <classified.json>
 """
 import json, re, sys
-from collections import defaultdict
+from collections import Counter, defaultdict
 from pathlib import Path
 
 LINUX_LINE = re.compile(r"^\+0x([0-9a-fA-F]+):\s+[0-9a-fA-F]+\s+(.*)$")
@@ -350,7 +350,7 @@ class Corpus:
         stays out of Spawn's group."""
         names, raw = list(self.names[cls]), self.tables[cls]
         present = {(split_name(names[i])[0], method(names[i])) for i in range(start, end) if names[i]}
-        repeated = {n for n in raw if raw.count(n) > 1}
+        repeated = {n for n, count in Counter(raw).items() if count > 1}
         for i in range(start, end):
             if (names[i] is None and not unnamed(raw[i]) and member(raw[i]) and raw[i] not in repeated
                     and (split_name(raw[i])[0], method(raw[i])) in present):
