@@ -1,5 +1,6 @@
 #!/bin/bash
-# Round nine: the think, touch and input functions by their datamap records.
+# Round ten: datamap records CEnvEntityMaker, CUpgrades and the rest build at
+# run time, read off the code that writes them.
 python3 - <<'PY'
 import re, bisect, collections, capstone, pefile
 from elftools.elf.elffile import ELFFile
@@ -168,86 +169,28 @@ def slots(cls, fn, lo=10, hi=10):
     for k in range(t - lo - 12, t + hi):
         if 0 <= k < len(win): print(f"  W[{k}] {win[k]:#x} ret {wpop(win[k])}  {whead(win[k])}")
 
-def lstrings(name):
-    a, n = byname[name]; out = []
-    for i in md.disasm(lcode[a-lva:a-lva+n], a):
-        m = re.search(r"\[e[a-d]x \+ (0x[0-9a-f]+)\]|\[e[a-d]x - (0x[0-9a-f]+)\]", i.op_str)
-        if m:
-            d = int(m.group(1), 16) if m.group(1) else -int(m.group(2), 16)
-            s = lstr(got + d)
-            if s and s not in out: out.append(s)
-    return out
 
-CALLS = ("call", "jmp", "ret")
-def lcalls(sym):
-    """The Linux body's calls, strings and returns, in order."""
-    a, n = byname[sym]
-    print(f"== linux {sym} size {n}, {len({lholder(s) for s in lg.get(a, ())})} callers")
-    for i in md.disasm(lcode[a-lva:a-lva+n], a):
-        line = None
-        if i.mnemonic in ("call", "ret") or (i.mnemonic == "jmp" and i.op_str.startswith("0x") and not (a <= int(i.op_str, 16) < a + n)):
-            line = f"  {i.address:#x}  {i.mnemonic} {i.op_str}"
-            if i.op_str.startswith("0x") and int(i.op_str, 16) in byaddr: line += "    -> " + byaddr[int(i.op_str, 16)]
-        m = re.search(r"\[e[a-d]x \+ (0x[0-9a-f]+)\]|\[e[a-d]x - (0x[0-9a-f]+)\]", i.op_str)
-        if m:
-            d = int(m.group(1), 16) if m.group(1) else -int(m.group(2), 16)
-            s = lstr(got + d)
-            if s: line = f"  {i.address:#x}  {i.mnemonic} {i.op_str}    str {s}"
-        if line: print(line)
-def wcalls(rva, limit=0x3000):
-    n = len(wg.get(rva, ()))
-    print(f"== windows {rva:#x} ret {wpop(rva)}, {len({wstart(s) for s in wg.get(rva, ())})} callers")
-    for i in md.disasm(code[rva-tv:rva-tv+limit], base + rva):
-        if i.mnemonic == "int3": break
-        line = None
-        if i.mnemonic in ("call", "ret") or (i.mnemonic == "jmp" and i.op_str.startswith("0x") and not (0 <= int(i.op_str, 16) - base - rva < limit)):
-            line = f"  {i.address-base:#x}  {i.mnemonic} {i.op_str}"
-            if i.op_str.startswith("0x"):
-                t = int(i.op_str, 16) - base; line += f"    -> {t:#x}" + (" " + kname[t] if t in kname else "")
-        for v in re.findall(r"0x10[0-9a-f]{6}", i.op_str):
-            s = wcstr(int(v, 16) - base)
-            if s: line = f"  {i.address-base:#x}  {i.mnemonic} {i.op_str}    str {s}"
-        if line: print(line)
-def cmp2(sym, rva):
-    print(f"######## {sym} vs {rva:#x}")
-    try: lcalls(sym)
-    except Exception as e: print("  linux:", e)
-    wcalls(rva)
-def wcallers(rva):
-    fs = sorted({wstart(s) for s in wg.get(rva, ())})
-    print(f"  callers of {rva:#x}: " + ", ".join(f"{f:#x}" + (" " + kname[f] if f in kname else "") for f in fs))
-    return fs
-def side(cls, lo, hi, shift=0):
-    lin, win = lrows(cls), wrows(cls)
-    print(f"== {cls}: linux {len(lin)}, windows {len(win)}")
-    for k in range(lo, hi):
-        l = lin[k] if k < len(lin) else ""
-        w = win[k - shift] if 0 <= k - shift < len(win) else None
-        ws = f"W[{k-shift}] {w:#x} ret {wpop(w)} {whead(w, 4)}" if w is not None else ""
-        print(f"  L[{k}] {l[:60]:60} | {ws[:150]}")
-
-
-import struct
-def tdraw(fname):
-    print(f"######## td raw {fname}")
+def dyninit(fname, before=6, after=10):
+    """The code that builds a datamap record at run time: the instructions around each load of the name."""
+    print(f"######## datamap init {fname}")
     for a in wstr(fname):
         pat = (base + a).to_bytes(4, "little")
-        for va, data in rdata:
-            at = data.find(pat)
-            while at != -1:
-                ws = struct.unpack_from("<10I", data, at - 4)
-                print(f"  at {va+at-4:#x}: " + " ".join(f"{w:08x}" for w in ws))
-                for w in ws:
-                    r = w - base
-                    if tv <= r < tv + len(code): print(f"     code {r:#x} ret {wpop(r)} {whead(r, 6)}")
-                    elif wcstr(r): print(f"     str {r:#x} {wcstr(r)}")
-                at = data.find(pat, at + 1)
-        # code that loads the name (a record built at run time)
-        pat = (base + a).to_bytes(4, "little")
-        at = code.find(pat); fs = set()
+        at = code.find(pat)
         while at != -1:
-            fs.add(wstart(tv + at)); at = code.find(pat, at + 1)
-        print(f"  code referencing it: {[hex(f) for f in sorted(fs)][:6]}")
-for f in ("UpgradeTouch", "FlagTouch", "PushThink", "ShieldThink", "TankBossThink", "InputSetTime", "InputStop", "InputForceSpawnAtEntityOrigin", "TeleporterTouch"):
-    tdraw(f)
+            site = tv + at
+            f = wstart(site)
+            ins = list(md.disasm(code[f-tv:site-tv+0x80], base + f))
+            k = next((i for i, x in enumerate(ins) if x.address - base <= site < x.address - base + x.size), None)
+            if k is not None:
+                for x in ins[max(0, k-before):k+after]:
+                    line = f"    {x.address-base:#x}  {x.mnemonic} {x.op_str}"
+                    for v in re.findall(r"0x10[0-9a-f]{6}", x.op_str):
+                        r = int(v, 16) - base
+                        if tv <= r < tv + len(code): line += f"    code ret {wpop(r)} {whead(r, 5)}"
+                        elif wcstr(r): line += f"    str {wcstr(r)}"
+                    print(line)
+                print("    --")
+            at = code.find(pat, at + 1)
+for f in ("UpgradeTouch", "PushThink", "ShieldThink", "TankBossThink", "InputSetTime", "InputForceSpawnAtEntityOrigin", "InputForceSpawn", "TeleporterTouch", "InputStop", "InputIgnitePlayer"):
+    dyninit(f)
 PY

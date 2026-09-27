@@ -1,2 +1,2 @@
-engine string SV_ComputeClientPacks
-engine string CFrameSnapshotManager
+engine func 0x132643 600
+engine callers 0x132643
