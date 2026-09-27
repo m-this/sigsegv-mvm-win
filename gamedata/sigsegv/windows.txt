@@ -6700,6 +6700,16 @@
 					lib   "server"
 					// consensus
 				}
+				"CTFGCServerSystem::PreClientUpdate"
+				{
+					type  "fixed"
+					sym   "_ZN17CTFGCServerSystem15PreClientUpdateEv"
+					addr  "0x5ca630"
+					build "10828683"
+					lib   "server"
+					vtidx "16"
+					// verified: read by hand: slot 16 of CTFGCServerSystem's table (Linux 17 with its two destructors); CGCClientSystem::PreClientUpdate, CRTime::UpdateRealTime, GCClientSystem and the virtual at +0x1bc, the Linux body
+				}
 				"UTIL_HudMessage"
 				{
 					type  "fixed"
@@ -7030,6 +7040,16 @@
 					vtidx "46"
 					// string
 				}
+				"CTFGameRules::BetweenRounds_Think"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules19BetweenRounds_ThinkEv"
+					addr  "0x483430"
+					build "10828683"
+					lib   "server"
+					vtidx "207"
+					// verified: read by hand: slot 207 of CTFGameRules' table (Linux 209, the two-slot shift of RoundCleanupShouldIgnore at 190 and BroadcastSound at 219); the ready-status countdown check, IsCompetitiveMode (which Linux inlines as GTFGCClientSystem and GetMatchGroupDescription), PlayerReadyStatus_HaveMinPlayersToEnable, then CheckReadyRestart (0x34dda0), the Linux body's order; ret. The matcher's 0x49e310 is slot 230, RoundRespawn
+				}
 				"CSchemaAttributeType_Default::ConvertStringToEconAttributeValue"
 				{
 					type  "fixed"
@@ -7111,6 +7131,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CreateSpellSpawnZombie"
+				{
+					type  "fixed"
+					sym   "_Z22CreateSpellSpawnZombieP20CBaseCombatCharacterRK6Vectori"
+					addr  "0x5bb460"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: creates 'tf_projectile_spellspawnzombie', sets the detonate time and DispatchSpawn, the Linux body; cdecl, plain ret; two direct callers as on Linux. 0x5aca40, which shares the calls, makes Merasmus' bomb
 				}
 				"CTFGameMovement::PlayerSolidMask"
 				{
