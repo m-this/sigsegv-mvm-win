@@ -1603,5 +1603,18 @@
   "rva": "0x50d0d0",
   "vtidx": 447,
   "why": "read by hand: slot 447 of CTFPlayer's table (Linux 448); the class index at +0x22d0, the byte at +0x2354, then the game rules' virtual, the Linux body (+0x22d8, +0x235c there); ret"
+ },
+ "_ZN15CEnvEntityMaker15InputForceSpawnER11inputdata_t": {
+  "rva": "0x24caf0",
+  "why": "read by hand: FindTemplate (0x24c530, which SpawnEntity also calls first), HasRoomToSpawn and IsPlayerLooking, an output fired, then SpawnEntity (0x24cd90), the Linux body's calls; ret 4 for the inputdata"
+ },
+ "_ZN15CEnvEntityMaker29InputForceSpawnAtEntityOriginER11inputdata_t": {
+  "rva": "0x24cb90",
+  "why": "read by hand: FindEntityByName on the input's string, that entity's abs origin and angles, then SpawnEntity (0x24cd90), the Linux body; ret 4 for the inputdata"
+ },
+ "_ZN15CCollisionEvent13ShouldCollideEP14IPhysicsObjectS1_PvS2_": {
+  "rva": "0x2b8410",
+  "vtidx": 11,
+  "why": "read by hand: slot 11 of CCollisionEvent's table, the same slot as on Linux (both tables 18 long); pops its four arguments (ret 16) between AddDamageEvent (slot 10, ret 24 for six) and ShouldSolvePenetration (slot 12, ret 20 for five), as the Linux order has them"
  }
 }
