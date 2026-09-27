@@ -1729,5 +1729,21 @@
  "_ZN15CTeamRoundTimer12InputSetTimeER11inputdata_t": {
   "rva": "0x34b4f0",
   "why": "read off CTeamRoundTimer's datamap, built at run time: the 'SetTime' input writes this address (0x34983b); the stopwatch check of the Linux body (two flags, then SetStopWatchTimeStamp, inlined here with its state changes) before setting the time; ret 4 for the inputdata"
+ },
+ "_ZN9CUpgrades12UpgradeTouchEP11CBaseEntity": {
+  "rva": "0x5f64f0",
+  "why": "read by hand: CUpgrades::Spawn (0x5f53e0) sets it as the touch function (mov [esi+0xd8], 0x105f64f0, the m_pfnTouch SetTouch writes), and CUpgrades' datamap, built at run time, writes 'UpgradeTouch' and then this address; ret 4 for the toucher"
+ },
+ "_Z16UTIL_ScreenShakeRK6Vectorffff14ShakeCommand_tb": {
+  "rva": "0x36de50",
+  "why": "read by hand: the one function called by all six of Linux's callers known on Windows (ApplyOnDamageModifyRules, the eyeball boss' death, the tank's destruction and three more), with 23 direct callers as Linux has 23; reads the amplitude at +0xc; cdecl, plain ret"
+ },
+ "_Z21UTIL_EntitiesInSphereRK6VectorfP20CFlaggedEntitiesEnum": {
+  "rva": "0x36c690",
+  "why": "read by hand: called by six of the seven Linux callers known on Windows (JarExplode, the minigun's AttackEnemyProjectiles and four more), 21 direct callers against Linux's 22; loads the spatial partition and the radius at +0xc for EnumerateElementsInSphere, the Linux body; cdecl, plain ret. 0x369e80, which those callers also call, is CFlaggedEntitiesEnum's constructor (ret 12)"
+ },
+ "_ZNK6CTFBot21GetDesiredAttackRangeEv": {
+  "rva": "0x551fe0",
+  "why": "read by hand: called by both of Linux's callers known on Windows and by nothing else, among CTFBot's functions; takes the active weapon (m_Shared at +0x1ae8, GetActiveTFWeapon) first as the Linux body does; ret. The matcher's 0x563530 pops 8"
  }
 }
