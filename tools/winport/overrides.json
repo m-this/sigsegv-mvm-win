@@ -1401,5 +1401,207 @@
   "rva": "0x54e9d0",
   "vtidx": 0,
   "why": "read by hand: slot 0 of CTFBot's table, the scalar deleting destructor: calls the body at 0x54e470, tests the flags (&1, &4), frees through 0x1e9af0, ret 4. CTFBot has no subclass, so every bot is destroyed through it; ECAttr_Extensions clears its per-bot data here"
+ },
+ "_ZN14CSpawnLocation17FindSpawnLocationER6Vector": {
+  "rva": "0x5ed4e0",
+  "why": "read by hand: walks the handle vector at +4 (count +0x10), looks each entity up and skips it on its disabled byte, the Linux loop; one argument (ret 4) and four direct callers, as Linux has four (the mission and wave spawn populators); the candidate every matched caller pointed at"
+ },
+ "_ZN9CTFPlayer19ReapplyItemUpgradesEP13CEconItemView": {
+  "rva": "0x508c80",
+  "why": "read by hand: returns early on the virtual at +0x71c (Linux +0x720), reads the class index, calls GetPlayerUpgradeHistory, bumps the counter at +0x2468 and clears +0x2478 when gpGlobals->maxClients > 1, then walks the history matching the item's definition index, the Linux body; ret 4"
+ },
+ "_ZN9CTFPlayer18GetSceneSoundTokenEv": {
+  "rva": "0x4f3ff0",
+  "vtidx": 375,
+  "why": "read by hand: slot 375 of CTFPlayer's table (Linux 376, after DeathSound); returns 'M_MVM_' or 'MVM_' for a BLU player in MvM by IsMiniBoss, else the empty string, the Linux body; ret"
+ },
+ "_ZN18CPopulationManager8ResetMapEv": {
+  "rva": "0x5e69c0",
+  "why": "read by hand: loops the players through UTIL_PlayerByIndex, checks the team and calls the player virtual at +0x704 (Linux +0x708), then ClearCheckpoint, the Linux body; two direct callers as on Linux; ret"
+ },
+ "_ZN18CPopulationManager23UpdateObjectiveResourceEv": {
+  "rva": "0x5e78c0",
+  "why": "read by hand: writes the objective resource's fields with a state change each; five direct callers as Linux has five, and StartCurrentWave (0x5e7520) calls it first as on Linux; ret"
+ },
+ "_ZN18CPopulationManager16StartCurrentWaveEv": {
+  "rva": "0x5e7520",
+  "why": "read by hand: calls UpdateObjectiveResource (0x5e78c0), the stats' RoundEvent_WaveStart and State_Transition, in the Linux order; ret"
+ },
+ "_ZNK6CTFBot14GetFlagToFetchEv": {
+  "rva": "0x552180",
+  "why": "read by hand: opens with the two GetTeamNumber checks of the Linux body; eight direct callers as Linux has eight (CTFBotSquad::Leave, CTFBotSpawner::Spawn and the flag behaviours); ret"
+ },
+ "_ZNK6CTFBot18GetFlagCaptureZoneEv": {
+  "rva": "0x552110",
+  "why": "read by hand: two GetTeamNumber comparisons in a short loop, the Linux body; four direct callers as Linux has four (DeliverFlag, PushToCapturePoint, the engineer's move); ret"
+ },
+ "_ZN6CTFBot5SpawnEv": {
+  "rva": "0x562e50",
+  "vtidx": 24,
+  "why": "read by hand: slot 24 of CTFBot's table (Linux 25, between SetTransmit/GetTracerType and CTFPlayer::Precache); the virtual at +0x150, the bot's own resets and a call into CTFPlayer::Spawn, the Linux body"
+ },
+ "_ZN11CBaseEntity6CreateEPKcRK6VectorRK6QAnglePS_": {
+  "rva": "0x1ee720",
+  "why": "read by hand: CreateEntityByName(name, -1), then SetLocalOrigin, SetLocalAngles, the owner virtual and DispatchSpawn(ent, true): Linux's Create with CreateNoSpawn inlined; cdecl, plain ret, 63 direct callers"
+ },
+ "_ZN15CEnvEntityMaker11SpawnEntityE6Vector6QAngle": {
+  "rva": "0x24cd90",
+  "why": "read by hand: FindTemplate first, the entity's abs origin and angles, then the arguments compared with vec3_invalid (FLT_MAX at 0x109d62d8), the Linux body; pops the Vector and QAngle it takes by value (ret 24); eight direct callers as Linux has eight"
+ },
+ "_ZN9CUpgrades5SpawnEv": {
+  "rva": "0x5f53e0",
+  "vtidx": 24,
+  "why": "read by hand: slot 24 of CUpgrades' table (Linux 25); calls CBaseTrigger::Spawn (0x360300, CBaseTrigger's slot 24) first and InitTrigger after, the Linux body"
+ },
+ "_ZN9CUpgradesD0Ev": {
+  "rva": "0x5f5600",
+  "vtidx": 0,
+  "why": "read by hand: slot 0 of CUpgrades' table, the scalar deleting destructor: destroys the outputs, calls the base destructor (0x2303e0), tests the flags and frees through 0x1e9af0, ret 4. It holds ~CUpgrades' body, which has no function of its own on Windows"
+ },
+ "_ZN11CTFTankBoss14UpdateOnRemoveEv": {
+  "rva": "0x5f51d0",
+  "vtidx": 111,
+  "why": "read by hand: slot 111 of CTFTankBoss' table (Linux 112); StopSound on the tank's loop, DecrementMannVsMachineWaveClassCount, then the base, the Linux body"
+ },
+ "_ZN11CTFBaseBoss12OnTakeDamageERK15CTakeDamageInfo": {
+  "rva": "0x5de570",
+  "vtidx": 64,
+  "why": "read by hand: slot 64 of CTFBaseBoss' table (Linux 65); copies the damage info and calls ApplyOnDamageModifyRules on it, the Linux body; ret 4; the matcher's candidate too"
+ },
+ "_ZN11CTFBaseBoss5TouchEP11CBaseEntity": {
+  "rva": "0x5df040",
+  "vtidx": 105,
+  "why": "read by hand: slot 105 of CTFBaseBoss' table (Linux 106, after StartTouch); NextBotCombatCharacter::Touch, a virtual, a CTakeDamageInfo and TakeDamage, the Linux body; ret 4; the matcher's candidate too"
+ },
+ "_ZN17CTFBotDeliverFlag5OnEndEP6CTFBotP6ActionIS0_E": {
+  "rva": "0x588560",
+  "vtidx": 47,
+  "why": "read by hand: slot 47 of CTFBotDeliverFlag's table (Linux 48, after OnStart 45 and Update 46, which pop 12 with the result pointer); clears bit 8 of the bot's attribute flags and ends in one call where the Linux body ends by jumping to ResetRageBuffs; ret 8"
+ },
+ "_ZN17CBaseCombatWeapon5EquipEP20CBaseCombatCharacter": {
+  "rva": "0x1e1080",
+  "vtidx": 234,
+  "why": "read by hand: slot 234 of CBaseCombatWeapon's table (Linux 240, after Get/SetSubType); SetAbsVelocity, SetSolidFlags, FollowEntity, SetOwner, a virtual, the Linux body; ret 4, one direct caller as on Linux (CTFWeaponBase::Equip)"
+ },
+ "_ZN11CTFWearable5EquipEP11CBasePlayer": {
+  "rva": "0x3d1190",
+  "vtidx": 233,
+  "why": "read by hand: slot 233 of CTFWearable's table (Linux 239, after CanEquip); CEconWearable::Equip, the team check and GetDisguiseTeam, the Linux body; ret 4; the matcher's candidate too"
+ },
+ "_ZN12CCaptureFlag16GetMaxReturnTimeEv": {
+  "rva": "0x448070",
+  "why": "read by hand: two GetRobotDestructionLogic calls and the float scaling of the return time field, the Linux body; ret"
+ },
+ "_ZN6CTFBot29GetNearestKnownSappableTargetEv": {
+  "rva": "0x552da0",
+  "why": "read by hand: the vision virtuals and a dynamic cast per known entity, the Linux loop over known objects; three direct callers as Linux has three (SpySap, SpyAttack, the script function); ret"
+ },
+ "_ZN11CEconEntity14UpdateOnRemoveEv": {
+  "rva": "0x3a04e0",
+  "vtidx": 111,
+  "why": "read by hand: slot 111 of CEconEntity's table (Linux 112); two virtual calls, then the base UpdateOnRemove, the Linux body"
+ },
+ "_ZN17CBaseCombatWeapon11WeaponSoundE13WeaponSound_tf": {
+  "rva": "0x1e4d50",
+  "vtidx": 303,
+  "why": "read by hand: slot 303 of CBaseCombatWeapon's table (Linux 309, after GetRandomBurst, before StopWeaponSound which pops 4); reads the weapon's file info and plays the shoot sound; ret 8 for its two arguments"
+ },
+ "_ZN12CTFGameRules17GetBonusRoundTimeEb": {
+  "rva": "0x48c300",
+  "vtidx": 188,
+  "why": "read by hand: slot 188 of CTFGameRules' table (Linux 189, after IsInArenaMode, IsInKothMode, IsInTraining, IsInItemTestingMode at 184-187); the MvM check, GTFGCClientSystem and GetMatchGroupDescription, the Linux body; ret 4 for its bool"
+ },
+ "_ZN17CTFGCServerSystem15PreClientUpdateEv": {
+  "rva": "0x5ca630",
+  "vtidx": 16,
+  "why": "read by hand: slot 16 of CTFGCServerSystem's table (Linux 17 with its two destructors); CGCClientSystem::PreClientUpdate, CRTime::UpdateRealTime, GCClientSystem and the virtual at +0x1bc, the Linux body"
+ },
+ "_ZN12CCaptureFlag6PickUpEP9CTFPlayerb": {
+  "rva": "0x448730",
+  "why": "read by hand: every named call it makes is one the Linux body makes (TeamFortress_SetSpeed, LookupAttachment('flag'), SetLocalOrigin, SetLocalAngles, HasTheFlag, InCond), and it plays 'CaptureFlag.EnemyStolen', 'AttackDefend.EnemyStolen' and 'MVM.AttackDefend.EnemyStolen'; ret 8 for (player, bool)"
+ },
+ "_ZN11CTFTankBoss13TankBossThinkEv": {
+  "rva": "0x5f3d50",
+  "why": "read by hand: the tank's think: 'Announcer.MVM_Tank_Alert_Halfway', 'Announcer.MVM_Tank_Alert_Near_Hatch', the 'movement' sequence, TakeDamage, StopSound, EmitSound and StopParticleEffects, the Linux body's calls; ret"
+ },
+ "_ZN5CWave12AddClassTypeE8string_tij": {
+  "rva": "0x5ed180",
+  "why": "read by hand: called by exactly CPopulationManager::Parse (0x5e5c40) and CWave::Parse (0x5ee640), Linux's two callers, and pops (string_t, int, unsigned) with ret 12; the vector insert is inlined"
+ },
+ "_ZN18CPopulationManager24AdjustMinPlayerSpawnTimeEv": {
+  "rva": "0x5e2e40",
+  "why": "read by hand: calls SetTeamRespawnWaveTime as the Linux body does; its one direct caller is CWave::ActiveWaveUpdate (0x5ece00), Linux's one caller; ret"
+ },
+ "_ZN18CPopulationManager7WaveEndEb": {
+  "rva": "0x5e7b00",
+  "why": "read by hand: RoundEvent_WaveEnd, SetCheckpoint, State_Transition and the 'scorestats_accumulated_update' event, the Linux body; ret 4 for its bool; two direct callers, CWave::WaveCompleteUpdate among them, as on Linux"
+ },
+ "_ZN17CObjectTeleporter24RecieveTeleportingPlayerEP9CTFPlayer": {
+  "rva": "0x4d0a40",
+  "why": "read by hand: the telefrag (TakeDamage), SetFOV and the exit position, the Linux body's calls; ret 4; two direct callers, TeleporterThink (0x4d1e00) among them, as on Linux"
+ },
+ "_ZN13CTFBaseRocket6CreateEP11CBaseEntityPKcRK6VectorRK6QAngleS1_": {
+  "rva": "0x63f490",
+  "why": "read by hand: GetOwnerPlayer, GetCarryingRuneType, 'mult_projectile_speed' and 'rocket_specialist', SetAbsVelocity and SetAbsAngles, the Linux body; cdecl, plain ret; called by the sentry's FireRocket (0x4cbf40) and CTFProjectile_Rocket::Create (0x536410), two of Linux's three callers"
+ },
+ "_ZN9CTFPlayer14RemoveCurrencyEi": {
+  "rva": "0x50a1c0",
+  "why": "read by hand: lowers the currency with a state change and calls CPopulationManager's AddPlayerCurrencySpent (0x5e2dc0), the Linux body; ret 4, three direct callers as on Linux"
+ },
+ "_ZN9CTFPlayer22EndPurchasableUpgradesEv": {
+  "rva": "0x4ec070",
+  "why": "read by hand: ends in a call to CPopulationManager's SendUpgradesToPlayer (0x5e6fd0, in the population manager's code) as the Linux body does; ret; the matcher's call candidate from CUpgrades::GrantOrRemoveAllUpgrades"
+ },
+ "_ZN9CTFPlayer17InputIgnitePlayerER11inputdata_t": {
+  "rva": "0x4fb030",
+  "why": "read by hand: calls IgnitePlayer and pops the inputdata (ret 4), as the Linux body jumps to IgnitePlayer; the matcher took it from CTFPlayer's input table"
+ },
+ "_ZN9CTFPlayer19InputSetCustomModelER11inputdata_t": {
+  "rva": "0x4fb080",
+  "why": "read by hand: the variant's string (ToString) handed to SetCustomModel, the Linux body; ret 4; the matcher took it from CTFPlayer's input table"
+ },
+ "_ZN9CTFPlayer22RemoveOwnedProjectilesEv": {
+  "rva": "0x50a550",
+  "why": "read by hand: calls CBaseGrenade::GetThrower and CBaseEntity::AddEffects as the Linux body does; ret, three direct callers as on Linux"
+ },
+ "_ZN10CTFPowerup5SpawnEv": {
+  "rva": "0x533a30",
+  "why": "read by hand: SetMoveType, SetSolidFlags, the 'idle' sequence through LookupSequence and ResetSequence, the Linux body; seven direct callers as on Linux"
+ },
+ "_ZN13CTFWeaponBase20CalcIsAttackCriticalEv": {
+  "rva": "0x632520",
+  "why": "read by hand: the owner cast to CTFPlayer, TheTFBots and IsAllBotTeam on the team, IsPVEModeActive (0x4924c0) and IsPVEModeControlled (0x4924d0, its neighbour as on Linux), the Linux body; ret"
+ },
+ "_ZN20CTFPlayerSharedUtils28GetEconItemViewByLoadoutSlotEP9CTFPlayeriPP11CEconEntity": {
+  "rva": "0x521ec0",
+  "why": "read by hand: CEconItemView::GetStaticData and CTFItemDefinition::GetLoadoutSlot over the player's items, the Linux body; cdecl, plain ret"
+ },
+ "_ZN11CBaseObject25InitializeMapPlacedObjectEv": {
+  "rva": "0x4c1cd0",
+  "why": "read by hand: field writes with state changes, the object's virtuals, a team read and a second state change, the Linux shape; one direct caller as on Linux; ret"
+ },
+ "_ZNK6CTFBot24IsBarrageAndReloadWeaponEP13CTFWeaponBase": {
+  "rva": "0x557020",
+  "why": "read by hand: GetActiveTFWeapon when no weapon is passed, then the weapon id tests, the Linux body; ret 4, three direct callers as on Linux"
+ },
+ "_ZN13CTFWeaponBase19CanFireCriticalShotEbP11CBaseEntity": {
+  "rva": "0x632b50",
+  "vtidx": 439,
+  "why": "read by hand: slot 439 of CTFWeaponBase's table, the one CTFRevolver overrides (0x625140); IsPVEModeControlled on the owner, the Linux body; ret 8 for (bool, CBaseEntity *), three direct callers as on Linux"
+ },
+ "_ZN11CTFRevolver19CanFireCriticalShotEbP11CBaseEntity": {
+  "rva": "0x625140",
+  "vtidx": 439,
+  "why": "read by hand: slot 439 of CTFRevolver's table, where CTFWeaponBase has 0x632b50; the 'set_weapon_mode' attribute and IsCritBoosted, the Linux body; ret 8"
+ },
+ "_ZN9CTFPlayer14IsReadyToSpawnEv": {
+  "rva": "0x4fc560",
+  "vtidx": 446,
+  "why": "read by hand: slot 446 of CTFPlayer's table (Linux 447, after IsReadyToPlay); the byte at +0x2354 and the revive marker handle at +0x259c (Linux +0x235c and +0x25a4, the shift the rest of CTFPlayer has), the Linux body; ret"
+ },
+ "_ZN9CTFPlayer22ShouldGainInstantSpawnEv": {
+  "rva": "0x50d0d0",
+  "vtidx": 447,
+  "why": "read by hand: slot 447 of CTFPlayer's table (Linux 448); the class index at +0x22d0, the byte at +0x2354, then the game rules' virtual, the Linux body (+0x22d8, +0x235c there); ret"
  }
 }

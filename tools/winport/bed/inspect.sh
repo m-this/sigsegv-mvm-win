@@ -1,7 +1,6 @@
 #!/bin/bash
-# Round three: the calls and strings of each candidate against its Linux
-# function, and the slots of CTFTankBoss, CTFPlayer and CTFGameRules side by
-# side.
+# Round four: datamap inputs, the game rules' slots, CTFBot's tail, and
+# neighbours for the Pop mods' remaining targets.
 python3 - <<'PY'
 import re, bisect, collections, capstone, pefile
 from elftools.elf.elffile import ELFFile
@@ -170,7 +169,6 @@ def slots(cls, fn, lo=10, hi=10):
     for k in range(t - lo - 12, t + hi):
         if 0 <= k < len(win): print(f"  W[{k}] {win[k]:#x} ret {wpop(win[k])}  {whead(win[k])}")
 
-
 def lstrings(name):
     a, n = byname[name]; out = []
     for i in md.disasm(lcode[a-lva:a-lva+n], a):
@@ -229,49 +227,79 @@ def side(cls, lo, hi, shift=0):
         ws = f"W[{k-shift}] {w:#x} ret {wpop(w)} {whead(w, 4)}" if w is not None else ""
         print(f"  L[{k}] {l[:60]:60} | {ws[:150]}")
 
+def lite(sym, show=3):
+    print(f"######## lite {sym}")
+    if sym not in byname: print("  missing"); return
+    a, n = byname[sym]
+    import io, contextlib
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf): callees, callers = ldis(sym, 0)
+    print(f"  linux size {n}, strings {lstrings(sym)[:8]}")
+    print(f"  linux callees: {list(dict.fromkeys(callees))[:15]}")
+    print(f"  linux callers: {callers[:12]}")
+    for s in lstrings(sym)[:4]:
+        fs = wrefs(eval(s))
+        for f in fs[:4]: print(f"    {f:#x} ret {wpop(f)}  {whead(f, 5)}")
+    cnt, cc, kc = wfind(callees, callers)
+    for f, k in cnt.most_common(show): print(f"    {f:#x} votes {k} ret {wpop(f)}  {whead(f, 5)}")
+
+
+def dminput(fname):
+    """Every typedescription whose fieldName is this string: its externalName and inputFunc (+0x18)."""
+    print(f"######## datamap input {fname}")
+    import struct
+    for a in wstr(fname):
+        pat = (base + a).to_bytes(4, "little")
+        for va, data in rdata:
+            at = data.find(pat)
+            while at != -1:
+                if at >= 4:
+                    rec = struct.unpack_from("<IIIHHIII", data, at - 4)
+                    ext = wcstr(rec[5] - base) if rec[5] else None
+                    fn = rec[7] - base
+                    print(f"  td at {va+at-4:#x}: type {rec[0]} ext {ext} inputFunc {fn:#x} ret {wpop(fn) if tv <= fn < tv+len(code) else '-'} {whead(fn, 5) if tv <= fn < tv+len(code) else ''}")
+                at = data.find(pat, at + 1)
+
+for f in ("InputForceSpawn", "InputForceSpawnAtEntityOrigin", "InputStop", "InputSetTime", "InputIgnitePlayer", "InputSetCustomModel"):
+    dminput(f)
 for sym, rva in [
- ("_ZN12CCaptureFlag6PickUpEP9CTFPlayerb", 0x448730),
- ("_ZN11CTFTankBoss13TankBossThinkEv", 0x5f3d50),
- ("_ZN11CTFTankBoss15UpdatePingSoundEv", 0x5f2a10),
- ("_ZN5CWave12AddClassTypeE8string_tij", 0x5ed180),
- ("_ZN5CWave25IsDoneWithNonSupportWavesEv", 0x5ed710),
- ("_ZN18CPopulationManager24AdjustMinPlayerSpawnTimeEv", 0x5e2e40),
- ("_ZN18CPopulationManager7WaveEndEb", 0x5e7b00),
- ("_Z18IsSpaceToSpawnHereRK6Vector", 0x29a460),
- ("_Z18IsSpaceToSpawnHereRK6Vector", 0x29a1f0),
- ("_ZN11CTFBaseBoss22ResolvePlayerCollisionEP9CTFPlayer", 0x5deaa0),
- ("_ZN17CObjectTeleporter24RecieveTeleportingPlayerEP9CTFPlayer", 0x4d0a40),
- ("_ZN13CTFBaseRocket6CreateEP11CBaseEntityPKcRK6VectorRK6QAngleS1_", 0x63f490),
- ("_ZN17CTFBotDeliverFlag5OnEndEP6CTFBotP6ActionIS0_E", 0x588560),
- ("_ZN15CEnvEntityMaker11SpawnEntityE6Vector6QAngle", 0x24cd90),
- ("_ZN9CTFPlayer10StateLeaveEv", 0x50fa80),
- ("_ZN9CTFPlayer14RemoveCurrencyEi", 0x50a1c0),
- ("_ZN9CTFPlayer22EndPurchasableUpgradesEv", 0x4ec070),
- ("_ZN9CTFPlayer17InputIgnitePlayerER11inputdata_t", 0x4fb030),
- ("_ZN9CTFPlayer19InputSetCustomModelER11inputdata_t", 0x4fb080),
- ("_ZN9CTFPlayer22RemoveOwnedProjectilesEv", 0x50a550),
- ("_ZN10CTFPowerup5SpawnEv", 0x533a30),
- ("_ZN13CTFWeaponBase20CalcIsAttackCriticalEv", 0x632520),
- ("_ZN20CTFPlayerSharedUtils28GetEconItemViewByLoadoutSlotEP9CTFPlayeriPP11CEconEntity", 0x521ec0),
- ("_ZN11CBaseObject25InitializeMapPlacedObjectEv", 0x4c1cd0),
- ("_ZNK6CTFBot24IsBarrageAndReloadWeaponEP13CTFWeaponBase", 0x557020),
- ("_ZN13CTFWeaponBase19CanFireCriticalShotEbP11CBaseEntity", 0x632b50),
- ("_ZN11CTFRevolver19CanFireCriticalShotEbP11CBaseEntity", 0x625140),
+ ("_ZN15CEnvEntityMaker15InputForceSpawnER11inputdata_t", 0x24caf0),
+ ("_ZN15CEnvEntityMaker29InputForceSpawnAtEntityOriginER11inputdata_t", 0x24cb90),
+ ("_ZN12CTFGameRules14BroadcastSoundEiPKciP11CBasePlayer", 0x4836e0),
+ ("_ZN12CTFGameRules19BetweenRounds_ThinkEv", 0x498ba0),
+ ("_ZN12CTFGameRules19BetweenRounds_ThinkEv", 0x49e310),
+ ("_ZN12CTFGameRules24RoundCleanupShouldIgnoreEP11CBaseEntity", 0x4a1c20),
+ ("_ZN12CTFGameRules18ShouldCreateEntityEPKc", 0x4a1c20),
+ ("_ZN15CCollisionEvent13ShouldCollideEP14IPhysicsObjectS1_PvS2_", 0x2b8410),
 ]:
     try: cmp2(sym, rva)
     except Exception as e: print("  error", e)
-
-print("######## callers of SpawnEntity 0x24cd90, heads")
-for f in wcallers(0x24cd90): print(f"    {f:#x} ret {wpop(f)} {whead(f, 8)}")
-print("######## vec3_invalid constants", [hex(int.from_bytes(code[0:0], 'little'))])
-for va, data in rdata:
-    for r in (0x9d62d8, 0x9d62dc):
-        if va <= r < va + len(data): print(f"  {r:#x}: {data[r-va:r-va+4].hex()}")
-print("######## CBaseTrigger slot 24", hex(wrows("CBaseTrigger")[24]), "CUpgrades 24", hex(wrows("CUpgrades")[24]))
-side("CTFTankBoss", 326, 346, 0)
-side("CTFTankBoss", 326, 346, -6)
-side("CTFPlayer", 440, 452, 1)
-side("CTFGameRules", 196, 224, 1)
-for s in ("_ZN9CTFPlayer14IsReadyToSpawnEv", "_ZN9CTFPlayer22ShouldGainInstantSpawnEv", "_ZN11CTFTankBoss16GetCurrencyValueEv", "_ZN12CTFGameRules19BetweenRounds_ThinkEv", "_ZN12CTFGameRules14BroadcastSoundEiPKciP11CBasePlayer", "_ZN12CTFGameRules24RoundCleanupShouldIgnoreEP11CBaseEntity", "_ZN12CTFGameRules18ShouldCreateEntityEPKc"):
-    ldis(s, 60)
+side("CTFGameRules", 186, 196, 1)
+side("CTFBot", 500, 539, 44)
+side("CTFBot", 500, 539, 43)
+for s in ("_ZN13NextBotPlayerI9CTFPlayerE6UpdateEv", "_ZN13NextBotPlayerI9CTFPlayerE17PressCrouchButtonEf", "_ZN13NextBotPlayerI9CTFPlayerE19ReleaseCrouchButtonEv", "_ZN6CTFBot12AvoidPlayersEP8CUserCmd", "_ZN6CTFBot13OnWeaponFiredEP20CBaseCombatCharacterP17CBaseCombatWeapon"):
+    try: lcalls(s)
+    except Exception as e: print(e)
+for sym in [
+ "_ZN12CCaptureFlag9FlagTouchEP11CBaseEntity",
+ "_ZN18CFlagDetectionZone19EntityIsFlagCarrierEP11CBaseEntity",
+ "_ZN16CTFMedigunShield11ShieldThinkEv",
+ "_ZN10CPointPush9PushThinkEv",
+ "_ZN12CEventActionC2EPKc",
+ "_Z21UTIL_EntitiesInSphereRK6VectorfP20CFlaggedEntitiesEnum",
+ "_ZN16CTFBotMainAction17FireWeaponAtEnemyEP6CTFBot",
+ "_ZNK16CTFBotMainAction33SelectMoreDangerousThreatInternalEPK8INextBotPK20CBaseCombatCharacterPK12CKnownEntityS8_",
+ "_ZN16CTFWeaponBaseGun10FireRocketEP9CTFPlayeri",
+ "_Z19TE_TFParticleEffectR16IRecipientFilterfPKc6Vector6QAngleP11CBaseEntity20ParticleAttachment_t",
+ "_ZN15CItemGeneration18GenerateRandomItemEP22CItemSelectionCriteriaRK6VectorRK6QAnglePKc",
+ "_ZN15CTFPlayerShared16OnConditionAddedE7ETFCond",
+ "_ZN15CTFPlayerShared18OnConditionRemovedE7ETFCond",
+ "_Z20DoTeleporterOverrideP11CBaseEntityR6Vectorb",
+ "_Z17GetBotEscortCounti",
+ "_ZNK11CTFBotSquad33ShouldSquadLeaderWaitForFormationEv",
+ "_ZN21CTFBotTacticalMonitor20FindNearbyTeleporterEP6CTFBot",
+ "_ZN12CTFGameRules18ShouldCreateEntityEPKc",
+]:
+    try: lite(sym)
+    except Exception as e: print("  error", e)
 PY
