@@ -1,1 +1,10 @@
-# nothing asked
+# PassesTriggerFilters ends in m_hFilter's PassesFilter
+server func 0x360650 300
+# who asks the schema for an attribute definition, by name and by index
+server callers 0x3b8ea0
+server callers 0x3b8e30
+# who calls SetModel and PrecacheModel (SetViewModel, SetCustomViewModel)
+server callers 0x1fc1e0
+server callers 0x1f86f0
+server string TFExplosion
+server string custom_view_model
