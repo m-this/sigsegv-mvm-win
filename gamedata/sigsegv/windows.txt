@@ -3169,6 +3169,15 @@
 					vtidx "136"
 					// vtable
 				}
+				"CBaseGrenade::SetThrower"
+				{
+					type  "fixed"
+					sym   "_ZN12CBaseGrenade10SetThrowerEP20CBaseCombatCharacter"
+					addr  "0x20ae80"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: resolves m_hThrower (+0x504, Linux +0x51c) and, when it differs from the argument, reports the change and stores the argument's handle (GetRefEHandle, vtable +8, Linux +0xc) or -1; then stores the same handle into m_hOriginalThrower (+0x508, Linux +0x520) unless that already resolves, the Linux body; thiscall, ret 4 for its one argument. Called by the (int, float) InitGrenade (0x63a170) right after its first virtual call, as on Linux, and sits next to GetThrower (0x20ad30)
+				}
 				"CBaseGrenade::GetDamageRadius"
 				{
 					type  "fixed"
@@ -4721,6 +4730,15 @@
 					lib   "server"
 					// verified: string lead, agreed by strings: 4 shared string(s), 2/2 matched callees, windows/linux size 1056/1078
 				}
+				"CTFProjectile_Arrow::SetScorer"
+				{
+					type  "fixed"
+					sym   "_ZN19CTFProjectile_Arrow9SetScorerEP11CBaseEntity"
+					addr  "0x5364b0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: stores the argument's handle (GetRefEHandle, vtable +8, Linux +0xc) or -1 into m_Scorer at +0x510, the handle IScorer::GetScorer (0x5361a0, from the IScorer base at +0x50c) reads; Linux stores at +0x528 from its base at +0x524. Rocket's and Arrow's Linux bodies are byte for byte the same and both classes keep m_Scorer at +0x510 on Windows, so the one folded body serves both; thiscall, ret 4 for its one argument. Sits between Rocket's GetScorer and Create
+				}
 				"CTFProjectile_Arrow::StrikeTarget"
 				{
 					type  "fixed"
@@ -4814,6 +4832,15 @@
 					build "10828683"
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: shares the string 'tf_projectile_rocket' with the Linux function, and 0 of its 0 matched callees
+				}
+				"CTFProjectile_Rocket::SetScorer"
+				{
+					type  "fixed"
+					sym   "_ZN20CTFProjectile_Rocket9SetScorerEP11CBaseEntity"
+					addr  "0x5364b0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: stores the argument's handle (GetRefEHandle, vtable +8, Linux +0xc) or -1 into m_Scorer at +0x510, the handle IScorer::GetScorer (0x5361a0, from the IScorer base at +0x50c) reads; Linux stores at +0x528 from its base at +0x524. Rocket's and Arrow's Linux bodies are byte for byte the same and both classes keep m_Scorer at +0x510 on Windows, so the one folded body serves both; thiscall, ret 4 for its one argument. Sits between Rocket's GetScorer and Create
 				}
 				"CTFProjectile_Rocket::Spawn"
 				{
@@ -8467,6 +8494,24 @@
 					lib   "server"
 					// call
 				}
+				"CNavArea::ClearSearchLists"
+				{
+					type  "fixed"
+					sym   "_ZN8CNavArea16ClearSearchListsEv"
+					addr  "0x3dd120"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: increments m_masterMarker (0x9c1c1c) and sets it to 1 on wrap, and zeroes m_openList (0xa8d1ec) and its tail (0xa8d1f0), the Linux body; static, plain ret
+				}
+				"CNavArea::AddToOpenList"
+				{
+					type  "fixed"
+					sym   "_ZN8CNavArea13AddToOpenListEv"
+					addr  "0x3dc990"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: returns when +0x50 (m_openMarker) already equals m_masterMarker (0x9c1c1c), else stores it; an empty m_openList (0xa8d1ec) takes the area as head and tail (0xa8d1f0) with +0x48/+0x4c cleared; otherwise walks +0x48 from the head comparing the total cost at +0x40 and links it in before the first dearer area or after the tail, the Linux body and offsets; thiscall, plain ret, no arguments. AddToOpenListTail follows at 0x3dca10
+				}
 				"CNavArea::IsBlocked"
 				{
 					type  "fixed"
@@ -8476,6 +8521,15 @@
 					lib   "server"
 					vtidx "17"
 					// vtable
+				}
+				"CNavArea::RemoveFromOpenList"
+				{
+					type  "fixed"
+					sym   "_ZN8CNavArea18RemoveFromOpenListEv"
+					addr  "0x3e5f40"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: returns when +0x50 is zero, unlinks the area from its +0x4c prev and +0x48 next, moving m_openList (0xa8d1ec) or its tail (0xa8d1f0) when it was at an end, then clears +0x50, the Linux body and offsets; thiscall, plain ret, no arguments
 				}
 				"CNavArea::IsPotentiallyVisibleToTeam"
 				{
@@ -8505,6 +8559,15 @@
 					build "10828683"
 					lib   "server"
 					// consensus
+				}
+				"CTFNavArea::MakeNewTFMarker"
+				{
+					type  "fixed"
+					sym   "_ZN10CTFNavArea15MakeNewTFMarkerEv"
+					addr  "0x5d5970"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: inc dword [0x9d23e8]; ret, the Linux add [m_masterTFMark], 1; ret. The same global is what TFMark (0x5d63f0) stores into +0x21c and IsTFMarked (0x5d5570) compares with it (Linux +0x220), and SelectSpawnArea (0x5ef2a0, by its VPROF string) calls it first and then GetGlobalTeam, CollectSurroundingAreas, IsTFMarked, TFMark and IsValidForWanderingPopulation, the Linux order; static, plain ret
 				}
 				"NavAreaBuildPath<CTFBotPathCost>"
 				{
