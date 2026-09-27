@@ -1438,5 +1438,35 @@
  "_ZN9CTFPlayer14RemoveCurrencyEi": {
   "rva": "0x50a1c0",
   "why": "read by hand: m_nCurrency (+0x2448, the offset its send prop pushes) less the amount, floored at 0, stored with NetworkStateChanged when it changes; then if g_pGameRules is in MvM (+0xc72, as Linux) calls 0x5e2dc0 on g_pPopulationManager with (player, amount), Linux's AddPlayerCurrencySpent, the Linux body. Its three callers are Linux's: ClientCommand, Event_Killed and the upgrade purchase (0x5f6220). thiscall, ret 4 for the int"
+ },
+ "_ZN13CTFWeaponBase16GetParticleColorEi": {
+  "rva": "0x6354a0",
+  "vtidx": 450,
+  "why": "read by hand: CTFWeaponBase's slot 450 (Linux 457, the seven slots above it shifted as around it). The owner from the handle at +0x210, IsPlayer, the item's initialized flag, GetModifiedRGBValue(team == blue) scaled by 1/255 and clamped when positive, else the same four team colours as Linux (0x3f3851ec, 0x3eb0a3d7, 0x3f000000, 0x3e147ae1) by color 1 or not and red or not; zero when no owner. Hidden return pointer and the int, ret 8"
+ },
+ "_Z19TE_TFParticleEffectR16IRecipientFilterfPKc6Vector6QAngleP11CBaseEntity20ParticleAttachment_t": {
+  "rva": "0x470860",
+  "why": "read by hand: resets the temp entity, GetParticleSystemIndex(name), origin from the first Vector, start from vec3_origin, angles from the QAngle, and only when the entity is set its edict index and the attachment type (the seventh argument), then CBaseTempEntity::Create(filter, delay); the Linux body field for field. cdecl, plain ret, 60 callers. Its neighbours 0x470750 (two Vectors, attachment fixed at 2) and 0x470a10 (Complex) are the other overloads"
+ },
+ "_Z19TE_TFParticleEffectR16IRecipientFilterfPKc6VectorS3_6QAngleP11CBaseEntity": {
+  "rva": "0x470750",
+  "why": "read by hand: the overload with two Vectors: origin from the first, start from the second, angles from the QAngle, and with an entity its edict index and attachment type 2, then CBaseTempEntity::Create; the Linux body. cdecl, plain ret, two callers as on Linux (the flare and the energy ball)"
+ },
+ "_Z22PassServerEntityFilterPK13IHandleEntityS1_": {
+  "rva": "0x36edf0",
+  "why": "read by hand: true with no pass entity, false when touch is pass, each handle to an entity unless a static prop, true unless both are entities, false when either owns the other; the Linux body with its .part clone folded in. CTraceFilterSimple::ShouldHitEntity (slot 0, 0x36f2e0) calls it with the touched handle and m_pPassEnt and pops 8 itself: cdecl, plain ret"
+ },
+ "_ZN9CTFPlayer25UseActionSlotItemReleasedEv": {
+  "rva": "0x514510",
+  "why": "read by hand: the one call ClientCommand makes for -use_action_slot_item_server when m_bUsingActionSlot (+0x25b4) is set. Clears that flag with its state change, then with the grappling hook in use and the active weapon's id 0x65 switches to the last weapon if Weapon_CanSwitchTo allows, else SwitchToNextBestWeapon(last); the Linux body. No argument, plain ret"
+ },
+ "_ZNK19CEconItemDefinition17IterateAttributesEP26IEconItemAttributeIterator": {
+  "rva": "0x3bba50",
+  "why": "read by hand: CEconItemView::IterateAttributes (0x3c4ba0) calls it on GetStaticData() with its filtering iterator. Walks the static attributes (+0x1c, count +0x28, 8 bytes each), looks each index up in the schema's attribute map, and calls the attribute type's OnIterateAttributeValue(iterator, def, &value) (+0x24 here, +0x28 on Linux with two destructors), stopping on false; the Linux body. One argument, ret 4"
+ },
+ "win_g_DataObjectAccessSystem_m_Accessors": {
+  "name": "g_DataObjectAccessSystem::m_Accessors [windows]",
+  "rva": "0xa399d4",
+  "why": "read by hand: the 32 accessor pointers GetDataObject indexes, which MSVC inlined everywhere. DestroyAllDataObjects (0x2c4030, called by CBaseEntity's destructor 0x1e98c0) tests type bits 0 to 7 at +0x370 and calls slot 3 (DestroyDataObject) of [type*4 + this]; CreateDataObject (0x2c3ff0) sets the bit and jumps to slot 2 of the same entry, Linux reading 0x17fccec the same way (g_DataObjectAccessSystem at 0x17fcce0, +0xc). The static constructor 0x19070 writes the system's vtable at 0xa399c8 and zeroes 0x80 bytes here. The inlined reads call slot 1, GetDataObject"
  }
 }
