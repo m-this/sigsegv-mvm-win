@@ -230,6 +230,6 @@ def dyninit2(fname, after=40):
                         elif wcstr(r): print(f"    {x.address-base:#x}  str {wcstr(r)}")
                 print("    --")
             at = code.find(pat, at + 1)
-for f in ("BossThink", "UpgradeTouch", "InputEnable"):
+for f in ("BossThink", "UpgradeTouch"):
     dyninit2(f, 25)
 PY
