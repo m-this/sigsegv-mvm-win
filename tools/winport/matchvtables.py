@@ -51,6 +51,11 @@ def read_linux(path):
     nothing to cut on and everything read is treated as the primary table,
     which is what this tool did before.
     """
+    return [name for _, name in read_linux_addressed(path)]
+
+
+def read_linux_addressed(path):
+    """read_linux, with each slot's address."""
     slots, offset = [], 0
     for line in path.read_text(errors="replace").splitlines():
         line = line.strip()
@@ -60,7 +65,7 @@ def read_linux(path):
             continue
         m = LINUX_LINE.match(line)
         if m and offset == 0:
-            slots.append(m.group(2).strip())
+            slots.append((int(line.split()[1], 16), m.group(2).strip()))
     return slots
 
 
@@ -161,99 +166,123 @@ def slot_key(signature):
     return name if name == "~" else name + signature[len(bare_name(signature)):].strip()
 
 
+# Groups a class declares, by overriding an inherited virtual of the same name,
+# before any of its new virtuals, so its new overloads of them come first. Read
+# from the SDK and confirmed by hand: CGameMovement's slot 12 is
+# PlayerSolidMask, two past where Linux order puts it (overrides.json).
+DECLARED_FIRST = {
+    "CGameMovement": ("GetPlayerMins", "GetPlayerMaxs"),
+}
+
+
 class Corpus:
     """Every Linux primary table, for telling a class's own new virtuals from
     the ones it inherits.
 
     The dumps carry no base classes, but a primary base's table is a prefix of
-    the derived class's, slot for slot by name and parameters. The longest
-    other table a class's own starts with is taken as its primary base, and the
-    slots past it are the class's own new virtuals. A table missing from the
-    dump merges two classes' runs into one, which only matters when both
-    declare the same name.
+    the derived class's, slot for slot by name and parameters. Of the classes
+    this one inherits a slot from, and the interfaces it implements, the one
+    with the longest table this one starts with is taken as its primary base,
+    and the slots past it are the class's own new virtuals. A base missing from
+    that search merges two classes' runs into one, which only matters when
+    both declare the same name.
+
+    A slot's name is the first name nm gives its address, and GCC folds
+    identical bodies: `return NULL` fills dozens of slots under one of their
+    names. A body seen at two slot indices is therefore not named at all here.
+    It matches anything and groups with nothing, which is right for MSVC too,
+    since it folds the same bodies and every slot of one holds one address.
     """
 
     def __init__(self, linux_dir):
-        self.tables, self.pretty = {}, {}
+        rows, self.pretty = {}, {}
         for path in sorted(Path(linux_dir).glob("*.txt")):
-            slots = read_linux(path)
-            if slots:
-                self.tables[path.stem] = slots
+            got = read_linux_addressed(path)
+            if got:
+                rows[path.stem] = got
                 head = path.read_text(errors="replace").split("\n", 1)[0].strip()
                 self.pretty[path.stem] = head if head and not head.startswith(("//", "+")) else path.stem
-        self.keys = {cls: tuple(slot_key(s) for s in slots) for cls, slots in self.tables.items()}
-        # A table with a pure slot matches by walking it; every other one by a
-        # hash of its whole key list, looked up at each prefix of the class.
-        self.wild = sorted((c for c, k in self.keys.items() if None in k),
-                           key=lambda c: (-len(self.keys[c]), c))
-        self.exact = defaultdict(list)
-        for cls, keys in self.keys.items():
-            if None not in keys:
-                self.exact[(len(keys), self.prefix_hashes(keys)[-1])].append(cls)
-        self._orders = {}
-        # Groups moved to where the class overrides the same name, for the log:
-        # the one place the rule is applied on an assumption (see order).
-        self.moved = defaultdict(list)
+        self.stem = {pretty: stem for stem, pretty in self.pretty.items()}
+        self.tables = {cls: [name for _, name in got] for cls, got in rows.items()}
 
-    @staticmethod
-    def prefix_hashes(keys):
-        out, h = [0], 0
-        for k in keys:
-            h = hash((h, k))
-            out.append(h)
-        return out
+        seen = defaultdict(set)
+        for got in rows.values():
+            for index, (addr, _) in enumerate(got):
+                seen[addr].add(index)
+        self.folded = {addr for addr, where in seen.items() if len(where) > 1}
+        self.names = {
+            cls: [None if addr in self.folded or unnamed(name) else name for addr, name in got]
+            for cls, got in rows.items()
+        }
+        self.keys = {cls: [slot_key(n) if n else None for n in names] for cls, names in self.names.items()}
+        # Tables with nothing named but destructors: interfaces, whose slots
+        # are all pure. Nothing says which class implements one, so any class
+        # that implements every slot of it itself is taken to.
+        self.interfaces = [c for c, k in self.keys.items()
+                           if all(x in (None, "~") for x in k) and any(unnamed(n) for n in self.tables[c])]
+        self._orders = {}
+        # Classes that add an overload of a name they also override, for the
+        # log: the one place the order rests on an assumption (see order).
+        self.ambiguous = {}
+
+    def starts_with(self, cls, other):
+        mine, theirs = self.keys[cls], self.keys[other]
+        return len(theirs) < len(mine) and all(t is None or k is None or t == k for t, k in zip(theirs, mine))
 
     def parent(self, cls):
         """The longest other table this one starts with, or None."""
-        keys = self.keys[cls]
-        hashes = self.prefix_hashes(keys)
+        own = self.pretty[cls]
+        named = [n for n in self.names[cls] if n]
+        candidates = {self.stem.get(split_name(n)[0]) for n in named} - {None, cls}
         best = None
-        for m in range(len(keys) - 1, 0, -1):
-            found = sorted(c for c in self.exact.get((m, hashes[m]), ()) if c != cls and self.keys[c] == keys[:m])
-            if found:
-                best = found[0]
-                break
-        for other in self.wild:
-            theirs = self.keys[other]
-            if len(theirs) >= len(keys) or (best and len(theirs) <= len(self.keys[best])):
+        for other in sorted(candidates):
+            if self.starts_with(cls, other) and (best is None or len(self.keys[other]) > len(self.keys[best])):
+                best = other
+        floor = len(self.keys[best]) if best else 0
+        for other in sorted(self.interfaces):
+            size = len(self.keys[other])
+            if size <= floor or other == cls or not self.starts_with(cls, other):
                 continue
-            if all(t is None or t == k for t, k in zip(theirs, keys)):
-                return other
+            if all(n is None or split_name(n)[0] == own for n in self.names[cls][:size]):
+                best, floor = other, size
         return best
 
     def order(self, cls):
         """The Linux slot indices of `cls` in the order MSVC lays them out.
 
         A class's own new virtuals are grouped by name. A group goes where the
-        class first declares that name, which is its first new virtual of that
-        name unless the class also overrides an inherited virtual of the same
-        name: the override is declared somewhere the binary does not record,
-        and it is taken to come before the class's new virtuals, the way
-        CGameMovement declares the IGameMovement interface it implements first.
-        Those classes are recorded in `moved`.
+        class first declares that name. That is its first new virtual of the
+        name, unless the class also overrides an inherited virtual of the same
+        name and declares the override earlier. The binary does not record
+        where an override is declared, and it goes both ways: CGameMovement
+        declares GetPlayerMins(bool) at the top and GetPlayerMins() far below,
+        CBasePlayer declares ChangeTeam(int) just above its new overload. So a
+        group stays at its first new virtual unless DECLARED_FIRST says
+        otherwise, and every class that could go either way is recorded in
+        `ambiguous`.
         """
         if cls in self._orders:
             return self._orders[cls]
-        slots = self.tables[cls]
+        slots = self.names[cls]
         base = self.parent(cls)
         inherited = list(self.order(base)) if base else []
         start = len(self.tables[base]) if base else 0
         own = self.pretty[cls]
 
-        overrides = {}
+        overridden = set()
         for j in range(start):
-            if not unnamed(slots[j]):
-                qualifier, name = split_name(slots[j])
-                if qualifier == own:
-                    overrides.setdefault(method(slots[j]), j)
+            if slots[j] and split_name(slots[j])[0] == own:
+                overridden.add(method(slots[j]))
         groups = {}
         for i in range(start, len(slots)):
-            groups.setdefault(("#", i) if unnamed(slots[i]) else method(slots[i]), []).append(i)
-        early = sorted((g for g in groups if g in overrides), key=overrides.get)
-        rest = [g for g in groups if g not in overrides]
-        if early and list(groups)[:len(early)] != early:
-            self.moved[cls] += early
-        new = [i for g in early + rest for i in reversed(groups[g])]
+            groups.setdefault(method(slots[i]) if slots[i] else ("#", i), []).append(i)
+        first = [g for g in DECLARED_FIRST.get(own, ()) if g in groups]
+        rest = [g for g in groups if g not in first]
+        unsure = [g for g in rest if g in overridden and g != rest[0]]
+        if unsure:
+            self.ambiguous[cls] = unsure
+        # The destructor's two Itanium slots are one to MSVC, and keep their order.
+        new = [i for g in first + rest for i in (groups[g] if g == "~" else reversed(groups[g]))]
         self._orders[cls] = inherited + new
         return self._orders[cls]
 
@@ -329,9 +358,9 @@ def main():
         print("\n  alignment used, by class:")
         for how, n in sorted(used.items(), key=lambda kv: -kv[1]):
             print(f"    {how:<18} {n}")
-    if corpus.moved:
-        print("\n  overload groups moved up to an override of the same name:")
-        for cls, names in sorted(corpus.moved.items()):
+    if corpus.ambiguous:
+        print("\n  new overloads of a name the class also overrides, kept where Linux has them:")
+        for cls, names in sorted(corpus.ambiguous.items()):
             print(f"    {cls:<42} {' '.join(names)}")
     if refused:
         print("\n  refused, worst first (class: linux slots vs windows slots):")

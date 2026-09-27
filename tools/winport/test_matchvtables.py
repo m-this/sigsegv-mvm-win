@@ -13,7 +13,10 @@ import matchvtables as mv  # noqa: E402
 
 def dump(directory, cls, *slots):
     rows = [cls, "", "// vtable at 0x00001000 offset 0x0000"]
-    rows += [f"+0x{i * 4:04x}:  {0x100 + i:08x}  {s}" for i, s in enumerate(slots)]
+    # An address is its slot index unless the slot says otherwise, so a body
+    # is folded only where a test folds it.
+    slots = [s if isinstance(s, tuple) else (0x100 + i, s) for i, s in enumerate(slots)]
+    rows += [f"+0x{i * 4:04x}:  {a:08x}  {s}" for i, (a, s) in enumerate(slots)]
     (Path(directory) / f"{cls}.txt").write_text("\n".join(rows) + "\n")
 
 
@@ -102,12 +105,14 @@ class Order(unittest.TestCase):
             "CBase::KeyValue(char const*, float)",
             "CDerived::KeyValue(char const*, char const*)",
         ])
-        # Touch(int) is new here, and CDerived overrides Touch(CBase*), so the
-        # group goes where that override is taken to be declared: first.
-        self.assertEqual(got[8:], ["CDerived::Touch(int)", "CDerived::Walk()", "CDerived::Run()"])
-        self.assertEqual(self.corpus.moved["CDerived"], ["Touch"])
+        # Touch(int) is new here and CDerived overrides Touch(CBase*), which
+        # it may declare anywhere: the group stays put and is reported.
+        self.assertEqual(got[8:], ["CDerived::Walk()", "CDerived::Run()", "CDerived::Touch(int)"])
+        self.assertEqual(self.corpus.ambiguous["CDerived"], ["Touch"])
 
-    def test_new_overloads_move_up_to_the_overridden_name(self):
+    def test_declared_first_moves_new_overloads_up(self):
+        mv.DECLARED_FIRST["CMove"] = ("Mins", "Maxs")
+        self.addCleanup(mv.DECLARED_FIRST.pop, "CMove")
         self.assertEqual(self.movement.parent("CMove"), "IMove")
         self.assertEqual(self.names("CMove", self.movement)[5:], [
             "CMove::Mins() const",
@@ -116,6 +121,19 @@ class Order(unittest.TestCase):
             "CMove::SolidMask(bool)",
             "CMove::Friction()",
         ])
+
+    def test_a_folded_body_groups_with_nothing(self):
+        with tempfile.TemporaryDirectory() as d:
+            dump(d, "CFold",
+                 "CFold::~CFold()", "CFold::~CFold()",
+                 "CFold::Enemy()",
+                 (0x900, "CFold::Enemy() const"),
+                 "CFold::Think()",
+                 (0x900, "CFold::Enemy() const"))
+            corpus = mv.Corpus(d)
+            # Slot 3 and 5 are one `return NULL` under one of its names, so
+            # neither is an Enemy overload as far as the order goes.
+            self.assertEqual(corpus.order("CFold"), [0, 1, 2, 3, 4, 5])
 
     def test_align_collapses_the_destructor(self):
         how, aligned = mv.align(self.corpus.tables["CBase"], list(range(7)), self.corpus.order("CBase"))
