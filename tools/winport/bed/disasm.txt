@@ -1,2 +1,1 @@
-# ED_Alloc on Windows: where sv.num_edicts and g_FreeEdicts live
-engine 0x1bd43e 160
+# nothing asked

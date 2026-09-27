@@ -1,6 +1,5 @@
 #!/bin/bash
-# Round 4: the sword mods as MSVC inlined them, CanDecapitate's slot, who
-# deletes the game rules on each side, GetFiringAngles.
+# Round 5: CTFSword's last slots on Windows, and where sv sits in engine.dll.
 python3 - <<'PY'
 import re, bisect, collections, capstone, pefile
 from elftools.elf.elffile import ELFFile
@@ -177,69 +176,26 @@ def fsize(f):
     return 20000
 
 
-import struct, os
-def lro(a, n=4):
-    for sec in elf.iter_sections():
-        va = sec["sh_addr"]
-        if va and va <= a < va + sec["sh_size"] and sec["sh_type"] != "SHT_NOBITS":
-            return sec.data()[a-va:a-va+n]
-print("######## sword")
-for a in (0x1317188, 0x11abbf8):
-    b = lro(a); print(f"  linux {a:#x} = {struct.unpack('<f', b)[0] if b else None}")
-hold = collections.Counter()
-for m in re.finditer(rb"\x80[\x78-\x7f\xb8-\xbf]\x31\x08\x00\x00|\xc6[\x80-\x87]\x31\x08\x00\x00|\x0f\xb6[\x80-\xbf]\x31\x08\x00\x00", lcode):
-    hold[byaddr[lholder(lva + m.start())]] += 1
-print("  linux functions touching byte +0x831: " + ", ".join(f"{n}:{c}" for n, c in hold.most_common(40)))
-def around4(f, n=0x4000):
-    ins = list(md.disasm(code[f-tv:f-tv+n], base + f))
-    for k, i in enumerate(ins):
-        if i.mnemonic == "int3": ins = ins[:k]; break
-    for k, i in enumerate(ins):
-        if re.search(r", 4$", i.op_str) and i.mnemonic in ("cmp", "mov") and any(x.mnemonic in ("cvtsi2ss", "imul", "shl") for x in ins[k:k+8]):
-            print(f"  -- at {i.address-base:#x}")
-            for x in ins[max(0, k-45):k+14]:
-                line = f"     {x.address-base:#x}  {x.mnemonic} {x.op_str}"
-                if x.mnemonic == "call" and x.op_str.startswith("0x"):
-                    t = int(x.op_str, 16) - base
-                    if t in kname: line += "  " + kname[t]
-                print(line)
-for n in ("_ZN9CTFPlayer29TeamFortress_CalculateMaxSpeedEb", "_ZN9CTFPlayer22GetMaxHealthForBuffingEv"):
-    print("==", n, hex(known[n]) if n in known else "unknown")
-    if n in known: around4(known[n])
-    if n in byname:
-        a, sz = byname[n]
-        ins = list(md.disasm(lcode[a-lva:a-lva+sz], a))
-        for k, i in enumerate(ins):
-            if "0x1f1c]" in i.op_str:
-                print("   linux:")
-                for x in ins[max(0, k-30):k+10]: print(f"     {x.address:#x}  {x.mnemonic} {x.op_str}")
-                break
-for cls in ("CTFSword", "CTFDecapitationMeleeWeaponBase"):
-    for side in ("linux", "win"):
-        path = f"derived/{side}-vtables/{cls}.txt"
-        if os.path.exists(path):
-            rows = open(path).read().splitlines()
-            print(f"== {path}")
-            for r in rows:
-                m = re.match(r"\+0x([0-9a-f]+):", r)
-                if m and 0x780 <= int(m.group(1), 16) <= 0x7c0: print("   " + r[:160])
-for l in open("tools/winport/knownvtidx.generated.txt"):
-    if "Decapitat" in l or "CTFSword" in l: print("  known:", l.rstrip()[:200])
-
-print("######## game rules")
-for n in ("_ZN6CWorldD2Ev",):
+import os
+print("######## sword slots")
+rows = open("derived/win-vtables/CTFSword.txt").read().splitlines()
+for r in rows:
+    m = re.match(r"\+0x([0-9a-f]+):\s+([0-9a-f]+)", r)
+    if m and 0x760 <= int(m.group(1), 16):
+        print("   " + r[:120])
+for f in (0x62c630, 0x62c7d0, 0x62caa0, 0x62c980, 0x62ca00):
+    wdis2(f, 60)
+ldis("_ZN30CTFDecapitationMeleeWeaponBase13CanDecapitateEv", 40)
+for n in ("_ZN30CTFDecapitationMeleeWeaponBase7HolsterEP17CBaseCombatWeapon",):
     ldis(n, 60)
-needle = (0x17f63fc).to_bytes(4, "little")
-at = lcode.find(needle); ws = set()
-while at != -1:
-    if lcode[at-1] == 0xa3 or lcode[at-2] in (0x89, 0xc7): ws.add(byaddr[lholder(lva + at)])
-    at = lcode.find(needle, at + 1)
-print("  linux writers of [0x17f63fc]: " + ", ".join(sorted(ws)))
-for f in (0x27c1c0, 0x27c260, 0x27dff0, 0x34ea30, 0x39c460):
-    print("  windows writer", hex(f), kname.get(f, ""), "callers:", ", ".join(sorted({hex(wstart(x)) + (" " + kname[wstart(x)] if wstart(x) in kname else "") for x in wg.get(f, ())})[:8]))
-    wdis2(f, 45)
+    if n in known: wdis2(known[n], 60)
 
-print("######## GetFiringAngles")
-ldis("_ZNK19CTFPointWeaponMimic15GetFiringAnglesEv", 80)
-wdis2(0x5e22b0, 90)
+print("######## engine sv")
+epe = pefile.PE("game-windows/bin/engine.dll", fast_load=True)
+et = next(s for s in epe.sections if s.Name.rstrip(b"\0") == b".text")
+ec = et.get_data(); ev = et.VirtualAddress; eb = epe.OPTIONAL_HEADER.ImageBase
+for m in re.finditer(rb"\xb8(....)\xc3", ec, re.S):
+    v = int.from_bytes(m.group(1), "little")
+    if 0x105eb000 <= v <= 0x105eb48c:
+        print(f"  mov eax, {v:#x}; ret at {ev + m.start():#x}")
 PY

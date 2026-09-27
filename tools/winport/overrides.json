@@ -1172,5 +1172,29 @@
  "_ZN14CTriggerCamera7DisableEv": {
   "rva": "0x3667e0",
   "why": "read by hand: resolves m_hPlayer (+0x384, Linux +0x39c) and asks IsAlive (vtable +0x10c, Linux +0x110), clears the not-solid flag through SetSolidFlags when spawnflags bit 0x20 is set, SetViewEntity (0x2e90c0) with the player, EnableControl(true) (0x2e04d0), shows the active weapon again and DispatchUpdateTransmitState, ThinkSet(NULL), FireOutput of m_OnEndFollow, SetLocalAngularVelocity, the Linux order; the camera's Move (0x368910) calls it when SF_CAMERA_PLAYER_INTERRUPT is set and the player's buttons changed, as Linux Move calls Disable; thiscall, plain ret"
+ },
+ "_Z10TE_TFBloodR16IRecipientFilterfRK6VectorS3_i": {
+  "rva": "0x460c50",
+  "why": "read by hand: copies the origin and normal vectors and the entity index into the static CTETFBlood at 0xa9d148 (+0xc to +0x24, the Linux object's layout at 0x18677c0) and tail-calls CBaseTempEntity::Create (0x434c20) on it with the filter and delay, as the Linux body does; cdecl, one caller"
+ },
+ "_ZN19CTFPointWeaponMimic10FireRocketEv": {
+  "rva": "0x5e1c60",
+  "name": "CTFPointWeaponMimic::FireRocket",
+  "why": "read by hand: the jump table InputFireMultiple (0x5e2460) indexes with m_nWeaponType (+0x384, Linux +0x39c) sends type 0 here, the Linux FireRocket's case; after GetFiringAngles (0x5e22b0) it calls CTFProjectile_Rocket::Create (0x536410) as Linux does; thiscall, no arguments. Fire itself is inlined on Windows"
+ },
+ "_ZN19CTFPointWeaponMimic11FireGrenadeEv": {
+  "rva": "0x5e1950",
+  "name": "CTFPointWeaponMimic::FireGrenade",
+  "why": "read by hand: the jump table InputFireMultiple (0x5e2460) indexes with m_nWeaponType (+0x384, Linux +0x39c) sends type 1 here, the Linux FireGrenade's case; GetFiringAngles (0x5e22b0), AngleVectors, then 0x1ee780 with \"tf_projectile_pipe\" (Linux: CreateNoSpawn of it) and DispatchSpawn, the smaller of the two pipe functions as on Linux; thiscall, no arguments"
+ },
+ "_ZN19CTFPointWeaponMimic9FireArrowEv": {
+  "rva": "0x5e1740",
+  "name": "CTFPointWeaponMimic::FireArrow",
+  "why": "read by hand: the jump table InputFireMultiple (0x5e2460) indexes with m_nWeaponType (+0x384, Linux +0x39c) sends type 2 here, the Linux FireArrow's case; GetFiringAngles (0x5e22b0) then the arrow's Create (0x5fab70) and the same two virtual calls on the projectile as the Linux body; thiscall, no arguments"
+ },
+ "_ZN19CTFPointWeaponMimic17FireStickyGrenadeEv": {
+  "rva": "0x5e1e60",
+  "name": "CTFPointWeaponMimic::FireStickyGrenade",
+  "why": "read by hand: the jump table InputFireMultiple (0x5e2460) indexes with m_nWeaponType (+0x384, Linux +0x39c) sends type 3 here, the Linux FireStickyGrenade's case; GetFiringAngles (0x5e22b0), AngleVectors, 0x1ee780 with \"tf_projectile_pipe\" (Linux: CreateNoSpawn of it), the larger of the two pipe functions as on Linux; thiscall, no arguments"
  }
 }
