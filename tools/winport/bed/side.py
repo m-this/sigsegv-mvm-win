@@ -8,14 +8,16 @@ pe = pefile.PE("../game-windows/tf/bin/server.dll", fast_load=True)
 img = pe.get_memory_mapped_image()
 md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
 def head(va, n=60):
+    """The first n instructions, and what the first ret pops."""
     rva = va - 0x10000000
     out, pops = [], None
-    for ins in md.disasm(img[rva:rva + 400], va):
-        out.append(f"{ins.mnemonic} {ins.op_str}".strip())
+    for ins in md.disasm(img[rva:rva + 0x800], va):
+        if len(out) < n:
+            out.append(f"{ins.mnemonic} {ins.op_str}".strip())
         if ins.mnemonic == "ret":
             pops = int(ins.op_str, 16) if ins.op_str else 0
             break
-        if len(out) >= n:
+        if ins.mnemonic == "int3":
             break
     return pops, out
 corpus = mv.Corpus("linux-vtables")
