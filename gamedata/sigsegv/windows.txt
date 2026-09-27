@@ -1004,6 +1004,15 @@
 					lib   "server"
 					// verified: read by hand: the Linux body at offsets 0x18 lower; thiscall, ret 4. Returns when the argument equals m_vecAbsVelocity (+0x250, Linux +0x268), else InvalidatePhysicsRecursive(4) (0x201520), clears EFL_DIRTY_ABSVELOCITY in m_iEFlags (+0x13c), stores it, and with a move parent (+0x178) subtracts the parent's abs velocity (CalcAbsoluteVelocity 0x1ec810 when dirty), VectorIRotate through its coordinate frame (+0x268, CalcAbsolutePosition when dirty) and writes m_vecVelocity (+0x2c4) through the NetworkStateChanged slot (+0x2f8, Linux +0x300); without one it writes the argument there. CBaseEntity::ApplyAbsVelocityImpulse (0x1ff4b0) calls it with GetAbsVelocity plus the impulse, as on Linux
 				}
+				"CBaseEntity::Remove"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity6RemoveEv"
+					addr  "0x1f8b90"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: `push ecx; call 0x36d8b0; pop ecx; ret`, UTIL_Remove(this), the Linux body (a jmp to UTIL_Remove(CBaseEntity *)); 0x36d8b0 is what CServerTools::RemoveEntity (slot 21 of CServerTools, the SDK's index) calls with its argument, as the SDK's RemoveEntity does. The matcher found it through CBaseParticleEntity::Think and turned it away; thiscall, no argument
+				}
 				"CBaseEntity::EmitSound [member: normal]"
 				{
 					type  "fixed"
@@ -3429,6 +3438,216 @@
 					lib   "server"
 					vtidx "18"
 					// vtable
+				}
+				"CEntityFactory<CEnvEntityMaker>::Create"
+				{
+					type  "fixed"
+					sym   "_ZN14CEntityFactoryI15CEnvEntityMakerE6CreateEPKc"
+					addr  "0x24c3b0"
+					build "10828683"
+					lib   "server"
+					vtidx "0"
+					// verified: read by hand: slot 0 of the vtable RTTI names CEntityFactory<CEnvEntityMaker>; allocates the object, calls CBaseEntity::CBaseEntity(false) (0x1e8ea0), sets the CEnvEntityMaker vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4
+				}
+				"CEntityFactory<CEnvShake>::Create"
+				{
+					type  "fixed"
+					sym   "_ZN14CEntityFactoryI9CEnvShakeE6CreateEPKc"
+					addr  "0x255de0"
+					build "10828683"
+					lib   "server"
+					vtidx "0"
+					// verified: read by hand: slot 0 of the vtable RTTI names CEntityFactory<CEnvShake>; allocates the object, calls CBaseEntity::CBaseEntity(false) (0x1e8ea0), sets the CEnvShake vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4
+				}
+				"CEntityFactory<CEnvViewPunch>::Create"
+				{
+					type  "fixed"
+					sym   "_ZN14CEntityFactoryI13CEnvViewPunchE6CreateEPKc"
+					addr  "0x2423f0"
+					build "10828683"
+					lib   "server"
+					vtidx "0"
+					// verified: read by hand: slot 0 of the vtable RTTI names CEntityFactory<CEnvViewPunch>; allocates the object, calls CBaseEntity::CBaseEntity(false) (0x1e8ea0), sets the CEnvViewPunch vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4
+				}
+				"CEntityFactory<CFuncNavAvoid>::Create"
+				{
+					type  "fixed"
+					sym   "_ZN14CEntityFactoryI13CFuncNavAvoidE6CreateEPKc"
+					addr  "0x3f11b0"
+					build "10828683"
+					lib   "server"
+					vtidx "0"
+					// verified: read by hand: slot 0 of the vtable RTTI names CEntityFactory<CFuncNavAvoid>; allocates the object, calls CBaseEntity::CBaseEntity(false) (0x1e8ea0), sets the CFuncNavAvoid vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4
+				}
+				"CEntityFactory<CFuncNavPrefer>::Create"
+				{
+					type  "fixed"
+					sym   "_ZN14CEntityFactoryI14CFuncNavPreferE6CreateEPKc"
+					addr  "0x3f1230"
+					build "10828683"
+					lib   "server"
+					vtidx "0"
+					// verified: read by hand: slot 0 of the vtable RTTI names CEntityFactory<CFuncNavPrefer>; allocates the object, calls CBaseEntity::CBaseEntity(false) (0x1e8ea0), sets the CFuncNavPrefer vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4
+				}
+				"CEntityFactory<CGameText>::Create"
+				{
+					type  "fixed"
+					sym   "_ZN14CEntityFactoryI9CGameTextE6CreateEPKc"
+					addr  "0x298f00"
+					build "10828683"
+					lib   "server"
+					vtidx "0"
+					// verified: read by hand: slot 0 of the vtable RTTI names CEntityFactory<CGameText>; allocates the object, calls CBaseEntity::CBaseEntity(false) (0x1e8ea0), sets the CGameText vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4
+				}
+				"CEntityFactory<CPathTrack>::Create"
+				{
+					type  "fixed"
+					sym   "_ZN14CEntityFactoryI10CPathTrackE6CreateEPKc"
+					addr  "0x2ab520"
+					build "10828683"
+					lib   "server"
+					vtidx "0"
+					// verified: read by hand: slot 0 of the vtable RTTI names CEntityFactory<CPathTrack>; allocates the object, calls CBaseEntity::CBaseEntity(false) (0x1e8ea0), sets the CPathTrack vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4
+				}
+				"CEntityFactory<CPointClientCommand>::Create"
+				{
+					type  "fixed"
+					sym   "_ZN14CEntityFactoryI19CPointClientCommandE6CreateEPKc"
+					addr  "0x227320"
+					build "10828683"
+					lib   "server"
+					vtidx "0"
+					// verified: read by hand: slot 0 of the vtable RTTI names CEntityFactory<CPointClientCommand>; allocates the object, calls CBaseEntity::CBaseEntity(false) (0x1e8ea0), sets the CPointClientCommand vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4
+				}
+				"CEntityFactory<CPointEntity>::Create"
+				{
+					type  "fixed"
+					sym   "_ZN14CEntityFactoryI12CPointEntityE6CreateEPKc"
+					addr  "0x338cd0"
+					build "10828683"
+					lib   "server"
+					vtidx "0"
+					// verified: read by hand: slot 0 of the vtable RTTI names CEntityFactory<CPointEntity>; allocates the object, calls CBaseEntity::CBaseEntity(false) (0x1e8ea0), sets the CPointEntity vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4
+				}
+				"CEntityFactory<CPointHurt>::Create"
+				{
+					type  "fixed"
+					sym   "_ZN14CEntityFactoryI10CPointHurtE6CreateEPKc"
+					addr  "0x2fad20"
+					build "10828683"
+					lib   "server"
+					vtidx "0"
+					// verified: read by hand: slot 0 of the vtable RTTI names CEntityFactory<CPointHurt>; allocates the object, calls CBaseEntity::CBaseEntity(false) (0x1e8ea0), sets the CPointHurt vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4
+				}
+				"CEntityFactory<CPointNavInterface>::Create"
+				{
+					type  "fixed"
+					sym   "_ZN14CEntityFactoryI18CPointNavInterfaceE6CreateEPKc"
+					addr  "0x5d6420"
+					build "10828683"
+					lib   "server"
+					vtidx "0"
+					// verified: read by hand: slot 0 of the vtable RTTI names CEntityFactory<CPointNavInterface>; allocates the object, calls CBaseEntity::CBaseEntity(false) (0x1e8ea0), sets the CPointNavInterface vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4
+				}
+				"CEntityFactory<CPointPopulatorInterface>::Create"
+				{
+					type  "fixed"
+					sym   "_ZN14CEntityFactoryI24CPointPopulatorInterfaceE6CreateEPKc"
+					addr  "0x5e80a0"
+					build "10828683"
+					lib   "server"
+					vtidx "0"
+					// verified: read by hand: slot 0 of the vtable RTTI names CEntityFactory<CPointPopulatorInterface>; allocates the object, calls CBaseEntity::CBaseEntity(false) (0x1e8ea0), sets the CPointPopulatorInterface vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4
+				}
+				"CEntityFactory<CPointServerCommand>::Create"
+				{
+					type  "fixed"
+					sym   "_ZN14CEntityFactoryI19CPointServerCommandE6CreateEPKc"
+					addr  "0x227380"
+					build "10828683"
+					lib   "server"
+					vtidx "0"
+					// verified: read by hand: slot 0 of the vtable RTTI names CEntityFactory<CPointServerCommand>; allocates the object, calls CBaseEntity::CBaseEntity(false) (0x1e8ea0), sets the CPointServerCommand vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4
+				}
+				"CEntityFactory<CRagdollMagnet>::Create"
+				{
+					type  "fixed"
+					sym   "_ZN14CEntityFactoryI14CRagdollMagnetE6CreateEPKc"
+					addr  "0x234950"
+					build "10828683"
+					lib   "server"
+					vtidx "0"
+					// verified: read by hand: slot 0 of the vtable RTTI names CEntityFactory<CRagdollMagnet>; allocates the object, calls CBaseEntity::CBaseEntity(false) (0x1e8ea0), sets the CRagdollMagnet vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4
+				}
+				"CEntityFactory<CTeamplayRoundWin>::Create"
+				{
+					type  "fixed"
+					sym   "_ZN14CEntityFactoryI17CTeamplayRoundWinE6CreateEPKc"
+					addr  "0x44eb10"
+					build "10828683"
+					lib   "server"
+					vtidx "0"
+					// verified: read by hand: slot 0 of the vtable RTTI names CEntityFactory<CTeamplayRoundWin>; allocates the object, calls CBaseEntity::CBaseEntity(false) (0x1e8ea0), sets the CTeamplayRoundWin vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4
+				}
+				"CEntityFactory<CTFBotHint>::Create"
+				{
+					type  "fixed"
+					sym   "_ZN14CEntityFactoryI10CTFBotHintE6CreateEPKc"
+					addr  "0x593740"
+					build "10828683"
+					lib   "server"
+					vtidx "0"
+					// verified: read by hand: slot 0 of the vtable RTTI names CEntityFactory<CTFBotHint>; allocates the object, calls CBaseEntity::CBaseEntity(false) (0x1e8ea0), sets the CTFBotHint vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4
+				}
+				"CEntityFactory<CTFBotHintSentrygun>::Create"
+				{
+					type  "fixed"
+					sym   "_ZN14CEntityFactoryI19CTFBotHintSentrygunE6CreateEPKc"
+					addr  "0x594470"
+					build "10828683"
+					lib   "server"
+					vtidx "0"
+					// verified: read by hand: slot 0 of the vtable RTTI names CEntityFactory<CTFBotHintSentrygun>; allocates the object, calls the CBaseTFBotHintEntity constructor, sets the CTFBotHintSentrygun vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4
+				}
+				"CEntityFactory<CTFBotHintTeleporterExit>::Create"
+				{
+					type  "fixed"
+					sym   "_ZN14CEntityFactoryI24CTFBotHintTeleporterExitE6CreateEPKc"
+					addr  "0x594670"
+					build "10828683"
+					lib   "server"
+					vtidx "0"
+					// verified: read by hand: slot 0 of the vtable RTTI names CEntityFactory<CTFBotHintTeleporterExit>; allocates the object, calls the CBaseTFBotHintEntity constructor, sets the CTFBotHintTeleporterExit vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4
+				}
+				"CEntityFactory<CTFForceRespawn>::Create"
+				{
+					type  "fixed"
+					sym   "_ZN14CEntityFactoryI15CTFForceRespawnE6CreateEPKc"
+					addr  "0x44bc70"
+					build "10828683"
+					lib   "server"
+					vtidx "0"
+					// verified: read by hand: slot 0 of the vtable RTTI names CEntityFactory<CTFForceRespawn>; allocates the object, calls CBaseEntity::CBaseEntity(false) (0x1e8ea0), sets the CTFForceRespawn vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4
+				}
+				"CEntityFactory<CTFHudNotify>::Create"
+				{
+					type  "fixed"
+					sym   "_ZN14CEntityFactoryI12CTFHudNotifyE6CreateEPKc"
+					addr  "0x44bf00"
+					build "10828683"
+					lib   "server"
+					vtidx "0"
+					// verified: read by hand: slot 0 of the vtable RTTI names CEntityFactory<CTFHudNotify>; allocates the object, calls CBaseEntity::CBaseEntity(false) (0x1e8ea0), sets the CTFHudNotify vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4
+				}
+				"CEntityFactory<CTrainingAnnotation>::Create"
+				{
+					type  "fixed"
+					sym   "_ZN14CEntityFactoryI19CTrainingAnnotationE6CreateEPKc"
+					addr  "0x4514b0"
+					build "10828683"
+					lib   "server"
+					vtidx "0"
+					// verified: read by hand: slot 0 of the vtable RTTI names CEntityFactory<CTrainingAnnotation>; allocates the object, calls CBaseEntity::CBaseEntity(false) (0x1e8ea0), sets the CTrainingAnnotation vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4
 				}
 				"CFuncIllusionary::Spawn"
 				{
