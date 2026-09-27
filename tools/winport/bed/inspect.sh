@@ -1,5 +1,5 @@
 #!/bin/bash
-# Attribute list, provider, DispatchTraceAttack and weapon virtual bodies, Windows against Linux.
+# Upgrade station, radius damage, DispatchTraceAttack and weapon helper bodies, Windows against Linux.
 python3 - <<'PY'
 import re, bisect, collections, capstone, pefile
 from elftools.elf.elffile import ELFFile
@@ -159,86 +159,50 @@ def slots(cls, fn, lo=10, hi=10):
         if 0 <= k < len(win): print(f"  W[{k}] {win[k]:#x} ret {wpop(win[k])}  {whead(win[k])}")
 
 
-def funcs_calling(target):
-    return sorted({wstart(s) for s in wg.get(target, ())})
-def fsize(f):
-    n = 0
-    for i in md.disasm(code[f-tv:f-tv+0x2000], base + f):
-        if i.mnemonic == "int3": break
-        n = i.address - base - f + i.size
-    return n
-def text_of(f, limit=0x400):
+def text_of(f, limit=0x600):
     out = []
     for i in md.disasm(code[f-tv:f-tv+limit], base + f):
         if i.mnemonic == "int3": break
-        out.append(f"{i.mnemonic} {i.op_str}")
-    return "\n".join(out)
+        out.append((i.address - base, f"{i.mnemonic} {i.op_str}"))
+    return out
 
-print("\n######## provider")
-for f in (0x39e6b0, 0x39e8b0, 0x39ea40): wdis(f, 120); print("  callers:", [hex(x) for x in funcs_calling(f)])
-
-print("\n######## AddAttribute candidates")
-both = set(funcs_calling(0x3b8810)) & set(funcs_calling(0x3b8e30))
-for f in sorted(both):
-    t = text_of(f)
-    if fsize(f) < 260 and "+ 0x34]" in t:
-        print(f"  cand {f:#x} size {fsize(f)} ret {wpop(f)}"); wdis(f, 80)
-
-print("\n######## DestroyAllAttributes candidates")
-at = 0
-seen = set()
-pat = re.compile(r"mov dword ptr \[e.x \+ 0x10\], 0")
-for va, _ in [(tv, None)]:
-    pass
-cnt = 0
-for f in sorted({wstart(s) for s in range(tv, tv + len(code), 1) if False}):
-    pass
-# scan every function that makes a vcall at +0x34 through the list's manager field (+0x18)
-hits = []
-off = 0
-blob = code
-i = blob.find(b"\xff\x50\x34")
-while i != -1:
-    hits.append(wstart(tv + i)); i = blob.find(b"\xff\x50\x34", i + 1)
-for f in sorted(set(hits)):
-    if f in seen: continue
-    seen.add(f)
-    t = text_of(f, 0x300)
-    if fsize(f) < 200 and pat.search(t) and "+ 0x18]" in t:
-        print(f"  cand {f:#x} size {fsize(f)} ret {wpop(f)} callers {len(wg.get(f,()))}"); wdis(f, 70)
-
-print("\n######## DispatchTraceAttack candidates")
-hits = set()
-for pat2 in (b"\xff\x90\xf4\x00\x00\x00", b"\xff\x92\xf4\x00\x00\x00", b"\xff\x50\x00"):
-    pass
-i = code.find(b"\xf4\x00\x00\x00")
-while i != -1:
-    f = wstart(tv + i)
-    if f not in hits and fsize(f) < 120:
-        t = text_of(f, 0x100)
-        if re.search(r"call dword ptr \[e.x \+ 0xf4\]", t) and re.search(r"\+ 0xf8\]", t) and 0x10 in wpop(f):
-            hits.add(f); print(f"  cand {f:#x} size {fsize(f)} ret {wpop(f)} callers {len(wg.get(f,()))}"); wdis(f, 50)
-    hits.add(f)
-    i = code.find(b"\xf4\x00\x00\x00", i + 1)
-wdis(0x60b170, 400)
-
-print("\n######## SMG / pistol GetDamageType")
-wdis(0x629750, 60)
-wdis(0x624220, 400)
-for a in (0x12da0cc, 0x12f03e3): print(hex(a), lstr(a))
-
+print("\n######## strings")
+for a in (0x12f76fd, 0x13481be, 0x134819c): print(hex(a), lstr(a))
 def wstrat(rva):
     for va, data in rdata:
         if va <= rva < va + len(data):
             e = data.find(b"\0", rva - va); return data[rva-va:e][:60]
-for a in (0x10860e00, 0x1087b3cc, 0x108f6148, 0x1087f870, 0x108e4ee4): print(hex(a), wstrat(a - base))
+for a in (0x108f6410, 0x108f6130): print(hex(a), wstrat(a - base))
 
-print("\n######## weapon virtuals")
-for sym in ("_ZNK13CTFWeaponBase17AutoFiresFullClipEv", "_ZN13CTFWeaponBase13ItemBusyFrameEv", "_ZN13CTFWeaponBase16ItemHolsterFrameEv",
-            "_ZNK13CTFWeaponBase16GetPenetrateTypeEv", "_ZN13CTFWeaponBase15GetSpreadAnglesEv"):
-    ldis(sym, 90)
-w = wrows("CTFWeaponBase")
-for k in (273, 274, 275, 276, 285, 402, 403, 404, 405, 406):
-    print(f"-- W[{k}]"); wdis(w[k], 70)
-wdis(0x632e30, 90)
+print("\n######## SMG helper")
+wdis(0x629750, 200)
+ldis("_ZNK6CTFSMG11CanHeadshotEv", 40) if "_ZNK6CTFSMG11CanHeadshotEv" in byname else print([n for n in byname if "CTFSMG" in n])
+
+print("\n######## DispatchTraceAttack inlined?")
+sites = []
+at = code.find(b"\xf4\x00\x00\x00")
+seen = set()
+while at != -1:
+    f = wstart(tv + at)
+    if f not in seen:
+        seen.add(f)
+        ins = text_of(f, 0x3000)
+        for k, (a, t) in enumerate(ins):
+            if re.match(r"call dword ptr \[e.x \+ 0xf4\]", t):
+                nxt = " | ".join(x for _, x in ins[k+1:k+14])
+                if re.search(r"(call|jmp) dword ptr \[e.x \+ 0xf8\]", nxt) and "test al, al" in nxt:
+                    sites.append((f, a))
+    at = code.find(b"\xf4\x00\x00\x00", at + 1)
+print("  sites:", len(sites), [(hex(f), hex(a)) for f, a in sites[:40]])
+for f, a in sites[:3]:
+    print(f"-- site in {f:#x} at {a:#x}")
+    for x, t in text_of(f, 0x3000):
+        if a - 0x30 <= x <= a + 0x50: print(f"  {x:#x}  {t}")
+
+print("\n######## upgrades / radius damage")
+for pre in ("_ZN9CUpgrades23PlayerPurchasingUpgradeEP9CTFPlayeriibbb", "_ZN9CUpgrades18ApplyUpgradeToItemEP9CTFPlayerP13CEconItemViewiibb",
+            "_ZN19CTFRadiusDamageInfo13ApplyToEntityEP11CBaseEntity"):
+    for n in sorted(x for x in byname if x.startswith(pre)):
+        print("\n####", n, byname[n])
+        study(n, show=2)
 PY
