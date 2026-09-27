@@ -140,82 +140,9 @@ namespace Mod::Etc::Entity_Limit_Manager
     GlobalThunk<CUtlVector<IServerNetworkable*>> g_DeleteList("g_DeleteList");
     GlobalThunk<bool> g_bDisableEhandleAccess("g_bDisableEhandleAccess");
     GlobalThunk<int> s_RemoveImmediateSemaphore("s_RemoveImmediateSemaphore");
-
-#if defined _WINDOWS
-    /* Windows only, while the port finds out why the edict table fills there
-     * and not on Linux: at most every 30 seconds near the limit, what the
-     * engine counts, what the free list holds, what this mod chose to delete
-     * and which classes hold the edicts. Every second when the table is full
-     * and it found nothing to delete, since ED_Alloc may end the server next. */
-    void ReportEdicts(int entityCount, const char *deleting, bool full)
-    {
-        static double last = -1000.0;
-        if (Plat_FloatTime() - last < (full ? 1.0 : 30.0)) return;
-        last = Plat_FloatTime();
-
-        int numEdicts = reinterpret_cast<CGameServer *>(sv)->GetNumEdicts();
-        auto worldEdict = INDEXENT(0);
-        float svtime = sv->GetTime();
-        int nFree = 0, usable = 0;
-        auto &freeEdicts = g_FreeEdicts.GetRef();
-        for (int iBit = freeEdicts.FindNextSetBit(0); iBit >= 0; iBit = freeEdicts.FindNextSetBit(iBit + 1)) {
-            ++nFree;
-            auto edict = worldEdict + iBit;
-            if (edict->freetime < 2 || svtime - edict->freetime >= 1.0f) ++usable;
-        }
-        std::unordered_map<std::string, int> classes;
-        for (int i = 0; i < numEdicts && i < MAX_EDICTS; i++) {
-            auto edict = worldEdict + i;
-            if (edict->IsFree()) continue;
-            auto networkable = edict->GetNetworkable();
-            auto entity = networkable != nullptr ? networkable->GetBaseEntity() : nullptr;
-            auto name = entity != nullptr ? entity->GetClassname() : nullptr;
-            classes[name != nullptr ? name : "?"]++;
-        }
-        std::vector<std::pair<std::string, int>> sorted(classes.begin(), classes.end());
-        std::sort(sorted.begin(), sorted.end(), [](auto &a, auto &b){ return a.second > b.second; });
-        Msg("SigMod: edicts: GetEntityCount %d, num_edicts %d, free list %d (%d usable), delete list %d, remove immediate semaphore %d, deleting %s\n",
-            entityCount, numEdicts, nFree, usable, g_DeleteList.GetRef().Count(), s_RemoveImmediateSemaphore.GetRef(),
-            deleting);
-        /* the lists this mod picks from, and whether their casts work here */
-        auto &projList = IBaseProjectileAutoList::AutoList();
-        int projCast = 0;
-        for (int i = 0; i < projList.Count(); i++) {
-            if (rtti_scast<CBaseProjectile *>(projList[i]) != nullptr) ++projCast;
-        }
-        auto &currencyList = ICurrencyPackAutoList::AutoList();
-        int currencyCast = 0;
-        for (int i = 0; i < currencyList.Count(); i++) {
-            if (rtti_scast<CCurrencyPack *>(currencyList[i]) != nullptr) ++currencyCast;
-        }
-        int botViewmodels = 0, botWearables = 0;
-        ForEachTFPlayer([&](CTFPlayer *player) {
-            if (player->IsFakeClient()) {
-                for (int i = 0; i < 2; i++) {
-                    if (player->GetViewModel(i) != nullptr) ++botViewmodels;
-                }
-                botWearables += player->GetNumWearables();
-            }
-            return true;
-        });
-        Msg("SigMod: edicts: projectiles %d (%d cast), currency packs %d (%d cast), bot viewmodels %d, bot wearables %d, disposable %d\n",
-            projList.Count(), projCast, currencyList.Count(), currencyCast, botViewmodels, botWearables,
-            (int)AutoList<DisposableEntityModule>::List().size());
-        std::string line;
-        for (size_t i = 0; i < sorted.size() && i < 25; i++) {
-            char buf[128];
-            snprintf(buf, sizeof(buf), " %s:%d", sorted[i].first.c_str(), sorted[i].second);
-            line += buf;
-        }
-        Msg("SigMod: edicts by class:%s\n", line.c_str());
-    }
-#endif
 	DETOUR_DECL_STATIC(CBaseEntity *, CreateEntityByName, const char *className, int iForceEdictIndex)
 	{
         int entityCount = engine->GetEntityCount();
-#if defined _WINDOWS
-        const char *reportedDelete = "nothing";
-#endif
         // Check if there is a useable free edict. If not, try to find a recently freed edict and make it useable
         bool success = false;
         if (reinterpret_cast<CGameServer *>(sv)->GetNumEdicts() == MAX_EDICTS) {
@@ -442,9 +369,6 @@ namespace Mod::Etc::Entity_Limit_Manager
                 }
             }
             //timer.End();
-#if defined _WINDOWS
-            if (entityToDelete != nullptr) reportedDelete = entityToDelete->GetClassname();
-#endif
             if (entityToDelete != nullptr) {
                 //Msg("Deleted entity %d %s %.9f\n", entityToDelete->entindex(), entityToDelete->GetClassname(), timer.GetDuration().GetSeconds());
                 auto edict = entityToDelete->edict();
@@ -462,11 +386,6 @@ namespace Mod::Etc::Entity_Limit_Manager
                 edict->freetime = 0;
             }
         }
-#if defined _WINDOWS
-        if (entityCount > MAX_EDICTS - 128) {
-            ReportEdicts(entityCount, reportedDelete, entityCount >= MAX_EDICTS && strcmp(reportedDelete, "nothing") == 0);
-        }
-#endif
 		return DETOUR_STATIC_CALL(className, iForceEdictIndex);
 	}
 
