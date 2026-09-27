@@ -1,8 +1,7 @@
 #!/bin/bash
-# Six functions called unresolved: GetParticleColor, TE_TFParticleEffect,
-# PassServerEntityFilter, UseActionSlotItemReleased,
-# CEconItemDefinition::IterateAttributes and GetDataObject. Linux bodies with
-# their calls named, and the Windows functions around them.
+# GetParticleColor by its team colours, PassServerEntityFilter as
+# CTraceFilterSimple calls it, what the action slot commands call, and
+# IterateAttributes and GetDataObject with their Linux bodies.
 python3 - <<'PY'
 import re, bisect, collections, capstone, pefile
 from elftools.elf.elffile import ELFFile
@@ -161,30 +160,40 @@ def slots(cls, fn, lo=10, hi=10):
     for k in range(t - lo - 12, t + hi):
         if 0 <= k < len(win): print(f"  W[{k}] {win[k]:#x} ret {wpop(win[k])}  {whead(win[k])}")
 
-print("######## GetParticleColor")
-study("_ZN13CTFWeaponBase16GetParticleColorEi")
-slots("CTFWeaponBase", "GetParticleColor")
+def wfind_imm(*imms):
+    hits = None
+    for v in imms:
+        pat = v.to_bytes(4, "little"); fs = set(); at = code.find(pat)
+        while at != -1: fs.add(wstart(tv + at)); at = code.find(pat, at + 1)
+        hits = fs if hits is None else hits & fs
+    return sorted(hits)
+def wafter(ref, n=40):
+    for i in list(md.disasm(code[ref-tv:ref-tv+0x200], base + ref))[:n]:
+        line = f"  {i.address-base:#x}  {i.mnemonic} {i.op_str}"
+        if i.mnemonic in ("call", "jmp") and i.op_str.startswith("0x"):
+            t = int(i.op_str, 16) - base; line += f"    -> {t:#x}" + (" " + kname[t] if t in kname else "")
+            if i.mnemonic == "call": line += f"  ret {wpop(t)}  {whead(t, 6)}"
+        print(line)
 
-print("######## TE_TFParticleEffect")
-for n in sorted(byname):
-    if "TE_TFParticleEffect" in n or "GetParticleSystemIndex" in n: print(f"  linux {byname[n][0]:#x} size {byname[n][1]} {n}")
-study("_Z19TE_TFParticleEffectR16IRecipientFilterfPKc6Vector6QAngleP11CBaseEntity20ParticleAttachment_t", 3)
-ldis("_Z19TE_TFParticleEffectR16IRecipientFilterfPKc6VectorS3_6QAngleP11CBaseEntity", 80)
-wdis(0x470a10, 200)
-for f in sorted({wstart(s) for s in wg.get(0x470a10, ())}): print(f"  caller of Complex {f:#x} ret {wpop(f)}  {whead(f)}")
-wrefs("TFParticleEffect")
+print("######## GetParticleColor")
+win = wrows("CTFWeaponBase")
+for k in range(466, len(win)): print(f"  W[{k}] {win[k]:#x} ret {wpop(win[k])}  {whead(win[k])}")
+for f in wfind_imm(0x3e147ae1, 0x3eda9fbe):
+    print(f"  holds both colours: {f:#x}; CTFWeaponBase slots {[k for k, v in enumerate(win) if v == f]}")
+    wdis(f, 160)
 
 print("######## PassServerEntityFilter")
-study("_Z22PassServerEntityFilterPK13IHandleEntityS1_", 3)
-for n in byname:
-    if n.startswith("_Z22PassServerEntityFilter"): ldis(n, 80)
-ldis("_ZN18CTraceFilterSimple15ShouldHitEntityEP13IHandleEntityi", 80)
-wdis(wrows("CTraceFilterSimple")[0], 120)
+wdis(0x36edf0, 120)
+print("  callers of 0x36edf0: " + ", ".join(f"{f:#x}" for f in sorted({wstart(s) for s in wg.get(0x36edf0, ())})))
 
 print("######## UseActionSlotItemReleased")
-kc = study("_ZN9CTFPlayer25UseActionSlotItemReleasedEv", 2)
-for s in ("-use_action_slot_item_server", "+use_action_slot_item_server"): wrefs(s)
-ldis("_ZN9CTFPlayer22UseActionSlotItemPressedEv", 200)
+for n in sorted(byname):
+    if "UseActionSlot" in n or "IsUsingGrapplingHook" in n: print(f"  linux {byname[n][0]:#x} size {byname[n][1]} {n}")
+for s in ("-use_action_slot_item_server", "+use_action_slot_item_server"):
+    for a in wstr(s):
+        pat = (base + a).to_bytes(4, "little"); at = code.find(pat)
+        while at != -1:
+            print(f"== after the reference to {s!r} at {tv+at:#x}"); wafter(tv + at - 1, 45); at = code.find(pat, at + 1)
 
 print("######## CEconItemDefinition::IterateAttributes")
 study("_ZNK19CEconItemDefinition17IterateAttributesEP26IEconItemAttributeIterator", 3)
