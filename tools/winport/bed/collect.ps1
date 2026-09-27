@@ -56,6 +56,10 @@ if ($cdbLogs) {
     return $hex
   }
   Write-Host ("cdb: {0} breakpoints passed" -f ($log | Select-String '^BREAKPOINT').Count)
+  # Every other exception is notify-only (sxn *): a stack overflow or a divide
+  # by zero ends srcds with no record anywhere else, so name each kind seen.
+  $log | Where-Object { $_ -match '^\([0-9a-f]+\.[0-9a-f]+\): (.+ - code [0-9a-f]{8} \((first|second) chance\))' } |
+    ForEach-Object { $Matches[1] } | Group-Object | ForEach-Object { Write-Host ("cdb: exception {0} x{1}" -f $_.Name, $_.Count) }
   $starts = @()
   for ($i = 0; $i -lt $log.Count; $i++) {
     if ($log[$i] -match '^(FIRST-CHANCE AV|SECOND-CHANCE AV|HEAP CORRUPTION|STACK BUFFER OVERRUN|PROCESS EXIT|CPP EXCEPTION|EXIT CALLED|TERMINATE CALLED|UNHANDLED STOP)') { $starts += $i }
