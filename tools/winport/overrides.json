@@ -1744,6 +1744,6 @@
  },
  "_ZNK6CTFBot21GetDesiredAttackRangeEv": {
   "rva": "0x551fe0",
-  "why": "read by hand: called by both of Linux's callers known on Windows and by nothing else, among CTFBot's functions; takes the active weapon (m_Shared at +0x1ae8, GetActiveTFWeapon) first as the Linux body does; ret. The matcher's 0x563530 pops 8"
+  "why": "read by hand: GetActiveTFWeapon, IsWeapon, IsMeleeWeapon, a weapon virtual and WeaponID_IsSniperRifle, each returning its own range constant, the Linux body; ret; called by the two Linux callers known on Windows (CTFBotAttack::Update, CTFBotSpyAttack::Update). The matcher's 0x563530 pops 8"
  }
 }
