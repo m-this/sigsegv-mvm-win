@@ -3512,6 +3512,15 @@
 					lib   "server"
 					// string
 				}
+				"CObjectSentrygun::FindTarget"
+				{
+					type  "fixed"
+					sym   "_ZN16CObjectSentrygun10FindTargetEv"
+					addr  "0x4cab30"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the Linux body step by step, offsets 0x18 lower: the flag at +0xb30 cleared through NetworkStateChanged with +0xb38 set to curtime plus a constant, the rules' +0x30, IsInCommentaryMode (0x232930), +0xa20 and +0xa30, EyePosition through the vtable, the enemy team through TFTeamMgr, the range at +0xb2c squared, the handle at +0xb24; ValidTargetPlayer inlined in its player loop. thiscall, no arguments, plain ret; called from 0x4ca31d and 0x4ce007 with only ecx
+				}
 				"CObjectSentrygun::FireRocket"
 				{
 					type  "fixed"
@@ -3566,15 +3575,6 @@
 					lib   "server"
 					// verified: string lead, agreed by strings: 3 shared string(s), 1/2 matched callees, windows/linux size 400/463
 				}
-				"CObjectSentrygun::ValidTargetPlayer"
-				{
-					type  "fixed"
-					sym   "_ZN16CObjectSentrygun17ValidTargetPlayerEP9CTFPlayerRK6VectorS4_"
-					addr  "0x4cab30"
-					build "10828683"
-					lib   "server"
-					// verified: corroborated by tools/winport/corroborate.py: shares the string 'set_weapon_mode' with the Linux function, and 4 of its 4 matched callees
-				}
 				"CObjectTeleporter::SetModel"
 				{
 					type  "fixed"
@@ -3584,14 +3584,23 @@
 					lib   "server"
 					// string
 				}
+				"CObjectTeleporter::TeleporterSend"
+				{
+					type  "fixed"
+					sym   "_ZN17CObjectTeleporter14TeleporterSendEP9CTFPlayer"
+					addr  "0x4d1a70"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: returns on a null player, AddCond(TF_COND_SELECTED_TO_TELEPORT) on its m_Shared, a PVS filter at the teleporter's origin, the spy check (IsPlayerClass 8), the 'teleported_red/blue' and 'player_sparkles_red/blue' effects, 'Building_Teleporter.Send', the 'mod_teleporter_speed_boost' hook and AddCond 0x20, the Linux body; thiscall, ret 4. It was matched to TeleporterThink, which takes no argument
+				}
 				"CObjectTeleporter::TeleporterThink"
 				{
 					type  "fixed"
 					sym   "_ZN17CObjectTeleporter15TeleporterThinkEv"
-					addr  "0x4d1a70"
+					addr  "0x4d1e00"
 					build "10828683"
 					lib   "server"
-					// verified: corroborated by tools/winport/corroborate.py: shares the string 'Building_Teleporter.Ready', 'TeleporterContext', 'bidirectional_teleport' with the Linux function, and 7 of its 7 matched callees
+					// verified: read by hand: the function after TeleporterSend, the Linux body with offsets 0x18 lower: returns when +0xa30 is set, then sets itself as the 'TeleporterContext' think (pushes its own VA 0x104d1e00 to 0x2025e0, as the teleporter's spawn at 0x4d0680 does), tests +0xa20 and +0xa30, the 'bidirectional_teleport' hook, and switches on the state at +0xad0 (Linux +0xae8); thiscall, no arguments, plain ret. 0x4d1a70, the earlier match, is TeleporterSend
 				}
 				"CPointTeleport::Activate"
 				{
