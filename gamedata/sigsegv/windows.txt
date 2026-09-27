@@ -790,7 +790,7 @@
 				{
 					type  "fixed"
 					sym   "_ZZNK7IVision11IsAbleToSeeEP11CBaseEntityNS_20FieldOfViewCheckTypeEP6VectorE6tm_fmt"
-					addr  "0xa8fc8c"
+					addr  "0xa8fc80"
 					build "10828683"
 					lib   "server"
 					// data
@@ -2000,7 +2000,7 @@
 				{
 					type  "fixed"
 					sym   "_ZN20CBaseCombatCharacter11FInViewConeERK6Vector"
-					addr  "0x1d5c30"
+					addr  "0x1d5b30"
 					build "10828683"
 					lib   "server"
 					// vtable
@@ -2018,7 +2018,7 @@
 				{
 					type  "fixed"
 					sym   "_ZN20CBaseCombatCharacter10RemoveAmmoEii"
-					addr  "0x1dc470"
+					addr  "0x1dc400"
 					build "10828683"
 					lib   "server"
 					// vtable
@@ -3910,10 +3910,11 @@
 				{
 					type  "fixed"
 					sym   "_ZN11CSmokeStack8KeyValueEPKcS1_"
-					addr  "0x437b50"
+					addr  "0x437b90"
 					build "10828683"
 					lib   "server"
-					// string
+					vtidx "33"
+					// verified: read by hand: slot 33 of CSmokeStack, where CBaseEntity's (const char *, const char *) KeyValue sits once MSVC reverses the three overloads (as in CGameText). Pops 8; stricmp of the key with "Wind" parses "%f %f %f" into the vector at +0x3fc and returns true, a second stricmp parses an int into +0x3f4, as the Linux body's Wind/WindAngle/WindSpeed branches do. The string match 0x437b50 pops 4, has no direct caller and only releases a handle at +0x3a0
 				}
 				"CSoundEnt::Initialize"
 				{
@@ -6934,7 +6935,7 @@
 					addr  "0x474020"
 					build "10828683"
 					lib   "server"
-					// consensus
+					// vtable
 				}
 				"CTFGameMovement::GetAirSpeedCap"
 				{
