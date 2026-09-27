@@ -1434,5 +1434,9 @@
   "rva": "0x4c1cd0",
   "vtidx": 381,
   "why": "read by hand: sets m_bWasMapPlaced (+0x9f4, Linux +0xa0c) with NetworkStateChanged, returns if the builder handle (+0x944, Linux +0x95c) resolves, else calls the virtual at +0x540 (Linux +0x544) with 0, SpawnControlPanels unless the flag 4 at +0x90c, SetHealth (0x4c4280) of the max health, the virtual at +0x560 and sets +0x39c from the team being other than 2, the Linux body. Slot 381 in the dispenser's, the sentry's and the teleporter's tables, two below Linux there (PlayStartupAnimation 378/380, the empty SetupAttachedVersion 379/381, ShouldPlayersAvoid 380/382 comparing the collision group with 0x15); the teleporter's 381 calls this first as its Linux override calls the base. thiscall, no arguments"
+ },
+ "_ZN9CTFPlayer14RemoveCurrencyEi": {
+  "rva": "0x50a1c0",
+  "why": "read by hand: m_nCurrency (+0x2448, the offset its send prop pushes) less the amount, floored at 0, stored with NetworkStateChanged when it changes; then if g_pGameRules is in MvM (+0xc72, as Linux) calls 0x5e2dc0 on g_pPopulationManager with (player, amount), Linux's AddPlayerCurrencySpent, the Linux body. Its three callers are Linux's: ClientCommand, Event_Killed and the upgrade purchase (0x5f6220). thiscall, ret 4 for the int"
  }
 }
