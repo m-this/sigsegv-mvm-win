@@ -1617,11 +1617,21 @@ namespace Mod::Pop::PopMgr_Extensions
 	}
 
 	RefCount rc_CTFPlayerSharedUtils_GetEconItemViewByLoadoutSlot;
+#if defined _WINDOWS
+	/* A static function, cdecl on Windows: a member detour would pop the
+	 * three arguments its caller pops again. */
+	DETOUR_DECL_STATIC(CEconItemView *, CTFPlayerSharedUtils_GetEconItemViewByLoadoutSlot, CTFPlayer *player, int slot, CEconEntity **entity)
+	{
+		SCOPED_INCREMENT(rc_CTFPlayerSharedUtils_GetEconItemViewByLoadoutSlot);
+		return DETOUR_STATIC_CALL(player, slot, entity);
+	}
+#else
     DETOUR_DECL_MEMBER(CEconItemView *, CTFPlayerSharedUtils_GetEconItemViewByLoadoutSlot, CTFPlayer *player, int slot, CBaseEntity &entity)
 	{
         SCOPED_INCREMENT(rc_CTFPlayerSharedUtils_GetEconItemViewByLoadoutSlot);
         return DETOUR_MEMBER_CALL(player, slot, entity);
 	}
+#endif
 
 	RefCount rc_CTFPlayer_GiveDefaultItems;
 	RefCount rc_CTFPlayer_ValidateWeapons;
@@ -2565,7 +2575,13 @@ namespace Mod::Pop::PopMgr_Extensions
 		player_killer = nullptr;
 	}
 	
+	/* The game takes inputdata_t by reference and on Windows pops the one
+	 * pointer; a copy taken by value pops the whole struct. */
+#if defined _WINDOWS
+	DETOUR_DECL_MEMBER(void, CTFPlayer_InputSetCustomModel, inputdata_t &data)
+#else
 	DETOUR_DECL_MEMBER(void, CTFPlayer_InputSetCustomModel, inputdata_t data)
+#endif
 	{
 		DETOUR_MEMBER_CALL(data);
 		if (state.m_bFixSetCustomModelInput) {
@@ -7362,7 +7378,11 @@ namespace Mod::Pop::PopMgr_Extensions
 			MOD_ADD_DETOUR_MEMBER(CPopulationManager_RestoreCheckpoint, "CPopulationManager::RestoreCheckpoint");
 			MOD_ADD_DETOUR_MEMBER(CPopulationManager_SetCheckpoint, "CPopulationManager::SetCheckpoint");
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_GetEntityForLoadoutSlot, "CTFPlayer::GetEntityForLoadoutSlot");
+#if defined _WINDOWS
+            MOD_ADD_DETOUR_STATIC(CTFPlayerSharedUtils_GetEconItemViewByLoadoutSlot, "CTFPlayerSharedUtils::GetEconItemViewByLoadoutSlot");
+#else
             MOD_ADD_DETOUR_MEMBER(CTFPlayerSharedUtils_GetEconItemViewByLoadoutSlot, "CTFPlayerSharedUtils::GetEconItemViewByLoadoutSlot");
+#endif
             MOD_ADD_DETOUR_MEMBER(KeyValues_RecursiveMergeKeyValues, "KeyValues::RecursiveMergeKeyValues");
             MOD_ADD_DETOUR_MEMBER(KeyValues_LoadFromBuffer, "KeyValues::LoadFromBuffer");
 			
