@@ -5998,6 +5998,15 @@
 					lib   "server"
 					// verified: read by hand: tests IsUsingSpells as Linux does (a global's +0x30, the rules' +0x11b8 against 4, +0xc82), then CreateNoSpawn (0x1ee780) of "tf_spell_pickup" at the position raised by a constant, and stores the tier (its second argument) in the pickup, the Linux body; thiscall, (const Vector &, int). The other function creating the pickup (0x495900) has it inlined
 				}
+				"CTFGameRules::IsUsingSpells"
+				{
+					type  "fixed"
+					sym   "_ZNK12CTFGameRules13IsUsingSpellsEv"
+					addr  "0x492a30"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: true when the spells convar is set or the game type at +0x11b8 is 4, else the byte at +0xc82, the Linux body instruction for instruction; ret; two direct callers, GetBaseItemForClass (0x3ca340) and SlotContainsBaseItems, as on Linux
+				}
 				"KeyValues::LoadFromFile"
 				{
 					type  "fixed"
@@ -6061,6 +6070,24 @@
 					lib   "server"
 					// vtable
 				}
+				"UTIL_EntitiesInSphere"
+				{
+					type  "fixed"
+					sym   "_Z21UTIL_EntitiesInSphereRK6VectorfP20CFlaggedEntitiesEnum"
+					addr  "0x36c690"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: called by six of the seven Linux callers known on Windows (JarExplode, the minigun's AttackEnemyProjectiles and four more), 21 direct callers against Linux's 22; loads the spatial partition and the radius at +0xc for EnumerateElementsInSphere, the Linux body; cdecl, plain ret. 0x369e80, which those callers also call, is CFlaggedEntitiesEnum's constructor (ret 12)
+				}
+				"DispatchParticleEffect [overload 2]"
+				{
+					type  "fixed"
+					sym   "_Z22DispatchParticleEffectPKc20ParticleAttachment_tP11CBaseEntityib"
+					addr  "0x2a9d10"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: GetParticleSystemIndex on the name, the entity at +0x10 (its index, its abs origin) and the 'ParticleEffect' dispatch, with no LookupAttachment, so the integer attachment overload; cdecl, plain ret; 14 direct callers against Linux's 16, one of which is the attachment-name overload Windows inlines
+				}
 				"DispatchParticleEffect [overload 3]"
 				{
 					type  "fixed"
@@ -6069,6 +6096,24 @@
 					build "10828683"
 					lib   "server"
 					// verified: read by hand: GetParticleSystemIndex(name), then overload 5 inlined: a CEffectData with the origin as both m_vOrigin and m_vStart, the angles, the entity's index and PARTICLE_DISPATCH_FROM_ENTITY when there is one, dispatched as ParticleEffect; cdecl with the entity at +0x24, as the Linux body passes the origin twice to overload 5. Called by 8 of the 11 Linux callers known on Windows (CTFBaseRocket::Explode, CTFPlayer::Event_Killed, CItem::ItemTouch...). 0x30efd0, the earlier candidate, is a destructor
+				}
+				"DispatchParticleEffect [overload 6]"
+				{
+					type  "fixed"
+					sym   "_Z22DispatchParticleEffectPKc20ParticleAttachment_tP11CBaseEntityS0_6VectorS4_bb"
+					addr  "0x2a9b30"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: LookupAttachment on the attachment name, GetParticleSystemIndex and the 'ParticleEffect' dispatch with the colours, the Linux body; cdecl, plain ret; one direct caller on each side (ApplyPostHitEffects)
+				}
+				"DispatchParticleEffect [overload 7]"
+				{
+					type  "fixed"
+					sym   "_Z22DispatchParticleEffectPKc6Vector6QAngleS1_S1_bP11CBaseEntityi"
+					addr  "0x2a9900"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: GetParticleSystemIndex, the origin at +0xc and the angles at +0x18 by value, the entity read at +0x40, which is where this overload (origin, angles, two colours, bool, entity, attachment) has it; 'ParticleEffect'; cdecl, plain ret; one direct caller on each side (the energy ring's impact)
 				}
 				"StopParticleEffects"
 				{
@@ -6525,6 +6570,15 @@
 					build "10828683"
 					lib   "server"
 					// verified: read by hand: the overload with two Vectors: origin from the first, start from the second, angles from the QAngle, and with an entity its edict index and attachment type 2, then CBaseTempEntity::Create; the Linux body. cdecl, plain ret, two callers as on Linux (the flare and the energy ball)
+				}
+				"DoTeleporterOverride"
+				{
+					type  "fixed"
+					sym   "_Z20DoTeleporterOverrideP11CBaseEntityR6Vectorb"
+					addr  "0x5ed2b0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: GetNearestNavArea and GetClosestPointOnArea as in the Linux body; cdecl, plain ret; one direct caller as on Linux, next to CSpawnLocation::FindSpawnLocation (0x5ed4e0)
 				}
 				"CTFGameRules::OnPlayerSpawned"
 				{
