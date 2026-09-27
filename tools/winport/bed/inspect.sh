@@ -1,5 +1,5 @@
 #!/bin/bash
-# ReadKeyField, PassesTriggerFilters and the Custom_Attributes gaps, Windows against Linux.
+# Bodies for PassesTriggerFilters and the Custom_Attributes gaps, Windows against Linux.
 python3 - <<'PY'
 import re, bisect, collections, capstone, pefile
 from elftools.elf.elffile import ELFFile
@@ -159,30 +159,56 @@ def slots(cls, fn, lo=10, hi=10):
         if 0 <= k < len(win): print(f"  W[{k}] {win[k]:#x} ret {wpop(win[k])}  {whead(win[k])}")
 
 
-print("\n######## ReadKeyField")
-study("_ZN11CBaseEntity12ReadKeyFieldEPKcP9variant_t", show=3)
-for f in wrefs("Usage:\n   ent_dump <entity name>\n"): wdis(f, 260)
+def wrange(lo, hi, n=45):
+    at = lo
+    while at < hi:
+        f = wstart(at + 1) if code[at-tv] in (0xCC,) else at
+        s = at
+        # next function start: skip int3 padding
+        while code[s-tv] == 0xCC: s += 1
+        wdis(s, n)
+        # advance to end of this function (first int3 run after it)
+        e = s
+        while not (code[e-tv] == 0xCC and code[e+1-tv] == 0xCC) and e < hi: e += 1
+        at = e
+        while code[at-tv] == 0xCC and at < hi: at += 1
 
-print("\n######## PassesTriggerFilters")
-ldis("_ZN12CBaseTrigger20PassesTriggerFiltersEP11CBaseEntity", 120)
-for f in wrefs("func_pushable"): print(f"  {f:#x} ret {wpop(f)} callers {len(wg.get(f,()))}  {whead(f, 10)}")
-for cls in ("CBaseTrigger", "CTriggerMultiple", "CFuncRespawnRoom", "CTriggerHurt"):
-    try: slots(cls, "PassesTriggerFilters", 8, 6)
-    except Exception as e: print(cls, e)
+print("\n######## PassesTriggerFilters 0x360650")
+wdis(0x360650, 330)
 
-print("\n######## virtual gaps")
-for cls, fn in [("CTFWeaponBase","GetDamageType"),("CTFSniperRifle","GetDamageType"),("CTFSniperRifleClassic","GetDamageType"),
-                ("CTFRevolver","GetDamageType"),("CTFSMG","GetDamageType"),("CTFPistol_ScoutSecondary","GetDamageType"),
-                ("CTFWeaponBase","Reload"),("CTFWeaponBaseMelee","Swing"),("CTFGameRules","FPlayerCanTakeDamage"),
-                ("CTFWeaponBase","GetPenetrateType"),("CTFWeaponBase","ItemBusyFrame"),("CTFWeaponBase","ItemHolsterFrame")]:
-    try: slots(cls, fn, 6, 5)
-    except Exception as e: print(cls, fn, e)
+print("\n######## CAttributeList neighbourhood")
+wrange(0x3c4a00, 0x3c5800, 60)
+print("callers of RemoveAttribute 0x3c51c0:", sorted({hex(wstart(s)) for s in wg.get(0x3c51c0, ())}))
 
-print("\n######## attribute lists")
-for s in ["_ZN14CAttributeList12AddAttributeEP18CEconItemAttribute", "_ZN14CAttributeList22RemoveAttributeByIndexEi",
-          "_ZN14CAttributeList20DestroyAllAttributesEv", "_ZN17CAttributeManager9ProvideToEP11CBaseEntity",
-          "_ZN17CAttributeManager15StopProvidingToEP11CBaseEntity",
-          "_ZN12CTFGameRules20FPlayerCanTakeDamageEP11CBasePlayerP11CBaseEntityRK15CTakeDamageInfo",
-          "_ZN11CBaseEntity19DispatchTraceAttackERK15CTakeDamageInfoRK6VectorP10CGameTraceP15CDmgAccumulator"]:
-    print("\n####", s); study(s, show=2)
+print("\n######## ProvideTo / StopProvidingTo")
+wdis(0x4b1e10, 200)
+for f in (0x61cd00, 0x4e2310, 0x1e4d10): wdis(f, 70)
+slots("CEconEntity", "ReapplyProvision", 3, 3)
+slots("CTFWeaponBase", "ReapplyProvision", 3, 3)
+ldis("_ZN11CEconEntity16ReapplyProvisionEv", 150)
+
+print("\n######## FPlayerCanTakeDamage")
+wdis(0x48b220, 260)
+
+print("\n######## DispatchTraceAttack")
+ldis("_ZN11CBaseEntity19DispatchTraceAttackERK15CTakeDamageInfoRK6VectorP10CGameTraceP15CDmgAccumulator", 100)
+for f in (0x4fc410, 0x14e190, 0x33ac10, 0x1ffb50): wdis(f, 60)
+
+print("\n######## GetDamageType")
+for cls, sym in [("CTFWeaponBase","_ZNK13CTFWeaponBase13GetDamageTypeEv"),("CTFSniperRifle","_ZNK14CTFSniperRifle13GetDamageTypeEv"),
+                 ("CTFSniperRifleClassic","_ZNK21CTFSniperRifleClassic13GetDamageTypeEv"),("CTFRevolver","_ZNK11CTFRevolver13GetDamageTypeEv"),
+                 ("CTFSMG","_ZNK6CTFSMG13GetDamageTypeEv"),("CTFPistol_ScoutSecondary","_ZNK24CTFPistol_ScoutSecondary13GetDamageTypeEv")]:
+    print("\n####", cls)
+    if sym in byname: ldis(sym, 80)
+    else: print("  no linux", sym, [n for n in byname if "GetDamageType" in n and cls in n])
+    w = wrows(cls)[134]; wdis(w, 80)
+    print("  slot 134 users:", [c for c in ("CTFWeaponBase","CTFSniperRifle","CTFSniperRifleClassic","CTFRevolver","CTFSMG","CTFPistol_ScoutSecondary","CTFPistol","CTFShotgun","CTFMinigun","CTFFlameThrower") if len(wrows(c))>134 and wrows(c)[134]==w])
+
+print("\n######## Reload / Swing")
+ldis("_ZN13CTFWeaponBase6ReloadEv", 90)
+w = wrows("CTFWeaponBase")
+for k in range(282, 292): print(f"-- W[{k}]"); wdis(w[k], 30)
+ldis("_ZN18CTFWeaponBaseMelee5SwingEP9CTFPlayer", 120)
+w = wrows("CTFWeaponBaseMelee")
+for k in (472, 473, 477, 481, 482): print(f"-- W[{k}]"); wdis(w[k], 60)
 PY
