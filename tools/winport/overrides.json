@@ -1944,5 +1944,18 @@
   "rva": "0x38a270",
   "name": "CScriptConvarAccessor::SetValue",
   "why": "read by hand: VScript's Convars.SetValue, the Linux body (0x89a850) in order: returns on a null or empty name, looks the name up in the allow list (+0xc) and warns when absent, ConVarRef and IsValid, the 0x20000020 flags test, a switch on the variant's type, then g_pGameRules->SaveConvar; thiscall, ret 0x14 for the name and the 16-byte variant; CMemberScriptBinding's Call thunk 0x380400 reaches it"
+ },
+ "_ZN10CTFNavArea6TFMarkEv": {
+  "rva": "0x5d63f0",
+  "why": "read by hand: mov eax, [0x9d23e8]; mov [ecx+0x21c], eax; ret, the Linux body storing m_masterTFMark (the global MakeNewTFMarker 0x5d5970 increments) into +0x220. SelectSpawnArea (0x5ef2a0) calls it right after IsTFMarked returns false, where Linux calls TFMark; thiscall with no argument, plain ret"
+ },
+ "_ZNK10CTFNavArea10IsTFMarkedEv": {
+  "rva": "0x5d5570",
+  "why": "read by hand: mov eax, [ecx+0x21c]; cmp eax, [0x9d23e8]; sete al; ret, comparing the field TFMark (0x5d63f0) writes with the global MakeNewTFMarker (0x5d5970) increments. SelectSpawnArea (0x5ef2a0) calls it on each surrounding area and skips a true result, where Linux calls IsTFMarked; thiscall with no argument, plain ret"
+ },
+ "_ZNK13CTFWeaponBase21GetAfterburnRateOnHitEv": {
+  "rva": "0x15d760",
+  "vtidx": 460,
+  "why": "read by hand from the weapon vtables, seven below Linux from IsEnergyWeapon (453/446) and GetParticleColor (457/450) on: SetBroken(bool) 461 is the empty ret 4 at 454, GetDropSkinOverride 465 is the -1 return at 458, and CTFCompoundBow, which overrides GetInitialAfterburnDuration (466), has its own body at 459 where CTFWeaponBuilder has the base one. 460 is the base's 0.0f return, folded with IBody::GetHeadSteadyDuration, so the slot names it and the detour on it is refused as folded"
  }
 }

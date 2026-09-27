@@ -252,13 +252,28 @@ protected:
 class CNavArea : public CNavAreaCriticalData
 {
 public:
+#if defined _WINDOWS
+	/* The Windows server keeps CNavAreaCriticalData's layout: AddToOpenList
+	 * reads m_openMarker at +0x50, m_totalCost at +0x40 and the open list links
+	 * at +0x48, and SearchSurroundingAreas marks +0x3c and zeroes m_costSoFar at
+	 * +0x44. The center is this struct's field at +0x2c, which the Linux
+	 * extractor finds too and nothing extracts on Windows. m_parent and
+	 * m_parentHow follow the eight vector pointers and the search marker after
+	 * m_connect: SearchSurroundingAreas stores null at +0x78 and 9
+	 * (NUM_TRAVERSE_TYPES) at +0x7c on its start area. */
+	const Vector& GetCenter() const    { return CNavAreaCriticalData::m_center; }
+	CNavArea *GetParent() const        { return *reinterpret_cast<CNavArea *const *>(reinterpret_cast<uintptr_t>(this) + 0x78); }
+	int GetParentHow() const           { return *reinterpret_cast<const int *>(reinterpret_cast<uintptr_t>(this) + 0x7c); }
+	void SetParent(CNavArea *parent)   { *reinterpret_cast<CNavArea **>(reinterpret_cast<uintptr_t>(this) + 0x78) = parent; }
+#else
 	const Vector& GetCenter() const    { return this->m_center; }
-	bool HasAttributes(int bits) const { return ((this->m_attributeFlags & bits) != 0); }
 	CNavArea *GetParent() const        { return this->m_parent; }
 	int GetParentHow() const           { return this->m_parentHow; }
+	void SetParent(CNavArea *parent)   { this->m_parent = parent; }
+#endif
+	bool HasAttributes(int bits) const { return ((this->m_attributeFlags & bits) != 0); }
 	float GetCostSoFar() const         { return this->m_costSoFar; }
 	void SetCostSoFar(float cost)      { this->m_costSoFar = cost; }
-	void SetParent(CNavArea *parent)   { this->m_parent = parent; }
 	void SetTotalCost(float cost)      { this->m_totalCost = cost; }
 	
 	int GetAdjacentCount(int dir) const	{ return m_connect[dir].Count(); }
@@ -282,8 +297,21 @@ public:
 	bool IsPotentiallyVisible(CNavArea *area) const                                                 { return vt_IsPotentiallyVisible                 (this, area); }
 	bool IsCompletelyVisible(CNavArea *area) const                                                  { return vt_IsCompletelyVisible                  (this, area); }
 	bool IsPotentiallyVisibleToTeam(int teamID) const                                               { return vt_IsPotentiallyVisibleToTeam           (this, teamID); }
+#if defined _WINDOWS
+	/* No Windows address. The body appends every direction's connected areas,
+	 * from m_connect at +0x58 as above. */
+	void CollectAdjacentAreas(CUtlVector<CNavArea *> *vector)
+	{
+		for (int dir = 0; dir < NUM_DIRECTIONS; ++dir) {
+			for (int i = 0; i < m_connect[dir].Count(); ++i) {
+				vector->AddToTail(m_connect[dir][i].area);
+			}
+		}
+	}
+#else
 	void CollectAdjacentAreas(CUtlVector<CNavArea *> *vector)                                       { return ft_CollectAdjacentAreas                 (this, vector); }
-	
+#endif
+
 
 	DECL_EXTRACT(CUtlVector<CHandle<CFuncNavCost>>, m_funcNavCostVector);
 	DECL_EXTRACT (CUtlVectorConservative<AreaBindInfo>, m_potentiallyVisibleAreas);
@@ -349,7 +377,13 @@ public:
 	void AddPotentiallyVisibleActor(CBaseCombatCharacter *actor)     {        ft_AddPotentiallyVisibleActor(this, actor); }
 	void TFMark()                                                    {        ft_TFMark(this); }
 	bool IsTFMarked()                                                { return ft_IsTFMarked(this); }
+#if defined _WINDOWS
+	/* The Linux body is the one the m_nAttributes extractor matches there:
+	 * test the attributes against 0x06000007, setz. */
+	bool IsValidForWanderingPopulation()                             { return (this->GetTFAttributes() & (BLOCKED | RED_SPAWN_ROOM | BLUE_SPAWN_ROOM | NO_SPAWNING | RESCUE_CLOSET)) == 0; }
+#else
 	bool IsValidForWanderingPopulation()                             { return ft_IsValidForWanderingPopulation(this); }
+#endif
 	
 
 	static void MakeNewTFMarker() { ft_MakeNewTFMarker(); }
