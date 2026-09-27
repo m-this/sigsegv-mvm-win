@@ -7327,6 +7327,15 @@
 					lib   "server"
 					// call, ret 24 as its arguments say
 				}
+				"CHeadlessHatmanAttack::RecomputeHomePosition"
+				{
+					type  "fixed"
+					sym   "_ZN21CHeadlessHatmanAttack21RecomputeHomePositionEv"
+					addr  "0x59e700"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the Linux body (0xec31b0) in order: the countdown at +0x4818 (Now against +0x4820, reset by +0x481c), the control point master handle, the loop over its points, then the chosen point's abs origin (CalcAbsolutePosition when dirty) stored as the home position at +0x480c; CHeadlessHatmanAttack::Update (0x59ece0) calls it right after SelectVictim (0x59e870), as Linux Update does; no argument, plain ret
+				}
 				"TE_TFBlood"
 				{
 					type  "fixed"
