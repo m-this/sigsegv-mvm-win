@@ -1,5 +1,5 @@
 #!/bin/bash
-# Bodies for PassesTriggerFilters and the Custom_Attributes gaps, Windows against Linux.
+# Attribute list, provider, DispatchTraceAttack and weapon virtual bodies, Windows against Linux.
 python3 - <<'PY'
 import re, bisect, collections, capstone, pefile
 from elftools.elf.elffile import ELFFile
@@ -159,56 +159,86 @@ def slots(cls, fn, lo=10, hi=10):
         if 0 <= k < len(win): print(f"  W[{k}] {win[k]:#x} ret {wpop(win[k])}  {whead(win[k])}")
 
 
-def wrange(lo, hi, n=45):
-    at = lo
-    while at < hi:
-        f = wstart(at + 1) if code[at-tv] in (0xCC,) else at
-        s = at
-        # next function start: skip int3 padding
-        while code[s-tv] == 0xCC: s += 1
-        wdis(s, n)
-        # advance to end of this function (first int3 run after it)
-        e = s
-        while not (code[e-tv] == 0xCC and code[e+1-tv] == 0xCC) and e < hi: e += 1
-        at = e
-        while code[at-tv] == 0xCC and at < hi: at += 1
+def funcs_calling(target):
+    return sorted({wstart(s) for s in wg.get(target, ())})
+def fsize(f):
+    n = 0
+    for i in md.disasm(code[f-tv:f-tv+0x2000], base + f):
+        if i.mnemonic == "int3": break
+        n = i.address - base - f + i.size
+    return n
+def text_of(f, limit=0x400):
+    out = []
+    for i in md.disasm(code[f-tv:f-tv+limit], base + f):
+        if i.mnemonic == "int3": break
+        out.append(f"{i.mnemonic} {i.op_str}")
+    return "\n".join(out)
 
-print("\n######## PassesTriggerFilters 0x360650")
-wdis(0x360650, 330)
+print("\n######## provider")
+for f in (0x39e6b0, 0x39e8b0, 0x39ea40): wdis(f, 120); print("  callers:", [hex(x) for x in funcs_calling(f)])
 
-print("\n######## CAttributeList neighbourhood")
-wrange(0x3c4a00, 0x3c5800, 60)
-print("callers of RemoveAttribute 0x3c51c0:", sorted({hex(wstart(s)) for s in wg.get(0x3c51c0, ())}))
+print("\n######## AddAttribute candidates")
+both = set(funcs_calling(0x3b8810)) & set(funcs_calling(0x3b8e30))
+for f in sorted(both):
+    t = text_of(f)
+    if fsize(f) < 260 and "+ 0x34]" in t:
+        print(f"  cand {f:#x} size {fsize(f)} ret {wpop(f)}"); wdis(f, 80)
 
-print("\n######## ProvideTo / StopProvidingTo")
-wdis(0x4b1e10, 200)
-for f in (0x61cd00, 0x4e2310, 0x1e4d10): wdis(f, 70)
-slots("CEconEntity", "ReapplyProvision", 3, 3)
-slots("CTFWeaponBase", "ReapplyProvision", 3, 3)
-ldis("_ZN11CEconEntity16ReapplyProvisionEv", 150)
+print("\n######## DestroyAllAttributes candidates")
+at = 0
+seen = set()
+pat = re.compile(r"mov dword ptr \[e.x \+ 0x10\], 0")
+for va, _ in [(tv, None)]:
+    pass
+cnt = 0
+for f in sorted({wstart(s) for s in range(tv, tv + len(code), 1) if False}):
+    pass
+# scan every function that makes a vcall at +0x34 through the list's manager field (+0x18)
+hits = []
+off = 0
+blob = code
+i = blob.find(b"\xff\x50\x34")
+while i != -1:
+    hits.append(wstart(tv + i)); i = blob.find(b"\xff\x50\x34", i + 1)
+for f in sorted(set(hits)):
+    if f in seen: continue
+    seen.add(f)
+    t = text_of(f, 0x300)
+    if fsize(f) < 200 and pat.search(t) and "+ 0x18]" in t:
+        print(f"  cand {f:#x} size {fsize(f)} ret {wpop(f)} callers {len(wg.get(f,()))}"); wdis(f, 70)
 
-print("\n######## FPlayerCanTakeDamage")
-wdis(0x48b220, 260)
+print("\n######## DispatchTraceAttack candidates")
+hits = set()
+for pat2 in (b"\xff\x90\xf4\x00\x00\x00", b"\xff\x92\xf4\x00\x00\x00", b"\xff\x50\x00"):
+    pass
+i = code.find(b"\xf4\x00\x00\x00")
+while i != -1:
+    f = wstart(tv + i)
+    if f not in hits and fsize(f) < 120:
+        t = text_of(f, 0x100)
+        if re.search(r"call dword ptr \[e.x \+ 0xf4\]", t) and re.search(r"\+ 0xf8\]", t) and 0x10 in wpop(f):
+            hits.add(f); print(f"  cand {f:#x} size {fsize(f)} ret {wpop(f)} callers {len(wg.get(f,()))}"); wdis(f, 50)
+    hits.add(f)
+    i = code.find(b"\xf4\x00\x00\x00", i + 1)
+wdis(0x60b170, 400)
 
-print("\n######## DispatchTraceAttack")
-ldis("_ZN11CBaseEntity19DispatchTraceAttackERK15CTakeDamageInfoRK6VectorP10CGameTraceP15CDmgAccumulator", 100)
-for f in (0x4fc410, 0x14e190, 0x33ac10, 0x1ffb50): wdis(f, 60)
+print("\n######## SMG / pistol GetDamageType")
+wdis(0x629750, 60)
+wdis(0x624220, 400)
+for a in (0x12da0cc, 0x12f03e3): print(hex(a), lstr(a))
 
-print("\n######## GetDamageType")
-for cls, sym in [("CTFWeaponBase","_ZNK13CTFWeaponBase13GetDamageTypeEv"),("CTFSniperRifle","_ZNK14CTFSniperRifle13GetDamageTypeEv"),
-                 ("CTFSniperRifleClassic","_ZNK21CTFSniperRifleClassic13GetDamageTypeEv"),("CTFRevolver","_ZNK11CTFRevolver13GetDamageTypeEv"),
-                 ("CTFSMG","_ZNK6CTFSMG13GetDamageTypeEv"),("CTFPistol_ScoutSecondary","_ZNK24CTFPistol_ScoutSecondary13GetDamageTypeEv")]:
-    print("\n####", cls)
-    if sym in byname: ldis(sym, 80)
-    else: print("  no linux", sym, [n for n in byname if "GetDamageType" in n and cls in n])
-    w = wrows(cls)[134]; wdis(w, 80)
-    print("  slot 134 users:", [c for c in ("CTFWeaponBase","CTFSniperRifle","CTFSniperRifleClassic","CTFRevolver","CTFSMG","CTFPistol_ScoutSecondary","CTFPistol","CTFShotgun","CTFMinigun","CTFFlameThrower") if len(wrows(c))>134 and wrows(c)[134]==w])
+def wstrat(rva):
+    for va, data in rdata:
+        if va <= rva < va + len(data):
+            e = data.find(b"\0", rva - va); return data[rva-va:e][:60]
+for a in (0x10860e00, 0x1087b3cc, 0x108f6148, 0x1087f870, 0x108e4ee4): print(hex(a), wstrat(a - base))
 
-print("\n######## Reload / Swing")
-ldis("_ZN13CTFWeaponBase6ReloadEv", 90)
+print("\n######## weapon virtuals")
+for sym in ("_ZNK13CTFWeaponBase17AutoFiresFullClipEv", "_ZN13CTFWeaponBase13ItemBusyFrameEv", "_ZN13CTFWeaponBase16ItemHolsterFrameEv",
+            "_ZNK13CTFWeaponBase16GetPenetrateTypeEv", "_ZN13CTFWeaponBase15GetSpreadAnglesEv"):
+    ldis(sym, 90)
 w = wrows("CTFWeaponBase")
-for k in range(282, 292): print(f"-- W[{k}]"); wdis(w[k], 30)
-ldis("_ZN18CTFWeaponBaseMelee5SwingEP9CTFPlayer", 120)
-w = wrows("CTFWeaponBaseMelee")
-for k in (472, 473, 477, 481, 482): print(f"-- W[{k}]"); wdis(w[k], 60)
+for k in (273, 274, 275, 276, 285, 402, 403, 404, 405, 406):
+    print(f"-- W[{k}]"); wdis(w[k], 70)
+wdis(0x632e30, 90)
 PY
