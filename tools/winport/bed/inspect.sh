@@ -1,5 +1,5 @@
 #!/bin/bash
-# Upgrade station, radius damage, DispatchTraceAttack and weapon helper bodies, Windows against Linux.
+# Upgrade station, radius damage and DispatchTraceAttack candidates on Windows.
 python3 - <<'PY'
 import re, bisect, collections, capstone, pefile
 from elftools.elf.elffile import ELFFile
@@ -159,50 +159,19 @@ def slots(cls, fn, lo=10, hi=10):
         if 0 <= k < len(win): print(f"  W[{k}] {win[k]:#x} ret {wpop(win[k])}  {whead(win[k])}")
 
 
-def text_of(f, limit=0x600):
-    out = []
-    for i in md.disasm(code[f-tv:f-tv+limit], base + f):
-        if i.mnemonic == "int3": break
-        out.append((i.address - base, f"{i.mnemonic} {i.op_str}"))
-    return out
+print("\n######## ApplyToEntity candidate 0x480a30")
+wdis(0x480a30, 900)
+print("  pops", wpop(0x480a30), "callers", sorted({hex(wstart(s)) for s in wg.get(0x480a30, ())}))
 
-print("\n######## strings")
-for a in (0x12f76fd, 0x13481be, 0x134819c): print(hex(a), lstr(a))
-def wstrat(rva):
-    for va, data in rdata:
-        if va <= rva < va + len(data):
-            e = data.find(b"\0", rva - va); return data[rva-va:e][:60]
-for a in (0x108f6410, 0x108f6130): print(hex(a), wstrat(a - base))
+print("\n######## ApplyUpgradeToItem candidate 0x5f6220")
+wdis(0x5f6220, 700)
+print("  pops", wpop(0x5f6220), "callers", sorted({hex(wstart(s)) for s in wg.get(0x5f6220, ())}))
 
-print("\n######## SMG helper")
-wdis(0x629750, 200)
-ldis("_ZNK6CTFSMG11CanHeadshotEv", 40) if "_ZNK6CTFSMG11CanHeadshotEv" in byname else print([n for n in byname if "CTFSMG" in n])
-
-print("\n######## DispatchTraceAttack inlined?")
-sites = []
-at = code.find(b"\xf4\x00\x00\x00")
-seen = set()
-while at != -1:
-    f = wstart(tv + at)
-    if f not in seen:
-        seen.add(f)
-        ins = text_of(f, 0x3000)
-        for k, (a, t) in enumerate(ins):
-            if re.match(r"call dword ptr \[e.x \+ 0xf4\]", t):
-                nxt = " | ".join(x for _, x in ins[k+1:k+14])
-                if re.search(r"(call|jmp) dword ptr \[e.x \+ 0xf8\]", nxt) and "test al, al" in nxt:
-                    sites.append((f, a))
-    at = code.find(b"\xf4\x00\x00\x00", at + 1)
-print("  sites:", len(sites), [(hex(f), hex(a)) for f, a in sites[:40]])
-for f, a in sites[:3]:
-    print(f"-- site in {f:#x} at {a:#x}")
-    for x, t in text_of(f, 0x3000):
-        if a - 0x30 <= x <= a + 0x50: print(f"  {x:#x}  {t}")
-
-print("\n######## upgrades / radius damage")
-for pre in ("_ZN9CUpgrades23PlayerPurchasingUpgradeEP9CTFPlayeriibbb", "_ZN9CUpgrades18ApplyUpgradeToItemEP9CTFPlayerP13CEconItemViewiibb",
-            "_ZN19CTFRadiusDamageInfo13ApplyToEntityEP11CBaseEntity"):
-    for n in sorted(x for x in byname if x.startswith(pre)):
-        print("\n####", n, byname[n])
-        study(n, show=2)
+print("\n######## ClientCommandKeyValues callees")
+for f in (0x5e6600, 0x4fbe00, 0x48bfa0):
+    print(f"  {f:#x} pops {wpop(f)} callers {len(wg.get(f,()))}  {whead(f, 12)}")
+for f in wrefs("MVM_Upgrade"): pass
+cands = [f for f in (0x5e6600, 0x4fbe00, 0x48bfa0) if 0x5f6220 in wcallees(f, 0x3000)]
+print("  calling 0x5f6220:", [hex(c) for c in cands])
+for c in cands: wdis(c, 700)
 PY
