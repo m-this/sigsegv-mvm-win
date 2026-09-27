@@ -25,7 +25,7 @@ from pathlib import Path
 root = Path(__file__).resolve().parents[2]
 
 
-def split_params(text):
+def split_params(text, raw=False):
     out, depth, current = [], 0, ""
     for ch in text:
         if ch in "<([":
@@ -39,7 +39,31 @@ def split_params(text):
             current += ch
     if current.strip():
         out.append(current.strip())
+    if raw:
+        return out
     return [p for p in out if p not in ("", "void")]
+
+
+def windows_only(text):
+    """The text with every line Windows does not compile blanked, lines kept.
+
+    Only conditions on _WINDOWS are read; any other #if keeps both branches."""
+    out, stack = [], []
+    for line in text.split("\n"):
+        d = line.strip()
+        if re.match(r"#\s*if(?:def)?\b", d):
+            neg = re.match(r"#\s*(?:ifndef\s+_WINDOWS\b|if\s+!\s*defined\s*\(?\s*_WINDOWS\b)", d)
+            pos = re.match(r"#\s*(?:ifdef\s+_WINDOWS\b|if\s+defined\s*\(?\s*_WINDOWS\b)", d)
+            stack.append(False if neg else True if pos else None)
+        elif re.match(r"#\s*elif\b", d) and stack:
+            pos = re.match(r"#\s*elif\s+defined\s*\(?\s*_WINDOWS\b", d)
+            stack[-1] = True if pos else (False if stack[-1] else None)
+        elif re.match(r"#\s*else\b", d) and stack:
+            stack[-1] = None if stack[-1] is None else not stack[-1]
+        elif re.match(r"#\s*endif\b", d) and stack:
+            stack.pop()
+        out.append("" if False in stack else line)
+    return "\n".join(out)
 
 
 def macro_args(text, start):
@@ -95,15 +119,18 @@ def main():
 
     wanted = []
     for path in sorted((root / "src").rglob("*.cpp")) + sorted((root / "src").rglob("*.h")):
-        text = path.read_text(errors="replace")
+        text = windows_only(path.read_text(errors="replace"))
         decls = {}
         for m in re.finditer(r"\b(?:DETOUR_DECL_MEMBER|VHOOK_DECL)\s*(?=\()", text):
             args, _ = macro_args(text, m.end())
             if args is None:
                 continue
-            parts = split_params(args)
+            # Raw, so a detour returning void keeps its name in parts[1]:
+            # dropping the return type skipped every void one with no parameters.
+            parts = split_params(args, raw=True)
             if len(parts) >= 2:
-                decls.setdefault(parts[1], []).append((parts[2:], text.count("\n", 0, m.start()) + 1))
+                params = [p for p in parts[2:] if p not in ("", "void")]
+                decls.setdefault(parts[1], []).append((params, text.count("\n", 0, m.start()) + 1))
         # A virtual hook sits in a vtable slot with no pop check at load, so
         # its declaration is checked here or nowhere: MOD_ADD_VHOOK(name,
         # class, "Func") and MOD_ADD_VHOOK2(name, class, class, "Func").
