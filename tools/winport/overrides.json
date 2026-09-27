@@ -1523,7 +1523,7 @@
  },
  "_ZN11CTFTankBoss13TankBossThinkEv": {
   "rva": "0x5f3d50",
-  "why": "read by hand: the tank's think: 'Announcer.MVM_Tank_Alert_Halfway', 'Announcer.MVM_Tank_Alert_Near_Hatch', the 'movement' sequence, TakeDamage, StopSound, EmitSound and StopParticleEffects, the Linux body's calls; ret"
+  "why": "read by hand: the tank's think: 'Announcer.MVM_Tank_Alert_Halfway', 'Announcer.MVM_Tank_Alert_Near_Hatch', the 'movement' sequence, TakeDamage, StopSound, EmitSound and StopParticleEffects, the Linux body's calls; ret. CTFTankBoss' datamap, built at run time, writes 'TankBossThink' and then this address (0x4dd4b)"
  },
  "_ZN5CWave12AddClassTypeE8string_tij": {
   "rva": "0x5ed180",
@@ -1717,5 +1717,17 @@
  "_Z21SV_ComputeClientPacksiPP11CGameClientP14CFrameSnapshot": {
   "rva": "0x132620",
   "why": "read by hand, engine.dll: the only function referencing 'SV_ComputeClientPacks' (five profiler scopes); the MDL cache lock, then for each of clientCount (arg 1) clients (arg 2): SetupPackInfo(snapshot), serverGameEnts->CheckTransmit(&m_PackInfo, snapshot->m_pValidEntities, m_nValidEntities), SetupPrevPackInfo, then the entity packing, as the SDK's sv_main.cpp writes it"
+ },
+ "_ZN16CTFMedigunShield11ShieldThinkEv": {
+  "rva": "0x61e6d0",
+  "why": "read off CTFMedigunShield's datamap, which MSVC builds at run time: the initializer writes 'ShieldTouch' and 'ShieldThink' (0x53875, 0x5389a), then their functions in the same order, 0x61ea10 (ret 4, the touch) and this one (ret, no argument), as the teleporter's record pairs TeleporterThink with 0x4d1e00, the address the table already has"
+ },
+ "_ZN10CPointPush9PushThinkEv": {
+  "rva": "0x2d79d0",
+  "why": "read off CPointPush's datamap, built at run time: 'PushThink' (0x2d51f3) and then this address (0x2d523b), the class's only function record before its fields ('m_bEnabled', 'm_flMagnitude'); ret, no argument"
+ },
+ "_ZN15CTeamRoundTimer12InputSetTimeER11inputdata_t": {
+  "rva": "0x34b4f0",
+  "why": "read off CTeamRoundTimer's datamap, built at run time: the 'SetTime' input writes this address (0x34983b); the stopwatch check of the Linux body (two flags, then SetStopWatchTimeStamp, inlined here with its state changes) before setting the time; ret 4 for the inputdata"
  }
 }
