@@ -116,9 +116,6 @@ def main():
         table = path.read_text(errors="replace")
         for m in re.finditer(r'\n\s*"([^"]+)"\s*\n\s*\{[^{}]*?\bsym\s+"(_Z[^"]+)"', table):
             symbol_of.setdefault(m[1], m[2])
-        # An addrs_group lists its entries as "name" "symbol" pairs, one a line.
-        for m in re.finditer(r'^\s*"([^"]+)"\s+"(_Z[^"]+)"\s*$', table, re.M):
-            symbol_of.setdefault(m[1], m[2])
 
     wanted = []
     for path in sorted((root / "src").rglob("*.cpp")) + sorted((root / "src").rglob("*.h")):
