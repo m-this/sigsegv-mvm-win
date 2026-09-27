@@ -1,2 +1,2 @@
-# VScriptServerInit by its message
-server string Started VScript virtual machine
+# VScriptServerInit, the function holding its "Started VScript" message
+server func 0x38a860 400

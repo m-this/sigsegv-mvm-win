@@ -1,8 +1,7 @@
 #!/bin/bash
-# Pop mismatches: PlayerSolidMask, CTFGameRules' constructor, the grenade's
-# Destroy, IVision::IsAbleToSee and VScriptServerInit, each Windows body next
-# to the Linux one; then every vtidx entry of windows.txt whose Linux name is
-# overloaded in its class, with the slots around it on both sides.
+# Second round: the bodies that decide PlayerSolidMask, CTFGameRules'
+# constructor, VScriptServerInit and the overloads the first round found, and
+# every vtidx entry's pop against the arguments its symbol declares.
 python3 - <<'PY'
 import re, subprocess, capstone, pefile
 from pathlib import Path
@@ -91,55 +90,98 @@ def side_by_side(cls, lo, hi, wcls=None):
             rva = va - base
             print(f"  W[{idx}] {rva:#x} ret {wpop(rva)}  {whead(rva)}")
 
-print("######## PlayerSolidMask")
-ldis("_ZN15CTFGameMovement15PlayerSolidMaskEb", 80)
-ldis("_ZN12CGameMovement15PlayerSolidMaskEb", 40)
-wbody(0x476370, 80, "windows.txt PlayerSolidMask")
-print("callers of 0x476370:", " ".join(f"{c:#x}(in {fstart(c):#x})" for c in callers(0x476370)[:20]))
-for idx, va, name in ltable("CTFGameMovement"):
-    if "PlayerSolidMask" in name: print(f"  linux slot {idx} {name}")
-side_by_side("CTFGameMovement", 0, 90)
+def lcallers(target):
+    out = []
+    for m in re.finditer(rb"\xe8", lcode):
+        at = m.start()
+        if at + 5 > len(lcode): break
+        rel = int.from_bytes(lcode[at+1:at+5], "little", signed=True)
+        if lva + at + 5 + rel == target: out.append(lva + at)
+    return out
+def lfunc_of(a):
+    best = None
+    for n, (s, z) in syms.items():
+        if s <= a < s + z and (best is None or s > syms[best][0]): best = n
+    return best
 
-print("######## CTFGameRules ctor")
-ldis("_ZN12CTFGameRulesC1Ev", 90)
-ldis("_ZN12CTFGameRulesC2Ev", 10)
-wbody(0x47ad20, 90, "windows.txt CTFGameRules C1")
-print("callers of 0x47ad20:", " ".join(f"{c:#x}(in {fstart(c):#x})" for c in callers(0x47ad20)[:20]))
-vt = win_header("CTFGameRules")
-print(f"CTFGameRules primary vtable {vt:#x}" if vt else "no CTFGameRules vtable header")
-if vt:
-    needle = vt.to_bytes(4, "little")
-    for m in re.finditer(re.escape(needle), code):
-        at = tv + m.start(); fs = fstart(at)
-        print(f"  vtable written at {at:#x} in {fs:#x} ret {wpop(fs)}  {whead(fs, 8)}")
-        print("    callers:", " ".join(f"{c:#x}(in {fstart(c):#x})" for c in callers(fs)[:10]))
-for n, (a, s) in syms.items():
-    if "CreateGameRulesObject" in n or "12CTFGameRulesC" in n: print(f"  linux {n} {a:#x} size {s}")
+print("######## PlayerSolidMask slot 12")
+wbody(0x475320, 60, "CTFGameMovement slot 12")
+for idx, va, _ in wtable("CGameMovement"):
+    if 9 <= idx <= 13: print(f"  CGameMovement W[{idx}] {va-base:#x} ret {wpop(va-base)}  {whead(va-base, 10)}")
+for idx, va, name in ltable("CGameMovement"):
+    if 5 <= idx <= 13 or 26 <= idx <= 29: print(f"  CGameMovement L[{idx}] {va:#x} {name}")
 
-print("######## CTFWeaponBaseGrenadeProj::Destroy")
-ldis("_ZN24CTFWeaponBaseGrenadeProj7DestroyEbb", 60)
-wbody(0x6395c0, 60, "windows.txt Destroy")
-for idx, va, name in ltable("CTFWeaponBaseGrenadeProj"):
-    if "Destroy" in name: print(f"  linux slot {idx} {name}")
-for idx, va, _ in wtable("CTFWeaponBaseGrenadeProj"):
-    if 228 <= idx <= 238: print(f"  W[{idx}] {va-base:#x} ret {wpop(va-base)}  {whead(va-base)}")
+print("######## CTFGameRules by RTTI")
+data = pe.get_memory_mapped_image()
+def rva_of_bytes(b, start=0):
+    return [m.start() for m in re.finditer(re.escape(b), data)]
+for tdname in (b".?AVCTFGameRules@@",):
+    for at in rva_of_bytes(tdname):
+        td = base + at - 8
+        print(f"type descriptor {td:#x}")
+        for c in rva_of_bytes(td.to_bytes(4, "little")):
+            col = c - 12
+            sig, off, cd = (int.from_bytes(data[col+k:col+k+4], "little") for k in (0, 4, 8))
+            if sig not in (0, 1): continue
+            print(f"  COL at {col:#x} offset {off:#x}")
+            for v in rva_of_bytes((base + col).to_bytes(4, "little")):
+                vt = base + v + 4
+                print(f"    vtable {vt:#x}")
+                for m in re.finditer(re.escape(vt.to_bytes(4, "little")), code):
+                    w = tv + m.start(); fs = fstart(w)
+                    print(f"      written at {w:#x} in {fs:#x} ret {wpop(fs)}; callers " + " ".join(f"{x:#x}(in {fstart(x):#x})" for x in callers(fs)[:8]))
+                    print("\n".join(wdis(fs, 40)))
+print("linux callers of CTFGameRules C1:", " ".join(f"{c:#x}({lfunc_of(c)})" for c in lcallers(0xc641a0)))
+a, z = syms["_ZN12CTFGameRulesC1Ev"]
+print("linux C1 callees in order:")
+seen = []
+for i in md.disasm(lcode[a-lva:a-lva+z], a):
+    if i.mnemonic == "call" and i.op_str.startswith("0x"):
+        n = lname.get(int(i.op_str, 16), i.op_str)
+        if n not in seen: seen.append(n)
+print("  " + "\n  ".join(seen[:60]))
 
-print("######## IVision::IsAbleToSee")
-ldis("_ZNK7IVision11IsAbleToSeeEP11CBaseEntityNS_20FieldOfViewCheckTypeEP6Vector", 90)
-ldis("_ZNK7IVision11IsAbleToSeeERK6VectorNS_20FieldOfViewCheckTypeE", 90)
-for cls in ("CDisableVision", "IVision", "CTFBotVision"):
-    side_by_side(cls, 55, 68)
+print("######## VScriptServerInit callers")
+print("linux callers:", " ".join(f"{c:#x}({lfunc_of(c)})" for c in lcallers(syms["_Z17VScriptServerInitv"][0])))
+for fs in (fstart(0x38a860),):
+    print(f"windows function holding 0x38a860 starts {fs:#x} ret {wpop(fs)}; callers " + " ".join(f"{x:#x}(in {fstart(x):#x})" for x in callers(fs)))
+    print("\n".join(wdis(fs, 70)))
+for c in callers(fstart(0x38a860)):
+    print(f"== caller {fstart(c):#x}")
+    print("\n".join(wdis(fstart(c), 40)))
+for c in lcallers(syms["_Z17VScriptServerInitv"][0])[:2]:
+    ldis(lfunc_of(c), 40)
+
+print("######## overload bodies")
+for sym in ("_ZN11CBotNPCBody14AimHeadTowardsERK6VectorN5IBody18LookAtPriorityTypeEfP13INextBotReplyPKc",
+            "_ZN11CBotNPCBody14AimHeadTowardsEP11CBaseEntityN5IBody18LookAtPriorityTypeEfP13INextBotReplyPKc"):
+    ldis(sym, 45)
+wbody(0x597ce0, 45, "CBotNPCBody W[50]")
+wbody(0x597c70, 45, "CBotNPCBody W[51]")
+for sym in ("_ZN11CBaseEntity8FVisibleEPS_iPS0_", "_ZN11CBaseEntity8FVisibleERK6VectoriPPS_"):
+    ldis(sym, 60)
+wbody(0x1f09f0, 60, "CBaseEntity W[148]")
+wbody(0x1f0b20, 60, "CBaseEntity W[149]")
+side_by_side("CBaseEntity", 28, 37)
+for sym in ("_ZN11CBaseEntity8KeyValueEPKcS1_", "_ZN11CBaseEntity8KeyValueEPKcf", "_ZN11CBaseEntity8KeyValueEPKcRK6Vector", "_ZN9CGameText8KeyValueEPKcS1_"):
+    ldis(sym, 30)
+for r, l in ((0x201d30, "W[31]"), (0x201d90, "W[32]"), (0x2017c0, "windows.txt CBaseEntity::KeyValue"), (0x298dc0, "CGameText W[33]")):
+    wbody(r, 30, l)
+for sym in ("_ZN24CTFWeaponBaseGrenadeProj11InitGrenadeERK6VectorS2_P20CBaseCombatCharacterRK13CTFWeaponInfo",
+            "_ZN24CTFWeaponBaseGrenadeProj11InitGrenadeERK6VectorS2_P20CBaseCombatCharacterif"):
+    ldis(sym, 50)
+wbody(0x63a140, 50, "W[245]")
+wbody(0x63a170, 50, "W[244]")
+side_by_side("CTFWeaponBaseGrenadeProj", 242, 248)
+ldis("_ZN47CEconItemAttributeIterator_ApplyAttributeString23OnIterateAttributeValueEPK28CEconItemAttributeDefinitionRK17CAttribute_String", 30)
+wbody(0x39e840, 30, "W[4]")
+side_by_side("CDisableVision", 64, 69)
 for idx, va, _ in wtable("CDisableVision"):
-    if idx in (61, 62): wbody(va - base, 90, f"CDisableVision slot {idx}")
+    if idx in (65, 66): wbody(va - base, 40, f"CDisableVision W[{idx}]")
+for sym in ("_ZNK7IVision15IsInFieldOfViewERK6Vector", "_ZNK7IVision15IsInFieldOfViewEP11CBaseEntity"):
+    ldis(sym, 40)
 
-print("######## VScriptServerInit")
-ldis("_Z17VScriptServerInitv", 160)
-wbody(0x38a700, 160, "windows.txt VScriptServerInit")
-print("callers of 0x38a700:", " ".join(f"{c:#x}(in {fstart(c):#x})" for c in callers(0x38a700)[:20]))
-for n, (a, s) in syms.items():
-    if "VScriptServer" in n: print(f"  linux {n} {a:#x} size {s}")
-
-print("######## overload audit")
+print("######## pop screen")
 known = {}
 cur = None
 for l in open("tools/winport/knownvtidx.generated.txt"):
@@ -158,30 +200,48 @@ for l in open("gamedata/sigsegv/windows.txt"):
         if "vtidx" in cur and "sym" in cur: entries.append(cur)
         cur = None
 dem = subprocess.run(["c++filt"], input="\n".join(e["sym"] for e in entries), capture_output=True, text=True).stdout.splitlines()
-def bare(sig):
-    depth = 0
+def params(sig):
+    depth, end = 0, None
     for i in range(len(sig) - 1, -1, -1):
-        if sig[i] == ")": depth += 1
+        if sig[i] == ")":
+            depth += 1
+            if depth == 1: end = i
         elif sig[i] == "(":
             depth -= 1
-            if depth == 0: return sig[:i].strip()
-    return sig
-def method(sig): return bare(sig).split("::")[-1]
-print(f"{len(entries)} vtidx entries")
+            if depth == 0:
+                inner = sig[i+1:end]; break
+    else: return None
+    out, d, cur = [], 0, ""
+    for ch in inner:
+        if ch in "<(": d += 1
+        if ch in ">)": d -= 1
+        if ch == "," and d == 0: out.append(cur.strip()); cur = ""
+        else: cur += ch
+    if cur.strip(): out.append(cur.strip())
+    return out
+SIZE = {"double": 8, "long long": 8, "unsigned long long": 8, "Vector": 12, "QAngle": 12, "AngularImpulse": 12, "Vector2D": 8}
+def expect(sig):
+    ps = params(sig)
+    if ps is None: return None
+    total = 0
+    for p in ps:
+        if p in ("void",): continue
+        if p == "...": return None
+        if p.endswith("*") or p.endswith("&") or p.endswith("const") and ("*" in p or "&" in p): total += 4
+        elif p in SIZE: total += SIZE[p]
+        else: total += 4
+    return total
+bad = 0
 for e, d in zip(entries, dem):
     cls = known.get(e["name"], e["name"].split("::")[0])
-    lt_ = ltable(cls)
-    if not lt_:
-        print(f"-- {e['name']}: no linux table for {cls}"); continue
-    same = [(i, n) for i, _, n in lt_ if method(n) == method(d)]
-    if len({n for _, n in same}) < 2: continue
-    v = int(e["vtidx"])
-    print(f"== {e['name']}  [{cls}]  {d}  vtidx {v}  addr {e.get('addr')}  ret {wpop(int(e['addr'], 16)) if 'addr' in e else '?'}")
-    for i, n in same: print(f"   L[{i}] {n}")
-    lo = min(i for i, _ in same)
-    for i, va, n in lt_:
-        if lo - 2 <= i <= max(i for i, _ in same) + 2 and (i, n) not in same: print(f"   L[{i}] {n}")
-    for idx, va, _ in wtable(cls):
-        if v - 4 <= idx <= v + 4:
-            print(f"   W[{idx}] {va-base:#x} ret {wpop(va-base)}  {whead(va-base, 5)}")
+    v = int(e["vtidx"]); want = expect(d)
+    got = wpop(int(e["addr"], 16)) if "addr" in e else "?"
+    at = next((va - base for i, va, _ in wtable(cls) if i == v), None)
+    note = "" if at is None or "addr" not in e or at == int(e["addr"], 16) else f" (slot {v} of {cls} holds {at:#x})"
+    if want is None or got in ("?",) or "/" in got: 
+        print(f"?? {e['name']}  {d}  vtidx {v} ret {got}{note}"); continue
+    if int(got) not in (want, want + 4):
+        bad += 1
+        print(f"!! {e['name']}  {d}  vtidx {v} [{cls}] ret {got}, arguments {want}{note}")
+print(f"{bad} of {len(entries)} disagree")
 PY
