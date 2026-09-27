@@ -1,6 +1,6 @@
 #!/bin/bash
-# The dreadwood fault (server.dll+0x38a36c under +0x380434, called from Squirrel),
-# SetFOV, the CTFSword speed and health mods, and the most called unresolved.
+# Round 2: the dreadwood caller chain against Linux Convars.SetValue, the
+# CTFSword mods by body, CTriggerCamera::Disable, CTFPointWeaponMimic::Fire, TE_TFBlood.
 python3 - <<'PY'
 import re, bisect, collections, capstone, pefile
 from elftools.elf.elffile import ELFFile
@@ -163,31 +163,82 @@ def wwho(rva):
     wdis2(f, 300)
     return f
 
-print("######## dreadwood")
-f1 = wwho(0x38a36c)
-f2 = wwho(0x380434)
 
-print("######## SetFOV")
-ldis("_ZN11CBasePlayer6SetFOVEP11CBaseEntityifi", 400)
-wdis2(0x20e3a0, 200)
+def fsize(f):
+    n = 0
+    for i in md.disasm(code[f-tv:f-tv+6000], base + f):
+        if i.mnemonic == "int3": return i.address - base - f
+    return 6000
+
+print("######## dreadwood")
 for n in sorted(byname):
-    if "CanOverrideEnvZoomOwner" in n or n.startswith("_ZN11CBasePlayer6GetFOV") or n.startswith("_ZNK11CBasePlayer6GetFOV"):
-        ldis(n, 80); print("   windows:", hex(known[n]) if n in known else "unknown")
+    if "ScriptConvarAccessor" in n or "SaveConvar" in n:
+        print("  sym", n, hex(byname[n][0]), byname[n][1], "windows " + hex(known[n]) if n in known else "")
+for n in sorted(byname):
+    if "ScriptConvarAccessor8SetValue" in n or "SaveConvar" in n:
+        ldis(n, 150)
+for r in (0x1fe2ae, 0x3296ed, 0x2700b3):
+    f = wstart(r)
+    print(f"#### frame {r:#x} in {f:#x}" + (" " + kname[f] if f in kname else ""))
+    s = r - 60
+    for i in md.disasm(code[s-tv:s-tv+80], base + s):
+        line = f"     {i.address-base:#x}  {i.mnemonic} {i.op_str}"
+        for m in re.finditer(r"0x[0-9a-f]{8}", i.op_str):
+            v = int(m.group(0), 16) - base
+            st = wstr(v)
+            if st: line += "    str " + st
+            elif v in kname: line += "    = " + kname[v]
+        print(line)
+wdis2(wstart(0x1fe2ae), 120)
+# who writes g_pGameRules on Windows
+gr = known.get("g_pGameRules")
+print("g_pGameRules", hex(gr) if gr else None)
+if gr:
+    for sec, at in wrefs(gr):
+        if sec != ".text": continue
+        k = code[at-tv-2:at-tv]
+        if k[:1] in (b"\x89", b"\xc7") or code[at-tv-1] == 0xa3:
+            f = wstart(at)
+            print(f"  writes at {at:#x} in {f:#x}" + (" " + kname[f] if f in kname else ""))
+
+print("######## CTriggerCamera::Disable")
+wdis2(0x3667e0, 260)
 
 print("######## sword")
-for n in ("_ZN8CTFSword16GetSwordSpeedModEv", "_ZN8CTFSword17GetSwordHealthModEv"):
-    study(n, show=2, callers_show=0)
-for n in sorted(byname):
-    if n.startswith("_ZN8CTFSword") or n.startswith("_ZNK8CTFSword"):
-        print("  sword sym", n, hex(byname[n][0]), byname[n][1], "windows " + hex(known[n]) if n in known else "")
-for c in ("_ZN9CTFPlayer29TeamFortress_CalculateMaxSpeedEb", "_ZN9CTFPlayer22GetMaxHealthForBuffingEv"):
-    if c in byname:
-        a, sz = byname[c]
-        print(c, "linux", hex(a), "windows", hex(known[c]) if c in known else "unknown")
+hits = collections.defaultdict(list)
+for m in re.finditer(rb"\x83[\xb8-\xbf]", code):
+    at = m.start()
+    if code[at+1] == 0xbc: continue
+    d = int.from_bytes(code[at+2:at+6], "little")
+    if 0x1c00 <= d < 0x2100 and code[at+6] == 4:
+        hits[wstart(tv + at)].append(d)
+for f in sorted(hits):
+    print(f"  {f:#x} size {fsize(f):#x} disp {[hex(d) for d in hits[f]]}" + (" " + kname[f] if f in kname else ""))
+for f in sorted(hits):
+    if fsize(f) < 0xc0: wdis2(f, 80)
 
-print("######## most called unresolved")
-for pat in ("_ZN19CTFPointWeaponMimic4Fire", "_Z10TE_TFBlood", "_ZN14CTriggerCamera7Disable"):
-    for n in sorted(byname):
-        if n.startswith(pat):
-            study(n, show=2, callers_show=2)
+print("######## TE_TFBlood inside OnTakeDamage_Alive")
+otda = known["_ZN9CTFPlayer18OnTakeDamage_AliveERK15CTakeDamageInfo"]
+n = fsize(otda)
+for i in md.disasm(code[otda-tv:otda-tv+n], base + otda):
+    if i.mnemonic == "call" and i.op_str.startswith("0x") and int(i.op_str, 16) - base == known["_ZN15CBaseTempEntity6CreateER16IRecipientFilterf"]:
+        s = i.address - base - 110
+        print(f"  -- call at {i.address-base:#x}")
+        for j in md.disasm(code[s-tv:s-tv+120], base + s):
+            print(f"     {j.address-base:#x}  {j.mnemonic} {j.op_str}")
+for n in sorted(byname):
+    if "TETFBlood" in n or "g_TETFBlood" in n:
+        print("  sym", n, hex(byname[n][0]))
+for a, nm in objs.items():
+    if "TETFBlood" in nm: print("  obj", nm, hex(a))
+
+print("######## CTFPointWeaponMimic")
+for n in sorted(byname):
+    if n.startswith("_ZN19CTFPointWeaponMimic"):
+        print("  sym", n, hex(byname[n][0]), byname[n][1], "windows " + hex(known[n]) if n in known else "")
+ldis("_ZN19CTFPointWeaponMimic17InputFireMultipleER11inputdata_t", 80)
+wdis2(known["_ZN19CTFPointWeaponMimic17InputFireMultipleER11inputdata_t"], 120)
+for n in sorted(byname):
+    if n.startswith("_ZN19CTFPointWeaponMimic") and "InputFireOnce" in n:
+        ldis(n, 60)
 PY
