@@ -824,6 +824,15 @@
 					lib   "server"
 					// call
 				}
+				"CBaseEntity::DispatchTraceAttack"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity19DispatchTraceAttackERK15CTakeDamageInfoRK6VectorP10CGameTraceP15CDmgAccumulator"
+					addr  "0x1ffb50"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: PassesDamageFilter(info) through slot 61 (reads m_hDamageFilter at +0x100), then TraceAttack(info, dir, trace, accumulator) through slot 62, which pops 16; the Linux body at slots 62 and 63. Pops 16. 26 callers, CTFRadiusDamageInfo::ApplyToEntity (0x480a30) among them where Linux calls it between ClearMultiDamage and ApplyMultiDamage
+				}
 				"CBasePlayer::EyeVectors"
 				{
 					type  "fixed"
@@ -832,6 +841,16 @@
 					build "10828683"
 					lib   "server"
 					// verified: read by hand: GetVehicle through the vtable (+0x4dc, Linux +0x4e0), and with one CacheVehicleView and the vehicle view angles (+0xffc, Linux +0x1014), else EyeAngles (+0x228, Linux +0x22c), then AngleVectors with the three pointers, the Linux body; thiscall, ret 0xc for (Vector *, Vector *, Vector *)
+				}
+				"CBaseTrigger::PassesTriggerFilters"
+				{
+					type  "fixed"
+					sym   "_ZN12CBaseTrigger20PassesTriggerFiltersEP11CBaseEntity"
+					addr  "0x360650"
+					build "10828683"
+					lib   "server"
+					vtidx "208"
+					// verified: read by hand: slot 208 of CBaseTrigger (Linux 209, after UsesFilter at 207 which reads m_hFilter at +0x400; InputEndTouch agrees at 206). Tests the spawnflags at +0x138 as the Linux body does at +0x150: ALLOW_ALL 0x40, clients by FL_CLIENT, NPCs by FL_NPC, pushables by the pooled "func_pushable" classname, physics by movetype 6, debris by collision group 1 to 3; then the NPC and vehicle flags, IsPlayer and IsAlive, and last m_hFilter's PassesFilter. Pops 4
 				}
 				"CBaseMultiplayerPlayer::SpeakConceptIfAllowed"
 				{
@@ -2545,6 +2564,16 @@
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: shares the string 'auto_fires_full_clip_all_at_once' with the Linux function, and 5 of its 5 matched callees
 				}
+				"CTFWeaponBase::ItemBusyFrame"
+				{
+					type  "fixed"
+					sym   "_ZN13CTFWeaponBase13ItemBusyFrameEv"
+					addr  "0x6369c0"
+					build "10828683"
+					lib   "server"
+					vtidx "274"
+					// verified: read by hand: slot 274 of CTFWeaponBase (Linux 280; ItemPostFrame at 273). The base ItemBusyFrame, the owner, button 0x800 with the flag at +0x6dd (+0x6e9 on Linux) calling DoClassSpecialSkill, then IN_ATTACK with GetMaxClip1 and the reload singly flag (+0x62c); the Linux body. No argument
+				}
 				"CTFWeaponBase::CalcIsAttackCritical"
 				{
 					type  "fixed"
@@ -2553,6 +2582,16 @@
 					build "10828683"
 					lib   "server"
 					// verified: read by hand: the owner cast to CTFPlayer, TheTFBots and IsAllBotTeam on the team, IsPVEModeActive (0x4924c0) and IsPVEModeControlled (0x4924d0, its neighbour as on Linux), the Linux body; ret
+				}
+				"CTFWeaponBase::GetDamageType"
+				{
+					type  "fixed"
+					sym   "_ZNK13CTFWeaponBase13GetDamageTypeEv"
+					addr  "0x3dab70"
+					build "10828683"
+					lib   "server"
+					vtidx "134"
+					// verified: read by hand: slot 134 of CTFWeaponBase (Linux 135; GetDamage returns 0 and SetDamage pops 4 at 135 and 136). g_aWeaponDamageTypes[GetWeaponID()] with GetWeaponID at +0x5f8; the Linux body. The same body sits at 134 in the weapons that keep the base one, CTFSniperRifleClassic among them. No argument
 				}
 				"CTFWeaponBase::Deploy"
 				{
@@ -2571,6 +2610,36 @@
 					build "10828683"
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: shares the string 'honorbound' with the Linux function, and 4 of its 4 matched callees
+				}
+				"CTFWeaponBase::GetPenetrateType"
+				{
+					type  "fixed"
+					sym   "_ZNK13CTFWeaponBase16GetPenetrateTypeEv"
+					addr  "0x6356b0"
+					build "10828683"
+					lib   "server"
+					vtidx "403"
+					// verified: read by hand: slot 403 of CTFWeaponBase (Linux 410). AttribHookValue<int> of projectile_penetration, 12 when positive and 0 otherwise; the Linux body. No argument
+				}
+				"CTFWeaponBase::Reload"
+				{
+					type  "fixed"
+					sym   "_ZN13CTFWeaponBase6ReloadEv"
+					addr  "0x637820"
+					build "10828683"
+					lib   "server"
+					vtidx "284"
+					// verified: read by hand: slot 284 of CTFWeaponBase (Linux 290; AbortReload 283, AutoFiresFullClip 285, PrimaryAttack 287 calling CBaseCombatWeapon::PrimaryAttack). Owner cast to CTFPlayer, the two reload fields (+0x7ac, +0x7b0 here, +0x7b8, +0x7bc on Linux) zeroed, +0x7d0 cleared with NetworkStateChanged, then the energy weapon test at +0x6f8; the Linux body. No argument
+				}
+				"CTFWeaponBase::GetSpreadAngles"
+				{
+					type  "fixed"
+					sym   "_ZN13CTFWeaponBase15GetSpreadAnglesEv"
+					addr  "0x635d90"
+					build "10828683"
+					lib   "server"
+					vtidx "405"
+					// verified: read by hand: slot 405 of CTFWeaponBase (Linux 412). The owner's EyeAngles copied to the returned QAngle, then AttribHookValue<float> of projectile_spread_angle; the Linux body. Pops 4, the hidden return pointer
 				}
 				"CTFWeaponBase::Equip"
 				{
@@ -2627,6 +2696,16 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CTFWeaponBase::AutoFiresFullClip"
+				{
+					type  "fixed"
+					sym   "_ZNK13CTFWeaponBase17AutoFiresFullClipEv"
+					addr  "0x6324e0"
+					build "10828683"
+					lib   "server"
+					vtidx "285"
+					// verified: read by hand: slot 285 of CTFWeaponBase (Linux 291). AttribHookValue<int> of auto_fires_full_clip, nonzero; the Linux body. No argument
 				}
 				"CTFWeaponBase::SendWeaponAnim"
 				{
@@ -4521,6 +4600,16 @@
 					lib   "server"
 					// verified: string lead, agreed by strings: 2 shared string(s), 1/1 matched callees, windows/linux size 336/422
 				}
+				"CTFPistol_ScoutSecondary::GetDamageType"
+				{
+					type  "fixed"
+					sym   "_ZNK24CTFPistol_ScoutSecondary13GetDamageTypeEv"
+					addr  "0x624220"
+					build "10828683"
+					lib   "server"
+					vtidx "134"
+					// verified: read by hand: slot 134 of CTFPistol_ScoutSecondary. The back_headshot attribute hook inlined (pooled string, the manager's hook value, 0x39d200), then the weapon's damage type, with DMG_USE_HITLOCATIONS when the value is nonzero; the Linux body. No argument
+				}
 				"CTFPlayerResource::UpdateConnectedPlayer"
 				{
 					type  "fixed"
@@ -4775,6 +4864,16 @@
 					vtidx "439"
 					// verified: read by hand: slot 439 of CTFRevolver's table, where CTFWeaponBase has 0x632b50; the 'set_weapon_mode' attribute and IsCritBoosted, the Linux body; ret 8
 				}
+				"CTFRevolver::GetDamageType"
+				{
+					type  "fixed"
+					sym   "_ZNK11CTFRevolver13GetDamageTypeEv"
+					addr  "0x625360"
+					build "10828683"
+					lib   "server"
+					vtidx "134"
+					// verified: read by hand: slot 134 of CTFRevolver. set_weapon_mode 1 and enough time since the last shot (+0x800 here, +0x80c on Linux) add DMG_USE_HITLOCATIONS to the weapon's damage type; the Linux body. No argument
+				}
 				"CTFScatterGun::ApplyPostHitEffects"
 				{
 					type  "fixed"
@@ -4783,6 +4882,16 @@
 					build "10828683"
 					lib   "server"
 					// verified: vtable CTFPEPBrawlerBlaster[420], agreed by strings: 2 shared string(s), 4/4 matched callees, windows/linux size 704/957
+				}
+				"CTFSMG::GetDamageType"
+				{
+					type  "fixed"
+					sym   "_ZNK6CTFSMG13GetDamageTypeEv"
+					addr  "0x6292b0"
+					build "10828683"
+					lib   "server"
+					vtidx "134"
+					// verified: read by hand: slot 134 of CTFSMG. Adds DMG_USE_HITLOCATIONS to the weapon's damage type when 0x629750 is true, which is set_weapon_mode == 1 with the attribute hook inlined; the Linux body. No argument
 				}
 				"CTFSniperRifle::ApplyChargeSpeedModifications"
 				{
@@ -4819,6 +4928,16 @@
 					build "10828683"
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: shares the string 'Weapon_Upgrade.ExplosiveHeadshot', 'dxhr_arm_muzzleflash', 'explosive_sniper_shot' with the Linux function, and 10 of its 10 matched callees
+				}
+				"CTFSniperRifle::GetDamageType"
+				{
+					type  "fixed"
+					sym   "_ZNK14CTFSniperRifle13GetDamageTypeEv"
+					addr  "0x62a360"
+					build "10828683"
+					lib   "server"
+					vtidx "134"
+					// verified: read by hand: slot 134 of CTFSniperRifle. The weapon's damage type, with DMG_USE_HITLOCATIONS (0x2000000) cleared unless the owner is a player in condition 1 (zoomed); the Linux body. No argument
 				}
 				"CTFSniperRifle::ItemPostFrame"
 				{
@@ -5055,6 +5174,16 @@
 					lib   "server"
 					// string
 				}
+				"CTFWeaponBaseMelee::Swing"
+				{
+					type  "fixed"
+					sym   "_ZN18CTFWeaponBaseMelee5SwingEP9CTFPlayer"
+					addr  "0x63ed50"
+					build "10828683"
+					lib   "server"
+					vtidx "482"
+					// verified: read by hand: slot 482 of CTFWeaponBaseMelee (Linux 489), after SendPlayerAnimEvent at 481 (DoAnimationEvent(player, 0, 0)). CalcIsAttackCritical, Event_PlayerFiredWeapon with m_bCurrentAttackIsCrit (+0x6de), SendPlayerAnimEvent and the view model animation, then m_flNextPrimaryAttack (+0x5cc) from now plus the swing time; the Linux body. Pops 4
+				}
 				"CTFWeaponBuilder::SetSubType"
 				{
 					type  "fixed"
@@ -5175,6 +5304,15 @@
 					build "10828683"
 					lib   "server"
 					// consensus
+				}
+				"CUpgrades::PlayerPurchasingUpgrade"
+				{
+					type  "fixed"
+					sym   "_ZN9CUpgrades23PlayerPurchasingUpgradeEP9CTFPlayeriibbb"
+					addr  "0x5f6220"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the whole function, where Linux detours the .part clone after the wrapper's null player and upgrade index checks (against the count at 0xb96aec), which this body makes first; the detour repeats them under _WINDOWS. Then the 0x19c byte upgrade copied out of g_MannVsMachineUpgrades, GetAttributeDefinitionByName on its attribute, and on purchase RemoveCurrency, RememberUpgrade and Regenerate, as the clone does. Called from CUpgrades::GrantOrRemoveAllUpgrades (0x5f5de0), the Linux clone's caller, and 0x485ed0. Pops 24
 				}
 				"CUpgrades::Spawn"
 				{
@@ -6061,6 +6199,15 @@
 					lib   "server"
 					// string
 				}
+				"CTFRadiusDamageInfo::ApplyToEntity"
+				{
+					type  "fixed"
+					sym   "_ZN19CTFRadiusDamageInfo13ApplyToEntityEP11CBaseEntity"
+					addr  "0x480a30"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the whole function, where Linux detours the .part clone GCC split after the wrapper's two early returns (entity == m_pEntityIgnore at +0x14, m_takedamage 0 at +0xf9 here, +0x10d on Linux), which this body makes first; the detour repeats them under _WINDOWS. Then the trace filters, the explosive force, DispatchTraceAttack (0x1ffb50) with the multi damage pair or TakeDamage, TraceAttackToTriggers and RecordEnemyPlayerHit, as the clone does. Called only from CTFGameRules::RadiusDamage (0x499230). Pops 4
+				}
 				"CMultiplayRules::VoiceCommand"
 				{
 					type  "fixed"
@@ -6298,6 +6445,16 @@
 					lib   "server"
 					vtidx "39"
 					// string
+				}
+				"CTFGameRules::FPlayerCanTakeDamage"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules20FPlayerCanTakeDamageEP11CBasePlayerP11CBaseEntityRK15CTakeDamageInfo"
+					addr  "0x48b220"
+					build "10828683"
+					lib   "server"
+					vtidx "63"
+					// verified: read by hand: slot 63 of CTFGameRules (FlPlayerFallDamage pops 4 at 62). Null checks, the flag at +0xc83 with player != attacker and the red/blue team pairs, the weapon and attacker vcall at +0x310, damage custom 0x47 at info+0x40, m_bPlayingMannVsMachine at +0xc72 and info+0x5c, then the base rules' FPlayerCanTakeDamage; the Linux body. Pops 12
 				}
 				"MapEntity_ParseAllEntities"
 				{
@@ -7327,6 +7484,24 @@
 					lib   "server"
 					// string
 				}
+				"CAttributeManager::ProvideTo"
+				{
+					type  "fixed"
+					sym   "_ZN17CAttributeManager9ProvideToEP11CBaseEntity"
+					addr  "0x39e8b0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the target's attribute interface (+0xe4), its manager's AddProvider (0x39d630) with m_hOuter (+0x38), then the parity at +0x34 stepped modulo 64 with NetworkStateChanged, then OnAttributeValuesChanged; the Linux body. Called from CEconEntity::ReapplyProvision (0x39fde0) and CTFPowerupBottle::ReapplyProvision (0x4b1e10) as on Linux. Pops 4
+				}
+				"CAttributeManager::StopProvidingTo"
+				{
+					type  "fixed"
+					sym   "_ZN17CAttributeManager15StopProvidingToEP11CBaseEntity"
+					addr  "0x39ea40"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the ProvideTo body with RemoveProvider (0x39e930, finds the provider in the list at +0xc and swaps the last one in) in place of AddProvider; the Linux body. Its three callers are the ReapplyProvision of CEconEntity, CTFPowerupBottle and CTFWeaponBase, as on Linux. Pops 4
+				}
 				"CServerGameClients::GetPlayerLimits"
 				{
 					type  "fixed"
@@ -7962,6 +8137,15 @@
 					build "10828683"
 					lib   "server"
 					// verified: read by hand: thiscall, ret 4; walks m_Attributes (+4, count at +0x10, 0x10 a record), looks up each record's definition by index through the item schema and compares it with the argument; on a match shifts the tail down, decrements the count and calls the manager at +0x18 through slot 0x34, as the Linux body removes and notifies
+				}
+				"CAttributeList::RemoveAttributeByIndex"
+				{
+					type  "fixed"
+					sym   "_ZN14CAttributeList22RemoveAttributeByIndexEi"
+					addr  "0x3c5240"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: bounds check of the index against the count at +0x10, memmove of the 16 byte entries after it, count decremented, then m_pManager (+0x18) OnAttributeValuesChanged (+0x34 here, +0x38 on Linux); the Linux body. Its one caller is CTFPlayer::RemovePlayerAttributes (0x50a730), as on Linux. Pops 4
 				}
 				"CPlayerInventory::DumpInventoryToConsole"
 				{
@@ -11539,6 +11723,24 @@
 					build "10828683"
 					lib   "server"
 					// vtable
+				}
+				"CUpgrades::PlayerPurchasingUpgrade [clone]"
+				{
+					type  "fixed"
+					sym   "_ZN9CUpgrades23PlayerPurchasingUpgradeEP9CTFPlayeriibbb"
+					addr  "0x5f6220"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the whole function, where Linux detours the .part clone after the wrapper's null player and upgrade index checks (against the count at 0xb96aec), which this body makes first; the detour repeats them under _WINDOWS. Then the 0x19c byte upgrade copied out of g_MannVsMachineUpgrades, GetAttributeDefinitionByName on its attribute, and on purchase RemoveCurrency, RememberUpgrade and Regenerate, as the clone does. Called from CUpgrades::GrantOrRemoveAllUpgrades (0x5f5de0), the Linux clone's caller, and 0x485ed0. Pops 24
+				}
+				"CTFRadiusDamageInfo::ApplyToEntity [clone]"
+				{
+					type  "fixed"
+					sym   "_ZN19CTFRadiusDamageInfo13ApplyToEntityEP11CBaseEntity"
+					addr  "0x480a30"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the whole function, where Linux detours the .part clone GCC split after the wrapper's two early returns (entity == m_pEntityIgnore at +0x14, m_takedamage 0 at +0xf9 here, +0x10d on Linux), which this body makes first; the detour repeats them under _WINDOWS. Then the trace filters, the explosive force, DispatchTraceAttack (0x1ffb50) with the multi damage pair or TakeDamage, TraceAttackToTriggers and RecordEnemyPlayerHit, as the clone does. Called only from CTFGameRules::RadiusDamage (0x499230). Pops 4
 				}
 				"CAmbientGeneric::m_DataMap"
 				{
