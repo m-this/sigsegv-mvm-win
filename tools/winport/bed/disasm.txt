@@ -1,17 +1,21 @@
-# the tail of PassesTriggerFilters, past its first ret: m_hFilter's PassesFilter
-server 0x36080d 60
-# slot 252 of CBaseCombatWeapon, by the shift of 6 around it: SetViewModel?
-server 0x1e44d0 120
-server 0x1e4000 60
-# GetAttributeByName? GetItemSchema then GetAttributeDefinitionByName on one argument
-server 0x52a200 80
-# the short callers of GetAttributeDefinition(int): GetStaticData?
-server 0x3a0f00 30
-server 0x3a0f70 30
-server 0x3c3b60 30
-server 0x3c4b30 30
-server 0x3a0bc0 40
-# TE_TFExplosion: CBaseTempEntity::Create's callers, and two Linux callers' calls
-server callers 0x434c20
-server 0x3a360 30
-server func 0x6022f0 300
+# PassesTriggerFilters calls this on m_hFilter with (this, entity): PassesFilter?
+server 0x259570 40
+# calls PrecacheModel, then tests the custom view model index at +0x65c: SetCustomViewModel?
+server func 0x1dea90 250
+# GetAttributeDefinitionByName's short callers: GetAttributeByName?
+server 0x39f440 40
+server 0x39fef0 40
+server 0x3a0ec0 40
+server 0x3aa4b0 40
+server 0x51a120 40
+server 0x50b130 40
+server 0x3b0bb0 40
+server 0x3b0d50 40
+server callers 0x3c3b60
+# the TF temp entities that call CBaseTempEntity::Create: TE_TFExplosion?
+server 0x470530 100
+server 0x4706b0 60
+server 0x470750 90
+server 0x470860 90
+server 0x470970 60
+server 0x470a10 110
