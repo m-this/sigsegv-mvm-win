@@ -1321,5 +1321,9 @@
   "rva": "0x2fad20",
   "vtidx": 0,
   "why": "read by hand: slot 0 of the vtable RTTI names CEntityFactory<CPointHurt>; allocates the object, calls CBaseEntity::CBaseEntity(false) (0x1e8ea0), sets the CPointHurt vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4"
+ },
+ "_ZN11CBaseEntity6RemoveEv": {
+  "rva": "0x1f8b90",
+  "why": "read by hand: `push ecx; call 0x36d8b0; pop ecx; ret`, UTIL_Remove(this), the Linux body (a jmp to UTIL_Remove(CBaseEntity *)); 0x36d8b0 is what CServerTools::RemoveEntity (slot 21 of CServerTools, the SDK's index) calls with its argument, as the SDK's RemoveEntity does. The matcher found it through CBaseParticleEntity::Think and turned it away; thiscall, no argument"
  }
 }
