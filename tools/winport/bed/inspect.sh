@@ -7,14 +7,13 @@ RUN=36289640316
 hdr=$(git config --get http.https://github.com/.extraheader 2>/dev/null | sed 's/^AUTHORIZATION: //I')
 mkdir -p /tmp/sym && cd /tmp/sym
 curl -sS -H "Authorization: $hdr" "https://api.github.com/repos/m-this/sigsegv-mvm-win/actions/runs/$RUN/artifacts" > arts.json
-for name in symbols package-windows winbed heapcheck bed-1; do
+for name in symbols package-windows; do
 	id=$(python3 -c "import json,sys;print(next(a['id'] for a in json.load(open('arts.json'))['artifacts'] if a['name']=='$name'))")
 	curl -sSL -H "Authorization: $hdr" -o "$name.zip" "https://api.github.com/repos/m-this/sigsegv-mvm-win/actions/artifacts/$id/zip"
 	mkdir -p "$name" && unzip -q -o "$name.zip" -d "$name"
+	( cd "$name" && for z in *.zip; do [ -f "$z" ] && unzip -q -o "$z"; done ) 2>/dev/null
 done
-echo "== files"; find winbed heapcheck bed-1 -type f | head -80
-echo "== mentions of 7e27a or deathpour"; grep -rIl "7e27a\|technical_terror" winbed heapcheck bed-1 2>/dev/null | head
-for f in $(grep -rIl "7e27a" winbed heapcheck bed-1 2>/dev/null | head -3); do echo "## $f"; grep -n -B5 -A40 "7e27a" "$f" | head -120; done
+find /tmp/sym/symbols /tmp/sym/package-windows -iname '*.dll' -o -iname '*.pdb' | head
 dll=$(find /tmp/sym/package-windows -iname 'sigsegv.ext.2.tf2.dll' | head -1)
 pdb=$(find /tmp/sym/symbols -iname 'sigsegv.ext.2.tf2.pdb' | head -1)
 sudo mkdir -p /home/runner/winport/winport-build && sudo cp "$pdb" /home/runner/winport/winport-build/ && sudo chmod a+r /home/runner/winport/winport-build/*.pdb
