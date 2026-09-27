@@ -1,6 +1,7 @@
 #!/bin/bash
-# The Pop mods' detour targets with no Windows address: where the virtual ones
-# sit in both tables, and the Windows neighbours of the rest.
+# Linux bodies against the Windows functions the vtables and the matcher
+# point at, for the Pop mods' missing detour targets; string and callee
+# neighbours for the rest.
 python3 - <<'PY'
 import re, bisect, collections, capstone, pefile
 from elftools.elf.elffile import ELFFile
@@ -83,6 +84,9 @@ def wdis(start, limit=250):
         if i.mnemonic in ("call", "jmp") and i.op_str.startswith("0x"):
             t = int(i.op_str, 16) - base; line += f"    -> {t:#x}"
             if t in kname: line += " " + kname[t]
+        for v in re.findall(r"0x10[0-9a-f]{6}", i.op_str):
+            s = wcstr(int(v, 16) - base)
+            if s: line += "    str " + s
         print(line)
         if i.mnemonic == "int3" or n >= limit: break
 def wfind(callees, callers):
@@ -110,6 +114,13 @@ def study(name, show=2, callers_show=0):
     return kc
 
 
+def wcstr(rva):
+    for va, data in rdata:
+        if va <= rva < va + len(data):
+            e = data.find(b"\0", rva - va)
+            t = data[rva - va:e]
+            if 3 <= len(t) and all(32 <= c < 127 for c in t[:40]): return repr(t[:60].decode())
+    return None
 rdata = [(s.VirtualAddress, s.get_data()) for s in pe.sections if s.Name.rstrip(b"\0") in (b".rdata", b".data")]
 def wstr(s):
     out = []
@@ -160,31 +171,98 @@ def slots(cls, fn, lo=10, hi=10):
         if 0 <= k < len(win): print(f"  W[{k}] {win[k]:#x} ret {wpop(win[k])}  {whead(win[k])}")
 
 
-import subprocess
-def demangle(sym):
-    return subprocess.run(["c++filt", sym], capture_output=True, text=True).stdout.strip()
+def lstrings(name):
+    a, n = byname[name]; out = []
+    for i in md.disasm(lcode[a-lva:a-lva+n], a):
+        m = re.search(r"\[e[a-d]x \+ (0x[0-9a-f]+)\]|\[e[a-d]x - (0x[0-9a-f]+)\]", i.op_str)
+        if m:
+            d = int(m.group(1), 16) if m.group(1) else -int(m.group(2), 16)
+            s = lstr(got + d)
+            if s and s not in out: out.append(s)
+    return out
 
-import os
-print("######## vtable files")
-print([f for f in os.listdir("derived/win-vtables") if "Action" in f and "CTFBot" in f][:10])
-print([f for f in os.listdir("derived/linux-vtables") if "Action" in f and "CTFBot" in f][:10])
+def compare(sym, rva, ln=55, wn=55):
+    print(f"######## {sym} vs {rva:#x}  windows ret {wpop(rva)}")
+    try: ldis(sym, ln)
+    except Exception as e: print("  linux:", e)
+    wdis(rva, wn)
 
-print("######## Action<CTFBot>::OnCommandString, CTFBotMissionSuicideBomber OnStart/Update (gamedata idx 0x52, 0x2d, 0x2e)")
-for cls in ("Action<CTFBot>", "CTFBotScenarioMonitor", "CTFBotTacticalMonitor"):
-    try: slots(cls, "OnCommandString", 4, 3)
-    except Exception as e: print(cls, e)
-for fn in ("OnStart", "Update"):
-    try: slots("CTFBotMissionSuicideBomber", fn, 3, 3)
-    except Exception as e: print(e)
+def lite(sym, show=3):
+    print(f"######## lite {sym}")
+    if sym not in byname: print("  missing"); return
+    a, n = byname[sym]
+    import io, contextlib
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf): callees, callers = ldis(sym, 0)
+    print(f"  linux size {n}, strings {lstrings(sym)[:8]}")
+    print(f"  linux callees: {list(dict.fromkeys(callees))[:15]}")
+    print(f"  linux callers: {callers[:12]}")
+    for s in lstrings(sym)[:4]:
+        fs = wrefs(eval(s))
+        for f in fs[:4]: print(f"    {f:#x} ret {wpop(f)}  {whead(f, 5)}")
+    cnt, cc, kc = wfind(callees, callers)
+    for f, k in cnt.most_common(show): print(f"    {f:#x} votes {k} ret {wpop(f)}  {whead(f, 5)}")
 
-print("######## virtual targets")
-wanted = [l.strip() for l in open("tools/winport/wanted.txt") if l.strip() and not l.startswith("#")]
-for sym in wanted:
-    d = demangle(sym)
-    m = re.match(r"(.*?)::([~\w]+)\(", d)
-    if not m or not os.path.exists(f"derived/linux-vtables/{m.group(1)}.txt"): continue
-    if not any(f"::{m.group(2)}(" in n and n.startswith(m.group(1) + "::") for n in lrows(m.group(1))): continue
-    print(f"######## {d}")
-    try: slots(m.group(1), m.group(2), 5, 3)
-    except Exception as e: print(e)
+pairs = [
+ ("_ZN14CSpawnLocation17FindSpawnLocationER6Vector", 0x5ed4e0),
+ ("_ZN9CTFPlayer19ReapplyItemUpgradesEP13CEconItemView", 0x508c80),
+ ("_ZN9CTFPlayer18GetSceneSoundTokenEv", 0x4f3ff0),
+ ("_ZN18CPopulationManager8ResetMapEv", 0x5e69c0),
+ ("_ZN18CPopulationManager23UpdateObjectiveResourceEv", 0x5e78c0),
+ ("_ZN18CPopulationManager16StartCurrentWaveEv", 0x5e7520),
+ ("_ZNK6CTFBot14GetFlagToFetchEv", 0x552180),
+ ("_ZNK6CTFBot18GetFlagCaptureZoneEv", 0x552110),
+ ("_ZN6CTFBot5SpawnEv", 0x562e50),
+ ("_ZN11CBaseEntity6CreateEPKcRK6VectorRK6QAnglePS_", 0x1ee720),
+ ("_ZN15CEnvEntityMaker15InputForceSpawnER11inputdata_t", 0x24cd90),
+ ("_ZN9CUpgrades5SpawnEv", 0x5f53e0),
+ ("_ZN9CUpgradesD0Ev", 0x5f5600),
+ ("_ZN11CTFTankBoss14UpdateOnRemoveEv", 0x5f51d0),
+ ("_ZN11CTFBaseBoss12OnTakeDamageERK15CTakeDamageInfo", 0x5de570),
+ ("_ZN11CTFBaseBoss5TouchEP11CBaseEntity", 0x5df040),
+ ("_ZN17CTFBotDeliverFlag5OnEndEP6CTFBotP6ActionIS0_E", 0x588560),
+ ("_ZN17CBaseCombatWeapon5EquipEP20CBaseCombatCharacter", 0x1e1080),
+ ("_ZN11CTFWearable5EquipEP11CBasePlayer", 0x3d1190),
+ ("_ZN12CCaptureFlag16GetMaxReturnTimeEv", 0x448070),
+ ("_ZN6CTFBot29GetNearestKnownSappableTargetEv", 0x552da0),
+ ("_ZN11CEconEntity14UpdateOnRemoveEv", 0x3a04e0),
+ ("_ZN17CBaseCombatWeapon11WeaponSoundE13WeaponSound_tf", 0x1e4d50),
+ ("_ZN12CTFGameRules17GetBonusRoundTimeEb", 0x48c300),
+ ("_ZN17CTFGCServerSystem15PreClientUpdateEv", 0x5ca630),
+]
+for sym, rva in pairs:
+    compare(sym, rva, 45, 45)
+
+for sym in [
+ "_ZN12CCaptureFlag6PickUpEP9CTFPlayerb",
+ "_ZN11CTFTankBoss13TankBossThinkEv",
+ "_ZN11CTFTankBoss15UpdatePingSoundEv",
+ "_ZN11CTFTankBoss16GetCurrencyValueEv",
+ "_ZN5CWave12AddClassTypeE8string_tij",
+ "_ZN5CWave25IsDoneWithNonSupportWavesEv",
+ "_ZN18CPopulationManager7WaveEndEb",
+ "_ZN18CPopulationManager24AdjustMinPlayerSpawnTimeEv",
+ "_ZN15CEnvEntityMaker11SpawnEntityE6Vector6QAngle",
+ "_ZN15CEnvEntityMaker29InputForceSpawnAtEntityOriginER11inputdata_t",
+ "_Z18IsSpaceToSpawnHereRK6Vector",
+ "_ZN9CTFPlayer10StateLeaveEv",
+ "_ZN9CTFPlayer18ShouldDropAmmoPackEv",
+ "_ZN9CTFPlayer14IsReadyToSpawnEv",
+ "_ZN9CTFPlayer22ShouldGainInstantSpawnEv",
+ "_ZN12CTFGameRules19BetweenRounds_ThinkEv",
+ "_ZN11CTFBaseBoss22ResolvePlayerCollisionEP9CTFPlayer",
+ "_ZN17CObjectTeleporter24RecieveTeleportingPlayerEP9CTFPlayer",
+ "_ZN13CTFBaseRocket6CreateEP11CBaseEntityPKcRK6VectorRK6QAngleS1_",
+]:
+    try: lite(sym)
+    except Exception as e: print("  error", e)
+for cls, fn in (("VCTFBot____Action", None),):
+    win = wrows(cls)
+    for k in range(78, 88):
+        if k < len(win): print(f"  Action<CTFBot> W[{k}] {win[k]:#x} ret {wpop(win[k])}  {whead(win[k], 5)}")
+    for c2 in ("CTFBotScenarioMonitor", "CTFBotTacticalMonitor"):
+        w2 = wrows(c2)
+        print(f"  {c2} W[82] {w2[82]:#x} W[83] {w2[83]:#x}")
+lin = lrows("CTFBotScenarioMonitor")
+for k in range(80, 86): print(f"  L[{k}] {lin[k]}")
 PY

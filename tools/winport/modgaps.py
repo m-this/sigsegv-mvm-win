@@ -13,6 +13,8 @@ fails the whole mod, so the two are listed apart.
     modgaps.py                          every mod with a gap, and the gaps
     modgaps.py "Pop:TFBot_Extensions" ...    those mods only, with a count of
                                              how many of them need each target
+    modgaps.py --bed LOG ...            also what a bed's log says it refused
+                                        or could not hook at load
 """
 
 import collections
@@ -30,6 +32,14 @@ root = Path(__file__).resolve().parents[2]
 windows = {}
 for m in re.finditer(r'^\t\t\t\t"([^"]+)"\n\t\t\t\t\{\n(.*?)\n\t\t\t\t\}', (root / "gamedata/sigsegv/windows.txt").read_text(), re.M | re.S):
     windows[m.group(1)] = m.group(2)
+
+args = sys.argv[1:]
+refused, hookfail = set(), set()
+if args[:1] == ["--bed"]:
+    log = open(args[1], errors="replace").read()
+    refused = set(re.findall(r'refused detour: [^"\n]*"([^"]+)"', log))
+    hookfail = set(re.findall(r'CVirtualHook::FAIL "([^"]+)"', log))
+    args = args[2:]
 
 bad = {sym for sym, e in json.load(open(Path(__file__).parent / "overrides.json")).items() if e.get("bad")}
 
@@ -128,7 +138,11 @@ for path in sorted(glob.glob(str(root / "src/**/*.cpp"), recursive=True)):
         mods.setdefault(owner, []).append((kind, m.group(3), path[len(str(root)) + 1:], text.count("\n", 0, m.start()) + 1))
 
 
-def status(name):
+def status(name, kind):
+    if kind == "detour" and name in refused:
+        return "refused"
+    if kind == "vhook" and name in hookfail:
+        return "failed"
     entry = windows.get(name)
     if entry is None:
         e = linux.get(name, {})
@@ -155,24 +169,24 @@ def describe(name):
     return f'{t} {e["sym"]}' if e.get("sym") else t
 
 
-wanted = sys.argv[1:] or list(mods)
+wanted = args or list(mods)
 need = collections.defaultdict(set)
 for mod in wanted:
     if mod not in mods:
         print(f"{mod}: no registrations found", file=sys.stderr)
         continue
-    gaps = [(kind, name, where, line, status(name)) for kind, name, where, line in mods[mod] if status(name)]
-    if not gaps and not sys.argv[1:]:
+    gaps = [(kind, name, where, line, status(name, kind)) for kind, name, where, line in mods[mod] if status(name, kind)]
+    if not gaps and not args:
         continue
     total = collections.Counter(kind for kind, *_ in mods[mod])
-    print(f"== {mod}: {sum(g[4] != 'runtime' for g in gaps)} of {total['detour']} detours + {total['vhook']} vhooks have no address, "
+    print(f"== {mod}: {sum(g[4] != 'runtime' for g in gaps)} of {total['detour']} detours + {total['vhook']} vhooks have no usable address, "
           f"{sum(g[4] == 'runtime' for g in gaps)} more are found at run time")
     for kind, name, where, line, st in sorted(gaps, key=lambda g: (g[4] == "runtime", g[0] != "vhook", g[1])):
         print(f"  {kind:6} {st:7} {name:60} {describe(name)}  ({where}:{line})")
         if st != "runtime":
             need[(kind, name)].add(mod)
 
-if sys.argv[1:]:
+if args:
     print(f"\n== targets by how many of the {len(wanted)} mods need them")
     for (kind, name), who in sorted(need.items(), key=lambda kv: (-len(kv[1]), kv[0][0] != "vhook", kv[0][1])):
         print(f"  {len(who)}  {kind:6} {name:60} {', '.join(sorted(who))}")
