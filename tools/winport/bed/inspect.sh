@@ -270,54 +270,42 @@ def lsyms(pat):
     for a, n in sorted(objs.items()):
         if re.search(pat, n): print(f"  obj {a:#x} {n}")
 
-lsyms(r"SetThrower|SetScorer|GetScorer|TFMark|OpenList|ClearSearchLists|m_openList|m_masterMarker|m_masterTFMark")
-for s in ("_ZN12CBaseGrenade10SetThrowerEP20CBaseCombatCharacter",
-          "_ZN20CTFProjectile_Rocket9SetScorerEP11CBaseEntity",
-          "_ZN19CTFProjectile_Arrow9SetScorerEP11CBaseEntity",
-          "_ZN20CTFProjectile_Rocket9GetScorerEv",
-          "_ZN19CTFProjectile_Arrow9GetScorerEv",
-          "_ZN10CTFNavArea15MakeNewTFMarkerEv",
-          "_ZN10CTFNavArea6TFMarkEv",
-          "_ZN10CTFNavArea10IsTFMarkedEv",
-          "_ZN8CNavArea13AddToOpenListEv",
-          "_ZN8CNavArea18RemoveFromOpenListEv",
-          "_ZN8CNavArea16ClearSearchListsEv",
-          "_ZN12CBaseGrenade10GetThrowerEv"):
-    if s in byname:
-        try: ldis(s, 200)
-        except Exception as e: print("  error", e)
-    else: print("missing", s)
 
-# The open list: m_openList is known at 0xa8d1ec, m_masterMarker at 0x9c1c1c.
-for g in (0xa8d1e8, 0xa8d1ec, 0xa8d1f0):
-    wglobal(g, 260)
-wglobal(0x9c1c1c, 0, "(m_masterMarker, list only)")
+# Round two. SetThrower: the (int, float) InitGrenade is its Linux caller.
+ldis("_ZN24CTFWeaponBaseGrenadeProj11InitGrenadeERK6VectorS2_P20CBaseCombatCharacterif", 120)
+wdis(0x63a170, 200)
+# Any Windows body naming 0x504 as an immediate (the change offset NetworkStateChanged records).
+hits = collections.Counter()
+for pat in (b"\x68\x04\x05\x00\x00",) + tuple(bytes([0xb8 + r]) + b"\x04\x05\x00\x00" for r in range(8)) + (b"\x66\x81",):
+    at = code.find(pat)
+    while at != -1:
+        if pat == b"\x66\x81":
+            ins = list(md.disasm(code[at:at+9], base + tv + at))
+            if ins and "0x504" in ins[0].op_str: hits[wstart(tv + at)] += 1
+        else: hits[wstart(tv + at)] += 1
+        at = code.find(pat, at + 1)
+print("######## windows functions with the immediate 0x504")
+for f in sorted(hits):
+    body = list(md.disasm(code[f-tv:f-tv+wsize(f)], base + f))
+    w504 = sum(1 for i in body if i.mnemonic == "mov" and i.op_str.startswith("dword ptr [") and "+ 0x504]" in i.op_str.split(",")[0])
+    w508 = sum(1 for i in body if i.mnemonic == "mov" and i.op_str.startswith("dword ptr [") and "+ 0x508]" in i.op_str.split(",")[0])
+    print(f"  {f:#x} size {wsize(f)} ret {wpop(f)} callers {len({wstart(s) for s in wg.get(f, ())})} stores504 {w504} stores508 {w508}" + (" " + kname[f] if f in kname else ""))
+    if w504 and wsize(f) < 900: wdis(f, 260)
 
-# SetThrower: the known GetThrower body gives m_hThrower; the Linux callers of SetThrower lead to Windows.
-wdis(0x20ad30, 60)
-study("_ZN12CBaseGrenade10SetThrowerEP20CBaseCombatCharacter", 2, 4)
-
-# SetScorer: Rocket's Create is known; the Linux callers of each lead to Windows.
-wdis(0x536410, 200)
-study("_ZN20CTFProjectile_Rocket9SetScorerEP11CBaseEntity", 2, 4)
-study("_ZN19CTFProjectile_Arrow9SetScorerEP11CBaseEntity", 2, 4)
-for cls in ("CTFProjectile_Rocket", "CTFProjectile_Arrow"):
-    for side_, path in (("linux", f"derived/linux-vtables/{cls}.txt"), ("windows", f"derived/win-vtables/{cls}.txt")):
-        try:
-            lines = open(path).read().splitlines()
-            heads = [k for k, l in enumerate(lines) if l.startswith("// vtable")]
-            print(f"######## {side_} {cls}: tables at lines {heads}")
-            for k in heads[1:]:
-                for l in lines[k:k+8]: print("  " + l)
-                rows = []
-                for l in lines[k+1:k+6]:
-                    m = re.match(r"\s*\+0x([0-9a-f]+):\s+([0-9a-f]+)", l)
-                    if not m: break
-                    rows.append(int(m.group(2), 16))
-                if side_ == "windows" and len(rows) <= 4:
-                    for r in rows: wdis(r - base, 20)
-        except Exception as e: print("  error", e)
-
-# MakeNewTFMarker: the Linux callers lead to Windows.
-study("_ZN10CTFNavArea15MakeNewTFMarkerEv", 2, 4)
+# MakeNewTFMarker: CSpawnLocation::SelectSpawnArea is its Linux caller, called from FindSpawnLocation.
+ldis("_ZNK14CSpawnLocation15SelectSpawnAreaEv", 250)
+wdis(0x5ed4e0, 120)
+for c in dict.fromkeys(wcallees(0x5ed4e0)):
+    if c not in kname and wsize(c) < 1200: wdis(c, 250)
+# The TFMark shape: mov eax, [g]; mov [ecx + off], eax; ret
+print("######## windows TFMark shapes")
+for m in re.finditer(rb"\xa1(....)\x89\x81(..)\x00\x00\xc3", code, re.S):
+    g = int.from_bytes(m.group(1), "little") - base; off = int.from_bytes(m.group(2), "little")
+    incs = code.count(b"\xff\x05" + m.group(1)) + code.count(b"\x83\x05" + m.group(1) + b"\x01")
+    print(f"  {tv + m.start():#x}: global {g:#x} -> +{off:#x}; increments of it {incs}")
+    if incs:
+        for pat in (b"\xff\x05" + m.group(1), b"\x83\x05" + m.group(1) + b"\x01"):
+            at = code.find(pat)
+            while at != -1:
+                f = wstart(tv + at); print(f"    incremented in {f:#x} size {wsize(f)} at {tv+at:#x}"); at = code.find(pat, at + 1)
 PY
