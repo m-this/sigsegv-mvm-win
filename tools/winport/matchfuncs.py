@@ -328,6 +328,7 @@ def vtable_pairs(linux_dir, windows_dir):
     import matchvtables as mv
 
     claims = collections.defaultdict(set)
+    corpus = mv.Corpus(linux_dir)
     for linux_path in Path(linux_dir).glob("*.txt"):
         win_path = Path(windows_dir) / linux_path.name
         if not win_path.exists():
@@ -348,7 +349,8 @@ def vtable_pairs(linux_dir, windows_dir):
                 if len(parts) == 3:
                     rows.append((parts[2].strip(), int(parts[1], 16)))
         signatures = [sig for sig, _ in rows]
-        how, aligned = mv.align(signatures, windows)
+        order = corpus.order(linux_path.stem) if linux_path.stem in corpus.tables else None
+        how, aligned = mv.align(signatures, windows, order)
         if aligned is None or how not in ("raw", "collapse"):
             continue
         address_of = {}
