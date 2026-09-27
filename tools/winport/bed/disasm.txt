@@ -1,1 +1,3 @@
-# nothing asked
+# the dreadwood fault: the Squirrel call into the server binding
+bin/vscript.dll +0xab47
+bin/vscript.dll func 0xab47 300
