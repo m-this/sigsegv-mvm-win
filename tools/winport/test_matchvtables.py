@@ -135,6 +135,18 @@ class Order(unittest.TestCase):
             # neither is an Enemy overload as far as the order goes.
             self.assertEqual(corpus.order("CFold"), [0, 1, 2, 3, 4, 5])
 
+    def test_a_missing_base_still_ends_a_run(self):
+        with tempfile.TemporaryDirectory() as d:
+            slots = self.movement.tables["CMove"]
+            dump(d, "CMove", *slots)
+            mv.DECLARED_FIRST["CMove"] = ("Mins", "Maxs")
+            mv.MISSING_BASES["CMove"] = 5
+            self.addCleanup(mv.DECLARED_FIRST.pop, "CMove")
+            self.addCleanup(mv.MISSING_BASES.pop, "CMove")
+            corpus = mv.Corpus(d)
+            self.assertIsNone(corpus.parent("CMove"))
+            self.assertEqual(self.names("CMove", corpus), self.names("CMove", self.movement))
+
     def test_align_collapses_the_destructor(self):
         how, aligned = mv.align(self.corpus.tables["CBase"], list(range(7)), self.corpus.order("CBase"))
         self.assertEqual(how, "collapse")

@@ -104,7 +104,7 @@ print("ambiguous:", corpus.ambiguous)
 PY
 
 echo "=== side by side"
-for q in "CBaseEntity 20 45" "CBaseEntity 140 152" "CBasePlayer 270 282" "CBasePlayer 448 458" "CGameMovement 0 24" "CTFGameMovement 8 14"; do
+for q in "CBaseEntity 20 45" "CBaseEntity 140 152" "CBasePlayer 270 282" "CBasePlayer 448 458" "CGameMovement 0 14" "CTFBonesaw 0 3"; do
   python3 ../tools/winport/bed/side.py $q
 done
 

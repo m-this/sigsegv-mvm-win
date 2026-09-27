@@ -155,6 +155,13 @@ def method(signature):
     return "~" if name.startswith("~") else name
 
 
+def member(signature):
+    """Whether a slot's name is a member function's: Class::name(...). A free
+    function's name has no class, and a template's carries its return type."""
+    qualifier = split_name(signature)[0].replace("(anonymous namespace)", "_")
+    return bool(qualifier) and " " not in qualifier.split("<")[0]
+
+
 def slot_key(signature):
     """What a slot means whichever class implements it: the name and the
     parameters without the class. A base's slot and the derived class's
@@ -175,6 +182,14 @@ DECLARED_FIRST = {
 }
 
 
+# Where a base the Linux dump has no table for ends, in Linux slots: its own
+# virtuals are not grouped with the class's. IGameMovement has an inline
+# destructor and seven pure virtuals, and no vtable of its own in server_srv.so.
+MISSING_BASES = {
+    "CGameMovement": 9,
+}
+
+
 class Corpus:
     """Every Linux primary table, for telling a class's own new virtuals from
     the ones it inherits.
@@ -190,7 +205,10 @@ class Corpus:
     identical bodies: `return NULL` fills dozens of slots under one of their
     names. A body seen at two slot indices is therefore not named at all here.
     It matches anything and groups with nothing, which is right for MSVC too,
-    since it folds the same bodies and every slot of one holds one address.
+    since it folds the same bodies and every slot of one holds one address. So
+    is a slot named for something that is not a member function at all:
+    GetScriptDesc is the free template GetScriptDesc<CBasePlayer>(CBasePlayer*)
+    inlined into a virtual, and nm names the slot after the template.
     """
 
     def __init__(self, linux_dir):
@@ -210,7 +228,7 @@ class Corpus:
                 seen[addr].add(index)
         self.folded = {addr for addr, where in seen.items() if len(where) > 1}
         self.names = {
-            cls: [None if addr in self.folded or unnamed(name) else name for addr, name in got]
+            cls: [None if addr in self.folded or unnamed(name) or not member(name) else name for addr, name in got]
             for cls, got in rows.items()
         }
         self.keys = {cls: [slot_key(n) if n else None for n in names] for cls, names in self.names.items()}
@@ -292,22 +310,38 @@ class Corpus:
         start = len(self.tables[base]) if base else 0
         own = self.pretty[cls]
 
+        # A base the dump lacks still ends somewhere, and its run is its own.
+        cut = MISSING_BASES.get(own, 0)
+        if start < cut < len(slots):
+            inherited += self.grouped(slots, start, cut)
+            start = cut
+
         overridden = set()
         for j in range(start):
             if slots[j] and split_name(slots[j])[0] == own:
                 overridden.add(method(slots[j]))
-        groups = {}
-        for i in range(start, len(slots)):
-            groups.setdefault(method(slots[i]) if slots[i] else ("#", i), []).append(i)
-        first = [g for g in DECLARED_FIRST.get(own, ()) if g in groups]
-        rest = [g for g in groups if g not in first]
-        unsure = [g for g in rest if g in overridden and g != rest[0]]
+        new = self.grouped(slots, start, len(slots), DECLARED_FIRST.get(own, ()))
+        unsure = [g for g in self.group_names(slots, start, len(slots)) if g in overridden]
+        unsure = [g for g in unsure if g not in DECLARED_FIRST.get(own, ()) and g != method(slots[new[0]] or "")]
         if unsure:
             self.ambiguous[cls] = unsure
-        # The destructor's two Itanium slots are one to MSVC, and keep their order.
-        new = [i for g in first + rest for i in (groups[g] if g == "~" else reversed(groups[g]))]
         self._orders[cls] = inherited + new
         return self._orders[cls]
+
+    @staticmethod
+    def group_names(slots, start, end):
+        return list(dict.fromkeys(method(slots[i]) for i in range(start, end) if slots[i]))
+
+    @staticmethod
+    def grouped(slots, start, end, first=()):
+        """Slots start..end, one class's new virtuals, in MSVC's order."""
+        groups = {}
+        for i in range(start, end):
+            groups.setdefault(method(slots[i]) if slots[i] else ("#", i), []).append(i)
+        first = [g for g in first if g in groups]
+        # The destructor's two Itanium slots are one to MSVC, and keep their order.
+        return [i for g in first + [g for g in groups if g not in first]
+                for i in (groups[g] if g == "~" else reversed(groups[g]))]
 
 
 def align(linux, windows, order=None):
