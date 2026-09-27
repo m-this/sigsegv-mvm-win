@@ -11,7 +11,13 @@ namespace Mod::Attr::Undocumented
 		"");
 	
 	
+#if defined _WINDOWS
+	/* The game's function is a __thiscall member and pops its four arguments;
+	 * declared static the detour would pop none of them. */
+	DETOUR_DECL_MEMBER(float, CAttributeManager_ApplyAttributeFloatWrapper, float val, CBaseEntity *ent, string_t name, CUtlVector<CBaseEntity *> *vec)
+#else
 	DETOUR_DECL_STATIC(float, CAttributeManager_ApplyAttributeFloatWrapper, float val, CBaseEntity *ent, string_t name, CUtlVector<CBaseEntity *> *vec)
+#endif
 	{
 		const char *attr = STRING(name);
 		
@@ -25,7 +31,11 @@ namespace Mod::Attr::Undocumented
 			return cvar_force_distribute_currency_on_death.GetFloat();
 		}
 		
+#if defined _WINDOWS
+		return DETOUR_MEMBER_CALL(val, ent, name, vec);
+#else
 		return DETOUR_STATIC_CALL(val, ent, name, vec);
+#endif
 	}
 	
 	
@@ -34,7 +44,11 @@ namespace Mod::Attr::Undocumented
 	public:
 		CMod() : IMod("Attr:Undocumented")
 		{
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_MEMBER(CAttributeManager_ApplyAttributeFloatWrapper, "CAttributeManager::ApplyAttributeFloatWrapper");
+#else
 			MOD_ADD_DETOUR_STATIC(CAttributeManager_ApplyAttributeFloatWrapper, "CAttributeManager::ApplyAttributeFloatWrapper");
+#endif
 		}
 	};
 	CMod s_Mod;

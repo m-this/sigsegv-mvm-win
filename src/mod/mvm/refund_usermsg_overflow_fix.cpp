@@ -18,11 +18,21 @@ namespace Mod::MvM::UserMsg_Overflow
 			DETOUR_MEMBER_CALL(player, wave, eType, nCost);
 	}
 
+#if defined _WINDOWS
+	/* server.dll's PlayerEvent_Upgraded takes no this: it reads g_pMVMStats
+	 * itself, and its one caller pushes the six arguments and pops them. */
+	DETOUR_DECL_STATIC(void, CMannVsMachineStats_PlayerEvent_Upgraded, CTFPlayer *player, uint16 nItemDef, uint16 nAttributeDef, uint8 nQuality, int16 nCost, bool bIsBottle)
+	{
+		if (rc_CUpgrades_GrantOrRemoveAllUpgrades == 0)
+			DETOUR_STATIC_CALL(player, nItemDef, nAttributeDef, nQuality, nCost, bIsBottle);
+	}
+#else
 	DETOUR_DECL_MEMBER(void, CMannVsMachineStats_PlayerEvent_Upgraded, CTFPlayer *player, uint16 nItemDef, uint16 nAttributeDef, uint8 nQuality, int16 nCost, bool bIsBottle)
 	{
 		if (rc_CUpgrades_GrantOrRemoveAllUpgrades == 0)
 			DETOUR_MEMBER_CALL(player, nItemDef, nAttributeDef, nQuality, nCost, bIsBottle);
 	}
+#endif
 
     
 	class CMod : public IMod
@@ -30,7 +40,11 @@ namespace Mod::MvM::UserMsg_Overflow
 	public:
 		CMod() : IMod("Debug:UserMsg_Overflow")
 		{
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_STATIC(CMannVsMachineStats_PlayerEvent_Upgraded, "CMannVsMachineStats::PlayerEvent_Upgraded");
+#else
 			MOD_ADD_DETOUR_MEMBER(CMannVsMachineStats_PlayerEvent_Upgraded, "CMannVsMachineStats::PlayerEvent_Upgraded");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CMannVsMachineStats_NotifyTargetPlayerEvent, "CMannVsMachineStats::NotifyTargetPlayerEvent");
 			MOD_ADD_DETOUR_MEMBER(CUpgrades_GrantOrRemoveAllUpgrades, "CUpgrades::GrantOrRemoveAllUpgrades");
 		}

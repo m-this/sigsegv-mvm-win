@@ -8479,13 +8479,23 @@ namespace Mod::Attr::Custom_Attributes
 		return DETOUR_MEMBER_CALL(pTFPlayer, pBuilder, flNearestPoint, vecNearestBuildPoint);
 	}
 	
+#if defined _WINDOWS
+	/* Destroy(bool bBlinkOut, bool bBreakRocket) is __thiscall there and pops
+	 * both flags, so the detour takes them and passes them on. */
+	DETOUR_DECL_MEMBER(void, CTFBaseRocket_Destroy, bool bBlinkOut, bool bBreakRocket)
+#else
 	DETOUR_DECL_MEMBER(void, CTFBaseRocket_Destroy)
+#endif
 	{
 		auto rocket = reinterpret_cast<CTFBaseRocket *>(this);
 		int explode = 0;
 		CALL_ATTRIB_HOOK_INT_ON_OTHER(rocket->GetOriginalLauncher(), explode, projectile_explode_on_destroy);
 		if (explode == 3 && takeDamageAttacker != nullptr && takeDamageAttacker->GetTeamNumber() != (rocket->GetOwnerEntity() != nullptr ? rocket->GetOwnerEntity() : rocket)->GetTeamNumber()) {
+#if defined _WINDOWS
+			DETOUR_MEMBER_CALL(bBlinkOut, bBreakRocket);
+#else
 			DETOUR_MEMBER_CALL();
+#endif
 			return;
 		}
 		if (explode == 2 && takeDamageAttacker != nullptr) {
@@ -8499,7 +8509,11 @@ namespace Mod::Attr::Custom_Attributes
 			rocket->Explode(&tr, GetContainingEntity(INDEXENT(0)));
 			return;
 		}
+#if defined _WINDOWS
+		DETOUR_MEMBER_CALL(bBlinkOut, bBreakRocket);
+#else
 		DETOUR_MEMBER_CALL();
+#endif
 	}
 	
 	DETOUR_DECL_MEMBER(void, CTFWeaponBaseGrenadeProj_Destroy)
