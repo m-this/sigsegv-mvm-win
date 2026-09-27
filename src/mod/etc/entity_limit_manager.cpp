@@ -168,7 +168,9 @@ namespace Mod::Etc::Entity_Limit_Manager
             auto edict = worldEdict + i;
             if (edict->IsFree()) continue;
             auto networkable = edict->GetNetworkable();
-            classes[networkable != nullptr && networkable->GetClassName() != nullptr ? networkable->GetClassName() : "?"]++;
+            auto entity = networkable != nullptr ? networkable->GetBaseEntity() : nullptr;
+            auto name = entity != nullptr ? entity->GetClassname() : nullptr;
+            classes[name != nullptr ? name : "?"]++;
         }
         std::vector<std::pair<std::string, int>> sorted(classes.begin(), classes.end());
         std::sort(sorted.begin(), sorted.end(), [](auto &a, auto &b){ return a.second > b.second; });
