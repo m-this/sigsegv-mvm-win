@@ -1,1 +1,2 @@
-# nothing asked
+# RemoveCurrency's candidate, whole
+server func 0x50a1c0 120
