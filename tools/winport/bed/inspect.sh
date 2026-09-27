@@ -1,5 +1,5 @@
 #!/bin/bash
-# Upgrade station, radius damage and DispatchTraceAttack candidates on Windows.
+# DispatchTraceAttack and ApplyUpgradeToItem candidates on Windows.
 python3 - <<'PY'
 import re, bisect, collections, capstone, pefile
 from elftools.elf.elffile import ELFFile
@@ -159,19 +159,17 @@ def slots(cls, fn, lo=10, hi=10):
         if 0 <= k < len(win): print(f"  W[{k}] {win[k]:#x} ret {wpop(win[k])}  {whead(win[k])}")
 
 
-print("\n######## ApplyToEntity candidate 0x480a30")
-wdis(0x480a30, 900)
-print("  pops", wpop(0x480a30), "callers", sorted({hex(wstart(s)) for s in wg.get(0x480a30, ())}))
+print("\n######## DispatchTraceAttack candidate 0x1ffb50")
+wdis(0x1ffb50, 60)
+print("  pops", wpop(0x1ffb50), "callers", len(wg.get(0x1ffb50, ())), sorted({hex(wstart(s)) for s in wg.get(0x1ffb50, ())})[:30])
+w = wrows("CBaseEntity")
+for k in (60, 61, 62, 63): print(f"  W[{k}] {w[k]:#x} ret {wpop(w[k])}  {whead(w[k], 8)}")
+l = lrows("CBaseEntity")
+for k in (61, 62, 63, 64): print(f"  L[{k}] {l[k]}")
 
-print("\n######## ApplyUpgradeToItem candidate 0x5f6220")
-wdis(0x5f6220, 700)
-print("  pops", wpop(0x5f6220), "callers", sorted({hex(wstart(s)) for s in wg.get(0x5f6220, ())}))
-
-print("\n######## ClientCommandKeyValues callees")
-for f in (0x5e6600, 0x4fbe00, 0x48bfa0):
-    print(f"  {f:#x} pops {wpop(f)} callers {len(wg.get(f,()))}  {whead(f, 12)}")
-for f in wrefs("MVM_Upgrade"): pass
-cands = [f for f in (0x5e6600, 0x4fbe00, 0x48bfa0) if 0x5f6220 in wcallees(f, 0x3000)]
-print("  calling 0x5f6220:", [hex(c) for c in cands])
-for c in cands: wdis(c, 700)
+print("\n######## ApplyUpgradeToItem candidates")
+for f in (0x5f5690, 0x5f5f80, 0x485ed0):
+    print(f"  {f:#x} pops {wpop(f)} callers {sorted({hex(wstart(s)) for s in wg.get(f, ())})}")
+wdis(0x5f5690, 600)
+ldis("_ZN9CUpgrades18ApplyUpgradeToItemEP9CTFPlayerP13CEconItemViewiibb", 60)
 PY
