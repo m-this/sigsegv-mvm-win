@@ -1693,5 +1693,21 @@
  "_Z19TE_TFParticleEffectR16IRecipientFilterfPKc6VectorS3_6QAngleP11CBaseEntity": {
   "rva": "0x470750",
   "why": "read by hand: GetParticleSystemIndex, two Vectors and a QAngle by value and the entity at +0x38, this overload's layout; cdecl, plain ret; two direct callers on each side. 0x470860 is the attachment overload"
+ },
+ "_ZNK20CTFPlayerClassShared16GetHandModelNameEi": {
+  "rva": "0x531fc0",
+  "why": "read by hand: for hand index 0, GetPlayerClassData(m_iClass at +4) + 0x180, else a constant string, the Linux body; ret 4"
+ },
+ "_ZNK12CTFGameRules13IsUsingSpellsEv": {
+  "rva": "0x492a30",
+  "why": "read by hand: true when the spells convar is set or the game type at +0x11b8 is 4, else the byte at +0xc82, the Linux body instruction for instruction; ret; two direct callers, GetBaseItemForClass (0x3ca340) and SlotContainsBaseItems, as on Linux"
+ },
+ "_ZN12CTFSpellBook16SetSelectedSpellEi": {
+  "rva": "0x5bc970",
+  "why": "read by hand: stores the spell index at +0x820 with a state change, looks the spell up with GetSpellData inlined (three tables of 0x2c records, the forced-spell convar) and stores its charges at +0x824, the Linux body (+0x828, +0x82c there); ret 4; four direct callers, RollNewSpell among them, as on Linux. The matcher's 0x48cb30 pops nothing"
+ },
+ "_ZN14CTFSniperRifle15CreateSniperDotEv": {
+  "rva": "0x62b1a0",
+  "why": "read by hand: creates 'env_sniperdot' with CSniperDot::Create inlined (SetMoveType, SetSolidFlags, AddEffects), at the owner's abs position, the Linux body; ret; two direct callers, CTFSniperRifleClassic::ItemPostFrame and the zoom, as on Linux"
  }
 }
