@@ -8,14 +8,22 @@ the two ABIs differ in exactly two ways that matter here:
   * Destructors. The Itanium ABI emits two slots, the complete object destructor
     and the deleting destructor, and they appear in the dump as the same
     signature twice in a row. MSVC emits one, the vector deleting destructor.
-  * Overloads. MSVC reverses a run of overloads declared together in one class.
-    Itanium keeps declaration order.
+  * Overloads. MSVC lays out a class's own new virtuals by name: all of one
+    name sit together, at the place the class first declares that name, and
+    in reverse declaration order among themselves. Itanium keeps declaration
+    order. So CBaseEntity's three KeyValue overloads are reversed, and
+    CGameMovement's GetPlayerMins(), declared long after the GetPlayerMins(bool)
+    it overrides, moves up to where that override is declared.
 
-Neither rule applies to every class, and which of them applies is not something
-the dumps record, so this tries each combination and keeps the one that makes
-the two tables the same length. Equal length is evidence, not proof: it is
-strong for a class with one vtable and worth nothing for one with several, which
-is why a class MSVC gave more than one vtable is refused outright.
+The destructor rule is a question of length, so this tries raw and then
+collapsed and keeps the one that makes the two tables the same length. The
+overload rule never changes a length, so no length can tell whether it applies;
+it is applied always. It needs to know which slots are the class's own new
+virtuals, and the dumps do not say, so the class's primary base is taken to be
+the longest other Linux table its own table starts with, name for name (see
+Corpus). Equal length is evidence, not proof: it is strong for a class with one
+vtable and worth nothing for one with several, which is why a class MSVC gave
+more than one vtable is refused outright.
 
 Everything else is refused too. A wrong vtable index is a call into the wrong
 function, which is a crash at best and silent corruption at worst, and a gap
@@ -109,31 +117,153 @@ def collapse_destructors(slots):
     return out
 
 
-def reverse_overload_runs(slots):
-    """MSVC lays a run of same-named virtuals out backwards."""
-    out, i = [], 0
-    while i < len(slots):
-        j = i
-        while j + 1 < len(slots) and bare_name(slots[j + 1]) == bare_name(slots[i]):
-            j += 1
-        run = slots[i:j + 1]
-        out.extend(reversed(run) if len(run) > 1 else run)
-        i = j + 1
-    return out
+def split_name(signature):
+    """CTFPlayer::KeyValue(char const*, float) -> ("CTFPlayer", "KeyValue").
+
+    The last `::` outside template brackets, so CUtlVector<A::B>::Foo splits
+    after the `>`. An operator's name can hold brackets of its own, so it is
+    cut at `::operator` first."""
+    bare = bare_name(signature)
+    at = bare.rfind("::operator")
+    if at >= 0 and "::" not in bare[at + 2:]:
+        return bare[:at], bare[at + 2:]
+    depth = 0
+    for i in range(len(bare) - 1, 0, -1):
+        c = bare[i]
+        if c == ">":
+            depth += 1
+        elif c == "<":
+            depth -= 1
+        elif depth == 0 and c == ":" and bare[i - 1] == ":":
+            return bare[:i - 1], bare[i + 1:]
+    return "", bare
 
 
-ALIGNMENTS = (
-    ("raw", lambda s: s),
-    ("collapse", collapse_destructors),
-    ("collapse+reverse", lambda s: reverse_overload_runs(collapse_destructors(s))),
-    ("reverse", reverse_overload_runs),
-)
+def unnamed(signature):
+    """A slot with no function of its own to name: a pure or deleted virtual."""
+    return not signature or "__cxa_pure_virtual" in signature or "__cxa_deleted_virtual" in signature
 
 
-def align(linux, windows):
-    """The first transform that makes the tables agree in length, or None."""
-    for name, transform in ALIGNMENTS:
-        candidate = transform(linux)
+def method(signature):
+    """The name MSVC groups by: KeyValue for any KeyValue, `~` for a destructor."""
+    name = split_name(signature)[1]
+    return "~" if name.startswith("~") else name
+
+
+def slot_key(signature):
+    """What a slot means whichever class implements it: the name and the
+    parameters without the class. A base's slot and the derived class's
+    override of it have the same key. None for a slot with no name, which
+    matches anything."""
+    if unnamed(signature):
+        return None
+    name = method(signature)
+    return name if name == "~" else name + signature[len(bare_name(signature)):].strip()
+
+
+class Corpus:
+    """Every Linux primary table, for telling a class's own new virtuals from
+    the ones it inherits.
+
+    The dumps carry no base classes, but a primary base's table is a prefix of
+    the derived class's, slot for slot by name and parameters. The longest
+    other table a class's own starts with is taken as its primary base, and the
+    slots past it are the class's own new virtuals. A table missing from the
+    dump merges two classes' runs into one, which only matters when both
+    declare the same name.
+    """
+
+    def __init__(self, linux_dir):
+        self.tables, self.pretty = {}, {}
+        for path in sorted(Path(linux_dir).glob("*.txt")):
+            slots = read_linux(path)
+            if slots:
+                self.tables[path.stem] = slots
+                head = path.read_text(errors="replace").split("\n", 1)[0].strip()
+                self.pretty[path.stem] = head if head and not head.startswith(("//", "+")) else path.stem
+        self.keys = {cls: tuple(slot_key(s) for s in slots) for cls, slots in self.tables.items()}
+        # A table with a pure slot matches by walking it; every other one by a
+        # hash of its whole key list, looked up at each prefix of the class.
+        self.wild = sorted((c for c, k in self.keys.items() if None in k),
+                           key=lambda c: (-len(self.keys[c]), c))
+        self.exact = defaultdict(list)
+        for cls, keys in self.keys.items():
+            if None not in keys:
+                self.exact[(len(keys), self.prefix_hashes(keys)[-1])].append(cls)
+        self._orders = {}
+        # Groups moved to where the class overrides the same name, for the log:
+        # the one place the rule is applied on an assumption (see order).
+        self.moved = defaultdict(list)
+
+    @staticmethod
+    def prefix_hashes(keys):
+        out, h = [0], 0
+        for k in keys:
+            h = hash((h, k))
+            out.append(h)
+        return out
+
+    def parent(self, cls):
+        """The longest other table this one starts with, or None."""
+        keys = self.keys[cls]
+        hashes = self.prefix_hashes(keys)
+        best = None
+        for m in range(len(keys) - 1, 0, -1):
+            found = sorted(c for c in self.exact.get((m, hashes[m]), ()) if c != cls and self.keys[c] == keys[:m])
+            if found:
+                best = found[0]
+                break
+        for other in self.wild:
+            theirs = self.keys[other]
+            if len(theirs) >= len(keys) or (best and len(theirs) <= len(self.keys[best])):
+                continue
+            if all(t is None or t == k for t, k in zip(theirs, keys)):
+                return other
+        return best
+
+    def order(self, cls):
+        """The Linux slot indices of `cls` in the order MSVC lays them out.
+
+        A class's own new virtuals are grouped by name. A group goes where the
+        class first declares that name, which is its first new virtual of that
+        name unless the class also overrides an inherited virtual of the same
+        name: the override is declared somewhere the binary does not record,
+        and it is taken to come before the class's new virtuals, the way
+        CGameMovement declares the IGameMovement interface it implements first.
+        Those classes are recorded in `moved`.
+        """
+        if cls in self._orders:
+            return self._orders[cls]
+        slots = self.tables[cls]
+        base = self.parent(cls)
+        inherited = list(self.order(base)) if base else []
+        start = len(self.tables[base]) if base else 0
+        own = self.pretty[cls]
+
+        overrides = {}
+        for j in range(start):
+            if not unnamed(slots[j]):
+                qualifier, name = split_name(slots[j])
+                if qualifier == own:
+                    overrides.setdefault(method(slots[j]), j)
+        groups = {}
+        for i in range(start, len(slots)):
+            groups.setdefault(("#", i) if unnamed(slots[i]) else method(slots[i]), []).append(i)
+        early = sorted((g for g in groups if g in overrides), key=overrides.get)
+        rest = [g for g in groups if g not in overrides]
+        if early and list(groups)[:len(early)] != early:
+            self.moved[cls] += early
+        new = [i for g in early + rest for i in reversed(groups[g])]
+        self._orders[cls] = inherited + new
+        return self._orders[cls]
+
+
+def align(linux, windows, order=None):
+    """The Linux table in MSVC's order, destructors collapsed if that is what
+    makes the two agree in length, or None. `order` is Corpus.order's; without
+    it the slots keep Linux order."""
+    arranged = [linux[i] for i in order] if order is not None else list(linux)
+    for name, candidate in (("raw", arranged), ("collapse", collapse_destructors(arranged))):
         if len(candidate) == len(windows):
             return name, candidate
     return None, None
@@ -154,6 +284,7 @@ def main():
     for row in json.loads(classified.read_text())["virtual"]:
         wanted[row["class"]].append(row)
 
+    corpus = Corpus(linux_dir)
     resolved, refused, missing, multi = [], [], [], []
     from_multi = 0
     used = defaultdict(int)
@@ -174,7 +305,7 @@ def main():
         if len(tables) > 1:
             from_multi += len(rows)
         linux = read_linux(linux_path)
-        how, aligned = align(linux, windows)
+        how, aligned = align(linux, windows, corpus.order(cls))
         if aligned is None:
             refused.append((cls, len(collapse_destructors(linux)), len(windows), len(rows)))
             continue
@@ -198,6 +329,10 @@ def main():
         print("\n  alignment used, by class:")
         for how, n in sorted(used.items(), key=lambda kv: -kv[1]):
             print(f"    {how:<18} {n}")
+    if corpus.moved:
+        print("\n  overload groups moved up to an override of the same name:")
+        for cls, names in sorted(corpus.moved.items()):
+            print(f"    {cls:<42} {' '.join(names)}")
     if refused:
         print("\n  refused, worst first (class: linux slots vs windows slots):")
         for cls, ln, wn, n in sorted(refused, key=lambda r: -r[3])[:8]:
