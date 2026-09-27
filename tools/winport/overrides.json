@@ -1401,5 +1401,30 @@
   "rva": "0x54e9d0",
   "vtidx": 0,
   "why": "read by hand: slot 0 of CTFBot's table, the scalar deleting destructor: calls the body at 0x54e470, tests the flags (&1, &4), frees through 0x1e9af0, ret 4. CTFBot has no subclass, so every bot is destroyed through it; ECAttr_Extensions clears its per-bot data here"
+ },
+ "_ZN11CBasePlayer10EyeVectorsEP6VectorS1_S1_": {
+  "rva": "0x20c640",
+  "why": "read by hand: GetVehicle through the vtable (+0x4dc, Linux +0x4e0), and with one CacheVehicleView and the vehicle view angles (+0xffc, Linux +0x1014), else EyeAngles (+0x228, Linux +0x22c), then AngleVectors with the three pointers, the Linux body; thiscall, ret 0xc for (Vector *, Vector *, Vector *)"
+ },
+ "_ZN17CAttributeManager15AttribHookValueIfEET_S1_PKcPK11CBaseEntityP10CUtlVectorIPS4_10CUtlMemoryIS8_iEEb": {
+  "rva": "0x44e4d0",
+  "why": "read by hand: VPROF \"CAttributeManager::AttribHookValue\", returns the value unless the name, its first char and the entity's attribute interface (+0xe4, Linux +0xf8) are set, pools the name (the static constant pool when the bool is set, as Linux), calls ApplyAttributeFloatWrapper (+0x38, Linux +0x3c) with the value loaded as a float and converts the result as a float, returning it in st0; the int one (0x1df2f0) converts the value with cvtsi2ss and returns eax. cdecl, plain ret"
+ },
+ "_ZN17CAttributeManager15AttribHookValueIiEET_S1_PKcPK11CBaseEntityP10CUtlVectorIPS4_10CUtlMemoryIS8_iEEb": {
+  "rva": "0x1df2f0",
+  "why": "read by hand: the same body as AttribHookValue<float> (0x44e4d0) but the value goes in through cvtsi2ss, the result through the int conversion (0x39d200, the float one is 0x39d210) and comes back in eax, as the Linux int instance; cdecl, plain ret"
+ },
+ "_ZN11CBaseEntity13CreateNoSpawnEPKcRK6VectorRK6QAnglePS_": {
+  "rva": "0x1ee780",
+  "why": "read by hand: CreateEntityByName(name, -1), returns null if none, else SetLocalOrigin, SetLocalAngles, SetOwnerEntity through the vtable, NotifyCreateEntity on the entity list, returns the entity, the Linux body; cdecl, plain ret"
+ },
+ "_ZN11CBaseObject9SetHealthEf": {
+  "rva": "0x4c4280",
+  "why": "read by hand: clamps to the max health (+0xa3c, Linux +0xa54) when the flag at +0xa31 (Linux +0xa49) is set, stores m_flHealth (+0xa48, Linux +0xa60), writes the ceiling to m_iHealth (+0xf4, Linux +0x108) with NetworkStateChanged, and fires m_OnObjectHealthChanged (+0x9c8, Linux +0x9e0) with the float when it changed, the Linux body; thiscall, ret 4 for the float"
+ },
+ "_ZN15CBaseProjectile13IsDestroyableEb": {
+  "rva": "0x152770",
+  "vtidx": 232,
+  "why": "read by hand from CBaseProjectile's vtable, one below Linux from GetBaseProjectileType (227/228) to ShouldTouchNonWorldSolid (235/236): GetDestroyableHitCount 229 reads one field, CanCollideWithTeammates 230 and its delay 231 are known, 232 is xor al, al; ret 4 as Linux's IsDestroyable(bool) returns false, 233 is the empty Destroy(bool, bool) popping 8 and 234 SetLauncher. The body is folded with other false returning functions, so the slot names it; the rocket's and the grenade's 232 are their own IsDestroyable"
  }
 }

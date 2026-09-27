@@ -1,4 +1,1 @@
-# AttribHookValue's VPROF name; CreateNoSpawn's candidate
-server string CAttributeManager::AttribHookValue
-server func 0x1ee780 150
-server string CBasePlayer::EyeVectors
+# nothing asked

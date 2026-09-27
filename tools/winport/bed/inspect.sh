@@ -110,16 +110,40 @@ def study(name, show=2, callers_show=0):
     return kc
 
 
-for name in ("_ZN9CTFPlayer14RemoveCurrencyEi",
-             "_ZN11CBasePlayer10EyeVectorsEP6VectorS1_S1_",
-             "_ZN17CAttributeManager15AttribHookValueIfEET_S1_PKcPK11CBaseEntityP10CUtlVectorIPS4_10CUtlMemoryIS8_iEEb",
-             "_ZN17CAttributeManager15AttribHookValueIiEET_S1_PKcPK11CBaseEntityP10CUtlVectorIPS4_10CUtlMemoryIS8_iEEb",
-             "_ZN11CBaseEntity13CreateNoSpawnEPKcRK6VectorRK6QAnglePS_",
-             "_ZN11CBaseObject9SetHealthEf"):
-    study(name, show=2, callers_show=2)
-for name in ("_ZN11CBaseObject25InitializeMapPlacedObjectEv", "_ZN15CBaseProjectile13IsDestroyableEb"):
-    if name in byname: ldis(name)
-wdis(0x1ee780, 120)
+# RemoveCurrency: its callee on Windows, then m_nCurrency's Windows offset
+# from the send table and every function subtracting from it
+study("_ZN18CPopulationManager22AddPlayerCurrencySpentEP9CTFPlayeri", show=2, callers_show=0)
+def cstr_va(text_):
+    for sec in pe.sections:
+        data = sec.get_data(); at = data.find(b"\0" + text_ + b"\0")
+        if at != -1: return base + sec.VirtualAddress + at + 1
+va = cstr_va(b"m_nCurrency")
+offs = set()
+for m in re.finditer(re.escape(va.to_bytes(4, "little")), code):
+    s = tv + m.start(); f = wstart(s)
+    ins = list(md.disasm(code[max(f, s-60)-tv:s-tv+8], base + max(f, s-60)))
+    for i in ins[-8:]: print(f"  {i.address-base:#x}  {i.mnemonic} {i.op_str}")
+    offs |= {int(x, 16) for i in ins[-8:] for x in re.findall(r"0x[0-9a-f]+", i.op_str) if 0x1000 <= int(x, 16) < 0x3000}
+print("m_nCurrency offsets pushed:", [hex(o) for o in offs])
+for o in sorted(offs):
+    hits = collections.Counter()
+    for m in re.finditer(re.escape(o.to_bytes(4, "little")), code):
+        hits[wstart(tv + m.start())] += 1
+    subs = []
+    for f in hits:
+        body = list(md.disasm(code[f-tv:f-tv+1500], base + f))
+        txt = [f"{i.mnemonic} {i.op_str}" for i in body[:400]]
+        if any(t.startswith("cmovs") or t.startswith("sub ") and hex(o) in t for t in txt):
+            subs.append(f)
+    print(f"== {o:#x}: {len(hits)} functions touch it; with a sub or cmovs: {[hex(f) for f in subs]}")
+    for f in subs[:12]:
+        print(f"  callers of {f:#x}: " + ", ".join(sorted({hex(wstart(x)) + (' ' + kname[wstart(x)] if wstart(x) in kname else '') for x in wg.get(f, ())})[:12]))
+        wdis(f, 80)
+wdis(0x4c1cd0, 120)
+wdis(0x4b7140, 30)
+ldis("_ZN11CBaseObject20SetupAttachedVersionEv", 40) if "_ZN11CBaseObject20SetupAttachedVersionEv" in byname else print("no SetupAttachedVersion")
+ldis("_ZN11CBaseObject18ShouldPlayersAvoidEv", 20) if "_ZN11CBaseObject18ShouldPlayersAvoidEv" in byname else None
+ldis("_ZN17CObjectTeleporter25InitializeMapPlacedObjectEv", 60)
 
 # The vtables: Linux rows beside Windows rows with the head of each function
 def head(rva, n=7):
@@ -133,9 +157,8 @@ def rows(path):
         m = re.match(r"\+0x([0-9a-f]+):\s+([0-9a-f]+)\s*(.*)", line)
         if on and m: out.append((int(m.group(1), 16) // 4, int(m.group(2), 16), m.group(3)))
     return out
-for cls, key, lo, hi in (("CBaseObject", "InitializeMapPlacedObject", 12, 12), ("CObjectSentrygun", "InitializeMapPlacedObject", 12, 12),
-                         ("CBaseProjectile", "IsDestroyable", 10, 10), ("CTFProjectile_Rocket", "IsDestroyable", 10, 10),
-                         ("CTFGrenadePipebombProjectile", "IsDestroyable", 10, 10)):
+for cls, key, lo, hi in (("CObjectDispenser", "InitializeMapPlacedObject", 8, 6), ("CObjectTeleporter", "InitializeMapPlacedObject", 8, 6),
+                         ("CObjectSentrygun", "InitializeMapPlacedObject", 30, 4)):
     try:
         L = rows(f"derived/linux-vtables/{cls}.txt"); W = rows(f"derived/win-vtables/{cls}.txt")
     except Exception as e:
