@@ -1939,5 +1939,10 @@
  "_Z14TE_TFExplosionR16IRecipientFilterfRK6VectorS3_iiiii": {
   "rva": "0x4706b0",
   "why": "read by hand: copies origin and normal to +0xc and +0x18 of the global at 0x10b406f0, which the static initializer builds with the name \"TFExplosion\", then the five ints to +0x24 through +0x34, and calls CBaseTempEntity::Create (0x434c20) with (filter, delay), the Linux body at the same offsets. 11 callers as on Linux, among them CTFBaseRocket::Explode, CTFWeaponBaseGrenadeProj::Explode, CTFProjectile_Flare::Explode_Air, CTFStickBomb::Smack and CTFPlayer::DoTauntAttack twice. cdecl, plain ret"
+ },
+ "_ZN21CScriptConvarAccessor8SetValueEPKc12CVariantBaseI24CVariantDefaultAllocatorE": {
+  "rva": "0x38a270",
+  "name": "CScriptConvarAccessor::SetValue",
+  "why": "read by hand: VScript's Convars.SetValue, the Linux body (0x89a850) in order: returns on a null or empty name, looks the name up in the allow list (+0xc) and warns when absent, ConVarRef and IsValid, the 0x20000020 flags test, a switch on the variant's type, then g_pGameRules->SaveConvar; thiscall, ret 0x14 for the name and the 16-byte variant; CMemberScriptBinding's Call thunk 0x380400 reaches it"
  }
 }
