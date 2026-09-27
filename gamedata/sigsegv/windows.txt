@@ -2237,6 +2237,15 @@
 					lib   "server"
 					// consensus, ret 12 as its arguments say
 				}
+				"CBasePlayer::SetFOV"
+				{
+					type  "fixed"
+					sym   "_ZN11CBasePlayer6SetFOVEP11CBaseEntityifi"
+					addr  "0x20e3a0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: returns false for a null requester, reads m_hZoomOwner (+0xc88, Linux +0xca0) and asks CanOverrideEnvZoomOwner (0x251300) when another owner holds it, clears it for fov 0 or sets it to the requester's handle, takes GetFOV (0x2e1a00) when zoomStart is not positive, then stores m_iFOVStart (+0xc74), curtime (+0xc78), m_iFOV (+0xc6c) and m_Local.m_flFOVRate (+0x8bc) as Linux does at +0x18 higher; thiscall, ret 0x10, 40 callers
+				}
 				"CBasePlayer::WantsLagCompensationOnEntity"
 				{
 					type  "fixed"
@@ -4357,6 +4366,26 @@
 					vtidx "267"
 					// vtable
 				}
+				"CTFSword::GetSwordHealthMod"
+				{
+					type  "fixed"
+					sym   "_ZN8CTFSword17GetSwordHealthModEv"
+					addr  "0x62ca00"
+					build "10828683"
+					lib   "server"
+					vtidx "488"
+					// verified: read by hand: CTFSword's last primary slot +0x7a0 (Linux +0x7c0): 0 without an owner that IsPlayer (vtable +0x14c) or when CanDecapitate (vtable +0x790) is false, else min(m_iDecapitations (+0x1f10), 4) * 15 as shl 4 and sub, the Linux body; thiscall, plain ret
+				}
+				"CTFSword::GetSwordSpeedMod"
+				{
+					type  "fixed"
+					sym   "_ZN8CTFSword16GetSwordSpeedModEv"
+					addr  "0x62c980"
+					build "10828683"
+					lib   "server"
+					vtidx "487"
+					// verified: read by hand: CTFSword's slot +0x79c (Linux +0x7bc, the same seven-slot shift as CanDecapitate +0x790 against +0x7ac): returns 1.0 while the holster flag (+0x828, Linux +0x831, the byte CTFDecapitationMeleeWeaponBase::Holster sets) is set, 0 without an owner that IsPlayer (vtable +0x14c, Linux +0x150), 1.0 when CanDecapitate (vtable +0x790) is false, else min(m_iDecapitations (+0x1f10), 4) times a constant plus a constant, the Linux body (0.08 and 1.0); thiscall, plain ret
+				}
 				"CTFTankBoss::Event_Killed"
 				{
 					type  "fixed"
@@ -4562,6 +4591,15 @@
 					lib   "server"
 					vtidx "0"
 					// vtable index
+				}
+				"CTriggerCamera::Disable"
+				{
+					type  "fixed"
+					sym   "_ZN14CTriggerCamera7DisableEv"
+					addr  "0x3667e0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: resolves m_hPlayer (+0x384, Linux +0x39c) and asks IsAlive (vtable +0x10c, Linux +0x110), clears the not-solid flag through SetSolidFlags when spawnflags bit 0x20 is set, SetViewEntity (0x2e90c0) with the player, EnableControl(true) (0x2e04d0), shows the active weapon again and DispatchUpdateTransmitState, ThinkSet(NULL), FireOutput of m_OnEndFollow, SetLocalAngularVelocity, the Linux order; the camera's Move (0x368910) calls it when SF_CAMERA_PLAYER_INTERRUPT is set and the player's buttons changed, as Linux Move calls Disable; thiscall, plain ret
 				}
 				"CTriggerCamera::Enable"
 				{
@@ -5302,6 +5340,15 @@
 					build "10828683"
 					lib   "server"
 					// verified: read by hand: a pointer; GetSteamUGC reads it and then steamapicontext at 0x992284, as Linux reads 0x176e590 then 0x176e594, and GameServerSteamAPIActivated and Shutdown read it as Linux does; the file points it at the static context
+				}
+				"g_FreeEdicts"
+				{
+					type  "fixed"
+					sym   "_ZL12g_FreeEdicts"
+					addr  "0x655dd0"
+					build "10828683"
+					lib   "engine"
+					// verified: read by hand: engine.dll's ED_ClearFreeFlag (0x1bd410) checks the index against sv.num_edicts (0x5eb48c), tests FL_EDICT_FREE in sv.edicts[index], decrements sv.free_edicts and clears bit index of this CBitVec (btr on dword index>>5), as the Linux engine clears g_FreeEdicts
 				}
 				"g_HostState"
 				{
@@ -6353,6 +6400,15 @@
 					build "10828683"
 					lib   "server"
 					// call, ret 24 as its arguments say
+				}
+				"TE_TFBlood"
+				{
+					type  "fixed"
+					sym   "_Z10TE_TFBloodR16IRecipientFilterfRK6VectorS3_i"
+					addr  "0x460c50"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: copies the origin and normal vectors and the entity index into the static CTETFBlood at 0xa9d148 (+0xc to +0x24, the Linux object's layout at 0x18677c0) and tail-calls CBaseTempEntity::Create (0x434c20) on it with the filter and delay, as the Linux body does; cdecl, one caller
 				}
 				"CalculateMeleeDamageForce"
 				{
@@ -10677,6 +10733,42 @@
 					build "10828683"
 					lib   "server"
 					// verified: read by hand: the function slot 0 of CBaseProjectile's table (0x20f610, the scalar deleting destructor: flags test, free, ret 4) calls before freeing, and that CTFBaseProjectile's (0x533c80), CTFBaseRocket's (0x63f250) and CBaseGrenade's (0x209f10) call after writing their own vtables; the rocket, arrow, flare, energy ball, pipebomb and jar tables reach it through their bases' plain destructors (0x63f230, 0x209ee0). It writes CBaseProjectile's vtable and its IBaseProjectileAutoList one at +0x4ac, creates a game event, looks up the attacker, sets three keys and fires it (or frees it), purges two CUtlVectors, removes itself from the auto list and jumps to ~CBaseAnimating (0x1c8b20), the Linux D2 body in order; no argument
+				}
+				"CTFPointWeaponMimic::FireRocket"
+				{
+					type  "fixed"
+					sym   "_ZN19CTFPointWeaponMimic10FireRocketEv"
+					addr  "0x5e1c60"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the jump table InputFireMultiple (0x5e2460) indexes with m_nWeaponType (+0x384, Linux +0x39c) sends type 0 here, the Linux FireRocket's case; after GetFiringAngles (0x5e22b0) it calls CTFProjectile_Rocket::Create (0x536410) as Linux does; thiscall, no arguments. Fire itself is inlined on Windows
+				}
+				"CTFPointWeaponMimic::FireGrenade"
+				{
+					type  "fixed"
+					sym   "_ZN19CTFPointWeaponMimic11FireGrenadeEv"
+					addr  "0x5e1950"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the jump table InputFireMultiple (0x5e2460) indexes with m_nWeaponType (+0x384, Linux +0x39c) sends type 1 here, the Linux FireGrenade's case; GetFiringAngles (0x5e22b0), AngleVectors, then 0x1ee780 with "tf_projectile_pipe" (Linux: CreateNoSpawn of it) and DispatchSpawn, the smaller of the two pipe functions as on Linux; thiscall, no arguments
+				}
+				"CTFPointWeaponMimic::FireArrow"
+				{
+					type  "fixed"
+					sym   "_ZN19CTFPointWeaponMimic9FireArrowEv"
+					addr  "0x5e1740"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the jump table InputFireMultiple (0x5e2460) indexes with m_nWeaponType (+0x384, Linux +0x39c) sends type 2 here, the Linux FireArrow's case; GetFiringAngles (0x5e22b0) then the arrow's Create (0x5fab70) and the same two virtual calls on the projectile as the Linux body; thiscall, no arguments
+				}
+				"CTFPointWeaponMimic::FireStickyGrenade"
+				{
+					type  "fixed"
+					sym   "_ZN19CTFPointWeaponMimic17FireStickyGrenadeEv"
+					addr  "0x5e1e60"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the jump table InputFireMultiple (0x5e2460) indexes with m_nWeaponType (+0x384, Linux +0x39c) sends type 3 here, the Linux FireStickyGrenade's case; GetFiringAngles (0x5e22b0), AngleVectors, 0x1ee780 with "tf_projectile_pipe" (Linux: CreateNoSpawn of it), the larger of the two pipe functions as on Linux; thiscall, no arguments
 				}
 			}
 		}
