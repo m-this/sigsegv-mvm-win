@@ -1,7 +1,7 @@
 #!/bin/bash
-# Round six: BroadcastSound against its base, the inputs without a static
-# datamap record, TE_TFParticleEffect's overloads, BetweenRounds_Think, and
-# neighbours for the rest of the Pop mods' targets.
+# Round seven: BetweenRounds_Think at slot 207, the particle dispatchers, the
+# static EmitSound, ScreenShake, DropCurrencyPack, and the callees of known
+# callers for the small ones.
 python3 - <<'PY'
 import re, bisect, collections, capstone, pefile
 from elftools.elf.elffile import ELFFile
@@ -228,67 +228,43 @@ def side(cls, lo, hi, shift=0):
         ws = f"W[{k-shift}] {w:#x} ret {wpop(w)} {whead(w, 4)}" if w is not None else ""
         print(f"  L[{k}] {l[:60]:60} | {ws[:150]}")
 
-def lite(sym, show=3):
-    print(f"######## lite {sym}")
-    if sym not in byname: print("  missing"); return
-    a, n = byname[sym]
-    import io, contextlib
-    buf = io.StringIO()
-    with contextlib.redirect_stdout(buf): callees, callers = ldis(sym, 0)
-    print(f"  linux size {n}, strings {lstrings(sym)[:8]}")
-    print(f"  linux callees: {list(dict.fromkeys(callees))[:15]}")
-    print(f"  linux callers: {callers[:12]}")
-    for s in lstrings(sym)[:4]:
-        fs = wrefs(eval(s))
-        for f in fs[:4]: print(f"    {f:#x} ret {wpop(f)}  {whead(f, 5)}")
-    cnt, cc, kc = wfind(callees, callers)
-    for f, k in cnt.most_common(show): print(f"    {f:#x} votes {k} ret {wpop(f)}  {whead(f, 5)}")
 
+def callees_of(rva, label=""):
+    print(f"######## callees of {rva:#x} {label}")
+    seen = []
+    for t in wcallees(rva, 0x3000):
+        if t not in seen: seen.append(t)
+    for t in seen:
+        if tv <= t < tv + len(code):
+            print(f"    {t:#x} ret {wpop(t)} {kname.get(t, '')} {whead(t, 5)}")
 
 for sym, rva in [
- ("_ZN24CTeamplayRoundBasedRules14BroadcastSoundEiPKciP11CBasePlayer", 0x34dab0),
- ("_ZN12CTFGameRules14BroadcastSoundEiPKciP11CBasePlayer", 0x4836e0),
+ ("_ZN12CTFGameRules19BetweenRounds_ThinkEv", 0x483430),
+ ("_Z22DispatchParticleEffectPKc20ParticleAttachment_tP11CBaseEntityib", 0x2a9d10),
+ ("_Z22DispatchParticleEffectPKc20ParticleAttachment_tP11CBaseEntityS0_6VectorS4_bb", 0x2a9b30),
+ ("_Z22DispatchParticleEffectPKc6VectorS1_6QAngleP11CBaseEntity", 0x2a9900),
+ ("_Z22CreateSpellSpawnZombieP20CBaseCombatCharacterRK6Vectori", 0x5aca40),
+ ("_Z22CreateSpellSpawnZombieP20CBaseCombatCharacterRK6Vectori", 0x5bb460),
+ ("_ZN11CBaseEntity9EmitSoundER16IRecipientFilteriPKcPK6VectorfPf", 0x32e640),
+ ("_Z16UTIL_ScreenShakeRK6Vectorffff14ShakeCommand_tb", 0x288200),
+ ("_ZN9CTFPlayer16DropCurrencyPackE17CurrencyRewards_tibP11CBasePlayer", 0x4eba20),
+ ("_ZN15CTFGameMovement19PreventBunnyJumpingEv", 0x473000),
 ]:
-    ldis(sym, 80); wdis(rva, 80)
-print("######## who is 0x2f6ff0 (the static InputForceSpawn record)")
-wcalls(0x2f6ff0)
-for sym, rva in [("_ZN13CFuncRotating9InputStopER11inputdata_t", 0x2a7720), ("_ZN13CFuncRotating9InputStopER11inputdata_t", 0x359600)]:
-    cmp2(sym, rva)
-ldis("_ZN13CFuncRotating9InputStopER11inputdata_t", 60)
-print("######## TE_TFParticleEffect overloads on Linux")
-for n in sorted(byname):
-    if "TE_TFParticleEffect" in n: print(f"  {n} callers {len({lholder(s) for s in lg.get(byname[n][0], ())})} size {byname[n][1]}")
-wdis(0x470860, 60)
-wdis(0x470750, 40)
-ldis("_Z19TE_TFParticleEffectR16IRecipientFilterfPKc6Vector6QAngleP11CBaseEntity20ParticleAttachment_t", 60)
-print("######## BetweenRounds_Think")
-ldis("_ZN12CTFGameRules19BetweenRounds_ThinkEv", 200)
-wdis(0x498ba0, 120)
-side("CTFGameRules", 200, 212, 1)
-for sym in [
- "_ZN15CTeamRoundTimer12InputSetTimeER11inputdata_t",
- "_ZN15CTFGameMovement19PreventBunnyJumpingEv",
- "_ZN9CTFPlayer16DropCurrencyPackE17CurrencyRewards_tibP11CBasePlayer",
- "_ZN24CTeamplayRoundBasedRules28GetMinTimeWhenPlayerMaySpawnEP11CBasePlayer",
- "_ZN9CUpgrades12UpgradeTouchEP11CBaseEntity",
- "_Z21UTIL_EntitiesInSphereRK6VectorfP20CFlaggedEntitiesEnum",
- "_ZN15CTFReviveMarker6CreateEP9CTFPlayer",
- "_ZNK12CTFGameRules13IsUsingSpellsEv",
- "_ZN14CTFSniperRifle15CreateSniperDotEv",
- "_ZN12CTFSpellBook16SetSelectedSpellEi",
- "_ZNK20CTFPlayerClassShared16GetHandModelNameEi",
- "_Z22CreateSpellSpawnZombieP20CBaseCombatCharacterRK6Vectori",
- "_Z16UTIL_ScreenShakeRK6Vectorffff14ShakeCommand_tb",
- "_ZN11CBaseEntity9EmitSoundER16IRecipientFilteriPKcPK6VectorfPf",
- "_ZNK15CTFFlameManager19GetFlameDamageScaleEPK10tf_point_tP9CTFPlayer",
- "_ZN21CHeadlessHatmanAttack21RecomputeHomePositionEv",
- "_Z22DispatchParticleEffectPKc20ParticleAttachment_tP11CBaseEntityib",
- "_Z22DispatchParticleEffectPKc6VectorS1_6QAngleP11CBaseEntity",
- "_Z22DispatchParticleEffectPKc20ParticleAttachment_tP11CBaseEntityS0_6VectorS4_bb",
- "_Z22DispatchParticleEffectPKc6Vector6QAngleS1_S1_bP11CBaseEntityi",
- "_ZN18CFlagDetectionZone19EntityIsFlagCarrierEP11CBaseEntity",
- "_ZN6CTFBot13OnWeaponFiredEP20CBaseCombatCharacterP17CBaseCombatWeapon",
-]:
-    try: lite(sym)
+    try: cmp2(sym, rva)
     except Exception as e: print("  error", e)
+print("######## DispatchParticleEffect overloads on Linux")
+for n in sorted(byname):
+    if n.startswith("_Z22DispatchParticleEffect"): print(f"  {n} callers {len({lholder(s) for s in lg.get(byname[n][0], ())})} size {byname[n][1]}")
+for r in (0x2a9900, 0x2a9a10, 0x2a9b30, 0x2a9d10):
+    print(f"  win {r:#x} callers {len({wstart(s) for s in wg.get(r, ())})} ret {wpop(r)}")
+for f in (0x2a9d10, 0x2a9900):
+    wdis(f, 30)
+for rva, label in [(0x5bc7e0, "RollNewSpell"), (0x3a0270, "UpdateModelToClass"), (0x62bda0, "CTFSniperRifleClassic::ItemPostFrame"), (0x3ca340, "GetBaseItemForClass"), (0x4720e0, "CheckJumpButton")]:
+    callees_of(rva, label)
+side("CTeamplayRoundBasedRules", 226, 243, 2)
+side("CTFGameRules", 226, 250, 2)
+ldis("_ZN24CTeamplayRoundBasedRules28GetMinTimeWhenPlayerMaySpawnEP11CBasePlayer", 50)
+ldis("_ZN12CTFSpellBook16SetSelectedSpellEi", 40)
+ldis("_ZNK20CTFPlayerClassShared16GetHandModelNameEi", 20)
+ldis("_ZN14CTFSniperRifle15CreateSniperDotEv", 30)
 PY

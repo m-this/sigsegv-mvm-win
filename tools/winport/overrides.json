@@ -422,8 +422,9 @@
   "why": "references both 'Gamerules: entering state' strings and compares this+0x3cc against the argument first, as Linux does; the other referrer is an inlined copy"
  },
  "_ZN24CTeamplayRoundBasedRules14BroadcastSoundEiPKciP11CBasePlayer": {
-  "rva": "0x4836e0",
-  "why": "string lead, agreed by strings: 2 shared string(s), 0/0 matched callees, windows/linux size 160/144"
+  "rva": "0x34dab0",
+  "vtidx": 219,
+  "why": "read by hand: slot 219 of CTeamplayRoundBasedRules' table; creates 'teamplay_broadcast_audio', sets team, sound and additional_flags and fires it, the Linux body with no player key; ret 16. The string lead that had it at 0x4836e0 took CTFGameRules' override, which shares those strings"
  },
  "_ZN27CTFProjectile_GrapplingHook10HookTargetEP11CBaseEntity": {
   "rva": "0x5fb0f0",
@@ -1650,5 +1651,14 @@
  "_ZN21CTFBotTacticalMonitor20FindNearbyTeleporterEP6CTFBot": {
   "rva": "0x575790",
   "why": "read by hand: TheTFNavMesh()->CollectBuiltObjects as in the Linux body; ret 4, one direct caller as on Linux (the monitor's Update), among CTFBotTacticalMonitor's functions"
+ },
+ "_ZN12CTFGameRules14BroadcastSoundEiPKciP11CBasePlayer": {
+  "rva": "0x4836e0",
+  "vtidx": 219,
+  "why": "read by hand: slot 219 of CTFGameRules' table, where CTeamplayRoundBasedRules has 0x34dab0; drops the player unless its virtual at +0x14c (Linux +0x150) says so, then fires 'teamplay_broadcast_audio' with team, sound, additional_flags and the player's user id, the Linux body; ret 16"
+ },
+ "_Z19TE_TFParticleEffectR16IRecipientFilterfPKc6Vector6QAngleP11CBaseEntity20ParticleAttachment_t": {
+  "rva": "0x470860",
+  "why": "read by hand: GetParticleSystemIndex on the name, the Vector at +0x14 and QAngle at +0x20 by value, the entity at +0x2c and attachment at +0x30 into the temp entity, the Linux argument layout; cdecl, plain ret; 60 direct callers, the most used overload as on Linux (45). 0x470750 is the two-Vector overload (arguments up to +0x38, two callers on each side)"
  }
 }
