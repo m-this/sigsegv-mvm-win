@@ -4346,12 +4346,22 @@ namespace Mod::Pop::PopMgr_Extensions
 		}
 	}
 
+	/* The game's GetBonusRoundTime takes (bool bGameOver) and on Windows pops
+	 * it, so the detour has to take it and pass it on. */
+#if defined _WINDOWS
+	DETOUR_DECL_MEMBER(int, CTFGameRules_GetBonusRoundTime, bool bGameOver)
+#else
 	DETOUR_DECL_MEMBER(int, CTFGameRules_GetBonusRoundTime)
+#endif
 	{
 		if (state.m_iLoseTime != -1) {
 			return state.m_iLoseTime;
 		}
+#if defined _WINDOWS
+		return DETOUR_MEMBER_CALL(bGameOver);
+#else
 		return DETOUR_MEMBER_CALL();
+#endif
 	}
 
 
