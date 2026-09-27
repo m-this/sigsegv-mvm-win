@@ -271,24 +271,16 @@ def lsyms(pat):
         if re.search(pat, n): print(f"  obj {a:#x} {n}")
 
 
-# Round three. SetThrower's Windows body, called from the (int, float) InitGrenade.
-wdis(0x20ae80, 200)
-wcallers(0x20ae80)
-# MakeNewTFMarker, IsTFMarked and TFMark as SelectSpawnArea (0x5ef2a0) calls them.
-for f in (0x5d5960, 0x5d5970, 0x5d5570, 0x5d63f0): wdis(f, 14)
-wcallers(0x5d5970)
-wglobal(0x9d23e8, 40, "(the TFMark global)")
-# Any small out-of-line SetScorer: stores a handle at +0x510 after asking GetRefEHandle.
-print("######## small windows bodies storing at +0x510 after a +8 virtual call")
-seen = set()
-for m in re.finditer(rb"\x89[\x80-\xbf]\x10\x05\x00\x00", code):
-    f = wstart(tv + m.start())
-    if f in seen: continue
-    seen.add(f)
-    n = wsize(f)
-    if n > 120: continue
-    body = list(md.disasm(code[f-tv:f-tv+n], base + f))
-    if any(i.mnemonic == "call" and i.op_str.endswith("+ 8]") for i in body):
-        print(f"  {f:#x} size {n} ret {wpop(f)} callers {len({wstart(s) for s in wg.get(f, ())})}")
-        wdis(f, 30)
+# Round four. Who calls SetScorer's body and SetThrower's second caller.
+for f in (0x5364b0, 0x20ae80, 0x5d5970):
+    fs = wcallers(f)
+    for c in fs: print(f"    {c:#x} ret {wpop(c)} {whead(c, 6)}")
+    pat = (base + f).to_bytes(4, "little")
+    for va, data in rdata:
+        at = data.find(pat)
+        while at != -1: print(f"    data reference at {va + at:#x}"); at = data.find(pat, at + 1)
+for f in (0x60f610, 0x56e250):
+    wcalls(f)
+for s_ in ("_ZN28CTFGrenadePipebombProjectile9DeflectedEP11CBaseEntityR6Vector", "_ZN24CTFBotDestroyEnemySentry23ComputeCornerAttackSpotEP6CTFBot", "_ZN16CObjectSentrygun10FireRocketEv"):
+    lcalls(s_)
 PY
