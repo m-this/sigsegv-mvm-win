@@ -1,2 +1,15 @@
 # Missions the bed plays instead of all of them, one per line: shard 0 plays
 # these and the other shards stop at once. Empty is the full sweep.
+mvm_creepside_b2_exp_celestial_broken_tomb
+mvm_deathpour_rc1_exp_blackout
+mvm_ghost_town_adv_horrorsome_happenings
+mvm_ghost_town_exp_deadweight
+mvm_ghost_town_int_cpu_spookies
+mvm_hideout_b3_adv_wet_warfare
+mvm_kelly_rc1b_adv_ominous_outback
+mvm_lotus_b6_adv_ledmotif
+mvm_nightsky_rc4d_int_mountain_of_fear
+mvm_rottenburg_adv_munich_mugging
+mvm_skeleclipse_b7a_adv_vicious_delicious
+mvm_sludge_b6_int_logging_dreadwood
+mvm_terrorlict_final1c5_adv_accursed_aggrievocation
