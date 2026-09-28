@@ -4666,6 +4666,15 @@
 					lib   "server"
 					// verified: string lead, agreed by strings: 2 shared string(s), 1/1 matched callees, windows/linux size 336/422
 				}
+				"CTFPistol_ScoutPrimary::Push"
+				{
+					type  "fixed"
+					sym   "_ZN22CTFPistol_ScoutPrimary4PushEv"
+					addr  "0x624560"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the one call ItemPostFrame (vtable +0x444, 0x6244c0, the only slot the class overrides next to it) makes once m_flPushTime (+0x800) has passed, before storing -1 there and chaining to the base; the Linux ItemPostFrame does the same. Its body gets the player owner, plays Weapon_Hands.PushImpact's sound set, computes the enemy team (2 to 3, 3 to 2) and collects that team's players (CollectPlayers, 0x4505c0), then traces and shoves each, the Linux order; thiscall, plain ret
+				}
 				"CTFPistol_ScoutSecondary::GetDamageType"
 				{
 					type  "fixed"
@@ -6783,6 +6792,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CollectPlayers<CTFPlayer>"
+				{
+					type  "fixed"
+					sym   "_Z14CollectPlayersI9CTFPlayerEiP10CUtlVectorIPT_10CUtlMemoryIS3_iEEibb"
+					addr  "0x4505c0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: clears the vector's count unless shouldAppend (arg 4), walks players 1 to maxClients through UTIL_PlayerByIndex (0x36d470), keeps one with an edict and IsPlayer (vtable +0x14c), skips one whose field at +0xe74 is 2 (Linux +0xe8c), lets team -2 through or compares GetTeamNumber with arg 2, then the isAlive test and the append, the Linux body. cdecl, plain ret; called with (vector, team, isAlive, append) and add esp, 0x10 by UpdateMission (0x5f0791), UpdateMissionDestroySentries (0x5f0dab) and ScoutPrimary::Push (0x624601)
 				}
 				"CServerGameDLL::ServerActivate"
 				{

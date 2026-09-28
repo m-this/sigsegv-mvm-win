@@ -1969,5 +1969,13 @@
   "rva": "0x15d760",
   "vtidx": 460,
   "why": "read by hand from the weapon vtables, seven below Linux from IsEnergyWeapon (453/446) and GetParticleColor (457/450) on: SetBroken(bool) 461 is the empty ret 4 at 454, GetDropSkinOverride 465 is the -1 return at 458, and CTFCompoundBow, which overrides GetInitialAfterburnDuration (466), has its own body at 459 where CTFWeaponBuilder has the base one. 460 is the base's 0.0f return, folded with IBody::GetHeadSteadyDuration, so the slot names it and the detour on it is refused as folded"
+ },
+ "_ZN22CTFPistol_ScoutPrimary4PushEv": {
+  "rva": "0x624560",
+  "why": "read by hand: the one call ItemPostFrame (vtable +0x444, 0x6244c0, the only slot the class overrides next to it) makes once m_flPushTime (+0x800) has passed, before storing -1 there and chaining to the base; the Linux ItemPostFrame does the same. Its body gets the player owner, plays Weapon_Hands.PushImpact's sound set, computes the enemy team (2 to 3, 3 to 2) and collects that team's players (CollectPlayers, 0x4505c0), then traces and shoves each, the Linux order; thiscall, plain ret"
+ },
+ "_Z14CollectPlayersI9CTFPlayerEiP10CUtlVectorIPT_10CUtlMemoryIS3_iEEibb": {
+  "rva": "0x4505c0",
+  "why": "read by hand: clears the vector's count unless shouldAppend (arg 4), walks players 1 to maxClients through UTIL_PlayerByIndex (0x36d470), keeps one with an edict and IsPlayer (vtable +0x14c), skips one whose field at +0xe74 is 2 (Linux +0xe8c), lets team -2 through or compares GetTeamNumber with arg 2, then the isAlive test and the append, the Linux body. cdecl, plain ret; called with (vector, team, isAlive, append) and add esp, 0x10 by UpdateMission (0x5f0791), UpdateMissionDestroySentries (0x5f0dab) and ScoutPrimary::Push (0x624601)"
  }
 }
