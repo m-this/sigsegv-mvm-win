@@ -147,6 +147,19 @@ private:
 	static MemberFuncThunk<CTFSpellBook *, void, int, bool> ft_RollNewSpell;
 };
 
+#if defined _WINDOWS
+/* The game's interface, in its declaration order, which is the order of its
+ * vtable. Only the bow's stub calls it. */
+class ITFChargeUpWeapon
+{
+public:
+	virtual bool CanCharge() = 0;
+	virtual float GetChargeBeginTime() = 0;
+	virtual float GetChargeMaxTime() = 0;
+	virtual float GetCurrentCharge() = 0;
+};
+#endif
+
 class CTFCompoundBow : public CTFPipebombLauncher
 {
 public:
@@ -159,8 +172,16 @@ public:
 	 * type to pass to rtti_cast... what a mess */
 //	bool CanCharge()           { return vt_CanCharge         (this); }
 //	float GetChargeBeginTime() { return vt_GetChargeBeginTime(this); }
+#if defined _WINDOWS
+	/* MSVC keeps an override of a secondary base's virtual in that base's own
+	 * vtable only, so on Windows these have no slot in the bow's primary one
+	 * and are called through its ITFChargeUpWeapon base. */
+	float GetChargeMaxTime()   { return rtti_cast<ITFChargeUpWeapon *>(this)->GetChargeMaxTime(); }
+	float GetCurrentCharge()   { return rtti_cast<ITFChargeUpWeapon *>(this)->GetCurrentCharge(); }
+#else
 	float GetChargeMaxTime()   { return vt_GetChargeMaxTime  (this); }
 	float GetCurrentCharge()   { return vt_GetCurrentCharge  (this); }
+#endif
 
 	DECL_SENDPROP(bool, m_bArrowAlight);
 	
