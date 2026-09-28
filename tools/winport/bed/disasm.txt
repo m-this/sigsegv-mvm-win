@@ -1,1 +1,3 @@
-# nothing asked
+# a rocket's radius damage faults at 0x48a90b reading +0xefc of a null pointer, called from CTFPlayer::OnTakeDamage (0x503f25)
+server +0x48a90b
+server +0x503f25
