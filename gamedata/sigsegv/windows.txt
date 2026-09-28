@@ -4897,6 +4897,15 @@
 					lib   "server"
 					// verified: read by hand: picks the class name by projectile type (0xb and 0x17 one name, 0x1a another, the rest tf_projectile_arrow), calls CBaseEntity::Create (0x1ee720) with (name, origin, angles, owner), and on success calls the arrow's init virtual (vtable +0x3dc) with (angles, speed, gravity, type, owner, scorer), the Linux body (+0x3e0). cdecl, plain ret
 				}
+				"CTFProjectile_Arrow::FadeOut"
+				{
+					type  "fixed"
+					sym   "_ZN19CTFProjectile_Arrow7FadeOutEi"
+					addr  "0x5fae40"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand from the ARROW_REMOVE_THINK reference at 0x5fae84: the function starting at 0x5fae40, past the jump table of the one before, does SetMoveType(0, 0), SetAbsVelocity(vec3_origin), adds FSOLID_NOT_SOLID and EF_NODRAW, then SetContextThink(RemoveThink, curtime + (float)its int argument, "ARROW_REMOVE_THINK"), the Linux FadeOut; BreakArrow (0x5fa110) is the same prologue with a constant delay and no argument. thiscall, the int on the stack
+				}
 				"CTFProjectile_Arrow::SetScorer"
 				{
 					type  "fixed"
