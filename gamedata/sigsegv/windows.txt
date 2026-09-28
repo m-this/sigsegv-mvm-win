@@ -4844,6 +4844,15 @@
 					lib   "server"
 					// string
 				}
+				"CTFProjectile_Flare::SetScorer"
+				{
+					type  "fixed"
+					sym   "_ZN19CTFProjectile_Flare9SetScorerEP11CBaseEntity"
+					addr  "0x5364b0"
+					build "10828683"
+					lib   "server"
+					// verified: read off the vtables: Flare's IScorer base is at +0x50c as Rocket's (Linux +0x524 for both), and its one slot is the same GetScorer, 0x5361a0, reading m_Scorer at +0x510. The Linux Flare body stores into +0x528 from its base at +0x524, Rocket's layout, so the folded Rocket/Arrow SetScorer serves Flare too; thiscall, ret 4 for its one argument. Unresolved, a flare fired by a temporary player kept that player as scorer, and mvm_autumnull_rc2_adv_dynamic_disaster faulted in a think right after the call
+				}
 				"CTFProjectile_GrapplingHook::HookTarget"
 				{
 					type  "fixed"

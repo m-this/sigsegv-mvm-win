@@ -1914,6 +1914,10 @@
   "rva": "0x5364b0",
   "why": "read by hand: stores the argument's handle (GetRefEHandle, vtable +8, Linux +0xc) or -1 into m_Scorer at +0x510, the handle IScorer::GetScorer (0x5361a0, from the IScorer base at +0x50c) reads; Linux stores at +0x528 from its base at +0x524. Rocket's and Arrow's Linux bodies are byte for byte the same and both classes keep m_Scorer at +0x510 on Windows, so the one folded body serves both; thiscall, ret 4 for its one argument. Sits between Rocket's GetScorer and Create"
  },
+ "_ZN19CTFProjectile_Flare9SetScorerEP11CBaseEntity": {
+  "rva": "0x5364b0",
+  "why": "read off the vtables: Flare's IScorer base is at +0x50c as Rocket's (Linux +0x524 for both), and its one slot is the same GetScorer, 0x5361a0, reading m_Scorer at +0x510. The Linux Flare body stores into +0x528 from its base at +0x524, Rocket's layout, so the folded Rocket/Arrow SetScorer serves Flare too; thiscall, ret 4 for its one argument. Unresolved, a flare fired by a temporary player kept that player as scorer, and mvm_autumnull_rc2_adv_dynamic_disaster faulted in a think right after the call"
+ },
  "_ZN10CTFNavArea15MakeNewTFMarkerEv": {
   "rva": "0x5d5970",
   "why": "read by hand: inc dword [0x9d23e8]; ret, the Linux add [m_masterTFMark], 1; ret. The same global is what TFMark (0x5d63f0) stores into +0x21c and IsTFMarked (0x5d5570) compares with it (Linux +0x220), and SelectSpawnArea (0x5ef2a0, by its VPROF string) calls it first and then GetGlobalTeam, CollectSurroundingAreas, IsTFMarked, TFMark and IsValidForWanderingPopulation, the Linux order; static, plain ret"
