@@ -182,6 +182,11 @@ Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort
 Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
   Select-String -Pattern 'CVirtualHook::FAIL .*|IMod::InvokeLoad: .*failed.*' | ForEach-Object { $_.Matches[0].Value } |
   Sort-Object -Unique | ForEach-Object { Write-Host "mod: $_" }
+# Each detour that did not load, by mod: a mechanic that silently does
+# nothing on Windows while the mod reports loaded.
+Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
+  Select-String -Pattern 'IHasDetours::LoadDetours: "([^"]+)" "([^"]+)" FAIL' | ForEach-Object { "$($_.Matches[0].Groups[1].Value): $($_.Matches[0].Groups[2].Value)" } |
+  Sort-Object -Unique | ForEach-Object { Write-Host "detour failed: $_" }
 # Where the frame callbacks spend a slow server's time, the last reports of
 # each console.
 Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort-Object Name | ForEach-Object {
@@ -283,12 +288,18 @@ Get-ChildItem "$Out\winbed-*.out", "$Out\winbed-*.err" -ErrorAction SilentlyCont
   Write-Host "--- tail of $($_.Name)"
   Get-Content $_.FullName -Tail 6 | Write-Host
 }
+# The entity count once a minute, from boot.ps1, with the mission it was in.
+if (Test-Path "$Out\entities.txt") {
+  Get-Content "$Out\entities.txt" | ForEach-Object { Write-Host "entities: $($_.Substring(0, [Math]::Min(260, $_.Length)))" }
+}
 if (Test-Path "$Out\results.jsonl") {
   Get-Content "$Out\results.jsonl" | ForEach-Object {
     try {
       $r = $_ | ConvertFrom-Json
       $why = if ($r.error) { $r.error.Substring(0, [Math]::Min(120, $r.error.Length)) } else { '' }
       Write-Host ("wave {0} w{1} {2} {3} {4}s {5}" -f $r.mission, $r.wave, $r.state, $r.outcome, [int]$r.wall_seconds, $why)
+      # the counts the Linux bed prints too, to set the two side by side
+      Write-Host ("  counts: bots={0} tanks={1} bot_spawns={2} tank_spawns={3} kill_attempts={4} alive_at_end={5} remaining_at_end={6} game_seconds={7}" -f $r.bots, $r.tanks, $r.bot_spawns, $r.tank_spawns, $r.kill_attempts, $r.alive_at_end, $r.remaining_at_end, $r.game_seconds)
       # A wave that did not pass: what the probe last saw of it, bots alive,
       # robots left, spawns, which says whether the wave stalled or crawled.
       if ($r.state -ne 'passed') {
