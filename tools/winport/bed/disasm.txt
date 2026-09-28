@@ -1,2 +1,2 @@
-# CWave::IsDoneWithNonSupportWaves: does ActiveWaveUpdate call it, or carry it inlined?
-server func 0x5ece00 400
+# FireProjectile's switch on the projectile type: which Fire* each case calls (FireRocket, FireArrow, ...)
+server func 0x63ba00 400
