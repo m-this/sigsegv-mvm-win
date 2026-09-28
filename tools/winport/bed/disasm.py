@@ -23,6 +23,8 @@ symbols for:
     server dataref 0x8bcf08 16   every place outside code holding this RVA's address, with the
                                  dwords around it: a datamap's typedescription names its input
                                  function a few dwords after its field name
+    server vtable CTFWeaponBaseGun 477 4    slots 477.. of the class's primary vtable, found
+                                 from its RTTI name through the complete object locator
     server input InputChangeGrav the input function each datamap entry named exactly this holds,
                                  six dwords past the name, as InputFireMultiple's entry does
 """
@@ -148,6 +150,40 @@ class Module:
         if not found:
             print(f"== {target:#x} held nowhere outside code")
 
+    def vtable(self, cls, first, count):
+        """The primary vtable of a class, by its MSVC RTTI name: the type
+        descriptor holds ".?AV<cls>@@" 8 bytes in, the complete object
+        locator with offset 0 points at it, and the vtable starts one dword
+        after the pointer to that locator."""
+        data = self.pe.__data__
+        text_lo = self.text.VirtualAddress
+        text_hi = text_lo + self.text.Misc_VirtualSize
+        name = f".?AV{cls}@@".encode() + b"\0"
+        at = data.find(name)
+        if at == -1:
+            print(f"== {cls}: no RTTI name"); return
+        td = self.base + self.pe.get_rva_from_offset(at) - 8
+        found = False
+        at = data.find(td.to_bytes(4, "little"))
+        while at != -1:
+            col_off = at - 12
+            sig, off, cdoff = (int.from_bytes(data[col_off + 4 * k:col_off + 4 * k + 4], "little") for k in range(3))
+            if sig == 0 and off == 0:
+                col = self.base + self.pe.get_rva_from_offset(col_off)
+                ref = data.find(col.to_bytes(4, "little"))
+                while ref != -1:
+                    vt = ref + 4
+                    slots = []
+                    for k in range(first, first + count):
+                        v = int.from_bytes(data[vt + 4 * k:vt + 4 * k + 4], "little") - self.base
+                        slots.append(f"[{k}] {v:#x}{'' if text_lo <= v < text_hi else ' (not code)'}")
+                    print(f"== {cls} vtable at {self.pe.get_rva_from_offset(vt):#x}: " + ", ".join(slots))
+                    found = True
+                    ref = data.find(col.to_bytes(4, "little"), ref + 1)
+            at = data.find(td.to_bytes(4, "little"), at + 1)
+        if not found:
+            print(f"== {cls}: no offset-0 vtable")
+
     def inputs(self, name):
         """The datamap entries whose field name is exactly this string, and
         the input function each holds six dwords past the name pointer."""
@@ -206,6 +242,10 @@ def main():
                 continue
             if rest.startswith("string "):
                 mod.strings(rest[len("string "):])
+                continue
+            if rest.startswith("vtable "):
+                parts = rest.split()
+                mod.vtable(parts[1], int(parts[2]), int(parts[3]) if len(parts) > 3 else 1)
                 continue
             if rest.startswith("input "):
                 mod.inputs(rest.split()[1])
