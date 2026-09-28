@@ -2166,10 +2166,31 @@ namespace Mod::Pop::ECAttr_Extensions
 		
 		return DETOUR_MEMBER_CALL(info, pVictim, b1);
 	}
+	void ApplyRocketCustomVisuals(CBaseEntity *proj);
+
 	DETOUR_DECL_MEMBER(CTFProjectile_Rocket *, CTFWeaponBaseGun_FireRocket, CTFPlayer *player, int i1)
 	{
 		auto proj = DETOUR_MEMBER_CALL(player, i1);
-		
+		ApplyRocketCustomVisuals(proj);
+		return proj;
+	}
+
+#if defined _WINDOWS
+	/* MSVC inlined FireRocket into CTFWeaponBaseGun::FireProjectile: its one
+	 * weapon call to CTFProjectile_Rocket::Create is there (0x63bb15). The
+	 * rocket is dressed where it is made instead; a rocket whose owner is no
+	 * bot with RocketCustomModel or RocketCustomParticle is left as it was,
+	 * as FireRocket's detour leaves it. */
+	DETOUR_DECL_STATIC(CBaseEntity *, CTFProjectile_Rocket_Create, CBaseEntity *pLauncher, const Vector &vecOrigin, const QAngle &vecAngles, CBaseEntity *pOwner, CBaseEntity *pScorer)
+	{
+		auto proj = DETOUR_STATIC_CALL(pLauncher, vecOrigin, vecAngles, pOwner, pScorer);
+		ApplyRocketCustomVisuals(proj);
+		return proj;
+	}
+#endif
+
+	void ApplyRocketCustomVisuals(CBaseEntity *proj)
+	{
 		if (proj != nullptr) {
 			auto data = GetDataForBot(proj->GetOwnerEntity());
 			if (data != nullptr) {
@@ -2187,8 +2208,6 @@ namespace Mod::Pop::ECAttr_Extensions
 				}
 			}
 		}
-		
-		return proj;
 	}
 	
 	DETOUR_DECL_MEMBER(void, CTFWeaponBase_ApplyOnHitAttributes, CBaseEntity *ent, CTFPlayer *player, const CTakeDamageInfo& info)
@@ -2946,7 +2965,11 @@ namespace Mod::Pop::ECAttr_Extensions
 
 			MOD_ADD_DETOUR_MEMBER(CTFGameRules_ApplyOnDamageModifyRules, "CTFGameRules::ApplyOnDamageModifyRules");
 			
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_STATIC(CTFProjectile_Rocket_Create, "CTFProjectile_Rocket::Create");
+#else
 			MOD_ADD_DETOUR_MEMBER(CTFWeaponBaseGun_FireRocket, "CTFWeaponBaseGun::FireRocket");
+#endif
 			
 			MOD_ADD_DETOUR_MEMBER(CTFWeaponBase_ApplyOnHitAttributes, "CTFWeaponBase::ApplyOnHitAttributes");
 			
