@@ -1,1 +1,4 @@
-# nothing asked
+# FireWeaponAtEnemy candidate: IsAlive, attributes, taunting, tf_bot_fire_weapon_allowed, ret 4
+server 0x56a8d0 70
+server callers 0x56a8d0
+server string tf_bot_fire_weapon_allowed
