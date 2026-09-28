@@ -3169,6 +3169,15 @@
 					lib   "server"
 					// verified: vtable CAmmoPack[25], agreed by strings: 2 shared string(s), 3/3 matched callees, windows/linux size 48/62
 				}
+				"CBaseFilter::InputTestActivator"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseFilter18InputTestActivatorER11inputdata_t"
+					addr  "0x259520"
+					build "10828683"
+					lib   "server"
+					// verified: read from CBaseFilter's datamap: the one typedescription naming "InputTestActivator" and "TestActivator" (at 0x98d48c) holds 0x259520 as its input function, the slot InputFireMultiple's entry holds 0x5e2460 in (disasm.py input). thiscall, the inputdata_t reference on the stack
+				}
 				"CBaseFilter::PassesDamageFilter"
 				{
 					type  "fixed"
@@ -4209,6 +4218,15 @@
 					lib   "server"
 					// verified: read by hand: the function after TeleporterSend, the Linux body with offsets 0x18 lower: returns when +0xa30 is set, then sets itself as the 'TeleporterContext' think (pushes its own VA 0x104d1e00 to 0x2025e0, as the teleporter's spawn at 0x4d0680 does), tests +0xa20 and +0xa30, the 'bidirectional_teleport' hook, and switches on the state at +0xad0 (Linux +0xae8); thiscall, no arguments, plain ret. 0x4d1a70, the earlier match, is TeleporterSend
 				}
+				"CPointPopulatorInterface::InputChangeBotAttributes"
+				{
+					type  "fixed"
+					sym   "_ZN24CPointPopulatorInterface24InputChangeBotAttributesER11inputdata_t"
+					addr  "0x5e80f0"
+					build "10828683"
+					lib   "server"
+					// verified: read from CPointPopulatorInterface's datamap: the one typedescription naming "InputChangeBotAttributes" and "ChangeBotAttributes" (at 0x9d3020) holds 0x5e80f0 as its input function, the slot InputFireMultiple's entry holds 0x5e2460 in (disasm.py input). thiscall, the inputdata_t reference on the stack
+				}
 				"CPointTeleport::Activate"
 				{
 					type  "fixed"
@@ -4273,6 +4291,24 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CTargetChangeGravity::InputChangeGrav"
+				{
+					type  "fixed"
+					sym   "_ZN20CTargetChangeGravity15InputChangeGravER11inputdata_t"
+					addr  "0x2347c0"
+					build "10828683"
+					lib   "server"
+					// verified: read from CTargetChangeGravity's datamap: the one typedescription naming "InputChangeGrav" and "ChangeGrav" (at 0x980fc8) holds 0x2347c0 as its input function, the slot InputFireMultiple's entry holds 0x5e2460 in (disasm.py input). thiscall, the inputdata_t reference on the stack
+				}
+				"CTargetChangeGravity::InputResetGrav"
+				{
+					type  "fixed"
+					sym   "_ZN20CTargetChangeGravity14InputResetGravER11inputdata_t"
+					addr  "0x234820"
+					build "10828683"
+					lib   "server"
+					// verified: read from CTargetChangeGravity's datamap: the one typedescription naming "InputResetGrav" and "ResetGrav" (at 0x980ffc) holds 0x234820 as its input function, the slot InputFireMultiple's entry holds 0x5e2460 in (disasm.py input). thiscall, the inputdata_t reference on the stack
 				}
 				"CTeam::AddPlayer"
 				{
