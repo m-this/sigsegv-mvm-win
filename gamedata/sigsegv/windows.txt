@@ -11158,6 +11158,15 @@
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: calls all 6 of the Linux function's matched callees, and no string disagrees
 				}
+				"CTFPlayer::ChangeTeam"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer10ChangeTeamEibbb"
+					addr  "0x4e3c50"
+					build "10828683"
+					lib   "server"
+					// verified: unique string, 17 of 19 matched callees, and read by hand from its override: CTFBot::ChangeTeam (0x5505f0) first calls it with its four arguments pushed through unchanged, then the MvM block, the Linux CTFBot body. thiscall, ret 0x10. Once turned away because its detour faulted in CheckPlayerClassLimit with a this that was no player, on a build from before the detour fixes since
+				}
 				"CTFPlayer::ItemIsAllowed"
 				{
 					type  "fixed"
