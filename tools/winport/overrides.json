@@ -2035,5 +2035,9 @@
  "_ZN20CTargetChangeGravity14InputResetGravER11inputdata_t": {
   "rva": "0x234820",
   "why": "read from CTargetChangeGravity's datamap: the one typedescription naming \"InputResetGrav\" and \"ResetGrav\" (at 0x980ffc) holds 0x234820 as its input function, the slot InputFireMultiple's entry holds 0x5e2460 in (disasm.py input). thiscall, the inputdata_t reference on the stack"
+ },
+ "_ZN19CTFProjectile_Arrow7FadeOutEi": {
+  "rva": "0x5fae40",
+  "why": "read by hand from the ARROW_REMOVE_THINK reference at 0x5fae84: the function starting at 0x5fae40, past the jump table of the one before, does SetMoveType(0, 0), SetAbsVelocity(vec3_origin), adds FSOLID_NOT_SOLID and EF_NODRAW, then SetContextThink(RemoveThink, curtime + (float)its int argument, \"ARROW_REMOVE_THINK\"), the Linux FadeOut; BreakArrow (0x5fa110) is the same prologue with a constant delay and no argument. thiscall, the int on the stack"
  }
 }
