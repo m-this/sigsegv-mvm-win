@@ -1,2 +1,1 @@
-# the function the arrow's trail calls with (arrow, 1), which calls SetParent's detour
-server func 0x200d80 60
+# nothing asked
