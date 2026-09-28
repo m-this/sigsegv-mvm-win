@@ -2039,5 +2039,9 @@
  "_ZN19CTFProjectile_Arrow7FadeOutEi": {
   "rva": "0x5fae40",
   "why": "read by hand from the ARROW_REMOVE_THINK reference at 0x5fae84: the function starting at 0x5fae40, past the jump table of the one before, does SetMoveType(0, 0), SetAbsVelocity(vec3_origin), adds FSOLID_NOT_SOLID and EF_NODRAW, then SetContextThink(RemoveThink, curtime + (float)its int argument, \"ARROW_REMOVE_THINK\"), the Linux FadeOut; BreakArrow (0x5fa110) is the same prologue with a constant delay and no argument. thiscall, the int on the stack"
+ },
+ "_ZN16CTFBotMainAction17FireWeaponAtEnemyEP6CTFBot": {
+  "rva": "0x56a8d0",
+  "why": "ranked first by candidates.py (14 matched callees), read by hand: IsAlive through +0x10c, the bot attribute bits 3 and 10 (SUPPRESS_FIRE, IGNORE_ENEMIES) at +0x27b8, InCond(7) (taunting), a convar's value, GetActiveTFWeapon, then HoldFireUntilFullReload (bit 11) against the clip, the Linux body in its order; one caller, at 0x56dcdf. thiscall, the bot on the stack, ret 4"
  }
 }
