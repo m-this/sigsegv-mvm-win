@@ -157,13 +157,38 @@ if ($focus.Count -gt 0) {
 $reverse = @($missions | Where-Object { $_ -like '*_rev_*' })
 $missions = @($missions | Where-Object { $_ -notlike '*_rev_*' })
 Say "$($missions.Count) missions in this shard, $($reverse.Count) reverse ones left out"
+# Once a minute, the server's entity count and the classes holding the most,
+# by the engine's own report_entities: near the edict limit SigMod's entity
+# limit manager frees entities to make room, and a count that climbs across
+# waves on one platform and not the other is where the two part.
+$entityJob = Start-Job -ArgumentList (Get-Location).Path, $out -ScriptBlock {
+  param($dir, $out)
+  Set-Location $dir
+  for (;;) {
+    Start-Sleep 60
+    $env:SRCDS_RCON_HOST = Get-Content "$out\rcon-host.txt" -ErrorAction SilentlyContinue
+    $lines = @(& bedbin\rcon.exe report_entities 2>$null)
+    $total = $lines | Where-Object { $_ -match '^Total ' } | Select-Object -First 1
+    if (-not $total) { $total = "no total line, last: $($lines | Select-Object -Last 1)" }
+    # "Class: name (count)" per class, or "count name" in older builds
+    $top = $lines | ForEach-Object {
+      if ($_ -match '^Class: (\S+) \((\d+)\)') { [pscustomobject]@{ n = [int]$Matches[2]; c = $Matches[1] } }
+      elseif ($_ -match '^\s*(\d+)\s+(\S+)\s*$') { [pscustomobject]@{ n = [int]$Matches[1]; c = $Matches[2] } }
+    } | Sort-Object n -Descending | Select-Object -First 6 | ForEach-Object { "$($_.c) $($_.n)" }
+    $mission = Get-Content "$out\mission.txt" -ErrorAction SilentlyContinue
+    '{0:HH:mm:ss} {1} {2}; most: {3}' -f (Get-Date), $mission, $total, ($top -join ', ') | Add-Content "$out\entities.txt"
+  }
+}
 $failed = 0
 foreach ($mission in $missions) {
   if (-not (Alive) -and -not (Start-Bed)) { Say "giving up at ${mission}: the server does not start"; $failed++; break }
+  Set-Content "$out\rcon-host.txt" $script:address
+  Set-Content "$out\mission.txt" $mission
   & bedbin\waveprobe.exe -rcon "$($script:address):27015" -mission $mission @single >> "$out\results.jsonl" 2>> "$out\waveprobe.err"
   if ($LASTEXITCODE -ne 0) { $failed++ }
   if (-not (Alive)) { Say "died in ${mission}: $(Death-Reason)" }
 }
+Stop-Job $entityJob -ErrorAction SilentlyContinue
 Copy-Item "$tf\console.log" "$out\consoles\console-$($script:starts).log" -ErrorAction SilentlyContinue
 Say "$failed of $($missions.Count) missions failed, $($script:starts) server starts"
 if ($failed -gt 0) { exit 1 }

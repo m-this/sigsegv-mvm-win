@@ -109,6 +109,15 @@ jobs:
         done
         echo "rcon answers on ${addr:-nothing}"
         export SRCDS_RCON_HOST=$addr
+        # Once a minute, the entity count and the classes holding the most,
+        # as boot.ps1 records them on Windows.
+        ( while sleep 60; do
+            r=$(bedbin/rcon report_entities 2>/dev/null)
+            total=$(printf '%s\n' "$r" | grep -m1 '^Total ')
+            [ -n "$total" ] || total="no total line, last: $(printf '%s\n' "$r" | tail -1)"
+            top=$(printf '%s\n' "$r" | sed -nE 's/^Class: (\S+) \(([0-9]+)\).*/\2 \1/p; s/^\s*([0-9]+)\s+(\S+)\s*$/\1 \2/p' | sort -rn | head -6 | awk '{printf "%s %s, ", $2, $1}')
+            echo "$(date +%H:%M:%S) ${{ matrix.mission }} $total; most: $top" >> out/entities.txt
+          done ) &
         for c in "meta list" "sm exts list" "sm plugins list" "sig_list_mods"; do
           echo "## $c"; bedbin/rcon "$c" 2>&1 | tee "out/$(echo $c | tr ' ' _).txt" | head -60
         done
@@ -132,6 +141,7 @@ jobs:
         echo "-- winbed.out"; grep -v "VPK file hashes" out/winbed.out | tail -80 | cut -c1-300 || true
         echo "-- winbed.err"; tail -30 out/winbed.err || true
         echo "-- console tail"; grep -av "VPK file hashes" out/console.log | tail -80 | cut -c1-300 || true
+        echo "-- entities"; cut -c1-260 out/entities.txt 2>/dev/null || true
         echo "-- repeated console lines"
         sed 's/^L [0-9/ :-]*//' out/console.log 2>/dev/null | sort | uniq -c | sort -rn | head -30 | cut -c1-220
         echo "-- script errors"

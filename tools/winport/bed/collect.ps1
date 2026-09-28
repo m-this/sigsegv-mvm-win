@@ -283,6 +283,10 @@ Get-ChildItem "$Out\winbed-*.out", "$Out\winbed-*.err" -ErrorAction SilentlyCont
   Write-Host "--- tail of $($_.Name)"
   Get-Content $_.FullName -Tail 6 | Write-Host
 }
+# The entity count once a minute, from boot.ps1, with the mission it was in.
+if (Test-Path "$Out\entities.txt") {
+  Get-Content "$Out\entities.txt" | ForEach-Object { Write-Host "entities: $($_.Substring(0, [Math]::Min(260, $_.Length)))" }
+}
 if (Test-Path "$Out\results.jsonl") {
   Get-Content "$Out\results.jsonl" | ForEach-Object {
     try {
