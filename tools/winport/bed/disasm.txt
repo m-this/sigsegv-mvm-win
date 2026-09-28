@@ -1,1 +1,7 @@
-# nothing asked
+# SetParent's detour gets a parent that is no entity: who calls it from the arrow's Create
+server 0x200d30 50
+server callers 0x200d9a
+server 0x5fac40 40
+server 0x5fb640 30
+server 0x5fab70 80
+server func 0x1fc660 60
