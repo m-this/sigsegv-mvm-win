@@ -293,6 +293,8 @@ if (Test-Path "$Out\results.jsonl") {
       $r = $_ | ConvertFrom-Json
       $why = if ($r.error) { $r.error.Substring(0, [Math]::Min(120, $r.error.Length)) } else { '' }
       Write-Host ("wave {0} w{1} {2} {3} {4}s {5}" -f $r.mission, $r.wave, $r.state, $r.outcome, [int]$r.wall_seconds, $why)
+      # the counts the Linux bed prints too, to set the two side by side
+      Write-Host ("  counts: bots={0} tanks={1} bot_spawns={2} tank_spawns={3} kill_attempts={4} alive_at_end={5} remaining_at_end={6} game_seconds={7}" -f $r.bots, $r.tanks, $r.bot_spawns, $r.tank_spawns, $r.kill_attempts, $r.alive_at_end, $r.remaining_at_end, $r.game_seconds)
       # A wave that did not pass: what the probe last saw of it, bots alive,
       # robots left, spawns, which says whether the wave stalled or crawled.
       if ($r.state -ne 'passed') {

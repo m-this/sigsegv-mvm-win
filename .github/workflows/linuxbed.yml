@@ -136,6 +136,8 @@ jobs:
                 continue
             if "wave" in d:
                 print("wave", d.get("mission"), "w%s" % d.get("wave"), d.get("state"), d.get("outcome"), d.get("reason", ""), d.get("game_seconds"))
+                # the counts the Windows bed prints too, to set the two side by side
+                print("  counts:", " ".join("%s=%s" % (k, d.get(k)) for k in ("bots", "tanks", "bot_spawns", "tank_spawns", "kill_attempts", "alive_at_end", "remaining_at_end")))
         PY
         echo "-- waveprobe.err"; tail -20 out/waveprobe.err || true
         echo "-- winbed.out"; grep -v "VPK file hashes" out/winbed.out | tail -80 | cut -c1-300 || true
