@@ -1,0 +1,144 @@
+name: Linux bed
+
+# The missions the Windows bed does not finish, played on Linux with the
+# upstream SigMod the launcher pins, by the same installer (winbed), probe and
+# timeout. A mission that stops at the same wave here is not the port's.
+# linuxbed.txt names the missions, one per line.
+
+on:
+  push:
+    branches:
+      - 'linux-bed'
+  workflow_dispatch:
+    inputs:
+      archipelago_ref:
+        description: tf2-archipelago ref the bed tools are built from
+        default: sigmod-windows-bed
+
+concurrency:
+  group: linuxbed-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tools:
+    runs-on: ubuntu-24.04
+    outputs:
+      missions: ${{ steps.missions.outputs.list }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        path: win
+        sparse-checkout: tools/winport/bed
+    - id: missions
+      run: |
+        list=$(grep -v '^#' win/tools/winport/bed/linuxbed.txt | sed 's/#.*//' | awk 'NF{print $1}' | python3 -c 'import json,sys;print(json.dumps([l.strip() for l in sys.stdin if l.strip()]))')
+        echo "list=$list" >> "$GITHUB_OUTPUT"
+    - uses: actions/checkout@v4
+      with:
+        repository: m-this/tf2-archipelago
+        ref: ${{ inputs.archipelago_ref || 'sigmod-windows-bed' }}
+        path: ap
+    - uses: actions/setup-go@v5
+      with:
+        go-version-file: ap/go.mod
+    - name: Build
+      working-directory: ap
+      run: |
+        make launcher-assets-linux
+        mkdir -p dist/linuxbed
+        # The asset versions winbed installs, as `make winbed` links them in.
+        ldflags=$(make -s --no-print-directory -f Makefile -f <(printf 'print-ldflags:\n\t@echo $(LAUNCHER_LDFLAGS)\n') print-ldflags)
+        for c in winbed waveprobe rcon; do
+          GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -trimpath -ldflags="$ldflags" -o dist/linuxbed/$c ./launcher/cmd/$c
+        done
+        . deploy/env/versions.env
+        compiler=plugin/build/sourcemod-$SOURCEMOD_VERSION/addons/sourcemod/scripting/spcomp64
+        [ -x $compiler ] || compiler=${compiler%64}
+        $compiler -E -odist/linuxbed/tf2_waveprobe.smx plugin/scripting/tf2_waveprobe.sp
+    - uses: actions/upload-artifact@v4
+      with:
+        name: linuxbed-tools
+        path: ap/dist/linuxbed
+
+  bed:
+    needs: tools
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      matrix:
+        mission: ${{ fromJson(needs.tools.outputs.missions) }}
+    env:
+      WAVEPROBE_RCONPW: bed-${{ github.run_id }}
+      SRCDS_RCONPW: bed-${{ github.run_id }}
+      BED: /home/runner/bed
+    steps:
+    - uses: actions/download-artifact@v4
+      with: { name: linuxbed-tools, path: bedbin }
+    - name: Room and 32-bit libraries
+      run: |
+        chmod +x bedbin/winbed bedbin/waveprobe bedbin/rcon
+        sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL /usr/local/share/boost
+        sudo dpkg --add-architecture i386
+        sudo apt-get update -q
+        sudo apt-get install -y -q lib32gcc-s1 lib32stdc++6 libc6-i386 lib32z1 libtinfo6:i386 libncurses6:i386 libbz2-1.0:i386 libcurl4t64:i386 libcurl3t64-gnutls:i386 libsdl2-2.0-0:i386 > /dev/null
+        df -h /
+    - name: Install
+      run: |
+        bedbin/winbed -install -root "$BED" -probe bedbin/tf2_waveprobe.smx
+        # What a library srcds loads at boot cannot find, named rather than
+        # read off a restart loop.
+        cd "$BED/tf-dedicated"
+        for so in bin/replay_srv.so bin/engine_srv.so tf/bin/server_srv.so bin/dedicated_srv.so; do
+          echo "== $so"; LD_LIBRARY_PATH=bin ldd "$so" | grep -i "not found" || echo "all found"
+        done
+        ls -la ~/.steam/sdk32 2>/dev/null || echo "no ~/.steam/sdk32" 
+    - name: Play
+      run: |
+        mkdir -p out
+        tf="$BED/tf-dedicated/tf"
+        bedbin/winbed -serve -root "$BED" > out/winbed.out 2> out/winbed.err &
+        # srcds on a LAN reach binds rcon to the address its hostname
+        # resolves to, so try loopback and every IPv4 the runner has.
+        addr=
+        for i in $(seq 1 60); do
+          for a in 127.0.0.1 $(hostname -I); do
+            if SRCDS_RCON_HOST=$a bedbin/rcon status > /dev/null 2>&1; then addr=$a; break 2; fi
+          done
+          sleep 10
+        done
+        echo "rcon answers on ${addr:-nothing}"
+        export SRCDS_RCON_HOST=$addr
+        for c in "meta list" "sm exts list" "sm plugins list" "sig_list_mods"; do
+          echo "## $c"; bedbin/rcon "$c" 2>&1 | tee "out/$(echo $c | tr ' ' _).txt" | head -60
+        done
+        bedbin/waveprobe -rcon "$addr:27015" -mission "${{ matrix.mission }}" -mode normal -timeout 600s \
+          >> out/results.jsonl 2>> out/waveprobe.err || true
+        cp "$tf/console.log" out/ 2>/dev/null || true
+    - name: Report
+      if: always()
+      run: |
+        python3 - <<'PY'
+        import json
+        for line in open("out/results.jsonl", errors="replace"):
+            try:
+                d = json.loads(line)
+            except ValueError:
+                continue
+            if "wave" in d:
+                print("wave", d.get("mission"), "w%s" % d.get("wave"), d.get("state"), d.get("outcome"), d.get("reason", ""), d.get("game_seconds"))
+        PY
+        echo "-- waveprobe.err"; tail -20 out/waveprobe.err || true
+        echo "-- winbed.out"; grep -v "VPK file hashes" out/winbed.out | tail -80 | cut -c1-300 || true
+        echo "-- winbed.err"; tail -30 out/winbed.err || true
+        echo "-- console tail"; grep -av "VPK file hashes" out/console.log | tail -80 | cut -c1-300 || true
+        echo "-- repeated console lines"
+        sed 's/^L [0-9/ :-]*//' out/console.log 2>/dev/null | sort | uniq -c | sort -rn | head -30 | cut -c1-220
+        echo "-- script errors"
+        grep -a -c "AN ERROR HAS OCCURRED" out/console.log || true
+        grep -a -A3 "AN ERROR HAS OCCURRED" out/console.log | head -60 | cut -c1-220
+    - if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: linuxbed-${{ matrix.mission }}
+        path: out
