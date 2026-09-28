@@ -224,8 +224,13 @@ void IMod::InvokeLoad()
 	bool ok_detour = this->LoadDetours();
 #if defined _WINDOWS
 	/* a detour refused for a shared body goes on its vtable slot instead,
-	 * loaded with the mod's own virtual hooks just below */
+	 * loaded with the mod's own virtual hooks just below. Not for the Perf and
+	 * Prof mods: they exist to make the server faster or to measure it, and a
+	 * callback on a slot every entity calls (GetBaseEntity, GetModelIndex) made
+	 * a mission run a thousand times slower. */
+	bool perf = strncmp(this->GetName(), "Perf", 4) == 0 || strncmp(this->GetName(), "Prof", 4) == 0;
 	for (auto& [name, detour] : this->Detours()) {
+		if (perf) break;
 		if (detour->IsLoaded()) continue;
 		if (CVirtualHook *vhook = detour->AsVirtualHookWhenRefused(); vhook != nullptr) {
 			this->AddVirtualHook(vhook);
