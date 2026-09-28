@@ -2019,5 +2019,21 @@
  "_ZN19CTFPointWeaponMimic13InputFireOnceER11inputdata_t": {
   "rva": "0x5e24e0",
   "why": "read from CTFPointWeaponMimic's datamap: the typedescription naming \"InputFireOnce\" (0x8bcf08) and \"FireOnce\" holds 0x5e24e0 as its input function, in the slot where the FireMultiple entry holds InputFireMultiple (0x5e2460). thiscall, the inputdata_t reference on the stack"
+ },
+ "_ZN11CBaseFilter18InputTestActivatorER11inputdata_t": {
+  "rva": "0x259520",
+  "why": "read from CBaseFilter's datamap: the one typedescription naming \"InputTestActivator\" and \"TestActivator\" (at 0x98d48c) holds 0x259520 as its input function, the slot InputFireMultiple's entry holds 0x5e2460 in (disasm.py input). thiscall, the inputdata_t reference on the stack"
+ },
+ "_ZN24CPointPopulatorInterface24InputChangeBotAttributesER11inputdata_t": {
+  "rva": "0x5e80f0",
+  "why": "read from CPointPopulatorInterface's datamap: the one typedescription naming \"InputChangeBotAttributes\" and \"ChangeBotAttributes\" (at 0x9d3020) holds 0x5e80f0 as its input function, the slot InputFireMultiple's entry holds 0x5e2460 in (disasm.py input). thiscall, the inputdata_t reference on the stack"
+ },
+ "_ZN20CTargetChangeGravity15InputChangeGravER11inputdata_t": {
+  "rva": "0x2347c0",
+  "why": "read from CTargetChangeGravity's datamap: the one typedescription naming \"InputChangeGrav\" and \"ChangeGrav\" (at 0x980fc8) holds 0x2347c0 as its input function, the slot InputFireMultiple's entry holds 0x5e2460 in (disasm.py input). thiscall, the inputdata_t reference on the stack"
+ },
+ "_ZN20CTargetChangeGravity14InputResetGravER11inputdata_t": {
+  "rva": "0x234820",
+  "why": "read from CTargetChangeGravity's datamap: the one typedescription naming \"InputResetGrav\" and \"ResetGrav\" (at 0x980ffc) holds 0x234820 as its input function, the slot InputFireMultiple's entry holds 0x5e2460 in (disasm.py input). thiscall, the inputdata_t reference on the stack"
  }
 }
