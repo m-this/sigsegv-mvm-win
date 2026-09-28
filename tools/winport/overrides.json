@@ -2015,5 +2015,9 @@
   "rva": "0x14fa90",
   "vtidx": 233,
   "why": "read by hand from the projectile vtables, one below Linux (234) as in the slots before it: CBaseProjectile's slot 232 is the base IsDestroyable(bool) (xor al, al; ret 4) and slot 233 the shared ret 8, the Linux base's empty body for its two bools; CTFBaseRocket has its own Destroy there (0x6395c0), testing its second argument. Folded, so callers go through the slot"
+ },
+ "_ZN19CTFPointWeaponMimic13InputFireOnceER11inputdata_t": {
+  "rva": "0x5e24e0",
+  "why": "read from CTFPointWeaponMimic's datamap: the typedescription naming \"InputFireOnce\" (0x8bcf08) and \"FireOnce\" holds 0x5e24e0 as its input function, in the slot where the FireMultiple entry holds InputFireMultiple (0x5e2460). thiscall, the inputdata_t reference on the stack"
  }
 }
