@@ -1,4 +1,3 @@
-# CTFPointWeaponMimic's datamap: the FireOnce input's function, beside FireMultiple (0x5e2460)
-server string FireOnce
-server string FireMultiple
-server callers 0x5e22b0
+# CTFPointWeaponMimic's datamap entries: InputFireOnce and, to check the layout, InputFireMultiple (0x5e2460)
+server dataref 0x8bcf08 16
+server dataref 0x8bcf24 16
