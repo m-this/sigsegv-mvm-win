@@ -1,6 +1,1 @@
-# the input functions SigMod detours that have no Windows address yet
-server input InputTestActivator
-server input InputChangeBotAttributes
-server input InputChangeGrav
-server input InputResetGrav
-server input InputFireOnce
+# nothing asked
