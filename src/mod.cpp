@@ -222,6 +222,16 @@ void IMod::InvokeLoad()
 	
 	bool ok_patch  = this->LoadPatches();
 	bool ok_detour = this->LoadDetours();
+#if defined _WINDOWS
+	/* a detour refused for a shared body goes on its vtable slot instead,
+	 * loaded with the mod's own virtual hooks just below */
+	for (auto& [name, detour] : this->Detours()) {
+		if (detour->IsLoaded()) continue;
+		if (CVirtualHook *vhook = detour->AsVirtualHookWhenRefused(); vhook != nullptr) {
+			this->AddVirtualHook(vhook);
+		}
+	}
+#endif
 	bool ok_hooks = this->LoadVirtualHooks();
 	
 #if defined _WINDOWS
