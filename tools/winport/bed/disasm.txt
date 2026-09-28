@@ -1,2 +1,5 @@
-# FireProjectile's switch on the projectile type: which Fire* each case calls (FireRocket, FireArrow, ...)
-server func 0x63ba00 400
+# FireProjectile calls FireRocket through slot 0x774 (477): the base class's entry there, and its neighbours
+server vtable CTFWeaponBaseGun 475 12
+server vtable CTFRocketLauncher 475 12
+# FadeOut sets the ARROW_REMOVE_THINK context
+server string ARROW_REMOVE_THINK
