@@ -4304,6 +4304,15 @@
 					vtidx "336"
 					// verified: read by hand: empty on Linux (a lone ret), so on Windows it is the shared empty body, and only the slot says which virtual it is: slot 336 of CTFBaseBoss, the one before GetCurrencyValue (337, 0x5de290), where CTFTankBoss has its own bounds code (0x5f5010); Linux has two INextBot virtuals between them that MSVC keeps in the INextBot vtable
 				}
+				"CTFBaseProjectile::SetScorer"
+				{
+					type  "fixed"
+					sym   "_ZN17CTFBaseProjectile9SetScorerEP11CBaseEntity"
+					addr  "0x534890"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: stores the argument's handle (GetRefEHandle, vtable +8, Linux +0xc) or -1 into m_Scorer at +0x500, the handle GetScorer (0x534300, from the IScorer base at +0x4e4, reading +0x1c) reads; Linux stores at +0x518 from its base at +0x4fc, the same +0x1c. The Linux body does nothing else; thiscall, ret 4 for its one argument. Sits among CTFBaseProjectile's functions after GetScorer (0x534300)
+				}
 				"CTFBaseRocket::CheckForStunOnImpact"
 				{
 					type  "fixed"
@@ -4843,6 +4852,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CTFProjectile_Flare::SendDeathNotice"
+				{
+					type  "fixed"
+					sym   "_ZN19CTFProjectile_Flare15SendDeathNoticeEv"
+					addr  "0x5feef0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: resolves m_hOwnerEntity (+0x210), keeps it only when IsPlayer (vtable +0x14c), reads its m_hActiveWeapon through 0x1db530 (+0x830) with no null check, dynamic_casts the result to CTFFlareGun, and when GetFlareGunType (0x5fe360) is 1 calls the gun's vtable +0xe0 with the flare, the Linux body. Called from the flare's remove think (0x5fe5a0) just before UTIL_Remove. thiscall, plain ret. The Linux detour returns early for an owner that is not a player, which is what mvm_autumnull_rc2_adv_dynamic_disaster faulted on
 				}
 				"CTFProjectile_Flare::SetScorer"
 				{
