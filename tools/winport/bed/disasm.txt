@@ -1,5 +1,10 @@
-# FireProjectile calls FireRocket through slot 0x774 (477): the base class's entry there, and its neighbours
-server vtable CTFWeaponBaseGun 475 12
-server vtable CTFRocketLauncher 475 12
-# FadeOut sets the ARROW_REMOVE_THINK context
-server string ARROW_REMOVE_THINK
+# which of CTFWeaponBaseGun's slots 476..483 calls CTFProjectile_Rocket::Create (0x536410): FireRocket
+server callers 0x536410
+server func 0x63b470 120
+server func 0x63b190 60
+server func 0x63b070 60
+server func 0x63b280 60
+# FadeOut: the three functions setting ARROW_REMOVE_THINK
+server func 0x5f931b 120
+server func 0x5fa153 120
+server func 0x5fae85 120
