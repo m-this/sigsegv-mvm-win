@@ -1,1 +1,2 @@
-# nothing asked
+# CWave::IsDoneWithNonSupportWaves: does ActiveWaveUpdate call it, or carry it inlined?
+server func 0x5ece00 400
