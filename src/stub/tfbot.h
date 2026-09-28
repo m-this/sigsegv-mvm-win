@@ -398,10 +398,23 @@ public:
 	float GetDesiredPathLookAheadRange() const                         { return ft_GetDesiredPathLookAheadRange(this); }
 	void PushRequiredWeapon(CTFWeaponBase *weapon)                     { return ft_PushRequiredWeapon          (this, weapon); }
 	void PopRequiredWeapon()                                           { return ft_PopRequiredWeapon           (this); }
+#if defined _WINDOWS
+	/* server.dll has only the two-vector overload as a function; MSVC
+	 * inlined the others. As in the game source, the one-argument forms trace
+	 * from the bot's shoot position, and the entity forms trace to the
+	 * entity's WorldSpaceCenter under MASK_SOLID_BRUSHONLY, which can only hit
+	 * the target itself when it is a brush: for a player, a bot, a tank or a
+	 * building the two-vector trace gives the same answer. */
+	bool IsLineOfFireClear(const Vector& to) const                     { return ft_IsLineOfFireClear_vec_vec   (this, const_cast<CTFBot *>(this)->Weapon_ShootPosition(), to); }
+	bool IsLineOfFireClear(CBaseEntity *to) const                      { return ft_IsLineOfFireClear_vec_vec   (this, const_cast<CTFBot *>(this)->Weapon_ShootPosition(), to->WorldSpaceCenter()); }
+	bool IsLineOfFireClear(const Vector& from, const Vector& to) const { return ft_IsLineOfFireClear_vec_vec   (this, from, to); }
+	bool IsLineOfFireClear(const Vector& from, CBaseEntity *to) const  { return ft_IsLineOfFireClear_vec_vec   (this, from, to->WorldSpaceCenter()); }
+#else
 	bool IsLineOfFireClear(const Vector& to) const                     { return ft_IsLineOfFireClear_vec       (this, to); }
 	bool IsLineOfFireClear(CBaseEntity *to) const                      { return ft_IsLineOfFireClear_ent       (this, to); }
 	bool IsLineOfFireClear(const Vector& from, const Vector& to) const { return ft_IsLineOfFireClear_vec_vec   (this, from, to); }
 	bool IsLineOfFireClear(const Vector& from, CBaseEntity *to) const  { return ft_IsLineOfFireClear_vec_ent   (this, from, to); }
+#endif
 	SuspectedSpyInfo_t *IsSuspectedSpy(CTFPlayer *spy)                 { return ft_IsSuspectedSpy              (this, spy); }
 	void SuspectSpy(CTFPlayer *spy)                                    {        ft_SuspectSpy                  (this, spy); }
 	void StopSuspectingSpy(CTFPlayer *spy)                             {        ft_StopSuspectingSpy           (this, spy); }
