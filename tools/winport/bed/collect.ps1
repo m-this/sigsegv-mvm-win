@@ -289,6 +289,15 @@ if (Test-Path "$Out\results.jsonl") {
       $r = $_ | ConvertFrom-Json
       $why = if ($r.error) { $r.error.Substring(0, [Math]::Min(120, $r.error.Length)) } else { '' }
       Write-Host ("wave {0} w{1} {2} {3} {4}s {5}" -f $r.mission, $r.wave, $r.state, $r.outcome, [int]$r.wall_seconds, $why)
+      # A wave that did not pass: what the probe last saw of it, bots alive,
+      # robots left, spawns, which says whether the wave stalled or crawled.
+      if ($r.state -ne 'passed') {
+        $j = $_ -replace '"error":"[^"]*",?', ''
+        Write-Host "  record: $($j.Substring(0, [Math]::Min(700, $j.Length)))"
+        Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue |
+          Select-String -Pattern "WAVEPROBE state=\S+ .*pop=$([regex]::Escape($r.mission)) .*gamewave=$($r.wave) .*" |
+          Select-Object -Last 2 | ForEach-Object { Write-Host "  last probe: $($_.Matches[0].Value)" }
+      }
     } catch {}
   }
 }
