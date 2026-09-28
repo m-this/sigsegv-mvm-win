@@ -31,7 +31,8 @@ jobs:
         sparse-checkout: tools/winport/bed
     - id: missions
       run: |
-        list=$(grep -v '^#' win/tools/winport/bed/linuxbed.txt | sed 's/#.*//' | awk 'NF{print $1}' | python3 -c 'import json,sys;print(json.dumps([l.strip() for l in sys.stdin if l.strip()]))')
+        # a line is a mission, then any extra probe arguments (-start-wave 7)
+        list=$(grep -v '^#' win/tools/winport/bed/linuxbed.txt | sed 's/#.*//' | awk 'NF' | python3 -c 'import json,sys;print(json.dumps([" ".join(l.split()) for l in sys.stdin if l.strip()]))')
         echo "list=$list" >> "$GITHUB_OUTPUT"
     - uses: actions/checkout@v4
       with:
@@ -109,6 +110,10 @@ jobs:
         done
         echo "rcon answers on ${addr:-nothing}"
         export SRCDS_RCON_HOST=$addr
+        line="${{ matrix.mission }}"
+        mission=${line%% *}
+        probeargs=
+        [ "$mission" = "$line" ] || probeargs=${line#* }
         # Once a minute, the entity count and the classes holding the most,
         # as boot.ps1 records them on Windows.
         ( while sleep 60; do
@@ -116,12 +121,12 @@ jobs:
             total=$(printf '%s\n' "$r" | grep -m1 '^Total ')
             [ -n "$total" ] || total="no total line, last: $(printf '%s\n' "$r" | tail -1)"
             top=$(printf '%s\n' "$r" | sed -nE 's/^Class: (\S+) \(([0-9]+)\).*/\2 \1/p; s/^\s*([0-9]+)\s+(\S+)\s*$/\1 \2/p' | sort -rn | head -6 | awk '{printf "%s %s, ", $2, $1}')
-            echo "$(date +%H:%M:%S) ${{ matrix.mission }} $total; most: $top" >> out/entities.txt
+            echo "$(date +%H:%M:%S) $mission $total; most: $top" >> out/entities.txt
           done ) &
         for c in "meta list" "sm exts list" "sm plugins list" "sig_list_mods"; do
           echo "## $c"; bedbin/rcon "$c" 2>&1 | tee "out/$(echo $c | tr ' ' _).txt" | head -60
         done
-        bedbin/waveprobe -rcon "$addr:27015" -mission "${{ matrix.mission }}" -mode normal -timeout 600s \
+        bedbin/waveprobe -rcon "$addr:27015" -mission "$mission" $probeargs -mode normal -timeout 600s \
           >> out/results.jsonl 2>> out/waveprobe.err || true
         cp "$tf/console.log" out/ 2>/dev/null || true
     - name: Report
@@ -152,5 +157,5 @@ jobs:
     - if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: linuxbed-${{ matrix.mission }}
+        name: linuxbed-${{ strategy.job-index }}
         path: out
