@@ -1,1 +1,4 @@
-# nothing asked
+# CTFPointWeaponMimic's datamap: the FireOnce input's function, beside FireMultiple (0x5e2460)
+server string FireOnce
+server string FireMultiple
+server callers 0x5e22b0
