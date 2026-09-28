@@ -3077,6 +3077,15 @@
 					lib   "server"
 					// table
 				}
+				"CTFPointWeaponMimic::InputFireOnce"
+				{
+					type  "fixed"
+					sym   "_ZN19CTFPointWeaponMimic13InputFireOnceER11inputdata_t"
+					addr  "0x5e24e0"
+					build "10828683"
+					lib   "server"
+					// verified: read from CTFPointWeaponMimic's datamap: the typedescription naming "InputFireOnce" (0x8bcf08) and "FireOnce" holds 0x5e24e0 as its input function, in the slot where the FireMultiple entry holds InputFireMultiple (0x5e2460). thiscall, the inputdata_t reference on the stack
+				}
 				"CTFWeaponBaseGrenadeProj::Destroy"
 				{
 					type  "fixed"
