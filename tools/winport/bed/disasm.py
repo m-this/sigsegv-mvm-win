@@ -23,6 +23,8 @@ symbols for:
     server dataref 0x8bcf08 16   every place outside code holding this RVA's address, with the
                                  dwords around it: a datamap's typedescription names its input
                                  function a few dwords after its field name
+    server input InputChangeGrav the input function each datamap entry named exactly this holds,
+                                 six dwords past the name, as InputFireMultiple's entry does
 """
 
 import os
@@ -146,6 +148,30 @@ class Module:
         if not found:
             print(f"== {target:#x} held nowhere outside code")
 
+    def inputs(self, name):
+        """The datamap entries whose field name is exactly this string, and
+        the input function each holds six dwords past the name pointer."""
+        data = self.pe.__data__
+        text_lo = self.text.VirtualAddress
+        text_hi = text_lo + self.text.Misc_VirtualSize
+        out = []
+        offset = data.find(b"\0" + name.encode() + b"\0")
+        while offset != -1:
+            ref = (self.base + self.pe.get_rva_from_offset(offset + 1)).to_bytes(4, "little")
+            at = data.find(ref)
+            while at != -1:
+                rva = self.pe.get_rva_from_offset(at)
+                if rva is not None and not (text_lo <= rva < text_hi):
+                    func = int.from_bytes(data[at + 24:at + 28], "little") - self.base
+                    ext = int.from_bytes(data[at + 16:at + 20], "little") - self.base
+                    ext_off = self.pe.get_offset_from_rva(ext) if 0 < ext < 0x2000000 else None
+                    ext_name = data[ext_off:data.find(b"\0", ext_off)].decode(errors="replace") if ext_off else "?"
+                    if text_lo <= func < text_hi:
+                        out.append(f"{func:#x} (input {ext_name!r}, entry at {rva:#x})")
+                at = data.find(ref, at + 1)
+            offset = data.find(b"\0" + name.encode() + b"\0", offset + 1)
+        print(f"== {name}: " + ("; ".join(out) if out else "no datamap entry"))
+
     def strings(self, needle):
         data = self.pe.__data__
         offset = data.find(needle.encode())
@@ -180,6 +206,9 @@ def main():
                 continue
             if rest.startswith("string "):
                 mod.strings(rest[len("string "):])
+                continue
+            if rest.startswith("input "):
+                mod.inputs(rest.split()[1])
                 continue
             if rest.startswith("dataref "):
                 parts = rest.split()
