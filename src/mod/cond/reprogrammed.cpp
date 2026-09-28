@@ -1539,6 +1539,14 @@ namespace Mod::Cond::Reprogrammed
 		if (nCond < 0 || nCond >= GetExtraConditionCount()) {
             return;
         }
+#if defined _WINDOWS
+		/* The constructor detour that sizes m_ConditionData for the extra
+		 * conditions has no Windows address, and without it the game's AddCond
+		 * writes an extra condition past the vector's end. AddCond is the one
+		 * path that writes an extra condition's slot, so it is sized here,
+		 * before the game's AddCond indexes it. EnsureCount only grows it. */
+		reinterpret_cast<CTFPlayerShared *>(this)->m_ConditionData->EnsureCount(GetExtraConditionCount());
+#endif
 		DETOUR_MEMBER_CALL(nCond, flDuration, pProvider);
 	}
 	

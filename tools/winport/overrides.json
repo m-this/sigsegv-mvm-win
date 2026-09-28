@@ -459,8 +459,8 @@
   "why": "vtable CAmmoPack[25], agreed by strings: 2 shared string(s), 3/3 matched callees, windows/linux size 48/62"
  },
  "_ZN9CTFPlayer10ChangeTeamEibbb": {
-  "bad": true,
-  "why": "address 0x4e3c50 is right (unique string, 17 of 19 matched callees), but its detour runs with a this that is not a player and faults in CheckPlayerClassLimit; left undetoured with CBasePlayer::ChangeTeam until the detour path is understood"
+  "rva": "0x4e3c50",
+  "why": "unique string, 17 of 19 matched callees, and read by hand from its override: CTFBot::ChangeTeam (0x5505f0) first calls it with its four arguments pushed through unchanged, then the MvM block, the Linux CTFBot body. thiscall, ret 0x10. Once turned away because its detour faulted in CheckPlayerClassLimit with a this that was no player, on a build from before the detour fixes since"
  },
  "_ZN9CTFPlayer10DeathSoundERK15CTakeDamageInfo": {
   "rva": "0x4e7d90",
