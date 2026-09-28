@@ -20,6 +20,9 @@ symbols for:
     server string KeyValues::    the functions referencing a string containing this
     server func 0x408e1f 300     the whole function holding this address, from its start
     server callers 0x21ca90      every direct call to this RVA, each with the function holding it
+    server dataref 0x8bcf08 16   every place outside code holding this RVA's address, with the
+                                 dwords around it: a datamap's typedescription names its input
+                                 function a few dwords after its field name
 """
 
 import os
@@ -119,6 +122,30 @@ class Module:
             at = self.code.find(b"\xe8", at + 1)
         print(f"== {len(found)} calls to {target:#x}: " + ", ".join(found))
 
+    def datarefs(self, target, count):
+        """Every aligned dword in the image equal to target's address, outside
+        .text, printed with count dwords from four before it, each dword that
+        lands in .text marked as code."""
+        data = self.pe.__data__
+        ref = (self.base + target).to_bytes(4, "little")
+        text_lo = self.text.VirtualAddress
+        text_hi = text_lo + self.text.Misc_VirtualSize
+        at = data.find(ref)
+        found = 0
+        while at != -1 and found < 20:
+            rva = self.pe.get_rva_from_offset(at)
+            if rva is not None and not (text_lo <= rva < text_hi):
+                found += 1
+                words = []
+                for k in range(-4, count - 4):
+                    w = int.from_bytes(data[at + 4 * k:at + 4 * k + 4], "little")
+                    v = w - self.base
+                    words.append(f"{v:#x}{'*' if text_lo <= v < text_hi else ''}" if 0 <= v < 0x2000000 else f"{w:#x}")
+                print(f"== {target:#x} held at {rva:#x}: " + " ".join(words))
+            at = data.find(ref, at + 1)
+        if not found:
+            print(f"== {target:#x} held nowhere outside code")
+
     def strings(self, needle):
         data = self.pe.__data__
         offset = data.find(needle.encode())
@@ -153,6 +180,10 @@ def main():
                 continue
             if rest.startswith("string "):
                 mod.strings(rest[len("string "):])
+                continue
+            if rest.startswith("dataref "):
+                parts = rest.split()
+                mod.datarefs(mod.rva(parts[1]), int(parts[2]) if len(parts) > 2 else 16)
                 continue
             if rest.startswith("callers "):
                 mod.callers(mod.rva(rest.split()[1]))
