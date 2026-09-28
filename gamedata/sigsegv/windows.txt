@@ -2060,6 +2060,15 @@
 					lib   "server"
 					// vtable
 				}
+				"CTFTeam::GetNumObjects"
+				{
+					type  "fixed"
+					sym   "_ZN7CTFTeam13GetNumObjectsEi"
+					addr  "0x5408c0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: a type of 0 or less returns the count (itself called with -1); otherwise walks the team's object handles (+0x3e4) and counts those whose GetType (vtable +0x598) equals the argument, the Linux body (count at +0x408, array at +0x3fc). thiscall, ret 4 for its one argument
+				}
 				"CBasePlayer::IsBot"
 				{
 					type  "fixed"
@@ -2839,6 +2848,16 @@
 					lib   "server"
 					vtidx "484"
 					// verified: read by hand from the vtables: CTFWeaponBaseGun's own run of slots sits 7 below Linux (GetWeaponProjectileType 479/472, whose body indexes the weapon info at +0x6d8 by the mode at +0x6cc and returns the entry's projectile type; FireFlameRocket's two overloads 486-487/479-480 both return null); Linux 491, the shared fldz; ret, as the Linux body returns 0
+				}
+				"CTFWeaponBaseGun::GetProjectileGravity"
+				{
+					type  "fixed"
+					sym   "_ZN16CTFWeaponBaseGun20GetProjectileGravityEv"
+					addr  "0x15d760"
+					build "10828683"
+					lib   "server"
+					vtidx "485"
+					// verified: read by hand from the weapon vtables, seven below Linux (492) as in the slots before it: CTFWeaponBaseGun's slot 485 holds the shared fldz; ret body, the Linux base's own fldz; ret, where CTFCompoundBow and CTFPipebombLauncher have their own bodies. Folded, so a detour on it is refused, and callers go through the slot
 				}
 				"CTFWeaponBaseGun::GetWeaponProjectileType"
 				{
@@ -4388,6 +4407,15 @@
 					lib   "server"
 					// string
 				}
+				"CTFBotHintEngineerNest::IsStaleNest"
+				{
+					type  "fixed"
+					sym   "_ZNK22CTFBotHintEngineerNest11IsStaleNestEv"
+					addr  "0x5940c0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: walks the sentry hint handles (count +0x39c, array +0x390; Linux +0x3b4 and +0x3a8) and then the teleporter ones (+0x3b0, +0x3a4), calling OwnerObjectHasNoOwner (0x5943f0) on each resolved hint and returning true on the first that has none, the Linux body with every field 0x18 lower. thiscall, plain ret
+				}
 				"CTFBotMvMEngineerHintFinder::FindHint"
 				{
 					type  "fixed"
@@ -4795,6 +4823,15 @@
 					build "10828683"
 					lib   "server"
 					// verified: string lead, agreed by strings: 4 shared string(s), 2/2 matched callees, windows/linux size 1056/1078
+				}
+				"CTFProjectile_Arrow::Create"
+				{
+					type  "fixed"
+					sym   "_ZN19CTFProjectile_Arrow6CreateERK6VectorRK6QAngleff16ProjectileType_tP11CBaseEntityS8_"
+					addr  "0x5fab70"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: picks the class name by projectile type (0xb and 0x17 one name, 0x1a another, the rest tf_projectile_arrow), calls CBaseEntity::Create (0x1ee720) with (name, origin, angles, owner), and on success calls the arrow's init virtual (vtable +0x3dc) with (angles, speed, gravity, type, owner, scorer), the Linux body (+0x3e0). cdecl, plain ret
 				}
 				"CTFProjectile_Arrow::SetScorer"
 				{
@@ -6399,6 +6436,15 @@
 					build "10828683"
 					lib   "server"
 					// verified: read by hand: the other function pushing IGameSystemPerFrame's type descriptor, right after a 15-byte atexit registration with no padding between them; it walks s_GameSystems (count 0x109930e4) for its argument, the SDK's FindAndRemove, then the per-frame list; cdecl, ret
+				}
+				"WeaponID_IsSniperRifle"
+				{
+					type  "fixed"
+					sym   "_Z22WeaponID_IsSniperRiflei"
+					addr  "0x639030"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: true for weapon ids 0x11, 0x4d and 0x63, the Linux body; WeaponID_IsSniperRifleOrBow, which adds 0x3d, follows it as on Linux. cdecl, plain ret. The emitter's match for this symbol lands mid-instruction and is not it
 				}
 				"CTFGameRules::ApplyOnDamageAliveModifyRules"
 				{
@@ -10125,6 +10171,15 @@
 					build "10828683"
 					lib   "server"
 					// verified: read by hand: the consensus match turned away, and the Linux body step for step: GetTeamNumber, the enemy team (2 and 3 swapped), CollectPlayers(&vec, team, true, false), per player WorldSpaceCenter (vtable +0x270, Linux +0x274) and PointInRespawnRoom(player, center, false), AddToTail, then RandomInt(0, n-1) or null; thiscall, no arguments, ret
+				}
+				"CTFBot::ShouldAutoJump"
+				{
+					type  "fixed"
+					sym   "_ZN6CTFBot14ShouldAutoJumpEv"
+					addr  "0x562720"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: tests bit 18 of the dword at +0x27b8 (Linux the byte at +0x27ba, bit 2: the AUTO_JUMP attribute), then the timer at +0x291c whose duration is +0x2924, the same offsets as Linux; when it has elapsed, restarts it with RandomFloat(+0x2914, +0x2918) through the import and returns 1, the Linux body. thiscall, plain ret
 				}
 				"CTFBot::DrawDebugTextOverlays"
 				{
