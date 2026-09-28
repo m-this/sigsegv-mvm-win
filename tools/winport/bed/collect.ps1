@@ -182,6 +182,11 @@ Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort
 Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
   Select-String -Pattern 'CVirtualHook::FAIL .*|IMod::InvokeLoad: .*failed.*' | ForEach-Object { $_.Matches[0].Value } |
   Sort-Object -Unique | ForEach-Object { Write-Host "mod: $_" }
+# Each detour that did not load, by mod: a mechanic that silently does
+# nothing on Windows while the mod reports loaded.
+Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
+  Select-String -Pattern 'IHasDetours::LoadDetours: "([^"]+)" "([^"]+)" FAIL' | ForEach-Object { "$($_.Matches[0].Groups[1].Value): $($_.Matches[0].Groups[2].Value)" } |
+  Sort-Object -Unique | ForEach-Object { Write-Host "detour failed: $_" }
 # Where the frame callbacks spend a slow server's time, the last reports of
 # each console.
 Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort-Object Name | ForEach-Object {
