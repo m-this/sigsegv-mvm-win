@@ -3321,6 +3321,16 @@
 					vtidx "0"
 					// vtable index
 				}
+				"CBaseProjectile::Destroy"
+				{
+					type  "fixed"
+					sym   "_ZN15CBaseProjectile7DestroyEbb"
+					addr  "0x14fa90"
+					build "10828683"
+					lib   "server"
+					vtidx "233"
+					// verified: read by hand from the projectile vtables, one below Linux (234) as in the slots before it: CBaseProjectile's slot 232 is the base IsDestroyable(bool) (xor al, al; ret 4) and slot 233 the shared ret 8, the Linux base's empty body for its two bools; CTFBaseRocket has its own Destroy there (0x6395c0), testing its second argument. Folded, so callers go through the slot
+				}
 				"CBaseProjectile::GetCollideWithTeammatesDelay"
 				{
 					type  "fixed"
@@ -4406,6 +4416,15 @@
 					build "10828683"
 					lib   "server"
 					// string
+				}
+				"CTFBotHintEngineerNest::DetonateStaleNest"
+				{
+					type  "fixed"
+					sym   "_ZN22CTFBotHintEngineerNest17DetonateStaleNestEv"
+					addr  "0x593c90"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: calls DetonateObjectsFromHints (0x593bc0) on the sentry hints (+0x390) and then on the teleporter hints (+0x3a4), the Linux body with both vectors 0x18 lower (+0x3a8, +0x3bc), as in IsStaleNest (0x5940c0). thiscall, plain ret
 				}
 				"CTFBotHintEngineerNest::IsStaleNest"
 				{
@@ -10208,6 +10227,15 @@
 					build "10828683"
 					lib   "server"
 					// verified: read by hand: GetActiveTFWeapon when no weapon is passed, then the weapon id tests, the Linux body; ret 4, three direct callers as on Linux
+				}
+				"CTFBot::TransientlyConsistentRandomValue"
+				{
+					type  "fixed"
+					sym   "_ZNK6CTFBot32TransientlyConsistentRandomValueEfi"
+					addr  "0x563630"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand from its caller: CTFBot::ShouldFireCompressionBlast (0x5627b0) calls it with (1.0f, 0) for the skill levels 1 and 2 at +0x27bc and compares each result with a constant, the four Linux calls with two folded. thiscall, the float and the seed on the stack
 				}
 				"CTFBot::GetNearestKnownSappableTarget"
 				{
