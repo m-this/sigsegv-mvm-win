@@ -406,4 +406,21 @@ CTFPlayer *CTFWeaponBase::GetTFPlayerOwner() const
 {
 	return ToTFPlayer(const_cast<CTFWeaponBase *>(this)->GetOwner());
 }
+
+const CTFWeaponInfo &CTFWeaponBase::GetTFWpnData() const
+{
+	/* The handle's offset is read off CBaseCombatWeapon::GetViewModel, which
+	 * opens with movzx eax, word ptr [ecx + disp32]. Without it the handle
+	 * is the invalid one, whose info is the engine's empty record. */
+	static int offset = []{
+		auto code = reinterpret_cast<const uint8_t *>(AddrManager::GetAddr("CBaseCombatWeapon::GetViewModel"));
+		if (code != nullptr && code[0] == 0x0f && code[1] == 0xb7 && code[2] == 0x81) {
+			return *reinterpret_cast<const int *>(code + 3);
+		}
+		Warning("CTFWeaponBase::GetTFWpnData: GetViewModel does not open with the handle read\n");
+		return -1;
+	}();
+	WEAPON_FILE_INFO_HANDLE handle = (offset < 0 ? (WEAPON_FILE_INFO_HANDLE)0xffff : *reinterpret_cast<const WEAPON_FILE_INFO_HANDLE *>(reinterpret_cast<const uint8_t *>(this) + offset));
+	return *static_cast<const CTFWeaponInfo *>(GetFileWeaponInfoFromHandle(handle));
+}
 #endif

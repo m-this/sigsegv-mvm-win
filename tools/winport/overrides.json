@@ -2055,5 +2055,9 @@
  "_ZN28CTFGrenadePipebombProjectile15StickybombTouchEP11CBaseEntity": {
   "bad": true,
   "why": "the vtable match (knownvtidx, slot 262 for Linux +0x3ec) lands on 0x130ba0, an empty body MSVC shares with other empty virtuals (CTFWeaponBaseGun's slot 475 holds it too), not the touch that sticks a bomb to a surface. Hooked there, SigMod's StickybombTouch ran in place of another virtual of every pipebomb, and missions with stickies ran a thousand times slower"
+ },
+ "_Z27GetFileWeaponInfoFromHandlet": {
+  "rva": "0x39b2e0",
+  "why": "read by hand from CBaseCombatWeapon::GetViewModel (0x1e1950): the handle m_hWeaponFileInfo, a word at +0x642, pushed alone (cdecl, add esp 4), and 0xa6 added to the result for szViewModel, as the Linux body does. CTFWeaponBase::GetTFWpnData is inlined on Windows and is this call"
  }
 }

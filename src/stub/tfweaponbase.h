@@ -31,10 +31,21 @@ public:
 #endif
 	
 	bool IsSilentKiller() { return ft_IsSilentKiller(this); }
+#if defined _WINDOWS
+	/* Inlined into its callers in server.dll. The Linux body: as many whole
+	 * shots as ENERGY_WEAPON_MAX_CHARGE (20) holds, times the shot cost. */
+	float Energy_GetMaxEnergy() { int shots = 20.0f / Energy_GetShotCost(); return shots * Energy_GetShotCost(); }
+#else
 	float Energy_GetMaxEnergy() { return ft_Energy_GetMaxEnergy(this); }
+#endif
 	void CalcIsAttackCritical() { ft_CalcIsAttackCritical(this); }
 	bool CalcIsAttackCriticalPoll(bool checkRandom);
+#if defined _WINDOWS
+	/* Inlined in server.dll: GetFileWeaponInfoFromHandle of m_hWeaponFileInfo. */
+	CTFWeaponInfo const& GetTFWpnData() const;
+#else
 	CTFWeaponInfo const& GetTFWpnData() const { return ft_GetTFWeaponData(this); }
+#endif
 	void StartEffectBarRegen()   { ft_StartEffectBarRegen(this); }
 	bool DeflectProjectiles()    { return ft_DeflectProjectiles(this); }
 	
