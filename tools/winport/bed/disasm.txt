@@ -1,5 +1,5 @@
-server vtable CBaseEntity 172 8
-server 0x157b90 3
-server vtable CTFProjectile_Rocket 172 8
-server vtable CTFProjectile_Flare 172 8
-server string PerformCustomPhysics
+server vtable CTFWeaponBaseGun 480 8
+server vtable CTFRocketLauncher 480 8
+server vtable CTFGrenadeLauncher 480 8
+server vtable CTFWeaponBase 456 8
+server vtable CTFFlameThrower 456 8
