@@ -1,5 +1,2 @@
-server vtable CTFWeaponBaseGun 480 8
-server vtable CTFRocketLauncher 480 8
-server vtable CTFGrenadeLauncher 480 8
-server vtable CTFWeaponBase 456 8
-server vtable CTFFlameThrower 456 8
+server callers 0x5ef5f0
+server func 0x5e50b0 150
