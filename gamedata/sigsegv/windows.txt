@@ -9202,6 +9202,15 @@
 					lib   "server"
 					// verified: read by hand: called by exactly CPopulationManager::Parse (0x5e5c40) and CWave::Parse (0x5ee640), Linux's two callers, and pops (string_t, int, unsigned) with ret 12; the vector insert is inlined
 				}
+				"CWave::ForceFinish"
+				{
+					type  "fixed"
+					sym   "_ZN5CWave11ForceFinishEv"
+					addr  "0x5ed7e0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the one caller is CPopulationManager::JumpToWave (0x5e5161), as on Linux. It walks the wave spawns (m_WaveSpawns at +0xc, count +0x18) with CWaveSpawnPopulator::ForceFinish inlined: a state below 3 goes to WAIT_FOR_ALL_DEAD (SetState 3, 0x5ef5f0), a state other than 3 to DONE (4), then each active bot handle at +0x4b0 is sent to spectator through its ChangeTeam slot, the Linux body
+				}
 				"CWave::Parse"
 				{
 					type  "fixed"
@@ -9841,6 +9850,15 @@
 					build "10828683"
 					lib   "server"
 					// verified: read by hand: called by exactly CPopulationManager::Parse (0x5e5c40) and CWave::Parse (0x5ee640), Linux's two callers, and pops (string_t, int, unsigned) with ret 12; the vector insert is inlined
+				}
+				"CWave::ForceFinish"
+				{
+					type  "fixed"
+					sym   "_ZN5CWave11ForceFinishEv"
+					addr  "0x5ed7e0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand: the one caller is CPopulationManager::JumpToWave (0x5e5161), as on Linux. It walks the wave spawns (m_WaveSpawns at +0xc, count +0x18) with CWaveSpawnPopulator::ForceFinish inlined: a state below 3 goes to WAIT_FOR_ALL_DEAD (SetState 3, 0x5ef5f0), a state other than 3 to DONE (4), then each active bot handle at +0x4b0 is sent to spectator through its ChangeTeam slot, the Linux body
 				}
 				"CWave::Parse"
 				{
