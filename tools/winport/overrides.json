@@ -2059,5 +2059,9 @@
  "_Z27GetFileWeaponInfoFromHandlet": {
   "rva": "0x39b2e0",
   "why": "read by hand from CBaseCombatWeapon::GetViewModel (0x1e1950): the handle m_hWeaponFileInfo, a word at +0x642, pushed alone (cdecl, add esp 4), and 0xa6 added to the result for szViewModel, as the Linux body does. CTFWeaponBase::GetTFWpnData is inlined on Windows and is this call"
+ },
+ "_ZN11CTFTankBoss16GetCurrencyValueEv": {
+  "rva": "0x5f2360",
+  "why": "read by hand from the vtables: slot 337 (+0x544) of CTFTankBoss (0x8c0454), where CTFBaseBoss (0x8bb884) holds its own GetCurrencyValue 0x5de290, verified. The tank overrides it as on Linux: a handle at +0xa00 checked for a live entity, then a byte at +0xa31, returning 0 for neither; ret with no pop"
  }
 }
