@@ -1,5 +1,3 @@
-server vtable CTFTankBossBody 76 10
-server vtable CTFBaseBossLocomotion 76 12
-server vtable NextBotGroundLocomotion 76 12
-server 0x1e15f0 4
-server 0x522cf0 4
+server vtable CTFWeaponBase 446 4
+server vtable CTFWeaponBaseGun 446 4
+server vtable CTFRaygun 446 4
