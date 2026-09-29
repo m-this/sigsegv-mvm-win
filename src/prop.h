@@ -347,8 +347,10 @@ public:
 	template<typename A> inline void SetIndex(const A val, int index)
 	{ 
 		if constexpr (NET) {
-			if (memcmp((this->GetPtrRO()+index), &val, sizeof(A)) != 0)
-				PROP->StateChanged(reinterpret_cast<void *>(this->GetInstanceBaseAddr()), this->GetPtrRW()+index);
+			/* the element, not index whole arrays past the start: GetPtrRO is a
+			 * pointer to the array type, and +index read that many arrays on */
+			if (memcmp(&this->GetRO()[index], &val, sizeof(A)) != 0)
+				PROP->StateChanged(reinterpret_cast<void *>(this->GetInstanceBaseAddr()), &this->GetRW()[index]);
 		}
 		this->GetRW()[index] = val;
 	}
