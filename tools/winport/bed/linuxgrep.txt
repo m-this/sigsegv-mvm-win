@@ -1,1 +1,0 @@
-Heavy Colonel|Invalid spawner|WaveSpawn|spawnbot|w4a|Yakuza|WAVEPROBE (started|passed|failed)|Wave #|robot limit|Could not
