@@ -1,2 +1,4 @@
-# Missions the bed plays instead of all of them, one per line: shard 0 plays
-# these and the other shards stop at once. Empty is the full sweep.
+# focus
+mvm_rottenburg_adv_marathon
+mvm_condemned_b3_exp_trespasser_remaster
+mvm_creepside_b2_adv_dust_to_dust
