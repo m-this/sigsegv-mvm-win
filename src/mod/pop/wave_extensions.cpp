@@ -15,6 +15,7 @@
 #include "stub/misc.h"
 #include "mod/pop/pointtemplate.h"
 #include "mod/pop/common.h"
+#include "mem/protect.h"
 
 namespace Mod::MvM::Wavespawn_Extensions
 {
@@ -1156,6 +1157,85 @@ namespace Mod::Pop::Wave_Extensions
 		REG_WRAPPER_ALL
 		return DETOUR_MEMBER_CALL() && IsDoneWithNonSupport(reinterpret_cast<CWave *>(this));
 	}
+
+#if defined _WINDOWS
+	/* CWave::IsDoneWithNonSupportWaves is inlined into ActiveWaveUpdate in
+	 * server.dll, as a loop over the wave spawns (+0x221) whose "done" exit
+	 * (+0x254, xor edi, edi then a short jump to +0x260) goes on to finish
+	 * the support spawns and kill the robots left. That exit is sent through
+	 * a stub asking IsDoneWithNonSupport first, and to the "not done" exit
+	 * (+0x335) when it says no, which is what the detour does on Linux. */
+	constexpr uint32_t off_check    = 0x221;
+	constexpr uint32_t off_done     = 0x254;
+	constexpr uint32_t off_continue = 0x260;
+	constexpr uint32_t off_not_done = 0x335;
+	constexpr uint8_t s_BufInlinedCheck[] = {
+		0x33, 0xff,                                // +0x221 xor edi, edi
+		0x85, 0xc9,                                // +0x223 test ecx, ecx
+		0x0f, 0x8e, 0x95, 0x00, 0x00, 0x00,        // +0x225 jle +0x2c0
+		0x8b, 0x56, 0x0c,                          // +0x22b mov edx, [esi+0xc]
+		0x8b, 0xff,                                // +0x22e mov edi, edi
+		0x8b, 0x02,                                // +0x230 mov eax, [edx]
+		0x85, 0xc0,                                // +0x232 test eax, eax
+		0x74, 0x16,                                // +0x234 je +0x24c
+		0x80, 0xb8, 0xcc, 0x04, 0x00, 0x00, 0x00,  // +0x236 cmp byte ptr [eax+0x4cc], 0 (m_bSupportWave)
+		0x75, 0x0d,                                // +0x23d jne +0x24c
+		0x83, 0xb8, 0xd4, 0x04, 0x00, 0x00, 0x04,  // +0x23f cmp dword ptr [eax+0x4d4], 4 (m_state, DONE)
+		0x0f, 0x85, 0xe9, 0x00, 0x00, 0x00,        // +0x246 jne +0x335
+		0x47,                                      // +0x24c inc edi
+		0x83, 0xc2, 0x04,                          // +0x24d add edx, 4
+		0x3b, 0xf9,                                // +0x250 cmp edi, ecx
+		0x7c, 0xdc,                                // +0x252 jl +0x230
+		0x33, 0xff,                                // +0x254 xor edi, edi
+		0xeb, 0x08,                                // +0x256 jmp +0x260
+	};
+
+	bool __cdecl InlinedCheckDone(CWave *wave)
+	{
+		return IsDoneWithNonSupport(wave);
+	}
+
+	uint8_t *inlined_check_stub = nullptr;
+	uint8_t inlined_check_restore[5];
+
+	void PatchInlinedCheck(bool enable)
+	{
+		auto func = reinterpret_cast<uint8_t *>(AddrManager::GetAddr("CWave::ActiveWaveUpdate"));
+		if (func == nullptr) return;
+		uint8_t *site = func + off_done;
+		auto rel = [](const uint8_t *from_next, const void *to) {
+			return (uint32_t)((uintptr_t)to - (uintptr_t)from_next);
+		};
+
+		if (!enable) {
+			if (inlined_check_stub == nullptr || site[0] != 0xe9) return;
+			MemProtModifier_RX_RWX(site, sizeof(inlined_check_restore));
+			memcpy(site, inlined_check_restore, sizeof(inlined_check_restore));
+			return;
+		}
+
+		if (memcmp(func + off_check, s_BufInlinedCheck, sizeof(s_BufInlinedCheck)) != 0) {
+			Warning("Pop:Wave_Extensions: the check inlined into CWave::ActiveWaveUpdate is not where it was read; a wave boss will not hold the wave open\n");
+			return;
+		}
+		if (inlined_check_stub == nullptr) {
+			inlined_check_stub = reinterpret_cast<uint8_t *>(VirtualAlloc(nullptr, 32, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE));
+			if (inlined_check_stub == nullptr) return;
+			uint8_t *p = inlined_check_stub;
+			*p++ = 0x56;                                                                      // push esi (the wave)
+			*p++ = 0xe8; *(uint32_t *)p = rel(p + 4, (void *)&InlinedCheckDone); p += 4;    // call InlinedCheckDone
+			*p++ = 0x83; *p++ = 0xc4; *p++ = 0x04;                                            // add esp, 4
+			*p++ = 0x84; *p++ = 0xc0;                                                         // test al, al
+			*p++ = 0x0f; *p++ = 0x84; *(uint32_t *)p = rel(p + 4, func + off_not_done); p += 4; // jz the "not done" exit
+			*p++ = 0x33; *p++ = 0xff;                                                         // xor edi, edi
+			*p++ = 0xe9; *(uint32_t *)p = rel(p + 4, func + off_continue); p += 4;          // jmp on to the "done" work
+		}
+		memcpy(inlined_check_restore, site, sizeof(inlined_check_restore));
+		MemProtModifier_RX_RWX(site, sizeof(inlined_check_restore));
+		site[0] = 0xe9;
+		*(uint32_t *)(site + 1) = rel(site + 5, inlined_check_stub);
+	}
+#endif
 	CWave *last_wave;
 	DETOUR_DECL_MEMBER(void, CTeamplayRoundBasedRules_State_Enter, gamerules_roundstate_t newState)
 	{
@@ -1394,6 +1474,9 @@ namespace Mod::Pop::Wave_Extensions
 		
 		virtual void OnUnload() override
 		{
+#if defined _WINDOWS
+			PatchInlinedCheck(false);
+#endif
 			waves.clear();
 			StopSoundLoop();
 		}
@@ -1401,10 +1484,16 @@ namespace Mod::Pop::Wave_Extensions
 		virtual void OnEnable() override
 		{
 			usermsgs->HookUserMessage2(usermsgs->GetMessageIndex("PlayerLoadoutUpdated"), &player_loadout_updated_listener);
+#if defined _WINDOWS
+			PatchInlinedCheck(true);
+#endif
 		}
 
 		virtual void OnDisable() override
 		{
+#if defined _WINDOWS
+			PatchInlinedCheck(false);
+#endif
 			usermsgs->UnhookUserMessage2(usermsgs->GetMessageIndex("PlayerLoadoutUpdated"), &player_loadout_updated_listener);
 			waves.clear();
 			StopSoundLoop();
