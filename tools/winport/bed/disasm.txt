@@ -1,1 +1,1 @@
-server func 0x5ece00 400
+server 0x5ed021 30
