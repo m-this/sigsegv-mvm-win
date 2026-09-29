@@ -1,3 +1,1 @@
-server func 0x1e1950 50
-server func 0x6361a0 80
-server func 0x5607f5 200
+server 0x560790 60
