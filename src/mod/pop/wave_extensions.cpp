@@ -1152,6 +1152,39 @@ namespace Mod::Pop::Wave_Extensions
 		return done;
 	}
 	
+	/* What the current wave is waiting on: each wave spawn's name, state,
+	 * what it waits for, how many it has spawned of how many, and how many of
+	 * its robots are alive. The wave probe asks for it when a wave times out. */
+	CON_COMMAND(sig_wave_dump, "Print the state of each wave spawn of the current wave")
+	{
+		static const char *states[] = { "PENDING", "PRE_SPAWN_DELAY", "SPAWNING", "WAIT_FOR_ALL_DEAD", "DONE" };
+		CWave *wave = g_pPopulationManager != nullptr ? g_pPopulationManager->GetCurrentWave() : nullptr;
+		if (wave == nullptr) {
+			Msg("sig_wave_dump: no wave\n");
+			return;
+		}
+		for (int i = 0; i < wave->m_WaveSpawns.Count(); ++i) {
+			CWaveSpawnPopulator *ws = wave->m_WaveSpawns[i];
+			if (ws == nullptr) continue;
+			int state = ws->m_state;
+			int alive = 0;
+			for (auto &handle : ws->m_activeVector) {
+				if (handle != nullptr && handle->IsAlive()) ++alive;
+			}
+			Msg("sig_wave_dump: #%d name=\"%s\" state=%s support=%d%s waitspawned=\"%s\" waitdead=\"%s\" spawned=%d total=%d active=%d alive=%d\n",
+				i, ws->m_name.Get(), (state >= 0 && state <= 4) ? states[state] : "?", ws->m_bSupportWave, ws->m_bLimitedSupport ? "(limited)" : "",
+				ws->m_waitForAllSpawned.Get(), ws->m_waitForAllDead.Get(), ws->m_countSpawnedSoFar, ws->m_totalCount,
+				ws->m_activeVector.Count(), alive);
+			for (auto &handle : ws->m_activeVector) {
+				CBaseEntity *ent = handle;
+				if (ent == nullptr || !ent->IsAlive()) continue;
+				CBasePlayer *player = ToBasePlayer(ent);
+				Msg("sig_wave_dump:   alive #%d %s team=%d health=%d name=\"%s\"\n", ENTINDEX(ent), ent->GetClassname(),
+					ent->GetTeamNumber(), ent->GetHealth(), player != nullptr ? player->GetPlayerName() : STRING(ent->GetEntityName()));
+			}
+		}
+	}
+
 	DETOUR_DECL_MEMBER(bool, CWave_IsDoneWithNonSupportWaves)
 	{
 		REG_WRAPPER_ALL

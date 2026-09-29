@@ -111,9 +111,19 @@ jobs:
         echo "rcon answers on ${addr:-nothing}"
         export SRCDS_RCON_HOST=$addr
         line="${{ matrix.mission }}"
+        # "mission probeargs | cmd; cmd": what follows a bar goes to the
+        # server over rcon before the probe starts
+        cmds=
+        case "$line" in *"|"*) cmds=${line#*|}; line=${line%%|*};; esac
+        line=$(echo $line)
         mission=${line%% *}
         probeargs=
         [ "$mission" = "$line" ] || probeargs=${line#* }
+        IFS=';' read -ra cmdlist <<< "$cmds"
+        for c in "${cmdlist[@]}"; do
+          c=$(echo $c); [ -n "$c" ] || continue
+          echo "## $c"; bedbin/rcon "$c" 2>&1 | head -5
+        done
         for c in "meta list" "sm exts list" "sm plugins list" "sig_list_mods"; do
           echo "## $c"; bedbin/rcon "$c" 2>&1 | tee "out/$(echo $c | tr ' ' _).txt" | head -60
         done
