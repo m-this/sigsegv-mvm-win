@@ -4656,16 +4656,6 @@
 					vtidx "260"
 					// vtable
 				}
-				"CTFGrenadePipebombProjectile::StickybombTouch"
-				{
-					type  "fixed"
-					sym   "_ZN28CTFGrenadePipebombProjectile15StickybombTouchEP11CBaseEntity"
-					addr  "0x130ba0"
-					build "10828683"
-					lib   "server"
-					vtidx "262"
-					// vtable index
-				}
 				"CTFGrenadePipebombProjectile::DetonateStickies"
 				{
 					type  "fixed"
