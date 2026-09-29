@@ -743,3 +743,14 @@ void CTFPlayer::AddCustomAttribute(const char *s1, const std::string &val, float
 }
 
 GlobalThunk<Vector[TF_CLASS_COUNT]> g_TFClassViewVectors("g_TFClassViewVectors");
+
+#if defined _WINDOWS
+int CTFPlayerShared::FindHealerIndex(CBaseEntity *pHealer)
+{
+	auto &healers = this->m_aHealers.Get();
+	for (int i = 0; i < healers.Count(); ++i) {
+		if (healers[i].pHealer == pHealer) return i;
+	}
+	return -1;
+}
+#endif

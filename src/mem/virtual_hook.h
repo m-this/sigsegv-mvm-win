@@ -145,6 +145,10 @@ public:
 	virtual void DoDisable() override;
 	
 private:
+	/* each slot holding the function, in the base and every derived vtable,
+	 * with its vtable; found once, on the first enable */
+	std::vector<std::pair<void **, void *>> m_Slots;
+	bool m_bSlotsFound = false;
     friend class CVirtualHookFunc;
 };
 
@@ -166,6 +170,8 @@ public:
 
     void UnloadAll();
     void DoHook();
+	/* what the slot held before any hook went on it */
+	void *GetOriginal() const { return this->m_pFuncInner; }
 private:
     void **m_pFuncPtr;
 	void *m_pVTable;

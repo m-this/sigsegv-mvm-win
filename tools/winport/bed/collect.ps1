@@ -240,6 +240,10 @@ Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyCo
 Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
   Select-String -Pattern '(?:DoLoad|CVirtualHook): "[^"]+": refused' | ForEach-Object { $_.Line.Trim() } |
   Sort-Object -Unique | ForEach-Object { Write-Host "refused detour: $_" }
+# Detours refused for a shared body and put on their vtable slot instead.
+Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
+  Select-String -Pattern 'CDetour: "[^"]+": hooked at slot .*' | ForEach-Object { $_.Matches[0].Value } |
+  Sort-Object -Unique | ForEach-Object { Write-Host "slot detour: $_" }
 # Where each virtual hook went (the bed sets SIGSEGV_SURVEY_UNRESOLVED).
 Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
   Select-String -Pattern 'CVirtualHook: "[^"]+" in ' | ForEach-Object { $_.Line.Trim() } |

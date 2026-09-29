@@ -853,7 +853,14 @@ namespace Mod::Pop::Tank_Extensions
 		if (rc_CTFTankBoss_UpdatePingSound || rc_CTFTankBoss_TankBossThink || rc_CTankSpawner_Spawn) {
 			SpawnerData *data = rc_CTankSpawner_Spawn ? &(spawners[current_spawner]) : thinking_tank_data;
 			if (data != nullptr) {
-				if (rc_CTFTankBoss_UpdatePingSound && data->sound_ping != "")
+#if defined _WINDOWS
+				/* UpdatePingSound is inlined into TankBossThink in server.dll,
+				 * so the ping is told apart there by its name. */
+				bool ping = rc_CTFTankBoss_UpdatePingSound || (rc_CTFTankBoss_TankBossThink && FStrEq(sound, "MVM.TankPing"));
+#else
+				bool ping = rc_CTFTankBoss_UpdatePingSound;
+#endif
+				if (ping && data->sound_ping != "")
 					sound = data->sound_ping.c_str();
 				else if(rc_CTFTankBoss_TankBossThink && FStrEq(sound, "MVM.TankDeploy") && data->sound_deploy != "")
 					sound = data->sound_deploy.c_str();

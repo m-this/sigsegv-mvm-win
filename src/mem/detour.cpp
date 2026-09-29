@@ -301,11 +301,13 @@ bool IDetour_SymNormal::DoLoad()
 
 #if defined _WINDOWS
 	if (IsFoldableTrivialFunction(reinterpret_cast<const uint8_t *>(this->m_pFunc))) {
+		this->m_bRefusedShared = true;
 		Warning("IDetour_SymNormal::DoLoad: \"%s\": refused, a trivial function MSVC may have merged with others (%s)\n",
 			this->GetName(), this->m_bFuncByName ? this->m_strFuncName.c_str() : "by pointer");
 		return false;
 	}
 	if (FillsSeveralSlotIndices(this->m_pFunc)) {
+		this->m_bRefusedShared = true;
 		Warning("IDetour_SymNormal::DoLoad: \"%s\": refused, its body is shared by virtuals at several vtable slots (%s)\n",
 			this->GetName(), this->m_bFuncByName ? this->m_strFuncName.c_str() : "by pointer");
 		return false;
@@ -387,6 +389,49 @@ void IDetour_SymRegex::DoUnload()
 	TRACE("[this: %08x \"%s\"]", (uintptr_t)this, this->GetName());
 }
 
+
+#if defined _WINDOWS
+/* A function whose body MSVC shares with others cannot take a jump in its
+ * prologue: every function folded into it would run the callback. When it is a
+ * virtual the address table gives a slot for, the game reaches the class's own
+ * version through that slot, so the callback goes there instead: the class's
+ * vtable and every derived one still holding the same pointer, which is what a
+ * detour on it catches on Linux. A direct, non-virtual call to it is missed,
+ * and MSVC inlines those for bodies this small. The slot has to hold the
+ * function in the class's own vtable, and the callback has to pop what the
+ * game's body pops, or it stays a failed detour. */
+CVirtualHook *CDetour::AsVirtualHookWhenRefused()
+{
+	if (!this->m_bRefusedShared || !this->FuncByName()) return nullptr;
+	const std::string &func = this->FuncName();
+	
+	int idx = AddrManager::GetVTIndex(func.c_str());
+	size_t sep = func.rfind("::");
+	if (idx < 0 || idx >= 0x1000 || sep == std::string::npos) return nullptr;
+	std::string cls = func.substr(0, sep);
+	if (cls.find_first_of("<>: ") != std::string::npos) return nullptr;
+	
+	int game_pop;
+	if (this->m_iCallbackPop >= 0 &&
+		(!PopBytes(reinterpret_cast<const uint8_t *>(this->GetFuncPtr()), game_pop) || game_pop != this->m_iCallbackPop)) {
+		return nullptr;
+	}
+	
+	/* the vtable name outlives the hook, which keeps the pointer */
+	static std::list<std::string> s_VTableNames;
+	for (const char *prefix : {".?AV", ".?AU"}) {
+		std::string name = prefix + cls + "@@";
+		const void **vt = RTTI::GetVTable(name.c_str());
+		if (vt == nullptr || vt[idx] != this->GetFuncPtr()) continue;
+		
+		s_VTableNames.push_back(name);
+		Warning("CDetour: \"%s\": hooked at slot %d of %s and the classes inheriting it, its body being shared\n",
+			this->GetName(), idx, cls.c_str());
+		return new CVirtualHookInherit(s_VTableNames.back().c_str(), func.c_str(), this->m_pCallback, this->m_pInner);
+	}
+	return nullptr;
+}
+#endif
 
 bool CDetour::DoLoad()
 {
