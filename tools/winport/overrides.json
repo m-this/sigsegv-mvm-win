@@ -2068,5 +2068,9 @@
   "rva": "0x3dab60",
   "vtidx": 448,
   "why": "read by hand from the vtables: slot 448 of CTFWeaponBase (0x8f54b4) and CTFWeaponBaseGun, two after IsEnergyWeapon (446, verified) as on Linux, holds 0x3dab60, the body it shares with Energy_GetRechargeCost at 449 (both return 4 on Linux); CTFRaygun has its own shot cost there (0x624d30) and a different recharge cost at 449 (0x372920)"
+ },
+ "_ZN5CWave11ForceFinishEv": {
+  "rva": "0x5ed7e0",
+  "why": "read by hand: the one caller is CPopulationManager::JumpToWave (0x5e5161), as on Linux. It walks the wave spawns (m_WaveSpawns at +0xc, count +0x18) with CWaveSpawnPopulator::ForceFinish inlined: a state below 3 goes to WAIT_FOR_ALL_DEAD (SetState 3, 0x5ef5f0), a state other than 3 to DONE (4), then each active bot handle at +0x4b0 is sent to spectator through its ChangeTeam slot, the Linux body"
  }
 }
