@@ -2063,5 +2063,10 @@
  "_ZN11CTFTankBoss16GetCurrencyValueEv": {
   "rva": "0x5f2360",
   "why": "read by hand from the vtables: slot 337 (+0x544) of CTFTankBoss (0x8c0454), where CTFBaseBoss (0x8bb884) holds its own GetCurrencyValue 0x5de290, verified. The tank overrides it as on Linux: a handle at +0xa00 checked for a live entity, then a byte at +0xa31, returning 0 for neither; ret with no pop"
+ },
+ "_ZNK13CTFWeaponBase18Energy_GetShotCostEv": {
+  "rva": "0x3dab60",
+  "vtidx": 448,
+  "why": "read by hand from the vtables: slot 448 of CTFWeaponBase (0x8f54b4) and CTFWeaponBaseGun, two after IsEnergyWeapon (446, verified) as on Linux, holds 0x3dab60, the body it shares with Energy_GetRechargeCost at 449 (both return 4 on Linux); CTFRaygun has its own shot cost there (0x624d30) and a different recharge cost at 449 (0x372920)"
  }
 }

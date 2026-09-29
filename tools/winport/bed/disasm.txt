@@ -1,3 +1,1 @@
-server vtable CTFWeaponBase 446 4
-server vtable CTFWeaponBaseGun 446 4
-server vtable CTFRaygun 446 4
+# nothing asked
