@@ -378,7 +378,13 @@ public:
 	bool IsCritBoosted() const                                                          { return ft_IsCritBoosted             (this); }
 	void Heal(CBaseEntity *pHealer, float flAmount, float flOverhealBonus, float flOverhealDecayMult, bool bDispenserHeal, CTFPlayer *pHealScorer) { ft_Heal (this, pHealer, flAmount, flOverhealBonus, flOverhealDecayMult, bDispenserHeal, pHealScorer); }
 	float StopHealing(CBaseEntity *pHealer)                                             { return ft_StopHealing               (this, pHealer); }
+#if defined _WINDOWS
+	/* No address for it in server.dll. The Linux body: the index of the
+	 * healer in m_aHealers, or -1. */
+	int FindHealerIndex(CBaseEntity *pHealer);
+#else
 	int FindHealerIndex(CBaseEntity *pHealer)                                           { return ft_FindHealerIndex           (this, pHealer); }
+#endif
 	void RecalculatePlayerBodygroups()                                                  {        ft_RecalculatePlayerBodygroups(this); }
 
 	DECL_SENDPROP(float,       m_flCloakMeter);
