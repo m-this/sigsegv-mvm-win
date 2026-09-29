@@ -1,2 +1,1 @@
-server vtable CBaseCombatWeapon 322 3
-server vtable CTFWeaponBase 322 3
+server 0x1e19c0 8
