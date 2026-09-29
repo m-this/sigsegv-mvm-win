@@ -305,6 +305,10 @@ if (Test-Path "$Out\results.jsonl") {
       if ($r.state -ne 'passed') {
         $j = $_ -replace '"error":"[^"]*",?', ''
         Write-Host "  record: $($j.Substring(0, [Math]::Min(700, $j.Length)))"
+        # SigMod's wave dump, whole: which wave spawn the wave waits on
+        if ($r.debug_snapshot) {
+          $r.debug_snapshot -split "`n" | Where-Object { $_ -match '^sig_wave_dump' } | ForEach-Object { Write-Host "  $_" }
+        }
         Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue |
           Select-String -Pattern "WAVEPROBE state=\S+ .*pop=$([regex]::Escape($r.mission)) .*gamewave=$($r.wave) .*" |
           Select-Object -Last 2 | ForEach-Object { Write-Host "  last probe: $($_.Matches[0].Value)" }
