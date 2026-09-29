@@ -251,14 +251,30 @@ static bool VTableDerivesFrom(const void **vtable, const void **base, void *obje
 #endif
 }
 
+/* Each vtable holding the function at the slot gets the hook in its own slot.
+ * It used to be the base's slot every time, which hooked no derived class and
+ * put the same hook into the base's chain once per class, so a callback that
+ * called the original called itself. A slot is matched on what it held before
+ * any hook, since another mod's hook may already be on it. */
 void CVirtualHookInherit::DoEnable()
 {
     if (!this->m_bEnabled && this->m_bLoaded) {
-        auto origfunc = *this->m_pFuncPtr;
-        for (auto &[name, vtable] : RTTI::GetAllVTable()) {
-            if (vtable[this->m_iOffset] == origfunc && VTableDerivesFrom(vtable, (const void **)this->m_pVTable, *this->m_pFuncPtr)) {
-                CVirtualHookFunc::Find(this->m_pFuncPtr, (void *) *vtable).AddVirtualHook(this);
+        if (!this->m_bSlotsFound) {
+            auto original = [](void **slot) {
+                CVirtualHookFunc *func = CVirtualHookFunc::FindOptional(slot);
+                return func != nullptr ? func->GetOriginal() : *slot;
+            };
+            void *origfunc = original(this->m_pFuncPtr);
+            for (auto &[name, vtable] : RTTI::GetAllVTable()) {
+                void **slot = const_cast<void **>(vtable + this->m_iOffset);
+                if (original(slot) == origfunc && VTableDerivesFrom(vtable, (const void **)this->m_pVTable, origfunc)) {
+                    this->m_Slots.emplace_back(slot, (void *) vtable);
+                }
             }
+            this->m_bSlotsFound = true;
+        }
+        for (auto &[slot, vtable] : this->m_Slots) {
+            CVirtualHookFunc::Find(slot, vtable).AddVirtualHook(this);
         }
         
         this->m_bEnabled = true;
@@ -268,11 +284,8 @@ void CVirtualHookInherit::DoEnable()
 void CVirtualHookInherit::DoDisable()
 {
     if (this->m_bEnabled) {
-        auto origfunc = *this->m_pFuncPtr;
-        for (auto &[name, vtable] : RTTI::GetAllVTable()) {
-            if (vtable[this->m_iOffset] == origfunc && VTableDerivesFrom(vtable, (const void **)this->m_pVTable, *this->m_pFuncPtr)) {
-                CVirtualHookFunc::Find(this->m_pFuncPtr, (void *) *vtable).RemoveVirtualHook(this);
-            }
+        for (auto &[slot, vtable] : this->m_Slots) {
+            CVirtualHookFunc::Find(slot, vtable).RemoveVirtualHook(this);
         }
         this->m_bEnabled = false;
     }
