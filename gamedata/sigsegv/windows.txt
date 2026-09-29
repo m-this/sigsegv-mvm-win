@@ -3142,6 +3142,15 @@
 					lib   "server"
 					// verified: virtual, CTFBaseBoss's vtable slot +0x544: the Windows tank table lines up with Linux five slots lower over GetCurrencyValue, ModifyDamage, SetSkin and GetBodyInterface, and the base's +0x548 is ModifyDamage's shared stub. Given its address, the thunk finds the slot and calls each boss's own override
 				}
+				"CTFTankBoss::GetCurrencyValue"
+				{
+					type  "fixed"
+					sym   "_ZN11CTFTankBoss16GetCurrencyValueEv"
+					addr  "0x5f2360"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand from the vtables: slot 337 (+0x544) of CTFTankBoss (0x8c0454), where CTFBaseBoss (0x8bb884) holds its own GetCurrencyValue 0x5de290, verified. The tank overrides it as on Linux: a handle at +0xa00 checked for a live entity, then a byte at +0xa31, returning 0 for neither; ret with no pop
+				}
 				"CSprite::SpriteCreate"
 				{
 					type  "fixed"
