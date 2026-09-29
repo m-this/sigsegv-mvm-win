@@ -35,6 +35,7 @@ version = sys.argv[2]
 # have, usually because Windows needs a different function; "lib" defaults to
 # server.
 overrides = json.load(open(Path(__file__).parent / "overrides.json"))
+bad = {sym for sym, entry in overrides.items() if entry.get("bad")}
 for sym, entry in overrides.items():
     # "bad" marks a match that was checked and is wrong: leave the name out, so
     # it fails to resolve out loud rather than running the wrong function.
@@ -139,7 +140,8 @@ for name, entry in found + [x for x in extra if x[0] in named]:
     if entry.get("type") != "sym" or (lib != "server" and "verified" not in matches.get(entry.get("sym"), {}).get("via", "")):
         continue
     match = matches.get(entry.get("sym"))
-    if match is None and name in by_name:
+    # a "bad" override turns away the vtable match of that name as well
+    if match is None and name in by_name and entry.get("sym") not in bad:
         match = {"rva": by_name[name], "via": "vtable index"}
     if match is None and name.startswith("DT_") and name.endswith("::g_SendTable"):
         out += [
