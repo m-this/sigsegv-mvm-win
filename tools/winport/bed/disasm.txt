@@ -1,1 +1,2 @@
-# nothing asked
+server vtable CBaseCombatWeapon 322 3
+server vtable CTFWeaponBase 322 3
