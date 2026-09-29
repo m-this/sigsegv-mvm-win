@@ -7997,6 +7997,15 @@
 					lib   "server"
 					// verified: read by hand: the one function called by all six of Linux's callers known on Windows (ApplyOnDamageModifyRules, the eyeball boss' death, the tank's destruction and three more), with 23 direct callers as Linux has 23; reads the amplitude at +0xc; cdecl, plain ret
 				}
+				"GetKilleaterWeaponFromDamageInfo"
+				{
+					type  "fixed"
+					sym   "_Z32GetKilleaterWeaponFromDamageInfoPK15CTakeDamageInfo"
+					addr  "0x48cb70"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand from CTFPlayer::OnTakeDamage: at 0x503eca it is called with the damage info's address alone (cdecl, add esp 4) and its result, tested for null, is the econ entity handed to the kill eater event (0x48a8e0) with kKillEaterEvent 0x52, damage dealt, as the Linux body does with GetKilleaterWeaponFromDamageInfo
+				}
 				"CTeamplayRules::PlayerKilled"
 				{
 					type  "fixed"
@@ -8015,6 +8024,15 @@
 					lib   "server"
 					// consensus
 				}
+				"GetKilleaterWeaponFromDamageInfo::CTakeDamageInfo"
+				{
+					type  "fixed"
+					sym   "_Z32GetKilleaterWeaponFromDamageInfoPK15CTakeDamageInfo"
+					addr  "0x48cb70"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand from CTFPlayer::OnTakeDamage: at 0x503eca it is called with the damage info's address alone (cdecl, add esp 4) and its result, tested for null, is the econ entity handed to the kill eater event (0x48a8e0) with kKillEaterEvent 0x52, damage dealt, as the Linux body does with GetKilleaterWeaponFromDamageInfo
+				}
 				"OnBotTeleported"
 				{
 					type  "fixed"
@@ -8023,6 +8041,15 @@
 					build "10828683"
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: shares the string 'MVM.Robot_Teleporter_Deliver' with the Linux function, and 6 of its 6 matched callees
+				}
+				"EconItemInterface_OnOwnerKillEaterEvent"
+				{
+					type  "fixed"
+					sym   "_Z39EconItemInterface_OnOwnerKillEaterEventP18IEconItemInterfaceP9CTFPlayerS2_18kill_eater_event_ti"
+					addr  "0x48a8e0"
+					build "10828683"
+					lib   "server"
+					// verified: read by hand from CTFPlayer::OnTakeDamage, which calls it twice with (econ entity, attacker, victim, event 0x52 or 0x5e, amount), cdecl, add esp 0x28 for both. MSVC folded the econ entity wrapper and the IEconItemInterface body into this one function: it takes the entity, not the interface, and reaches the item through +0x4ac itself. Its owner, the second argument, is where the Linux one is, which is all the Weapon_Shoot detour reads: a fake weapon's damage with no player owner faulted here reading owner+0xefc
 				}
 				"CTFGameRules::FlPlayerFallDamage"
 				{

@@ -2051,5 +2051,9 @@
  "_Z39EconItemInterface_OnOwnerKillEaterEventP18IEconItemInterfaceP9CTFPlayerS2_18kill_eater_event_ti": {
   "rva": "0x48a8e0",
   "why": "read by hand from CTFPlayer::OnTakeDamage, which calls it twice with (econ entity, attacker, victim, event 0x52 or 0x5e, amount), cdecl, add esp 0x28 for both. MSVC folded the econ entity wrapper and the IEconItemInterface body into this one function: it takes the entity, not the interface, and reaches the item through +0x4ac itself. Its owner, the second argument, is where the Linux one is, which is all the Weapon_Shoot detour reads: a fake weapon's damage with no player owner faulted here reading owner+0xefc"
+ },
+ "_ZN28CTFGrenadePipebombProjectile15StickybombTouchEP11CBaseEntity": {
+  "bad": true,
+  "why": "the vtable match (knownvtidx, slot 262 for Linux +0x3ec) lands on 0x130ba0, an empty body MSVC shares with other empty virtuals (CTFWeaponBaseGun's slot 475 holds it too), not the touch that sticks a bomb to a surface. Hooked there, SigMod's StickybombTouch ran in place of another virtual of every pipebomb, and missions with stickies ran a thousand times slower"
  }
 }

@@ -40,6 +40,13 @@ public:
 	DetourPriority GetPriority() const { return this->m_Priority; }
 	void SetPriority(DetourPriority priority) { this->m_Priority = priority; }
 	
+#if defined _WINDOWS
+	/* For a detour DoLoad refused because MSVC shares the function's body with
+	 * others: the same callback on the function's own vtable slot, or nullptr
+	 * when it has none that can be hooked. See CDetour's. */
+	virtual CVirtualHook *AsVirtualHookWhenRefused() { return nullptr; }
+#endif
+	
 protected:
 	IDetour() {}
 	
@@ -70,6 +77,13 @@ protected:
 	
 	virtual bool DoLoad() override;
 	virtual void DoUnload() override;
+	
+#if defined _WINDOWS
+	/* set when DoLoad refused the function for a body MSVC shares */
+	bool m_bRefusedShared = false;
+	const std::string& FuncName() const { return this->m_strFuncName; }
+	bool FuncByName() const { return this->m_bFuncByName; }
+#endif
 	
 private:
 	std::string m_strName;
@@ -132,6 +146,12 @@ private:
 	
 	virtual void DoEnable() override;
 	virtual void DoDisable() override;
+	
+#if defined _WINDOWS
+public:
+	virtual CVirtualHook *AsVirtualHookWhenRefused() override;
+private:
+#endif
 	
 	bool EnsureUniqueInnerPtrs();
 	
