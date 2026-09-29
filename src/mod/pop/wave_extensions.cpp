@@ -1175,6 +1175,13 @@ namespace Mod::Pop::Wave_Extensions
 				i, ws->m_name.Get(), (state >= 0 && state <= 4) ? states[state] : "?", ws->m_bSupportWave, ws->m_bLimitedSupport ? "(limited)" : "",
 				ws->m_waitForAllSpawned.Get(), ws->m_waitForAllDead.Get(), ws->m_countSpawnedSoFar, ws->m_totalCount,
 				ws->m_activeVector.Count(), alive);
+			for (auto &handle : ws->m_activeVector) {
+				CBaseEntity *ent = handle;
+				if (ent == nullptr || !ent->IsAlive()) continue;
+				CBasePlayer *player = ToBasePlayer(ent);
+				Msg("sig_wave_dump:   alive #%d %s team=%d health=%d name=\"%s\"\n", ENTINDEX(ent), ent->GetClassname(),
+					ent->GetTeamNumber(), ent->GetHealth(), player != nullptr ? player->GetPlayerName() : STRING(ent->GetEntityName()));
+			}
 		}
 	}
 
