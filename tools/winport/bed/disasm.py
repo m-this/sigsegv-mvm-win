@@ -73,7 +73,7 @@ class Module:
         for count, ins in enumerate(md.disasm(code, self.base + start)):
             rva = ins.address - self.base
             mark = " <==" if stop_after is not None and rva < stop_after <= rva + ins.size else ""
-            line = f"  {rva:#08x}  {ins.mnemonic} {ins.op_str}{mark}"
+            line = f"  {rva:#08x}  {ins.bytes.hex():<16} {ins.mnemonic} {ins.op_str}{mark}"
             if ins.mnemonic in ("call", "jmp") and ins.op_str.startswith("0x"):
                 line += f"    -> {int(ins.op_str, 16) - self.base:#x}"
             lines.append(line)
