@@ -1212,28 +1212,7 @@ namespace Mod::Cond::Reprogrammed
 			}
 		}
 
-#if defined _WINDOWS
-		/* A neutral robot spawned a moment ago stands where the next member of
-		 * its squad spawns, and on Windows the game's space test there counts
-		 * it: the squad's second robot was refused every time and the squad
-		 * spawned its first again, for ever (dust to dust, wave 5). On Linux the
-		 * squad spawns. The neutral robots stay out of that test for the call. */
-		std::vector<CHandle<CTFPlayer>> unsolid;
-		for (auto bot : spec_players) {
-			if (bot != nullptr && !bot->CollisionProp()->IsSolidFlagSet(FSOLID_NOT_SOLID)) {
-				bot->CollisionProp()->SetSolidFlags(bot->CollisionProp()->GetSolidFlags() | FSOLID_NOT_SOLID);
-				unsolid.push_back(bot);
-			}
-		}
-#endif
 		bool result = DETOUR_MEMBER_CALL(where, ents);
-#if defined _WINDOWS
-		for (auto bot : unsolid) {
-			if (bot != nullptr) {
-				bot->CollisionProp()->SetSolidFlags(bot->CollisionProp()->GetSolidFlags() & ~FSOLID_NOT_SOLID);
-			}
-		}
-#endif
 
 		for (auto bot : spec_players) {
 			if (bot != nullptr && !bot->IsMarkedForDeletion() && bot->GetTeamNumber() == TEAM_SPECTATOR) {
