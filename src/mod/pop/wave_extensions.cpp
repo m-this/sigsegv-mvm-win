@@ -22,6 +22,11 @@ namespace Mod::MvM::Wavespawn_Extensions
 	bool IsEnabled();
 }
 
+namespace Mod::Pop::WaveSpawn_Extensions
+{
+	void DumpTemplateInstances(CWaveSpawnPopulator *populator);
+}
+
 namespace Mod::Pop::Wave_Extensions
 {
 	struct SentryGunInfo
@@ -1182,6 +1187,7 @@ namespace Mod::Pop::Wave_Extensions
 				Msg("sig_wave_dump:   alive #%d %s team=%d health=%d name=\"%s\"\n", ENTINDEX(ent), ent->GetClassname(),
 					ent->GetTeamNumber(), ent->GetHealth(), player != nullptr ? player->GetPlayerName() : STRING(ent->GetEntityName()));
 			}
+			Mod::Pop::WaveSpawn_Extensions::DumpTemplateInstances(ws);
 		}
 	}
 

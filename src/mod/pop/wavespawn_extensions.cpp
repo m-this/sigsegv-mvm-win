@@ -971,6 +971,24 @@ namespace Mod::Pop::WaveSpawn_Extensions
 		}
 	}
 
+	/* The entities of each template a wave spawn is waiting on, for
+	 * sig_wave_dump: its sentinel says only that something is still there. */
+	void DumpTemplateInstances(CWaveSpawnPopulator *populator) {
+		for (auto spawner : template_spawners) {
+			if (spawner->m_Populator != populator) continue;
+			for (auto &[inst, pos] : spawner->m_Instances) {
+				if (inst == nullptr) continue;
+				Msg("sig_wave_dump:   template \"%s\" delete=%d killed=%d parent=%d\n", inst->templ != nullptr ? inst->templ->name.c_str() : "",
+					inst->mark_delete, inst->all_entities_killed, inst->has_parent);
+				for (auto &handle : inst->entities) {
+					CBaseEntity *ent = handle;
+					if (ent == nullptr) continue;
+					Msg("sig_wave_dump:     #%d %s name=\"%s\"\n", ENTINDEX(ent), ent->GetClassname(), STRING(ent->GetEntityName()));
+				}
+			}
+		}
+	}
+
 	void RemoveWaveSpawnEntities(CWaveSpawnPopulator *populator) {
 		for(auto spawner : template_spawners) {
 			auto spPopulator = spawner->m_Populator;
