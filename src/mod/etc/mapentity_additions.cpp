@@ -848,14 +848,22 @@ namespace Mod::Etc::Mapentity_Additions
         /* Who kills a giant by suicide: accursed's Chief dies at full health
          * seconds after it spawns, and nothing in the mission says so. */
         if (auto tfplayer = ToTFPlayer(player); tfplayer != nullptr && tfplayer->IsMiniBoss()) {
-            void *ret = __builtin_return_address(0);
-            HMODULE mod = nullptr;
-            char path[MAX_PATH] = "?";
-            if (GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, (LPCSTR)ret, &mod))
+            /* The modules the return addresses on the stack belong to: a
+             * plugin's ForcePlayerSuicide goes through sdktools, the game's own
+             * callers stay in server.dll. */
+            std::string where;
+            auto sp = reinterpret_cast<uintptr_t *>(__builtin_frame_address(0));
+            for (int i = 0; i < 96 && where.size() < 400; i++) {
+                HMODULE mod = nullptr;
+                if (!GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, (LPCSTR)sp[i], &mod)) continue;
+                char path[MAX_PATH] = "?";
                 GetModuleFileNameA(mod, path, sizeof(path));
-            const char *base = strrchr(path, '\\');
-            Msg("SigMod: suicide %s health %d force %d from %s+0x%x\n", player->GetPlayerName(), player->GetHealth(), force,
-                base != nullptr ? base + 1 : path, (unsigned)((uintptr_t)ret - (uintptr_t)mod));
+                const char *base = strrchr(path, '\\');
+                char one[96];
+                snprintf(one, sizeof(one), " %s+0x%x", base != nullptr ? base + 1 : path, (unsigned)(sp[i] - (uintptr_t)mod));
+                where += one;
+            }
+            Msg("SigMod: suicide %s health %d force %d stack%s\n", player->GetPlayerName(), player->GetHealth(), force, where.c_str());
         }
 #endif
         // No commit suicide if the camera is active
