@@ -1,2 +1,1 @@
-mvm_creepside_b2_adv_dust_to_dust -start-wave 5 | sig_etc_extra_player_slots_count 33
-mvm_creepside_b2_adv_dust_to_dust -start-wave 5
+mvm_condemned_b3_exp_trespasser_remaster
