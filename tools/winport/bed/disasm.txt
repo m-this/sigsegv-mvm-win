@@ -1,2 +1,2 @@
-server 0x4e6ad6 60
-server 0x4e6b00 30
+server func 0x5748f0 200
+server 0x5748d0 30
