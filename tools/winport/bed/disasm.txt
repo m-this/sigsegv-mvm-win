@@ -1,1 +1,2 @@
-server func 0x4e6b2d 400
+server 0x4e6ad6 60
+server 0x4e6b00 30
