@@ -191,7 +191,7 @@ Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyCo
 # member cannot spawn retries all of them for ever.
 Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort-Object Name | ForEach-Object {
   $name = $_.Name
-  Select-String -Path $_.FullName -Pattern '(SigMod: (bot spawn refused|task below)|WAVEPROBE wear) .*' | Select-Object -First 120 | ForEach-Object { Write-Host "spawn in ${name}: $($_.Matches[0].Value)" }
+  Select-String -Path $_.FullName -Pattern '(SigMod: (bot spawn refused|task below)|WAVEPROBE (wear|death)) .*' | Select-Object -First 120 | ForEach-Object { Write-Host "spawn in ${name}: $($_.Matches[0].Value)" }
 }
 # Where the frame callbacks spend a slow server's time, the last reports of
 # each console.
