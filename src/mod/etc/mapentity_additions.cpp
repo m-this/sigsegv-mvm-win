@@ -848,7 +848,7 @@ namespace Mod::Etc::Mapentity_Additions
         /* Who kills a giant by suicide: accursed's Chief dies at full health
          * seconds after it spawns, and nothing in the mission says so. */
         if (auto tfplayer = ToTFPlayer(player); tfplayer != nullptr && tfplayer->IsMiniBoss()) {
-            void *ret = _ReturnAddress();
+            void *ret = __builtin_return_address(0);
             HMODULE mod = nullptr;
             char path[MAX_PATH] = "?";
             if (GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, (LPCSTR)ret, &mod))
