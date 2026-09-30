@@ -702,17 +702,10 @@ void UpdatePeriodicTasks(std::vector<PeriodicTaskImpl> &pending_periodic_tasks, 
 
         CTFBot *bot = pending_task_impl.bot;
         if (bot == nullptr || !bot->IsAlive()) {
-#if defined _WINDOWS
-            if (pending_task.health_below != 0 && bot != nullptr)
-                Msg("SigMod: task below %d dropped, %s died at health %d, lowest seen %d, next in %.2f\n", pending_task.health_below, bot->GetPlayerName(), bot->GetHealth(), pending_task_impl.lowestHealth, pending_task_impl.nextTaskTime - gpGlobals->curtime);
-#endif
             it = pending_periodic_tasks.erase(it);
             continue;
         }
 
-#if defined _WINDOWS
-        if (bot->GetHealth() < pending_task_impl.lowestHealth) pending_task_impl.lowestHealth = bot->GetHealth();
-#endif
         if (pending_task.health_below != 0 
             && bot->GetHealth() >= pending_task.health_below) {
             pending_task_impl.nextTaskTime = gpGlobals->curtime + pending_task.delay;
@@ -735,10 +728,6 @@ void UpdatePeriodicTasks(std::vector<PeriodicTaskImpl> &pending_periodic_tasks, 
 
             size_t sizePre = pending_periodic_tasks.size();
             size_t posPre = it - pending_periodic_tasks.begin();
-#if defined _WINDOWS
-            if (pending_task.health_below != 0)
-                Msg("SigMod: task below %d ran, %s at health %d\n", pending_task.health_below, bot->GetPlayerName(), bot->GetHealth());
-#endif
             pending_task.Update(bot);
 
             // Changing attributes might clear the task table
