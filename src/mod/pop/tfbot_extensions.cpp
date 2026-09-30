@@ -1028,6 +1028,37 @@ namespace Mod::Pop::TFBot_Extensions
 		if (result && it != spawners.end()) {
 			OnBotSpawn(spawner,ents, (*it).second);
 		}
+#if defined _WINDOWS
+		/* A refused spawn leaves no trace of why, and a squad retries its
+		 * whole membership on every refusal. Say what the game's own space
+		 * test would hit at this spot, and who is dead and waiting. */
+		if (!result && TFGameRules()->IsMannVsMachineMode()) {
+			static int refusals = 0;
+			if (refusals < 40 || refusals % 500 == 0) {
+				Vector here = where;
+				here.z += 18.0f;
+				trace_t tr;
+				CTraceFilterSimple filter(nullptr, COLLISION_GROUP_PLAYER_MOVEMENT);
+				UTIL_TraceHull(here, here, VEC_HULL_MIN - Vector(5, 5, 0), VEC_HULL_MAX + Vector(5, 5, 5), MASK_SOLID | CONTENTS_PLAYERCLIP, &filter, &tr);
+				CBaseEntity *hit = tr.m_pEnt;
+				int specBots = 0, specAlive = 0;
+				auto spec = TFTeamMgr()->GetTeam(TEAM_SPECTATOR);
+				for (int i = 0; i < spec->GetNumPlayers(); i++) {
+					CBasePlayer *p = spec->GetPlayer(i);
+					if (p == nullptr || !p->IsBot()) continue;
+					specBots++;
+					if (p->IsAlive()) specAlive++;
+				}
+				Msg("SigMod: bot spawn refused #%d: class=%d at (%.0f %.0f %.0f) space=%s hit=#%d team=%d \"%s\" spectator bots=%d alive=%d blue=%d\n",
+					refusals, spawner->m_iClass, where.x, where.y, where.z,
+					tr.fraction >= 1.0f ? "free" : "blocked",
+					hit != nullptr ? ENTINDEX(hit) : -1, hit != nullptr ? hit->GetTeamNumber() : -1,
+					hit != nullptr ? (hit->IsPlayer() ? static_cast<CBasePlayer *>(hit)->GetPlayerName() : hit->GetClassname()) : "",
+					specBots, specAlive, TFTeamMgr()->GetTeam(TF_TEAM_BLUE)->GetNumPlayers());
+			}
+			refusals++;
+		}
+#endif
 		if (swapSlots) {
 			// Swap the team vector contents back
 			auto team = TFTeamMgr()->GetTeam(TEAM_SPECTATOR);

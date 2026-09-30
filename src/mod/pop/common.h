@@ -145,6 +145,9 @@ public:
     std::shared_ptr<PeriodicTask> task;
     float nextTaskTime = 0;
     int repeatsLeft = 0;
+#if defined _WINDOWS
+    int lowestHealth = 0x7fffffff;
+#endif
 };
 
 struct ItemAttributes

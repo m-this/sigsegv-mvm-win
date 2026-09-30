@@ -2500,6 +2500,16 @@
 					vtidx "322"
 					// verified: read by hand: slot 322 of CBaseCombatWeapon (Linux 328; GetWorldModel +0xf6 at 323, GetAnimPrefix +0x146 at 324 and GetMaxClip1 0x1e1600 at 325 agree on the shift of 6). GetFileWeaponInfoFromHandle of m_hWeaponFileInfo (+0x642, +0x64e on Linux) plus 0xa6, szViewModel, the Linux body. CTFWeaponBase overrides the same slot (0x6361a0, AttribHookValue then GetTFWpnData) as Linux does at 328. Pops 4
 				}
+				"CBaseCombatWeapon::GetWorldModel"
+				{
+					type  "fixed"
+					sym   "_ZNK17CBaseCombatWeapon13GetWorldModelEv"
+					addr  "0x1e19c0"
+					build "10828683"
+					lib   "server"
+					vtidx "323"
+					// verified: read by hand from the vtables: slot 323 of CBaseCombatWeapon (0x793444), right after GetViewModel at 322 (verified), which returns the weapon info's world model string (+0xf6) as the Linux body does; CTFWeaponBase has its own at 323 (0x636270) and shares 324 (0x1e1430, GetAnimPrefix) with the base, as Linux's order has them
+				}
 				"CBaseCombatWeapon::WeaponSound"
 				{
 					type  "fixed"

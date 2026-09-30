@@ -111,9 +111,19 @@ jobs:
         echo "rcon answers on ${addr:-nothing}"
         export SRCDS_RCON_HOST=$addr
         line="${{ matrix.mission }}"
+        # "mission probeargs | cmd; cmd": what follows a bar goes to the
+        # server over rcon before the probe starts
+        cmds=
+        case "$line" in *"|"*) cmds=${line#*|}; line=${line%%|*};; esac
+        line=$(echo $line)
         mission=${line%% *}
         probeargs=
         [ "$mission" = "$line" ] || probeargs=${line#* }
+        IFS=';' read -ra cmdlist <<< "$cmds"
+        for c in "${cmdlist[@]}"; do
+          c=$(echo $c); [ -n "$c" ] || continue
+          echo "## $c"; bedbin/rcon "$c" 2>&1 | head -5
+        done
         for c in "meta list" "sm exts list" "sm plugins list" "sig_list_mods"; do
           echo "## $c"; bedbin/rcon "$c" 2>&1 | tee "out/$(echo $c | tr ' ' _).txt" | head -60
         done
@@ -144,6 +154,12 @@ jobs:
         echo "-- script errors"
         grep -a -c "AN ERROR HAS OCCURRED" out/console.log || true
         grep -a -A3 "AN ERROR HAS OCCURRED" out/console.log | head -60 | cut -c1-220
+        # linuxgrep.txt, when present, is one extended regex: the console lines
+        # it matches, for following one thing through a run
+        if [ -s tools/winport/bed/linuxgrep.txt ]; then
+          echo "-- console lines matching linuxgrep.txt"
+          grep -a -E -f tools/winport/bed/linuxgrep.txt out/console.log | head -400 | cut -c1-300 || true
+        fi
     - if: always()
       uses: actions/upload-artifact@v4
       with:

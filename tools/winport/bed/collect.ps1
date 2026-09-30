@@ -187,6 +187,12 @@ Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyCo
 Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
   Select-String -Pattern 'IHasDetours::LoadDetours: "([^"]+)" "([^"]+)" FAIL' | ForEach-Object { "$($_.Matches[0].Groups[1].Value): $($_.Matches[0].Groups[2].Value)" } |
   Sort-Object -Unique | ForEach-Object { Write-Host "detour failed: $_" }
+# Each bot spawn the game refused, and what stood in the way: a squad whose
+# member cannot spawn retries all of them for ever.
+Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort-Object Name | ForEach-Object {
+  $name = $_.Name
+  Select-String -Path $_.FullName -Pattern '(SigMod: (bot spawn refused|task below|suicide)|WAVEPROBE (wear|death|wave stood|hit)) .*' | Select-Object -First 120 | ForEach-Object { Write-Host "spawn in ${name}: $($_.Matches[0].Value)" }
+}
 # Where the frame callbacks spend a slow server's time, the last reports of
 # each console.
 Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort-Object Name | ForEach-Object {
@@ -292,6 +298,10 @@ Get-ChildItem "$Out\winbed-*.out", "$Out\winbed-*.err" -ErrorAction SilentlyCont
   Write-Host "--- tail of $($_.Name)"
   Get-Content $_.FullName -Tail 6 | Write-Host
 }
+# The probe's own complaints: a mission that ends with no record ended here.
+if (Test-Path "$Out\waveprobe.err") {
+  Get-Content "$Out\waveprobe.err" -Tail 15 | ForEach-Object { Write-Host "probe: $_" }
+}
 if (Test-Path "$Out\results.jsonl") {
   Get-Content "$Out\results.jsonl" | ForEach-Object {
     try {
@@ -305,6 +315,10 @@ if (Test-Path "$Out\results.jsonl") {
       if ($r.state -ne 'passed') {
         $j = $_ -replace '"error":"[^"]*",?', ''
         Write-Host "  record: $($j.Substring(0, [Math]::Min(700, $j.Length)))"
+        # SigMod's wave dump, whole: which wave spawn the wave waits on
+        if ($r.debug_snapshot) {
+          $r.debug_snapshot -split "`n" | Where-Object { $_ -match '^sig_wave_dump' } | ForEach-Object { Write-Host "  $_" }
+        }
         Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue |
           Select-String -Pattern "WAVEPROBE state=\S+ .*pop=$([regex]::Escape($r.mission)) .*gamewave=$($r.wave) .*" |
           Select-Object -Last 2 | ForEach-Object { Write-Host "  last probe: $($_.Matches[0].Value)" }
