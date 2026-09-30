@@ -298,6 +298,10 @@ Get-ChildItem "$Out\winbed-*.out", "$Out\winbed-*.err" -ErrorAction SilentlyCont
   Write-Host "--- tail of $($_.Name)"
   Get-Content $_.FullName -Tail 6 | Write-Host
 }
+# The probe's own complaints: a mission that ends with no record ended here.
+if (Test-Path "$Out\waveprobe.err") {
+  Get-Content "$Out\waveprobe.err" -Tail 15 | ForEach-Object { Write-Host "probe: $_" }
+}
 if (Test-Path "$Out\results.jsonl") {
   Get-Content "$Out\results.jsonl" | ForEach-Object {
     try {
