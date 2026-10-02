@@ -49,6 +49,9 @@ jobs:
         git clone https://github.com/alliedmodders/metamod-source --depth 1 -b 1.11-dev
         popd
 
+    - name: Rebuild the tf2 SDK's tier1 from its sources
+      run: tools/build-sdk-tier1.sh ../alliedmodders/hl2sdk-tf2
+
     - name: Build submodules
       run: |
         pushd libs/udis86
@@ -92,6 +95,7 @@ jobs:
       with:
         name: package-linux
         path: build/release/package-linux.zip
+        if-no-files-found: error
 
     - name: Upload package-linux-optimize-only
       uses: actions/upload-artifact@v4
