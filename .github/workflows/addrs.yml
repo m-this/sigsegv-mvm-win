@@ -67,7 +67,7 @@ jobs:
         python3 ../tools/winport/matchfuncs.py ../game-linux/tf/bin/server_srv.so ../game-windows/tf/bin/server.dll matches.json linux-vtables win-vtables > matchfuncs.log
         python3 ../tools/winport/argsize.py ../game-windows/tf/bin/server.dll matches.json > argsize.log
         python3 ../tools/winport/datamaps.py ../game-windows/tf/bin/server.dll ../gamedata/sigsegv/datamaps.txt > datamaps.json
-        python3 ../tools/winport/emitgamedata.py matches.json "$ver" datamaps.json ../tools/winport/knownvtidx.generated.txt > windows.txt
+        python3 ../tools/winport/emitgamedata.py matches.json "$ver" datamaps.json ../tools/winport/knownvtidx.generated.txt win-vtables > windows.txt
     - name: How it differs from the committed table
       if: always()
       run: |

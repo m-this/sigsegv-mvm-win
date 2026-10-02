@@ -64,8 +64,18 @@ log: every `IHasDetours::LoadDetours: "<mod>" "<addr>" FAIL` is there.
 To rebuild the extension: `OUT=/tmp/winport-build tools/winport/build.sh`
 (clang-cl + lld-link, needs an xwin SDK and the AlliedModders checkout next
 door; see `census.sh`). To regenerate the address table:
-`emitgamedata.py matches.json 10828683 datamaps.json knownvtidx.generated.txt >
-gamedata/sigsegv/windows.txt`.
+`emitgamedata.py matches.json 10828683 datamaps.json knownvtidx.generated.txt
+win-vtables/ > gamedata/sigsegv/windows.txt`.
+
+After a TF2 update the overrides move first. Each entry in `overrides.json`
+holds for the build its `build` names, and `emitgamedata.py` leaves out any
+other. With the previous build's binaries still on disk, `rebase.py
+OLD/server.dll NEW/server.dll --json rvas.json` finds each address again by its
+masked body, or for a global through the carried functions that reference it,
+and answers `none` where the body changed. A `none` is read by hand, as the
+twelve of the 2026-10-02 update were (`carried` in each entry). Steam does not
+serve an old build to an anonymous login, so keep the binaries of the build
+the table is for.
 
 ## Where it stands
 

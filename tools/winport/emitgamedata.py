@@ -10,10 +10,15 @@ Linux symbol lookups one for one.
 `fixed` is tied to a server version, which is what it should be: the matches
 are only true for the build they were made against.
 
-    emitgamedata.py matches.json SERVER_VERSION [datamaps.json [knownvtidx.generated.txt]] > gamedata/sigsegv/windows.txt
+    emitgamedata.py matches.json SERVER_VERSION [datamaps.json [knownvtidx.generated.txt win-vtables/]] > gamedata/sigsegv/windows.txt
 
 tools/winport/overrides.json holds addresses checked by hand, keyed by Linux
-symbol, and wins over matches.json.
+symbol, and wins over matches.json. Each names the build it holds for; one
+from another build is left out, and rebase.py carries them to a new one.
+
+knownvtidx.generated.txt gives a vtable and a slot per name. The address is
+read from that slot in dumpvtables.py's dump of this build, win-vtables/; the
+address in the file's comments is the build it was made from.
 """
 
 import glob
@@ -36,11 +41,15 @@ version = sys.argv[2]
 # server.
 overrides = json.load(open(Path(__file__).parent / "overrides.json"))
 bad = {sym for sym, entry in overrides.items() if entry.get("bad")}
+stale = sorted(sym for sym, entry in overrides.items() if "rva" in entry and entry.get("build") != version)
+if stale:
+    print(f"{len(stale)} overrides hold for another build than {version}, left out: run rebase.py", file=sys.stderr)
 for sym, entry in overrides.items():
     # "bad" marks a match that was checked and is wrong: leave the name out, so
     # it fails to resolve out loud rather than running the wrong function.
-    if entry.get("bad"):
+    if entry.get("bad") or sym in stale:
         matches.pop(sym, None)
+        bad.add(sym)
         continue
     matches[sym] = {"rva": int(entry["rva"], 16), "via": "verified: " + entry["why"]}
     # A body MSVC folded, like an empty virtual, is one address in many slots;
@@ -125,11 +134,33 @@ if len(sys.argv) > 3:
 # its body with others that return false, and read as false for every player.
 by_name = {}
 vtidx = {}
+
+
+def primary_table(path):
+    """The slots of a class's offset-0 vtable in a dumpvtables.py dump."""
+    slots, inside = [], False
+    for row in open(path):
+        if row.startswith("// vtable"):
+            if inside:
+                break
+            inside = row.rstrip().endswith("offset 0x0000")
+        elif inside and row.startswith("+0x"):
+            slots.append(int(row.split()[1], 16))
+    return slots
+
+
 if len(sys.argv) > 4:
     text = open(sys.argv[4]).read()
-    for m in re.finditer(r'"([^"]+)"\n\{\n(?:[^}]*?)idx +"(\d+)"\n(?:[^}]*?)// [^\n]*windows (0x[0-9a-f]+)', text):
-        by_name[m.group(1)] = int(m.group(3), 16) - 0x10000000
-        vtidx[m.group(1)] = (int(m.group(2)), by_name[m.group(1)])
+    dumps = Path(sys.argv[5])
+    for m in re.finditer(r'"([^"]+)"\n\{\n(?:[^}]*?)vtable +"([^"]+)"\n(?:[^}]*?)idx +"(\d+)"\n', text):
+        name, table, index = m.group(1), m.group(2), int(m.group(3))
+        dump = dumps / f"{table}.txt"
+        slots = primary_table(dump) if dump.exists() else []
+        if index >= len(slots):
+            print(f"knownvtidx {name}: no slot {index} in {table}'s dump, left out", file=sys.stderr)
+            continue
+        by_name[name] = slots[index] - 0x10000000
+        vtidx[name] = (index, by_name[name])
 
 # A named override takes the place of the Linux entry of that name: a function
 # Linux finds by signature ("func ebpprologue vprof") has no symbol to match.
