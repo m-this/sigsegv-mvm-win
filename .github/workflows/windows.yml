@@ -50,6 +50,8 @@ jobs:
       BOOST: /home/runner/winport/winport-deps/boost/usr/include
       ALLIEDMODDERS: /home/runner/winport/alliedmodders
       OUT: /home/runner/winport/winport-build
+      # The hl2sdk tf2 commit the extension is built against; see the cache key.
+      HL2SDK_TF2: 9c2efb1deeffd5e895d2b43dabb639409c78c6d6
       # A .pdb beside the DLL, for the bed's debugger. The package does not ship it.
       DEBUGINFO: '1'
 
@@ -106,13 +108,16 @@ jobs:
       id: cc
       run: echo "version=$(clang-cl --version | head -n1 | tr -cd '[:alnum:].')" >> "$GITHUB_OUTPUT"
 
-    # Keyed on the branch heads: a TF2 update that moves an SDK struct lands in
-    # hl2sdk's tf2 branch, and a fixed key would keep building the old layout.
+    # hl2sdk is pinned: a commit on its tf2 branch changes what SigMod reads
+    # from the game, and on 2026-10-02 one (631a7b6c) stalled nine community
+    # waves that the commit before it (9c2efb1d) plays to the end. Moving the
+    # pin is a change to test with the bed. The key follows the pin and the
+    # other two branch heads.
     - name: AlliedModders heads
       id: heads
       run: |
         head() { git ls-remote "https://github.com/alliedmodders/$1" "refs/heads/$2" | cut -c1-12; }
-        echo "key=$(head sourcemod 1.11-dev)-$(head hl2sdk tf2)-$(head metamod-source 1.11-dev)" >> "$GITHUB_OUTPUT"
+        echo "key=$(head sourcemod 1.11-dev)-${HL2SDK_TF2:0:12}-$(head metamod-source 1.11-dev)" >> "$GITHUB_OUTPUT"
 
     - uses: actions/cache@v4
       id: am
@@ -131,7 +136,8 @@ jobs:
       run: |
         mkdir -p "$ALLIEDMODDERS" && cd "$ALLIEDMODDERS"
         git clone --recursive --depth 1 -b 1.11-dev https://github.com/alliedmodders/sourcemod
-        git clone --depth 1 -b tf2 https://github.com/alliedmodders/hl2sdk hl2sdk-tf2
+        git clone -b tf2 https://github.com/alliedmodders/hl2sdk hl2sdk-tf2
+        git -C hl2sdk-tf2 checkout --detach "$HL2SDK_TF2"
         git clone --depth 1 -b 1.11-dev https://github.com/alliedmodders/metamod-source
         cp -r "$GITHUB_WORKSPACE/hl2sdk-manifests" hl2sdk-manifests
 
