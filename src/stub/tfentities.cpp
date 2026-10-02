@@ -1,5 +1,6 @@
 #include "stub/tfentities.h"
 #include "mem/extract.h"
+#include "stub/upgrades.h"
 
 #if defined _LINUX
 
@@ -101,7 +102,14 @@ MemberFuncThunk<CCaptureFlag *, void, CTFPlayer*, bool> CCaptureFlag::ft_PickUp(
 GlobalThunk<CUtlVector<ICaptureFlagAutoList *>> ICaptureFlagAutoList::m_ICaptureFlagAutoListAutoList("ICaptureFlagAutoList::m_ICaptureFlagAutoListAutoList");
 
 
-MemberFuncThunk<const CUpgrades *, const char *, int> CUpgrades::ft_GetUpgradeAttributeName("CUpgrades::GetUpgradeAttributeName");
+// The game's own function is the same bounds check and read. Its Windows
+// address never resolved, and the unresolved call returned null into strcmp.
+const char *CUpgrades::GetUpgradeAttributeName(int index) const
+{
+	auto &upgrades = CMannVsMachineUpgradeManager::Upgrades();
+	if (index < 0 || index >= upgrades.Count()) return nullptr;
+	return upgrades[index].m_szAttribute;
+}
 MemberFuncThunk<const CUpgrades *, void, CTFPlayer *, bool , bool > CUpgrades::ft_GrantOrRemoveAllUpgrades("CUpgrades::GrantOrRemoveAllUpgrades");
 MemberFuncThunk<CUpgrades *, void, CTFPlayer *, int , int, bool, bool, bool > CUpgrades::ft_PlayerPurchasingUpgrade("CUpgrades::PlayerPurchasingUpgrade");
 MemberFuncThunk<CUpgrades *, attrib_definition_index_t,  CTFPlayer*, CEconItemView *, int, int, bool, bool > CUpgrades::ft_ApplyUpgradeToItem("CUpgrades::ApplyUpgradeToItem");
