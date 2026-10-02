@@ -92,6 +92,12 @@ compile_one() {
 		# NDEBUG, as a Valve release build has it: without it the file defines
 		# _DEBUG for crtdbg.h and asks the linker for the debug CRT.
 		flags+=("$OPT" /Oy- /DNDEBUG ${DEBUGINFO:+/Z7}) ;;
+	# The SDK's tier1, from its sources, the way memoverride is built.
+	tier1)
+		local f
+		flags=()
+		for f in "${WIN_CXXFLAGS[@]}"; do [[ $f == /FI*pch.h ]] || flags+=("$f"); done
+		flags+=("$OPT" /DNDEBUG) ;;
 	esac
 	if clang-cl "${flags[@]}" /clang:-MMD /clang:-MF"$obj.d" -c "$file" /Fo"$obj" > "$log" 2>&1; then
 		write_deps "$obj.d" "$obj.deps"
@@ -179,6 +185,17 @@ PY
 	# Windows the extension's static CRT is a heap of its own, and freeing the
 	# game's string there was STATUS_HEAP_CORRUPTION at map start.
 	echo "memoverride $SDK/public/tier0/memoverride.cpp"
+	# hl2sdk's prebuilt tier1.lib lags its headers: on 2026-10-02 KeyValues
+	# gained a field, the header had it and lib/public/x86/tier1.lib did not,
+	# and every KeyValues the extension touched had the old layout. Built from
+	# the SDK's sources, the list its AMBuilder gives, the two always agree.
+	python3 - "$SDK/tier1/AMBuilder" <<'PY'
+import re, sys
+text = open(sys.argv[1]).read()
+block = text[text.index("project.sources = ["):]
+for name in re.findall(r"'([^']+\.cpp)'", block[:block.index("]")]) + ["processor_detect.cpp"]:
+    print("tier1", f"{sys.argv[1].rsplit('/', 1)[0]}/{name}")
+PY
 	for f in libs/ann/src/*.cpp; do echo "ann $f"; done
 	for f in libs/lua/src/*.c; do
 		case "$f" in */lua.c|*/luac.c) ;; *) echo "lua $f" ;; esac
@@ -195,8 +212,11 @@ failed=$(grep -c '^fail ' "$OUT/results")
 echo "compiled: $ok, failed: $failed"
 [ "$failed" -eq 0 ] || { grep '^fail ' "$OUT/results" | head -20; exit 1; }
 
+mapfile -t tier1 < <(sed -n 's/^tier1 //p' "$OUT/sources" | while read -r f; do obj_of "$f"; done)
+lld-link /lib /nologo /OUT:"$OUT/tier1.lib" "${tier1[@]}" || exit 1
+
 echo "linking"
-mapfile -t objects < <(sed -E 's/^[a-z0-9]+ //' "$OUT/sources" | while read -r f; do obj_of "$f"; done)
+mapfile -t objects < <(grep -v '^tier1 ' "$OUT/sources" | sed -E 's/^[a-z0-9]+ //' | while read -r f; do obj_of "$f"; done)
 objects+=("$OUT/pch.obj")
 # /BASE well above the engine's own modules: loaded in the middle of the free
 # space, a 6 MB module splits what the engine needs for a big map in one piece.
@@ -205,7 +225,7 @@ objects+=("$OUT/pch.obj")
 lld-link /nologo /DLL /MACHINE:X86 /BASE:0x66000000 ${DEBUGINFO:+/DEBUG /OPT:REF /OPT:ICF} /errorlimit:0 /OUT:"$OUT/sigsegv.ext.2.tf2.dll" \
 	/LIBPATH:"$XWIN/crt/lib/x86" /LIBPATH:"$XWIN/sdk/lib/um/x86" /LIBPATH:"$XWIN/sdk/lib/ucrt/x86" \
 	"${objects[@]}" \
-	"$SDK/lib/public/x86/tier0.lib" "$SDK/lib/public/x86/tier1.lib" \
+	"$SDK/lib/public/x86/tier0.lib" "$OUT/tier1.lib" \
 	"$SDK/lib/public/x86/vstdlib.lib" "$SDK/lib/public/x86/mathlib.lib" \
 	legacy_stdio_definitions.lib kernel32.lib user32.lib gdi32.lib advapi32.lib \
 	shell32.lib ole32.lib oleaut32.lib uuid.lib ws2_32.lib dbghelp.lib psapi.lib \
