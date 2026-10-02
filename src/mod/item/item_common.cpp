@@ -350,7 +350,15 @@ void GenerateItemNames() {
     for (int i = 0; i < UINT16_MAX; i++)
     {
         CEconItemDefinition *def = GetItemSchema()->GetItemDefinition(i);
-        if (def != nullptr && !FStrEq(def->GetItemName(""), "#TF_Default_ItemDef") && strncmp(def->GetItemClass(), "tf_", 3) == 0) {
+        // Broken schema entries (e.g. stray key/value pairs misplaced at the "items" level
+        // in items_game.txt) produce definitions with no KeyValues block; skip them.
+        if (def == nullptr || def->GetKeyValues() == nullptr) continue;
+
+        const char *item_name = def->GetItemName("");
+        const char *item_class = def->GetItemClass("");
+        if (item_name == nullptr || item_class == nullptr) continue;
+
+        if (!FStrEq(item_name, "#TF_Default_ItemDef") && strncmp(item_class, "tf_", 3) == 0) {
             const char *item_slot = def->GetKeyValues()->GetString("item_slot", nullptr);
             if (item_slot != nullptr) {
                 item_def_names.emplace_back(i, def->GetItemName("#")+1);
@@ -361,7 +369,7 @@ void GenerateItemNames() {
     for (int i = 0; i < 4000; i++)
     {
         auto def = GetItemSchema()->GetAttributeDefinition(i);
-        if (def != nullptr) {
+        if (def != nullptr && def->GetKeyValues() != nullptr) {
             const char *str = def->GetKeyValues()->GetString("description_string", "#")+1;
             if (str[0] != '\0') {
                 attr_names.emplace_back(i, str);
