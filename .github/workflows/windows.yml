@@ -106,11 +106,19 @@ jobs:
       id: cc
       run: echo "version=$(clang-cl --version | head -n1 | tr -cd '[:alnum:].')" >> "$GITHUB_OUTPUT"
 
+    # Keyed on the branch heads: a TF2 update that moves an SDK struct lands in
+    # hl2sdk's tf2 branch, and a fixed key would keep building the old layout.
+    - name: AlliedModders heads
+      id: heads
+      run: |
+        head() { git ls-remote "https://github.com/alliedmodders/$1" "refs/heads/$2" | cut -c1-12; }
+        echo "key=$(head sourcemod 1.11-dev)-$(head hl2sdk tf2)-$(head metamod-source 1.11-dev)" >> "$GITHUB_OUTPUT"
+
     - uses: actions/cache@v4
       id: am
       with:
         path: /home/runner/winport/alliedmodders
-        key: alliedmodders-1.11-dev-tf2-v1
+        key: alliedmodders-${{ steps.heads.outputs.key }}
 
     - uses: actions/cache@v4
       with:
