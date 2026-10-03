@@ -171,6 +171,15 @@ jobs:
           echo "-- console lines matching linuxgrep.txt"
           grep -a -E -f tools/winport/bed/linuxgrep.txt out/console.log | head -400 | cut -c1-300 || true
         fi
+    # The job used to pass on a server that crash-looped 38 times under a
+    # SigMod from 2025: the probe gives up quietly and nothing else looked.
+    # More than one start is a crash, and no SigMod build line is no SigMod.
+    - name: Verdict
+      run: |
+        starts=$(grep -a -c "server_srv.so loaded" out/winbed.out || true)
+        echo "server starts: $starts"
+        grep -a -q "CExtSigsegv: compiled @" out/winbed.out out/console.log || { echo "SigMod did not load"; exit 1; }
+        [ "${starts:-0}" -le 1 ] || { echo "the server started $starts times: it crashed"; exit 1; }
     - if: always()
       uses: actions/upload-artifact@v4
       with:
