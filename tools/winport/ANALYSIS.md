@@ -75,9 +75,18 @@ masked body, or for a global through the carried functions that reference it,
 and answers `none` where the body changed. A `none` is read by hand, as the
 twelve of the 2026-10-02 update were (`carried` in each entry). Steam serves
 an old build to an anonymous login when its manifest is named, so the Address
-table job does all of this: give it `previous` as BUILD:MANIFEST, the manifest
-of depot 232255 that an earlier run printed, and `carry.py` rewrites
-overrides.json before the table is derived.
+table job does all of this by itself. `table.json` records the build the
+committed table was made for and its depot 232255 manifest. Every six hours the
+job asks Steam for the build served now; when it is another, `carry.py`
+rewrites overrides.json from the binaries `table.json` names, the table is
+derived, and table, overrides and `table.json` are committed to
+`winport-auto-<build>`, branched from the ref the job ran on, and the Windows
+bed is dispatched on that branch. A `none` is still read by hand there, and
+merging is still a person's call. Until it is merged the job leaves the branch
+alone. `previous` as BUILD:MANIFEST overrides `table.json`, and `commit` pushes
+to the ref the job ran on instead. An update can leave depot 232255 as it was:
+11068238 and 11076587 share manifest 3034927351635892546, and the carry then
+reads the same binaries twice.
 
 ## Where it stands
 

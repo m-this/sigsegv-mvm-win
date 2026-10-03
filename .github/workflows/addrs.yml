@@ -3,15 +3,20 @@ name: Address table
 # windows.txt from the game build Steam serves now, by the same scripts that
 # made the committed one, and how the two differ. Every entry is a fixed RVA
 # keyed to a ServerVersion, so a Valve update turns them all off until this
-# runs. The result is an artifact; committing it is a person's call.
+# runs. table.json names the build and depot 232255 manifest the committed
+# table was made for. When Steam serves another build, a scheduled or
+# dispatched run carries the overrides from that one, derives the table and
+# commits it to winport-auto-<build> for the bed to play; merging it is a
+# person's call.
 
 on:
   schedule:
-    - cron: '17 5 * * 1'
+    # An update breaks every address until this runs, so look often.
+    - cron: '17 */6 * * *'
   workflow_dispatch:
     inputs:
       previous:
-        description: the build overrides.json holds for, as BUILD:MANIFEST of depot 232255 (Windows binaries), to carry it to the build served now
+        description: the build overrides.json holds for, as BUILD:MANIFEST of depot 232255 (Windows binaries), to carry it to the build served now; empty takes it from tools/winport/table.json
         default: ''
       commit:
         description: commit the carried overrides and the derived table to this branch
@@ -27,6 +32,7 @@ on:
       - '.github/workflows/addrs.yml'
       - 'tools/winport/*.py'
       - 'tools/winport/overrides.json'
+      - 'tools/winport/table.json'
       - 'gamedata/sigsegv/windows.txt'
       - 'tools/winport/wanted.txt'
       - 'tools/winport/pluginsigs.txt'
@@ -35,6 +41,9 @@ on:
 
 permissions:
   contents: write
+  # To dispatch the bed on a carried table: a push made with this job's
+  # token starts no workflow.
+  actions: write
 
 concurrency:
   group: addrs-${{ github.ref }}
@@ -59,32 +68,74 @@ jobs:
         printf 'regex:^tf/bin/server(_srv)?\\.(so|dll)$\nbin/engine.dll\nbin/SoundEmitterSystem.dll\nbin/soundemittersystem_srv.so\ntf/steam.inf\n' > files.txt
         for os in linux windows; do
           for attempt in 1 2 3; do
-            ./dd/DepotDownloader -app 232250 -os $os -filelist files.txt -dir game-$os && break
+            ./dd/DepotDownloader -app 232250 -os $os -filelist files.txt -dir game-$os 2>&1 | tee -a dd-$os.log
+            [ "${PIPESTATUS[0]}" = 0 ] && break
             sleep 15
           done
         done
         ls -la game-*/tf/bin game-*/tf/steam.inf
         grep -h -i 'ServerVersion' game-*/tf/steam.inf
+    # The manifest is what a later run needs to fetch these binaries again,
+    # and DepotDownloader prints it nowhere but here.
+    - name: What the table is for, and what to carry from
+      id: state
+      run: |
+        ver=$(grep -i '^ServerVersion=' game-windows/tf/steam.inf | cut -d= -f2 | tr -d '\r')
+        manifest=$(grep -o 'depot 232255 from app 232250, manifest [0-9]*' dd-windows.log | tail -n 1 | awk '{print $NF}')
+        table_build=$(python3 -c "import json; print(json.load(open('tools/winport/table.json'))['build'])")
+        table_manifest=$(python3 -c "import json; print(json.load(open('tools/winport/table.json'))['manifest'])")
+        echo "served: ServerVersion $ver, depot 232255 manifest ${manifest:-unknown}; table.json: $table_build:$table_manifest"
+        previous=$PREVIOUS target=
+        if [ "$ver" != "$table_build" ] && [ -z "$previous" ]; then
+          previous=$table_build:$table_manifest
+        fi
+        if [ "$COMMIT" = true ]; then
+          target=$GITHUB_REF_NAME
+        elif [ "$ver" != "$table_build" ]; then
+          # A push only reports. The schedule runs on the default branch,
+          # which keeps the old table until the branch is merged, so once
+          # the branch exists every later run leaves it alone.
+          if [ "$GITHUB_EVENT_NAME" != push ]; then
+            if git ls-remote --exit-code origin "refs/heads/winport-auto-$ver" > /dev/null; then
+              echo "winport-auto-$ver already holds this build; not committing again"
+            else
+              target=winport-auto-$ver
+            fi
+          fi
+        fi
+        echo "previous: ${previous:-none}, commit to: ${target:-nowhere}"
+        { echo "ver=$ver"; echo "manifest=$manifest"; echo "previous=$previous"; echo "target=$target"; } >> "$GITHUB_OUTPUT"
+      env:
+        PREVIOUS: ${{ inputs.previous }}
+        COMMIT: ${{ inputs.commit }}
     # Steam serves a past manifest when it is named, and an earlier run of this
     # job printed the one it downloaded ("Got manifest request code for depot
     # 232255"). That is how the overrides follow an update with no binaries
     # kept anywhere.
     - name: Carry the overrides from the previous build
-      if: inputs.previous != ''
+      if: steps.state.outputs.previous != ''
       run: |
         old_build=${PREVIOUS%%:*}
         manifest=${PREVIOUS#*:}
-        printf 'tf/bin/server.dll\nbin/engine.dll\nbin/SoundEmitterSystem.dll\n' > prev.txt
-        for attempt in 1 2 3; do
-          ./dd/DepotDownloader -app 232250 -depot 232255 -manifest "$manifest" -filelist prev.txt -dir game-prev && break
-          sleep 15
-        done
-        ver=$(grep -i '^ServerVersion=' game-windows/tf/steam.inf | cut -d= -f2 | tr -d '\r')
-        python3 tools/winport/carry.py game-prev game-windows "$old_build" "$ver"
+        prev=game-prev
+        # An update can leave the Windows depot alone (11068238 to 11076587
+        # did): the binaries are the ones just downloaded.
+        if [ "$manifest" = "$SERVED_MANIFEST" ]; then
+          prev=game-windows
+        else
+          printf 'tf/bin/server.dll\nbin/engine.dll\nbin/SoundEmitterSystem.dll\n' > prev.txt
+          for attempt in 1 2 3; do
+            ./dd/DepotDownloader -app 232250 -depot 232255 -manifest "$manifest" -filelist prev.txt -dir game-prev && break
+            sleep 15
+          done
+        fi
+        python3 tools/winport/carry.py $prev game-windows "$old_build" "$VER"
         git diff --stat tools/winport/overrides.json
         mkdir -p derived && cp tools/winport/overrides.json derived/overrides.json
       env:
-        PREVIOUS: ${{ inputs.previous }}
+        PREVIOUS: ${{ steps.state.outputs.previous }}
+        SERVED_MANIFEST: ${{ steps.state.outputs.manifest }}
+        VER: ${{ steps.state.outputs.ver }}
     - name: Derive the table
       run: |
         ver=$(grep -i '^ServerVersion=' game-windows/tf/steam.inf | cut -d= -f2 | tr -d '\r')
@@ -125,7 +176,7 @@ jobs:
         # override the table lacks, fails here. Against another build the
         # difference is the point, and the derived table is the artifact.
         # A carrying run is making the table anew, so it is allowed to differ.
-        if [ -z "${{ inputs.previous }}" ] && grep -q "ServerVersion $ver" ../gamedata/sigsegv/windows.txt && ! diff committed.tsv derived.tsv > differ.txt; then
+        if [ -z "${{ steps.state.outputs.previous }}" ] && grep -q "ServerVersion $ver" ../gamedata/sigsegv/windows.txt && ! diff committed.tsv derived.tsv > differ.txt; then
           echo "windows.txt is not what the scripts derive from ServerVersion $ver: $(grep -c '^<' differ.txt) entries only committed, $(grep -c '^>' differ.txt) only derived"
           exit 1
         fi
@@ -175,16 +226,32 @@ jobs:
     # The artifact store is not reachable from everywhere the port is worked
     # on, and the branch is. Only a carried run commits: without `previous` the
     # overrides still hold for the old build and the table would leave them out.
+    # The `commit` input pushes to the ref the job ran on; an update found by
+    # itself goes to winport-auto-<build>, made from that ref, and never to it.
+    # The push starts no run of this job (a push with the job's token starts no
+    # workflow), and if it did, table.json would then match and change nothing.
     - name: Commit the table for the build served now
-      if: inputs.commit && inputs.previous != ''
+      if: steps.state.outputs.target != '' && steps.state.outputs.previous != ''
       run: |
-        ver=$(grep -i '^ServerVersion=' game-windows/tf/steam.inf | cut -d= -f2 | tr -d '\r')
+        [ -n "$MANIFEST" ] || { echo "no depot 232255 manifest in the download log, so table.json cannot record this build"; exit 1; }
         cp derived/windows.txt gamedata/sigsegv/windows.txt
+        python3 -c "import json,sys; open('tools/winport/table.json','w').write(json.dumps({'build': sys.argv[1], 'manifest': sys.argv[2]}, indent=1) + '\\n')" "$VER" "$MANIFEST"
         git config user.name github-actions
         git config user.email github-actions@users.noreply.github.com
-        git add gamedata/sigsegv/windows.txt tools/winport/overrides.json
-        git commit -m "gamedata(windows): addresses for ServerVersion $ver" -m "carried from ${{ inputs.previous }} by the Address table job, run ${{ github.run_id }}"
-        git push origin HEAD:${{ github.ref_name }}
+        git add gamedata/sigsegv/windows.txt tools/winport/overrides.json tools/winport/table.json
+        git commit -m "gamedata(windows): addresses for ServerVersion $VER" -m "carried from $PREVIOUS by the Address table job, run ${{ github.run_id }}"
+        git push origin "HEAD:refs/heads/$TARGET"
+      env:
+        VER: ${{ steps.state.outputs.ver }}
+        MANIFEST: ${{ steps.state.outputs.manifest }}
+        PREVIOUS: ${{ steps.state.outputs.previous }}
+        TARGET: ${{ steps.state.outputs.target }}
+    - name: Play the carried table on the bed
+      if: startsWith(steps.state.outputs.target, 'winport-auto-') && steps.state.outputs.previous != ''
+      run: gh workflow run windows.yml -R "$GITHUB_REPOSITORY" --ref "$TARGET"
+      env:
+        GH_TOKEN: ${{ github.token }}
+        TARGET: ${{ steps.state.outputs.target }}
     - uses: actions/upload-artifact@v4
       if: always()
       with:
