@@ -1,0 +1,35 @@
+name: Address table keying
+
+# gamedata/sigsegv/windows.txt, tools/winport/table.json and the overrides
+# have to name the same TF2 build, because the extension refuses to load on
+# any other one. Nothing else in CI says so on a push: the Address table job
+# downloads the game and takes seven minutes, and runs on four branches; the
+# Windows package job builds and plays, and runs on a tag. This takes a
+# second, needs neither the game nor a compiler, and runs wherever the three
+# files move. The path list is written twice because Actions does not read
+# YAML anchors.
+
+on:
+  push:
+    paths:
+      - 'gamedata/sigsegv/windows.txt'
+      - 'tools/winport/table.json'
+      - 'tools/winport/overrides.json'
+      - 'tools/winport/checktable.py'
+      - 'tools/winport/emitgamedata.py'
+      - '.github/workflows/checktable.yml'
+  pull_request:
+    paths:
+      - 'gamedata/sigsegv/windows.txt'
+      - 'tools/winport/table.json'
+      - 'tools/winport/overrides.json'
+      - 'tools/winport/checktable.py'
+      - 'tools/winport/emitgamedata.py'
+      - '.github/workflows/checktable.yml'
+
+jobs:
+  checktable:
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v4
+    - run: python3 tools/winport/checktable.py
