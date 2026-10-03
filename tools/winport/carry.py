@@ -24,6 +24,26 @@ LIBS = {
 }
 
 
+def unmoved(old_path, new_path, rva, reason):
+    """The same RVA, when the function's bytes did not change at all.
+
+    rebase.py needs a body unique in the old build, and a template instance
+    can share its body with another. When the update left the function where
+    it was, byte for byte up to the next function, there is nothing to find."""
+    old, new = rebase.Image(old_path), rebase.Image(new_path)
+    va = rva + old.w.base
+    if new.w.base != old.w.base or not old.w.in_text(va):
+        return None, reason
+    end = old.body_end(va)
+    if new.body_end(va) != end:
+        return None, reason
+    a = old.w.text_bytes[va - old.w.text_start:end - old.w.text_start]
+    b = new.w.text_bytes[va - new.w.text_start:end - new.w.text_start]
+    if a != b:
+        return None, reason
+    return rva, f"{reason}, but unmoved: the same {len(a)} bytes at the same address"
+
+
 def main():
     if len(sys.argv) != 5:
         sys.exit(__doc__)
@@ -43,6 +63,8 @@ def main():
         out, why = rebase.rebase(f"{old_dir}/{rel}", f"{new_dir}/{rel}", rvas)
         for sym, rva in zip(syms, rvas):
             got = out[rva]
+            if got is None:
+                got, why[rva] = unmoved(f"{old_dir}/{rel}", f"{new_dir}/{rel}", rva, why[rva])
             if got is None:
                 left.append(f"{sym} {rva:#x} ({lib}): {why[rva]}")
                 continue
