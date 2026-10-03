@@ -1,2 +1,5 @@
 # Missions the bed plays instead of all of them, one per line: shard 0 plays
 # these and the other shards stop at once. Empty is the full sweep.
+mvm_seabed_b6_adv_ocean_commotion
+mvm_yiresa_rc5a_adv_mesa_malware
+mvm_bigrock_int_bionic_breach
