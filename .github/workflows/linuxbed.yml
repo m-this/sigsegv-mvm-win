@@ -14,6 +14,10 @@ on:
       archipelago_ref:
         description: tf2-archipelago ref the bed tools are built from
         default: sigmod-windows-bed
+      bots:
+        description: fill RED with defender bots, which buy upgrades (needs a tf2-archipelago ref with winbed -bots)
+        type: boolean
+        default: false
 
 concurrency:
   group: linuxbed-${{ github.ref }}
@@ -95,6 +99,8 @@ jobs:
         done
         ls -la ~/.steam/sdk32 2>/dev/null || echo "no ~/.steam/sdk32" 
     - name: Play
+      env:
+        WINBED_BOTS: ${{ inputs.bots && '1' || '' }}
       run: |
         mkdir -p out
         tf="$BED/tf-dedicated/tf"
@@ -151,6 +157,11 @@ jobs:
         echo "-- console tail"; grep -av "VPK file hashes" out/console.log | tail -80 | cut -c1-300 || true
         echo "-- repeated console lines"
         sed 's/^L [0-9/ :-]*//' out/console.log 2>/dev/null | sort | uniq -c | sort -rn | head -30 | cut -c1-220
+        echo "-- server starts and SigMod build"
+        grep -a -c "server_srv.so loaded" out/console.log out/winbed.out out/winbed.err || true
+        grep -a -m3 "compiled @" out/console.log out/winbed.out | cut -c1-220 || true
+        echo "-- upgrades and crashes"
+        grep -a -i -E "Shopping:|bought|segfault|SIGSEGV|crash|Segmentation" out/console.log out/winbed.out out/winbed.err 2>/dev/null | head -200 | cut -c1-300 || true
         echo "-- script errors"
         grep -a -c "AN ERROR HAS OCCURRED" out/console.log || true
         grep -a -A3 "AN ERROR HAS OCCURRED" out/console.log | head -60 | cut -c1-220
@@ -160,6 +171,15 @@ jobs:
           echo "-- console lines matching linuxgrep.txt"
           grep -a -E -f tools/winport/bed/linuxgrep.txt out/console.log | head -400 | cut -c1-300 || true
         fi
+    # The job used to pass on a server that crash-looped 38 times under a
+    # SigMod from 2025: the probe gives up quietly and nothing else looked.
+    # More than one start is a crash, and no SigMod build line is no SigMod.
+    - name: Verdict
+      run: |
+        starts=$(grep -a -c "server_srv.so loaded" out/winbed.out || true)
+        echo "server starts: $starts"
+        grep -a -q "CExtSigsegv: compiled @" out/winbed.out out/console.log || { echo "SigMod did not load"; exit 1; }
+        [ "${starts:-0}" -le 1 ] || { echo "the server started $starts times: it crashed"; exit 1; }
     - if: always()
       uses: actions/upload-artifact@v4
       with:

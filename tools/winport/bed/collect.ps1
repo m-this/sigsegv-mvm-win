@@ -241,6 +241,13 @@ if ($unresolved) { Write-Host ("unresolved functions called: " + ($unresolved -j
 Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
   Select-String -Pattern 'detour validation failure|probably already detoured|Make it Count' |
   ForEach-Object { $_.Line.Trim() } | Sort-Object -Unique | ForEach-Object { Write-Host "shared detour: $_" }
+# Why a mission did not load: what the console said around each popfile.
+# The probe only sees the wave count stay at 0, and the console is in an
+# artifact not everybody can download.
+Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |
+  Select-String -Pattern 'tf_mvm_popfile|[Pp]opulation|popfile|\.pop\b|KeyValues|Could not|Unknown attribute|Invalid|SigMod: (Parse|pop)' |
+  ForEach-Object { $_.Line.Trim() } | Group-Object | Sort-Object Count -Descending | Select-Object -First 60 |
+  ForEach-Object { Write-Host "popfile: $($_.Count)x $($_.Name)" }
 # Detours SigMod refused on Windows: a pop mismatch is a wrong address or a
 # wrong declaration, and each one is a mechanic that does nothing.
 Get-ChildItem "$Out\consoles\*.log", "$Out\console*.log" -ErrorAction SilentlyContinue |

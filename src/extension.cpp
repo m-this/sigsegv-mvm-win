@@ -4,6 +4,7 @@
 #include "mem/alloc.h"
 #include "mod.h"
 #include "addr/addr.h"
+#include "addr/standard.h"
 #include "addr/prescan.h"
 #include "stub/baseplayer.h"
 #include "gameconf.h"
@@ -668,6 +669,17 @@ bool CExtSigsegv::SDK_OnLoad(char *error, size_t maxlength, bool late)
 	LibMgr::SetPtr(Library::SOURCEMODCORE,      menus);
 	PreScan::DoScans();
 	if (!g_GCHook.LoadAll(error, maxlength)) goto fail;
+	
+#if defined _WINDOWS
+	/* A fixed address is refused on any other build, and SigMod without them
+	 * calls functions that do nothing and crashes the server. Not loading
+	 * costs the missions that need SigMod; loading costs the server. */
+	if (int build = IAddr_FixedAddr::TableBuild(); build != 0 && engine->GetServerVersion() != build) {
+		snprintf(error, maxlength, "this SigMod build is for TF2 ServerVersion %d, and the server is %d",
+			build, engine->GetServerVersion());
+		goto fail;
+	}
+#endif
 	
 	LibMgr::Load();
 //	g_Disasm.Load();

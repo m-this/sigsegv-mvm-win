@@ -69,6 +69,21 @@ class IAddr_FixedAddr : public IAddr_Sym
 public:
 	virtual bool FindAddrWin(uintptr_t& addr) const override;
 	
+	/* How many fixed addresses the gamedata keys to each ServerVersion. The
+	 * Windows table is one build; a few older files carry a handful of
+	 * entries for builds long gone, so the table's build is the most common. */
+	static inline std::map<int, int> s_Builds;
+	
+	/* The ServerVersion the Windows table was made for, or 0 with no table. */
+	static int TableBuild()
+	{
+		int build = 0, most = 0;
+		for (const auto& [b, n] : s_Builds) {
+			if (n > most) { build = b; most = n; }
+		}
+		return build;
+	}
+	
 protected:
 	virtual int GetAddress() const = 0;
 	virtual int GetServerVersion() const = 0;

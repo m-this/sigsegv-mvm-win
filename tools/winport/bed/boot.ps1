@@ -128,6 +128,18 @@ foreach ($command in $Commands) {
   & bedbin\rcon.exe $command > "$out\$name.txt"
 }
 
+# A server without SigMod boots, answers rcon and plays every mission as
+# vanilla, and the exit tracer still prints, so nothing else notices. No mod
+# reporting OK means the extension is not running: say why SourceMod refused it.
+$mods = @(& bedbin\rcon.exe sig_list_mods)
+if (-not ($mods | Select-String '\bOK\b')) {
+  Say 'SigMod is not running: sig_list_mods lists no mods'
+  $why = @(@(& bedbin\rcon.exe 'sm exts list') | Select-String 'sigsegv|FAILED')
+  $why += @(Select-String -Path "$tf\console.log", "$tf\addons\sourcemod\logs\*.log" -Pattern 'Unable to load extension.*sigsegv' -ErrorAction SilentlyContinue)
+  if ($why) { $why | ForEach-Object { Say "  $($_.Line.Trim())" } } else { Say '  sm exts list does not name it and no log says why' }
+  exit 1
+}
+
 if (-not $Probe) {
   Start-Sleep 30
   if (-not (Alive)) { Say "the server died after booting: $(Death-Reason)"; exit 1 }
