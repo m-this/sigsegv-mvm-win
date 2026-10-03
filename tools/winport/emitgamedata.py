@@ -75,8 +75,14 @@ for path in sorted(glob.glob(str(root / "gamedata/sigsegv/*.txt"))):
 # and CGameMovement::PlayerMove among them. A known entry with no symbol is
 # therefore repaired rather than skipped, and the bogus entry whose name is a
 # mangled symbol is dropped.
+#
+# The unterminated symbol on misc.txt:3399 shifts the pairing for the rest of
+# that block, so 108 further entries come out with no name at all and the
+# symbol in the name's place. Those are dropped too: the re-read below finds
+# each one under its real name, and a nameless entry is an address SourceMod
+# can never look up. Eleven of them matched and were written into the table.
 found = [(name, entry) for name, entry in found
-         if not (name.startswith("_Z") and not entry.get("sym"))]
+         if name != "" and not (name.startswith("_Z") and not entry.get("sym"))]
 by_name = {name: entry for name, entry in found}
 known = {name for name, _ in found}
 for path in sorted(glob.glob(str(root / "gamedata/sigsegv/*.txt"))):
