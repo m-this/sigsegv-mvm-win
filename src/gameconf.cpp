@@ -491,7 +491,7 @@ SMCResult CSigsegvGameConf::AddrEntry_Load_Fixed()
 	int addr        = stoi(kv.at("addr"), nullptr, 0);
 	int build       = stoi(kv.at("build"), nullptr, 0);
 	
-	IAddr_FixedAddr::s_iTableBuild = build;
+	++IAddr_FixedAddr::s_Builds[build];
 	auto a = new CAddr_FixedAddr(name, sym, addr, build);
 	if (kv.find("vtidx") != kv.end()) {
 		a->SetVTIndex(stoi(kv.at("vtidx"), nullptr, 0));

@@ -674,9 +674,9 @@ bool CExtSigsegv::SDK_OnLoad(char *error, size_t maxlength, bool late)
 	/* A fixed address is refused on any other build, and SigMod without them
 	 * calls functions that do nothing and crashes the server. Not loading
 	 * costs the missions that need SigMod; loading costs the server. */
-	if (IAddr_FixedAddr::s_iTableBuild != 0 && engine->GetServerVersion() != IAddr_FixedAddr::s_iTableBuild) {
+	if (int build = IAddr_FixedAddr::TableBuild(); build != 0 && engine->GetServerVersion() != build) {
 		snprintf(error, maxlength, "this SigMod build is for TF2 ServerVersion %d, and the server is %d",
-			IAddr_FixedAddr::s_iTableBuild, engine->GetServerVersion());
+			build, engine->GetServerVersion());
 		goto fail;
 	}
 #endif
