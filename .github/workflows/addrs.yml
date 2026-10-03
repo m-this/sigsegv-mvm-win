@@ -9,6 +9,10 @@ on:
   schedule:
     - cron: '17 5 * * 1'
   workflow_dispatch:
+    inputs:
+      previous:
+        description: the build overrides.json holds for, as BUILD:MANIFEST of depot 232255 (Windows binaries), to carry it to the build served now
+        default: ''
   push:
     branches:
       - 'sigmod-windows-bed'
@@ -54,6 +58,26 @@ jobs:
         done
         ls -la game-*/tf/bin game-*/tf/steam.inf
         grep -h -i 'ServerVersion' game-*/tf/steam.inf
+    # Steam serves a past manifest when it is named, and an earlier run of this
+    # job printed the one it downloaded ("Got manifest request code for depot
+    # 232255"). That is how the overrides follow an update with no binaries
+    # kept anywhere.
+    - name: Carry the overrides from the previous build
+      if: inputs.previous != ''
+      run: |
+        old_build=${PREVIOUS%%:*}
+        manifest=${PREVIOUS#*:}
+        printf 'tf/bin/server.dll\nbin/engine.dll\n' > prev.txt
+        for attempt in 1 2 3; do
+          ./dd/DepotDownloader -app 232250 -depot 232255 -manifest "$manifest" -filelist prev.txt -dir game-prev && break
+          sleep 15
+        done
+        ver=$(grep -i '^ServerVersion=' game-windows/tf/steam.inf | cut -d= -f2 | tr -d '\r')
+        python3 tools/winport/carry.py game-prev game-windows "$old_build" "$ver"
+        git diff --stat tools/winport/overrides.json
+        mkdir -p derived && cp tools/winport/overrides.json derived/overrides.json
+      env:
+        PREVIOUS: ${{ inputs.previous }}
     - name: Derive the table
       run: |
         ver=$(grep -i '^ServerVersion=' game-windows/tf/steam.inf | cut -d= -f2 | tr -d '\r')

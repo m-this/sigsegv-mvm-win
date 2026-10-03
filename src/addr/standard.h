@@ -69,6 +69,10 @@ class IAddr_FixedAddr : public IAddr_Sym
 public:
 	virtual bool FindAddrWin(uintptr_t& addr) const override;
 	
+	/* The ServerVersion the gamedata's fixed addresses were made for, or 0
+	 * when it has none. Every entry of a table carries the same build. */
+	static inline int s_iTableBuild = 0;
+	
 protected:
 	virtual int GetAddress() const = 0;
 	virtual int GetServerVersion() const = 0;
