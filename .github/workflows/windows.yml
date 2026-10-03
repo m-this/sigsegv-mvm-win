@@ -55,7 +55,7 @@ jobs:
       ALLIEDMODDERS: /home/runner/winport/alliedmodders
       OUT: /home/runner/winport/winport-build
       # The hl2sdk tf2 commit the extension is built against; see the cache key.
-      HL2SDK_TF2: 631a7b6c0cbbb6941cf22e434620911a0bdfd478
+      HL2SDK_TF2: 9c2efb1deeffd5e895d2b43dabb639409c78c6d6
       # A .pdb beside the DLL, for the bed's debugger. The package does not ship it.
       DEBUGINFO: '1'
 
@@ -113,10 +113,9 @@ jobs:
       run: echo "version=$(clang-cl --version | head -n1 | tr -cd '[:alnum:].')" >> "$GITHUB_OUTPUT"
 
     # hl2sdk is pinned: a commit on its tf2 branch changes what SigMod reads
-    # from the game. 631a7b6c stalled nine community waves on TF2 11068238,
-    # where 9c2efb1d played them to the end; on 11076587 the 9c2efb1d build
-    # loads no SigMod mission at all. The pin follows the game build, and
-    # moving it is a change to test with the bed. The key follows the pin and the
+    # from the game, and on 2026-10-02 one (631a7b6c) stalled nine community
+    # waves that the commit before it (9c2efb1d) plays to the end. Moving the
+    # pin is a change to test with the bed. The key follows the pin and the
     # other two branch heads.
     - name: AlliedModders heads
       id: heads
