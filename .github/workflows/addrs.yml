@@ -13,6 +13,10 @@ on:
       previous:
         description: the build overrides.json holds for, as BUILD:MANIFEST of depot 232255 (Windows binaries), to carry it to the build served now
         default: ''
+      commit:
+        description: commit the carried overrides and the derived table to this branch
+        type: boolean
+        default: false
   push:
     branches:
       - 'sigmod-windows-bed'
@@ -28,6 +32,9 @@ on:
       - 'tools/winport/pluginsigs.txt'
       - 'tools/winport/bed/disasm.*'
       - 'tools/winport/bed/inspect.sh'
+
+permissions:
+  contents: write
 
 concurrency:
   group: addrs-${{ github.ref }}
@@ -164,6 +171,19 @@ jobs:
     - name: Disassemble the queries in disasm.txt
       if: always()
       run: python3 tools/winport/bed/disasm.py game-windows tools/winport/bed/disasm.txt
+    # The artifact store is not reachable from everywhere the port is worked
+    # on, and the branch is. Only a carried run commits: without `previous` the
+    # overrides still hold for the old build and the table would leave them out.
+    - name: Commit the table for the build served now
+      if: inputs.commit && inputs.previous != ''
+      run: |
+        ver=$(grep -i '^ServerVersion=' game-windows/tf/steam.inf | cut -d= -f2 | tr -d '\r')
+        cp derived/windows.txt gamedata/sigsegv/windows.txt
+        git config user.name github-actions
+        git config user.email github-actions@users.noreply.github.com
+        git add gamedata/sigsegv/windows.txt tools/winport/overrides.json
+        git commit -m "gamedata(windows): addresses for ServerVersion $ver" -m "carried from ${{ inputs.previous }} by the Address table job, run ${{ github.run_id }}"
+        git push origin HEAD:${{ github.ref_name }}
     - uses: actions/upload-artifact@v4
       if: always()
       with:
