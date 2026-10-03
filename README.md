@@ -50,6 +50,16 @@ by `tools/winport/emitgamedata.py` from three sources:
 `windows.txt` loads first and the first entry under a name wins, so the
 `AddrManager::Load: duplicate addr` lines on every start are by design.
 
+Every address in it is a fixed RVA, true only for the TF2 build it was read
+from. `tools/winport/table.json` records that ServerVersion and the depot
+232255 manifest it came from; the extension refuses to load when the server
+reports another build, rather than resolving nothing and faulting later in the
+game's code; a release names the build it is for and repeats it in
+`package-windows.build.json` beside the zip. The Address table job carries the
+table onto a new build, and `tools/winport/checktable.py` is the one-second
+check that table, overrides and `table.json` still agree on which build that
+is.
+
 ## Build
 
 From Linux, with clang-cl and lld-link against an xwin SDK:

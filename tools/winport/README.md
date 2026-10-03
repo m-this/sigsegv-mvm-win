@@ -8,6 +8,42 @@ nothing and the extension would load having hooked nothing at all.
 That is the whole reason there is no Windows build, and `src/addr/TODO-win.txt`
 is the note left when the attempt stopped.
 
+## Every address is keyed to one TF2 build
+
+A `fixed` entry carries the ServerVersion it was read from and
+`IAddr_FixedAddr::FindAddrWin` refuses it on any other, so a Valve update turns
+all 1,323 of them off at once. SigMod then loads having hooked nothing, calls
+`GetItemSchema` and `CEconItemView::Init` as functions that do nothing, and the
+server faults: at extension load, on an upgrade purchase, or on a weapon
+inspect. Build 11076587 against the 11068238 table did all three on 2026-10-02,
+and players found it, not CI.
+
+Three things stand between an update and that:
+
+- `CExtSigsegv::SDK_OnLoad` compares `engine->GetServerVersion()` against the
+  table's build and refuses to load, naming both numbers, instead of running
+  with nothing resolved;
+- the Address table job watches Steam for a new build, carries the overrides
+  onto it with `carry.py` and commits the derived table to
+  `winport-auto-<build>` for the bed to play. `ANALYSIS.md`'s "The instrument"
+  section has the procedure and its inputs; `table.json` records the build and
+  the depot 232255 manifest the committed table was made for. A cron runs only
+  from the repository's default branch, so this watches nothing while the
+  default branch is one `addrs.yml` is not on;
+- `checktable.py` reads `windows.txt`, `table.json` and `overrides.json` and
+  refuses any disagreement between them about the build. It needs no game, no
+  network and no compiler, so a push that moves one of the three without the
+  others fails in a second rather than after the Address table job's seven
+  minutes or the bed's hour.
+
+What an update costs, measured on 11068238 to 11076587: the Address table job
+ran 6m25s to 7m01s, `carry.py` moved 482 of the 483 overrides by itself and
+`Path::Compute<CTFBotPathCost>` was read by hand because its body is not unique
+in the old build, the derived table came out at 1,334 addresses against 1,333
+committed, and the package job then took 8m32s to build. That update left depot
+232255 alone, which is the cheap case. 10828683 to 11068238, where the binaries
+did change, cost thirteen overrides read by hand instead of one.
+
 ## What the address table actually contains
 
 `classify.py` parses all 35 files under `gamedata/sigsegv`, demangles every

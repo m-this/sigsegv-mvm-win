@@ -8,6 +8,10 @@ name: Address table
 # dispatched run carries the overrides from that one, derives the table and
 # commits it to winport-auto-<build> for the bed to play; merging it is a
 # person's call.
+#
+# GitHub runs a cron only from the repository's default branch, and only from
+# the copy of this file on it. While the default branch is one this file is
+# not on, nothing watches for an update and the next one is found by a player.
 
 on:
   schedule:
@@ -236,6 +240,9 @@ jobs:
         [ -n "$MANIFEST" ] || { echo "no depot 232255 manifest in the download log, so table.json cannot record this build"; exit 1; }
         cp derived/windows.txt gamedata/sigsegv/windows.txt
         python3 -c "import json,sys; open('tools/winport/table.json','w').write(json.dumps({'build': sys.argv[1], 'manifest': sys.argv[2]}, indent=1) + '\\n')" "$VER" "$MANIFEST"
+        # The three have to agree before the branch exists, not after a bed
+        # run on it says nothing loaded.
+        python3 tools/winport/checktable.py
         git config user.name github-actions
         git config user.email github-actions@users.noreply.github.com
         git add gamedata/sigsegv/windows.txt tools/winport/overrides.json tools/winport/table.json

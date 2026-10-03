@@ -71,6 +71,16 @@ jobs:
     - name: Detour parameters against the game's symbols
       run: python3 tools/winport/detourargs.py
 
+    # The build this package is for, and the one thing a release cannot get
+    # wrong: the extension refuses to load on any other ServerVersion, so a
+    # table that disagrees with table.json ships a package that either never
+    # loads or carries the next update from the wrong binaries.
+    - name: The address table holds for one build
+      id: table
+      run: |
+        python3 tools/winport/checktable.py
+        python3 -c "import json; print('build=' + json.load(open('tools/winport/table.json'))['build'])" >> "$GITHUB_OUTPUT"
+
     - name: Toolchain
       run: |
         # The MSVC STL xwin fetches refuses a clang older than 19 (STL1000).
@@ -195,6 +205,15 @@ jobs:
         (cd "$pkg" && zip -qr "$GITHUB_WORKSPACE/package-windows.zip" .)
         sha256sum package-windows.zip | tee package-windows.zip.sha256
         cp "$OUT/sigsegv.ext.2.tf2.pdb" .
+        # Which TF2 build this zip is for, beside the zip rather than inside
+        # it: a consumer pinning the release can read this without fetching
+        # 10 MB and grepping 7,000 lines of gamedata, and before it starts a
+        # server the extension would then refuse to load into.
+        python3 -c "import json,os,sys; t=json.load(open('tools/winport/table.json')); t['release']=os.environ['RELEASE']; json.dump(t, sys.stdout, indent=1)" \
+          > package-windows.build.json
+        cat package-windows.build.json
+      env:
+        RELEASE: ${{ github.ref_name }}
 
     # A bed report names SigMod's frames as sigsegv.ext.2.tf2.dll+0xRVA. The
     # build that has the .pdb is the one place that can name them.
@@ -218,15 +237,17 @@ jobs:
         path: |
           package-windows.zip
           package-windows.zip.sha256
+          package-windows.build.json
 
     - name: Release
       if: startsWith(github.ref, 'refs/tags/')
       uses: softprops/action-gh-release@v2
       with:
-        name: ${{ github.ref_name }} Windows build
+        name: ${{ github.ref_name }} Windows build for TF2 ServerVersion ${{ steps.table.outputs.build }}
         files: |
           package-windows.zip
           package-windows.zip.sha256
+          package-windows.build.json
 
   # The bed's tools come from tf2-archipelago: the launcher's own installer
   # (winbed), Kelly's wave probe and its plugin. Built on Linux, where spcomp is.
