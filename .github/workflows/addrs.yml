@@ -124,7 +124,8 @@ jobs:
         # scripts make: an address added by hand without its override, or an
         # override the table lacks, fails here. Against another build the
         # difference is the point, and the derived table is the artifact.
-        if grep -q "ServerVersion $ver" ../gamedata/sigsegv/windows.txt && ! diff committed.tsv derived.tsv > differ.txt; then
+        # A carrying run is making the table anew, so it is allowed to differ.
+        if [ -z "${{ inputs.previous }}" ] && grep -q "ServerVersion $ver" ../gamedata/sigsegv/windows.txt && ! diff committed.tsv derived.tsv > differ.txt; then
           echo "windows.txt is not what the scripts derive from ServerVersion $ver: $(grep -c '^<' differ.txt) entries only committed, $(grep -c '^>' differ.txt) only derived"
           exit 1
         fi
