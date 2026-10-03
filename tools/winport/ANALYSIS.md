@@ -73,9 +73,11 @@ other. With the previous build's binaries still on disk, `rebase.py
 OLD/server.dll NEW/server.dll --json rvas.json` finds each address again by its
 masked body, or for a global through the carried functions that reference it,
 and answers `none` where the body changed. A `none` is read by hand, as the
-twelve of the 2026-10-02 update were (`carried` in each entry). Steam does not
-serve an old build to an anonymous login, so keep the binaries of the build
-the table is for.
+twelve of the 2026-10-02 update were (`carried` in each entry). Steam serves
+an old build to an anonymous login when its manifest is named, so the Address
+table job does all of this: give it `previous` as BUILD:MANIFEST, the manifest
+of depot 232255 that an earlier run printed, and `carry.py` rewrites
+overrides.json before the table is derived.
 
 ## Where it stands
 

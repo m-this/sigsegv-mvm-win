@@ -3,7 +3,7 @@
 
     carry.py OLD_DIR NEW_DIR OLD_BUILD NEW_BUILD
 
-OLD_DIR and NEW_DIR are game trees with tf/bin/server.dll and bin/engine.dll.
+OLD_DIR and NEW_DIR are game trees holding the libraries in LIBS.
 Every entry whose build is OLD_BUILD goes through rebase.py against its own
 library. One that carries gets the new rva and build and says so in `carried`;
 one that does not keeps its old build, so emitgamedata.py leaves it out, and is
@@ -17,7 +17,11 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 import rebase  # noqa: E402
 
-LIBS = {"server": "tf/bin/server.dll", "engine": "bin/engine.dll"}
+LIBS = {
+    "server": "tf/bin/server.dll",
+    "engine": "bin/engine.dll",
+    "soundemittersystem": "bin/SoundEmitterSystem.dll",
+}
 
 
 def main():

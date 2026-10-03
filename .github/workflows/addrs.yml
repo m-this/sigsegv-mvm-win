@@ -67,7 +67,7 @@ jobs:
       run: |
         old_build=${PREVIOUS%%:*}
         manifest=${PREVIOUS#*:}
-        printf 'tf/bin/server.dll\nbin/engine.dll\n' > prev.txt
+        printf 'tf/bin/server.dll\nbin/engine.dll\nbin/SoundEmitterSystem.dll\n' > prev.txt
         for attempt in 1 2 3; do
           ./dd/DepotDownloader -app 232250 -depot 232255 -manifest "$manifest" -filelist prev.txt -dir game-prev && break
           sleep 15
