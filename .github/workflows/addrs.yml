@@ -108,14 +108,40 @@ jobs:
           fi
         fi
         echo "previous: ${previous:-none}, commit to: ${target:-nowhere}"
-        { echo "ver=$ver"; echo "manifest=$manifest"; echo "previous=$previous"; echo "target=$target"; } >> "$GITHUB_OUTPUT"
+        { echo "ver=$ver"; echo "manifest=$manifest"; echo "previous=$previous"; echo "previous_manifest=${previous#*:}"; echo "target=$target"; } >> "$GITHUB_OUTPUT"
       env:
         PREVIOUS: ${{ inputs.previous }}
         COMMIT: ${{ inputs.commit }}
-    # Steam serves a past manifest when it is named, and an earlier run of this
-    # job printed the one it downloaded ("Got manifest request code for depot
-    # 232255"). That is how the overrides follow an update with no binaries
-    # kept anywhere.
+    # Steam stops serving a past manifest to an anonymous account once the next
+    # one is out: the 11087207 carry was refused 11076587's with a 401. So every
+    # run keeps the Windows binaries it downloaded, keyed by their manifest, and
+    # the next update's carry reads them back. The restore is what keeps the
+    # entry from being evicted after a week unread.
+    - name: The served build's Windows binaries, kept by an earlier run
+      id: kept
+      if: steps.state.outputs.manifest != ''
+      uses: actions/cache/restore@v4
+      with:
+        path: winbins
+        key: winbins-${{ steps.state.outputs.manifest }}
+    - name: Keep the served build's Windows binaries
+      if: steps.state.outputs.manifest != '' && steps.kept.outputs.cache-hit != 'true'
+      run: |
+        mkdir -p winbins/tf/bin winbins/bin
+        cp game-windows/tf/bin/server.dll winbins/tf/bin/
+        cp game-windows/bin/engine.dll game-windows/bin/SoundEmitterSystem.dll winbins/bin/
+    - if: steps.state.outputs.manifest != '' && steps.kept.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v4
+      with:
+        path: winbins
+        key: winbins-${{ steps.state.outputs.manifest }}
+    - name: The previous build's Windows binaries, kept by an earlier run
+      id: prevbins
+      if: steps.state.outputs.previous != '' && steps.state.outputs.previous_manifest != steps.state.outputs.manifest
+      uses: actions/cache/restore@v4
+      with:
+        path: winbins
+        key: winbins-${{ steps.state.outputs.previous_manifest }}
     - name: Carry the overrides from the previous build
       if: steps.state.outputs.previous != ''
       run: |
@@ -126,7 +152,11 @@ jobs:
         # did): the binaries are the ones just downloaded.
         if [ "$manifest" = "$SERVED_MANIFEST" ]; then
           prev=game-windows
+        elif [ "$PREV_KEPT" = true ]; then
+          prev=winbins
         else
+          # Steam still serves a manifest for a while after an update, and a
+          # build no run of this job has seen has nothing kept.
           printf 'tf/bin/server.dll\nbin/engine.dll\nbin/SoundEmitterSystem.dll\n' > prev.txt
           for attempt in 1 2 3; do
             ./dd/DepotDownloader -app 232250 -depot 232255 -manifest "$manifest" -filelist prev.txt -dir game-prev && break
@@ -139,6 +169,7 @@ jobs:
       env:
         PREVIOUS: ${{ steps.state.outputs.previous }}
         SERVED_MANIFEST: ${{ steps.state.outputs.manifest }}
+        PREV_KEPT: ${{ steps.prevbins.outputs.cache-hit }}
         VER: ${{ steps.state.outputs.ver }}
     - name: Derive the table
       run: |
