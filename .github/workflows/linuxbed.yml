@@ -18,6 +18,9 @@ on:
         description: fill RED with defender bots, which buy upgrades (needs a tf2-archipelago ref with winbed -bots)
         type: boolean
         default: false
+      sigmod_run:
+        description: id of a Build and Release run whose package-linux to install instead of the pinned release
+        default: ''
 
 concurrency:
   group: linuxbed-${{ github.ref }}
@@ -88,9 +91,18 @@ jobs:
         sudo apt-get update -q
         sudo apt-get install -y -q lib32gcc-s1 lib32stdc++6 libc6-i386 lib32z1 libtinfo6:i386 libncurses6:i386 libbz2-1.0:i386 libcurl4t64:i386 libcurl3t64-gnutls:i386 libsdl2-2.0-0:i386 > /dev/null
         df -h /
+    - if: inputs.sigmod_run != ''
+      uses: actions/download-artifact@v4
+      with:
+        name: package-linux
+        path: sigmod
+        run-id: ${{ inputs.sigmod_run }}
+        github-token: ${{ github.token }}
     - name: Install
       run: |
-        bedbin/winbed -install -root "$BED" -probe bedbin/tf2_waveprobe.smx
+        sigmod=
+        [ -f sigmod/package-linux.zip ] && sigmod="-sigmod sigmod/package-linux.zip"
+        bedbin/winbed -install -root "$BED" -probe bedbin/tf2_waveprobe.smx $sigmod
         # What a library srcds loads at boot cannot find, named rather than
         # read off a restart loop.
         cd "$BED/tf-dedicated"
@@ -180,6 +192,9 @@ jobs:
         echo "server starts: $starts"
         grep -a -q "CExtSigsegv: compiled @" out/winbed.out out/console.log || { echo "SigMod did not load"; exit 1; }
         [ "${starts:-0}" -le 1 ] || { echo "the server started $starts times: it crashed"; exit 1; }
+        # A crash late in the job restarts the server after the count above
+        # was taken, so the fault itself is the other half of the check.
+        ! grep -a -q "Segmentation fault" out/winbed.out out/console.log || { echo "the server segfaulted"; exit 1; }
     - if: always()
       uses: actions/upload-artifact@v4
       with:
