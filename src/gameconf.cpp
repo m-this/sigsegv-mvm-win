@@ -61,6 +61,13 @@ bool CSigsegvGameConf::LoadAll(char *error, size_t maxlen)
 {
 	gameconfs->AddUserConfigHook("sigsegv", this);
 	
+#if defined _WINDOWS
+	this->m_Names.clear();
+	for (IAddr *addr : AutoList<IAddr>::List()) {
+		this->m_Names.insert(addr->GetName());
+	}
+#endif
+	
 	for (const char *const *c_name = configs; *c_name != nullptr; ++c_name) {
 		IGameConfig *conf = nullptr;
 		
@@ -252,6 +259,9 @@ SMCResult CSigsegvGameConf::AddrEntry_End()
 	}
 	
 	auto parser = this->m_AddrParsers.at(type);
+#if defined _WINDOWS
+	if (this->NameTaken(name)) return SMCResult_Continue;
+#endif
 	return (this->*parser)();
 }
 
@@ -382,6 +392,9 @@ SMCResult CSigsegvGameConf::AddrGroup_End()
 		};
 		(*handler)(data);
 		
+#if defined _WINDOWS
+		if (this->NameTaken(this->m_AddrEntry_State.m_Name)) continue;
+#endif
 		SMCResult result = (this->*parser)();
 		if (result != SMCResult_Continue) {
 			return SMCResult_HaltFail;
@@ -423,6 +436,20 @@ SMCResult CSigsegvGameConf::AddrGroup_Common_End()
 	
 	return SMCResult_Continue;
 }
+
+
+#if defined _WINDOWS
+/* windows.txt loads first and carries the address derived for this build, so a
+ * Linux block under the same name, or a static IAddr, is left out rather than
+ * registered a second time for AddrManager::Load to report. */
+bool CSigsegvGameConf::NameTaken(const std::string& name)
+{
+	if (this->m_Names.insert(name).second) return false;
+	
+	DevMsg("GameData: addr \"%s\" is already held by an earlier block, left out\n", name.c_str());
+	return true;
+}
+#endif
 
 
 void CSigsegvGameConf::AddrEntry_Load_Common(IAddr *addr)

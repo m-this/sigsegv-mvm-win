@@ -12,13 +12,16 @@ overrides from the wrong binaries.
 
 Nothing here needs the game, a network or a compiler, so it runs in a second
 on every push rather than in the seven minutes the Address table job takes.
-Exits non-zero and names every disagreement.
+A name registered twice (dupes.py) is a disagreement too. Exits non-zero and
+names every one.
 """
 
 import json
 import re
 import sys
 from pathlib import Path
+
+import dupes
 
 HEADER = re.compile(r"// Addresses in server\.dll for ServerVersion (\d+),")
 
@@ -105,9 +108,13 @@ def main():
         elif int(entry["build"]) < build:
             stale += 1
 
+    summary, repeated = dupes.report(root)
+    bad += [f"registered twice: {line}" for line in repeated]
+
     if bad:
         sys.exit("\n".join(bad[:50] + ([f"... and {len(bad) - 50} more"] if len(bad) > 50 else [])))
     print(f"windows.txt: {len(entries)} entries, all for ServerVersion {build} (depot 232255 manifest {table['manifest']})")
+    print("\n".join(summary))
     print(f"overrides.json: {sum(1 for e in overrides.values() if not e.get('bad'))} addresses, "
           f"{stale} left at an older build for carry.py to read by hand")
 

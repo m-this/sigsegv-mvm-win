@@ -6,8 +6,9 @@ name: Address table keying
 # downloads the game and takes seven minutes, and runs on four branches; the
 # Windows package job builds and plays, and runs on a tag. This takes a
 # second, needs neither the game nor a compiler, and runs wherever the three
-# files move. The path list is written twice because Actions does not read
-# YAML anchors.
+# files move, or a gamedata file the Windows server loads after them does (a
+# name in two of them is registered twice). The path list is written twice
+# because Actions does not read YAML anchors.
 
 on:
   push:
@@ -16,6 +17,9 @@ on:
       - 'tools/winport/table.json'
       - 'tools/winport/overrides.json'
       - 'tools/winport/checktable.py'
+      - 'tools/winport/dupes.py'
+      - 'src/gameconf.cpp'
+      - 'gamedata/sigsegv/*.txt'
       - 'tools/winport/emitgamedata.py'
       - '.github/workflows/checktable.yml'
   pull_request:
@@ -24,6 +28,9 @@ on:
       - 'tools/winport/table.json'
       - 'tools/winport/overrides.json'
       - 'tools/winport/checktable.py'
+      - 'tools/winport/dupes.py'
+      - 'src/gameconf.cpp'
+      - 'gamedata/sigsegv/*.txt'
       - 'tools/winport/emitgamedata.py'
       - '.github/workflows/checktable.yml'
 

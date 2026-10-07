@@ -58,6 +58,13 @@ private:
 	
 	std::list<std::unique_ptr<IAddr>> m_AddrPtrs;
 	
+#if defined _WINDOWS
+	/* Names held by an IAddr built before the block being read: the static ones
+	 * in src/addr, and every block loaded so far, windows.txt first. */
+	std::set<std::string> m_Names;
+	bool NameTaken(const std::string& name);
+#endif
+	
 	std::map<std::string, SMCResult (CSigsegvGameConf::*)()> m_AddrParsers {
 		{ "sym",                                   &CSigsegvGameConf::AddrEntry_Load_Sym },
 		{ "sym regex",                             &CSigsegvGameConf::AddrEntry_Load_Sym_Regex },
