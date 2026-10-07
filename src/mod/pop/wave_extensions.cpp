@@ -1191,13 +1191,13 @@ namespace Mod::Pop::Wave_Extensions
 		}
 	}
 
+#if !defined _WINDOWS
 	DETOUR_DECL_MEMBER(bool, CWave_IsDoneWithNonSupportWaves)
 	{
 		REG_WRAPPER_ALL
 		return DETOUR_MEMBER_CALL() && IsDoneWithNonSupport(reinterpret_cast<CWave *>(this));
 	}
-
-#if defined _WINDOWS
+#else
 	/* CWave::IsDoneWithNonSupportWaves is inlined into ActiveWaveUpdate in
 	 * server.dll, as a loop over the wave spawns (+0x221) whose "done" exit
 	 * (+0x254, xor edi, edi then a short jump to +0x260) goes on to finish
@@ -1491,7 +1491,9 @@ namespace Mod::Pop::Wave_Extensions
 			MOD_ADD_DETOUR_MEMBER(CMannVsMachineStats_RoundEvent_WaveEnd, "CMannVsMachineStats::RoundEvent_WaveEnd");
 			
 			MOD_ADD_DETOUR_MEMBER(CWave_ActiveWaveUpdate,          "CWave::ActiveWaveUpdate");
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(CWave_IsDoneWithNonSupportWaves, "CWave::IsDoneWithNonSupportWaves");
+#endif
 			
 			MOD_ADD_DETOUR_MEMBER(CTeamplayRoundBasedRules_State_Enter, "CTeamplayRoundBasedRules::State_Enter");
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_HandleCommand_JoinClass,                  "CTFPlayer::HandleCommand_JoinClass");

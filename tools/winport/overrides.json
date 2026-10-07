@@ -3036,6 +3036,10 @@
   "carried": "from 11076587 0x5edd60 by tools/winport/carry.py: server.dll, 380 bytes",
   "why": "read by hand: the one caller is CPopulationManager::JumpToWave (0x5e5161), as on Linux. It walks the wave spawns (m_WaveSpawns at +0xc, count +0x18) with CWaveSpawnPopulator::ForceFinish inlined: a state below 3 goes to WAIT_FOR_ALL_DEAD (SetState 3, 0x5ef5f0), a state other than 3 to DONE (4), then each active bot handle at +0x4b0 is sent to spectator through its ChangeTeam slot, the Linux body"
  },
+ "_ZN5CWave25IsDoneWithNonSupportWavesEv": {
+  "bad": true,
+  "why": "read by hand, 11087207: no body of its own, MSVC inlined it into CWave::ActiveWaveUpdate (0x5ec8f0). Linux calls it twice, both inside ActiveWaveUpdate: where it gates the OnNonSupportWavesDone loop, and on the empty wave spawn list, where the answer is true anyway. In server.dll the first is at +0x221 (0x5ecb11): m_WaveSpawns data [esi+0xc], per spawn cmp byte [eax+0x4cc],0 (m_bSupportWave) then cmp dword [eax+0x4d4],4 (m_state DONE), the Linux body at the same offsets, and its done exit at +0x254 falls into the OnNonSupportWavesDone loop (0x5ecb50, SetState 0x5ef0f0). The name stays unresolved on purpose: Pop:Wave_Extensions does not declare the detour on Windows and PatchInlinedCheck redirects the inlined exit, its bytes checked against this build"
+ },
  "_ZNK17CBaseCombatWeapon13GetWorldModelEv": {
   "rva": "0x1e1350",
   "build": "11087207",
