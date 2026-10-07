@@ -6,6 +6,7 @@
 param(
   [string[]]$Commands = @(),
   [string]$Probe = '',
+  [string]$After = '',
   [int]$BootMinutes = 20,
   [int]$MaxStarts = 40
 )
@@ -138,6 +139,11 @@ if (-not ($mods | Select-String '\bOK\b')) {
   $why += @(Select-String -Path "$tf\console.log", "$tf\addons\sourcemod\logs\*.log" -Pattern 'Unable to load extension.*sigsegv' -ErrorAction SilentlyContinue)
   if ($why) { $why | ForEach-Object { Say "  $($_.Line.Trim())" } } else { Say '  sm exts list does not name it and no log says why' }
   exit 1
+}
+
+if ($After) {
+  & $After
+  exit $LASTEXITCODE
 }
 
 if (-not $Probe) {

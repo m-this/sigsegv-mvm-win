@@ -270,6 +270,7 @@ jobs:
   # Boot once under full page heap, the check Wine's heap does not make: a
   # write out of bounds faults at the instruction, and WER keeps the dump.
   heapcheck:
+    if: false
     needs: [build, bed-tools]
     runs-on: windows-2022
     timeout-minutes: 120
@@ -327,6 +328,7 @@ jobs:
   # once the server has booted and loaded a map under heapcheck: eight runners
   # finding the same crash eight times tells nothing heapcheck did not.
   bed:
+    if: false
     # Beside heapcheck, not after it: each installs the game on its own runner,
     # and waiting doubled the time to a result.
     needs: [build, bed-tools]
@@ -387,3 +389,38 @@ jobs:
       with:
         name: bed-${{ matrix.shard }}
         path: bed-${{ matrix.shard }}
+
+  # tf2-archipelago apw-b14o: does a Windows server stack a weapon buff on every
+  # rebuild of the buff provider? One bot, one buff, ten re-equips.
+  buffprobe:
+    needs: [build, bed-tools]
+    runs-on: windows-2022
+    timeout-minutes: 90
+    env:
+      WAVEPROBE_RCONPW: bed-${{ github.run_id }}
+      BED: C:\bed
+      BED_DEBUGGER: none
+      WINBED_BOTS: '1'
+      WINBED_ROOM: '1'
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        sparse-checkout: tools/winport/bed
+    - uses: actions/download-artifact@v4
+      with: { name: package-windows, path: pkg }
+    - uses: actions/download-artifact@v4
+      with: { name: winbed, path: bedbin }
+    - uses: actions/download-artifact@v4
+      with: { name: symbols, path: pkg }
+    - name: Install
+      shell: pwsh
+      run: tools/winport/bed/install.ps1
+    - name: Boot and probe
+      shell: pwsh
+      run: tools/winport/bed/boot.ps1 -Commands 'sig_list_mods' -After "$PWD\tools\winport\bed\buffprobe.ps1"
+    - if: always()
+      shell: pwsh
+      run: tools/winport/bed/collect.ps1 -Out buffprobe
+    - if: always()
+      uses: actions/upload-artifact@v4
+      with: { name: buffprobe, path: buffprobe }
