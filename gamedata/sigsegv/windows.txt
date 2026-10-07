@@ -8107,6 +8107,15 @@
 					lib   "server"
 					// call
 				}
+				"CVEngineServer::PlaybackTempEntity"
+				{
+					type  "fixed"
+					sym   "_ZN14CVEngineServer18PlaybackTempEntityER16IRecipientFilterfPKvPK9SendTablei"
+					addr  "0x13cad0"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: the only function holding 'PlaybackTempEntity' and its 'SendTable_Encode returned false (ent %d), overflow? %i' error; drops the oldest queued temp entity when 255 are queued, bf_write on a 0xc0 byte buffer named so, SendTable_Encode(pST, pSender, &bf, classID + 1, 0, 0) and Host_Error on false, the Linux body in order. thiscall, ret 0x14 for (IRecipientFilter &, float, const void *, const SendTable *, int)
+				}
 				"CParticleSystemMgr::Init"
 				{
 					type  "fixed"
@@ -11530,6 +11539,16 @@
 					lib   "server"
 					// verified: read by hand: m_nCurrency (+0x2448, the offset its send prop pushes) less the amount, floored at 0, stored with NetworkStateChanged when it changes; then if g_pGameRules is in MvM (+0xc72, as Linux) calls 0x5e2dc0 on g_pPopulationManager with (player, amount), Linux's AddPlayerCurrencySpent, the Linux body. Its three callers are Linux's: ClientCommand, Event_Killed and the upgrade purchase (0x5f6220). thiscall, ret 4 for the int
 				}
+				"CTFPlayer::UpdateOnRemove"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer14UpdateOnRemoveEv"
+					addr  "0x513d30"
+					build "11087207"
+					lib   "server"
+					vtidx "111"
+					// verified: read by hand: CBasePlayer::UpdateOnRemove (0x2ea6c0, matched) first, then CPlayerInventory::RemoveListener (0x3a5530: the same walk of the listener list at +0x6c, count +0x78, and RemoveSOCacheListener, ret 4) with the inventory at +0x1308 and the listener at +0x1288 as the Linux body does at +0x131c and +0x12a0; thiscall, plain ret. Slot 111 of CTFPlayer, where CBasePlayer has 0x2ea6c0 (Linux 112, after the second destructor)
+				}
 				"CTFPlayer::PlayTauntSceneFromItem"
 				{
 					type  "fixed"
@@ -12035,6 +12054,15 @@
 					build "11087207"
 					lib   "server"
 					// vtable
+				}
+				"PassServerEntityFilter [clone]"
+				{
+					type  "fixed"
+					sym   "_Z22PassServerEntityFilterPK13IHandleEntityS1_"
+					addr  "0x36e930"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: true with no pass entity, false when touch is pass, each handle to an entity unless a static prop, true unless both are entities, false when either owns the other; the Linux body with its .part clone folded in. CTraceFilterSimple::ShouldHitEntity (slot 0, 0x36f2e0) calls it with the touched handle and m_pPassEnt and pops 8 itself: cdecl, plain ret
 				}
 				"CUpgrades::PlayerPurchasingUpgrade [clone]"
 				{
