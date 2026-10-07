@@ -7235,6 +7235,15 @@
 					lib   "engine"
 					// verified: read by hand, engine.dll: the only function referencing 'SV_ComputeClientPacks' (five profiler scopes); the MDL cache lock, then for each of clientCount (arg 1) clients (arg 2): SetupPackInfo(snapshot), serverGameEnts->CheckTransmit(&m_PackInfo, snapshot->m_pValidEntities, m_nValidEntities), SetupPrevPackInfo, then the entity packing, as the SDK's sv_main.cpp writes it
 				}
+				"CGameServer::SetHibernating"
+				{
+					type  "fixed"
+					sym   "_ZN11CGameServer14SetHibernatingEb"
+					addr  "0x1314b0"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: thiscall with a bool, ret 4; returns at once when the flag is already that value, stores it, prints 'Server is hibernating' or 'Server waking up from hibernation', then on hibernate walks the client list (+0x158, count +0x164) punting bots ('Punting bot, server is hibernating') as the Linux body does; its only caller, 0x130f80+0x17b, is CGameServer::UpdateHibernationState, as on Linux
+				}
 				"CServerGameEnts::CheckTransmit"
 				{
 					type  "fixed"
@@ -8819,6 +8828,15 @@
 					lib   "server"
 					// string
 				}
+				"CPopulationManager::CollectMvMBots"
+				{
+					type  "fixed"
+					sym   "_ZN18CPopulationManager14CollectMvMBotsEP10CUtlVectorIP9CTFPlayer10CUtlMemoryIS2_iEE"
+					addr  "0x5e2ce0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: cdecl, takes the vector (arg 1) and returns its size; zeroes the size, then for each index 1..maxClients calls UTIL_PlayerByIndex, skips a null player or one with no edict, calls the same virtuals as the Linux body (one slot twice, then a third), skips a field equal to 2 and a team of 2, and AddToTail; Linux has two callers, CTFBotSpawner::Spawn and AllocateBots, and here Spawn calls it once (0x5eafb0+0x459) and compares the count with tf_mvm_max_invaders, while AllocateBots carries its own inline copy of the loop
+				}
 				"CPopulationManager::CycleMission"
 				{
 					type  "fixed"
@@ -9539,6 +9557,15 @@
 					build "11087207"
 					lib   "server"
 					// string
+				}
+				"CPopulationManager::CollectMvMBots"
+				{
+					type  "fixed"
+					sym   "_ZN18CPopulationManager14CollectMvMBotsEP10CUtlVectorIP9CTFPlayer10CUtlMemoryIS2_iEE"
+					addr  "0x5e2ce0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: cdecl, takes the vector (arg 1) and returns its size; zeroes the size, then for each index 1..maxClients calls UTIL_PlayerByIndex, skips a null player or one with no edict, calls the same virtuals as the Linux body (one slot twice, then a third), skips a field equal to 2 and a team of 2, and AddToTail; Linux has two callers, CTFBotSpawner::Spawn and AllocateBots, and here Spawn calls it once (0x5eafb0+0x459) and compares the count with tf_mvm_max_invaders, while AllocateBots carries its own inline copy of the loop
 				}
 				"CPopulationManager::CycleMission"
 				{

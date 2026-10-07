@@ -487,6 +487,11 @@
   "carried": "from 11076587 0x5e3840 by tools/winport/carry.py: server.dll, 493 bytes",
   "why": "corroborated by tools/winport/corroborate.py: calls all 7 of the Linux function's matched callees, and no string disagrees"
  },
+ "_ZN18CPopulationManager14CollectMvMBotsEP10CUtlVectorIP9CTFPlayer10CUtlMemoryIS2_iEE": {
+  "rva": "0x5e2ce0",
+  "build": "11087207",
+  "why": "read by hand: cdecl, takes the vector (arg 1) and returns its size; zeroes the size, then for each index 1..maxClients calls UTIL_PlayerByIndex, skips a null player or one with no edict, calls the same virtuals as the Linux body (one slot twice, then a third), skips a field equal to 2 and a team of 2, and AddToTail; Linux has two callers, CTFBotSpawner::Spawn and AllocateBots, and here Spawn calls it once (0x5eafb0+0x459) and compares the count with tf_mvm_max_invaders, while AllocateBots carries its own inline copy of the loop"
+ },
  "_ZN18CPopulationManager14PostInitializeEv": {
   "rva": "0x5e46e0",
   "build": "11087207",
@@ -1120,6 +1125,12 @@
   "carried": "from 11076587 0x130c90 by tools/winport/carry.py: server.dll, 19 bytes",
   "why": "read by hand: empty on Linux (a lone ret), so on Windows it is the shared empty body, and only the slot says which virtual it is: slot 336 of CTFBaseBoss, the one before GetCurrencyValue (337, 0x5de290), where CTFTankBoss has its own bounds code (0x5f5010); Linux has two INextBot virtuals between them that MSVC keeps in the INextBot vtable",
   "vtidx": 336
+ },
+ "_ZN11CGameServer14SetHibernatingEb": {
+  "lib": "engine",
+  "rva": "0x1314b0",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: thiscall with a bool, ret 4; returns at once when the flag is already that value, stores it, prints 'Server is hibernating' or 'Server waking up from hibernation', then on hibernate walks the client list (+0x158, count +0x164) punting bots ('Punting bot, server is hibernating') as the Linux body does; its only caller, 0x130f80+0x17b, is CGameServer::UpdateHibernationState, as on Linux"
  },
  "_ZN11CEconEntity6GiveToEP11CBaseEntity": {
   "rva": "0x130600",
