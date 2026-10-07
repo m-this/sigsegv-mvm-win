@@ -832,12 +832,14 @@ namespace Mod::Pop::Tank_Extensions
 
 	RefCount rc_CTFTankBoss_UpdatePingSound;
 
+#if !defined _WINDOWS
 	DETOUR_DECL_MEMBER(void, CTFTankBoss_UpdatePingSound)
 	{
 		SCOPED_INCREMENT(rc_CTFTankBoss_UpdatePingSound);
 		
 		DETOUR_MEMBER_CALL();
 	}
+#endif
 
 	RefCount rc_CTFTankBoss_Spawn;
 	DETOUR_DECL_MEMBER(void, CTFTankBoss_Spawn)
@@ -1134,7 +1136,9 @@ namespace Mod::Pop::Tank_Extensions
 			MOD_ADD_DETOUR_MEMBER(CTFTankBoss_Event_Killed, "CTFTankBoss::Event_Killed");
 			MOD_ADD_DETOUR_MEMBER(CBaseEntity_EmitSound, "CBaseEntity::EmitSound [member: normal]");
 			MOD_ADD_DETOUR_STATIC(CBaseEntity_EmitSound2, "CBaseEntity::EmitSound [static: normal]");
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(CTFTankBoss_UpdatePingSound, "CTFTankBoss::UpdatePingSound");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CTFTankBoss_Spawn, "CTFTankBoss::Spawn");
 			MOD_ADD_DETOUR_STATIC(CreateEntityByName, "CreateEntityByName");
 			MOD_ADD_DETOUR_MEMBER(CTFTankDestruction_Spawn,      "CTFTankDestruction::Spawn");
