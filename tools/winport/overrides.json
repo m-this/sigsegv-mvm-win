@@ -2332,6 +2332,12 @@
   "carried": "from 11076587 0x5f42c0 by hand: its datamap record, built at run time, pairs the think's name with this address as on 11076587",
   "why": "read by hand: the tank's think: 'Announcer.MVM_Tank_Alert_Halfway', 'Announcer.MVM_Tank_Alert_Near_Hatch', the 'movement' sequence, TakeDamage, StopSound, EmitSound and StopParticleEffects, the Linux body's calls; ret. CTFTankBoss' datamap, built at run time, writes 'TankBossThink' and then this address (0x4dd4b)"
  },
+ "_ZN11CTFTankBoss24SetStartingPathTrackNodeEPc": {
+  "name": "CTFTankBoss::SetStartingPathTrackNode",
+  "rva": "0x5f24a0",
+  "build": "11087207",
+  "why": "read by hand: FindEntityByName on the global entity list with the name argument, a dynamic cast of the result to CPathTrack, then the node's handle stored in the tank, or -1 when either step gives null; ret 4, as the Linux body. The extractor for CTFTankBoss::m_hCurrentNode reads the store's offset (0xa00 on this build) from it, and the Spawn and TankBossThink bodies use the same offset where Linux's use m_hCurrentNode, 0x18 lower than Linux's 0xa18"
+ },
  "_ZN11CTFBaseBoss22ResolvePlayerCollisionEP9CTFPlayer": {
   "rva": "0x5de5b0",
   "build": "11087207",

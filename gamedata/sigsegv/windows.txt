@@ -12432,6 +12432,15 @@
 					lib   "server"
 					// verified: read by hand: the 32 accessor pointers GetDataObject indexes, which MSVC inlined everywhere. DestroyAllDataObjects (0x2c4030, called by CBaseEntity's destructor 0x1e98c0) tests type bits 0 to 7 at +0x370 and calls slot 3 (DestroyDataObject) of [type*4 + this]; CreateDataObject (0x2c3ff0) sets the bit and jumps to slot 2 of the same entry, Linux reading 0x17fccec the same way (g_DataObjectAccessSystem at 0x17fcce0, +0xc). The static constructor 0x19070 writes the system's vtable at 0xa399c8 and zeroes 0x80 bytes here. The inlined reads call slot 1, GetDataObject
 				}
+				"CTFTankBoss::SetStartingPathTrackNode"
+				{
+					type  "fixed"
+					sym   "_ZN11CTFTankBoss24SetStartingPathTrackNodeEPc"
+					addr  "0x5f24a0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: FindEntityByName on the global entity list with the name argument, a dynamic cast of the result to CPathTrack, then the node's handle stored in the tank, or -1 when either step gives null; ret 4, as the Linux body. The extractor for CTFTankBoss::m_hCurrentNode reads the store's offset (0xa00 on this build) from it, and the Spawn and TankBossThink bodies use the same offset where Linux's use m_hCurrentNode, 0x18 lower than Linux's 0xa18
+				}
 				"CScriptConvarAccessor::SetValue"
 				{
 					type  "fixed"
