@@ -179,7 +179,7 @@ class Interfaces(unittest.TestCase):
             "+0x0008:  00000202  non-virtual thunk to CPlayer::~CPlayer()",
         ]
         (Path(self.dir.name) / "CPlayer.txt").write_text("\n".join(rows) + "\n")
-        self.corpus = mv.Corpus(self.dir.name)
+        self.corpus = mv.Corpus(self.dir.name, interface_drop=True)
 
     def test_thunk_targets_are_read_from_the_secondary_tables(self):
         self.assertEqual(
@@ -192,6 +192,10 @@ class Interfaces(unittest.TestCase):
             "CPlayer::~CPlayer()", "CPlayer::~CPlayer()", "CPlayer::Spawn()", "CPlayer::Think()"])
         how, aligned = mv.align(slots, [1, 2, 3], self.corpus.order("CPlayer"))
         self.assertEqual((how, aligned), ("collapse", ["CPlayer::~CPlayer()", "CPlayer::Spawn()", "CPlayer::Think()"]))
+
+    def test_the_drop_is_off_unless_asked_for(self):
+        plain = mv.Corpus(self.dir.name)
+        self.assertEqual(plain.order("CPlayer"), list(range(6)))
 
     def test_a_hand_read_address_has_to_agree(self):
         aligned = ["CPlayer::~CPlayer()", "CPlayer::Spawn()", "CPlayer::Think()"]

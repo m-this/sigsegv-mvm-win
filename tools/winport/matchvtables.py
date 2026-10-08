@@ -253,7 +253,11 @@ class Corpus:
     inlined into a virtual, and nm names the slot after the template.
     """
 
-    def __init__(self, linux_dir):
+    def __init__(self, linux_dir, interface_drop=False):
+        # matchfuncs.py builds its vtable pairs from the same order, and every
+        # pair seeds its call propagation: dropping interface slots there moves
+        # 147 addresses of the table nobody has run, so it is asked for by name.
+        self.interface_drop = interface_drop
         rows, self.pretty, self.thunked = {}, {}, {}
         for path in sorted(Path(linux_dir).glob("*.txt")):
             got = read_linux_addressed(path)
@@ -375,7 +379,7 @@ class Corpus:
             if slots[j] and split_name(slots[j])[0] == own:
                 overridden.add(method(slots[j]))
         names = self.grouping(cls, start, len(slots))
-        interface = {i for i in range(start, len(slots)) if self.interface_only(cls, i)}
+        interface = {i for i in range(start, len(slots)) if self.interface_drop and self.interface_only(cls, i)}
         new = self.grouped(names, start, len(slots), DECLARED_FIRST.get(own, ()), interface)
         unsure = [g for g in self.group_names(names, start, len(slots)) if g in overridden]
         unsure = [g for g in unsure if g not in DECLARED_FIRST.get(own, ()) and g != method(names[new[0]] or "")]
@@ -491,7 +495,7 @@ def main():
     for row in json.loads(classified.read_text())["virtual"]:
         wanted[row["class"]].append(row)
 
-    corpus = Corpus(linux_dir)
+    corpus = Corpus(linux_dir, interface_drop=True)
     verified = load_verified(Path(__file__).parent / "overrides.json")
     resolved, refused, missing, multi = [], [], [], []
     unanchored, contradicted, no_slot, dropped, anchored = [], [], [], 0, 0
