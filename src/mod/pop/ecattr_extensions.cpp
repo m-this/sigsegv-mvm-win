@@ -345,6 +345,7 @@ namespace Mod::Pop::ECAttr_Extensions
 		DETOUR_DTOR_CALL();
 	}
 	
+#if !defined _WINDOWS
 	DETOUR_DECL_DTOR(CTFBot_dtor2)
 	{
 		auto bot = reinterpret_cast<CTFBot *>(this);
@@ -354,13 +355,19 @@ namespace Mod::Pop::ECAttr_Extensions
 		
 		DETOUR_DTOR_CALL();
 	}
+#endif
 	
 	
 	DETOUR_DECL_MEMBER(void, CTFPlayer_StateEnter, int nState)
 	{
 		auto player = reinterpret_cast<CTFPlayer *>(this);
 		
+#if defined _WINDOWS
+		int state_left = player->StateGet();
+		if (nState == TF_STATE_WELCOME || nState == TF_STATE_OBSERVER || state_left == TF_STATE_WELCOME || state_left == TF_STATE_OBSERVER) {
+#else
 		if (nState == TF_STATE_WELCOME || nState == TF_STATE_OBSERVER) {
+#endif
 			CTFBot *bot = ToTFBot(player);
 			if (bot != nullptr) {
 				ClearDataForBot(bot, DIE);
@@ -370,6 +377,7 @@ namespace Mod::Pop::ECAttr_Extensions
 		DETOUR_MEMBER_CALL(nState);
 	}
 	
+#if !defined _WINDOWS
 	DETOUR_DECL_MEMBER(void, CTFPlayer_StateLeave)
 	{
 		auto player = reinterpret_cast<CTFPlayer *>(this);
@@ -384,6 +392,7 @@ namespace Mod::Pop::ECAttr_Extensions
 		
 		DETOUR_MEMBER_CALL();
 	}
+#endif
 
 
 	CTFBotSpawner *current_spawner = nullptr;
@@ -2928,10 +2937,14 @@ namespace Mod::Pop::ECAttr_Extensions
 		{
 			
 			MOD_ADD_DETOUR_MEMBER(CTFBot_dtor0, "CTFBot::~CTFBot [D0]");
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(CTFBot_dtor2, "CTFBot::~CTFBot [D2]");
+#endif
 			
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_StateEnter, "CTFPlayer::StateEnter");
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_StateLeave, "CTFPlayer::StateLeave");
+#endif
 
 			MOD_ADD_DETOUR_MEMBER(CTFBotSpawner_Parse, "CTFBotSpawner::Parse");
 			
@@ -2976,9 +2989,11 @@ namespace Mod::Pop::ECAttr_Extensions
 			MOD_ADD_DETOUR_MEMBER(CTFBotMainAction_Update, "CTFBotMainAction::Update");
 			MOD_ADD_DETOUR_MEMBER(CTFBot_AvoidPlayers, "CTFBot::AvoidPlayers");
 
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_GetHandScaleSpeed, "CTFPlayer::GetHandScaleSpeed");
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_GetHeadScaleSpeed, "CTFPlayer::GetHeadScaleSpeed");
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_GetTorsoScaleSpeed, "CTFPlayer::GetTorsoScaleSpeed");
+#endif
 
 			MOD_ADD_DETOUR_MEMBER(CTFBotLocomotion_Update, "CTFBotLocomotion::Update");
 			MOD_ADD_DETOUR_MEMBER(NextBotPlayer_CTFPlayer_PressCrouchButton, "NextBotPlayer<CTFPlayer>::PressCrouchButton");
