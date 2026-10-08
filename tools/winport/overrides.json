@@ -3072,5 +3072,180 @@
   "rva": "0x5f58d0",
   "build": "11087207",
   "carried": "from 11076587 0x5f6350 by hand: the only function calling every anchored callee (4/4) and called by every anchored caller of the 11076587 body, with the same strings and the same ret"
+ },
+ "_ZN23CLagCompensationManager21FinishLagCompensationEP11CBasePlayer": {
+  "rva": "0x2eca40",
+  "build": "11087207",
+  "why": "read by hand: opens the 'FinishLagCompensation' VPROF scope of player_lagcompensation.cpp, walks the players through UTIL_PlayerByIndex (0x36cfa0) and calls the restore body (0x2ee720, the one holding ' restore got most of the way'), which GCC inlined into the Linux function; ret 4 for the one player argument. Between StartLagCompensation (0x2ec740) and the restore helper as on Linux"
+ },
+ "_Z32SendProxyArrayLength_PlayerArrayPKvi": {
+  "rva": "0x33cfc0",
+  "build": "11087207",
+  "why": "read by hand: the static init of DT_Team calls InternalSendPropArray (0x23df60) with 0x65 elements, the name 'player_array' and this function pushed first, as Linux pushes 0x857840 before the same name and 0x65 (Linux 0x8587ab). Body returns the field at +0x3a4 of its argument (the team's player count, +0x3bc on Linux) and rets plain, the Linux 14 bytes"
+ },
+ "_ZN13CGameMovement22GetPointContentsCachedERK6Vectori": {
+  "name": "CGameMovement::GetPointContentsCached [clone]",
+  "rva": "0x2781c0",
+  "build": "11087207",
+  "why": "read by hand: the whole function, where Linux detours the .part clone GCC split after the convar test (cmp byte at 0x99143c). It tests the convar, takes the player's entindex - 1 and calls enginetrace->GetPointContents(point, 0) when it is above 100 (cmp 0x65), else reads the per-slot cache (sentinel -10000 = 0xffffd8f1, squared distance against a constant) and refills it, as the clone does. Pops 8: this, a Vector reference, the slot"
+ },
+ "_ZN12CTFGameRules24CalcDominationAndRevengeEP9CTFPlayerP11CBaseEntityS1_bPi": {
+  "name": "CTFGameRules::CalcDominationAndRevenge [clone]",
+  "rva": "0x483470",
+  "build": "11087207",
+  "why": "read by hand: the whole function, where Linux detours the .part clone after the wrapper's early returns. FindPlayerStats (0x4a9650), SetPlayerDominated (0x52b160), Event_PlayerDominatedOther (0x4a8340), Event_PlayerRevenge (0x4a8d00), the 'player_domination' event with dominator, dominated and dominations. Pops 0x14: this and five arguments"
+ },
+ "_ZN12CTFGameStats16ResetPlayerStatsEP9CTFPlayer": {
+  "rva": "0x4aa6a0",
+  "build": "11087207",
+  "why": "read by hand: bounds the player's index by 0x65, calls the per-player zeroing (0x4aa510), then the loop over 0x66 rows at stride 0x794 that Linux inlines (the ResetKillHistory body); called from Event_PlayerConnected (0x4a7c50) as Linux does. Pops 4"
+ },
+ "_ZN12CTFGameStats16ResetKillHistoryEP9CTFPlayer": {
+  "rva": "0x4aa630",
+  "build": "11087207",
+  "why": "read by hand: the loop Linux has at 0xc77729: 0x66 rows at stride 0x794 clearing the three kill history cells at +0x2c8, +0x460 and +0x5f8 of the player's column (offsets agree term for term), indices above 0x65 refused. Pops 4"
+ },
+ "_ZN12CTFGameStats13IncrementStatEP9CTFPlayer12TFStatType_ti": {
+  "rva": "0x4a9f70",
+  "build": "11087207",
+  "why": "read by hand: IsCompetitiveMode (0x491cc0) and the state test against 4 as Linux, then adds the value to six rows of the player's 0x794 byte block at the offsets Linux adds to (0x0, 0xb4, 0x21c, 0x224, 0x168, 0x22c past the 0x94 header; Linux 0x94, 0x148, 0x2b0, 0x2b8, 0x1fc, 0x2c0). Pops 0xc: player, stat type, value"
+ },
+ "_ZN12CTFGameStats30AccumulateAndResetPerLifeStatsEP9CTFPlayer": {
+  "rva": "0x4a6b70",
+  "build": "11087207",
+  "why": "read by hand: CalcPlayerScore (0x4836e0) on the player's block, adds it to the round stats at this+0x74 and to two totals (+0xdc, +0x190 past the header; Linux +0x170, +0x224 from the block start), then clears 0x2d dwords with rep stosd as Linux does. Pops 4"
+ },
+ "_ZN12CTFGameStats21Event_PlayerConnectedEP11CBasePlayer": {
+  "rva": "0x4a7c50",
+  "build": "11087207",
+  "why": "read by hand: converts to a CTFPlayer through the vtable call at +0x14c, calls ResetPlayerStats (0x4aa6a0), then stores the SteamWorks uploader's GetTimeSinceEpoch (0x4600d0, 0x4600e0) in the player's block at stride 0x794, as Linux does with ToTFPlayer, ResetPlayerStats and GetSteamWorksSGameStatsUploader. Pops 4"
+ },
+ "_ZN12CTFGameStats14TrackKillStatsEP11CBasePlayerS1_": {
+  "rva": "0x4ac910",
+  "build": "11087207",
+  "why": "read by hand: both indices refused above 0x65, then +1 at +0x460 and +0x5f8 in one player's column, +1 at +0x2c8 and 0 at +0x5f8 in the other's, the four writes Linux makes at the same offsets. Pops 8"
+ },
+ "_ZN12CTFGameStats15FindPlayerStatsEP11CBasePlayer": {
+  "rva": "0x4a9650",
+  "build": "11087207",
+  "why": "read by hand: null player gives null, else this + 0x94 + 0x794 * the edict index (edict at +0x18 here, +0x20 on Linux), 0 when there is no edict, the Linux 52 bytes. Pops 4. Called by CalcDominationAndRevenge (0x483470) as Linux"
+ },
+ "_ZN12CTFGameStats28Event_PlayerEarnedKillStreakEP9CTFPlayer": {
+  "rva": "0x4a8380",
+  "build": "11087207",
+  "why": "read by hand: null player returns, else raises the stats block's field at +0x1f0 to the player's kill streak field (+0x1f18 here, +0x1f24 on Linux) when it is greater, the Linux 54 bytes. Pops 4"
+ },
+ "_ZN17CTFPlayerResource24SetPlayerClassWhenKilledEii": {
+  "rva": "0x515f80",
+  "build": "11087207",
+  "why": "read by hand: the call right before CBasePlayer::Event_Killed (0x2e05b0) in CTFPlayer::Event_Killed (0x4eea72), made with the entity index and the player's class as Linux calls it before CBasePlayer::Event_Killed; sets the array cell at this + 0x3704 + 4 * index when it differs and runs the change notifier (0x14f3c0). Pops 8"
+ },
+ "_ZN13CVoiceGameMgr15ClientConnectedEP7edict_t": {
+  "rva": "0x37a560",
+  "build": "11087207",
+  "why": "read by hand: index - 1 from the edict, sets its bit in a dword mask and clears the two 16 byte rows for that player, the first being g_SentGameRulesMasks (0xa801c8, already in the table), as Linux does at 0x8bf120. Pops 4"
+ },
+ "_ZN13CHLTVDirector21BuildActivePlayerListEv": {
+  "rva": "0x28a190",
+  "build": "11087207",
+  "why": "read by hand: clears the count at +0x144, walks players 1 to maxClients through UTIL_PlayerByIndex, keeps one that passes the vtable test at +0x10c, has FL bit 3 clear and a team above 1, and appends to the array at +0x148, offsets and logic as Linux 0x7323d0. Plain ret"
+ },
+ "_ZN12CTFGameRules35PlayerReadyStatus_UpdatePlayerStateEP9CTFPlayerb": {
+  "rva": "0x497510",
+  "build": "11087207",
+  "why": "read by hand: the whole function, wrapper and .part.0 clone together. Calls PlayerReadyStatus_HaveMinPlayersToEnable (0x4971e0), UTIL_PlayerByIndex, ShouldStartCountdown, fires 'teamplay_round_restart_seconds' with 'seconds' and walks the teams (vtable +0x34c/+0x350/+0x320), the clone's callees in order. Pops 8"
+ },
+ "_ZN24CTeamplayRoundBasedRules20State_Enter_PREROUNDEv": {
+  "rva": "0x350700",
+  "build": "11087207",
+  "why": "read by hand: the only function holding 'full_reset' (0x350755); references 'teamplay_round_start', 'full_reset', 'team_round_timer', 'show_in_hud', 'SetTime', 'Resume', 'Enable' and 'teamplay_update_timer' in the order Linux 0xb971e8 to 0xb9734c does. 1258 bytes against 1169, plain ret"
+ },
+ "_ZN16CTriggerCatapult16OnLaunchedVictimEP11CBaseEntity": {
+  "rva": "0x54ca30",
+  "build": "11087207",
+  "why": "read by hand: fires the output at +0x67c with (victim, this), and when the victim is a player (vtable +0x14c) stores curtime plus a constant in the per-player cell at +0x4a8 + 4 * index, else in cell 0; the Linux body (output at +0x694, cells at +0x4c0). Sits between LaunchByTarget (0x54c7f0) and StartTouch (0x54cab0). Pops 4"
+ },
+ "_ZL14tf_mvm_popfileRK8CCommand": {
+  "rva": "0x4a61a0",
+  "build": "11087207",
+  "why": "read by hand: the callback pushed with the 'tf_mvm_popfile' name (0x3c49f) when the ConCommand is built; holds 'Missing Popfile name' and 'Could not find a valid population file matching: %s.', the Linux strings of the command"
+ },
+ "_ZN11CBaseServer16CreateFakeClientEPKc": {
+  "lib": "engine",
+  "rva": "0x13ebe0",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: sets a null address of type 3 (SetIP 0, SetPort 0, SetType 3), calls CreateNewClient through the vtable (+0xd0, Linux +0xd4), builds the net channel when the demo flag at [0x5eb00c]+0x30 is set, bumps the user id and writes the userinfo convars 'cl_updaterate', 'cl_interp_ratio', 'cl_predictweapons', 'cl_lagcompensation' and the rest, as Linux does. Pops 4"
+ },
+ "_ZN11CBaseServer13GetFreeClientER8netadr_s": {
+  "lib": "engine",
+  "rva": "0x13f290",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: walks m_Clients (+0x158, count +0x164), compares each connected client's remote address with the argument, prints '%s:reconnect' and disconnects the old one, else returns a new client from the vtable (+0xd4, Linux +0xd8) when the count is below +0x14c, as Linux. Pops 4"
+ },
+ "_Z21SV_BroadcastVoiceDataP7IClientiPcx": {
+  "lib": "engine",
+  "rva": "0x12fd70",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: builds an SVC_VoiceData on the stack (bf_read, shifts the byte count left by 3, copies the data pointer and the 64-bit xuid), prints 'Sending voice from: %s - playerslot: %d' under the convar and loops g_Clients sending to every client that passes the two vtable tests; cdecl, plain ret, five argument dwords as Linux"
+ },
+ "_ZN11CBaseClient13FireGameEventEP10IGameEvent": {
+  "lib": "engine",
+  "rva": "0x82310",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: VPROF scope 'CBaseClient::FireGameEvent' at baseclient.cpp line 0x2af (Linux pushes the same 0x2af), serializes the event into a 0x400 byte bf_write through the game event manager and sends it on the net channel, printing the two GameEventManager failure messages of Linux. Pops 4"
+ },
+ "_ZN13CSteam3Server24SendUpdatedServerDetailsEv": {
+  "lib": "engine",
+  "rva": "0x13a5f0",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: the only function with 'steamblocking:%d'; GetNumClients and GetNumFakeClients, the hltv IsTVRelay test, UpdateGroupSteamID and the Steam game server calls in the order of Linux 0xb54ef to 0xb5810. Plain ret"
+ },
+ "_Z16Host_ChangelevelbPKcS0_": {
+  "lib": "engine",
+  "rva": "0x181630",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: 'Only the server may changelevel', the demo playback refusal, 'maps/%s.bsp', '---- Host_Changelevel ----', 'Failed to save data for transition', 'quit' and 'UpdateMap' in the order Linux has them; cdecl, plain ret, three arguments as the symbol"
+ },
+ "_ZN11CBaseServer14FillServerInfoER14SVC_ServerInfo": {
+  "lib": "engine",
+  "rva": "0x13ee60",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: V_FileBase of the map name, protocol 0x18 at +0x14, server count at +0x18, the four MD5 dwords copied from +0xf1..+0xfd to +0x24..+0x30, max clients, the OS byte at +0x1f (0x57 'W' here, 0x4c 'L' on Linux), tick interval at +0x40, game dir, map and hostname; the Linux field list. Pops 4"
+ },
+ "_ZN11CBaseServer18WriteDeltaEntitiesEP11CBaseClientP12CClientFrameS3_R8bf_write": {
+  "lib": "engine",
+  "rva": "0x128e90",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: opens the 'CBaseServer::WriteDeltaEntities' VPROF scope of sv_ents_write.cpp, then the 'Delta: [%d] deletions', 'delta [%s]', 'leave [%s]', 'enter [%s]', 'Delta Entities Overhead' and 'Delta Finish' traces in Linux order, and calls SV_DetermineUpdateType (0x128050) and SV_WriteDeltaHeader (0x1289e0). Pops 0x10: four arguments"
+ },
+ "_ZL22SV_DetermineUpdateTypeR16CEntityWriteInfo": {
+  "lib": "engine",
+  "rva": "0x128050",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: compares m_nNewEntity (+0x18) with m_nOldEntity (+0x14) and sets m_UpdateType (+0x10) to 0 or 1, then for equal ones tests the 'checkProps' profiler scope, the delta cache lookups and the pack comparisons at +0x2c/+0x30/+0x134/+0x138/+0x148, every offset of Linux 0xc6220. Takes the CEntityWriteInfo pointer on the stack (Linux in eax), plain ret"
+ },
+ "_ZN11CHLTVServer11StartMasterEP11CGameClient": {
+  "lib": "engine",
+  "rva": "0x17ef10",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: 'SourceTV client not found.' on a null client, then 'Mod doesn't support SourceTV. No director module found.', the userinfo convars and 'CHLTVServer::StartMaster: game event %s not found.' in Linux order. The call-propagation match 0x1bb680 was a 20 byte function and wrong. Takes the CBaseServer part as this. Pops 4"
+ },
+ "_ZN11CHLTVServer8ShutdownEv": {
+  "lib": "engine",
+  "rva": "0x17ee50",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: stops the demo recorder, prints 'SourceTV stop.' on the client or 'HLTV server shutting down' on the net channel, removes the game event listener and tail-jumps to CBaseServer::Shutdown (0x141260), as Linux 0x136fc0 does. Takes the CBaseServer part as this (the listener is at this - 8). Plain ret"
+ },
+ "_Z15SetupMaxPlayersi": {
+  "lib": "engine",
+  "rva": "0x1316e0",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: asks the game dll for its player limits (vtable +0), Sys_Errors with the four 'GetPlayerLimits: ...' messages Linux has, chooses the default when the argument is below 1, then Replay_IsSupportedModAndPlatform and '-replay'. cdecl, plain ret"
+ },
+ "hltv": {
+  "lib": "engine",
+  "rva": "0x637664",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: SendUpdatedServerDetails (0x13a5f0) loads it, calls CHLTVServer::IsTVRelay (0x17deb0) on it and reads the server part at +8 for the HLTV name, as Linux does with [0x33cd1c] and IsTVRelay; SV_DetermineUpdateType (0x128050) adds 0x658c to it for the delta cache lookup, Linux 0x6570"
  }
 }
