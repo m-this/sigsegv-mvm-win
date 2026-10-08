@@ -750,7 +750,14 @@ namespace Mod::Etc::Mapentity_Additions
 	}
 
     RefCount rc_CTriggerIgnite_BurnEntities;
-    DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, int, CTriggerIgnite_BurnEntities)
+#if defined _WINDOWS
+    /* server.dll inlines BurnEntities into BurnThink, which returns nothing:
+     * this detours BurnThink, the same scope. */
+    using BurnEntitiesRet = void;
+#else
+    using BurnEntitiesRet = int;
+#endif
+    DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, BurnEntitiesRet, CTriggerIgnite_BurnEntities)
 	{
         SCOPED_INCREMENT(rc_CTriggerIgnite_BurnEntities);
 		return DETOUR_MEMBER_CALL();
@@ -1644,9 +1651,15 @@ namespace Mod::Etc::Mapentity_Additions
         return ret;
 	}
 
-    DETOUR_DECL_MEMBER(void, CEventAction_CEventAction, const char *name)
+#if defined _WINDOWS
+    /* An MSVC constructor returns this in eax and its callers use it. */
+    using CEventActionCtorRet = void *;
+#else
+    using CEventActionCtorRet = void;
+#endif
+    DETOUR_DECL_MEMBER(CEventActionCtorRet, CEventAction_CEventAction, const char *name)
 	{
-        if (name == nullptr) { DETOUR_MEMBER_CALL(name); return; }
+        if (name == nullptr) return DETOUR_MEMBER_CALL(name);
 
         //TIME_SCOPE2(cevent)
         char *newname = nullptr;
@@ -1681,7 +1694,7 @@ namespace Mod::Etc::Mapentity_Additions
             name = newname;
         }
         //Msg("Event action post %s\n", name);
-        DETOUR_MEMBER_CALL(name);
+        return DETOUR_MEMBER_CALL(name);
     }
 
     DETOUR_DECL_STATIC(void, SV_ComputeClientPacks, int clientCount,  void **clients, void *snapshot)
@@ -1885,6 +1898,16 @@ namespace Mod::Etc::Mapentity_Additions
     
     DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, bool, CPopulationManager_Initialize)
 	{
+#if defined _WINDOWS
+        /* server.dll has no clone, so this detours the whole function. Linux detours the clone
+         * GCC split off after the wrapper's check that the nav mesh has areas (TheNavMesh + 0x30,
+         * the count both builds read); without that check the code below would run for a
+         * failed Initialize. */
+        CTFNavMesh *nav_mesh = TheNavMesh;
+        if (nav_mesh == nullptr || *reinterpret_cast<unsigned int *>(reinterpret_cast<uintptr_t>(nav_mesh) + 0x30) == 0) {
+            return DETOUR_MEMBER_CALL();
+        }
+#endif
 		auto ret = DETOUR_MEMBER_CALL();
         
 #ifndef NO_MVM
