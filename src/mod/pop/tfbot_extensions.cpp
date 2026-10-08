@@ -449,14 +449,24 @@ namespace Mod::Pop::TFBot_Extensions
 		DETOUR_DTOR_CALL();
 	}
 	
+	/* On Windows the base destructor the scalar deleting destructor calls: no
+	 * flags word, plain ret. */
+#if defined _WINDOWS
+	DETOUR_DECL_MEMBER(void, CTFBot_dtor2)
+#else
 	DETOUR_DECL_DTOR(CTFBot_dtor2)
+#endif
 	{
 		auto bot = reinterpret_cast<CTFBot *>(this);
 		
 	//	DevMsg("CTFBot %08x: dtor2, clearing data\n", (uintptr_t)bot);
 		ClearDataForBot(bot);
 		
+#if defined _WINDOWS
+		DETOUR_MEMBER_CALL();
+#else
 		DETOUR_DTOR_CALL();
+#endif
 	}
 	
 	THINK_FUNC_DECL(HideBossBar)

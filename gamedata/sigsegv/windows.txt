@@ -862,6 +862,15 @@
 					vtidx "473"
 					// vtable
 				}
+				"CQuestItemTracker::FireGameEvent_NonVirtual"
+				{
+					type  "fixed"
+					sym   "_ZThn20_N17CQuestItemTracker13FireGameEventEP10IGameEvent"
+					addr  "0x45c8d0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: slot 1 of the table at offset 0x14 in CQuestItemTracker's vtable (0x1084ffec), the IGameEventListener2 subobject, where Linux has a thunk that subtracts 0x14 and jumps to FireGameEvent. MSVC compiles the override against the subobject: the body keeps its this in esi and reaches the tracker as esi-0x14 (lea ecx,[esi-0x14] at 0x45c99c). It is the same address the table already gives CQuestItemTracker::FireGameEvent, which MSVC does not put in the primary table. thiscall, one argument, ret 4
+				}
 				"CBaseEntity::AddTimedOverlay"
 				{
 					type  "fixed"
@@ -4705,6 +4714,15 @@
 					vtidx "168"
 					// vtable
 				}
+				"CTFKnife::CanPerformBackstabAgainstTarget"
+				{
+					type  "fixed"
+					sym   "_ZN8CTFKnife31CanPerformBackstabAgainstTargetEP9CTFPlayer"
+					addr  "0x616c10"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the whole function, where Linux detours the .part clone GCC split after the wrapper's null target and AttribHookValueInt checks, which this body makes first (0x616c1e, then 0x101dec80 on the string at 0x108d6cd0). Then the MvM flag at gamerules +0xc6d with the owner's checks, InCond 0x79 and 0x78 on the owner, IsBehindAndFacingTarget (0x617100), and the MvM spy branch with InCond 0x47 and 0x32, as the clone does. Called from 0x616acb and 0x617514, two callers as the Linux clone has (PrimaryAttack, BackstabVMThink). thiscall, ret 4
+				}
 				"CTFKnife::GetMeleeDamage"
 				{
 					type  "fixed"
@@ -7416,6 +7434,15 @@
 					lib   "server"
 					// consensus
 				}
+				"CTFBotSquad::ShouldSquadLeaderWaitForFormation"
+				{
+					type  "fixed"
+					sym   "_ZNK11CTFBotSquad33ShouldSquadLeaderWaitForFormationEv"
+					addr  "0x5668d0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: CTFBotTacticalMonitor::Update (0x575e90) calls it with the bot's squad (+0x27d0) when the squad leader is the bot itself, then allocates the 0x40 byte wait-for-formation action, as the Linux Update does. Same body as Linux: members from index 1, a member handle resolved through the entity list, the timer at +0x28f4 and the byte at +0x28f8, a vcall on the member's body, and a final IsPlayerClass(5) on the member; 1 if one is waited for, else 0. thiscall, no argument, plain ret
+				}
 				"JarExplode"
 				{
 					type  "fixed"
@@ -8521,6 +8548,15 @@
 					build "11087207"
 					lib   "server"
 					// vtable
+				}
+				"IgnoreActorsTraceFilterFunction"
+				{
+					type  "fixed"
+					sym   "_Z31IgnoreActorsTraceFilterFunctionP13IHandleEntityi"
+					addr  "0x40ec20"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: EntityFromEntityHandle then MyCombatCharacterPointer() == NULL: the static prop manager's IsStaticProp through slot 3 on the handle, else GetBaseEntity (slot 5) and MyCombatCharacterPointer (slot 74, 0x128, the table's CBaseEntity::MyCombatCharacterPointer) tested with sete. The Linux body is the same with the slots shifted by one. Its address is pushed as a trace filter callback at 13 places in the nav code (0x413649 onwards, the Linux body at 10 or more); the one other function of this shape, 0x4105d0, tests one more thing after it and is pushed once. cdecl, reads one argument, plain ret
 				}
 				"CKickIssue::RequestCallVote"
 				{
@@ -10491,6 +10527,15 @@
 					vtidx "71"
 					// vtable
 				}
+				"CTFBotTacticalMonitor::AvoidBumpingEnemies"
+				{
+					type  "fixed"
+					sym   "_ZN21CTFBotTacticalMonitor19AvoidBumpingEnemiesEP6CTFBot"
+					addr  "0x574f70"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the call turned away at 0x570470, a constructor, scored it on callee overlap. This is the function CTFBotTacticalMonitor::Update (0x575e90) calls right after MonitorArmedStickyBombs (0x575570), when the bot IsPlayerClass(8), the Linux order. Same body as Linux: returns when the actor's field at +0x27bc is under 2, swaps the team 2/3, CollectPlayers, skips IsStealthed and InCond(3), keeps the nearest by squared distance, then calls through the components at +0x2668 and +0x26c8 and a final virtual call on the actor. thiscall, one argument, ret 4
+				}
 				"CTFBotSpyAttack::Update"
 				{
 					type  "fixed"
@@ -10621,6 +10666,15 @@
 					lib   "server"
 					vtidx "46"
 					// string
+				}
+				"GetBotEscortCount"
+				{
+					type  "fixed"
+					sym   "_Z17GetBotEscortCounti"
+					addr  "0x589060"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: CollectPlayers on the team argument, then for each bot walks its intention's action chain to the innermost (+0x10) and asks IsNamed through slot 43 with the string 'EscortFlagCarrier' (0x89c224), counting the matches, as Linux does with V_stricmp on GetName. cdecl, one argument, plain ret. Its one caller is CTFBotAttackFlagDefenders::Update (0x587950, call at 0x587b64); CTFBotEscortFlagCarrier::Update (0x589140) has the loop inlined, so a detour here covers only AttackFlagDefenders
 				}
 				"CTFBotTacticalMonitor::FindNearbyTeleporter"
 				{
@@ -11077,6 +11131,15 @@
 					build "11087207"
 					lib   "server"
 					// string
+				}
+				"CTFPlayer::StateLeave"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer10StateLeaveEv"
+					addr  "0x50f0b0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: m_pStateInfo (+0x22b8, +0x22c0 on Linux), then the leave-state member pointer at +0x18 of it with its this adjust at +0x1c, tail-jumped to; returns when either is null, the Linux body. MSVC inlined it in most callers: CTFPlayer::Event_Killed (0x4ec3b0, at 0x4ec860 before StateEnter(3)) and the StateLeave+StateEnter helper 0x50f520 carry their own copy, and only 0x50f40c (in 0x50f0d0) calls this one. thiscall, plain ret
 				}
 				"CTFPlayer::GiveNamedItem"
 				{
@@ -12044,6 +12107,15 @@
 					build "11087207"
 					lib   "server"
 					// verified: read by hand: the whole function, where Linux detours the .part clone after the wrapper's null player and upgrade index checks (against the count at 0xb96aec), which this body makes first; the detour repeats them under _WINDOWS. Then the 0x19c byte upgrade copied out of g_MannVsMachineUpgrades, GetAttributeDefinitionByName on its attribute, and on purchase RemoveCurrency, RememberUpgrade and Regenerate, as the clone does. Called from CUpgrades::GrantOrRemoveAllUpgrades (0x5f5de0), the Linux clone's caller, and 0x485ed0. Pops 24
+				}
+				"CTFKnife::CanPerformBackstabAgainstTarget [clone]"
+				{
+					type  "fixed"
+					sym   "_ZN8CTFKnife31CanPerformBackstabAgainstTargetEP9CTFPlayer"
+					addr  "0x616c10"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the whole function, where Linux detours the .part clone GCC split after the wrapper's null target and AttribHookValueInt checks, which this body makes first (0x616c1e, then 0x101dec80 on the string at 0x108d6cd0). Then the MvM flag at gamerules +0xc6d with the owner's checks, InCond 0x79 and 0x78 on the owner, IsBehindAndFacingTarget (0x617100), and the MvM spy branch with InCond 0x47 and 0x32, as the clone does. Called from 0x616acb and 0x617514, two callers as the Linux clone has (PrimaryAttack, BackstabVMThink). thiscall, ret 4
 				}
 				"CTFRadiusDamageInfo::ApplyToEntity [clone]"
 				{
