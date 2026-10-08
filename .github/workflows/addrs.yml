@@ -69,7 +69,7 @@ jobs:
         unzip -q dd.zip -d dd && chmod +x dd/DepotDownloader
     - name: The two server binaries of the current build
       run: |
-        printf 'regex:^tf/bin/server(_srv)?\\.(so|dll)$\nbin/engine.dll\nbin/SoundEmitterSystem.dll\nbin/soundemittersystem_srv.so\ntf/steam.inf\n' > files.txt
+        printf 'regex:^tf/bin/server(_srv)?\\.(so|dll)$\nbin/engine.dll\nbin/dedicated.dll\nbin/SoundEmitterSystem.dll\nbin/soundemittersystem_srv.so\ntf/steam.inf\n' > files.txt
         for os in linux windows; do
           for attempt in 1 2 3; do
             ./dd/DepotDownloader -app 232250 -os $os -filelist files.txt -dir game-$os 2>&1 | tee -a dd-$os.log
@@ -129,7 +129,7 @@ jobs:
       run: |
         mkdir -p winbins/tf/bin winbins/bin
         cp game-windows/tf/bin/server.dll winbins/tf/bin/
-        cp game-windows/bin/engine.dll game-windows/bin/SoundEmitterSystem.dll winbins/bin/
+        cp game-windows/bin/engine.dll game-windows/bin/dedicated.dll game-windows/bin/SoundEmitterSystem.dll winbins/bin/
     - if: steps.state.outputs.manifest != '' && steps.kept.outputs.cache-hit != 'true'
       uses: actions/cache/save@v4
       with:
@@ -157,7 +157,7 @@ jobs:
         else
           # Steam still serves a manifest for a while after an update, and a
           # build no run of this job has seen has nothing kept.
-          printf 'tf/bin/server.dll\nbin/engine.dll\nbin/SoundEmitterSystem.dll\n' > prev.txt
+          printf 'tf/bin/server.dll\nbin/engine.dll\nbin/dedicated.dll\nbin/SoundEmitterSystem.dll\n' > prev.txt
           for attempt in 1 2 3; do
             ./dd/DepotDownloader -app 232250 -depot 232255 -manifest "$manifest" -filelist prev.txt -dir game-prev && break
             sleep 15

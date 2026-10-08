@@ -833,6 +833,15 @@
 					lib   "server"
 					// verified: read by hand: PassesDamageFilter(info) through slot 61 (reads m_hDamageFilter at +0x100), then TraceAttack(info, dir, trace, accumulator) through slot 62, which pops 16; the Linux body at slots 62 and 63. Pops 16. 26 callers, CTFRadiusDamageInfo::ApplyToEntity (0x480a30) among them where Linux calls it between ClearMultiDamage and ApplyMultiDamage
 				}
+				"CTFReviveMarker::Create"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFReviveMarker6CreateEP9CTFPlayer"
+					addr  "0x538880"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the only function pushing 'entity_revive_marker'. Null player returns 0, CalcAbsolutePosition, CBaseEntity::Create(classname, origin with z raised by a constant, angles at player+0x334, 0), SetOwner(player) [.part.0], then the team set through a virtual (+0x184, Linux +0x188) with the owner's team; returns the marker. cdecl, plain ret. entities.txt holds a fixed entry for the build 3271684, which the version check refuses
+				}
 				"CBasePlayer::EyeVectors"
 				{
 					type  "fixed"
@@ -4211,6 +4220,15 @@
 					lib   "server"
 					// verified: string lead, agreed by strings: 3 shared string(s), 1/2 matched callees, windows/linux size 400/463
 				}
+				"CObjectTeleporter::PlayerCanBeTeleported"
+				{
+					type  "fixed"
+					sym   "_ZN17CObjectTeleporter21PlayerCanBeTeleportedEP9CTFPlayer"
+					addr  "0x4d03c0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the whole function, where Linux detours the .part.0 clone GCC split after the null-player return, which this body makes first. HasTheFlag(0, 0) then GetRobotDestructionLogic and its virtual (+0x31c) == 1, the builder virtual (+0x59c), IsPlayerClass(8), team compare, the MvM check (game rules +0xa40 == 7 and player +0x200c), as the clone does. thiscall, ret 4; called from TeleporterTouch
+				}
 				"CObjectTeleporter::RecieveTeleportingPlayer"
 				{
 					type  "fixed"
@@ -6566,6 +6584,15 @@
 					lib   "server"
 					// verified: called by 62 of its 68 matched callers; body is call GEconItemSchema, add eax 4, ret, the Linux shape
 				}
+				"CTFGameRules::CanUpgradeWithAttrib"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules20CanUpgradeWithAttribEP9CTFPlayeritP22CMannVsMachineUpgrades"
+					addr  "0x4843a0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: called from CUpgrades::PlayerPurchasingUpgrade (0x5f5d10) and GrantOrRemoveAllUpgrades (0x5f58d0) with the player, slot, attribute index and a pointer to the upgrade. Null player returns 0; upgrade+0x190 (Linux +0x150) == 1 with attribute 0x71 returns IsPlayerClass(9), else true; otherwise the inner check, inlined here (GetEconItemViewByLoadoutSlot on the slot). thiscall, ret 0x10
+				}
 				"CMannVsMachineStats::ResetUpgradeSpending"
 				{
 					type  "fixed"
@@ -6685,6 +6712,15 @@
 					lib   "server"
 					// string
 				}
+				"CBaseFileSystem::LoadKeyValues"
+				{
+					type  "fixed"
+					sym   "_ZN15CBaseFileSystem13LoadKeyValuesER9KeyValuesN11IFileSystem22KeyValuesPreloadType_tEPKcS5_"
+					addr  "0xfeb0"
+					build "11087207"
+					lib   "dedicated"
+					// verified: read by hand, dedicated.dll: slot 0x130 of the CFileSystem_Stdio vtable, the (KeyValues&, type, file, path) overload (MSVC lists the pair in reverse, so slot 0x134 is the one returning a new KeyValues). It adjusts this to the IBaseFileSystem base and passes (kv, filesystem, file, path, false) to KeyValues::LoadFromFile, as Linux 0x6c090 does. thiscall, ret 0x10. dedicated.dll carries its own copy of the file system as dedicated_srv.so does, which is where the Linux gamedata hooks it
+				}
 				"CTFGameMovement::CheckStuck"
 				{
 					type  "fixed"
@@ -6803,6 +6839,15 @@
 					build "11087207"
 					lib   "server"
 					// verified: read by hand: stores its three arguments at +4, +8 and +0xc and CTraceFilterSimple's vtable (0x10813e78, the table whose slot 0 is the known ShouldHitEntity) at +0, then ret 0xc; the Linux C1 does the same. One of the two code references to that vtable; 290 calls, from UTIL_TraceLine, FireBullets, IVision::IsLineOfSightClear...
+				}
+				"CTeamplayRoundBasedRules::GetMinTimeWhenPlayerMaySpawn"
+				{
+					type  "fixed"
+					sym   "_ZN24CTeamplayRoundBasedRules28GetMinTimeWhenPlayerMaySpawnEP11CBasePlayer"
+					addr  "0x34eab0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: called by CTFGameRules::HasPassedMinRespawnTime (0x48f460, the Linux body: a player virtual, the +0x22d0 test, this call, compared with curtime). Body: two convar floats (+0x2c) and the 2.0 constant, a virtual with the player (+0x2c8, Linux +0x2cc); if true adds m_flDeathTime, else a second virtual (+0x2c4) with (team, 0) added first. thiscall, ret 4
 				}
 				"CTFGameRules::GetTeamAssignmentOverride"
 				{
@@ -7123,6 +7168,15 @@
 					build "11087207"
 					lib   "server"
 					// consensus
+				}
+				"CTFGCServerSystem::PreClientUpdate"
+				{
+					type  "fixed"
+					sym   "_ZN17CTFGCServerSystem15PreClientUpdateEv"
+					addr  "0x5ca0c0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the whole Linux body in the same order. CGCClientSystem::PreClientUpdate, CRTime::UpdateRealTime, GCClientSystem, LaunchNewMatchForLobby, the SO cache listener swap ('removing listener to old Steam ID'), UpdateConnectedPlayersAndServerInfo(0, 0), the lobby state switch ('Lobby in invalid state %d') and the MvM block ('You must set maxplayers to 32', sv_visiblemaxplayers, 'Setting tf_mm_servermode=0 due to sv_password'). MatchPlayerAbandonThink is inlined here, which is why the string overlap was under the gate: its 'Match player %s dropped before going active' strings sit in this body
 				}
 				"UTIL_HudMessage"
 				{
@@ -7510,6 +7564,15 @@
 					lib   "server"
 					// call, ret 24 as its arguments say
 				}
+				"CHeadlessHatmanAttack::RecomputeHomePosition"
+				{
+					type  "fixed"
+					sym   "_ZN21CHeadlessHatmanAttack21RecomputeHomePositionEv"
+					addr  "0x59e1a0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: called from CHeadlessHatmanAttack::Update (0x59e780) in the Linux order. The interval timer at +0x4818 compared with the stored time at +0x4820 and rearmed with +0x481c, then each control point of the master whose index is the loop counter (+0x5a4, Linux +0x5bc), IsInRound, GetOwningTeam != 3, the game rules virtual (+0x27c, Linux +0x280), and the point's abs origin copied to +0x480c..+0x4814. The matcher gave this address to SelectVictim by consensus (fields 0.382); SelectVictim is 0x59e310, called just before it
+				}
 				"TE_TFBlood"
 				{
 					type  "fixed"
@@ -7518,6 +7581,15 @@
 					build "11087207"
 					lib   "server"
 					// verified: read by hand: copies the origin and normal vectors and the entity index into the static CTETFBlood at 0xa9d148 (+0xc to +0x24, the Linux object's layout at 0x18677c0) and tail-calls CBaseTempEntity::Create (0x434c20) on it with the filter and delay, as the Linux body does; cdecl, one caller
+				}
+				"CEngineSoundServer::PrecacheSound"
+				{
+					type  "fixed"
+					sym   "_ZN18CEngineSoundServer13PrecacheSoundEPKcbb"
+					addr  "0x475a0"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: slot 0 of the CEngineSoundServer vtable on both sides. The leading-character test, 'CEngineSoundServer::PrecacheSound:  Bad string: %s', SV_FindOrAddSound(name, preload) (0x1358f0), 'CEngineSoundServer::PrecacheSound: '%s' overflow' through Host_Error, as the Linux body. thiscall, ret 0xc
 				}
 				"CalculateMeleeDamageForce"
 				{
@@ -12035,6 +12107,15 @@
 					build "11087207"
 					lib   "server"
 					// vtable
+				}
+				"CObjectTeleporter::PlayerCanBeTeleported [clone]"
+				{
+					type  "fixed"
+					sym   "_ZN17CObjectTeleporter21PlayerCanBeTeleportedEP9CTFPlayer"
+					addr  "0x4d03c0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the whole function, where Linux detours the .part.0 clone GCC split after the null-player return, which this body makes first. HasTheFlag(0, 0) then GetRobotDestructionLogic and its virtual (+0x31c) == 1, the builder virtual (+0x59c), IsPlayerClass(8), team compare, the MvM check (game rules +0xa40 == 7 and player +0x200c), as the clone does. thiscall, ret 4; called from TeleporterTouch
 				}
 				"CUpgrades::PlayerPurchasingUpgrade [clone]"
 				{
