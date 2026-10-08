@@ -39,6 +39,7 @@ on:
       - 'tools/winport/table.json'
       - 'gamedata/sigsegv/windows.txt'
       - 'tools/winport/wanted.txt'
+      - 'tools/winport/wantedengine.txt'
       - 'tools/winport/pluginsigs.txt'
       - 'tools/winport/bed/disasm.*'
       - 'tools/winport/bed/inspect.sh'
@@ -69,7 +70,7 @@ jobs:
         unzip -q dd.zip -d dd && chmod +x dd/DepotDownloader
     - name: The two server binaries of the current build
       run: |
-        printf 'regex:^tf/bin/server(_srv)?\\.(so|dll)$\nbin/engine.dll\nbin/SoundEmitterSystem.dll\nbin/soundemittersystem_srv.so\ntf/steam.inf\n' > files.txt
+        printf 'regex:^tf/bin/server(_srv)?\\.(so|dll)$\nbin/engine.dll\nbin/engine_srv.so\nbin/SoundEmitterSystem.dll\nbin/soundemittersystem_srv.so\ntf/steam.inf\n' > files.txt
         for os in linux windows; do
           for attempt in 1 2 3; do
             ./dd/DepotDownloader -app 232250 -os $os -filelist files.txt -dir game-$os 2>&1 | tee -a dd-$os.log
@@ -224,6 +225,22 @@ jobs:
           python3 -c "import json,sys; m=json.load(open('derived/matches.json')).get(sys.argv[1]); print(sys.argv[1], 'turned away:' if m else 'no match', m or '')" "$sym"
         done
         python3 tools/winport/candidates.py game-linux/tf/bin/server_srv.so game-windows/tf/bin/server.dll derived/matches.json $wanted
+    # engine.dll has no symbols either and publishes three exports, so its
+    # functions are found the way server.dll's are: the Linux engine_srv.so
+    # keeps its symbol table, matchfuncs.py pairs the two, candidates.py ranks
+    # what is left. The pairing takes minutes, so it runs only when
+    # wantedengine.txt names something.
+    - name: Candidates for the engine functions in wantedengine.txt
+      if: always()
+      run: |
+        wanted=$(grep -v '^#' tools/winport/wantedengine.txt | tr '\n' ' ')
+        [ -n "$wanted" ] || exit 0
+        python3 tools/winport/matchfuncs.py game-linux/bin/engine_srv.so game-windows/bin/engine.dll derived/engine-matches.json > derived/engine-matchfuncs.log
+        tail -n 3 derived/engine-matchfuncs.log
+        for sym in $wanted; do
+          python3 -c "import json,sys; m=json.load(open('derived/engine-matches.json')).get(sys.argv[1]); print(sys.argv[1], 'matched:' if m else 'no match', m and {k: (hex(v) if k == 'rva' else v) for k, v in m.items()} or '')" "$sym"
+        done
+        python3 tools/winport/candidates.py game-linux/bin/engine_srv.so game-windows/bin/engine.dll derived/engine-matches.json $wanted
     - name: Windows signatures for the plugin's functions in pluginsigs.txt
       if: always()
       run: |
