@@ -25,6 +25,22 @@ Corpus). Equal length is evidence, not proof: it is strong for a class with one
 vtable and worth nothing for one with several, which is why a class MSVC gave
 more than one vtable is refused outright.
 
+  * Interface overrides. A virtual that overrides one a secondary base declares
+    gets a slot in the Itanium primary table when no primary base has it, and a
+    thunk to it in the secondary table. MSVC gives it the secondary slot only.
+    The Linux dump says which: the class's secondary tables hold `non-virtual
+    thunk to` those functions. Dropped from the class's own range, that is
+    what made CTFPlayer 497 slots against 490 and CTFBot 539 against 495: 490
+    and 495 once dropped, and 98 more classes.
+
+A class that needed that drop is accepted only where the addresses somebody
+read in server.dll by hand (overrides.json, for the build most of them hold
+for) agree with the alignment, at least one of them, and none may disagree.
+Equal length and a rule are the evidence for the rest; the hand-read ones are
+what could have contradicted it. Which of a class's slots no hand-read address
+covers is the part still to read, and the table does not take them from here
+without a Windows run: see tools/winport/status/20260919-vtable-candidates.
+
 Everything else is refused too. A wrong vtable index is a call into the wrong
 function, which is a crash at best and silent corruption at worst, and a gap
 somebody fills by hand is much cheaper than that.
@@ -34,6 +50,9 @@ somebody fills by hand is much cheaper than that.
 import json, re, sys
 from collections import Counter, defaultdict
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent))
+from classify import demangle  # noqa: E402
 
 LINUX_LINE = re.compile(r"^\+0x([0-9a-fA-F]+):\s+[0-9a-fA-F]+\s+(.*)$")
 WIN_LINE = re.compile(r"^\+0x([0-9a-fA-F]+):\s+([0-9a-fA-F]+)\s*$")
@@ -67,6 +86,29 @@ def read_linux_addressed(path):
         if m and offset == 0:
             slots.append((int(line.split()[1], 16), m.group(2).strip()))
     return slots
+
+
+def read_linux_thunks(path):
+    """The signatures the class's secondary tables thunk to.
+
+    A virtual that overrides one of a secondary base's gets its own slot in the
+    Itanium primary table when no primary base declares it, and a `non-virtual
+    thunk to` it in the secondary table. MSVC gives it the secondary slot only,
+    so these are the slots one table has and the other does not."""
+    targets, offset = set(), 0
+    for line in path.read_text(errors="replace").splitlines():
+        line = line.strip()
+        header = LINUX_HEADER.match(line)
+        if header:
+            offset = int(header.group(1), 16)
+            continue
+        m = LINUX_LINE.match(line)
+        if m and offset != 0:
+            name = m.group(2).strip()
+            for prefix in ("non-virtual thunk to ", "virtual thunk to "):
+                if name.startswith(prefix):
+                    targets.add(name[len(prefix):])
+    return targets
 
 
 def read_windows(path):
@@ -212,11 +254,12 @@ class Corpus:
     """
 
     def __init__(self, linux_dir):
-        rows, self.pretty = {}, {}
+        rows, self.pretty, self.thunked = {}, {}, {}
         for path in sorted(Path(linux_dir).glob("*.txt")):
             got = read_linux_addressed(path)
             if got:
                 rows[path.stem] = got
+                self.thunked[path.stem] = read_linux_thunks(path)
                 head = path.read_text(errors="replace").split("\n", 1)[0].strip()
                 self.pretty[path.stem] = head if head and not head.startswith(("//", "+")) else path.stem
         self.stem = {pretty: stem for stem, pretty in self.pretty.items()}
@@ -332,13 +375,22 @@ class Corpus:
             if slots[j] and split_name(slots[j])[0] == own:
                 overridden.add(method(slots[j]))
         names = self.grouping(cls, start, len(slots))
-        new = self.grouped(names, start, len(slots), DECLARED_FIRST.get(own, ()))
+        interface = {i for i in range(start, len(slots)) if self.interface_only(cls, i)}
+        new = self.grouped(names, start, len(slots), DECLARED_FIRST.get(own, ()), interface)
         unsure = [g for g in self.group_names(names, start, len(slots)) if g in overridden]
         unsure = [g for g in unsure if g not in DECLARED_FIRST.get(own, ()) and g != method(names[new[0]] or "")]
         if unsure:
             self.ambiguous[cls] = unsure
         self._orders[cls] = inherited + new
         return self._orders[cls]
+
+    def interface_only(self, cls, index):
+        """Whether a slot of the class's own range is an override of a virtual
+        its secondary base declares, which MSVC keeps out of the primary table.
+        The class's secondary tables name it in a thunk. A destructor is the
+        one virtual both ABIs keep in the primary table whatever else."""
+        raw = self.tables[cls][index]
+        return raw in self.thunked[cls] and method(raw) != "~"
 
     def grouping(self, cls, start, end):
         """The names slots start..end group by. A folded body is left out of
@@ -362,10 +414,13 @@ class Corpus:
         return list(dict.fromkeys(method(slots[i]) for i in range(start, end) if slots[i]))
 
     @staticmethod
-    def grouped(slots, start, end, first=()):
-        """Slots start..end, one class's new virtuals, in MSVC's order."""
+    def grouped(slots, start, end, first=(), skip=frozenset()):
+        """Slots start..end, one class's new virtuals, in MSVC's order, less
+        the ones in skip."""
         groups = {}
         for i in range(start, end):
+            if i in skip:
+                continue
             groups.setdefault(method(slots[i]) if slots[i] else ("#", i), []).append(i)
         first = [g for g in first if g in groups]
         # The destructor's two Itanium slots are one to MSVC, and keep their order.
@@ -384,6 +439,43 @@ def align(linux, windows, order=None):
     return None, None
 
 
+def load_verified(path):
+    """demangled signature -> (Windows RVA, slot or None), for the addresses
+    read by hand in overrides.json that hold for the build most of them name.
+    A `bad` entry is a match known wrong and says nothing about a slot."""
+    if not path.exists():
+        return {}
+    rows = {sym: e for sym, e in json.loads(path.read_text()).items()
+            if "rva" in e and not e.get("bad") and sym.startswith("_Z")}
+    if not rows:
+        return {}
+    build = Counter(e.get("build") for e in rows.values()).most_common(1)[0][0]
+    rows = {sym: e for sym, e in rows.items() if e.get("build") == build}
+    names = demangle(list(rows))
+    return {names[sym]: (int(e["rva"], 16), e.get("vtidx")) for sym, e in rows.items()}
+
+
+def check_anchors(aligned, windows, verified, base=0x10000000):
+    """How many hand-read addresses the alignment agrees and disagrees with.
+
+    A signature that appears twice in the table is one a folded body or an
+    overload spelled alike could put at either, so it anchors nothing. Nor does
+    a destructor, whose one signature is three functions."""
+    seen = Counter(aligned)
+    agree, disagree = 0, []
+    for slot, sig in enumerate(aligned):
+        hand = verified.get(sig)
+        # a destructor's signature names D0, D1 and D2, one slot and two bodies
+        if hand is None or seen[sig] != 1 or method(sig) == "~":
+            continue
+        rva, index = hand
+        if windows[slot] - base == rva and (index is None or int(index) == slot):
+            agree += 1
+        else:
+            disagree.append((sig, slot, windows[slot] - base, rva))
+    return agree, disagree
+
+
 def count_tables(path):
     return sum(1 for line in path.read_text(errors="replace").splitlines()
                if line.strip().startswith("// vtable at"))
@@ -400,7 +492,9 @@ def main():
         wanted[row["class"]].append(row)
 
     corpus = Corpus(linux_dir)
+    verified = load_verified(Path(__file__).parent / "overrides.json")
     resolved, refused, missing, multi = [], [], [], []
+    unanchored, contradicted, no_slot, dropped, anchored = [], [], [], 0, 0
     from_multi = 0
     used = defaultdict(int)
     for cls, rows in sorted(wanted.items()):
@@ -424,14 +518,29 @@ def main():
         if aligned is None:
             refused.append((cls, len(collapse_destructors(linux)), len(windows), len(rows)))
             continue
+        agree, disagree = check_anchors(aligned, windows, verified)
+        interface = len(corpus.tables[cls]) - len(corpus.order(cls))
+        if disagree:
+            contradicted.append((cls, disagree[0], len(disagree), len(rows)))
+            continue
+        if interface and not agree:
+            unanchored.append((cls, interface, len(rows)))
+            continue
         used[how] += 1
+        dropped += bool(interface)
+        anchored += agree
         index_of = {sig: i for i, sig in enumerate(aligned)}
+        kept = set(corpus.order(cls))
+        interface_sigs = {sig for i, sig in enumerate(linux) if i not in kept}
         for row in rows:
             at = index_of.get(row["sig"])
-            if at is None:
+            if at is None and row["sig"] in interface_sigs:
+                no_slot.append((cls, row["sig"]))
+            elif at is None:
                 refused.append((cls, len(aligned), len(windows), 1))
             else:
-                resolved.append({**row, "win_index": at, "win_addr": windows[at], "how": how})
+                resolved.append({**row, "win_index": at, "win_addr": windows[at], "how": how,
+                                 "interface": interface, "anchors": agree})
 
     total = sum(len(r) for r in wanted.values())
     print(f"virtual addresses wanted : {total} across {len(wanted)} classes")
@@ -440,6 +549,10 @@ def main():
     print(f"    of the resolved, from a class with several tables: {from_multi}")
     print(f"  no alignment fits      : {sum(r[3] for r in refused)} in {len(refused)} classes")
     print(f"  no dump on one side    : {sum(m[1] for m in missing)} in {len(missing)} classes")
+    print(f"  no slot of their own on Windows (interface table) : {len(no_slot)} in {len({c for c, _ in no_slot})} classes")
+    print(f"  classes that needed the interface drop, accepted: {dropped}, on {anchored} hand-read addresses that agree")
+    print(f"  refused, contradicted by a hand-read address : {sum(c[3] for c in contradicted)} in {len(contradicted)} classes")
+    print(f"  refused, interface drop and no hand-read one : {sum(u[2] for u in unanchored)} in {len(unanchored)} classes")
     if used:
         print("\n  alignment used, by class:")
         for how, n in sorted(used.items(), key=lambda kv: -kv[1]):
@@ -448,6 +561,8 @@ def main():
         print("\n  new overloads of a name the class also overrides, kept where Linux has them:")
         for cls, names in sorted(corpus.ambiguous.items()):
             print(f"    {cls:<42} {' '.join(names)}")
+    for cls, (sig, slot, got, want), n, rows_n in contradicted:
+        print(f"\n  contradicted: {cls}: {n} of the hand-read addresses disagree, the first {sig} at slot {slot} is {got:#x}, read as {want:#x}")
     if refused:
         print("\n  refused, worst first (class: linux slots vs windows slots):")
         for cls, ln, wn, n in sorted(refused, key=lambda r: -r[3])[:8]:
@@ -457,15 +572,17 @@ def main():
     with out.open("w") as fh:
         fh.write("// Generated by tools/winport/matchvtables.py. Do not hand-edit.\n")
         fh.write("// Every index below comes from the offset-0 vtable of each side, of\n")
-        fh.write("// equal length, dumped from the same game build. A class whose two\n")
-        fh.write("// tables never agree in length is absent on purpose: equal length is\n")
-        fh.write("// the evidence, and without it there is nothing but a guess.\n\n")
+        fh.write("// equal length once the interface overrides MSVC keeps out of it are\n")
+        fh.write("// dropped, dumped from the same game build. A class whose two tables\n")
+        fh.write("// never agree in length, or that a hand-read address contradicts, is\n")
+        fh.write("// absent on purpose: without that evidence there is nothing but a guess.\n\n")
         for row in sorted(resolved, key=lambda r: (r["class"], r["win_index"])):
             fh.write(f'"{row["name"]}"\n{{\n')
             fh.write('\ttype    "func knownvtidx"\n')
             fh.write(f'\tvtable  "{row["class"]}"\n')
             fh.write(f'\tidx     "{row["win_index"]}"\n')
-            fh.write(f'\t// {row["how"]}; linux +0x{row["offset"]:x}, windows 0x{row["win_addr"]:08x}\n')
+            drop = f", {row['interface']} interface slots dropped, {row['anchors']} hand-read agree" if row["interface"] else ""
+            fh.write(f'\t// {row["how"]}{drop}; linux +0x{row["offset"]:x}, windows 0x{row["win_addr"]:08x}\n')
             fh.write(f'\t// {row["sig"]}\n}}\n\n')
     print(f"\nwrote {len(resolved)} entries to {out}")
 
