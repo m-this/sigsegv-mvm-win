@@ -1,12 +1,11 @@
-# Two RED defender bots with an ammo-using weapon in hand: one gets a max-ammo and
-# a max-health buff, the other is the control. The buffed one is re-equipped ten
-# times (sm_ap_loadout_set ... primary own regenerates the bot, which rebuilds the
-# buff provider) and sm_ap_buff_debug is read after the buffs, after each
-# re-equip, after the tenth and five seconds later. Run by boot.ps1 -After once
-# the server answers rcon; needs WINBED_BOTS=1 and WINBED_ROOM=1. The bots come
-# from tf_bot_add between waves, which the defender mod takes over. Short on
-# purpose: an idle srcds on the bed ends itself with the console's GetLine fatal
-# after about eight minutes.
+# One RED defender bot with an ammo-using weapon in hand, buffed with max-ammo
+# and max-health, then rebuilt ten times in a row with no regeneration between
+# (sm_ap_buff_rebuild), in three phases: A with SigMod and the plugin's base
+# guard off, C with SigMod and the guard on, B with SigMod unloaded and the guard
+# off. Run by boot.ps1 -After once the server answers rcon; needs WINBED_BOTS=1
+# and WINBED_ROOM=1. The bot comes from tf_bot_add between waves, which the
+# defender mod takes over. Short on purpose: an idle srcds on the bed ends itself
+# with the console's GetLine fatal after about eight minutes.
 $ErrorActionPreference = 'Continue'
 $out = "$env:BED\bedout"
 $log = "$out\buffprobe.txt"
@@ -56,29 +55,49 @@ Rcon 'tf2ap_loadout_for_bots 1' | Out-Null
 Rcon 'tf_bot_add 1 red heavy' | Out-Null
 $bot = Wait-For 'an alive bot holding an ammo weapon' 60 { Ammo-Bot $null }
 if (-not $bot) { exit 1 }
-$control = Wait-For 'a second such bot for the control' 30 { Ammo-Bot $bot }
-Say "target bot $bot, control bot $control"
+Say "target bot $bot"
 
-$null = Snap 'target before buff' $bot
-if ($control) { $null = Snap 'control before buff' $control }
-
-$applied = Wait-For 'max-ammo to apply' 60 { (Rcon "sm_ap_buff_give #$bot max-ammo 1") -match 'Applied' }
-$applied2 = Wait-For 'max-health to apply' 60 { (Rcon "sm_ap_buff_give #$bot max-health 1") -match 'Applied' }
-Say "max-ammo applied=$([bool]$applied) max-health applied=$([bool]$applied2)"
-Start-Sleep 2
-$null = Snap 'target after buffs' $bot
-if ($control) { $null = Snap 'control after buffs' $control }
-
-foreach ($swap in 1..10) {
-  Rcon "sm_ap_loadout_set #$bot primary own" | Out-Null
-  Start-Sleep 2
-  $null = Snap "target re-equip $swap" $bot
+function Rebuilds($label) {
+  foreach ($line in ((Rcon "sm_ap_buff_rebuild #$bot 10") -split "`n" | Where-Object { $_ -match '\[AP rebuild\]' })) {
+    Say "$label $($line.Trim())"
+  }
 }
-$null = Snap 'target after ten' $bot
-if ($control) { $null = Snap 'control after ten' $control }
-Start-Sleep 5
-$null = Snap 'target 5 s later' $bot
-if ($control) { $null = Snap 'control 5 s later' $control }
-Say '=== SUMMARY'
-Get-Content $log | Where-Object { $_ -like 'SNAP *' } | ForEach-Object { Write-Host $_ }
+function Phase($label, $guard) {
+  Rcon "tf2ap_buff_base_guard $guard" | Out-Null
+  Say "=== PHASE $label (guard $guard)"
+  foreach ($line in ((Rcon "sm_ap_buff_rebuild #$bot 1 fresh") -split "`n" | Where-Object { $_ -match '\[AP rebuild\]' })) {
+    Say "$label clean $($line.Trim())"
+  }
+  Rcon "sm_ap_buff_give #$bot max-ammo 1" | Out-Null
+  Rcon "sm_ap_buff_give #$bot max-health 1" | Out-Null
+  $null = Snap "$label after buffs" $bot
+  Rebuilds $label
+  Start-Sleep 2
+  $null = Snap "$label after ten" $bot
+}
+
+Phase 'A' 0
+Phase 'C' 1
+
+$meta = Rcon 'meta list'
+$ext = Rcon 'sm exts list'
+$id = [regex]::Match($meta, '\[(\d+)\][^\r\n]*(sigsegv|SigMod)', 'IgnoreCase')
+if ($id.Success) {
+  Say "unloading metamod plugin $($id.Groups[1].Value)"
+  Rcon "meta unload $($id.Groups[1].Value)" | Out-Null
+} else {
+  $id = [regex]::Match($ext, '\[(\d+)\][^\r\n]*(sigsegv|SigMod)', 'IgnoreCase')
+  if ($id.Success) {
+    Say "unloading extension $($id.Groups[1].Value)"
+    Rcon "sm exts unload $($id.Groups[1].Value)" | Out-Null
+  } else {
+    Say 'SigMod is in neither meta list nor sm exts list'
+  }
+}
+Start-Sleep 3
+$mods = Rcon 'sig_list_mods'
+Say ("sig_list_mods after the unload: " + $mods.Substring(0, [Math]::Min(120, $mods.Length)))
+Rcon "sm_ap_loadout_set #$bot primary own" | Out-Null
+Start-Sleep 3
+Phase 'B' 0
 exit 0
