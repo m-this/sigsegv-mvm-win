@@ -666,6 +666,15 @@
 					lib   "server"
 					// verified: read by hand: the first call of CTFBot::PhysicsSimulate (0x560300, slot 110) on both sides. Same CBasePlayer::PhysicsSimulate (0x2e5800) tail, the engine vcall +0x140, IsDormantWhenDead then life state 2, the button flag set (0x800, 0x2000000, 0x20, 0x2000, 0x200, 0x400, 0x20000, mask 0xfffff9e5), AvoidPlayers (+0x7b8 for +0x848) and ProcessUsercmds (+0x6b8 for +0x6bc)
 				}
+				"NextBotPlayer<CTFPlayer>::Update"
+				{
+					type  "fixed"
+					sym   "_ZN13NextBotPlayerI9CTFPlayerE6UpdateEv"
+					addr  "0x563190"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the entry of CTFBot's INextBot table (offset 0x2668, slot 43, differs from INextBot's own), so `this` is the INextBot subobject, CTFBot + 0x2668, and the body subtracts it. Calls the object's +0x10c (Linux +0x110), then IsDormantWhenDead through +0x7ac (Linux +0x7d0, slot 491 of the primary table), tests the same global flag and tail calls INextBot::Update (0x420820); the Linux body adds 0x2668 before its tail call to INextBot::Update
+				}
 				"NextBotPlayer<CTFPlayer>::IsFakeClient"
 				{
 					type  "fixed"
@@ -10356,6 +10365,15 @@
 					build "11087207"
 					lib   "server"
 					// verified: read by hand: tests bit 18 of the dword at +0x27b8 (Linux the byte at +0x27ba, bit 2: the AUTO_JUMP attribute), then the timer at +0x291c whose duration is +0x2924, the same offsets as Linux; when it has elapsed, restarts it with RandomFloat(+0x2914, +0x2918) through the import and returns 1, the Linux body. thiscall, plain ret
+				}
+				"CTFBot::OnWeaponFired"
+				{
+					type  "fixed"
+					sym   "_ZN6CTFBot13OnWeaponFiredEP20CBaseCombatCharacterP17CBaseCombatWeapon"
+					addr  "0x55f3c0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the entry of CTFBot's INextBot table (offset 0x2668, slot 22, the one that differs from INextBot's own), so `this` is the INextBot subobject, CTFBot + 0x2668; MSVC compiled no primary-this version. Same body as Linux's 1027 bytes: the VPROF scope (engine vcall +0x50 with line 0xaac), the loop over the contained responders with the event call (+0x58 for +0x5c), the weapon's +0x10c (+0x110) test, the +0x11c ShouldSwitch call, the +0x114 call with 1000.0, the 0x64 / 0x5a / 0x3c / 0x1e / 0x0a weight table, RandomInt(1, 100) and the +0xdc (+0xe0) call on the intention interface; ret 8
 				}
 				"CTFBot::ShouldGib"
 				{

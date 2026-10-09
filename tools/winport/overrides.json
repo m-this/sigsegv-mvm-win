@@ -3226,5 +3226,15 @@
   "build": "11087207",
   "vtidx": 406,
   "why": "read by hand: slot 406 of CTFPlayer's table (Linux 407). Calls SetAbsOrigin, SetAbsAngles, SetAbsVelocity, DispatchUpdateTransmitState, SetMoveType, SetCollisionGroup and GetActiveWeapon three times, 912 bytes against Linux's 1432; the string match that had it at 0x2e3fe0 is an 80-byte function that sets origin, velocity and local angles"
+ },
+ "_ZN6CTFBot13OnWeaponFiredEP20CBaseCombatCharacterP17CBaseCombatWeapon": {
+  "rva": "0x55f3c0",
+  "build": "11087207",
+  "why": "read by hand: the entry of CTFBot's INextBot table (offset 0x2668, slot 22, the one that differs from INextBot's own), so `this` is the INextBot subobject, CTFBot + 0x2668; MSVC compiled no primary-this version. Same body as Linux's 1027 bytes: the VPROF scope (engine vcall +0x50 with line 0xaac), the loop over the contained responders with the event call (+0x58 for +0x5c), the weapon's +0x10c (+0x110) test, the +0x11c ShouldSwitch call, the +0x114 call with 1000.0, the 0x64 / 0x5a / 0x3c / 0x1e / 0x0a weight table, RandomInt(1, 100) and the +0xdc (+0xe0) call on the intention interface; ret 8"
+ },
+ "_ZN13NextBotPlayerI9CTFPlayerE6UpdateEv": {
+  "rva": "0x563190",
+  "build": "11087207",
+  "why": "read by hand: the entry of CTFBot's INextBot table (offset 0x2668, slot 43, differs from INextBot's own), so `this` is the INextBot subobject, CTFBot + 0x2668, and the body subtracts it. Calls the object's +0x10c (Linux +0x110), then IsDormantWhenDead through +0x7ac (Linux +0x7d0, slot 491 of the primary table), tests the same global flag and tail calls INextBot::Update (0x420820); the Linux body adds 0x2668 before its tail call to INextBot::Update"
  }
 }
