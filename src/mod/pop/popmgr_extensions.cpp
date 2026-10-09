@@ -3246,18 +3246,24 @@ namespace Mod::Pop::PopMgr_Extensions
         return DETOUR_MEMBER_CALL(player, slot, defindex, upgrade);
     }
 	
-	DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, void, CUpgrades_PlayerPurchasingUpgrade, CTFPlayer *player, int itemslot, int upgradeslot, bool sell, bool free, bool b3)
+#if defined _WINDOWS
+	using PurchaseResult = bool;
+#else
+	using PurchaseResult = void;
+#endif
+
+	DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, PurchaseResult, CUpgrades_PlayerPurchasingUpgrade, CTFPlayer *player, int itemslot, int upgradeslot, bool sell, bool free, bool b3)
 	{
 		if (!sell && !b3) {
 			auto upgrade = reinterpret_cast<CUpgrades *>(this);
 			
 			if (upgradeslot >= 0 && upgradeslot < CMannVsMachineUpgradeManager::Upgrades().Count()) {
 				if (!IsUpgradeAllowed(player, itemslot, upgradeslot)) {
-					return;
+					return PurchaseResult();
 				}
 			}
 		}
-		DETOUR_MEMBER_CALL(player, itemslot, upgradeslot, sell, free, b3);
+		return DETOUR_MEMBER_CALL(player, itemslot, upgradeslot, sell, free, b3);
 	}
 
     DETOUR_DECL_MEMBER(bool, CObjectSentrygun_FindTarget)
@@ -7395,7 +7401,9 @@ namespace Mod::Pop::PopMgr_Extensions
 
             MOD_ADD_DETOUR_STATIC(DispatchParticleEffect_2, "DispatchParticleEffect [overload 2]");
             MOD_ADD_DETOUR_STATIC(DispatchParticleEffect_3, "DispatchParticleEffect [overload 3]");
+#if !defined _WINDOWS
             MOD_ADD_DETOUR_STATIC(DispatchParticleEffect_4, "DispatchParticleEffect [overload 4]");
+#endif
             MOD_ADD_DETOUR_STATIC(DispatchParticleEffect_6, "DispatchParticleEffect [overload 6]");
             MOD_ADD_DETOUR_STATIC(DispatchParticleEffect_7, "DispatchParticleEffect [overload 7]");
             MOD_ADD_DETOUR_MEMBER(CBaseObject_StartBuilding, "CBaseObject::StartBuilding");

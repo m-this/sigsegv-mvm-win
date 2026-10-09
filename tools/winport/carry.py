@@ -20,6 +20,7 @@ import rebase  # noqa: E402
 LIBS = {
     "server": "tf/bin/server.dll",
     "engine": "bin/engine.dll",
+    "dedicated": "bin/dedicated.dll",
     "soundemittersystem": "bin/SoundEmitterSystem.dll",
 }
 
@@ -59,6 +60,10 @@ def main():
     left = []
     for lib, syms in sorted(by_lib.items()):
         rel = LIBS[lib]
+        if not Path(f"{old_dir}/{rel}").exists():
+            # A kept build from before this library was kept.
+            left += [f"{sym} {overrides[sym]['rva']} ({lib}): {rel} was not kept for {old_build}" for sym in syms]
+            continue
         rvas = [int(overrides[s]["rva"], 16) for s in syms]
         out, why = rebase.rebase(f"{old_dir}/{rel}", f"{new_dir}/{rel}", rvas)
         for sym, rva in zip(syms, rvas):
