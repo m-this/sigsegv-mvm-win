@@ -98,7 +98,37 @@ Seven of them failed before too. The changes:
   `mvm_ghost_town_adv_horrorsome_happenings` w7 and
   `mvm_oilrig_rc5d_adv_waters_of_wrath` w8 time out with bots spawned and
   killed and the wave's remaining count stuck (82, 83, 132, 24); they passed
-  before. Why the count stays up is not read yet.
+  before.
+
+  The count is no clue. `m_nMannVsMachineWaveEnemyCount` is the wave's total
+  and does not fall as robots die: the Linux bed holds it at 50, 69, 62 and 54
+  through the first four waves of marathon, with dozens of kills in each. A
+  wave ends when every wave spawn is DONE (`CWave::Update`, 0x5ef72c, reads
+  `m_isEveryContainedWaveSpawnDone`), so one wave spawn is not DONE. What each
+  wave shows of it:
+
+  - wet_warfare w1 spawns about three robots in 200 game seconds, the rate of
+    its Sniper mission, and nothing else. Its first wave spawn is a squad of
+    2 and every other one waits on it. scorched w1 is the same with a squad of
+    5, and counts 600 more spawns than kills. A squad needs as many robots in
+    the spectator team as it has members (`CSquadSpawner::Spawn` opens with
+    that test on both platforms).
+  - horrorsome w7 spawned all 132 counted robots and has none alive 321 game
+    seconds in. What is left is the wave's own `HalloweenBoss`, which the wave
+    waits on while it lives, and a support icon that never starts.
+  - waters w8 spawns 1340 robots in the 15 minutes at the rate of its support
+    wave spawn, so its counted wave spawns have stopped.
+
+  The 2026-10-06 sweep saw 1, 47, 17 and 7 of their robots against 299, 438,
+  113 and 1337 now: most robots counted as spawned were gone by the probe's
+  next look then.
+
+  Which wave spawn is not DONE, and what it holds, no log of either sweep
+  says: the probe asks `sig_wave_dump` only while a support ally lives. With
+  `sig_pop_wave_stall_dump 600` set, as the bed job sets it, a wave whose
+  counted wave spawns stand still for 600 game seconds prints the dump, three
+  times at most, into the console log and the job log. It names the robots a
+  squad could reuse, the slots reserved, the wave boss and each wave spawn.
 
 ## Other things the sweep showed
 

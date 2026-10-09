@@ -995,9 +995,13 @@ namespace Mod::Pop::Wave_Extensions
 		}
 	}
 	
+	void WatchForStall(CWave *wave);
+	
 	DETOUR_DECL_MEMBER(void, CWave_ActiveWaveUpdate)
 	{
 		auto wave = reinterpret_cast<CWave *>(this);
+		
+		WatchForStall(wave);
 		
 		auto it = waves.find(wave);
 		if (it == waves.end()) {
@@ -1159,15 +1163,31 @@ namespace Mod::Pop::Wave_Extensions
 	
 	/* What the current wave is waiting on: each wave spawn's name, state,
 	 * what it waits for, how many it has spawned of how many, and how many of
-	 * its robots are alive. The wave probe asks for it when a wave times out. */
-	CON_COMMAND(sig_wave_dump, "Print the state of each wave spawn of the current wave")
+	 * its robots are alive. Beside that, what a spawn needs of the server: the
+	 * robots that can be reused, the slots reserved, the wave boss. The wave
+	 * probe asks for it when a wave times out. */
+	void DumpWave(CWave *wave)
 	{
 		static const char *states[] = { "PENDING", "PRE_SPAWN_DELAY", "SPAWNING", "WAIT_FOR_ALL_DEAD", "DONE" };
-		CWave *wave = g_pPopulationManager != nullptr ? g_pPopulationManager->GetCurrentWave() : nullptr;
-		if (wave == nullptr) {
-			Msg("sig_wave_dump: no wave\n");
-			return;
+		static ConVarRef tf_mvm_max_invaders("tf_mvm_max_invaders");
+		
+		CTFTeam *team_spectator = TFTeamMgr()->GetTeam(TEAM_SPECTATOR);
+		CTFTeam *team_red       = TFTeamMgr()->GetTeam(TF_TEAM_RED);
+		CTFTeam *team_blue      = TFTeamMgr()->GetTeam(TF_TEAM_BLUE);
+		int spectators      = team_spectator != nullptr ? team_spectator->GetNumPlayers() : -1;
+		int spectators_bot  = 0;
+		int spectators_live = 0;
+		for (int i = 0; i < spectators && i < 64; ++i) {
+			CBasePlayer *player = team_spectator->GetPlayer(i);
+			if (player == nullptr) continue;
+			if (player->IsBot()) ++spectators_bot;
+			if (player->IsAlive()) ++spectators_live;
 		}
+		Msg("sig_wave_dump: wave round_state=%d every_spawn_done=%d reserved_slots=%d max_invaders=%d red=%d blue=%d spectators=%d spectator_bots=%d spectator_alive=%d bots_allocated=%d time=%.1f\n",
+			(int)TFGameRules()->State_Get(), wave->m_isEveryContainedWaveSpawnDone, CWaveSpawnPopulator::m_reservedPlayerSlotCount.GetRef(), tf_mvm_max_invaders.GetInt(),
+			team_red != nullptr ? team_red->GetNumPlayers() : -1, team_blue != nullptr ? team_blue->GetNumPlayers() : -1,
+			spectators, spectators_bot, spectators_live, g_pPopulationManager->m_bAllocatedBots.Get(), gpGlobals->curtime);
+		
 		for (int i = 0; i < wave->m_WaveSpawns.Count(); ++i) {
 			CWaveSpawnPopulator *ws = wave->m_WaveSpawns[i];
 			if (ws == nullptr) continue;
@@ -1176,19 +1196,78 @@ namespace Mod::Pop::Wave_Extensions
 			for (auto &handle : ws->m_activeVector) {
 				if (handle != nullptr && handle->IsAlive()) ++alive;
 			}
-			Msg("sig_wave_dump: #%d name=\"%s\" state=%s support=%d%s waitspawned=\"%s\" waitdead=\"%s\" spawned=%d total=%d active=%d alive=%d\n",
+			auto squad = rtti_cast<CSquadSpawner *>(ws->m_Spawner);
+			Msg("sig_wave_dump: #%d name=\"%s\" state=%s support=%d%s waitspawned=\"%s\" waitdead=\"%s\" spawned=%d total=%d active=%d alive=%d spawn_count=%d max_active=%d squad=%d reserved_mine=%d paused=%d where=%d result=%d\n",
 				i, ws->m_name.Get(), (state >= 0 && state <= 4) ? states[state] : "?", ws->m_bSupportWave, ws->m_bLimitedSupport ? "(limited)" : "",
 				ws->m_waitForAllSpawned.Get(), ws->m_waitForAllDead.Get(), ws->m_countSpawnedSoFar, ws->m_totalCount,
-				ws->m_activeVector.Count(), alive);
+				ws->m_activeVector.Count(), alive, ws->m_spawnCount, ws->m_maxActive, squad != nullptr ? squad->m_SubSpawners.Count() : 0,
+				ws->m_myReservedSlotCount, ws->m_bPaused, ws->m_where.m_teamSpawnVector.Count(), (int)ws->m_spawnLocationResult);
+			int listed = 0;
 			for (auto &handle : ws->m_activeVector) {
 				CBaseEntity *ent = handle;
 				if (ent == nullptr || !ent->IsAlive()) continue;
+				if (++listed > 24) break;
 				CBasePlayer *player = ToBasePlayer(ent);
 				Msg("sig_wave_dump:   alive #%d %s team=%d health=%d name=\"%s\"\n", ENTINDEX(ent), ent->GetClassname(),
 					ent->GetTeamNumber(), ent->GetHealth(), player != nullptr ? player->GetPlayerName() : STRING(ent->GetEntityName()));
 			}
 			Mod::Pop::WaveSpawn_Extensions::DumpTemplateInstances(ws);
 		}
+		
+		WaveData *data = GetWaveData(wave);
+		if (data != nullptr) {
+			for (auto &info : data->bosses) {
+				CBaseEntity *boss = info.boss;
+				Msg("sig_wave_dump: boss type=%d spawned=%d exists=%d alive=%d class=%s team=%d\n", (int)info.type, info.spawned, boss != nullptr,
+					boss != nullptr && boss->IsAlive(), boss != nullptr ? boss->GetClassname() : "", boss != nullptr ? boss->GetTeamNumber() : -1);
+			}
+		}
+	}
+	
+	CON_COMMAND(sig_wave_dump, "Print the state of each wave spawn of the current wave")
+	{
+		CWave *wave = g_pPopulationManager != nullptr ? g_pPopulationManager->GetCurrentWave() : nullptr;
+		if (wave == nullptr) {
+			Msg("sig_wave_dump: no wave\n");
+			return;
+		}
+		DumpWave(wave);
+	}
+	
+	ConVar cvar_stall_dump("sig_pop_wave_stall_dump", "0", FCVAR_NOTIFY,
+		"Mod: print sig_wave_dump once the counted wave spawns have neither changed state nor spawned for this many seconds, three times a wave at most. 0 to disable");
+	
+	struct StallWatch
+	{
+		CWave *wave = nullptr;
+		uint32_t signature = 0;
+		float since = 0.0f;
+		int dumps = 0;
+	} stall_watch;
+	
+	void WatchForStall(CWave *wave)
+	{
+		float seconds = cvar_stall_dump.GetFloat();
+		if (seconds <= 0.0f) return;
+		
+		uint32_t signature = wave->m_WaveSpawns.Count();
+		for (int i = 0; i < wave->m_WaveSpawns.Count(); ++i) {
+			CWaveSpawnPopulator *ws = wave->m_WaveSpawns[i];
+			if (ws == nullptr || ws->m_bSupportWave) continue;
+			signature = signature * 31 + ws->m_state;
+			signature = signature * 31 + ws->m_countSpawnedSoFar;
+		}
+		
+		if (stall_watch.wave != wave || stall_watch.signature != signature) {
+			stall_watch = { wave, signature, gpGlobals->curtime, 0 };
+			return;
+		}
+		if (stall_watch.dumps >= 3 || gpGlobals->curtime - stall_watch.since < seconds) return;
+		
+		++stall_watch.dumps;
+		stall_watch.since = gpGlobals->curtime;
+		Msg("sig_wave_dump: stalled for %.0f seconds, dump %d\n", seconds, stall_watch.dumps);
+		DumpWave(wave);
 	}
 
 #if !defined _WINDOWS
