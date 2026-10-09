@@ -3,6 +3,7 @@
 #include "stub/tfentities.h"
 #include "util/scope.h"
 #include "stub/tfweaponbase.h"
+#include "mod/mvm/extended_upgrades.h"
 
 namespace Mod::MvM::UpgradeStation_Regen_Improved
 {
@@ -10,10 +11,10 @@ namespace Mod::MvM::UpgradeStation_Regen_Improved
 	ConVar cvar_only_creators("sig_mvm_upgradestation_creators", "0", FCVAR_NOTIFY | FCVAR_GAMEDLL,
 		"The mod only affects creators.tf weapons");
 
-	DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, void, CUpgrades_PlayerPurchasingUpgrade, CTFPlayer *player, int slot, int tier, bool sell, bool free, bool b3)
+	DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, Mod::MvM::Extended_Upgrades::PurchaseResult, CUpgrades_PlayerPurchasingUpgrade, CTFPlayer *player, int slot, int tier, bool sell, bool free, bool b3)
 	{
 		SCOPED_INCREMENT(rc_CUpgrades_PlayerPurchasingUpgrade);
-		DETOUR_MEMBER_CALL(player, slot, tier, sell, free, b3);
+		return DETOUR_MEMBER_CALL(player, slot, tier, sell, free, b3);
 		
 	}
 	

@@ -3072,5 +3072,26 @@
   "rva": "0x5f58d0",
   "build": "11087207",
   "carried": "from 11076587 0x5f6350 by hand: the only function calling every anchored callee (4/4) and called by every anchored caller of the 11076587 body, with the same strings and the same ret"
+ },
+ "_ZN12CTFGameRules20CanUpgradeWithAttribEP9CTFPlayeritP22CMannVsMachineUpgrades": {
+  "rva": "0x4843a0",
+  "build": "11087207",
+  "why": "read by hand: ret 0x10, a null player is false, an upgrade whose UI group (+0x190, +0x150 on Linux) is 1 passes only attribute 0x71 and answers IsPlayerClass(9) (0x4fbfe0), a group of 2 only 0x147 (class 9) and 0x1e0 (class 8), then the same attribute switch behind a dynamic cast; the whole function, where Linux calls a .part clone after the wrapper's first two tests. Called from CUpgrades::PlayerPurchasingUpgrade (0x5f5d8a) with the game rules in ecx, as Linux's clone is, and from GrantOrRemoveAllUpgrades"
+ },
+ "_ZN12CTFGameRules17GetCostForUpgradeEP22CMannVsMachineUpgradesiiP9CTFPlayer": {
+  "rva": "0x48c210",
+  "build": "11087207",
+  "why": "read by hand: ret 0x10, a null upgrade is 0, else the cost at +0x18c (+0x14c on Linux) and the attribute looked up by name; slot 0 with class 9, slot 1 with class 4, slot 2 with class 8 or 9 return the cost as is, else the attribute indexes 4, 6, 0x4e, 0xb4, 0x10a, 0x14f and 0x18d scale it by a float, and slot 9 subtracts 10 per level of the string at 0x860e8c, 'canteen_specialist', down to 5: the Linux body branch for branch. Its one caller is CUpgrades::PlayerPurchasingUpgrade (0x5f5df1), where Linux's clone calls it twice"
+ },
+ "_ZN9CUpgrades18ApplyUpgradeToItemEP9CTFPlayerP13CEconItemViewiibb": {
+  "name": "CUpgrades::ApplyUpgradeToItem [clone]",
+  "rva": "0x5f5180",
+  "build": "11087207",
+  "why": "read by hand: the whole function, where Linux detours the .part clone after the wrapper's null player and currency test (+0x2468 here, +0x2470 on Linux, both must be above 0), which this body makes first. Then the 0x19c byte upgrade out of g_MannVsMachineUpgrades, its attribute by name, the UI group (+0x190) test against 2 (the powerup bottle path, 0x5f5380), else ApplyUpgrade_Default (0x5f5530) as the Linux clone's tail jump does. Called from CUpgrades::PlayerPurchasingUpgrade (0x5f5f03), as Linux's clone is, and by two others, where Linux's wrapper has three. ret 0x18, so 6 arguments"
+ },
+ "_ZL20ApplyUpgrade_DefaultRK22CMannVsMachineUpgradesP9CTFPlayerP13CEconItemViewib": {
+  "rva": "0x5f5530",
+  "build": "11087207",
+  "why": "read by hand: a cdecl function with its five arguments on the stack where Linux passes three in registers. The attribute by name, the player's list (+0x1284) for UI group 1 else the item's (+0x58), IterateAttributes for the current value, AlmostEqual (0x6dff60, tolerance 10) and Approach (0x6d97e0) against the cap, then RemoveAttribute for a downgrade or SetRuntimeAttributeValue (0x3c4860) and SetRuntimeAttributeRefundableCurrency (0x3c4810) plus the cost; returns the attribute's index, 0xffff when the item is missing. Its only caller is CUpgrades::ApplyUpgradeToItem (0x5f535f)"
  }
 }

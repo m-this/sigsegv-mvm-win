@@ -20,8 +20,12 @@ namespace Mod::MvM::Upgrade_Disallow
 	ConVar cvar_burn_time("sig_mvm_upgrade_allow_burn_time", "1", FCVAR_NOTIFY,
 		"Should burn time be enabled");
 
-	DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, void, CUpgrades_PlayerPurchasingUpgrade, CTFPlayer *player, int itemslot, int upgradeslot, bool sell, bool free, bool b3)
+	DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, Mod::MvM::Extended_Upgrades::PurchaseResult, CUpgrades_PlayerPurchasingUpgrade, CTFPlayer *player, int itemslot, int upgradeslot, bool sell, bool free, bool b3)
 	{
+#if defined _WINDOWS
+		// Linux detours the clone behind the wrapper's null player test; this is the whole function
+		if (player == nullptr) return Mod::MvM::Extended_Upgrades::PurchaseResult();
+#endif
 		if (!b3) {
 			auto upgrade = reinterpret_cast<CUpgrades *>(this);
 			int extended_upgrades_start_index = Mod::MvM::Extended_Upgrades::GetExtendedUpgradesStartIndex();
@@ -35,10 +39,10 @@ namespace Mod::MvM::Upgrade_Disallow
 							float increment = CMannVsMachineUpgradeManager::Upgrades()[upgradeslot].m_flIncrement;
 							float defValue = attr_def->GetDefaultValue();
 							if (attr->GetValuePtr()->m_Float > defValue && increment < 0) {
-								return;
+								return Mod::MvM::Extended_Upgrades::PurchaseResult();
 							}
 							if (attr->GetValuePtr()->m_Float < defValue && increment > 0) {
-								return;
+								return Mod::MvM::Extended_Upgrades::PurchaseResult();
 							}
 						}
 					}
@@ -55,15 +59,15 @@ namespace Mod::MvM::Upgrade_Disallow
 				
 				if (!cvar_explode_on_ignite.GetBool() && strcmp(upgradename,"explode_on_ignite") == 0){
 					gamehelpers->TextMsg(ENTINDEX(player), TEXTMSG_DEST_CENTER, TranslateText(player, "Explode on ignite is not allowed on this server"));
-					return;
+					return Mod::MvM::Extended_Upgrades::PurchaseResult();
 				}
 				else if (!cvar_medigun_shield.GetBool() && strcmp(upgradename,"generate rage on heal") == 0){
 					gamehelpers->TextMsg(ENTINDEX(player), TEXTMSG_DEST_CENTER, TranslateText(player, "Projectile shield is not allowed on this server"));
-					return;
+					return Mod::MvM::Extended_Upgrades::PurchaseResult();
 				}
 				else if (!cvar_burn_time.GetBool() && strcmp(upgradename,"weapon burn time increased") == 0){
 					gamehelpers->TextMsg(ENTINDEX(player), TEXTMSG_DEST_CENTER, TranslateText(player, "Burn time bonus upgrade is broken. Buy another upgrade"));
-					return;
+					return Mod::MvM::Extended_Upgrades::PurchaseResult();
 				}
 				else if (strcmp(upgradename,"engy sentry fire rate increased") == 0 &&
 					(strcmp(TFGameRules()->GetCustomUpgradesFile(), "") == 0 || strcmp(TFGameRules()->GetCustomUpgradesFile(), "scripts/items/mvm_upgrades.txt") == 0)){
@@ -74,14 +78,14 @@ namespace Mod::MvM::Upgrade_Disallow
 					DevMsg("upgrade %f\n",upgrade);
 					if (upgrade >= 0.79f && upgrade <= 0.81f) {
 						gamehelpers->TextMsg(ENTINDEX(player), TEXTMSG_DEST_CENTER, TranslateText(player, "3rd sentry fire rate bonus upgrade is broken. Buy another upgrade"));
-						return;
+						return Mod::MvM::Extended_Upgrades::PurchaseResult();
 					}
 					
 				}
 
 			}
 		}
-		DETOUR_MEMBER_CALL(player, itemslot, upgradeslot, sell, free, b3);
+		return DETOUR_MEMBER_CALL(player, itemslot, upgradeslot, sell, free, b3);
 		
 	}
 	
