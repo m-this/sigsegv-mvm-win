@@ -12788,6 +12788,15 @@
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: shares the string 'set_cannot_disguise' with the Linux function, and 3 of its 3 matched callees
 				}
+				"CTFPlayer::ClearDisguiseWeaponList"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer23ClearDisguiseWeaponListEv"
+					addr  "0x4e49c0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the callee CTFPlayerShared::OnRemoveDisguised (0x5263de) makes on the outer player between ClearExpression (0x4e4a70) and RemoveDisguiseWeapon (0x52a040), the Linux order after UpdateModel; ConditionGameRulesThink calls it after RemoveDisguiseWeapon (0x51d7ad), as Linux does. Same body: walks the disguise weapon handles at +0x25c4 with the count at +0x25d0 (Linux +0x25cc and +0x25d8), resolves each through the entity list and makes the weapon's +0x3ac virtual call (Linux +0x3c4) with a vector, then sets the count to 0; thiscall, plain ret. Linux's third caller, CreateDisguiseWeaponList, has no call to it here
+				}
 				"CTFPlayerShared::DetermineDisguiseWeapon"
 				{
 					type  "fixed"

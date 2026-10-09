@@ -4008,5 +4008,10 @@
   "rva": "0x637664",
   "build": "11087207",
   "why": "read by hand, engine.dll: SendUpdatedServerDetails (0x13a5f0) loads it, calls CHLTVServer::IsTVRelay (0x17deb0) on it and reads the server part at +8 for the HLTV name, as Linux does with [0x33cd1c] and IsTVRelay; SV_DetermineUpdateType (0x128050) adds 0x658c to it for the delta cache lookup, Linux 0x6570"
+ },
+ "_ZN9CTFPlayer23ClearDisguiseWeaponListEv": {
+  "rva": "0x4e49c0",
+  "build": "11087207",
+  "why": "read by hand: the callee CTFPlayerShared::OnRemoveDisguised (0x5263de) makes on the outer player between ClearExpression (0x4e4a70) and RemoveDisguiseWeapon (0x52a040), the Linux order after UpdateModel; ConditionGameRulesThink calls it after RemoveDisguiseWeapon (0x51d7ad), as Linux does. Same body: walks the disguise weapon handles at +0x25c4 with the count at +0x25d0 (Linux +0x25cc and +0x25d8), resolves each through the entity list and makes the weapon's +0x3ac virtual call (Linux +0x3c4) with a vector, then sets the count to 0; thiscall, plain ret. Linux's third caller, CreateDisguiseWeaponList, has no call to it here"
  }
 }
