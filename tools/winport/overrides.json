@@ -2143,6 +2143,7 @@
   "why": "read by hand: the overload with two Vectors: origin from the first, start from the second, angles from the QAngle, and with an entity its edict index and attachment type 2, then CBaseTempEntity::Create; the Linux body. cdecl, plain ret, two callers as on Linux (the flare and the energy ball)"
  },
  "_Z22PassServerEntityFilterPK13IHandleEntityS1_": {
+  "name": "PassServerEntityFilter [clone]",
   "rva": "0x36e930",
   "build": "11087207",
   "carried": "from 11076587 0x36ef70 by tools/winport/carry.py: server.dll, 123 bytes",
@@ -2316,6 +2317,12 @@
   "carried": "from 11076587 0x3a0660 by tools/winport/carry.py: server.dll, 33 bytes",
   "vtidx": 111,
   "why": "read by hand: slot 111 of CEconEntity's table (Linux 112); two virtual calls, then the base UpdateOnRemove, the Linux body"
+ },
+ "_ZN9CTFPlayer14UpdateOnRemoveEv": {
+  "rva": "0x513d30",
+  "build": "11087207",
+  "vtidx": 111,
+  "why": "read by hand: CBasePlayer::UpdateOnRemove (0x2ea6c0, matched) first, then CPlayerInventory::RemoveListener (0x3a5530: the same walk of the listener list at +0x6c, count +0x78, and RemoveSOCacheListener, ret 4) with the inventory at +0x1308 and the listener at +0x1288 as the Linux body does at +0x131c and +0x12a0; thiscall, plain ret. Slot 111 of CTFPlayer, where CBasePlayer has 0x2ea6c0 (Linux 112, after the second destructor)"
  },
  "_ZN17CBaseCombatWeapon11WeaponSoundE13WeaponSound_tf": {
   "rva": "0x1e46e0",
@@ -2604,6 +2611,12 @@
   "build": "11087207",
   "carried": "from 11076587 0x132620 by hand: engine.dll, still the only function referencing 'SV_ComputeClientPacks'; ret, as before. CFrameSnapshot's fields moved in this build, which a detour that passes the pointer through does not see",
   "why": "read by hand, engine.dll: the only function referencing 'SV_ComputeClientPacks' (five profiler scopes); the MDL cache lock, then for each of clientCount (arg 1) clients (arg 2): SetupPackInfo(snapshot), serverGameEnts->CheckTransmit(&m_PackInfo, snapshot->m_pValidEntities, m_nValidEntities), SetupPrevPackInfo, then the entity packing, as the SDK's sv_main.cpp writes it"
+ },
+ "_ZN14CVEngineServer18PlaybackTempEntityER16IRecipientFilterfPKvPK9SendTablei": {
+  "lib": "engine",
+  "rva": "0x13cad0",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: the only function holding 'PlaybackTempEntity' and its 'SendTable_Encode returned false (ent %d), overflow? %i' error; drops the oldest queued temp entity when 255 are queued, bf_write on a 0xc0 byte buffer named so, SendTable_Encode(pST, pSender, &bf, classID + 1, 0, 0) and Host_Error on false, the Linux body in order. thiscall, ret 0x14 for (IRecipientFilter &, float, const void *, const SendTable *, int)"
  },
  "_ZN16CTFMedigunShield11ShieldThinkEv": {
   "rva": "0x61e140",
@@ -3122,12 +3135,6 @@
   "build": "11087207",
   "vtidx": 111,
   "why": "read by hand: slot 111 of CTFBot's table (Linux 112). Releases the sound at +0x28f0 through CSoundEnvelopeController (0x331aa0, vcall +0x28), zeroes the field and tail calls CTFPlayer::UpdateOnRemove; the field offset is the same on both sides"
- },
- "_ZN9CTFPlayer14UpdateOnRemoveEv": {
-  "rva": "0x513d30",
-  "build": "11087207",
-  "vtidx": 111,
-  "why": "read by hand: slot 111 of CTFPlayer's table (Linux 112), the target of CTFBot::UpdateOnRemove's tail call. Calls CBasePlayer::UpdateOnRemove (0x2ea6c0) and removes the inventory listener, the Linux body"
  },
  "_ZN9CTFPlayer14ShouldTransmitEPK18CCheckTransmitInfo": {
   "rva": "0x50cec0",
