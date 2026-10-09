@@ -4476,6 +4476,15 @@
 					vtidx "64"
 					// verified: read by hand: slot 64 of CTFBaseBoss' table (Linux 65); copies the damage info and calls ApplyOnDamageModifyRules on it, the Linux body; ret 4; the matcher's candidate too
 				}
+				"CTFBaseBoss::ResolvePlayerCollision"
+				{
+					type  "fixed"
+					sym   "_ZN11CTFBaseBoss22ResolvePlayerCollisionEP9CTFPlayer"
+					addr  "0x5de5b0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: a one-argument member (ret 4) that takes the collision bounds of the boss and of the player, the centres of both through a virtual, traces twice with mask 0x201400b as the Linux body does, then builds a CTakeDamageInfo and calls TakeDamage on the player or ends in SetAbsOrigin; its one caller is the BossThink at 0x5dd7b0, which loops the collected players behind the resolve flag the way Linux's BossThink does, and the Linux function has one caller too. MSVC puts it right after Precache (0x5de590) with no padding between
+				}
 				"CTFBaseBoss::Touch"
 				{
 					type  "fixed"
@@ -4670,6 +4679,15 @@
 					lib   "server"
 					vtidx "24"
 					// vtable
+				}
+				"CTFFlameManager::GetFlameDamageScale"
+				{
+					type  "fixed"
+					sym   "_ZNK15CTFFlameManager19GetFlameDamageScaleEPK10tf_point_tP9CTFPlayer"
+					addr  "0x46d890"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the profiler zone of tf_flame.cpp line 0x228 named 'CTFFlameManager::GetFlameDamageScale', the squared distance of the point from its start position (+0x44..+0x4c) scaled and clamped, the lifetime fraction, the burned-entity map lookup for the player, then the point's count (+0x28) of multiplications by the manager's scale field, the Linux body; float in st0, ret 8 for its two arguments; one caller, as Linux has one
 				}
 				"CTFFlameManager::OnCollide"
 				{
@@ -6420,6 +6438,15 @@
 					build "11087207"
 					lib   "engine"
 					// verified: the CHostState::State_NewGame function assigns 3 to it, and m_currentState is the first member; one of the addresses the matched referrers of the Linux global use
+				}
+				"CreateEntityByName"
+				{
+					type  "fixed"
+					sym   "_Z18CreateEntityByNamePKci"
+					addr  "0x297050"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the one function referencing 'CreateEntityByName( %s, %d ) - CreateEdict failed.'; CreateEdict through the engine's vtable +0x54 when the index is not -1 and the warning when it returns null, then the entity factory dictionary's Create by name (vtable +4) and the tail call into the entity's own virtual, the Linux body; cdecl, plain ret, 119 direct callers. The gamedata finds it by that string as a func ebpprologue entry, which the emitter does not carry
 				}
 				"CAttributeManager::AttribHookValue<int>"
 				{
@@ -12297,6 +12324,15 @@
 					build "11087207"
 					lib   "server"
 					// verified: read by hand: the 32 accessor pointers GetDataObject indexes, which MSVC inlined everywhere. DestroyAllDataObjects (0x2c4030, called by CBaseEntity's destructor 0x1e98c0) tests type bits 0 to 7 at +0x370 and calls slot 3 (DestroyDataObject) of [type*4 + this]; CreateDataObject (0x2c3ff0) sets the bit and jumps to slot 2 of the same entry, Linux reading 0x17fccec the same way (g_DataObjectAccessSystem at 0x17fcce0, +0xc). The static constructor 0x19070 writes the system's vtable at 0xa399c8 and zeroes 0x80 bytes here. The inlined reads call slot 1, GetDataObject
+				}
+				"CTFTankBoss::SetStartingPathTrackNode"
+				{
+					type  "fixed"
+					sym   "_ZN11CTFTankBoss24SetStartingPathTrackNodeEPc"
+					addr  "0x5f24a0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: FindEntityByName on the global entity list with the name argument, a dynamic cast of the result to CPathTrack, then the node's handle stored in the tank, or -1 when either step gives null; ret 4, as the Linux body. The extractor for CTFTankBoss::m_hCurrentNode reads the store's offset (0xa00 on this build) from it, and the Spawn and TankBossThink bodies use the same offset where Linux's use m_hCurrentNode, 0x18 lower than Linux's 0xa18
 				}
 				"CScriptConvarAccessor::SetValue"
 				{

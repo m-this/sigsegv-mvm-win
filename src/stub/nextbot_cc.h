@@ -34,8 +34,13 @@ private:
 class CTFTankBoss : public CTFBaseBoss
 {
 public:
+#if defined _WINDOWS
+	DECL_RELATIVE(IBody *,             m_pBodyInterface);
+	DECL_EXTRACT (CHandle<CPathTrack>, m_hCurrentNode);
+#else
 	DECL_EXTRACT (IBody *,             m_pBodyInterface);
 	DECL_RELATIVE(CHandle<CPathTrack>, m_hCurrentNode);
+#endif
 	DECL_RELATIVE(CUtlVector<float>,   m_NodeDists);
 	DECL_RELATIVE(float,               m_flTotalDistance);
 	DECL_RELATIVE(int,                 m_iCurrentNode);

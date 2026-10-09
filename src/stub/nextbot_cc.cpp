@@ -1,4 +1,5 @@
 #include "stub/nextbot_cc.h"
+#include "mem/extract.h"
 
 
 #if defined _LINUX
@@ -46,7 +47,43 @@ struct CExtract_CTFTankBoss_m_pBodyInterface : public IExtract<uint32_t>
 
 #elif defined _WINDOWS
 
-using CExtract_CTFTankBoss_m_pBodyInterface = IExtractStub;
+static constexpr uint8_t s_Buf_CTFTankBoss_m_hCurrentNode[] = {
+	0x89, 0x86, 0x00, 0x00, 0x00, 0x00,                         // +0x0000 mov [esi+m_hCurrentNode], eax
+	0x5e,                                                       // +0x0006 pop esi
+	0x5d,                                                       // +0x0007 pop ebp
+	0xc2, 0x04, 0x00,                                           // +0x0008 ret 4
+	0xc7, 0x86, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, // +0x000b mov [esi+m_hCurrentNode], -1
+};
+
+/* SetStartingPathTrackNode stores the handle of the node it found, or -1,
+ * in the one member. MSVC has no GetBodyInterface that reads the tank's own
+ * member (the override sits in the INextBot table and adds that subobject's
+ * offset), so the layout is anchored here, and m_pBodyInterface is measured
+ * back from it. */
+struct CExtract_CTFTankBoss_m_hCurrentNode : public IExtract<uint32_t>
+{
+	CExtract_CTFTankBoss_m_hCurrentNode() : IExtract<uint32_t>(sizeof(s_Buf_CTFTankBoss_m_hCurrentNode)) {}
+	
+	virtual bool GetExtractInfo(ByteBuf& buf, ByteBuf& mask) const override
+	{
+		buf.CopyFrom(s_Buf_CTFTankBoss_m_hCurrentNode);
+		
+		mask.SetRange(0x00 + 2, 4, 0x00);
+		mask.SetRange(0x0b + 2, 4, 0x00);
+		
+		return true;
+	}
+	
+	virtual bool Validate(const uint8_t *ptr) const override
+	{
+		return memcmp(ptr + 0x00 + 2, ptr + 0x0b + 2, sizeof(uint32_t)) == 0;
+	}
+	
+	virtual const char *GetFuncName() const override   { return "CTFTankBoss::SetStartingPathTrackNode"; }
+	virtual uint32_t GetFuncOffMin() const override    { return 0x0000; }
+	virtual uint32_t GetFuncOffMax() const override    { return 0x0060; } // @ +0x0041
+	virtual uint32_t GetExtractOffset() const override { return 0x0000 + 2; }
+};
 
 #endif
 
@@ -151,8 +188,13 @@ MemberVFuncThunk<CTFBaseBoss *, void> CTFBaseBoss::vt_UpdateCollisionBounds(Type
 MemberVFuncThunk<CTFBaseBoss *, int> CTFBaseBoss::vt_GetCurrencyValue(TypeName<CTFBaseBoss>(), "CTFBaseBoss::GetCurrencyValue");
 
 
+#if defined _WINDOWS
+IMPL_EXTRACT   (CHandle<CPathTrack>,CTFTankBoss, m_hCurrentNode,    new CExtract_CTFTankBoss_m_hCurrentNode());
+IMPL_REL_BEFORE(IBody *,            CTFTankBoss, m_pBodyInterface,  m_hCurrentNode, 0, EHANDLE, EHANDLE);
+#else
 IMPL_EXTRACT (IBody *,             CTFTankBoss, m_pBodyInterface,  new CExtract_CTFTankBoss_m_pBodyInterface());
 IMPL_REL_AFTER(CHandle<CPathTrack>,CTFTankBoss, m_hCurrentNode,    m_pBodyInterface, EHANDLE, EHANDLE);
+#endif
 IMPL_REL_AFTER(CUtlVector<float>,  CTFTankBoss, m_NodeDists,       m_hCurrentNode);
 IMPL_REL_AFTER(float,              CTFTankBoss, m_flTotalDistance, m_NodeDists);
 IMPL_REL_AFTER(int,                CTFTankBoss, m_iCurrentNode,    m_flTotalDistance);
