@@ -1,0 +1,142 @@
+# Bed sweep 37959506551, main 24612609, cancelled after shards 0, 3, 4 and 5 finished.
+
+== shards
+shard 0: 6 of 7 missions failed, 6 server starts; mods 97 OK, 20 FAILED
+shard 3: 9 of 11 missions failed, 9 server starts; mods 97 OK, 20 FAILED
+shard 4: 11 of 14 missions failed, 11 server starts; mods 97 OK, 20 FAILED
+shard 5: 8 of 9 missions failed, 8 server starts; mods 97 OK, 20 FAILED
+
+== missions (waves passed / waves played, first failure)
+mvm_autumnull_rc2_adv_dynamic_disaster                     shard 0 0/2 w0 load_failed load blocked: cannot reach 172.25.128.1:27015: dial tcp 172.25.128.1:27015: connectex: No connection could be made because the target 
+mvm_bloodlust_b6_int_wretched_witchery                     shard 0 6/7 w7 failed wave timed out: wave exceeded wall-clock time limit: wave 7 still active after 15m0s (18.9 game seconds)
+mvm_deathpour_rc1_int_technical_terror                     shard 0 3/5 w0 load_failed load blocked: cannot reach 172.25.128.1:27015: dial tcp 172.25.128.1:27015: connectex: No connection could be made because the target 
+mvm_nightsky_rc4d_adv_nightsky_nightmare                   shard 0 0/2 w0 load_failed load blocked: cannot reach 172.25.128.1:27015: dial tcp 172.25.128.1:27015: connectex: No connection could be made because the target 
+mvm_nightsky_rc4d_exp_condemned_conflict                   shard 0 5/5 all passed
+mvm_null_b9c_adv_baneful_harvest                           shard 0 1/3 w0 load_failed load blocked: cannot reach 172.25.128.1:27015: dial tcp 172.25.128.1:27015: connectex: No connection could be made because the target 
+mvm_villa_b13f_adv_recalled_to_life                        shard 0 4/5 w5 failed wave timed out: wave exceeded wall-clock time limit: wave 5 still active after 15m0s (78.3 game seconds)
+mvm_bigrock_int_bionic_breach                              shard 3 7/7 all passed
+mvm_bloodlust_b6_adv_reanimation                           shard 3 0/1 w1 failed wave timed out: wave exceeded wall-clock time limit: wave 1 still active after 15m0s (358.9 game seconds)
+mvm_creepside_b2_adv_dismal_devilry                        shard 3 0/2 w0 load_failed load blocked: cannot reach 172.28.128.1:27015: dial tcp 172.28.128.1:27015: connectex: No connection could be made because the target 
+mvm_frostwynd_rc1_adv_medieval_madness                     shard 3 0/2 w0 load_failed load blocked: cannot reach 172.28.128.1:27015: dial tcp 172.28.128.1:27015: connectex: No connection could be made because the target 
+mvm_legerdemain_a6e_adv_midnight_patrol                    shard 3 2/4 w0 load_failed load blocked: cannot reach 172.28.128.1:27015: dial tcp 172.28.128.1:27015: connectex: No connection could be made because the target 
+mvm_legerdemain_a6e_int_legacy_heresy                      shard 3 0/2 w0 load_failed load blocked: cannot reach 172.28.128.1:27015: dial tcp 172.28.128.1:27015: connectex: No connection could be made because the target 
+mvm_mannhattan_exp_ax20                                    shard 3 1/3 w0 load_failed load blocked: cannot reach 172.28.128.1:27015: dial tcp 172.28.128.1:27015: connectex: No connection could be made because the target 
+mvm_oilrig_rc5d_adv_waters_of_wrath                        shard 3 0/2 w0 load_failed load blocked: cannot reach 172.28.128.1:27015: dial tcp 172.28.128.1:27015: connectex: No connection could be made because the target 
+mvm_skeleclipse_b7a_int_sunburn                            shard 3 5/5 all passed
+mvm_sludge_b6_adv_claire_de_lune                           shard 3 1/3 w0 load_failed load blocked: cannot reach 172.28.128.1:27015: dial tcp 172.28.128.1:27015: connectex: No connection could be made because the target 
+mvm_smog_b3a_int_hazardous_haze                            shard 3 3/5 w0 load_failed load blocked: cannot reach 172.28.128.1:27015: dial tcp 172.28.128.1:27015: connectex: No connection could be made because the target 
+mvm_akure_rc1a_adv_gold_and_grit                           shard 4 7/8 w8 failed probe error: wave 8 did not start within 1m30s: {State:armed Reason:none Map:mvm_akure_rc1a Pop:mvm_akure_rc1a_adv_gold_and_grit Max:
+mvm_chateau_rc3_adv_remedic                                shard 4 0/2 w0 load_failed load blocked: cannot reach 172.28.144.1:27015: dial tcp 172.28.144.1:27015: connectex: No connection could be made because the target 
+mvm_creepside_b2_adv_abyssal_atrocities                    shard 4 2/4 w0 load_failed load blocked: cannot reach 172.28.144.1:27015: dial tcp 172.28.144.1:27015: connectex: No connection could be made because the target 
+mvm_creepside_b2_adv_catastrophic_conjuring                shard 4 0/3 w0 load_failed load blocked: cannot reach 172.28.144.1:27015: dial tcp 172.28.144.1:27015: connectex: No connection could be made because the target 
+mvm_creepside_b2_adv_dust_to_dust                          shard 4 0/2 w0 load_failed load blocked: cannot reach 172.28.144.1:27015: dial tcp 172.28.144.1:27015: connectex: No connection could be made because the target 
+mvm_downpour_rc3a_adv_wet_wreckage                         shard 4 0/2 w0 load_failed load blocked: cannot reach 172.28.144.1:27015: dial tcp 172.28.144.1:27015: connectex: No connection could be made because the target 
+mvm_heatrock_rc6a_exp_slaughterhouse                       shard 4 1/3 w0 load_failed load blocked: cannot reach 172.28.144.1:27015: dial tcp 172.28.144.1:27015: connectex: No connection could be made because the target 
+mvm_kelly_rc1b_adv_crop_circles                            shard 4 3/5 w0 load_failed load blocked: cannot reach 172.28.144.1:27015: dial tcp 172.28.144.1:27015: connectex: No connection could be made because the target 
+mvm_marsbase_rc5_adv_secret_struggle                       shard 4 1/1 all passed
+mvm_nightsky_rc4d_int_night_of_fire                        shard 4 6/6 all passed
+mvm_robotfactory_b30_adv_frantic_flood                     shard 4 7/7 all passed
+mvm_robotfactory_b30_exp_enduring_exceptions               shard 4 0/2 w0 load_failed load blocked: cannot reach 172.28.144.1:27015: dial tcp 172.28.144.1:27015: connectex: No connection could be made because the target 
+mvm_rottenburg_exp_bx20                                    shard 4 1/3 w0 load_failed load blocked: cannot reach 172.28.144.1:27015: dial tcp 172.28.144.1:27015: connectex: No connection could be made because the target 
+mvm_rottenburg_int_calendartillery                         shard 4 2/4 w0 load_failed load blocked: cannot reach 172.28.144.1:27015: dial tcp 172.28.144.1:27015: connectex: No connection could be made because the target 
+mvm_akure_rc1a_int_bronze_and_bristle                      shard 5 8/8 all passed
+mvm_bloodmoon_b8_adv_sed_de_sangre                         shard 5 1/3 w0 load_failed load blocked: cannot reach 172.30.112.1:27015: dial tcp 172.30.112.1:27015: connectex: No connection could be made because the target 
+mvm_null_b9c_adv_distorted_reality                         shard 5 2/4 w0 load_failed load blocked: cannot reach 172.30.112.1:27015: dial tcp 172.30.112.1:27015: connectex: No connection could be made because the target 
+mvm_oxidize_rr18_adv_overclock                             shard 5 0/2 w0 load_failed load blocked: cannot reach 172.30.112.1:27015: dial tcp 172.30.112.1:27015: connectex: No connection could be made because the target 
+mvm_rottenburg_adv_marathon                                shard 5 2/4 w0 load_failed load blocked: cannot reach 172.30.112.1:27015: dial tcp 172.30.112.1:27015: connectex: No connection could be made because the target 
+mvm_seabed_b6_adv_ocean_commotion                          shard 5 2/4 w0 load_failed load blocked: cannot reach 172.30.112.1:27015: dial tcp 172.30.112.1:27015: connectex: No connection could be made because the target 
+mvm_spybase_rc8_exp_waters_of_a_robot_regime               shard 5 0/2 w0 load_failed load blocked: cannot reach 172.30.112.1:27015: dial tcp 172.30.112.1:27015: connectex: No connection could be made because the target 
+mvm_traumatic_b2a_int_river_of_despair                     shard 5 3/5 w0 load_failed load blocked: cannot reach 172.30.112.1:27015: dial tcp 172.30.112.1:27015: connectex: No connection could be made because the target 
+mvm_yiresa_rc5a_adv_mesa_malware                           shard 5 1/3 w0 load_failed load blocked: cannot reach 172.30.112.1:27015: dial tcp 172.30.112.1:27015: connectex: No connection could be made because the target 
+
+missions 41, wave 1 passed 27, every wave played passed 7
+
+== faults, exits, probe errors (unique per shard)
+shard 0: died in mvm_autumnull_rc2_adv_dynamic_disaster: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x010fd6bc), EBP chain:
+shard 0: died in mvm_bloodlust_b6_int_wretched_witchery: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x00d6d61c), EBP chain:
+shard 0: died in mvm_deathpour_rc1_int_technical_terror: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x00cfd7c4), EBP chain:
+shard 0: died in mvm_nightsky_rc4d_adv_nightsky_nightmare: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x00dfd924), EBP chain:
+shard 0: died in mvm_null_b9c_adv_baneful_harvest: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x010fd654), EBP chain:
+shard 0: died in mvm_villa_b13f_adv_recalled_to_life: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x001cd38c), EBP chain:
+shard 0: ##[error]Process completed with exit code 1.
+shard 0: fault in console-1.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x010fd6bc), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 0: fault in console-2.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x00d6d61c), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 0: fault in console-3.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x00cfd7c4), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 0: fault in console-4.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x00dfd924), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 0: fault in console-5.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x010fd654), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 0: fault in console-6.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x001cd38c), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 0: unresolved functions called: CTFPlayer::ClearDisguiseWeaponList
+shard 0: winbed: exit status 0xffffffff
+shard 0: probe: waveprobe: 2 wave tests failed
+shard 0: probe: waveprobe: 1 wave tests failed
+shard 3: died in mvm_bloodlust_b6_adv_reanimation: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x009bd924), EBP chain:
+shard 3: died in mvm_creepside_b2_adv_dismal_devilry: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x0060d56c), EBP chain:
+shard 3: died in mvm_frostwynd_rc1_adv_medieval_madness: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x00b7d924), EBP chain:
+shard 3: died in mvm_legerdemain_a6e_adv_midnight_patrol: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x0045d144), EBP chain:
+shard 3: died in mvm_legerdemain_a6e_int_legacy_heresy: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x00afd664), EBP chain:
+shard 3: died in mvm_mannhattan_exp_ax20: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x008fd58c), EBP chain:
+shard 3: died in mvm_oilrig_rc5d_adv_waters_of_wrath: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x00efd994), EBP chain:
+shard 3: died in mvm_sludge_b6_adv_claire_de_lune: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x00afd354), EBP chain:
+shard 3: died in mvm_smog_b3a_int_hazardous_haze: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x00d3d8fc), EBP chain:
+shard 3: ##[error]Process completed with exit code 1.
+shard 3: fault in console-1.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x009bd924), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 3: fault in console-2.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x0060d56c), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 3: fault in console-3.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x00b7d924), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 3: fault in console-4.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x0045d144), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 3: fault in console-5.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x00afd664), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 3: fault in console-6.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x008fd58c), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 3: fault in console-7.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x00efd994), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 3: fault in console-8.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x00afd354), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 3: fault in console-9.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x00d3d8fc), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 3: unresolved functions called: CTFPlayer::ClearDisguiseWeaponList
+shard 3: winbed: exit status 0xffffffff
+shard 3: probe: waveprobe: 1 wave tests failed
+shard 3: probe: waveprobe: 2 wave tests failed
+shard 4: died in mvm_akure_rc1a_adv_gold_and_grit: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x00f3d828), EBP chain:
+shard 4: died in mvm_chateau_rc3_adv_remedic: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x00cfd6a0), EBP chain:
+shard 4: died in mvm_creepside_b2_adv_abyssal_atrocities: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x012fd320), EBP chain:
+shard 4: died in mvm_creepside_b2_adv_catastrophic_conjuring: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x006fd86c), EBP chain:
+shard 4: died in mvm_creepside_b2_adv_dust_to_dust: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x005dd50c), EBP chain:
+shard 4: died in mvm_downpour_rc3a_adv_wet_wreckage: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x010fd834), EBP chain:
+shard 4: died in mvm_heatrock_rc6a_exp_slaughterhouse: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x010fd674), EBP chain:
+shard 4: died in mvm_kelly_rc1b_adv_crop_circles: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x008fd9ac), EBP chain:
+shard 4: died in mvm_robotfactory_b30_exp_enduring_exceptions: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x00afd564), EBP chain:
+shard 4: died in mvm_rottenburg_exp_bx20: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x00efd784), EBP chain:
+shard 4: died in mvm_rottenburg_int_calendartillery: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x00afd7b8), EBP chain:
+shard 4: ##[error]Process completed with exit code 1.
+shard 4: fault in console-1.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x00f3d828), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 4: fault in console-10.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x00efd784), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedS
+shard 4: fault in console-11.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x00afd7b8), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedS
+shard 4: fault in console-2.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x00cfd6a0), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 4: fault in console-3.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x012fd320), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 4: fault in console-4.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x006fd86c), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 4: fault in console-5.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x005dd50c), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 4: fault in console-6.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x010fd834), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 4: fault in console-7.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x010fd674), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 4: fault in console-8.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x008fd9ac), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 4: fault in console-9.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x00afd564), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 4: unresolved functions called: CTFPlayer::ClearDisguiseWeaponList
+shard 4: winbed: exit status 0xffffffff
+shard 4: probe: waveprobe: 1 wave tests failed
+shard 4: probe: waveprobe: 2 wave tests failed
+shard 4: probe: waveprobe: 3 wave tests failed
+shard 5: died in mvm_bloodmoon_b8_adv_sed_de_sangre: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x001ed364), EBP chain:
+shard 5: died in mvm_null_b9c_adv_distorted_reality: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x00fbd954), EBP chain:
+shard 5: died in mvm_oxidize_rr18_adv_overclock: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x006fd794), EBP chain:
+shard 5: died in mvm_rottenburg_adv_marathon: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x010fd46c), EBP chain:
+shard 5: died in mvm_seabed_b6_adv_ocean_commotion: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x0031d914), EBP chain:
+shard 5: died in mvm_spybase_rc8_exp_waters_of_a_robot_regime: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x006fd844), EBP chain:
+shard 5: died in mvm_traumatic_b2a_int_river_of_despair: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x0135d2f0), EBP chain:
+shard 5: died in mvm_yiresa_rc5a_adv_mesa_malware: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x007bd7bc), EBP chain:
+shard 5: ##[error]Process completed with exit code 1.
+shard 5: fault in console-1.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x001ed364), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 5: fault in console-2.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x00fbd954), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 5: fault in console-3.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x006fd794), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 5: fault in console-4.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x010fd46c), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 5: fault in console-5.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x0031d914), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 5: fault in console-6.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x006fd844), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 5: fault in console-7.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x0135d2f0), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 5: fault in console-8.log: SigMod: fault 0xc0000005 at sigsegv.ext.2.tf2.dll+0x1e50d7 touching 0xbf800010 (esp 0x007bd7bc), EBP chain: = std::vector<CustomVariable,std::allocator<CustomVariable> >::empty at /home/runner/winport/xwin-sdk/crt/include/vector:1910:0 <- ??$GetCustomVariableBool@$2U?$FixedSt
+shard 5: unresolved functions called: CTFPlayer::ClearDisguiseWeaponList
+shard 5: winbed: exit status 0xffffffff
+shard 5: probe: waveprobe: 2 wave tests failed
