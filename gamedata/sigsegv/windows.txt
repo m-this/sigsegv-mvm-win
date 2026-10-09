@@ -5616,6 +5616,15 @@
 					lib   "server"
 					// string
 				}
+				"CTriggerHurt::HurtEntity"
+				{
+					type  "fixed"
+					sym   "_ZN12CTriggerHurt10HurtEntityEP11CBaseEntityf"
+					addr  "0x367420"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the whole function, where Linux detours the .part clone after the wrapper's checks, which this body makes first: the target's m_takedamage (+0xf9 here, +0x10d on Linux) and the PassesTriggerFilters vcall (slot 0x340 here, 0x344 there). Then IsPlayer and the state 2 test (+0xe74 here, +0xe8c there), TakeHealth for a negative damage, otherwise TakeDamage (0x1fcc30), and the add to the touched-entities vector, as the clone does. EndTouch (0x360da0) calls it with the damage scaled as Linux's EndTouch does, and a second caller at 0x367372 stands for HurtAllTouchers. thiscall with the target and a float, ret 8, bool in al
+				}
 				"CTriggerIgnite::IgniteEntity"
 				{
 					type  "fixed"
@@ -6802,6 +6811,15 @@
 					lib   "server"
 					// verified: read by hand: true with no pass entity, false when touch is pass, each handle to an entity unless a static prop, true unless both are entities, false when either owns the other; the Linux body with its .part clone folded in. CTraceFilterSimple::ShouldHitEntity (slot 0, 0x36f2e0) calls it with the touched handle and m_pPassEnt and pops 8 itself: cdecl, plain ret
 				}
+				"IsSpaceToSpawnHere"
+				{
+					type  "fixed"
+					sym   "_Z18IsSpaceToSpawnHereRK6Vector"
+					addr  "0x5e8b10"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the Linux body. A vcall on the game rules (slot 0x7c here, 0x80 there) gives the hull, both corners moved by one constant (0x7793f8), the trace with mask 0x201400b (MASK_PLAYERSOLID), the overlay cross when the fraction is below one and a return of fraction >= 1. Windows has one more debug overlay before the cross. Callers: TeleportNearVictim (0x58f6d0, matched) once at 0x58f929, as on Linux, and two calls in 0x4a28f0, where Linux's SpawnZombieMob calls it twice. The call in CTFBotSpawner::Spawn is inlined here (0x5eb1f7 pushes the same mask). cdecl, one argument, plain ret, bool in al
+				}
 				"TeleportNearVictim"
 				{
 					type  "fixed"
@@ -7858,6 +7876,15 @@
 					lib   "soundemittersystem"
 					// verified: read by hand in SoundEmitterSystem.dll: the function holding the 'CSoundEmitterSystem::AddSoundsFromFile:  No such file' message; asks the filesystem for the name's handle through its vtable +0x8c and appends it to the vector at +0x78 (count +0x84), as the Linux body does at the same offsets; thiscall, ret 0x10
 				}
+				"CEventAction::CEventAction [C2]"
+				{
+					type  "fixed"
+					sym   "_ZN12CEventActionC2EPKc"
+					addr  "0x224800"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the constructor, which Linux names C1 and C2 for one body. Increments a static id counter into +0x14, clears +0, +4, +8, +0xc and +0x18 and sets +0x10 to -1, then strchr for 0x1b picks that delimiter or ',' and five nexttoken calls fill the target, input, parameter, delay and fire count: Linux 0x68c740 field for field. thiscall with one argument, ret 4, returns this in eax. Two of its callers are matched functions of the Linux constructor's callers: CEventsSaveDataOps::Parse (0x224660, which pushes 0x1c for the allocation first, as 0x68fc90 does) and HookOutput (0x4d8700)
+				}
 				"CQuestItemTracker::FireGameEvent"
 				{
 					type  "fixed"
@@ -8415,6 +8442,15 @@
 					build "11087207"
 					lib   "server"
 					// string
+				}
+				"CGlobalEntityList::FindEntityByClassname"
+				{
+					type  "fixed"
+					sym   "_ZN17CGlobalEntityList21FindEntityByClassnameEP11CBaseEntityPKcP17IEntityFindFilter"
+					addr  "0x2477e0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand; the byte pattern in misc.txt matches nothing in this build. The Linux body step for step: the start entity's handle index (GetRefEHandle at slot 2, the world slot when null), a walk along m_pNext, the 'NULL entity in global entity list!' warning for an empty entry (string xref 0x247827), a hit when the entity's classname pointer (+0x5c here, +0x64 on Linux) equals the argument or the complex class match (0x1ed6d0) accepts it, then the filter's ShouldFindEntity at slot 0. thiscall with three arguments, ret 0xc, 194 direct callers; FindEntityByName (0x247cd0) is the next function of the family
 				}
 				"CTeamplayRoundBasedRules::BroadcastSound"
 				{
@@ -8986,6 +9022,15 @@
 					build "11087207"
 					lib   "server"
 					// consensus
+				}
+				"CPopulationManager::Initialize"
+				{
+					type  "fixed"
+					sym   "_ZN18CPopulationManager10InitializeEv"
+					addr  "0x5e46e0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the whole function, where Linux detours the .part clone GCC split after the wrapper's nav mesh check. This body makes that check first (TheNavMesh at 0xa8ced0, its +0x30 at zero reaches the 'No Nav Mesh CPopulationManager::Initialize' string at 0x8bcb48), and the detour repeats it under _WINDOWS. Then the Parse call (0x5e5730) after a vcall, ClearCheckpoint or RestoreCheckpoint on gamerules +0x3cc == 1, UpdateObjectiveResource (0x5e73b0, already in the table) and the ConVar SetValue at the end, as the clone does. No arguments, plain ret, bool in al
 				}
 				"CPopulationManager::JumpToWave"
 				{
@@ -10802,6 +10847,15 @@
 					lib   "server"
 					// string
 				}
+				"CTFPlayer::StateLeave"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer10StateLeaveEv"
+					addr  "0x50f0b0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: m_pStateInfo at +0x22b8, the field StateEnter (0x50e860) stores, a null check, then the leave member pointer at +0x18 with its adjustor at +0x1c, added to this and jumped to. Linux reads +0x10 and +0x14 of its state info: its enter and leave pointers take 8 bytes each, MSVC's 16, and the state table's stride here is 0x38. 27 bytes, one direct caller (0x50f40c), no arguments, plain ret. The same sequence is inlined ahead of the StateEnter call in StateTransition (0x50f520)
+				}
 				"CTFPlayer::GiveNamedItem"
 				{
 					type  "fixed"
@@ -11839,6 +11893,15 @@
 					lib   "server"
 					// verified: read by hand: true with no pass entity, false when touch is pass, each handle to an entity unless a static prop, true unless both are entities, false when either owns the other; the Linux body with its .part clone folded in. CTraceFilterSimple::ShouldHitEntity (slot 0, 0x36f2e0) calls it with the touched handle and m_pPassEnt and pops 8 itself: cdecl, plain ret
 				}
+				"CTriggerIgnite::BurnEntities [clone]"
+				{
+					type  "fixed"
+					sym   "_ZN14CTriggerIgnite9BurnThinkEv"
+					addr  "0x542230"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: server.dll has no BurnEntities, MSVC inlined it into its only caller. BurnThink is 0x542230, which StartTouch (0x542720) passes to the think setter, and it is Linux's BurnThink with BurnEntities in it: the time of the last burn at +0x4b8, the walk over the touching handles (+0x494, count +0x4a0), IsPlayer twice, a vcall at slot 0x1ec, CTakeDamageInfo (0x339e80), IsInvulnerable, InCond 0x16, IgniteEntity (0x5423f0) and TakeDamage (0x1fcc30), then the next think when something burned. A detour on it counts the TakeDamage calls made while burning, which is the scope BurnEntities has on Linux. No arguments, plain ret, no return value
+				}
 				"CUpgrades::ApplyUpgradeToItem [clone]"
 				{
 					type  "fixed"
@@ -11848,6 +11911,15 @@
 					lib   "server"
 					// verified: read by hand: the whole function, where Linux detours the .part clone after the wrapper's null player and currency test (+0x2468 here, +0x2470 on Linux, both must be above 0), which this body makes first. Then the 0x19c byte upgrade out of g_MannVsMachineUpgrades, its attribute by name, the UI group (+0x190) test against 2 (the powerup bottle path, 0x5f5380), else ApplyUpgrade_Default (0x5f5530) as the Linux clone's tail jump does. Called from CUpgrades::PlayerPurchasingUpgrade (0x5f5f03), as Linux's clone is, and by two others, where Linux's wrapper has three. ret 0x18, so 6 arguments
 				}
+				"CTriggerHurt::HurtEntity [clone]"
+				{
+					type  "fixed"
+					sym   "_ZN12CTriggerHurt10HurtEntityEP11CBaseEntityf"
+					addr  "0x367420"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the whole function, where Linux detours the .part clone after the wrapper's checks, which this body makes first: the target's m_takedamage (+0xf9 here, +0x10d on Linux) and the PassesTriggerFilters vcall (slot 0x340 here, 0x344 there). Then IsPlayer and the state 2 test (+0xe74 here, +0xe8c there), TakeHealth for a negative damage, otherwise TakeDamage (0x1fcc30), and the add to the touched-entities vector, as the clone does. EndTouch (0x360da0) calls it with the damage scaled as Linux's EndTouch does, and a second caller at 0x367372 stands for HurtAllTouchers. thiscall with the target and a float, ret 8, bool in al
+				}
 				"CUpgrades::PlayerPurchasingUpgrade [clone]"
 				{
 					type  "fixed"
@@ -11856,6 +11928,15 @@
 					build "11087207"
 					lib   "server"
 					// verified: read by hand: the whole function, where Linux detours the .part clone after the wrapper's null player and upgrade index checks (against the count at 0xb96aec), which this body makes first; the detour repeats them under _WINDOWS. Then the 0x19c byte upgrade copied out of g_MannVsMachineUpgrades, GetAttributeDefinitionByName on its attribute, and on purchase RemoveCurrency, RememberUpgrade and Regenerate, as the clone does. Called from CUpgrades::GrantOrRemoveAllUpgrades (0x5f5de0), the Linux clone's caller, and 0x485ed0. Pops 24
+				}
+				"CPopulationManager::Initialize [clone]"
+				{
+					type  "fixed"
+					sym   "_ZN18CPopulationManager10InitializeEv"
+					addr  "0x5e46e0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the whole function, where Linux detours the .part clone GCC split after the wrapper's nav mesh check. This body makes that check first (TheNavMesh at 0xa8ced0, its +0x30 at zero reaches the 'No Nav Mesh CPopulationManager::Initialize' string at 0x8bcb48), and the detour repeats it under _WINDOWS. Then the Parse call (0x5e5730) after a vcall, ClearCheckpoint or RestoreCheckpoint on gamerules +0x3cc == 1, UpdateObjectiveResource (0x5e73b0, already in the table) and the ConVar SetValue at the end, as the clone does. No arguments, plain ret, bool in al
 				}
 				"CTFRadiusDamageInfo::ApplyToEntity [clone]"
 				{
