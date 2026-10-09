@@ -118,8 +118,11 @@ Seven of them failed before too. The changes:
   over the shipped `server.dll` relocated to every 64 KiB base from 0x50000000
   to 0x7a000000, 868 of 10752 bases lose at least one class and 12 lose
   `CObjectTeleporter`. The bed does not log the base, so which one shard 3
-  drew is not known. The scan now keeps only a match followed by code (and a
-  locator whose class descriptor is in `.rdata`).
+  drew is not known. The scan now keeps only a match that has a relocation
+  (`IMAGE_REL_BASED_HIGHLOW` in the module's base relocation table): a pointer
+  has one, a string does not. Replayed over the same 10752 bases, 8122 locator
+  and 7689 type descriptor collisions, none has a relocation, and all 3135
+  vtables still resolve at the same addresses.
 - Shard 3's private memory reached 1621 MB, against 878 MB before, during
   `mvm_oilrig_rc5d_adv_waters_of_wrath` wave 8 (1337 bots spawned in the 15
   minutes), mostly 16 MB allocations. No other shard rose by more than 30 MB.

@@ -4,7 +4,55 @@
 #include "util/prof.h"
 #include "util/misc.h"
 
+#include <algorithm>
 #include <regex>
+
+
+#if defined _MSC_VER
+/* The module's absolute-pointer slots, sorted: the RVA of every
+ * IMAGE_REL_BASED_HIGHLOW entry of its base relocation table. The loaded image
+ * is all the scans below see, strings and constants included, and a word that
+ * equals a locator or type descriptor address by chance is no pointer: only a
+ * pointer has a relocation. Empty when the table cannot be read. */
+static std::vector<uint32_t> LoadRelocations(uintptr_t base)
+{
+	std::vector<uint32_t> rvas;
+	
+	auto dos = (const IMAGE_DOS_HEADER *)base;
+	auto nt  = (const IMAGE_NT_HEADERS *)(base + dos->e_lfanew);
+	const IMAGE_DATA_DIRECTORY& dir = nt->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_BASERELOC];
+	if (dir.VirtualAddress == 0 || dir.Size == 0) return rvas;
+	
+	MEMORY_BASIC_INFORMATION mem;
+	for (uintptr_t p = base + dir.VirtualAddress; p < base + dir.VirtualAddress + dir.Size; p += mem.RegionSize) {
+		if (VirtualQuery((const void *)p, &mem, sizeof(mem)) == 0 || mem.State != MEM_COMMIT || (mem.Protect & (PAGE_NOACCESS | PAGE_GUARD)) != 0) {
+			Warning("RTTI::PreLoad: base relocation table at %08zx is not readable\n", p);
+			return rvas;
+		}
+		mem.RegionSize -= p - (uintptr_t)mem.BaseAddress;
+	}
+	
+	auto block = (const uint8_t *)(base + dir.VirtualAddress);
+	auto end   = block + dir.Size;
+	while (end - block >= (ptrdiff_t)sizeof(IMAGE_BASE_RELOCATION)) {
+		auto hdr = (const IMAGE_BASE_RELOCATION *)block;
+		if (hdr->SizeOfBlock < sizeof(IMAGE_BASE_RELOCATION) || hdr->SizeOfBlock > (size_t)(end - block)) break;
+		
+		auto entry = (const uint16_t *)(block + sizeof(IMAGE_BASE_RELOCATION));
+		auto entry_end = (const uint16_t *)(block + hdr->SizeOfBlock);
+		for (; entry < entry_end; ++entry) {
+			if ((*entry >> 12) == IMAGE_REL_BASED_HIGHLOW) {
+				rvas.push_back(hdr->VirtualAddress + (*entry & 0xfff));
+			}
+		}
+		
+		block += hdr->SizeOfBlock;
+	}
+	
+	std::sort(rvas.begin(), rvas.end());
+	return rvas;
+}
+#endif
 
 
 namespace RTTI
@@ -177,15 +225,14 @@ namespace RTTI
 			Prof::End("TD post");
 			
 			
-			/* The scans read the loaded image, strings included, and a word can
-			 * equal a locator address by chance: "tput" of "output" is the
-			 * locator of CObjectTeleporter at base 0x73e10000. A real locator
-			 * is followed by a class descriptor in rdata, a real vtable by
-			 * code. */
-			const auto text   = CLibSegBounds(lib, Segment::TEXT).Get();
-			const auto rodata = CLibSegBounds(lib, Segment::RODATA).Get();
-			auto in_text   = [text](const void *p)   { return (const uint8_t *)p >= text.first   && (const uint8_t *)p < text.second; };
-			auto in_rodata = [rodata](const void *p) { return (const uint8_t *)p >= rodata.first && (const uint8_t *)p < rodata.second; };
+			const uintptr_t lib_base = LibMgr::GetInfo(lib).BaseAddr();
+			const std::vector<uint32_t> relocs = LoadRelocations(lib_base);
+			if (relocs.empty()) {
+				Warning("RTTI::PreLoad: no relocations for %s, its vtables are taken unchecked\n", LibMgr::Lib_ToString(lib));
+			}
+			auto is_pointer = [&](const void *where) {
+				return relocs.empty() || std::binary_search(relocs.begin(), relocs.end(), (uint32_t)((uintptr_t)where - lib_base));
+			};
 			
 			Prof::Begin();
 			std::unordered_map<const COLScanner *, std::string> scannermap_COL;
@@ -213,11 +260,14 @@ namespace RTTI
 				for (auto match : scanner.Matches()) {
 					auto p_COL = (const __RTTI_CompleteObjectLocator *)((uintptr_t)match - offsetof(__RTTI_CompleteObjectLocator, pTypeDescriptor));
 					
-					if (p_COL->signature == 0x00000000 && p_COL->offset == 0x00000000 && p_COL->cdOffset == 0x00000000 && in_rodata(p_COL->pClassDescriptor)) {
+					if (p_COL->signature == 0x00000000 && p_COL->offset == 0x00000000 && p_COL->cdOffset == 0x00000000 && is_pointer(match)) {
 						matches.push_back(p_COL);
 					}
 				}
 				
+				if (matches.size() > 1) {
+					Warning("RTTI::PreLoad: %zu locators for \"%s\", it has no vtable\n", matches.size(), name.c_str());
+				}
 				if (matches.size() != 1) {
 				//	DevMsg("RTTI::PreLoad: %u TD refs for \"%s\"\n", scanner.Matches().size(), name.c_str());
 					continue;
@@ -249,9 +299,12 @@ namespace RTTI
 			for (const auto& scanner : scanners_VT) {
 				auto& name = scannermap_VT[&scanner];
 				
-				std::vector<const void *> refs = scanner.Matches();
+				std::vector<const void *> refs;
+				for (auto match : scanner.Matches()) {
+					if (is_pointer(match)) refs.push_back(match);
+				}
 				if (refs.size() > 1) {
-					refs.erase(std::remove_if(refs.begin(), refs.end(), [&](const void *ref){ return !in_text(((const void **)ref)[1]); }), refs.end());
+					Warning("RTTI::PreLoad: %zu vtables point to the locator of \"%s\", it has no vtable\n", refs.size(), name.c_str());
 				}
 				if (refs.size() != 1) {
 				//	DevMsg("RTTI::PreLoad: %u COL refs for \"%s\"\n", scanner.Matches().size(), name.c_str());
