@@ -177,6 +177,16 @@ namespace RTTI
 			Prof::End("TD post");
 			
 			
+			/* The scans read the loaded image, strings included, and a word can
+			 * equal a locator address by chance: "tput" of "output" is the
+			 * locator of CObjectTeleporter at base 0x73e10000. A real locator
+			 * is followed by a class descriptor in rdata, a real vtable by
+			 * code. */
+			const auto text   = CLibSegBounds(lib, Segment::TEXT).Get();
+			const auto rodata = CLibSegBounds(lib, Segment::RODATA).Get();
+			auto in_text   = [text](const void *p)   { return (const uint8_t *)p >= text.first   && (const uint8_t *)p < text.second; };
+			auto in_rodata = [rodata](const void *p) { return (const uint8_t *)p >= rodata.first && (const uint8_t *)p < rodata.second; };
+			
 			Prof::Begin();
 			std::unordered_map<const COLScanner *, std::string> scannermap_COL;
 			std::vector<COLScanner> scanners_COL;
@@ -203,7 +213,7 @@ namespace RTTI
 				for (auto match : scanner.Matches()) {
 					auto p_COL = (const __RTTI_CompleteObjectLocator *)((uintptr_t)match - offsetof(__RTTI_CompleteObjectLocator, pTypeDescriptor));
 					
-					if (p_COL->signature == 0x00000000 && p_COL->offset == 0x00000000 && p_COL->cdOffset == 0x00000000) {
+					if (p_COL->signature == 0x00000000 && p_COL->offset == 0x00000000 && p_COL->cdOffset == 0x00000000 && in_rodata(p_COL->pClassDescriptor)) {
 						matches.push_back(p_COL);
 					}
 				}
@@ -239,12 +249,16 @@ namespace RTTI
 			for (const auto& scanner : scanners_VT) {
 				auto& name = scannermap_VT[&scanner];
 				
-				if (!scanner.ExactlyOneMatch()) {
+				std::vector<const void *> refs = scanner.Matches();
+				if (refs.size() > 1) {
+					refs.erase(std::remove_if(refs.begin(), refs.end(), [&](const void *ref){ return !in_text(((const void **)ref)[1]); }), refs.end());
+				}
+				if (refs.size() != 1) {
 				//	DevMsg("RTTI::PreLoad: %u COL refs for \"%s\"\n", scanner.Matches().size(), name.c_str());
 					continue;
 				}
 				
-				s_VT()[name] = (const void **)((uintptr_t)scanner.FirstMatch() + 0x4);
+				s_VT()[name] = (const void **)((uintptr_t)refs[0] + 0x4);
 			//	DevMsg("\"%s\" VT @ %08x\n", name.c_str(), (uintptr_t)s_VT()[name]);
 			}
 			Prof::End("VT post");
