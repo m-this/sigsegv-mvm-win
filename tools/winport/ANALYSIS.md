@@ -39,6 +39,12 @@ mission asks for it.
 6. Keep the refusal discipline of `matchvtables.py`: a class whose two tables
    never agree in length gets no index from equal length, because equal length
    is the evidence.
+7. **One block per name.** `AddrManager::Load` keeps the first block under a name
+   and prints "duplicate addr for" for the rest. `windows.txt` loads first and
+   `CSigsegvGameConf::NameTaken` leaves out every later block under a name it
+   holds, so the address derived for this build is the one that counts. A name
+   twice in `windows.txt`, or twice among the other files, fails `dupes.py`,
+   which `checktable.py` and the Address table job run.
 
 ## The instrument
 

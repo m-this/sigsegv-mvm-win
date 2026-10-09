@@ -2,10 +2,10 @@
 """Write gamedata/sigsegv/windows.txt from matchfuncs.py's matches.
 
 Every `sym` entry in gamedata/sigsegv whose symbol was matched in server.dll
-becomes a `fixed` entry at the matched address, under the same name. The
-extension loads this file before the others on Windows, and the first entry
-registered under a name is the one that counts, so these stand in for the
-Linux symbol lookups one for one.
+becomes a `fixed` entry at the matched address, under the same name, once. The
+extension loads this file before the others on Windows and skips every later
+block under a name this one holds (CSigsegvGameConf::NameTaken), so these stand
+in for the Linux symbol lookups one for one. dupes.py counts what that leaves.
 
 `fixed` is tied to a server version, which is what it should be: the matches
 are only true for the build they were made against.
@@ -123,6 +123,7 @@ out = [
     '\t\t"sigsegv"', "\t\t{", '\t\t\t"addrs"', "\t\t\t{",
 ]
 count = 0
+emitted = {}
 # datamaps.py resolves each class's datamap statically; the runtime scan that
 # finds them on Linux comes back empty on Windows.
 if len(sys.argv) > 3:
@@ -181,6 +182,9 @@ for name, entry in found + [x for x in extra if x[0] in named]:
     if match is None and name in by_name and entry.get("sym") not in bad:
         match = {"rva": by_name[name], "via": "vtable index"}
     if match is None and name.startswith("DT_") and name.endswith("::g_SendTable"):
+        if name in emitted:
+            continue
+        emitted[name] = None
         out += [
             f'\t\t\t\t"{name}"', "\t\t\t\t{",
             '\t\t\t\t\ttype  "sendtable"',
@@ -204,6 +208,16 @@ for name, entry in found + [x for x in extra if x[0] in named]:
         if (match.get("expect") or 0) < 8 or match.get("pop") != match["expect"]:
             continue
         via += f', ret {match["pop"]} as its arguments say'
+    # The Linux gamedata names some functions in two files, and classify.py's
+    # reading of misc.txt past line 3399 adds phantoms of its own, so the same
+    # name arrives more than once. A second block under a name is a duplicate
+    # the extension prints and cannot choose between: the same address is
+    # dropped, a different one is a finding and fails the run.
+    if name in emitted:
+        if emitted[name] != match["rva"]:
+            sys.exit(f'"{name}" is matched to 0x{emitted[name]:x} and to 0x{match["rva"]:x} from two entries; one has to go')
+        continue
+    emitted[name] = match["rva"]
     out += [
         f'\t\t\t\t"{name}"', "\t\t\t\t{",
         '\t\t\t\t\ttype  "fixed"',
