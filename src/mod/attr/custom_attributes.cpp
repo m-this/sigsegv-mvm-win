@@ -3724,13 +3724,20 @@ namespace Mod::Attr::Custom_Attributes
 
 	void InspectAttributes(CTFPlayer *target, CTFPlayer *player, bool force, int slot = -2);
 
-	DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, void, CUpgrades_PlayerPurchasingUpgrade, CTFPlayer *player, int itemslot, int upgradeslot, bool sell, bool free, bool refund)
+#if defined _WINDOWS
+	/* The Windows CUpgrades::PlayerPurchasingUpgrade returns whether the purchase went through, and its callers test it */
+	using UpgradePurchaseResult = bool;
+#else
+	using UpgradePurchaseResult = void;
+#endif
+
+	DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, UpgradePurchaseResult, CUpgrades_PlayerPurchasingUpgrade, CTFPlayer *player, int itemslot, int upgradeslot, bool sell, bool free, bool refund)
 	{
 #if defined _WINDOWS
 		/* server.dll has no clone, so this detours the whole function. The
 		 * Linux wrapper returns before the clone for a null player or an
 		 * upgrade index out of range: return the same way here. */
-		if (player == nullptr || upgradeslot < 0 || upgradeslot >= CMannVsMachineUpgradeManager::Upgrades().Count()) return;
+		if (player == nullptr || upgradeslot < 0 || upgradeslot >= CMannVsMachineUpgradeManager::Upgrades().Count()) return UpgradePurchaseResult();
 #endif
 		if (!refund) {
 			auto upgrade = reinterpret_cast<CUpgrades *>(this);
@@ -3746,12 +3753,16 @@ namespace Mod::Attr::Custom_Attributes
 						if (!sell) {
 							gamehelpers->TextMsg(ENTINDEX(player), TEXTMSG_DEST_CENTER, TranslateText(player, "This weapon is not upgradeable"));
 						}
-						return;
+						return UpgradePurchaseResult();
 					}
 				}
 			}
 		}
+#if defined _WINDOWS
+		bool result = DETOUR_MEMBER_CALL(player, itemslot, upgradeslot, sell, free, refund);
+#else
 		DETOUR_MEMBER_CALL(player, itemslot, upgradeslot, sell, free, refund);
+#endif
 		
 		if (!refund) {
 			InspectAttributes(player, player , true, itemslot);
@@ -3770,6 +3781,9 @@ namespace Mod::Attr::Custom_Attributes
 				}
 			}
 		}
+#if defined _WINDOWS
+		return result;
+#endif
 	}
 	
 	RefCount rc_CTFPlayer_ReapplyItemUpgrades;
