@@ -2131,7 +2131,11 @@ namespace Mod::Pop::TFBot_Extensions
 	int current_ai_team_num = -1;
 	DETOUR_DECL_MEMBER(void, NextBotPlayer_CTFPlayer_Update)
 	{
+#if defined _WINDOWS
+		current_ai_team_num = TFBotFromNextBot(this)->GetTeamNumber();
+#else
 		current_ai_team_num = reinterpret_cast<CTFBot *>(this)->GetTeamNumber();
+#endif
 		DETOUR_MEMBER_CALL();
 		current_ai_team_num = -1;
 	}
@@ -2285,7 +2289,11 @@ namespace Mod::Pop::TFBot_Extensions
 	
 	DETOUR_DECL_MEMBER(void, CTFBot_OnWeaponFired, CBaseCombatCharacter *who, CBaseCombatWeapon *weapon)
 	{
+#if defined _WINDOWS
+		auto bot = TFBotFromNextBot(this);
+#else
 		auto bot = reinterpret_cast<CTFBot *>(this);
+#endif
 
 		static CValueOverride_ConVar<int> tf_bot_notice_gunfire_range("tf_bot_notice_gunfire_range");
 		static CValueOverride_ConVar<int> tf_bot_notice_quiet_gunfire_range("tf_bot_notice_quiet_gunfire_range");

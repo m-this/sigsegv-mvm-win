@@ -525,6 +525,15 @@ inline CTFBot *ToTFBot(CBasePlayer *pPlayer)
 	return static_cast<CTFBot *>(pPlayer);
 }
 
+#if defined _WINDOWS
+/* MSVC compiles CTFBot's overrides of INextBot's virtuals against the INextBot
+ * subobject, so a detour on one of them gets that subobject as this. */
+inline CTFBot *TFBotFromNextBot(void *self)
+{
+	return static_cast<CTFBot *>(reinterpret_cast<INextBot *>(self)->GetEntity());
+}
+#endif
+
 template<typename T> T *NextBotCreatePlayerBot(const char *name, bool fake_client = true);
 template<> CTFBot *NextBotCreatePlayerBot<CTFBot>(const char *name, bool fake_client);
 
