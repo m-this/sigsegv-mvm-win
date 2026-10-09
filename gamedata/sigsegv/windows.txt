@@ -304,6 +304,15 @@
 					vtidx "31"
 					// vtable
 				}
+				"INextBot::GetRangeSquaredTo"
+				{
+					type  "fixed"
+					sym   "_ZNK8INextBot17GetRangeSquaredToEP11CBaseEntity"
+					addr  "0x420200"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: slot 75 of INextBot's table and of the table at offset 0x2668 of CTFBot, both 80 slots long. Linux has the same function at 75 of 81: one destructor slot less moves everything down by one and MSVC reverses each overload pair, so the entity overload (0x420200) comes after the Vector one (0x4201d0, a squared distance from GetPosition) and lands on the same number. Both builds call this slot through +0x12c with an entity for SelectCloserThreat's inlined body. Same body: GetEntity (+0xb8, Linux +0xbc), the other entity's WorldSpaceCenter (+0x270, Linux +0x274), CCollisionProperty::CalcNearestPoint and CalcDistanceFromPoint on the collision property (+0x184, Linux +0x19c), squared, 0 for a null bot or entity. CTFBot does not override it, either build. Takes the INextBot part as this, pops 4
+				}
 				"CTFBaseBossLocomotion::FaceTowards"
 				{
 					type  "fixed"
@@ -2613,6 +2622,16 @@
 					lib   "server"
 					// string
 				}
+				"CBaseCombatWeapon::SecondaryAttack"
+				{
+					type  "fixed"
+					sym   "_ZN17CBaseCombatWeapon15SecondaryAttackEv"
+					addr  "0x1305b0"
+					build "11087207"
+					lib   "server"
+					vtidx "288"
+					// verified: read by hand: empty on Linux (a lone ret), so on Windows it is the shared empty body, and only the slot says which virtual it is: slot 288 of CBaseCombatWeapon, Linux 294 less 6 (PrimaryAttack 293 to 287 matched, ItemHolsterFrame, the other empty one, 281 to 275). Derived classes agree: CWeaponMedigun, CTFBat_Wood and CTFGrenadeLauncher SecondaryAttack, matched by string or call, sit in slot 288 of their tables as they do in 294 on Linux, and the CTFSodaPopper and CTFChargedSMG overrides here are slot 288 too. Call site: CTFPlayer::DoClassSpecialSkill (0x51f680) does Weapon_OwnsThisID(0x18) then the virtual call at +0x480 (+0xfb) where Linux calls +0x498 after the same OwnsThisID(0x18), and on a null weapon both go on to GetEquippedDemoShield (0x521d80, matched) and CTFWearableDemoShield::DoSpecialAction (0x6408c0, matched). Plain ret
+				}
 				"CBaseCombatWeapon::Equip"
 				{
 					type  "fixed"
@@ -2680,6 +2699,16 @@
 					build "11087207"
 					lib   "server"
 					// verified: read by hand: the Linux body; thiscall popping 4. With a null owner it zeroes m_iState (+0x600, Linux +0x60c) through NetworkStateChanged, passes the old state to the OnActiveStateChanged slot (+0x430, Linux 274 less 6) and clears the 'BaseCombatWeapon_HideThink' think through ThinkSet (0x2025e0); then writes the owner's GetRefEHandle (vtable +8) to m_hOwner (+0x5b8, Linux +0x5c4) through NetworkStateChanged and ends in DispatchUpdateTransmitState (0x1eebd0). Weapon_Detach (0x1d9d10) calls it with null. The candidate at 0x1e4230 that the string ranking gave is the function before it, which has no padding between the two
+				}
+				"CBaseCombatWeapon::CheckReload"
+				{
+					type  "fixed"
+					sym   "_ZN17CBaseCombatWeapon11CheckReloadEv"
+					addr  "0x1dff00"
+					build "11087207"
+					lib   "server"
+					vtidx "281"
+					// verified: read by hand: slot 281 of CBaseCombatWeapon's table (Linux 287; ItemBusyFrame 280 to 274 and PrimaryAttack 293 to 287 matched, so the shift is 6 here). Same body with the weapon's fields 0xc lower: the reloads-singly byte (+0x638 to +0x62c) picks the owner path, IsPlayer on the owner (+0x150 to +0x14c), the reload flag (+0x5e4 to +0x5d8), the timer against curtime (+0x5d8 to +0x5cc), the owner's flags test 0x801 (+0xbcc to +0xbb4), the ammo virtual +0x42c to +0x428, and FinishReload through +0x480 (slot 288) to +0x468 (slot 282). Call sites agree: Linux's only vcall of +0x47c is ItemPostFrame, after the virtual at +0x568 and a test; Windows ItemPostFrame (slot 273, 0x1e2120) calls +0x464 right after the virtual at +0x550 and a test. CTFWeaponBase's slot 281 (0x632970) tail jumps here at +0xe1, as Linux's CTFWeaponBase::CheckReload does with its jmp to 0x62ca70. Plain ret
 				}
 				"CBaseCombatWeapon::SetViewModel"
 				{
@@ -7974,6 +8003,15 @@
 					lib   "server"
 					// string
 				}
+				"UTIL_SetSize"
+				{
+					type  "fixed"
+					sym   "_Z12UTIL_SetSizeP11CBaseEntityRK6VectorS3_"
+					addr  "0x36dde0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: Linux UTIL_SetSize only jumps to SetMinMaxSize, which MSVC folded into it. The body is Linux's: for each of the three components mins above maxs prints '%s: backwards mins/maxs' with the entity's debug name (0x36de26 is the one reference to that string in the dll), then CBaseEntity::SetCollisionBounds (0x1fb3d0, matched by call) with the two vectors. cdecl, three stack arguments, plain ret. 62 direct calls here against Linux's 62; of the 34 callers whose Windows twin is known, 30 hold the same count of calls. CBaseEntity::SetSize (0x1fa520, matched by call) calls it with this and its two arguments (add esp 0xc) where Linux's jumps to UTIL_SetSize. CTFWeaponBaseGrenadeProj::Spawn calls it at 0x63a346 with the (-2,-2,-2) and (2,2,2) vectors, as Linux's does at 0xdff1d0
+				}
 				"TE_DispatchEffect"
 				{
 					type  "fixed"
@@ -8644,6 +8682,15 @@
 					build "11087207"
 					lib   "server"
 					// call
+				}
+				"CBaseEntityOutput::DeleteAllElements"
+				{
+					type  "fixed"
+					sym   "_ZN17CBaseEntityOutput17DeleteAllElementsEv"
+					addr  "0x225400"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: takes the head of the action list from +0x14, sets it to 0, then walks +0x18 freeing each node to the CEventAction pool (0xa08864, CUtlMemoryPool::Free at 0x6ee000), the Linux body at the same offsets. The destructor (0x2249a0, matched) has the same loop without the zeroing. One direct caller, 0x387000+0x7b, which is CScriptEntityOutputs::RemoveOutput: the sibling of AddOutput (0x37f6c0, matched), FindNamedOutput (0x1f0800, matched), then a string compare of the target with the empty string and the call when equal, as Linux's RemoveOutput tail jumps to 0x68cef0 on an empty target. Thiscall, plain ret
 				}
 				"StopScriptedScene"
 				{
