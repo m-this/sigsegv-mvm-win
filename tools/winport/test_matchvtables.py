@@ -156,5 +156,65 @@ class Order(unittest.TestCase):
         self.assertEqual(mv.align(self.corpus.tables["CBase"], list(range(5)))[0], None)
 
 
+class Interfaces(unittest.TestCase):
+    """What MSVC leaves out of the primary table: an override of a virtual a
+    secondary base declares. Itanium keeps it there and puts a thunk to it in
+    the secondary table."""
+
+    def setUp(self):
+        self.dir = tempfile.TemporaryDirectory()
+        self.addCleanup(self.dir.cleanup)
+        rows = [
+            "CPlayer", "", "// vtable at 0x00001000 offset 0x0000",
+            "+0x0000:  00000100  CPlayer::~CPlayer()",
+            "+0x0004:  00000101  CPlayer::~CPlayer()",
+            "+0x0008:  00000102  CPlayer::Spawn()",
+            "+0x000c:  00000103  CPlayer::GetAttributes()",
+            "+0x0010:  00000104  CPlayer::Reapply()",
+            "+0x0014:  00000105  CPlayer::Think()",
+            "",
+            "// vtable at 0x00001000 offset 0x0020",
+            "+0x0000:  00000200  non-virtual thunk to CPlayer::GetAttributes()",
+            "+0x0004:  00000201  non-virtual thunk to CPlayer::Reapply()",
+            "+0x0008:  00000202  non-virtual thunk to CPlayer::~CPlayer()",
+        ]
+        (Path(self.dir.name) / "CPlayer.txt").write_text("\n".join(rows) + "\n")
+        self.corpus = mv.Corpus(self.dir.name, interface_drop=True)
+
+    def test_thunk_targets_are_read_from_the_secondary_tables(self):
+        self.assertEqual(
+            mv.read_linux_thunks(Path(self.dir.name) / "CPlayer.txt"),
+            {"CPlayer::GetAttributes()", "CPlayer::Reapply()", "CPlayer::~CPlayer()"})
+
+    def test_an_interface_override_has_no_primary_slot_and_a_destructor_stays(self):
+        slots = self.corpus.tables["CPlayer"]
+        self.assertEqual([slots[i] for i in self.corpus.order("CPlayer")], [
+            "CPlayer::~CPlayer()", "CPlayer::~CPlayer()", "CPlayer::Spawn()", "CPlayer::Think()"])
+        how, aligned = mv.align(slots, [1, 2, 3], self.corpus.order("CPlayer"))
+        self.assertEqual((how, aligned), ("collapse", ["CPlayer::~CPlayer()", "CPlayer::Spawn()", "CPlayer::Think()"]))
+
+    def test_the_drop_is_off_unless_asked_for(self):
+        plain = mv.Corpus(self.dir.name)
+        self.assertEqual(plain.order("CPlayer"), list(range(6)))
+
+    def test_a_hand_read_address_has_to_agree(self):
+        aligned = ["CPlayer::~CPlayer()", "CPlayer::Spawn()", "CPlayer::Think()"]
+        windows = [0x10000100, 0x10000102, 0x10000105]
+        verified = {"CPlayer::Spawn()": (0x102, None), "CPlayer::Think()": (0x105, 2)}
+        self.assertEqual(mv.check_anchors(aligned, windows, verified), (2, []))
+        verified = {"CPlayer::Spawn()": (0x105, None), "CPlayer::Think()": (0x105, 1)}
+        agree, disagree = mv.check_anchors(aligned, windows, verified)
+        self.assertEqual(agree, 0)
+        self.assertEqual([d[:2] for d in disagree], [("CPlayer::Spawn()", 1), ("CPlayer::Think()", 2)])
+
+    def test_a_signature_in_the_table_twice_anchors_nothing(self):
+        aligned = ["CPlayer::Spawn()", "CPlayer::Spawn()"]
+        windows = [0x10000100, 0x10000100]
+        self.assertEqual(mv.check_anchors(aligned, windows, {"CPlayer::Spawn()": (0x999, None)}), (0, []))
+
+    def test_a_destructor_anchors_nothing(self):
+        self.assertEqual(mv.check_anchors(["CPlayer::~CPlayer()"], [0x10000100], {"CPlayer::~CPlayer()": (0x999, None)}), (0, []))
+
+
 if __name__ == "__main__":
     unittest.main()
