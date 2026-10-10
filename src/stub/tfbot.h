@@ -396,7 +396,11 @@ public:
 	IIntention *GetIntentionInterface() const                          { return ft_GetIntentionInterface       (this); }
 #endif
 	float GetDesiredPathLookAheadRange() const                         { return ft_GetDesiredPathLookAheadRange(this); }
+#if defined _WINDOWS
+	void PushRequiredWeapon(CTFWeaponBase *weapon);
+#else
 	void PushRequiredWeapon(CTFWeaponBase *weapon)                     { return ft_PushRequiredWeapon          (this, weapon); }
+#endif
 	void PopRequiredWeapon()                                           { return ft_PopRequiredWeapon           (this); }
 #if defined _WINDOWS
 	/* server.dll has only the two-vector overload as a function; MSVC
@@ -452,6 +456,9 @@ public:
 	DECL_EXTRACT(CUtlVector<CFmtStr>, m_Tags);
 //#endif
 	DECL_EXTRACT(AttributeType,       m_nBotAttrs);
+#if defined _WINDOWS
+	DECL_EXTRACT(CUtlVector<CHandle<CTFWeaponBase>>, m_requiredWeaponStack);
+#endif
 	DECL_RELATIVE(WeaponRestriction, m_iWeaponRestrictionFlags);
 	DECL_RELATIVE(CHandle<CBaseEntity>, m_enemySentry);
 	
@@ -468,7 +475,9 @@ private:
 	static MemberFuncThunk<const CTFBot *, IVision *                         > ft_GetVisionInterface;
 	static MemberFuncThunk<const CTFBot *, IIntention *                      > ft_GetIntentionInterface;
 	static MemberFuncThunk<const CTFBot *, float                             > ft_GetDesiredPathLookAheadRange;
+#if !defined _WINDOWS
 	static MemberFuncThunk<      CTFBot *, void, CTFWeaponBase *             > ft_PushRequiredWeapon;
+#endif
 	static MemberFuncThunk<      CTFBot *, void                              > ft_PopRequiredWeapon;
 	static MemberFuncThunk<const CTFBot *, bool, const Vector&               > ft_IsLineOfFireClear_vec;
 	static MemberFuncThunk<const CTFBot *, bool, CBaseEntity *               > ft_IsLineOfFireClear_ent;

@@ -5424,5 +5424,61 @@
   "rva": "0x1ec1c0",
   "build": "11087207",
   "why": "read by hand: clears EFL_DIRTY_ABSVELOCITY (bit 12 of +0x13c), takes the move parent through the handle at +0x178 and, when there is one, adds its absolute velocity (recursing on itself) to the child's, writing +0x250: the Linux body. GetAbsVelocity (0x1f0bf0) calls it under the dirty test. Thiscall, plain ret"
+ },
+ "_ZN21CBaseAnimatingOverlay10AddGestureE8Activityb": {
+  "rva": "0x1d14b0",
+  "build": "11087207",
+  "why": "read by hand, 11087207: FindGestureLayer (0x1d1e70) of the activity, an update of the layer found, else the AddLayeredSequence path with the 'AddGesture: Activity not found' warning; ret 8 for (activity, autokill). The structural match 0x36d980 was another function"
+ },
+ "_ZN21CBaseAnimatingOverlay18AddGestureSequenceEib": {
+  "rva": "0x1d1540",
+  "build": "11087207",
+  "why": "read by hand, 11087207: AddLayeredSequence (0x1d15a0) with priority 0, then the autokill flag set or cleared on the layer's flags (bit 1) and the layer index returned; ret 8 for (sequence, autokill), the Linux AddGestureSequence(int, bool)"
+ },
+ "_ZN21CBaseAnimatingOverlay13RemoveGestureE8Activity": {
+  "rva": "0x1d2660",
+  "build": "11087207",
+  "why": "read by hand, 11087207: FindGestureLayer (0x1d1e70) then, on a live layer, the kill rate from the blend-out (+0x14 times a constant), the weight at +0x28 zeroed and flag bit 4 set: the Linux body; ret 4"
+ },
+ "_ZN21CBaseAnimatingOverlay17RemoveAllGesturesEv": {
+  "rva": "0x1d25f0",
+  "build": "11087207",
+  "why": "read by hand, 11087207: the same per-layer loop as Linux (0x4c stride, live bit, kill rate from +0x14, weight zeroed, flag 4) over the vector at +0x4ac, whose size is at +0x4b8; thiscall, plain ret"
+ },
+ "_ZN21CBaseAnimatingOverlay14RestartGestureE8Activitybb": {
+  "rva": "0x1d2730",
+  "build": "11087207",
+  "why": "read by hand, 11087207: FindGestureLayer then AddGesture (0x1d14b0) when none and the add flag is set, else the cycle, weight and flags of the layer reset, ret 0xc for three arguments: the Linux body"
+ },
+ "_ZN11CBaseEntity8GetModelEv": {
+  "rva": "0x1f0fb0",
+  "build": "11087207",
+  "why": "read by hand: modelinfo (global at 0x10a31cc8) GetModel (vcall +4) on this entity's model index (virtual +0x18), the Linux body without its devirtualisation test; thiscall, plain ret. The structural match for CBaseAnimating::GetModelPtr named this address, which is this function"
+ },
+ "_ZN7CTFTeam9GetObjectEi": {
+  "rva": "0x540430",
+  "build": "11087207",
+  "why": "read by hand: the object handle at [team+0x3e4 + index*4] (Linux +0x3fc), resolved through the entity list to the entity or null; ret 4. Called by CTFTeam::GetNumObjects's callers' loops as Linux (0x5403a0 loops over it)"
+ },
+ "_ZNK11CBaseObject28MustBeBuiltOnAttachmentPointEv": {
+  "rva": "0x442f40",
+  "build": "11087207",
+  "why": "read by hand: bit 1 of the flags word at +0x90c (Linux +0x924), shifted down and masked, the Linux body; the twin of both matched callers"
+ },
+ "_ZN24CTFProjectile_EnergyBall9GetScorerEv": {
+  "name": "CTFProjectile_EnergyBall::GetScorer",
+  "rva": "0x5fbf80",
+  "build": "11087207",
+  "why": "read by hand: the scorer handle at +0x50c (Linux +0x524) resolved through the entity list, then the cast; a named address so the m_hScorer extractor can read the offset"
+ },
+ "_ZN18CPopulationManager29FindOrAddPlayerUpgradeHistoryE8CSteamID": {
+  "rva": "0x5e3d10",
+  "build": "11087207",
+  "why": "read by hand, 11087207: walks the history vector at +0x5ec (count +0x5f8) comparing the two dwords of the steam id with each entry's, and allocates a 0x20 byte entry when none is found, the Linux body; the steam id is two stack dwords, ret 8. Called by GetPlayerUpgradeHistory (0x5e4320) and the FindOrAdd (CTFPlayer*) inline"
+ },
+ "_ZN18CPopulationManager23GetPlayerUpgradeHistoryEP9CTFPlayer": {
+  "rva": "0x5e4320",
+  "build": "11087207",
+  "why": "read by hand, 11087207: the player's steam id through CBasePlayer::GetSteamID, FindOrAdd (0x5e3d10) and the entry's upgrade vector at +8, null when there is no entry: the Linux body (lea eax+8, cmovne); ret 4"
  }
 }

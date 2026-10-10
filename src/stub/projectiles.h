@@ -143,9 +143,15 @@ private:
 class CTFProjectile_EnergyBall : public CTFBaseRocket 
 {
 public:
+#if defined _WINDOWS
+	/* inline in server.dll: the handle store the Linux function is */
+	void SetScorer(CBaseEntity *scorer) { this->m_hScorer = scorer; }
+	DECL_EXTRACT(CHandle<CBaseEntity>, m_hScorer);
+#else
 	void SetScorer(CBaseEntity *scorer) { ft_SetScorer(this, scorer); }
 private:
 	static MemberFuncThunk<CTFProjectile_EnergyBall *, void, CBaseEntity *> ft_SetScorer;
+#endif
 };
 
 class CTFProjectile_Arrow : public CTFBaseRocket

@@ -275,6 +275,45 @@ MemberFuncThunk<CTFBot::SuspectedSpyInfo_t *, bool> CTFBot::SuspectedSpyInfo_t::
 MemberFuncThunk<CTFBot::SuspectedSpyInfo_t *, bool> CTFBot::SuspectedSpyInfo_t::ft_TestForRealizing    ("CTFBot::SuspectedSpyInfo_t::TestForRealizing");
 
 
+#if defined _WINDOWS
+/* PopRequiredWeapon is a single decrement of the stack's size, which sits 12
+ * bytes into the vector */
+static constexpr uint8_t s_Buf_CTFBot_m_requiredWeaponStack[] = {
+	0xff, 0x89, 0x00, 0x00, 0x00, 0x00,  // +0x0000 dec     dword ptr [ecx+m_requiredWeaponStack.m_Size]
+	0xc3,                                // +0x0006 ret
+};
+
+struct CExtract_CTFBot_m_requiredWeaponStack : public IExtract<int32_t>
+{
+	using T = int32_t;
+	
+	CExtract_CTFBot_m_requiredWeaponStack() : IExtract<T>(sizeof(s_Buf_CTFBot_m_requiredWeaponStack)) {}
+	
+	virtual bool GetExtractInfo(ByteBuf& buf, ByteBuf& mask) const override
+	{
+		buf.CopyFrom(s_Buf_CTFBot_m_requiredWeaponStack);
+		
+		mask.SetRange(0x00 + 2, 4, 0x00);
+		
+		return true;
+	}
+	
+	virtual const char *GetFuncName() const override   { return "CTFBot::PopRequiredWeapon"; }
+	virtual uint32_t GetFuncOffMin() const override    { return 0x0000; }
+	virtual uint32_t GetFuncOffMax() const override    { return 0x0000; }
+	virtual uint32_t GetExtractOffset() const override { return 0x0000 + 2; }
+	virtual T AdjustValue(T val) const override        { return val - (int32_t)sizeof(CUtlMemory<int>); }
+};
+
+IMPL_EXTRACT(CUtlVector<CHandle<CTFWeaponBase>>, CTFBot, m_requiredWeaponStack, new CExtract_CTFBot_m_requiredWeaponStack());
+
+/* inline in server.dll: the weapon's handle, or -1 for none, pushed on the stack */
+void CTFBot::PushRequiredWeapon(CTFWeaponBase *weapon)
+{
+	this->m_requiredWeaponStack->AddToTail(CHandle<CTFWeaponBase>(weapon));
+}
+#endif
+
 IMPL_EXTRACT(CTFBot::MissionType,   CTFBot, m_nMission,  new CExtract_CTFBot_m_nMission());
 //#if TOOLCHAIN_FIXES
 IMPL_EXTRACT(CUtlVector<CFmtStr>,   CTFBot, m_Tags,      new CExtract_CTFBot_m_Tags());
@@ -288,7 +327,9 @@ MemberFuncThunk<const CTFBot *, IBody *                                  > CTFBo
 MemberFuncThunk<const CTFBot *, IVision *                                > CTFBot::ft_GetVisionInterface          ("CTFBot::GetVisionInterface");
 MemberFuncThunk<const CTFBot *, IIntention *                             > CTFBot::ft_GetIntentionInterface       ("CTFBot::GetIntentionInterface");
 MemberFuncThunk<const CTFBot *, float                                    > CTFBot::ft_GetDesiredPathLookAheadRange("CTFBot::GetDesiredPathLookAheadRange");
+#if !defined _WINDOWS
 MemberFuncThunk<      CTFBot *, void, CTFWeaponBase *                    > CTFBot::ft_PushRequiredWeapon          ("CTFBot::PushRequiredWeapon");
+#endif
 MemberFuncThunk<      CTFBot *, void                                     > CTFBot::ft_PopRequiredWeapon           ("CTFBot::PopRequiredWeapon");
 MemberFuncThunk<const CTFBot *, bool, const Vector&                      > CTFBot::ft_IsLineOfFireClear_vec       ("CTFBot::IsLineOfFireClear_vec");
 MemberFuncThunk<const CTFBot *, bool, CBaseEntity *                      > CTFBot::ft_IsLineOfFireClear_ent       ("CTFBot::IsLineOfFireClear_ent");

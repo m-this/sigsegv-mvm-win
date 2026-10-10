@@ -146,7 +146,40 @@ MemberVFuncThunk<const CTFBaseRocket *, float>                    CTFBaseRocket:
 
 MemberFuncThunk<const CTFBaseRocket *, CBasePlayer *> CTFBaseRocket::ft_GetOwnerPlayer("CTFBaseRocket::GetOwnerPlayer");
 
+#if defined _WINDOWS
+static constexpr uint8_t s_Buf_CTFProjectile_EnergyBall_m_hScorer[] = {
+	0x8b, 0x89, 0x00, 0x00, 0x00, 0x00,  // +0x0000 mov     ecx, [ecx+m_hScorer]
+	0x85, 0xc9,                          // +0x0006 test    ecx, ecx
+	0x74, 0x00,                          // +0x0008 jz      none
+	0xba, 0xff, 0x1f, 0x00, 0x00,        // +0x000a mov     edx, 1FFFh
+};
+
+struct CExtract_CTFProjectile_EnergyBall_m_hScorer : public IExtract<uint32_t>
+{
+	using T = uint32_t;
+	
+	CExtract_CTFProjectile_EnergyBall_m_hScorer() : IExtract<T>(sizeof(s_Buf_CTFProjectile_EnergyBall_m_hScorer)) {}
+	
+	virtual bool GetExtractInfo(ByteBuf& buf, ByteBuf& mask) const override
+	{
+		buf.CopyFrom(s_Buf_CTFProjectile_EnergyBall_m_hScorer);
+		
+		mask.SetRange(0x00 + 2, 4, 0x00);
+		mask.SetRange(0x08 + 1, 1, 0x00);
+		
+		return true;
+	}
+	
+	virtual const char *GetFuncName() const override   { return "CTFProjectile_EnergyBall::GetScorer"; }
+	virtual uint32_t GetFuncOffMin() const override    { return 0x0000; }
+	virtual uint32_t GetFuncOffMax() const override    { return 0x0000; }
+	virtual uint32_t GetExtractOffset() const override { return 0x0000 + 2; }
+};
+
+IMPL_EXTRACT(CHandle<CBaseEntity>, CTFProjectile_EnergyBall, m_hScorer, new CExtract_CTFProjectile_EnergyBall_m_hScorer());
+#else
 MemberFuncThunk<CTFProjectile_EnergyBall *, void, CBaseEntity *> CTFProjectile_EnergyBall::ft_SetScorer("CTFProjectile_EnergyBall::SetScorer");
+#endif
 
 
 MemberFuncThunk<CTFProjectile_Flare *, void, CBaseEntity *> CTFProjectile_Flare::ft_SetScorer("CTFProjectile_Flare::SetScorer");
