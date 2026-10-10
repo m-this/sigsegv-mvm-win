@@ -1518,6 +1518,15 @@
 					lib   "server"
 					// verified: read by hand: CreateEntityByName(name, -1), then SetLocalOrigin, SetLocalAngles, the owner virtual and DispatchSpawn(ent, true): Linux's Create with CreateNoSpawn inlined; cdecl, plain ret, 63 direct callers
 				}
+				"CBaseEntity::GetNextThink"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity12GetNextThinkEPKc"
+					addr  "0x200be0"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: the same think-context walk and the default next-think path; the structural match was held back for lack of field evidence and is the same address
+				}
 				"CBaseEntity::IsCombatItem"
 				{
 					type  "fixed"
@@ -1565,6 +1574,15 @@
 					build "11087207"
 					lib   "server"
 					// string
+				}
+				"CBaseEntity::IsBSPModel"
+				{
+					type  "fixed"
+					sym   "_ZNK11CBaseEntity10IsBSPModelEv"
+					addr  "0x201020"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: GetSolid through the collision property then the model type test, as the Linux body; the structural match was held back for lack of field evidence and is the same address
 				}
 				"CBaseEntity::ShouldCollide"
 				{
@@ -1928,6 +1946,15 @@
 					vtidx "120"
 					// vtable index
 				}
+				"CBaseEntity::GetTouchTrace"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity13GetTouchTraceEv"
+					addr  "0x2c40b0"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: returns the address of the global touch trace; the structural match was held back for lack of field evidence and is the same address
+				}
 				"CBaseEntity::GetServerClass"
 				{
 					type  "fixed"
@@ -1956,6 +1983,15 @@
 					lib   "server"
 					vtidx "52"
 					// vtable index
+				}
+				"CBaseEntity::GetDataObject"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity13GetDataObjectEi"
+					addr  "0x2c4020"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: the same bit test on the data object flags, bounds check and accessor table tail jump; the structural match was held back for lack of field evidence and is the same address
 				}
 				"CBaseEntity::TakeHealth"
 				{
@@ -2016,6 +2052,15 @@
 					lib   "server"
 					vtidx "106"
 					// vtable
+				}
+				"CBaseEntity::SetTransmitState"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity16SetTransmitStateEi"
+					addr  "0x1fc850"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: the same 0xffffffc7 mask on the edict flags and the PVS bit test; the structural match was held back for lack of field evidence and is the same address
 				}
 				"CBaseEntity::FireNamedOutput"
 				{
@@ -2162,6 +2207,15 @@
 					vtidx "201"
 					// string
 				}
+				"CBaseAnimatingOverlay::GetLayerDuration"
+				{
+					type  "fixed"
+					sym   "_ZN21CBaseAnimatingOverlay16GetLayerDurationEi"
+					addr  "0x1d1f40"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: same layer bounds test, 0x4c stride and flag bit as the Linux body; the structural match was held back for lack of field evidence and is the same address
+				}
 				"CBaseAnimatingOverlay::SetLayerDuration"
 				{
 					type  "fixed"
@@ -2170,6 +2224,15 @@
 					build "11087207"
 					lib   "server"
 					// call, ret 8 as its arguments say
+				}
+				"CBaseAnimating::FindBodygroupByName"
+				{
+					type  "fixed"
+					sym   "_ZN14CBaseAnimating19FindBodygroupByNameEPKc"
+					addr  "0x1ca650"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: its one matched callee is called as in the Linux body; the structural match was held back for lack of field evidence and is the same address
 				}
 				"CBaseAnimating::GetAttachment [matrix]"
 				{
@@ -2189,6 +2252,15 @@
 					build "11087207"
 					lib   "server"
 					// call, ret 12 as its arguments say
+				}
+				"CBaseAnimating::GetAttachmentBone"
+				{
+					type  "fixed"
+					sym   "_ZN14CBaseAnimating17GetAttachmentBoneEi"
+					addr  "0x1cab50"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: the three matched callees of the Linux body are all called; the structural match was held back for lack of field evidence and is the same address
 				}
 				"CBaseAnimating::GetBonePosition"
 				{
@@ -2254,6 +2326,15 @@
 					lib   "server"
 					// string
 				}
+				"CBaseAnimating::ResetSequenceInfo"
+				{
+					type  "fixed"
+					sym   "_ZN14CBaseAnimating17ResetSequenceInfoEv"
+					addr  "0x1cecf0"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: both matched callees of the Linux body are called; the structural match was held back for lack of field evidence and is the same address
+				}
 				"CBaseAnimating::SetBodygroup"
 				{
 					type  "fixed"
@@ -2318,6 +2399,15 @@
 					lib   "server"
 					// string
 				}
+				"CBaseAnimating::InvalidateBoneCache"
+				{
+					type  "fixed"
+					sym   "_ZN14CBaseAnimating19InvalidateBoneCacheEv"
+					addr  "0x1ce640"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: the one matched callee of the Linux body is called; the structural match was held back for lack of field evidence and is the same address
+				}
 				"CBaseCombatCharacter::GetBossType"
 				{
 					type  "fixed"
@@ -2373,6 +2463,15 @@
 					lib   "server"
 					// verified: read by hand: SetTransmitState(8) (0x1fceb0), then sets m_bGlowEnabled (+0x6a8, Linux +0x6c0) through its NetworkStateChanged when it is not already set, the Linux body; no arguments
 				}
+				"CBaseCombatCharacter::SetBloodColor"
+				{
+					type  "fixed"
+					sym   "_ZN20CBaseCombatCharacter13SetBloodColorEi"
+					addr  "0x1dbfd0"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: a single store of the argument, ret 4; the structural match was held back for lack of field evidence and is the same address
+				}
 				"CBaseCombatCharacter::GiveAmmo"
 				{
 					type  "fixed"
@@ -2417,6 +2516,15 @@
 					build "11087207"
 					lib   "server"
 					// verified: read by hand: the Linux body, not inlined after all; thiscall popping 4, it walks the 48 handles of m_hMyWeapons (+0x770, Linux +0x788) for the argument and returns false after 0x30. On a match it calls the Detach slot (+0x43c), the HolsterOnDetach slot (+0x434) and on true the Holster slot (+0x41c) with null, Linux 277, 275 and 269 less 6 as the offsets Linux calls through; writes -1 to the slot through NetworkStateChanged, calls SetOwner(null) (0x1e4360), clears the active weapon through 0x1d8d30 when m_hActiveWeapon (+0x830, Linux +0x848) was it, and returns true
+				}
+				"CBaseCombatCharacter::SwitchToNextBestWeapon"
+				{
+					type  "fixed"
+					sym   "_ZN20CBaseCombatCharacter22SwitchToNextBestWeaponEP17CBaseCombatWeapon"
+					addr  "0x1dc050"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: the game rules vcall (+0x70) with the player and weapon, then the weapon switch, as the Linux body; the structural match was held back for lack of field evidence and is the same address
 				}
 				"CBaseCombatCharacter::ClearLastKnownArea"
 				{
@@ -2481,6 +2589,15 @@
 					build "11087207"
 					lib   "server"
 					// vtable
+				}
+				"CAI_BaseNPC::GetActivityID"
+				{
+					type  "fixed"
+					sym   "_ZN11CAI_BaseNPC13GetActivityIDEPKc"
+					addr  "0x138a70"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: the one matched callee of the Linux body is called; the structural match was held back for lack of field evidence and is the same address
 				}
 				"CTFTeam::GetNumObjects"
 				{
@@ -2556,6 +2673,24 @@
 					lib   "server"
 					// vtable
 				}
+				"CBasePlayer::ForceButtons"
+				{
+					type  "fixed"
+					sym   "_ZN11CBasePlayer12ForceButtonsEi"
+					addr  "0x2e0ed0"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: an or of the argument into the forced buttons, ret 4; the structural match was held back for lack of field evidence and is the same address
+				}
+				"CBasePlayer::UnforceButtons"
+				{
+					type  "fixed"
+					sym   "_ZN11CBasePlayer14UnforceButtonsEi"
+					addr  "0x2ea140"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: an and-not of the argument into the forced buttons, ret 4; the structural match was held back for lack of field evidence and is the same address
+				}
 				"CBasePlayer::RemoveWearable"
 				{
 					type  "fixed"
@@ -2564,6 +2699,15 @@
 					build "11087207"
 					lib   "server"
 					// vtable
+				}
+				"CBasePlayer::SnapEyeAngles"
+				{
+					type  "fixed"
+					sym   "_ZN11CBasePlayer13SnapEyeAnglesERK6QAngle"
+					addr  "0x2e9220"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: three float stores and the snap flag set to 1, ret 4; the structural match was held back for lack of field evidence and is the same address
 				}
 				"CBasePlayer::ChangeTeam [int, bool, bool, bool]"
 				{
@@ -3259,6 +3403,15 @@
 					lib   "server"
 					vtidx "450"
 					// verified: read by hand: CTFWeaponBase's slot 450 (Linux 457, the seven slots above it shifted as around it). The owner from the handle at +0x210, IsPlayer, the item's initialized flag, GetModifiedRGBValue(team == blue) scaled by 1/255 and clamped when positive, else the same four team colours as Linux (0x3f3851ec, 0x3eb0a3d7, 0x3f000000, 0x3e147ae1) by color 1 or not and red or not; zero when no owner. Hidden return pointer and the int, ret 8
+				}
+				"CTFWeaponBase::GetTFWpnData"
+				{
+					type  "fixed"
+					sym   "_ZNK13CTFWeaponBase12GetTFWpnDataEv"
+					addr  "0x635a60"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: GetWpnData then a dynamic cast of the result, as the Linux body; the structural match was held back for lack of field evidence and is the same address
 				}
 				"CTFWeaponBase::StartEffectBarRegen"
 				{
@@ -4015,6 +4168,15 @@
 					lib   "server"
 					// verified: read by hand: clamps to the max health (+0xa3c, Linux +0xa54) when the flag at +0xa31 (Linux +0xa49) is set, stores m_flHealth (+0xa48, Linux +0xa60), writes the ceiling to m_iHealth (+0xf4, Linux +0x108) with NetworkStateChanged, and fires m_OnObjectHealthChanged (+0x9c8, Linux +0x9e0) with the float when it changed, the Linux body; thiscall, ret 4 for the float
 				}
+				"CBaseObject::SetPlasmaDisabled"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseObject17SetPlasmaDisabledEf"
+					addr  "0x4c4040"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: NetworkStateChanged on the flag, the flag, the end time from curtime and the vcall after, as the Linux body; the structural match was held back for lack of field evidence and is the same address
+				}
 				"CBaseObject::ShouldQuickBuild"
 				{
 					type  "fixed"
@@ -4316,6 +4478,24 @@
 					lib   "server"
 					vtidx "212"
 					// vtable
+				}
+				"CCollisionProperty::MarkPartitionHandleDirty"
+				{
+					type  "fixed"
+					sym   "_ZN18CCollisionProperty24MarkPartitionHandleDirtyEv"
+					addr  "0x22ace0"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: the one matched callee of the Linux body is called; the structural match was held back for lack of field evidence and is the same address
+				}
+				"CCollisionProperty::SetSurroundingBoundsType"
+				{
+					type  "fixed"
+					sym   "_ZN18CCollisionProperty24SetSurroundingBoundsTypeE23SurroundingBoundsType_tPK6VectorS3_"
+					addr  "0x22ba60"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: the matched callee of the Linux body is called; the structural match was held back for lack of field evidence and is the same address
 				}
 				"CCurrencyPack::MyTouch"
 				{
@@ -5073,6 +5253,15 @@
 					lib   "server"
 					// verified: the touch function the object's initialiser stores (mov [esi+0xd8], 0x104d1fb0, a pointer the call-graph scan does not see); it checks the two state flags, IsPlayer twice, PlayerCanBeTeleported, HasTheFlag and the SendHudNotification pair, AttribHookValue<int> through the owner virtual (0x53c to 0x538), GetMatchingTeleporter, in the Linux order
 				}
+				"CPathTrack::GetNext"
+				{
+					type  "fixed"
+					sym   "_ZN10CPathTrack7GetNextEv"
+					addr  "0x2ab370"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: the same handle lookup on the next-track handle then the same field read; the structural match was held back for lack of field evidence and is the same address
+				}
 				"CPointPopulatorInterface::InputChangeBotAttributes"
 				{
 					type  "fixed"
@@ -5637,6 +5826,16 @@
 					vtidx "273"
 					// verified: the only slot between ItemPreFrame (272) and ItemBusyFrame (274, matched) that differs from the base class, next to GetProjectileSpeed (0x60e0e0, verified) in the grappling hook's code; the same tail structure with a virtual call 0x494 to 0x47c (6 slots lower); slot 273 is Linux 279 less 6
 				}
+				"CTFGrenadeLauncher::SecondaryAttack"
+				{
+					type  "fixed"
+					sym   "_ZN18CTFGrenadeLauncher15SecondaryAttackEv"
+					addr  "0x611240"
+					build "11087207"
+					lib   "server"
+					vtidx "288"
+					// verified: slot 288 of CTFGrenadeLauncher's table: a vcall, the owner's IsPlayer and a tail jump to CTFPlayer::DoClassSpecialSkill (0x51f680), as the Linux body; plain ret
+				}
 				"CTFGrenadePipebombProjectile::Create"
 				{
 					type  "fixed"
@@ -5783,6 +5982,15 @@
 					lib   "server"
 					// verified: read by hand: the think CTFLaserPointer::Deploy (0x617f10) sets with ThinkSet and 'CREATE_LASER_DOT' (0x617f3b), as Linux's sets CreateLaserDot. Tests the flag at +0x80d and the dot handle at +0x800 (Linux +0x819 and +0x80c), then CLaserDot::Create inline ('env_laserdot' at 0x617e04). Thiscall, plain ret
 				}
+				"CTFMechanicalArm::ShockAttack"
+				{
+					type  "fixed"
+					sym   "_ZN16CTFMechanicalArm11ShockAttackEv"
+					addr  "0x61a020"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: GetPlayerOwner (0x635110) then IsPlayer (vcall +0x14c) and the next-attack time test at +0x5d0, the Linux body's opening; the consensus match is the same address. Aligned-stack prologue, thiscall
+				}
 				"CTFMedigunShield::Create"
 				{
 					type  "fixed"
@@ -5883,6 +6091,16 @@
 					build "11087207"
 					lib   "server"
 					// verified: string lead, agreed by strings: 2 shared string(s), 1/1 matched callees, windows/linux size 336/422
+				}
+				"CTFPipebombLauncher::SecondaryAttack"
+				{
+					type  "fixed"
+					sym   "_ZN19CTFPipebombLauncher15SecondaryAttackEv"
+					addr  "0x6238c0"
+					build "11087207"
+					lib   "server"
+					vtidx "288"
+					// verified: slot 288 of CTFPipebombLauncher's table: the same opening as Linux's, with its .part.0 body inline (the detonation loop through vcalls +0x4bc and +0x18); plain ret
 				}
 				"CTFPistol_ScoutPrimary::Push"
 				{
@@ -5986,6 +6204,15 @@
 					lib   "server"
 					vtidx "0"
 					// vtable index
+				}
+				"CTFPointWeaponMimic::GetFiringAngles"
+				{
+					type  "fixed"
+					sym   "_ZNK19CTFPointWeaponMimic15GetFiringAnglesEv"
+					addr  "0x5e1da0"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: all four matched callees of the Linux body are called; the structural match was held back for lack of field evidence and is the same address
 				}
 				"CTFPointWeaponMimic::Spawn"
 				{
@@ -6861,6 +7088,15 @@
 					lib   "server"
 					vtidx "322"
 					// verified: the team number, CEconItemView::GetPlayerDisplayModel twice and the tail jump to CTFWeaponBase::GetViewModel as the Linux body; slot 322 is Linux 328 less 6 (GetWorldModel 329 to 323 matched)
+				}
+				"CTFWearable::CanEquip"
+				{
+					type  "fixed"
+					sym   "_ZN11CTFWearable8CanEquipEP11CBaseEntity"
+					addr  "0x3d07a0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: GetStaticData (0x3c3da0) and UTIL_GetHolidayForString (0x36f8c0) in the Linux order, ret 4; the consensus match is the same address
 				}
 				"CTFWearable::Equip"
 				{
@@ -8077,6 +8313,15 @@
 					lib   "server"
 					// verified: read by hand: true for weapon ids 0x11, 0x4d and 0x63, the Linux body; WeaponID_IsSniperRifleOrBow, which adds 0x3d, follows it as on Linux. cdecl, plain ret. The emitter's match for this symbol lands mid-instruction and is not it
 				}
+				"WeaponID_IsSniperRifleOrBow"
+				{
+					type  "fixed"
+					sym   "_Z27WeaponID_IsSniperRifleOrBowi"
+					addr  "0x638a80"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: the same four weapon ids, 0x3d, 0x11, 0x4d and 0x63; the structural match was held back for lack of field evidence and is the same address
+				}
 				"CTFGameRules::ApplyOnDamageAliveModifyRules"
 				{
 					type  "fixed"
@@ -8451,6 +8696,15 @@
 					lib   "server"
 					// verified: read by hand: compares its argument with each of the 0x6e weapon alias strings through V_stricmp (0x6e4a80) and returns the index, 0 when none matches, the Linux body; cdecl
 				}
+				"WeaponIdToAlias"
+				{
+					type  "fixed"
+					sym   "_Z15WeaponIdToAliasi"
+					addr  "0x53ef50"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: a bounds test and a lookup in the weapon names table; the structural match was held back for lack of field evidence and is the same address
+				}
 				"CTFGameRules::ApplyOnDamageModifyRules"
 				{
 					type  "fixed"
@@ -8468,6 +8722,15 @@
 					build "11087207"
 					lib   "server"
 					// verified: read by hand: stores its three arguments at +4, +8 and +0xc and CTraceFilterSimple's vtable (0x10813e78, the table whose slot 0 is the known ShouldHitEntity) at +0, then ret 0xc; the Linux C1 does the same. One of the two code references to that vtable; 290 calls, from UTIL_TraceLine, FireBullets, IVision::IsLineOfSightClear...
+				}
+				"PointInRespawnRoom"
+				{
+					type  "fixed"
+					sym   "_Z18PointInRespawnRoomPK11CBaseEntityRK6Vectorb"
+					addr  "0x456a00"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: the matched callee of the Linux body is called; the structural match was held back for lack of field evidence and is the same address
 				}
 				"CTeamplayRoundBasedRules::GetMinTimeWhenPlayerMaySpawn"
 				{
@@ -8943,7 +9206,7 @@
 					build "11087207"
 					lib   "server"
 					vtidx "0"
-					// vtable
+					// verified: read against the Linux body, 11087207: returns the address of the class's server class; the structural match was held back for lack of field evidence and is the same address
 				}
 				"CAttributeList::SetRuntimeAttributeValue"
 				{
@@ -9639,6 +9902,15 @@
 					lib   "server"
 					vtidx "1"
 					// vtable
+				}
+				"GetPlayerClassData"
+				{
+					type  "fixed"
+					sym   "_Z18GetPlayerClassDataj"
+					addr  "0x468480"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: the class data table plus 0xc plus the index times 0x8f0; the structural match was held back for lack of field evidence and is the same address
 				}
 				"CalculatePhysicsImpactDamage"
 				{
@@ -10651,6 +10923,24 @@
 					vtidx "232"
 					// verified: read by hand from CBaseProjectile's vtable, one below Linux from GetBaseProjectileType (227/228) to ShouldTouchNonWorldSolid (235/236): GetDestroyableHitCount 229 reads one field, CanCollideWithTeammates 230 and its delay 231 are known, 232 is xor al, al; ret 4 as Linux's IsDestroyable(bool) returns false, 233 is the empty Destroy(bool, bool) popping 8 and 234 SetLauncher. The body is folded with other false returning functions, so the slot names it; the rocket's and the grenade's 232 are their own IsDestroyable
 				}
+				"UTIL_GetCommandClient"
+				{
+					type  "fixed"
+					sym   "_Z21UTIL_GetCommandClientv"
+					addr  "0x272770"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: the matched callee of the Linux body is called; the structural match was held back for lack of field evidence and is the same address
+				}
+				"UTIL_GetCommandClientIndex"
+				{
+					type  "fixed"
+					sym   "_Z26UTIL_GetCommandClientIndexv"
+					addr  "0x272790"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: the command client global plus one; the structural match was held back for lack of field evidence and is the same address
+				}
 				"UTIL_IsCommandIssuedByServerAdmin"
 				{
 					type  "fixed"
@@ -10852,6 +11142,24 @@
 					build "11087207"
 					lib   "server"
 					// verified: turned away (call match); returns the empty string for -1 and otherwise the loadout name table's entry, the Linux body; cdecl
+				}
+				"GetLoadoutPositionByName"
+				{
+					type  "fixed"
+					sym   "_Z24GetLoadoutPositionByNamePKc"
+					addr  "0x4b1640"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: the matched callee of the Linux body is called; the structural match was held back for lack of field evidence and is the same address
+				}
+				"InventoryManager"
+				{
+					type  "fixed"
+					sym   "_Z16InventoryManagerv"
+					addr  "0x3c9e20"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: returns the address of the global inventory manager; the structural match was held back for lack of field evidence and is the same address
 				}
 				"CGameMovement::FullNoClipMove"
 				{
@@ -11081,6 +11389,15 @@
 					vtidx "32"
 					// vtable
 				}
+				"CNavArea::Contains"
+				{
+					type  "fixed"
+					sym   "_ZNK8CNavArea8ContainsERK6Vector"
+					addr  "0x3df5b0"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: IsOverlapping inlined as the four bounds compares, then GetZ and the 0x20 tolerance, as the Linux body; the structural match was held back for lack of field evidence and is the same address
+				}
 				"CNavArea::IsOverlapping"
 				{
 					type  "fixed"
@@ -11146,6 +11463,15 @@
 					lib   "server"
 					vtidx "34"
 					// string
+				}
+				"CTFNavArea::IsValidForWanderingPopulation"
+				{
+					type  "fixed"
+					sym   "_ZNK10CTFNavArea29IsValidForWanderingPopulationEv"
+					addr  "0x5d5050"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: the same 0x6000007 flag mask; the structural match was held back for lack of field evidence and is the same address
 				}
 				"CTFNavArea::GetCombatIntensity"
 				{
@@ -11444,6 +11770,15 @@
 					build "11087207"
 					lib   "server"
 					// verified: read by hand: calls UpdateObjectiveResource (0x5e78c0), the stats' RoundEvent_WaveStart and State_Transition, in the Linux order; ret
+				}
+				"CPopulationManager::IsInEndlessWaves"
+				{
+					type  "fixed"
+					sym   "_ZN18CPopulationManager16IsInEndlessWavesEv"
+					addr  "0x5e48c0"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: the endless flag, then the same two reads off the game rules; the structural match was held back for lack of field evidence and is the same address
 				}
 				"CPopulationManager::GetPopulationFilename"
 				{
@@ -12159,6 +12494,15 @@
 					lib   "server"
 					vtidx "323"
 					// verified: read by hand: `mov eax, [ecx + N]; ret`, the one-field read of CBaseCombatCharacter's last nav area that Linux has under CTFBot's name too; MSVC folds it with the base. Slot 323 of CTFBot's table (Linux 324), between ClearLastKnownArea and IsAreaTraversable, both matched
+				}
+				"CTFBot::GetTimeLeftToCapture"
+				{
+					type  "fixed"
+					sym   "_ZNK6CTFBot20GetTimeLeftToCaptureEv"
+					addr  "0x553040"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: IsInKothMode (game rules vcall +0x2e4), the enemy-team swap (2 and 3) into GetKothTeamTimer (0x48d650) and a tail jump to GetTimeRemaining (vcall +0x31c), else the round timer, else fldz: the Linux body; the consensus match was the same address. Thiscall, plain ret, float in st0
 				}
 				"CTFBot::Touch"
 				{
@@ -13153,6 +13497,15 @@
 					lib   "server"
 					// string
 				}
+				"CTFPlayer::MedicGetChargeLevel"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer19MedicGetChargeLevelEPP13CTFWeaponBase"
+					addr  "0x524530"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: the one matched callee of the Linux body is called; the structural match was held back for lack of field evidence and is the same address
+				}
 				"CTFPlayer::DoTauntAttack"
 				{
 					type  "fixed"
@@ -13871,6 +14224,15 @@
 					lib   "server"
 					// verified: string lead, agreed by strings: 13 shared string(s), 19/22 matched callees, windows/linux size 2912/5299
 				}
+				"CTFPlayer::CanMoveDuringTaunt"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer18CanMoveDuringTauntEv"
+					addr  "0x51aba0"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: IsCompetitiveMode then the same restart-time and round-time reads as the Linux body; the structural match was held back for lack of field evidence and is the same address
+				}
 				"CTFPlayer::RegenThink"
 				{
 					type  "fixed"
@@ -14209,6 +14571,24 @@
 					lib   "server"
 					// verified: read by hand: the whole UpdateCloakMeter, which opens with the IsPlayerClass(8) test that Linux's wrapper makes before its .part.0 clone. CTFPlayerShared::ConditionThink calls it first (0x51dc7b), then UpdateRageBuffsAndRage (0x52eb40, 'set_buff_type'), UpdateEnergyDrinkMeter and UpdateChargeMeter (0x52da80, 'charge_recharge_rate'), Linux's order. Thiscall, plain ret
 				}
+				"CTFPlayer::SetOffHandWeapon"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer16SetOffHandWeaponEP13CTFWeaponBase"
+					addr  "0x52af20"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: the same off-hand handle lookup as the Linux body; the structural match was held back for lack of field evidence and is the same address
+				}
+				"CTFPlayer::HolsterOffHandWeapon"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer20HolsterOffHandWeaponEv"
+					addr  "0x522fb0"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: the same off-hand handle lookup as the Linux body; the structural match was held back for lack of field evidence and is the same address
+				}
 				"CTFPlayer::TraceAttack"
 				{
 					type  "fixed"
@@ -14371,6 +14751,15 @@
 					lib   "server"
 					// verified: the same opening as the Linux body: the scene handle (0x2090 to 0x2084) passed to StopScriptedScene, then the byte flag set to 1 (0x2144 to 0x213c), the dword (0x2150 to 0x2148) cleared and the handle set to -1; in the name-ordered run it follows StateThinkDYING and precedes TakeHealth
 				}
+				"CTFPlayer::DropFlag"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer8DropFlagEb"
+					addr  "0x4eb8f0"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: the one matched callee of the Linux body is called; the structural match was held back for lack of field evidence and is the same address
+				}
 				"CTFPlayer::SetGrapplingHookTarget"
 				{
 					type  "fixed"
@@ -14379,6 +14768,15 @@
 					build "11087207"
 					lib   "server"
 					// verified: read by hand: the table had 0x50c120, a one-argument handle setter that ends at 0x50c147; this one follows it. Takes the target and the bool (ret 8) and adds conditions 0x63 and 0x64 for a target as Linux's body does at 0xcba282 and 0xcba294. Called by CTFProjectile_GrapplingHook::HookTarget (0x5faccd), twice by TFPlayerThink (0x50b112, 0x50b124), by 0x5fb69f (UpdateOnRemove) and by the script binding (0x5104dc), Linux's four callers
+				}
+				"CTFPlayer::RemoveInvisibility"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer18RemoveInvisibilityEv"
+					addr  "0x509e70"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: all four matched callees of the Linux body are called; the structural match was held back for lack of field evidence and is the same address
 				}
 				"CTFPlayer::CheckBlockBackstab"
 				{
@@ -14443,6 +14841,15 @@
 					build "11087207"
 					lib   "server"
 					// call
+				}
+				"CTFPlayerShared::RecalculatePlayerBodygroups"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFPlayerShared27RecalculatePlayerBodygroupsEv"
+					addr  "0x5297f0"
+					build "11087207"
+					lib   "server"
+					// verified: read against the Linux body, 11087207: UpdateWeaponBodyGroups with 0 and with 1 around the wearable update, as the Linux body; the structural match was held back for lack of field evidence and is the same address
 				}
 				"CTFPlayerShared::ConditionThink"
 				{

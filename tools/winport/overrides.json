@@ -5159,5 +5159,247 @@
   "rva": "0x2c10a0",
   "build": "11087207",
   "why": "read by hand: cdecl on the entity, the UnsetPlayerSimulated and player-simulated tests, then the vprof scope exit through vcall +0x68 as a jmp: the Linux body without its profile scope"
+ },
+ "_ZNK6CTFBot20GetTimeLeftToCaptureEv": {
+  "rva": "0x553040",
+  "build": "11087207",
+  "why": "read by hand: IsInKothMode (game rules vcall +0x2e4), the enemy-team swap (2 and 3) into GetKothTeamTimer (0x48d650) and a tail jump to GetTimeRemaining (vcall +0x31c), else the round timer, else fldz: the Linux body; the consensus match was the same address. Thiscall, plain ret, float in st0"
+ },
+ "_ZN16CTFMechanicalArm11ShockAttackEv": {
+  "rva": "0x61a020",
+  "build": "11087207",
+  "why": "read by hand: GetPlayerOwner (0x635110) then IsPlayer (vcall +0x14c) and the next-attack time test at +0x5d0, the Linux body's opening; the consensus match is the same address. Aligned-stack prologue, thiscall"
+ },
+ "_ZN11CTFWearable8CanEquipEP11CBaseEntity": {
+  "rva": "0x3d07a0",
+  "build": "11087207",
+  "why": "read by hand: GetStaticData (0x3c3da0) and UTIL_GetHolidayForString (0x36f8c0) in the Linux order, ret 4; the consensus match is the same address"
+ },
+ "_ZN18CTFGrenadeLauncher15SecondaryAttackEv": {
+  "rva": "0x611240",
+  "build": "11087207",
+  "vtidx": 288,
+  "why": "slot 288 of CTFGrenadeLauncher's table: a vcall, the owner's IsPlayer and a tail jump to CTFPlayer::DoClassSpecialSkill (0x51f680), as the Linux body; plain ret"
+ },
+ "_ZN19CTFPipebombLauncher15SecondaryAttackEv": {
+  "rva": "0x6238c0",
+  "build": "11087207",
+  "vtidx": 288,
+  "why": "slot 288 of CTFPipebombLauncher's table: the same opening as Linux's, with its .part.0 body inline (the detonation loop through vcalls +0x4bc and +0x18); plain ret"
+ },
+ "_ZN14CBaseAnimating19FindBodygroupByNameEPKc": {
+  "rva": "0x1ca650",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: its one matched callee is called as in the Linux body; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZN14CBaseAnimating17GetAttachmentBoneEi": {
+  "rva": "0x1cab50",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: the three matched callees of the Linux body are all called; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZN14CBaseAnimating16GetBoneTransformEiR11matrix3x4_t": {
+  "rva": "0x1cafc0",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: the three matched callees of the Linux body are all called; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZN14CBaseAnimating19InvalidateBoneCacheEv": {
+  "rva": "0x1ce640",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: the one matched callee of the Linux body is called; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZN14CBaseAnimating17ResetSequenceInfoEv": {
+  "rva": "0x1cecf0",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: both matched callees of the Linux body are called; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZN21CBaseAnimatingOverlay16GetLayerDurationEi": {
+  "rva": "0x1d1f40",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: same layer bounds test, 0x4c stride and flag bit as the Linux body; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZN20CBaseCombatCharacter13SetBloodColorEi": {
+  "rva": "0x1dbfd0",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: a single store of the argument, ret 4; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZN20CBaseCombatCharacter22SwitchToNextBestWeaponEP17CBaseCombatWeapon": {
+  "rva": "0x1dc050",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: the game rules vcall (+0x70) with the player and weapon, then the weapon switch, as the Linux body; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZN11CBaseEntity13GetDataObjectEi": {
+  "rva": "0x2c4020",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: the same bit test on the data object flags, bounds check and accessor table tail jump; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZN11CBaseEntity12GetNextThinkEPKc": {
+  "rva": "0x200be0",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: the same think-context walk and the default next-think path; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZNK11CBaseEntity10IsBSPModelEv": {
+  "rva": "0x201020",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: GetSolid through the collision property then the model type test, as the Linux body; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZN11CBaseEntity16SetTransmitStateEi": {
+  "rva": "0x1fc850",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: the same 0xffffffc7 mask on the edict flags and the PVS bit test; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZN11CBaseObject17SetPlasmaDisabledEf": {
+  "rva": "0x4c4040",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: NetworkStateChanged on the flag, the flag, the end time from curtime and the vcall after, as the Linux body; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZN11CBasePlayer12ForceButtonsEi": {
+  "rva": "0x2e0ed0",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: an or of the argument into the forced buttons, ret 4; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZN11CBasePlayer13SnapEyeAnglesERK6QAngle": {
+  "rva": "0x2e9220",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: three float stores and the snap flag set to 1, ret 4; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZN11CBasePlayer14UnforceButtonsEi": {
+  "rva": "0x2ea140",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: an and-not of the argument into the forced buttons, ret 4; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZN18CCollisionProperty24MarkPartitionHandleDirtyEv": {
+  "rva": "0x22ace0",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: the one matched callee of the Linux body is called; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZN18CCollisionProperty24SetSurroundingBoundsTypeE23SurroundingBoundsType_tPK6VectorS3_": {
+  "rva": "0x22ba60",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: the matched callee of the Linux body is called; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZNK8CNavArea8ContainsERK6Vector": {
+  "rva": "0x3df5b0",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: IsOverlapping inlined as the four bounds compares, then GetZ and the 0x20 tolerance, as the Linux body; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZN10CPathTrack7GetNextEv": {
+  "rva": "0x2ab370",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: the same handle lookup on the next-track handle then the same field read; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZN18CPopulationManager16IsInEndlessWavesEv": {
+  "rva": "0x5e48c0",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: the endless flag, then the same two reads off the game rules; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZNK6CTFBot17IsLineOfFireClearERK6Vector": {
+  "rva": "0x557270",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: the one matched callee of the Linux body is called; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZNK10CTFNavArea29IsValidForWanderingPopulationEv": {
+  "rva": "0x5d5050",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: the same 0x6000007 flag mask; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZN9CTFPlayer18CanMoveDuringTauntEv": {
+  "rva": "0x51aba0",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: IsCompetitiveMode then the same restart-time and round-time reads as the Linux body; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZN9CTFPlayer8DropFlagEb": {
+  "rva": "0x4eb8f0",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: the one matched callee of the Linux body is called; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZN9CTFPlayer20HolsterOffHandWeaponEv": {
+  "rva": "0x522fb0",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: the same off-hand handle lookup as the Linux body; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZN9CTFPlayer19MedicGetChargeLevelEPP13CTFWeaponBase": {
+  "rva": "0x524530",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: the one matched callee of the Linux body is called; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZN9CTFPlayer18RemoveInvisibilityEv": {
+  "rva": "0x509e70",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: all four matched callees of the Linux body are called; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZN9CTFPlayer16SetOffHandWeaponEP13CTFWeaponBase": {
+  "rva": "0x52af20",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: the same off-hand handle lookup as the Linux body; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZN15CTFPlayerShared27RecalculatePlayerBodygroupsEv": {
+  "rva": "0x5297f0",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: UpdateWeaponBodyGroups with 0 and with 1 around the wearable update, as the Linux body; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZNK19CTFPointWeaponMimic15GetFiringAnglesEv": {
+  "rva": "0x5e1da0",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: all four matched callees of the Linux body are called; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZNK13CTFWeaponBase12GetTFWpnDataEv": {
+  "rva": "0x635a60",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: GetWpnData then a dynamic cast of the result, as the Linux body; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZN11CAI_BaseNPC13GetActivityIDEPKc": {
+  "rva": "0x138a70",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: the one matched callee of the Linux body is called; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZN11CBaseEntity13GetTouchTraceEv": {
+  "rva": "0x2c40b0",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: returns the address of the global touch trace; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_Z24GetLoadoutPositionByNamePKc": {
+  "rva": "0x4b1640",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: the matched callee of the Linux body is called; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_Z18GetPlayerClassDataj": {
+  "rva": "0x468480",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: the class data table plus 0xc plus the index times 0x8f0; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_Z16InventoryManagerv": {
+  "rva": "0x3c9e20",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: returns the address of the global inventory manager; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_Z18PointInRespawnRoomPK11CBaseEntityRK6Vectorb": {
+  "rva": "0x456a00",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: the matched callee of the Linux body is called; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_Z21UTIL_GetCommandClientv": {
+  "rva": "0x272770",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: the matched callee of the Linux body is called; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_Z26UTIL_GetCommandClientIndexv": {
+  "rva": "0x272790",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: the command client global plus one; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_Z27WeaponID_IsSniperRifleOrBowi": {
+  "rva": "0x638a80",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: the same four weapon ids, 0x3d, 0x11, 0x4d and 0x63; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_Z15WeaponIdToAliasi": {
+  "rva": "0x53ef50",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: a bounds test and a lookup in the weapon names table; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZN15CBaseTempEntity14GetServerClassEv": {
+  "rva": "0x434720",
+  "build": "11087207",
+  "why": "read against the Linux body, 11087207: returns the address of the class's server class; the structural match was held back for lack of field evidence and is the same address"
  }
 }
