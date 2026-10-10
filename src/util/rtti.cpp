@@ -348,6 +348,7 @@ namespace RTTI
 		
 		DevMsg("RTTI::PreLoad: found %u RTTI\n", s_RTTI().size());
 		DevMsg("RTTI::PreLoad: found %u VT\n", s_VT().size());
+		Msg("RTTI::PreLoad: %s at base %08zx\n", LibMgr::Lib_ToString(Library::SERVER), LibMgr::GetInfo(Library::SERVER).BaseAddr());
 
 		std::map<size_t, std::string> vtSwapped;
 		for (auto &[name, ptr] : s_VT()) {
