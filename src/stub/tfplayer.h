@@ -486,6 +486,7 @@ public:
 	CTFWearable *GetEquippedWearableForLoadoutSlot(int iSlot)    { return ft_GetEquippedWearableForLoadoutSlot(this, iSlot); }
 	CBaseEntity *GetEntityForLoadoutSlot(int iSlot, bool bForceUseLoadout = false) { return ft_GetEntityForLoadoutSlot(this, iSlot, bForceUseLoadout); }
 	void RemoveInvisibility()                                    {        ft_RemoveInvisibility               (this); }
+	void DropAmmoPack(const CTakeDamageInfo &info, bool bEmpty, bool bDisguisedWeapon) { ft_DropAmmoPack(this, info, bEmpty, bDisguisedWeapon); }
 	void DoAnimationEvent(PlayerAnimEvent_t event, int nData = 0){        ft_DoAnimationEvent                 (this, event, nData); }
 #if defined _WINDOWS
 	/* No such function in server.dll: MSVC inlined it into its callers. The
@@ -666,6 +667,7 @@ private:
 	static MemberFuncThunk<      CTFPlayer *, CAttributeList *                > ft_GetAttributeList;
 	static MemberFuncThunk<      CTFPlayer *, CAttributeManager *             > ft_GetAttributeManager;
 	static MemberFuncThunk<      CTFPlayer *, void                            > ft_RemoveInvisibility;
+	static MemberFuncThunk<      CTFPlayer *, void, const CTakeDamageInfo &, bool, bool> ft_DropAmmoPack;
 	static MemberFuncThunk<      CTFPlayer *, void, PlayerAnimEvent_t, int    > ft_DoAnimationEvent;
 	static MemberFuncThunk<      CTFPlayer *, void, const char *              > ft_PlaySpecificSequence;
 	static MemberFuncThunk<      CTFPlayer *, void, taunts_t, int             > ft_Taunt;

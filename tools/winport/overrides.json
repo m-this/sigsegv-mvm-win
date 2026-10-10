@@ -4240,5 +4240,45 @@
   "rva": "0x4700f0",
   "build": "11087207",
   "why": "read by hand: what FX_FireBullets calls first (0x470824), as Linux's calls TE_FireBullets at 0xc26552. Builds a CRecipientFilter (0x30e970), AddRecipientsByPAS (0x30ee10), UsePredictionRules (0x30f540), then fills the temp entity, Linux's body. cdecl, plain ret"
+ },
+ "_ZNK15CTFBotMedicHeal16IsVisibleToEnemyEP6CTFBotRK6Vector": {
+  "rva": "0x5810d0",
+  "build": "11087207",
+  "why": "read by hand: takes the bot and the position (ret 8), and asks the bot's INextBot part (+0x2668) for its vision interface (+0xcc) to collect the known entities (+0xbc), then for each enemy (IsEnemy +0xd8) the entity's +0x414 with the position: what Linux's body does with CollectKnownEntities inline. Three callers, CTFBotMedicHeal::Update (0x583070) and twice ComputeFollowPosition (0x580120), Linux's three"
+ },
+ "_ZN14CTFTeamManager7GetTeamEi": {
+  "rva": "0x540490",
+  "build": "11087207",
+  "why": "read by hand: bounds-checks the index against the team count and returns the entry of the team array, Linux's body. FindTarget calls it with the enemy team (0x4ca7ac) right after TFTeamMgr (0x540a30, which returns s_TFTeamManager), as Linux's does at 0xca6eec. 22 direct callers here and on Linux. Thiscall, ret 4"
+ },
+ "_ZN15CTFPlayerShared10ModifyRageEf": {
+  "rva": "0x5246d0",
+  "build": "11087207",
+  "why": "read by hand: adds the argument to the rage meter at +0x288, Linux's offset, then SetRageMeter inline where Linux tail jumps to it. HandleRageGain (0x4f54e0) calls it at 0x4f55a5 and 0x4f566b, as Linux's does. 7 callers against Linux's 8. Thiscall, ret 4"
+ },
+ "_ZN14CWeaponMedigun9AddChargeEf": {
+  "rva": "0x61ab70",
+  "build": "11087207",
+  "why": "read by hand: adds the argument to the charge level at +0x824 with a state change and clamps it, Linux's body. CTFWeaponBase::ApplyOnHitAttributes (0x630800) calls it twice, as Linux's does at 0xdf6951 and 0xdf71d0; 7 callers here and on Linux. Thiscall, ret 4"
+ },
+ "_Z20UTIL_IsHolidayActivei": {
+  "rva": "0x36f8e0",
+  "build": "11087207",
+  "why": "read by hand: the holiday bits with UTIL_CalculateHolidays inline behind its 'calculated' flag (0xa7ef6c), Linux's body. TF_IsHolidayActive tail jumps to it (0x4a37a9) as Linux's calls it, and CTFGameRules::PlayerKilled calls it three times. cdecl, plain ret"
+ },
+ "_ZN18CFlagDetectionZone10StartTouchEP11CBaseEntity": {
+  "name": "CFlagDetectionZone::StartTouch",
+  "rva": "0x453010",
+  "build": "11087207",
+  "vtidx": 104,
+  "why": "read by hand: slot 104 of CFlagDetectionZone (Linux 105), anchored at 97 and 105 (Linux 98 and 106). Carries EntityIsFlagCarrier inline: IsPlayer, HasItem (0x522b10) and GetItem (0x521f80) on the entity, then the list insert and the output, Linux's StartTouch clone. Thiscall, ret 4"
+ },
+ "_ZN18CFlagDetectionZone19EntityIsFlagCarrierEP11CBaseEntity": {
+  "bad": true,
+  "why": "read by hand, 11087207: no body of its own. Its one Linux caller is CFlagDetectionZone::StartTouch, and here StartTouch (0x453010) carries it inline. Mapentity_Additions hooks StartTouch instead"
+ },
+ "_ZN9CTFPlayer18ShouldDropAmmoPackEv": {
+  "bad": true,
+  "why": "read by hand, 11087207: no body of its own. CTFPlayer::Event_Killed carries it inline at 0x4ed8c7 to 0x4ed906 (the MvM bot test through +0x71c, then the game rules' +0x2e0 and round state 7) before DropAmmoPack (0x4ed90f), and FeignDeath at 0x4f08aa. TFBot_Extensions drops a robot's weapon in Event_Killed instead"
  }
 }

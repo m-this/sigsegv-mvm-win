@@ -373,6 +373,7 @@ CAttributeManager *CTFPlayer::GetAttributeManager() { return rtti_cast<IHasAttri
 #endif
 MemberFuncThunk<      CTFPlayer *, CBaseEntity *, int, bool        > CTFPlayer::ft_GetEntityForLoadoutSlot            ("CTFPlayer::GetEntityForLoadoutSlot");
 MemberFuncThunk<      CTFPlayer *, void                            > CTFPlayer::ft_RemoveInvisibility               ("CTFPlayer::RemoveInvisibility");
+MemberFuncThunk<      CTFPlayer *, void, const CTakeDamageInfo &, bool, bool> CTFPlayer::ft_DropAmmoPack            ("CTFPlayer::DropAmmoPack");
 MemberFuncThunk<      CTFPlayer *, void, PlayerAnimEvent_t, int    > CTFPlayer::ft_DoAnimationEvent            ("CTFPlayer::DoAnimationEvent");
 MemberFuncThunk<      CTFPlayer *, void, const char *              > CTFPlayer::ft_PlaySpecificSequence        ("CTFPlayer::PlaySpecificSequence");
 MemberFuncThunk<      CTFPlayer *, void, taunts_t, int             > CTFPlayer::ft_Taunt                       ("CTFPlayer::Taunt");
