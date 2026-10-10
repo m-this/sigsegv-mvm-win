@@ -144,7 +144,7 @@ jobs:
         done
         # Bots alone never wake a hibernating server, and MvM:Robot_Limit
         # fills the spectator team only once it wakes, as a joining player does.
-        bedbin/rcon "sv_hibernate_when_empty 0" > /dev/null
+        bedbin/rcon "tf_allow_server_hibernation 0" > /dev/null
         for c in "meta list" "sm exts list" "sm plugins list" "sig_list_mods"; do
           echo "## $c"; bedbin/rcon "$c" 2>&1 | tee "out/$(echo $c | tr ' ' _).txt" | head -60
         done

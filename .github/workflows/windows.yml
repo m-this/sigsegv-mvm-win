@@ -381,7 +381,7 @@ jobs:
       # Bots alone never wake a hibernating server, and MvM:Robot_Limit fills
       # the spectator team only once it wakes: a wave that opens on a Squad
       # then waits forever. A player joining is what wakes a real server.
-      run: tools/winport/bed/boot.ps1 -Commands 'sv_hibernate_when_empty 0','sig_pop_wave_stall_dump 600','sig_list_mods' -Probe "-only-sigmod -mode normal -shards 8 -shard ${{ matrix.shard }} -timeout 900s ${{ inputs.probe_args }}"
+      run: tools/winport/bed/boot.ps1 -Commands 'tf_allow_server_hibernation 0','sig_pop_wave_stall_dump 600','sig_list_mods' -Probe "-only-sigmod -mode normal -shards 8 -shard ${{ matrix.shard }} -timeout 900s ${{ inputs.probe_args }}"
     - if: always() && steps.focus.outputs.idle != 'true'
       shell: pwsh
       run: tools/winport/bed/collect.ps1 -Out bed-${{ matrix.shard }}
