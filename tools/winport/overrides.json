@@ -4280,5 +4280,83 @@
  "_ZN9CTFPlayer18ShouldDropAmmoPackEv": {
   "bad": true,
   "why": "read by hand, 11087207: no body of its own. CTFPlayer::Event_Killed carries it inline at 0x4ed8c7 to 0x4ed906 (the MvM bot test through +0x71c, then the game rules' +0x2e0 and round state 7) before DropAmmoPack (0x4ed90f), and FeignDeath at 0x4f08aa. TFBot_Extensions drops a robot's weapon in Event_Killed instead"
+ },
+ "_ZN15CHeadlessHatman18OnTakeDamage_AliveERK15CTakeDamageInfo": {
+  "rva": "0x59bfe0",
+  "build": "11087207",
+  "vtidx": 283,
+  "why": "read by hand: slot 283 of CHeadlessHatman (Linux 284). The slots before it line up with Linux's AddPlayerItem and RemovePlayerItem (one shared empty body here, 0x1521d0, at 280 and 281) and CanBecomeServerRagdoll (282); the one after is NextBotCombatCharacter::OnTakeDamage_Dying (0x40fde0, Linux 285). Holds 'halloween_boss_injured', the effect Linux's dispatches first. Thiscall, ret 4"
+ },
+ "_ZN15CHeadlessHatmanD2Ev": {
+  "name": "CHeadlessHatman [D2]",
+  "rva": "0x59a9a0",
+  "build": "11087207",
+  "why": "read by hand: slot 0 of CHeadlessHatman, the scalar deleting destructor with the class's destructor inline: it writes CHeadlessHatman's two vtables, releases the components at +0x910 and +0x914, calls the base destructors and frees on the flag at [ebp+8], ret 4. Nothing derives from the class, so this is every HHH's destructor. SigMod's Windows DETOUR_DECL_DTOR takes that flag"
+ },
+ "_ZN17CBaseCombatWeapon17SetViewModelIndexEi": {
+  "rva": "0x1e3f40",
+  "build": "11087207",
+  "vtidx": 249,
+  "why": "read by hand: slot 249 of CBaseCombatWeapon (Linux 255), anchored at 240, 250 and 252 (Linux 246, 256 and 258). Stores the argument at +0x5c8 with a state change when it differs, Linux's body at +0x5d4 (weapon fields are 0xc lower here, as for CheckReload). Thiscall, ret 4"
+ },
+ "_ZN16CObjectSentrygun22MakeDisposableBuildingEP9CTFPlayer": {
+  "rva": "0x4cc890",
+  "build": "11087207",
+  "vtidx": 371,
+  "why": "read by hand: slot 371 of CObjectSentrygun (Linux 373). Of the sentry's run here (0x4cc950, 0x4cc890, then the shared ShouldBeActive 0x443220 and OnGoActive 0x4ccf70), this is the second of the two sentry overrides, as MakeDisposableBuilding follows MakeMiniBuilding on Linux. Same body: GetNumObjects (0x522550), CanBuild (0x51a690), SetHealth (0x4c3e80) and SetModelScale. Thiscall, ret 4"
+ },
+ "_ZN21CPropVehicleDriveable3UseEP11CBaseEntityS1_8USE_TYPEf": {
+  "rva": "0x3734d0",
+  "build": "11087207",
+  "vtidx": 103,
+  "why": "read by hand: slot 103 of CPropVehicleDriveable (Linux 104), anchored at 97 and 104 to 106 (Linux 98 and 105 to 107). Opens with the activator's IsPlayer as Linux's does; four arguments, ret 0x10"
+ },
+ "_ZN6CTFJar19CreateJarProjectileERK6VectorRK6QAngleS2_S2_P20CBaseCombatCharacterRK13CTFWeaponInfo": {
+  "rva": "0x613f40",
+  "build": "11087207",
+  "vtidx": 500,
+  "why": "read by hand: slot 500 of CTFJar (Linux 507), anchored at 474 to 494 (Linux 481 to 501). Creates 'tf_projectile_jar' with CreateNoSpawn and DispatchSpawn, the Linux body"
+ },
+ "_ZN10CTFJarMilk19CreateJarProjectileERK6VectorRK6QAngleS2_S2_P20CBaseCombatCharacterRK13CTFWeaponInfo": {
+  "rva": "0x6134d0",
+  "build": "11087207",
+  "vtidx": 500,
+  "why": "read by hand: slot 500 of CTFJarMilk (Linux 507), anchored at 474 to 494 (Linux 481 to 501). Creates 'tf_projectile_jar_milk' with CreateNoSpawn and DispatchSpawn, the Linux body"
+ },
+ "_ZN9CTFJarGas19CreateJarProjectileERK6VectorRK6QAngleS2_S2_P20CBaseCombatCharacterRK13CTFWeaponInfo": {
+  "rva": "0x615680",
+  "build": "11087207",
+  "vtidx": 500,
+  "why": "read by hand: slot 500 of CTFJarGas (Linux 507), anchored at 474 to 494 (Linux 481 to 501). Creates 'tf_projectile_jar_gas' with CreateNoSpawn and DispatchSpawn, the Linux body"
+ },
+ "_ZN10CTFCleaver19CreateJarProjectileERK6VectorRK6QAngleS2_S2_P20CBaseCombatCharacterRK13CTFWeaponInfo": {
+  "rva": "0x613680",
+  "build": "11087207",
+  "vtidx": 500,
+  "why": "read by hand: slot 500 of CTFCleaver (Linux 507), anchored at 474 to 494 (Linux 481 to 501). Creates 'tf_projectile_cleaver' with CreateNoSpawn and DispatchSpawn, the Linux body"
+ },
+ "_ZN11CTFRobotArm5SmackEv": {
+  "rva": "0x62f3a0",
+  "build": "11087207",
+  "vtidx": 473,
+  "why": "read by hand: slot 473 of CTFRobotArm (Linux 480), anchored at 470 and 482 (Linux 477 and 489). GetTFPlayerOwner, the virtuals Linux's makes, and CTFWrench::Smack (0x62f470) at the end as Linux's calls it. Thiscall, plain ret"
+ },
+ "_ZN9CTFWrench5SmackEv": {
+  "rva": "0x62f470",
+  "build": "11087207",
+  "vtidx": 473,
+  "why": "read by hand: slot 473 of CTFWrench (Linux 480). GetTFPlayerOwner, AngleVectors (0x6d9680), the virtual at +0x450 (Linux +0x454), then the swing trace, Linux's body; CTFRobotArm::Smack calls it. Thiscall, plain ret"
+ },
+ "_ZN18CTFWeaponBaseMelee12DoSwingTraceER10CGameTrace": {
+  "rva": "0x63d270",
+  "build": "11087207",
+  "vtidx": 472,
+  "why": "read by hand: slot 472 of the melee weapons (Linux 479), anchored at 470 and 482. Calls DoSwingTraceInternal (0x63d290) and returns, Linux's body. Thiscall, ret 4"
+ },
+ "_ZN14CTFCompoundBow16GetChargeMaxTimeEv": {
+  "rva": "0x605320",
+  "build": "11087207",
+  "vtidx": 2,
+  "why": "read by hand: slot 2 of CTFCompoundBow's table at offset 0x800, its ITFChargeUpWeapon base, where MSVC keeps the override (Linux has it at 503 of the primary table and a thunk in the secondary). Steps back 0x800 to the bow, calls the virtual at +0x678 with 1.0 and ApplyRefireSpeedModifications (0x6050e0), Linux's body. Takes the ITFChargeUpWeapon part as this"
  }
 }
