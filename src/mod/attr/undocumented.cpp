@@ -11,7 +11,7 @@ namespace Mod::Attr::Undocumented
 		"");
 	
 	
-	DETOUR_DECL_STATIC(float, CAttributeManager_ApplyAttributeFloatWrapper, float val, CBaseEntity *ent, string_t name, CUtlVector<CBaseEntity *> *vec)
+	DETOUR_DECL_MEMBER(float, CAttributeManager_ApplyAttributeFloatWrapper, float val, CBaseEntity *ent, string_t name, CUtlVector<CBaseEntity *> *vec)
 	{
 		const char *attr = STRING(name);
 		
@@ -25,7 +25,7 @@ namespace Mod::Attr::Undocumented
 			return cvar_force_distribute_currency_on_death.GetFloat();
 		}
 		
-		return DETOUR_STATIC_CALL(val, ent, name, vec);
+		return DETOUR_MEMBER_CALL(val, ent, name, vec);
 	}
 	
 	
@@ -34,7 +34,7 @@ namespace Mod::Attr::Undocumented
 	public:
 		CMod() : IMod("Attr:Undocumented")
 		{
-			MOD_ADD_DETOUR_STATIC(CAttributeManager_ApplyAttributeFloatWrapper, "CAttributeManager::ApplyAttributeFloatWrapper");
+			MOD_ADD_DETOUR_MEMBER(CAttributeManager_ApplyAttributeFloatWrapper, "CAttributeManager::ApplyAttributeFloatWrapper");
 		}
 	};
 	CMod s_Mod;
