@@ -323,10 +323,9 @@
   "why": "corroborated by tools/winport/corroborate.py: calls all 7 of the Linux function's matched callees, and no string disagrees"
  },
  "_ZN14CWeaponMedigun15HealTargetThinkEv": {
-  "rva": "0x61c340",
+  "rva": "0x61c350",
   "build": "11087207",
-  "carried": "from 11076587 0x61ce50 by tools/winport/carry.py: server.dll, 668 bytes",
-  "why": "corroborated by tools/winport/corroborate.py: calls all 6 of the Linux function's matched callees, and no string disagrees"
+  "why": "read by hand: the table had 0x61c340, which is 'mov eax, 0x32; ret'; corroborate.py read past its end. This body follows the int3 padding, references the think name 'MedigunHealTargetThink' through the pointer at 0x9d2cb4 (0x61c59c, 0x61c5c3) as Linux's ThinkSet and SetNextThink do, and StartHealing (0x61bb80) sets it as the think at 0x61bd81"
  },
  "_ZN14CWeaponMedigun18StartHealingTargetEP11CBaseEntity": {
   "rva": "0x61e830",
@@ -3138,8 +3137,10 @@
   "why": "read by hand from CTFPlayer::OnTakeDamage, which calls it twice with (econ entity, attacker, victim, event 0x52 or 0x5e, amount), cdecl, add esp 0x28 for both. MSVC folded the econ entity wrapper and the IEconItemInterface body into this one function: it takes the entity, not the interface, and reaches the item through +0x4ac itself. Its owner, the second argument, is where the Linux one is, which is all the Weapon_Shoot detour reads: a fake weapon's damage with no player owner faulted here reading owner+0xefc"
  },
  "_ZN28CTFGrenadePipebombProjectile15StickybombTouchEP11CBaseEntity": {
-  "bad": true,
-  "why": "the vtable match (knownvtidx, slot 262 for Linux +0x3ec) lands on 0x130ba0, an empty body MSVC shares with other empty virtuals (CTFWeaponBaseGun's slot 475 holds it too), not the touch that sticks a bomb to a surface. Hooked there, SigMod's StickybombTouch ran in place of another virtual of every pipebomb, and missions with stickies ran a thousand times slower"
+  "rva": "0x130600",
+  "build": "11087207",
+  "vtidx": 262,
+  "why": "read by hand: empty on Linux too (a lone ret at 0xda9ad0, slot 263). Here slot 262 of CTFGrenadePipebombProjectile holds the shared 'ret 4' at 0x130600: counting back from the end of the table, PreArmThink (slot 263, 0x6108e0, calls slot 257 through +0x404 as Linux's calls GetLiveTime) and ArmThink (264) follow it, and slot 257 is GetLiveTime (0x60fa80). The vtidx makes SigMod hook the slot in this class's table and the ones inheriting it, never the shared body, which is what went wrong with the knownvtidx match before"
  },
  "_Z27GetFileWeaponInfoFromHandlet": {
   "rva": "0x39ae10",
@@ -3748,9 +3749,9 @@
   "why": "the same opening as the Linux body: the scene handle (0x2090 to 0x2084) passed to StopScriptedScene, then the byte flag set to 1 (0x2144 to 0x213c), the dword (0x2150 to 0x2148) cleared and the handle set to -1; in the name-ordered run it follows StateThinkDYING and precedes TakeHealth"
  },
  "_ZN9CTFPlayer22SetGrapplingHookTargetEP11CBaseEntityb": {
-  "rva": "0x50c120",
+  "rva": "0x50c170",
   "build": "11087207",
-  "why": "AddCond and RemoveCond pairs, InCond, GetEntityForLoadoutSlot twice with a dynamic_cast each, MakeBleed and the final AddCond in the Linux order; between SetCustomModelRotation and SetObserverMode in the name-ordered run, 5 of 5 matched callees"
+  "why": "read by hand: the table had 0x50c120, a one-argument handle setter that ends at 0x50c147; this one follows it. Takes the target and the bool (ret 8) and adds conditions 0x63 and 0x64 for a target as Linux's body does at 0xcba282 and 0xcba294. Called by CTFProjectile_GrapplingHook::HookTarget (0x5faccd), twice by TFPlayerThink (0x50b112, 0x50b124), by 0x5fb69f (UpdateOnRemove) and by the script binding (0x5104dc), Linux's four callers"
  },
  "_ZN9CTFPlayer31RemoveAllOwnedEntitiesFromWorldEb": {
   "rva": "0x509b00",
@@ -4044,5 +4045,130 @@
  "_ZNK16CTFBotMainAction18SelectCloserThreatEP6CTFBotPK12CKnownEntityS4_": {
   "bad": true,
   "why": "read by hand, 11087207: no body of its own, MSVC inlined it into CTFBotMainAction::SelectMoreDangerousThreatInternal (0x56c1b0), its only caller on Linux as well (call at 0xe2969f). Inline at +0x5b to +0xa8: threat->GetEntity() (vcall +0xc, Linux +0x10), INextBot::GetRangeSquaredTo (+0x12c on the INextBot part at bot+0x2668) for each, and threat1 kept when the second range is above the first, as Linux's cmova does. The name stays unresolved on purpose: the stub implements the body on Windows with INextBot::GetRangeSquaredTo"
+ },
+ "_ZN14CAttributeList20DestroyAllAttributesEv": {
+  "rva": "0x3c2f40",
+  "build": "11087207",
+  "why": "read by hand: Linux's body: when the count at +0x10 is not zero, zero it, free the memory at +0x4 when the allocation count at +0xc is not negative, copy the element pointer to +0x14, call the manager at +0x18 through +0x34 (Linux +0x38, one destructor slot less) and tail jump to the list's own virtual at +0x4. Called by CUpgrades::ApplyUpgradeToItem's helper 0x5f5380 at 0x5f5435 and 0x5f54ee, each right after CTFPowerupBottle::RemoveEffect (0x4b2180), where the Linux clone calls it after RemoveEffect at 0xf6a0ec and 0xf6a149. CEconItemView::Init calls it too (0x3c4069). Thiscall, plain ret"
+ },
+ "_ZN14CAttributeList12AddAttributeEP18CEconItemAttribute": {
+  "bad": true,
+  "why": "read by hand, 11087207: no body of its own. Its only Linux callers are the two CEconDynamicAttributesForDemosIterator::OnIterateAttributeValue overloads, and here both carry it inline (0x3c4240 and 0x3c4350: GetAttributeDefinition, CUtlVector::InsertBefore 0x3c2ee0 and the manager notification). SigMod never calls it"
+ },
+ "_ZN11CBaseObject14StartPlacementEP9CTFPlayer": {
+  "rva": "0x4c5390",
+  "build": "11087207",
+  "vtidx": 339,
+  "why": "read by hand: slot 339 of CObjectTeleporter and CObjectSapper, which share it as Linux's 340 does (both hold 0xc84ac0 there), while CObjectSentrygun (0x4ce5b0) and CObjectDispenser (0x4c7e60) override it as on Linux. The slots around agree: 335 is the one all four override (Linux 336), 336 to 338 are shared by all four (Linux 337 to 339). Same body: SetSolidFlags with 4 or'd in first (0x4c53ac), then the placement fields. Thiscall, ret 4"
+ },
+ "_ZN15CCollisionEvent13PostCollisionEP17vcollisionevent_t": {
+  "rva": "0x2b7840",
+  "build": "11087207",
+  "vtidx": 1,
+  "why": "read by hand: slot 1 of CCollisionEvent's table at offset 0, after PreCollision, as on Linux. Same body with every virtual call 4 lower than Linux's (+0x44, +0x5c, +0xcc, +0x2a0 and +0x298 for Linux +0x48, +0x60, +0xd0, +0x2a4 and +0x29c): one destructor slot less. Thiscall, ret 4"
+ },
+ "_ZN13CGameMovement12CheckFallingEv": {
+  "name": "CGameMovement::CheckFalling [clone]",
+  "rva": "0x273930",
+  "build": "11087207",
+  "why": "read by hand: the whole CGameMovement::CheckFalling, slot 44 (Linux 45), where Linux detours the .part.0 clone GCC split after its ground entity and fall velocity test. Its only callers are the vtable and CTFGameMovement::CheckFalling's tail jump (0x471c98); Linux's FullWalkMove calls the clone directly, this build reaches it through the virtual. SigMod's detour makes the same test itself before it does anything. Thiscall, plain ret"
+ },
+ "_ZN10CTFMinigun12SharedAttackEv": {
+  "rva": "0x620490",
+  "build": "11087207",
+  "why": "read by hand: the table had 0x620430, which is SetWeaponState; matchfuncs found no start at 0x620490 and gave the string match to the function before it. This body opens with the owner and IsAlive tests, holds 'uses_ammo_while_aiming' and 'mult_minigun_spinup_time', and calls SetWeaponState at 0x620549, 0x6205ab, 0x6205d6 and 0x6206df. CTFMinigun::PrimaryAttack (0x61ff70) and SecondaryAttack (0x6203df) tail jump to it, as Linux's do at 0xdce580 and 0xdce5c1. Thiscall, plain ret"
+ },
+ "_ZN10CTFMinigun14SetWeaponStateE14MinigunState_t": {
+  "rva": "0x620430",
+  "build": "11087207",
+  "why": "read by hand: compares the argument with m_iWeaponState (+0x88c), and when it changes from idle, starting or spinning down stamps the two times at +0x8c8 and +0x8c0, then NetworkStateChanged and the store, Linux's body. Called only by SharedAttack here (four sites); WindUp, WindDown, WeaponReset and HandleFireOnEmpty carry it inline. Thiscall, ret 4"
+ },
+ "_ZN9CTFPlayer16IsAllowedToTauntEv": {
+  "rva": "0x523a80",
+  "build": "11087207",
+  "why": "read by hand: the first call of CTFPlayer::Taunt (0x5118de) and of PlayTauntSceneFromItem (0x50625e), as on Linux, and called from the HandleTauntCommand wrapper (0x4f5739) and CTFFlameThrower::UseRage (0x60be2c), Linux's other two callers. Tests conditions 0x11, 0x75, 0x52, 0x78, 0x13 and 0xe through InCond as Linux does, with the rest inline. Thiscall, plain ret"
+ },
+ "_ZN9CTFPlayer14CanGoInvisibleEb": {
+  "rva": "0x51aaa0",
+  "build": "11087207",
+  "why": "read by hand: takes the bool (ret 4), calls HasTheFlag (0x522b50) and, when it says no, the hint system with hint 7, as Linux's body does at 0xd1c192 and 0xd1c226; the cloak blocking checks follow. Callers are CTFPlayer::OnTakeDamage (0x503250, the inlined SpyDeadRingerDeath) and CTFWeaponInvis::ActivateInvisibilityWatch (0x61278b), Linux's two callers"
+ },
+ "_ZN15CTFPlayerShared16UpdateCloakMeterEv": {
+  "name": "CTFPlayerShared::UpdateCloakMeter [clone]",
+  "rva": "0x52dc80",
+  "build": "11087207",
+  "why": "read by hand: the whole UpdateCloakMeter, which opens with the IsPlayerClass(8) test that Linux's wrapper makes before its .part.0 clone. CTFPlayerShared::ConditionThink calls it first (0x51dc7b), then UpdateRageBuffsAndRage (0x52eb40, 'set_buff_type'), UpdateEnergyDrinkMeter and UpdateChargeMeter (0x52da80, 'charge_recharge_rate'), Linux's order. Thiscall, plain ret"
+ },
+ "_ZN15CTFPlayerShared22UpdateEnergyDrinkMeterEv": {
+  "name": "CTFPlayerShared::UpdateEnergyDrinkMeter [clone]",
+  "rva": "0x52e1d0",
+  "build": "11087207",
+  "why": "read by hand: the whole UpdateEnergyDrinkMeter, opening with the IsPlayerClass(1) test of Linux's wrapper; the third of the four meter updates ConditionThink makes (0x51dc89), as on Linux. Thiscall, plain ret"
+ },
+ "_ZN15CTFPlayerShared20PulseMedicRadiusHealEv": {
+  "name": "CTFPlayerShared::PulseMedicRadiusHeal [clone]",
+  "rva": "0x5285f0",
+  "build": "11087207",
+  "why": "read by hand: the whole PulseMedicRadiusHeal, opening with the +0x1f1 test Linux's ConditionThink makes before its clone (0xd2feff), and holding 'weapon_blocks_healing' (0x5287d5) as the clone does. ConditionThink calls it at 0x51def5. Thiscall, plain ret"
+ },
+ "_ZN14CWeaponMedigun15CycleResistTypeEv": {
+  "name": "CWeaponMedigun::CycleResistType [clone]",
+  "rva": "0x61afd0",
+  "build": "11087207",
+  "why": "read by hand: the whole CycleResistType, opening with the medigun type attribute test of Linux's wrapper; then GetChargeType (0x61c280), GetConditionProvider and RemoveCond twice, RecalculateChargeEffects twice (0x529550) and AddCond twice, the clone's body. Callers are CWeaponMedigun::ItemPostFrame (0x61c9e6) and CTFBotMedicHeal::Update (0x582600), Linux's two. Thiscall, plain ret"
+ },
+ "_ZN9CTFPlayer10ItemsMatchEP19TFPlayerClassData_tP13CEconItemViewS3_P13CTFWeaponBase": {
+  "name": "CTFPlayer::ItemsMatch [clone]",
+  "rva": "0x4fd1c0",
+  "build": "11087207",
+  "why": "read by hand: the whole ItemsMatch with all four arguments (ret 0x10), opening with the null and +0x54 test of Linux's wrapper on the current item, then the item ID compare and GetStaticData. Called by ManageBuilderWeapons (0x4fd40c), ManageRegularWeapons (0x4fd95b) and ValidateWeapons (0x514470); ValidateWearables carries it inline. Takes the class data the Linux clone drops, so SigMod's Windows detour declares it"
+ },
+ "_ZN9CTFPlayer20InspectButtonPressedEv": {
+  "rva": "0x4fb980",
+  "build": "11087207",
+  "why": "read by hand: what ClientCommandKeyValues calls for '+inspect_server' (0x48685b; '-inspect_server' calls 0x4fb9d0), as Linux's tail jumps to it at 0xc4e189. Sets the inspect time (+0x25b8, Linux +0x25c0) to curtime when it differs. Thiscall, plain ret"
+ },
+ "_ZN11CEventQueue13ServiceEventsEv": {
+  "rva": "0x226330",
+  "build": "11087207",
+  "why": "read by hand: the table had 0x226320, the ServiceEventQueue wrapper that loads g_EventQueue into ecx and jumps here. This body holds 'unhandled input: (%s) -> (%s), from (%s,%s); target entity not found'"
+ },
+ "_ZN11CBasePlayer13SetPunchAngleERK6QAngle": {
+  "name": "CBasePlayer::SetPunchAngle",
+  "rva": "0x2e8800",
+  "build": "11087207",
+  "why": "read by hand: compares the three components with m_Local.m_vecPunchAngle (+0x8f0) and stores the angle with a state change, Linux's body. FireProjectile calls it right after the inlined UpdatePunchAngles' SharedRandomInt('ShotgunPunchAngle') (0x63b970), which is where SigMod's Windows code needs it. Thiscall, ret 4"
+ },
+ "_ZN17CBaseCombatWeapon14SendWeaponAnimEi": {
+  "name": "CBaseCombatWeapon::SendWeaponAnim",
+  "rva": "0x1e3a30",
+  "build": "11087207",
+  "vtidx": 250,
+  "why": "read by hand: slot 250 of CBaseCombatWeapon (Linux 256, six lower as for the other weapon virtuals). CEconEntity::TranslateViewmodelHandActivity (0x39faf0) on the activity, then SetIdealActivity inline: SelectWeightedSequence (0x1cf200), false on -1, the ideal activity and sequence at +0x5f0 and +0x5ec, FindTransitionSequence (0x1ca6b0, its only weapon caller), the 0xab compare. SetIdealActivity has no body of its own here. CTFWeaponBase::SendWeaponAnim calls it at 0x637a7f and 0x637b03"
+ },
+ "_ZN17CBaseCombatWeapon16SetIdealActivityE8Activity": {
+  "bad": true,
+  "why": "read by hand, 11087207: no body of its own. FindTransitionSequence has one weapon caller, CBaseCombatWeapon::SendWeaponAnim (0x1e3a30), which carries SetIdealActivity inline after the activity translation. SigMod reaches it there on Windows"
+ },
+ "_ZN13CObjectSapper16FinishedBuildingEv": {
+  "name": "CObjectSapper::FinishedBuilding",
+  "rva": "0x4c86b0",
+  "build": "11087207",
+  "vtidx": 344,
+  "why": "read by hand: slot 344 of CObjectSapper (Linux 346). Holds 'player_sapped_object', 'Weapon_Sapper.Plant' and 'SapperThink' as Linux's does, and carries GetSapperSoundName inline: 'Weapon_%s.Timer' at 0x4c8938, falling back to 'Weapon_Sapper.Timer', played at 0x4c895d. Thiscall, plain ret"
+ },
+ "_ZN10CTFMinigun11WeaponResetEv": {
+  "name": "CTFMinigun::WeaponReset",
+  "rva": "0x620bb0",
+  "build": "11087207",
+  "vtidx": 430,
+  "why": "read by hand: slot 430 of CTFMinigun (Linux 437), where CTFWeaponBaseGun holds 0x638c90, which this calls first as Linux's calls CTFWeaponBase::WeaponReset. Then the owner, RemoveCond, TeamFortress_SetSpeed and the weapon state at +0x88c set inline. Thiscall, plain ret"
+ },
+ "_ZN10CTFMinigun17HandleFireOnEmptyEv": {
+  "name": "CTFMinigun::HandleFireOnEmpty",
+  "rva": "0x61fd20",
+  "build": "11087207",
+  "vtidx": 277,
+  "why": "read by hand: slot 277 of CTFMinigun (Linux 283), where the base gun holds 0x1e1470. Sets the weapon state at +0x88c inline twice around SendWeaponAnim through +0x3e8, as Linux's calls SetWeaponState twice around SendWeaponAnim. Thiscall, plain ret"
  }
 }

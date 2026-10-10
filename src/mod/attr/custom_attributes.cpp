@@ -322,6 +322,25 @@ namespace Mod::Attr::Custom_Attributes
 	CBaseAnimating *projectile_arrow = nullptr;
 
 	bool force_send_client = false;
+#if defined _WINDOWS
+	/* CRecipientFilter::IgnorePredictionCull is inline there. A host the
+	 * prediction system does not suppress gets the effect all the same. */
+	CBaseEntity *force_send_client_host = nullptr;
+#endif
+	void SetForceSendClient(bool force)
+	{
+		force_send_client = force;
+#if defined _WINDOWS
+		auto &prediction = g_RecipientFilterPredictionSystem.GetRef();
+		if (force) {
+			force_send_client_host = prediction.m_pSuppressHost;
+			prediction.m_pSuppressHost = nullptr;
+		} else {
+			prediction.m_pSuppressHost = force_send_client_host;
+			force_send_client_host = nullptr;
+		}
+#endif
+	}
 
 	void AttackEnemyProjectiles( CTFPlayer *player, CTFWeaponBase *weapon, int shoot_projectiles)
 	{
@@ -1057,7 +1076,7 @@ namespace Mod::Attr::Custom_Attributes
 				GET_STRING_ATTRIBUTE(weapon, projectile_trail_particle, particlename);
 				if (particlename != nullptr) {
 
-					force_send_client = true;
+					SetForceSendClient(true);
 					CRecipientFilter filter;
 					filter.AddAllPlayers();
 					Vector color0 = weapon->GetParticleColor(1);
@@ -1069,7 +1088,7 @@ namespace Mod::Attr::Custom_Attributes
 					} else {
 						DispatchParticleEffect(particlename, PATTACH_ABSORIGIN_FOLLOW, proj, nullptr, vec3_origin, false, color0, color1, true, false, nullptr, &filter);
 					}
-					force_send_client = false;
+					SetForceSendClient(false);
 				}
 				if (i < attr_projectile_count - 1)
 					weapon->ModifyProjectile(proj);
@@ -1407,10 +1426,10 @@ namespace Mod::Attr::Custom_Attributes
 			CALL_ATTRIB_HOOK_INT_ON_OTHER( stickbomb, iLargeExplosion, use_large_smoke_explosion );
 			if ( iLargeExplosion > 0 )
 			{
-				force_send_client = true;
+				SetForceSendClient(true);
 				DispatchParticleEffect( "explosionTrail_seeds_mvm", info.m_vecOrigin , vec3_angle );
 				DispatchParticleEffect( "fluidSmokeExpl_ring_mvm", info.m_vecOrigin , vec3_angle);
-				force_send_client = false;
+				SetForceSendClient(false);
 			}
 			//DevMsg("mini crit used: %d\n",minicrit);
 			//info.m_DmgInfo->SetDamageType(info.m_DmgInfo->GetDamageType() & (~DMG_USEDISTANCEMOD));
@@ -1484,6 +1503,26 @@ namespace Mod::Attr::Custom_Attributes
 
 	DETOUR_DECL_MEMBER(bool, CTFGameMovement_CheckJumpButton)
 	{
+#if defined _WINDOWS
+		/* PreventBunnyJumping and ToggleParachute are inline here. The jump
+		 * clamp is this function's only read of m_flMaxspeed, so a speed it
+		 * cannot reach turns the clamp off; the parachute redeploy convar is
+		 * only read by the parachute toggle. */
+		auto jumper = ToTFPlayer(reinterpret_cast<CGameMovement *>(this)->player);
+		float maxspeedRestore = -1.0f;
+		if (jumper != nullptr && GetFastAttributeInt(jumper, 0, ALLOW_BUNNY_HOP) != 0) {
+			maxspeedRestore = jumper->MaxSpeed();
+			jumper->SetMaxSpeed(FLT_MAX / 2.0f);
+		}
+		static CValueOverride_ConVar<bool> tf_parachute_deploy_toggle_allowed("tf_parachute_deploy_toggle_allowed");
+		int parachuteRedeploy = 0;
+		if (jumper != nullptr) {
+			CALL_ATTRIB_HOOK_INT_ON_OTHER(jumper, parachuteRedeploy, parachute_redeploy);
+		}
+		if (parachuteRedeploy != 0) {
+			tf_parachute_deploy_toggle_allowed.Set(true);
+		}
+#endif
 		bool restoreDucking = false;
 		if (process_movement_player != nullptr) {
 			auto player = ToTFPlayer(process_movement_player);
@@ -1496,6 +1535,14 @@ namespace Mod::Attr::Custom_Attributes
 		if (restoreDucking) {
 			process_movement_player->m_fFlags |= FL_DUCKING;
 		}
+#if defined _WINDOWS
+		if (maxspeedRestore >= 0.0f) {
+			jumper->SetMaxSpeed(maxspeedRestore);
+		}
+		if (parachuteRedeploy != 0) {
+			tf_parachute_deploy_toggle_allowed.Reset();
+		}
+#endif
 		if (ret && process_movement_player != nullptr) {
 			auto player = ToTFPlayer(process_movement_player);
 			//CAttributeList *attrlist = player->GetAttributeList();
@@ -1516,10 +1563,10 @@ namespace Mod::Attr::Custom_Attributes
 				CALL_ATTRIB_HOOK_INT_ON_OTHER( player, attr_jump, bot_custom_jump_particle );
 				if (attr_jump) {
 					const char *particlename = "rocketjump_smoke";
-					force_send_client = true;
+					SetForceSendClient(true);
 					DispatchParticleEffect( particlename, PATTACH_POINT_FOLLOW, player, "foot_L" );
 					DispatchParticleEffect( particlename, PATTACH_POINT_FOLLOW, player, "foot_R" );
-					force_send_client = false;
+					SetForceSendClient(false);
 				}
 			}
 		}
@@ -2071,9 +2118,24 @@ namespace Mod::Attr::Custom_Attributes
 		return DETOUR_MEMBER_CALL(player);
 	}
 
+#if defined _WINDOWS
+	/* GetSapperSoundName is inline in CObjectSapper::FinishedBuilding there,
+	 * which plays what it names right after 'Weapon_Sapper.Plant' */
+	CObjectSapper *sapper_finishing = nullptr;
+#endif
 	DETOUR_DECL_MEMBER(void, CBaseEntity_EmitSound_member, const char *sound, float start, float *duration)
 	{
 		auto entity = reinterpret_cast<CBaseEntity *>(this);
+#if defined _WINDOWS
+		if (sapper_finishing == entity && sound != nullptr && V_strstr(sound, ".Timer") != nullptr && sapper_finishing->GetBuilder() != nullptr) {
+			GET_STRING_ATTRIBUTE(sapper_finishing->GetBuilder(), custom_sapper_sound, custom);
+			if (custom != nullptr) {
+				sapper_finishing->SetCustomVariable("customsound", Variant(AllocPooledString(custom)));
+				PrecacheSound(custom);
+				sound = custom;
+			}
+		}
+#endif
 		if (rc_CTFWeaponFlameBall_FireProjectile && (FStrEq(sound, "Weapon_DragonsFury.Single") || FStrEq(sound, "Weapon_DragonsFury.SingleCrit"))) {
 			auto fury = rtti_cast<CEconEntity *>(entity);
 			GET_STRING_ATTRIBUTE(fury, custom_weapon_fire_sound, soundfiring);
@@ -2215,10 +2277,10 @@ namespace Mod::Attr::Custom_Attributes
 					CALL_ATTRIB_HOOK_INT_ON_OTHER( weapon, iLargeExplosion, use_large_smoke_explosion );
 					if ( iLargeExplosion > 0 )
 					{
-						force_send_client = true;
+						SetForceSendClient(true);
 						DispatchParticleEffect( "explosionTrail_seeds_mvm", ptr->endpos , vec3_angle );
 						DispatchParticleEffect( "fluidSmokeExpl_ring_mvm", ptr->endpos , vec3_angle);
-						force_send_client = false;
+						SetForceSendClient(false);
 					}
 					int customparticle = INVALID_STRING_INDEX;
 					int customparticleDirectHit = INVALID_STRING_INDEX;
@@ -3338,9 +3400,24 @@ namespace Mod::Attr::Custom_Attributes
 
 	RefCount rc_stop_stun;
 	bool addcond_overridden = false;
+#if defined _WINDOWS
+	/* ApplyRoboSapperEffects is inline in ApplyRoboSapper there, twice, and
+	 * its StunPlayer and AddCond are the only ones ApplyRoboSapper makes. */
+	RefCount rc_CObjectSapper_ApplyRoboSapper;
+	bool RoboSapperSkips(CTFPlayer *target)
+	{
+		if (rc_CObjectSapper_ApplyRoboSapper == 0 || target == nullptr) return false;
+		int cannotApply = 0;
+		CALL_ATTRIB_HOOK_INT_ON_OTHER(target, cannotApply, cannot_be_sapped);
+		return cannotApply != 0;
+	}
+#endif
 	DETOUR_DECL_MEMBER(void, CTFPlayerShared_StunPlayer, float duration, float slowdown, int flags, CTFPlayer *attacker)
 	{
 		if (rc_stop_stun) return;
+#if defined _WINDOWS
+		if (RoboSapperSkips(reinterpret_cast<CTFPlayerShared *>(this)->GetOuter())) return;
+#endif
 
 		auto shared = reinterpret_cast<CTFPlayerShared *>(this);
 		
@@ -4282,6 +4359,9 @@ namespace Mod::Attr::Custom_Attributes
 	DETOUR_DECL_MEMBER(void, CTFPlayerShared_AddCond2, ETFCond nCond, float flDuration, CBaseEntity *pProvider)
 	{
 		CTFPlayer *player = reinterpret_cast<CTFPlayerShared *>(this)->GetOuter();
+#if defined _WINDOWS
+		if (RoboSapperSkips(player)) return;
+#endif
 		if (pProvider != player && (nCond == TF_COND_URINE || nCond == TF_COND_MAD_MILK || nCond == TF_COND_MARKEDFORDEATH || nCond == TF_COND_MARKEDFORDEATH_SILENT)) {
 			CALL_ATTRIB_HOOK_FLOAT_ON_OTHER(player, flDuration, mult_debuff_duration);
 		}
@@ -4296,6 +4376,9 @@ namespace Mod::Attr::Custom_Attributes
 	{
 		SCOPED_INCREMENT(rc_CTFPlayerShared_AddCondIn);
 		CTFPlayer *player = reinterpret_cast<CTFPlayerShared *>(this)->GetOuter();
+#if defined _WINDOWS
+		if (RoboSapperSkips(player)) return;
+#endif
 
 		if (pProvider != player && pProvider != nullptr && pProvider->IsPlayer()) {
 			int immune = 0;
@@ -5495,6 +5578,9 @@ namespace Mod::Attr::Custom_Attributes
 		}
 	}
 	
+#if defined _WINDOWS
+	void MinigunStateAfter(CTFMinigun *minigun, CTFMinigun::MinigunState_t before);
+#endif
 	DETOUR_DECL_MEMBER(void, CTFMinigun_WindDown)
 	{
 		auto minigun = reinterpret_cast<CTFMinigun *>(this);
@@ -5505,7 +5591,13 @@ namespace Mod::Attr::Custom_Attributes
 				minigun->EmitSound(str);
 			}
 		}
+#if defined _WINDOWS
+		auto before = minigun->m_iWeaponState.Get();
+		DETOUR_MEMBER_CALL();
+		MinigunStateAfter(minigun, before);
+#else
         DETOUR_MEMBER_CALL();
+#endif
     }
 	
 	DETOUR_DECL_MEMBER(void, CTFMinigun_WindUp)
@@ -5591,10 +5683,18 @@ namespace Mod::Attr::Custom_Attributes
 		return ret;
 	}
 
+#if defined _WINDOWS
+	/* The whole function there, with the class data the Linux clone drops */
+	DETOUR_DECL_MEMBER(bool, CTFPlayer_ItemsMatch, void *pClassData, CEconItemView *pCurWeaponItem, CEconItemView *pNewWeaponItem, CTFWeaponBase *pWpnEntity)
+	{
+		return CTFPlayer_ItemsMatch_Func(DETOUR_MEMBER_CALL(pClassData, pCurWeaponItem, pNewWeaponItem, pWpnEntity), reinterpret_cast<CTFPlayer *>(this), pCurWeaponItem, pNewWeaponItem, pWpnEntity);
+	}
+#else
 	DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, bool, CTFPlayer_ItemsMatch, CEconItemView *pCurWeaponItem, CEconItemView *pNewWeaponItem, CTFWeaponBase *pWpnEntity)
 	{
 		return CTFPlayer_ItemsMatch_Func(DETOUR_MEMBER_CALL(pCurWeaponItem, pNewWeaponItem, pWpnEntity), reinterpret_cast<CTFPlayer *>(this), pCurWeaponItem, pNewWeaponItem, pWpnEntity);
 	}
+#endif
 
 	THINK_FUNC_DECL(MinigunClearSounds)
 	{
@@ -5614,31 +5714,54 @@ namespace Mod::Attr::Custom_Attributes
 		
 	}
 
+	void MinigunStateSounds(CTFMinigun *minigun, CTFMinigun::MinigunState_t state)
+	{
+		GET_STRING_ATTRIBUTE(minigun, custom_weapon_fire_sound, soundfiring);
+		GET_STRING_ATTRIBUTE(minigun, custom_minigun_spin_sound, soundspinning);
+
+		if (soundfiring != nullptr) {
+			if (state == CTFMinigun::AC_STATE_FIRING) {
+				minigun->EmitSound(soundfiring);
+				THINK_FUNC_SET(minigun, MinigunClearSounds, gpGlobals->curtime);
+			}
+			else {
+				minigun->StopSound(soundfiring);
+			}
+		}
+		if (soundspinning != nullptr) {
+			if (state == CTFMinigun::AC_STATE_SPINNING) {
+				minigun->EmitSound(soundspinning);
+				THINK_FUNC_SET(minigun, MinigunClearSounds, gpGlobals->curtime);
+			}
+			else {
+				minigun->StopSound(soundspinning);
+			}
+		}
+	}
+
+#if defined _WINDOWS
+	/* SetWeaponState has a body there only for SharedAttack's calls; WindUp,
+	 * WindDown, WeaponReset and HandleFireOnEmpty set the state inline. Those
+	 * compare the state around the call and make the sounds afterwards. */
+	bool minigun_state_handled = false;
+
+	void MinigunStateAfter(CTFMinigun *minigun, CTFMinigun::MinigunState_t before)
+	{
+		if (!minigun_state_handled && minigun->m_iWeaponState != before) {
+			MinigunStateSounds(minigun, minigun->m_iWeaponState);
+		}
+		minigun_state_handled = false;
+	}
+#endif
+
 	DETOUR_DECL_MEMBER(void, CTFMinigun_SetWeaponState, CTFMinigun::MinigunState_t state)
 	{
 		auto minigun = reinterpret_cast<CTFMinigun *>(this);
 		if (state != minigun->m_iWeaponState) {
-			GET_STRING_ATTRIBUTE(minigun, custom_weapon_fire_sound, soundfiring);
-			GET_STRING_ATTRIBUTE(minigun, custom_minigun_spin_sound, soundspinning);
-
-			if (soundfiring != nullptr) {
-				if (state == CTFMinigun::AC_STATE_FIRING) {
-					minigun->EmitSound(soundfiring);
-					THINK_FUNC_SET(minigun, MinigunClearSounds, gpGlobals->curtime);
-				}
-				else {
-					minigun->StopSound(soundfiring);
-				}
-			}
-			if (soundspinning != nullptr) {
-				if (state == CTFMinigun::AC_STATE_SPINNING) {
-					minigun->EmitSound(soundspinning);
-					THINK_FUNC_SET(minigun, MinigunClearSounds, gpGlobals->curtime);
-				}
-				else {
-					minigun->StopSound(soundspinning);
-				}
-			}
+			MinigunStateSounds(minigun, state);
+#if defined _WINDOWS
+			minigun_state_handled = true;
+#endif
 		}
 		DETOUR_MEMBER_CALL(state);
 	}
@@ -6665,9 +6788,38 @@ namespace Mod::Attr::Custom_Attributes
 		return result;
 	}
 
+#if defined _WINDOWS
+    RefCount rc_CObjectSentrygun_Attack;
+#endif
     DETOUR_DECL_MEMBER(bool, CObjectSentrygun_FindTarget)
     {
+#if defined _WINDOWS
+        /* SentryThink carries SentryRotate inline and calls this from it, and
+         * this carries ValidTargetPlayer inline. So the rotation's range
+         * multiplier is applied here when Attack is not the caller, and a
+         * player sentries ignore is FL_NOTARGET for the call, which the target
+         * loop skips before it gets to the inline ValidTargetPlayer. */
+        auto sentryPre{reinterpret_cast<CObjectSentrygun*>(this)};
+        if (rc_CObjectSentrygun_Attack == 0) {
+            sentryPre->m_flSentryRange *= GetBuildingAttributeFloat<"rangemult">(sentryPre, "mult_sentry_range", true);
+        }
+        std::vector<CTFPlayer *> notarget;
+        ForEachTFPlayer([&](CTFPlayer *player) {
+            if (!player->IsAlive() || (player->GetFlags() & FL_NOTARGET)) return;
+            int ignore = 0;
+            CALL_ATTRIB_HOOK_INT_ON_OTHER(player, ignore, ignored_by_enemy_sentries);
+            if (ignore != 0) {
+                player->m_fFlags |= FL_NOTARGET;
+                notarget.push_back(player);
+            }
+        });
         bool ret{DETOUR_MEMBER_CALL()};
+        for (auto player : notarget) {
+            player->m_fFlags &= ~FL_NOTARGET;
+        }
+#else
+        bool ret{DETOUR_MEMBER_CALL()};
+#endif
         auto sentry{reinterpret_cast<CObjectSentrygun*>(this)};
         CTFPlayer* builder{sentry->GetBuilder()};
         if(builder){
@@ -6839,13 +6991,13 @@ namespace Mod::Attr::Custom_Attributes
 					particle = "drg_pomson_projectile";
 				}
 
-				force_send_client = true;
+				SetForceSendClient(true);
 				CRecipientFilter filter;
 				filter.AddAllPlayers();
 				Vector color0 = pLauncher->GetParticleColor(1);
 				Vector color1 = pLauncher->GetParticleColor(2);
 				DispatchParticleEffect(particle, PATTACH_ABSORIGIN_FOLLOW, ring, nullptr, vec3_origin, false, color0, color1, true, true, nullptr, &filter);
-				force_send_client = false;
+				SetForceSendClient(false);
 			}
 		}
 		return ring;
@@ -7391,6 +7543,9 @@ namespace Mod::Attr::Custom_Attributes
 
 	DETOUR_DECL_MEMBER(void, CObjectSentrygun_Attack)
 	{
+#if defined _WINDOWS
+		SCOPED_INCREMENT(rc_CObjectSentrygun_Attack);
+#endif
 		auto sentry = reinterpret_cast<CObjectSentrygun *>(this);
 		sentry->m_flSentryRange *= GetBuildingAttributeFloat<"rangemult">(sentry, "mult_sentry_range", true);
 		float nextAttackPre = sentry->m_flNextAttack;
@@ -7711,8 +7866,14 @@ namespace Mod::Attr::Custom_Attributes
 	}
 
 	RefCount rc_CBaseObject_FindSnapToBuildPos;
+#if defined _WINDOWS
+	RefCount rc_FindSnapToBuildPos_Any;
+#endif
 	DETOUR_DECL_MEMBER(bool, CBaseObject_FindSnapToBuildPos, CBaseObject *pObjectOverride)
 	{
+#if defined _WINDOWS
+		SCOPED_INCREMENT(rc_FindSnapToBuildPos_Any);
+#endif
 		auto me = reinterpret_cast<CBaseObject *>(this);
 		int ally = 0;
 		CALL_ATTRIB_HOOK_INT_ON_OTHER(me->GetBuilder(), ally, sapper_sap_allies);
@@ -9929,6 +10090,105 @@ namespace Mod::Attr::Custom_Attributes
 		}
 	}
 
+#if defined _WINDOWS
+	/* server.dll carries these functions inline in their callers, so the
+	 * detours above find no body for them. These hook the caller, or a callee
+	 * of it, scoped to where the Linux function was called. */
+
+	// SetIdealActivity: inline in the base SendWeaponAnim, after the translation
+	DETOUR_DECL_MEMBER(bool, CBaseCombatWeapon_SendWeaponAnim, int act)
+	{
+		auto weapon = reinterpret_cast<CTFWeaponBase *>(this);
+		static int activityAttack = CAI_BaseNPC::GetActivityID("ACT_VM_PRIMARYATTACK");
+		if (rc_AltFireAttack) {
+			auto translated = weapon->TranslateViewmodelHandActivityInternal((Activity) act);
+			if (weapon->m_IdealActivity == translated && translated == weapon->TranslateViewmodelHandActivityInternal((Activity) activityAttack)) {
+				idealActivitySet = true;
+			}
+		}
+		return DETOUR_MEMBER_CALL(act);
+	}
+
+	// ApplyRoboSapperEffects: twice inline in ApplyRoboSapper
+	DETOUR_DECL_MEMBER(void, CObjectSapper_ApplyRoboSapper, CTFPlayer *target, float duration, int radius)
+	{
+		SCOPED_INCREMENT(rc_CObjectSapper_ApplyRoboSapper);
+		SCOPED_INCREMENT(rc_CTFPlayerShared_AddCond);
+		auto sapper = reinterpret_cast<CObjectSapper *>(this);
+		addcond_provider = sapper->GetBuilder();
+		addcond_provider_item = GetEconEntityAtLoadoutSlot(sapper->GetBuilder(), LOADOUT_POSITION_BUILDING);
+		int iCondOverride = 0;
+		CALL_ATTRIB_HOOK_INT_ON_OTHER(addcond_provider_item, iCondOverride, effect_cond_override);
+
+		SCOPED_INCREMENT_IF(rc_stop_stun, iCondOverride != 0);
+		DETOUR_MEMBER_CALL(target, duration, radius);
+	}
+
+	// GetSapperSoundName: inline in FinishedBuilding
+	DETOUR_DECL_MEMBER(void, CObjectSapper_FinishedBuilding)
+	{
+		auto outer = sapper_finishing;
+		sapper_finishing = reinterpret_cast<CObjectSapper *>(this);
+		DETOUR_MEMBER_CALL();
+		sapper_finishing = outer;
+	}
+
+	// WindUp and SetWeaponState: inline in SharedAttack, WeaponReset and HandleFireOnEmpty
+	DETOUR_DECL_MEMBER(void, CTFMinigun_SharedAttack)
+	{
+		auto minigun = reinterpret_cast<CTFMinigun *>(this);
+		auto before = minigun->m_iWeaponState.Get();
+		minigun_state_handled = false;
+		DETOUR_MEMBER_CALL();
+		if (before == CTFMinigun::AC_STATE_IDLE && minigun->m_iWeaponState == CTFMinigun::AC_STATE_STARTFIRING && minigun->GetItem() != nullptr) {
+			GET_STRING_ATTRIBUTE(minigun, custom_wind_down_sound, str);
+			if (str != nullptr) {
+				PrecacheSound(str);
+				minigun->EmitSound(str);
+			}
+		}
+		MinigunStateAfter(minigun, before);
+	}
+
+	DETOUR_DECL_MEMBER(void, CTFMinigun_WeaponReset)
+	{
+		auto minigun = reinterpret_cast<CTFMinigun *>(this);
+		auto before = minigun->m_iWeaponState.Get();
+		minigun_state_handled = false;
+		DETOUR_MEMBER_CALL();
+		MinigunStateAfter(minigun, before);
+	}
+
+	DETOUR_DECL_MEMBER(void, CTFMinigun_HandleFireOnEmpty)
+	{
+		auto minigun = reinterpret_cast<CTFMinigun *>(this);
+		auto before = minigun->m_iWeaponState.Get();
+		minigun_state_handled = false;
+		DETOUR_MEMBER_CALL();
+		MinigunStateAfter(minigun, before);
+	}
+
+	// UpdatePunchAngles: inline in FireProjectile, which then calls SetPunchAngle
+	DETOUR_DECL_MEMBER(void, CBasePlayer_SetPunchAngle, const QAngle &angle)
+	{
+		if (!fire_projectile_multi) return;
+		DETOUR_MEMBER_CALL(angle);
+	}
+
+	// FindBuildPointOnPlayer: inline in FindSnapToBuildPos, whose player loop
+	// skips an invulnerable player first; the detour of FindSnapToBuildPos
+	// above counts rc_FindSnapToBuildPos_Any
+	DETOUR_DECL_MEMBER(bool, CTFPlayerShared_IsInvulnerable)
+	{
+		if (rc_FindSnapToBuildPos_Any) {
+			int cannotApply = 0;
+			CALL_ATTRIB_HOOK_INT_ON_OTHER(reinterpret_cast<CTFPlayerShared *>(this)->GetOuter(), cannotApply, cannot_be_sapped);
+			if (cannotApply) return true;
+		}
+		return DETOUR_MEMBER_CALL();
+	}
+#endif
+
 	class CMod : public IMod, public IModCallbackListener, public IFrameUpdatePostEntityThinkListener
 	{
 	public:
@@ -9940,7 +10200,9 @@ namespace Mod::Attr::Custom_Attributes
 			MOD_ADD_DETOUR_MEMBER(CTFCompoundBow_LaunchGrenade, "CTFCompoundBow::LaunchGrenade");
 			MOD_ADD_DETOUR_MEMBER_PRIORITY(CTFWeaponBaseGun_FireProjectile, "CTFWeaponBaseGun::FireProjectile", HIGHEST);
 			MOD_ADD_DETOUR_MEMBER(CTFWeaponBaseGun_RemoveProjectileAmmo, "CTFWeaponBaseGun::RemoveProjectileAmmo");
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(CTFWeaponBaseGun_UpdatePunchAngles, "CTFWeaponBaseGun::UpdatePunchAngles");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CTFWeaponBaseMelee_Swing, "CTFWeaponBaseMelee::Swing");
 			MOD_ADD_DETOUR_MEMBER(CBaseObject_OnTakeDamage, "CBaseObject::OnTakeDamage");
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_Event_Killed, "CTFPlayer::Event_Killed");
@@ -9964,7 +10226,9 @@ namespace Mod::Attr::Custom_Attributes
 			MOD_ADD_DETOUR_MEMBER(CTFWeaponBaseGrenadeProj_Explode,    "CTFWeaponBaseGrenadeProj::Explode");
 			MOD_ADD_DETOUR_MEMBER(CTFBaseRocket_Explode,    "CTFBaseRocket::Explode");
 
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(CRecipientFilter_IgnorePredictionCull,    "CRecipientFilter::IgnorePredictionCull");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CTFWeaponBase_GetDamageType,    "CTFWeaponBase::GetDamageType");
 			MOD_ADD_DETOUR_MEMBER(CTFSniperRifle_GetDamageType,    "CTFSniperRifle::GetDamageType");
 			MOD_ADD_DETOUR_MEMBER(CTFSniperRifleClassic_GetDamageType,    "CTFSniperRifleClassic::GetDamageType");
@@ -9973,7 +10237,9 @@ namespace Mod::Attr::Custom_Attributes
 			MOD_ADD_DETOUR_MEMBER(CTFPistol_ScoutSecondary_GetDamageType,    "CTFPistol_ScoutSecondary::GetDamageType");
 			
 			MOD_ADD_DETOUR_MEMBER(CTFMinigun_CanHolster,    "CTFMinigun::CanHolster");
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(CObjectSapper_ApplyRoboSapperEffects,    "CObjectSapper::ApplyRoboSapperEffects [clone]");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CObjectSapper_IsParentValid,    "CObjectSapper::IsParentValid");
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_IsAllowedToTaunt,    "CTFPlayer::IsAllowedToTaunt");
 			MOD_ADD_VHOOK(CUpgrades_StartTouch, TypeName<CUpgrades>(), "CBaseTrigger::StartTouch");
@@ -10022,7 +10288,9 @@ namespace Mod::Attr::Custom_Attributes
 			MOD_ADD_DETOUR_MEMBER(CTFWeaponBase_ApplyOnHitAttributes,          "CTFWeaponBase::ApplyOnHitAttributes");
 			MOD_ADD_DETOUR_MEMBER(CObjectTeleporter_TeleporterTouch,          "CObjectTeleporter::TeleporterTouch");
 			MOD_ADD_DETOUR_MEMBER(CWeaponMedigun_GetTargetRange,          "CWeaponMedigun::GetTargetRange");
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(CTFBotTacticalMonitor_ShouldOpportunisticallyTeleport, "CTFBotTacticalMonitor::ShouldOpportunisticallyTeleport");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CTFProjectile_Arrow_ArrowTouch, "CTFProjectile_Arrow::ArrowTouch");
 			MOD_ADD_DETOUR_MEMBER(CTFRadiusDamageInfo_ApplyToEntity, "CTFRadiusDamageInfo::ApplyToEntity [clone]");
 			MOD_ADD_DETOUR_MEMBER(CTFFlameManager_BCanBurnEntityThisFrame,        "CTFFlameManager::BCanBurnEntityThisFrame");
@@ -10064,7 +10332,9 @@ namespace Mod::Attr::Custom_Attributes
 			MOD_ADD_DETOUR_MEMBER(CTeamplayRoundBasedRules_GetMinTimeWhenPlayerMaySpawn ,"CTeamplayRoundBasedRules::GetMinTimeWhenPlayerMaySpawn");
 			MOD_ADD_DETOUR_MEMBER(CTFGameRules_OnPlayerSpawned ,"CTFGameRules::OnPlayerSpawned");
 			MOD_ADD_DETOUR_MEMBER(CTFMinigun_WindDown ,"CTFMinigun::WindDown");
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(CTFMinigun_WindUp ,"CTFMinigun::WindUp");
+#endif
 			
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_DropAmmoPack, "CTFPlayer::DropAmmoPack");
 			MOD_ADD_DETOUR_STATIC(CTFDroppedWeapon_Create, "CTFDroppedWeapon::Create");
@@ -10085,7 +10355,9 @@ namespace Mod::Attr::Custom_Attributes
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_TFPlayerThink,           "CTFPlayer::TFPlayerThink");
 			MOD_ADD_DETOUR_MEMBER(CTFGameMovement_PlayerSolidMask, "CTFGameMovement::PlayerSolidMask");
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_PlayerRunCommand,					 "CTFPlayer::PlayerRunCommand");
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(CTFGameMovement_PreventBunnyJumping,			 "CTFGameMovement::PreventBunnyJumping");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CTFWeaponBase_Reload,			 "CTFWeaponBase::Reload");
 			MOD_ADD_DETOUR_MEMBER(CTFWeaponBase_Holster,			 "CTFWeaponBase::Holster");
 #if defined _WINDOWS
@@ -10105,7 +10377,9 @@ namespace Mod::Attr::Custom_Attributes
 			MOD_ADD_DETOUR_MEMBER(CAttributeList_SetRuntimeAttributeValue, "CAttributeList::SetRuntimeAttributeValue");
 			MOD_ADD_DETOUR_MEMBER(CAttributeList_RemoveAttribute, "CAttributeList::RemoveAttribute");
 			MOD_ADD_DETOUR_MEMBER(CAttributeList_RemoveAttributeByIndex, "CAttributeList::RemoveAttributeByIndex");
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(CAttributeList_AddAttribute, "CAttributeList::AddAttribute");
+#endif
  			MOD_ADD_DETOUR_MEMBER(CAttributeList_DestroyAllAttributes, "CAttributeList::DestroyAllAttributes");
 
 			MOD_ADD_DETOUR_MEMBER(CWeaponMedigun_RemoveHealingTarget, "CWeaponMedigun::RemoveHealingTarget");
@@ -10120,14 +10394,18 @@ namespace Mod::Attr::Custom_Attributes
 
             MOD_ADD_DETOUR_MEMBER(CTFPlayer_ForceRespawn, "CTFPlayer::ForceRespawn");	
 			
+#if !defined _WINDOWS
             MOD_ADD_DETOUR_MEMBER(CTFGameMovement_ToggleParachute, "CTFGameMovement::ToggleParachute [clone]");	
+#endif
             MOD_ADD_DETOUR_MEMBER(CTFGameMovement_HandleDuckingSpeedCrop, "CTFGameMovement::HandleDuckingSpeedCrop");	
             MOD_ADD_DETOUR_MEMBER(CTFPlayer_HandleAnimEvent, "CTFPlayer::HandleAnimEvent");
             MOD_ADD_DETOUR_MEMBER(CAttributeManager_ProvideTo, "CAttributeManager::ProvideTo");
             MOD_ADD_DETOUR_MEMBER(CAttributeManager_StopProvidingTo, "CAttributeManager::StopProvidingTo");
             MOD_ADD_DETOUR_MEMBER(CTFWeaponBase_GetParticleColor, "CTFWeaponBase::GetParticleColor");
             MOD_ADD_DETOUR_STATIC(CTFProjectile_EnergyRing_Create, "CTFProjectile_EnergyRing::Create");
+#if !defined _WINDOWS
             MOD_ADD_DETOUR_MEMBER(CObjectSentrygun_ValidTargetPlayer, "CObjectSentrygun::ValidTargetPlayer");
+#endif
             MOD_ADD_DETOUR_MEMBER(CTFJar_TossJarThink, "CTFJar::TossJarThink");
             MOD_ADD_DETOUR_MEMBER(CTFProjectile_ThrowableRepel_SetCustomPipebombModel, "CTFProjectile_ThrowableRepel::SetCustomPipebombModel");
             MOD_ADD_DETOUR_MEMBER(CTFWeaponBase_ItemHolsterFrame, "CTFWeaponBase::ItemHolsterFrame");
@@ -10139,8 +10417,10 @@ namespace Mod::Attr::Custom_Attributes
             MOD_ADD_DETOUR_MEMBER(CTFPlayer_SpyDeadRingerDeath, "CTFPlayer::SpyDeadRingerDeath");
             MOD_ADD_DETOUR_MEMBER(CTFWeaponInvis_CleanupInvisibilityWatch, "CTFWeaponInvis::CleanupInvisibilityWatch");
             MOD_ADD_DETOUR_MEMBER(CTFWeaponInvis_GetViewModel, "CTFWeaponInvis::GetViewModel");
+#if !defined _WINDOWS
             MOD_ADD_DETOUR_MEMBER(CTFWearableDemoShield_DoCharge, "CTFWearableDemoShield::DoCharge");
             MOD_ADD_DETOUR_MEMBER_PRIORITY(CObjectSapper_ApplyRoboSapperEffects_Last, "CObjectSapper::ApplyRoboSapperEffects [clone]", LOWEST);
+#endif
             MOD_ADD_DETOUR_MEMBER(CCurrencyPack_MyTouch, "CCurrencyPack::MyTouch");
             MOD_ADD_DETOUR_MEMBER(CTFPlayer_TraceAttack, "CTFPlayer::TraceAttack");
             MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_MakeBleed, "CTFPlayerShared::MakeBleed");
@@ -10154,15 +10434,19 @@ namespace Mod::Attr::Custom_Attributes
             MOD_ADD_DETOUR_MEMBER(CObjectTeleporter_PlayerCanBeTeleported, "CObjectTeleporter::PlayerCanBeTeleported [clone]");
             MOD_ADD_DETOUR_MEMBER(CTFPlayer_RemoveAllOwnedEntitiesFromWorld, "CTFPlayer::RemoveAllOwnedEntitiesFromWorld");
 			MOD_ADD_DETOUR_STATIC(CTFBaseRocket_Create, "CTFBaseRocket::Create");
+#if !defined _WINDOWS
             MOD_ADD_DETOUR_MEMBER(CTFPlayer_AddObject, "CTFPlayer::AddObject [clone]");
             MOD_ADD_DETOUR_MEMBER(CTFPlayer_RemoveObject, "CTFPlayer::RemoveObject");
+#endif
             MOD_ADD_DETOUR_MEMBER(CObjectDispenser_GetHealRate, "CObjectDispenser::GetHealRate");
             MOD_ADD_DETOUR_MEMBER(CObjectTeleporter_TeleporterThink, "CObjectTeleporter::TeleporterThink");
             MOD_ADD_DETOUR_MEMBER(CObjectSentrygun_StartUpgrading, "CObjectSentrygun::StartUpgrading");
             MOD_ADD_DETOUR_MEMBER(CObjectTeleporter_TeleporterSend, "CObjectTeleporter::TeleporterSend");
             MOD_ADD_VHOOK(CObjectSentrygun_FireBullets, TypeName<CObjectSentrygun>(), "CBaseEntity::FireBullets");
             MOD_ADD_DETOUR_MEMBER(CObjectDispenser_GetDispenserRadius, "CObjectDispenser::GetDispenserRadius");
+#if !defined _WINDOWS
             MOD_ADD_DETOUR_MEMBER(CObjectSentrygun_SentryRotate, "CObjectSentrygun::SentryRotate");
+#endif
             MOD_ADD_DETOUR_MEMBER(CObjectSentrygun_Attack, "CObjectSentrygun::Attack");
             MOD_ADD_DETOUR_MEMBER(CObjectSentrygun_SetModel, "CObjectSentrygun::SetModel");
             MOD_ADD_DETOUR_MEMBER(CObjectDispenser_SetModel, "CObjectDispenser::SetModel");
@@ -10175,7 +10459,9 @@ namespace Mod::Attr::Custom_Attributes
 			MOD_ADD_DETOUR_MEMBER_PRIORITY(CTFBot_ShouldGib,    "CTFBot::ShouldGib", HIGH);
 			MOD_ADD_DETOUR_MEMBER_PRIORITY(CTFPlayer_ShouldGib,    "CTFPlayer::ShouldGib", HIGH);
 			MOD_ADD_DETOUR_MEMBER(CObjectSapper_GetSapperModelName,    "CObjectSapper::GetSapperModelName");
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(CObjectSapper_GetSapperSoundName,    "CObjectSapper::GetSapperSoundName");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CObjectSapper_UpdateOnRemove,    "CObjectSapper::UpdateOnRemove");
 			MOD_ADD_DETOUR_MEMBER(CBaseObject_FindSnapToBuildPos,    "CBaseObject::FindSnapToBuildPos");
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_GetOpposingTFTeam,    "CTFPlayer::GetOpposingTFTeam");
@@ -10213,14 +10499,18 @@ namespace Mod::Attr::Custom_Attributes
 			MOD_ADD_DETOUR_MEMBER(CTFWeaponBase_ItemBusyFrame, "CTFWeaponBase::ItemBusyFrame");
 			MOD_ADD_DETOUR_STATIC(CTFReviveMarker_Create, "CTFReviveMarker::Create");
 			MOD_ADD_DETOUR_STATIC(TE_PlayerAnimEvent, "TE_PlayerAnimEvent");
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(CBaseCombatWeapon_SetIdealActivity, "CBaseCombatWeapon::SetIdealActivity");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CBaseEntity_Touch, "CBaseEntity::Touch");
 			MOD_ADD_DETOUR_MEMBER(CCollisionEvent_PostCollision, "CCollisionEvent::PostCollision");
 			MOD_ADD_DETOUR_MEMBER(CBaseCombatWeapon_HasPrimaryAmmo, "CBaseCombatWeapon::HasPrimaryAmmo");
 			MOD_ADD_DETOUR_MEMBER(CBasePlayer_PlayStepSound, "CBasePlayer::PlayStepSound");
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_OnTauntSucceeded, "CTFPlayer::OnTauntSucceeded");
 			MOD_ADD_DETOUR_MEMBER(CGameMovement_PlayerMove, "CGameMovement::PlayerMove");
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(CBaseObject_FindBuildPointOnPlayer, "CBaseObject::FindBuildPointOnPlayer [clone]");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CObjectSentrygun_FoundTarget, "CObjectSentrygun::FoundTarget");
 			MOD_ADD_DETOUR_MEMBER(CTFWeaponBaseGrenadeProj_Destroy, "CTFWeaponBaseGrenadeProj::Destroy");
 			MOD_ADD_DETOUR_MEMBER(CTFBaseRocket_Destroy, "CTFBaseRocket::Destroy");
@@ -10313,6 +10603,18 @@ namespace Mod::Attr::Custom_Attributes
 #ifdef PLATFORM_64BITS
 			MOD_ADD_DETOUR_MEMBER(CEconItemAttributeIterator_ApplyAttributeString_OnIterateAttributeValue, "CEconItemAttributeIterator_ApplyAttributeString::OnIterateAttributeValue");
 			MOD_ADD_DETOUR_MEMBER(CAttributeList_SetRuntimeAttributeRefundableCurrency, "CAttributeList::SetRuntimeAttributeRefundableCurrency");
+#endif
+
+#if defined _WINDOWS
+		//  The Linux functions server.dll carries inline, hooked where they are
+			MOD_ADD_DETOUR_MEMBER(CBaseCombatWeapon_SendWeaponAnim, "CBaseCombatWeapon::SendWeaponAnim");
+			MOD_ADD_DETOUR_MEMBER(CObjectSapper_ApplyRoboSapper, "CObjectSapper::ApplyRoboSapper");
+			MOD_ADD_DETOUR_MEMBER(CObjectSapper_FinishedBuilding, "CObjectSapper::FinishedBuilding");
+			MOD_ADD_DETOUR_MEMBER(CTFMinigun_SharedAttack, "CTFMinigun::SharedAttack");
+			MOD_ADD_DETOUR_MEMBER(CTFMinigun_WeaponReset, "CTFMinigun::WeaponReset");
+			MOD_ADD_DETOUR_MEMBER(CTFMinigun_HandleFireOnEmpty, "CTFMinigun::HandleFireOnEmpty");
+			MOD_ADD_DETOUR_MEMBER(CBasePlayer_SetPunchAngle, "CBasePlayer::SetPunchAngle");
+			MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_IsInvulnerable, "CTFPlayerShared::IsInvulnerable");
 #endif
 
 		//  Fast attribute cache

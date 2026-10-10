@@ -183,6 +183,7 @@ public:
 	int GetObserverMode() const             { return this->m_iObserverMode; }
 	const char *GetPlayerName()             { return this->m_szNetname; }
 	float MaxSpeed() const                  { return this->m_flMaxspeed; }
+	void SetMaxSpeed(float speed)           { this->m_flMaxspeed = speed; }
 	int GetUserID()                         { return engine->GetPlayerUserId(this->edict()); }
 #ifdef SE_IS_TF2
 	int GetNumWearables() const             { return this->m_hMyWearables->Count(); }
