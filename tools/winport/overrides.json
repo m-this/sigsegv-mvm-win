@@ -4013,5 +4013,36 @@
   "rva": "0x4e49c0",
   "build": "11087207",
   "why": "read by hand: the callee CTFPlayerShared::OnRemoveDisguised (0x5263de) makes on the outer player between ClearExpression (0x4e4a70) and RemoveDisguiseWeapon (0x52a040), the Linux order after UpdateModel; ConditionGameRulesThink calls it after RemoveDisguiseWeapon (0x51d7ad), as Linux does. Same body: walks the disguise weapon handles at +0x25c4 with the count at +0x25d0 (Linux +0x25cc and +0x25d8), resolves each through the entity list and makes the weapon's +0x3ac virtual call (Linux +0x3c4) with a vector, then sets the count to 0; thiscall, plain ret. Linux's third caller, CreateDisguiseWeaponList, has no call to it here"
+ },
+ "_ZN17CBaseCombatWeapon11CheckReloadEv": {
+  "rva": "0x1dff00",
+  "build": "11087207",
+  "vtidx": 281,
+  "why": "read by hand: slot 281 of CBaseCombatWeapon's table (Linux 287; ItemBusyFrame 280 to 274 and PrimaryAttack 293 to 287 matched, so the shift is 6 here). Same body with the weapon's fields 0xc lower: the reloads-singly byte (+0x638 to +0x62c) picks the owner path, IsPlayer on the owner (+0x150 to +0x14c), the reload flag (+0x5e4 to +0x5d8), the timer against curtime (+0x5d8 to +0x5cc), the owner's flags test 0x801 (+0xbcc to +0xbb4), the ammo virtual +0x42c to +0x428, and FinishReload through +0x480 (slot 288) to +0x468 (slot 282). Call sites agree: Linux's only vcall of +0x47c is ItemPostFrame, after the virtual at +0x568 and a test; Windows ItemPostFrame (slot 273, 0x1e2120) calls +0x464 right after the virtual at +0x550 and a test. CTFWeaponBase's slot 281 (0x632970) tail jumps here at +0xe1, as Linux's CTFWeaponBase::CheckReload does with its jmp to 0x62ca70. Plain ret"
+ },
+ "_ZN17CBaseCombatWeapon15SecondaryAttackEv": {
+  "rva": "0x1305b0",
+  "build": "11087207",
+  "vtidx": 288,
+  "why": "read by hand: empty on Linux (a lone ret), so on Windows it is the shared empty body, and only the slot says which virtual it is: slot 288 of CBaseCombatWeapon, Linux 294 less 6 (PrimaryAttack 293 to 287 matched, ItemHolsterFrame, the other empty one, 281 to 275). Derived classes agree: CWeaponMedigun, CTFBat_Wood and CTFGrenadeLauncher SecondaryAttack, matched by string or call, sit in slot 288 of their tables as they do in 294 on Linux, and the CTFSodaPopper and CTFChargedSMG overrides here are slot 288 too. Call site: CTFPlayer::DoClassSpecialSkill (0x51f680) does Weapon_OwnsThisID(0x18) then the virtual call at +0x480 (+0xfb) where Linux calls +0x498 after the same OwnsThisID(0x18), and on a null weapon both go on to GetEquippedDemoShield (0x521d80, matched) and CTFWearableDemoShield::DoSpecialAction (0x6408c0, matched). Plain ret"
+ },
+ "_Z12UTIL_SetSizeP11CBaseEntityRK6VectorS3_": {
+  "rva": "0x36dde0",
+  "build": "11087207",
+  "why": "read by hand: Linux UTIL_SetSize only jumps to SetMinMaxSize, which MSVC folded into it. The body is Linux's: for each of the three components mins above maxs prints '%s: backwards mins/maxs' with the entity's debug name (0x36de26 is the one reference to that string in the dll), then CBaseEntity::SetCollisionBounds (0x1fb3d0, matched by call) with the two vectors. cdecl, three stack arguments, plain ret. 62 direct calls here against Linux's 62; of the 34 callers whose Windows twin is known, 30 hold the same count of calls. CBaseEntity::SetSize (0x1fa520, matched by call) calls it with this and its two arguments (add esp 0xc) where Linux's jumps to UTIL_SetSize. CTFWeaponBaseGrenadeProj::Spawn calls it at 0x63a346 with the (-2,-2,-2) and (2,2,2) vectors, as Linux's does at 0xdff1d0"
+ },
+ "_ZN17CBaseEntityOutput17DeleteAllElementsEv": {
+  "rva": "0x225400",
+  "build": "11087207",
+  "why": "read by hand: takes the head of the action list from +0x14, sets it to 0, then walks +0x18 freeing each node to the CEventAction pool (0xa08864, CUtlMemoryPool::Free at 0x6ee000), the Linux body at the same offsets. The destructor (0x2249a0, matched) has the same loop without the zeroing. One direct caller, 0x387000+0x7b, which is CScriptEntityOutputs::RemoveOutput: the sibling of AddOutput (0x37f6c0, matched), FindNamedOutput (0x1f0800, matched), then a string compare of the target with the empty string and the call when equal, as Linux's RemoveOutput tail jumps to 0x68cef0 on an empty target. Thiscall, plain ret"
+ },
+ "_ZNK8INextBot17GetRangeSquaredToEP11CBaseEntity": {
+  "rva": "0x420200",
+  "build": "11087207",
+  "why": "read by hand: slot 75 of INextBot's table and of the table at offset 0x2668 of CTFBot, both 80 slots long. Linux has the same function at 75 of 81: one destructor slot less moves everything down by one and MSVC reverses each overload pair, so the entity overload (0x420200) comes after the Vector one (0x4201d0, a squared distance from GetPosition) and lands on the same number. Both builds call this slot through +0x12c with an entity for SelectCloserThreat's inlined body. Same body: GetEntity (+0xb8, Linux +0xbc), the other entity's WorldSpaceCenter (+0x270, Linux +0x274), CCollisionProperty::CalcNearestPoint and CalcDistanceFromPoint on the collision property (+0x184, Linux +0x19c), squared, 0 for a null bot or entity. CTFBot does not override it, either build. Takes the INextBot part as this, pops 4"
+ },
+ "_ZNK16CTFBotMainAction18SelectCloserThreatEP6CTFBotPK12CKnownEntityS4_": {
+  "bad": true,
+  "why": "read by hand, 11087207: no body of its own, MSVC inlined it into CTFBotMainAction::SelectMoreDangerousThreatInternal (0x56c1b0), its only caller on Linux as well (call at 0xe2969f). Inline at +0x5b to +0xa8: threat->GetEntity() (vcall +0xc, Linux +0x10), INextBot::GetRangeSquaredTo (+0x12c on the INextBot part at bot+0x2668) for each, and threat1 kept when the second range is above the first, as Linux's cmova does. The name stays unresolved on purpose: the stub implements the body on Windows with INextBot::GetRangeSquaredTo"
  }
 }

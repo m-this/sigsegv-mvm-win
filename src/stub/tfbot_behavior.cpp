@@ -155,7 +155,23 @@ CTFBotDead *CTFBotDead::New()
 }
 
 
+#if defined _WINDOWS
+/* MSVC inlined SelectCloserThreat into SelectMoreDangerousThreatInternal, its
+ * only caller, so server.dll has no function to call: this is its body. */
+static MemberFuncThunk<const INextBot *, float, CBaseEntity *> ft_INextBot_GetRangeSquaredTo("INextBot::GetRangeSquaredTo");
+
+const CKnownEntity *CTFBotMainAction::SelectCloserThreat(CTFBot *actor, const CKnownEntity *threat1, const CKnownEntity *threat2) const
+{
+	const INextBot *nextbot = actor->MyNextBotPointer();
+	
+	float range1 = ft_INextBot_GetRangeSquaredTo(nextbot, threat1->GetEntity());
+	float range2 = ft_INextBot_GetRangeSquaredTo(nextbot, threat2->GetEntity());
+	
+	return (range2 > range1 ? threat1 : threat2);
+}
+#else
 MemberFuncThunk<const CTFBotMainAction *, const CKnownEntity *, CTFBot *, const CKnownEntity *, const CKnownEntity *> CTFBotMainAction::ft_SelectCloserThreat("CTFBotMainAction::SelectCloserThreat");
+#endif
 
 MemberVFuncThunk<CTFBotEscortSquadLeader *, ActionResult<CTFBot>, CTFBot*, float> CTFBotEscortSquadLeader::vt_Update(TypeName<CTFBotEscortSquadLeader>(),"CTFBotEscortSquadLeader::Update");
 
