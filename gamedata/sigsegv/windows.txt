@@ -2691,6 +2691,16 @@
 					lib   "server"
 					// verified: virtual, the base weapon's vtable slot +0x3a4: CTFWeaponBuilder overrides SetSubType and HasAmmo, at +0x3bc and +0x3d8 on Linux and at +0x3a4 and +0x3c0 on Windows, seven slots apart on both; the thunk then calls the builder's override
 				}
+				"CBaseCombatWeapon::SetViewModelIndex"
+				{
+					type  "fixed"
+					sym   "_ZN17CBaseCombatWeapon17SetViewModelIndexEi"
+					addr  "0x1e3f40"
+					build "11087207"
+					lib   "server"
+					vtidx "249"
+					// verified: read by hand: slot 249 of CBaseCombatWeapon (Linux 255), anchored at 240, 250 and 252 (Linux 246, 256 and 258). Stores the argument at +0x5c8 with a state change when it differs, Linux's body at +0x5d4 (weapon fields are 0xc lower here, as for CheckReload). Thiscall, ret 4
+				}
 				"CBaseCombatWeapon::SetOwner"
 				{
 					type  "fixed"
@@ -4448,6 +4458,25 @@
 					lib   "server"
 					// verified: read by hand: the one function referencing all three boss class names ('headless_hatman', 'eyeball_boss', 'merasmus' at 0x59a8df-0x59a8ed); cdecl, plain ret, and it opens as the Linux body does, a switch on the first argument by sub eax, 1 three times, returning null for any other type
 				}
+				"CHeadlessHatman [D2]"
+				{
+					type  "fixed"
+					sym   "_ZN15CHeadlessHatmanD2Ev"
+					addr  "0x59a9a0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: slot 0 of CHeadlessHatman, the scalar deleting destructor with the class's destructor inline: it writes CHeadlessHatman's two vtables, releases the components at +0x910 and +0x914, calls the base destructors and frees on the flag at [ebp+8], ret 4. Nothing derives from the class, so this is every HHH's destructor. SigMod's Windows DETOUR_DECL_DTOR takes that flag
+				}
+				"CHeadlessHatman::OnTakeDamage_Alive"
+				{
+					type  "fixed"
+					sym   "_ZN15CHeadlessHatman18OnTakeDamage_AliveERK15CTakeDamageInfo"
+					addr  "0x59bfe0"
+					build "11087207"
+					lib   "server"
+					vtidx "283"
+					// verified: read by hand: slot 283 of CHeadlessHatman (Linux 284). The slots before it line up with Linux's AddPlayerItem and RemovePlayerItem (one shared empty body here, 0x1521d0, at 280 and 281) and CanBecomeServerRagdoll (282); the one after is NextBotCombatCharacter::OnTakeDamage_Dying (0x40fde0, Linux 285). Holds 'halloween_boss_injured', the effect Linux's dispatches first. Thiscall, ret 4
+				}
 				"CHeadlessHatman::Spawn"
 				{
 					type  "fixed"
@@ -4576,6 +4605,16 @@
 					build "11087207"
 					lib   "server"
 					// verified: string lead, agreed by strings: 2 shared string(s), 1/2 matched callees, windows/linux size 592/668
+				}
+				"CObjectSentrygun::MakeDisposableBuilding"
+				{
+					type  "fixed"
+					sym   "_ZN16CObjectSentrygun22MakeDisposableBuildingEP9CTFPlayer"
+					addr  "0x4cc890"
+					build "11087207"
+					lib   "server"
+					vtidx "371"
+					// verified: read by hand: slot 371 of CObjectSentrygun (Linux 373). Of the sentry's run here (0x4cc950, 0x4cc890, then the shared ShouldBeActive 0x443220 and OnGoActive 0x4ccf70), this is the second of the two sentry overrides, as MakeDisposableBuilding follows MakeMiniBuilding on Linux. Same body: GetNumObjects (0x522550), CanBuild (0x51a690), SetHealth (0x4c3e80) and SetModelScale. Thiscall, ret 4
 				}
 				"CObjectSentrygun::MakeScaledBuilding"
 				{
@@ -4721,6 +4760,16 @@
 					build "11087207"
 					lib   "server"
 					// consensus, ret 16 as its arguments say
+				}
+				"CPropVehicleDriveable::Use"
+				{
+					type  "fixed"
+					sym   "_ZN21CPropVehicleDriveable3UseEP11CBaseEntityS1_8USE_TYPEf"
+					addr  "0x3734d0"
+					build "11087207"
+					lib   "server"
+					vtidx "103"
+					// verified: read by hand: slot 103 of CPropVehicleDriveable (Linux 104), anchored at 97 and 104 to 106 (Linux 98 and 105 to 107). Opens with the activator's IsPlayer as Linux's does; four arguments, ret 0x10
 				}
 				"CSmokeStack::KeyValue"
 				{
@@ -4965,6 +5014,26 @@
 					lib   "server"
 					vtidx "288"
 					// verified: the only function with the minicrit_boost_when_charged literal besides the Linux GetProgress's twin: the base SecondaryAttack, GetOwner, AttribHookValue<float> and AddCond, as the Linux body; slot 288 is Linux 294 less 6
+				}
+				"CTFCleaver::CreateJarProjectile"
+				{
+					type  "fixed"
+					sym   "_ZN10CTFCleaver19CreateJarProjectileERK6VectorRK6QAngleS2_S2_P20CBaseCombatCharacterRK13CTFWeaponInfo"
+					addr  "0x613680"
+					build "11087207"
+					lib   "server"
+					vtidx "500"
+					// verified: read by hand: slot 500 of CTFCleaver (Linux 507), anchored at 474 to 494 (Linux 481 to 501). Creates 'tf_projectile_cleaver' with CreateNoSpawn and DispatchSpawn, the Linux body
+				}
+				"CTFCompoundBow::GetChargeMaxTime"
+				{
+					type  "fixed"
+					sym   "_ZN14CTFCompoundBow16GetChargeMaxTimeEv"
+					addr  "0x605320"
+					build "11087207"
+					lib   "server"
+					vtidx "2"
+					// verified: read by hand: slot 2 of CTFCompoundBow's table at offset 0x800, its ITFChargeUpWeapon base, where MSVC keeps the override (Linux has it at 503 of the primary table and a thunk in the secondary). Steps back 0x800 to the bow, calls the virtual at +0x678 with 1.0 and ApplyRefireSpeedModifications (0x6050e0), Linux's body. Takes the ITFChargeUpWeapon part as this
 				}
 				"CTFCompoundBow::GetProjectileDamage"
 				{
@@ -5251,6 +5320,16 @@
 					vtidx "168"
 					// vtable
 				}
+				"CTFJar::CreateJarProjectile"
+				{
+					type  "fixed"
+					sym   "_ZN6CTFJar19CreateJarProjectileERK6VectorRK6QAngleS2_S2_P20CBaseCombatCharacterRK13CTFWeaponInfo"
+					addr  "0x613f40"
+					build "11087207"
+					lib   "server"
+					vtidx "500"
+					// verified: read by hand: slot 500 of CTFJar (Linux 507), anchored at 474 to 494 (Linux 481 to 501). Creates 'tf_projectile_jar' with CreateNoSpawn and DispatchSpawn, the Linux body
+				}
 				"CTFJar::TossJarThink"
 				{
 					type  "fixed"
@@ -5260,6 +5339,26 @@
 					lib   "server"
 					vtidx "494"
 					// verified: GetTFPlayerOwner, AngleVectors, the trace, GetTFWpnData, SetLauncher, SpeakWeaponFire in the Linux order with the virtual calls 7 slots lower (0x7cc to 0x7b0, 0x7e4 to 0x7c8); the first CTFJar slot after ShouldRemoveDisguiseOnPrimaryAttack (500 to 493 matched); slot 494 is Linux 501 less 7
+				}
+				"CTFJarGas::CreateJarProjectile"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFJarGas19CreateJarProjectileERK6VectorRK6QAngleS2_S2_P20CBaseCombatCharacterRK13CTFWeaponInfo"
+					addr  "0x615680"
+					build "11087207"
+					lib   "server"
+					vtidx "500"
+					// verified: read by hand: slot 500 of CTFJarGas (Linux 507), anchored at 474 to 494 (Linux 481 to 501). Creates 'tf_projectile_jar_gas' with CreateNoSpawn and DispatchSpawn, the Linux body
+				}
+				"CTFJarMilk::CreateJarProjectile"
+				{
+					type  "fixed"
+					sym   "_ZN10CTFJarMilk19CreateJarProjectileERK6VectorRK6QAngleS2_S2_P20CBaseCombatCharacterRK13CTFWeaponInfo"
+					addr  "0x6134d0"
+					build "11087207"
+					lib   "server"
+					vtidx "500"
+					// verified: read by hand: slot 500 of CTFJarMilk (Linux 507), anchored at 474 to 494 (Linux 481 to 501). Creates 'tf_projectile_jar_milk' with CreateNoSpawn and DispatchSpawn, the Linux body
 				}
 				"CTFKnife::CanPerformBackstabAgainstTarget"
 				{
@@ -5892,6 +5991,16 @@
 					vtidx "263"
 					// verified: GetPlayerOwner, AttribHookValue, RemoveCond twice, then CTFWeaponBaseGun::Holster, as the Linux body; slot 263 is Linux 269 less 6, one after the Deploy above
 				}
+				"CTFRobotArm::Smack"
+				{
+					type  "fixed"
+					sym   "_ZN11CTFRobotArm5SmackEv"
+					addr  "0x62f3a0"
+					build "11087207"
+					lib   "server"
+					vtidx "473"
+					// verified: read by hand: slot 473 of CTFRobotArm (Linux 480), anchored at 470 and 482 (Linux 477 and 489). GetTFPlayerOwner, the virtuals Linux's makes, and CTFWrench::Smack (0x62f470) at the end as Linux's calls it. Thiscall, plain ret
+				}
 				"CTFScatterGun::ApplyPostHitEffects"
 				{
 					type  "fixed"
@@ -6197,6 +6306,16 @@
 					lib   "server"
 					// string
 				}
+				"CTFWeaponBaseMelee::DoSwingTrace"
+				{
+					type  "fixed"
+					sym   "_ZN18CTFWeaponBaseMelee12DoSwingTraceER10CGameTrace"
+					addr  "0x63d270"
+					build "11087207"
+					lib   "server"
+					vtidx "472"
+					// verified: read by hand: slot 472 of the melee weapons (Linux 479), anchored at 470 and 482. Calls DoSwingTraceInternal (0x63d290) and returns, Linux's body. Thiscall, ret 4
+				}
 				"CTFWeaponBaseMelee::DoSwingTraceInternal"
 				{
 					type  "fixed"
@@ -6261,6 +6380,16 @@
 					lib   "server"
 					vtidx "482"
 					// verified: read by hand: slot 482 of CTFWeaponBaseMelee (Linux 489), after SendPlayerAnimEvent at 481 (DoAnimationEvent(player, 0, 0)). CalcIsAttackCritical, Event_PlayerFiredWeapon with m_bCurrentAttackIsCrit (+0x6de), SendPlayerAnimEvent and the view model animation, then m_flNextPrimaryAttack (+0x5cc) from now plus the swing time; the Linux body. Pops 4
+				}
+				"CTFWrench::Smack"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFWrench5SmackEv"
+					addr  "0x62f470"
+					build "11087207"
+					lib   "server"
+					vtidx "473"
+					// verified: read by hand: slot 473 of CTFWrench (Linux 480). GetTFPlayerOwner, AngleVectors (0x6d9680), the virtual at +0x450 (Linux +0x454), then the swing trace, Linux's body; CTFRobotArm::Smack calls it. Thiscall, plain ret
 				}
 				"CTFWeaponBuilder::SetSubType"
 				{
