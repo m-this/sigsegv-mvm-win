@@ -205,15 +205,31 @@ namespace Mod::Etc::Misc
 
 	}
 	
-	DETOUR_DECL_MEMBER(void, CTFPlayerShared_OnRemoveStunned)
+	void ShowWeaponAfterStun(CTFPlayerShared *shared)
 	{
-		auto shared = reinterpret_cast<CTFPlayerShared *>(this);
 		auto weapon = shared->GetOuter()->GetActiveTFWeapon();
 		if (weapon != nullptr) {
 			weapon->RemoveEffects(EF_NODRAW);
 		}
+	}
+
+	DETOUR_DECL_MEMBER(void, CTFPlayerShared_OnRemoveStunned)
+	{
+		ShowWeaponAfterStun(reinterpret_cast<CTFPlayerShared *>(this));
 		DETOUR_MEMBER_CALL();
 	}
+
+#if defined _WINDOWS
+	/* OnRemoveStunned is inline in OnConditionRemoved there, which tail calls
+	 * it for this one condition on Linux */
+	DETOUR_DECL_MEMBER(void, CTFPlayerShared_OnConditionRemoved, ETFCond cond)
+	{
+		if (cond == TF_COND_STUNNED) {
+			ShowWeaponAfterStun(reinterpret_cast<CTFPlayerShared *>(this));
+		}
+		DETOUR_MEMBER_CALL(cond);
+	}
+#endif
 	
 	DETOUR_DECL_MEMBER(void, CTFPlayer_RemoveAllWeapons)
 	{
@@ -294,7 +310,11 @@ namespace Mod::Etc::Misc
 			MOD_ADD_DETOUR_MEMBER(CCaptureFlag_Drop, "CCaptureFlag::Drop");
 
 			// Fix stun disappearing weapons
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_OnConditionRemoved, "CTFPlayerShared::OnConditionRemoved");
+#else
 			MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_OnRemoveStunned, "CTFPlayerShared::OnRemoveStunned");
+#endif
 
 			// Remove inactive disguise weapons on death
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_RemoveAllWeapons, "CTFPlayer::RemoveAllWeapons");

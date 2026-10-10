@@ -4950,6 +4950,16 @@
 					vtidx "136"
 					// vtable
 				}
+				"CTFBat_Giftwrap::GetWeaponID"
+				{
+					type  "fixed"
+					sym   "_ZNK15CTFBat_Giftwrap11GetWeaponIDEv"
+					addr  "0x5ffe00"
+					build "11087207"
+					lib   "server"
+					vtidx "382"
+					// verified: read by hand: 'mov eax, 0x52; ret', the only such body in server.dll, at slot 382 of CTFBat_Giftwrap. Linux's returns 0x52 too. Trivial, so SigMod hooks the slot
+				}
 				"CTFBat_Wood::SecondaryAttack"
 				{
 					type  "fixed"
@@ -7355,6 +7365,15 @@
 					lib   "server"
 					// verified: read by hand: the one function referencing 'CreateEntityByName( %s, %d ) - CreateEdict failed.'; CreateEdict through the engine's vtable +0x54 when the index is not -1 and the warning when it returns null, then the entity factory dictionary's Create by name (vtable +4) and the tail call into the entity's own virtual, the Linux body; cdecl, plain ret, 119 direct callers. The gamedata finds it by that string as a func ebpprologue entry, which the emitter does not carry
 				}
+				"CTFGameRules::PushAllPlayersAway"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules18PushAllPlayersAwayERK6VectorffiP10CUtlVectorIP9CTFPlayer10CUtlMemoryIS5_iEE"
+					addr  "0x498c90"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: CollectPlayers into a local vector for the team argument, then the push loop, Linux's body; five arguments, ret 0x14. Called from both MvM engineer build actions' Update (0x57d47e, 0x57dde9), CTFPlayer::OnTakeDamage (0x5014d1) and the rocket pack, among Linux's callers
+				}
 				"CAttributeManager::AttribHookValue<int>"
 				{
 					type  "fixed"
@@ -9654,6 +9673,15 @@
 					lib   "server"
 					// string
 				}
+				"Script_StringToFile"
+				{
+					type  "fixed"
+					sym   "_ZL19Script_StringToFilePKcS0_"
+					addr  "0x389710"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: holds 'StringToFile() file name cannot contain '..'' and 'Script_StringToFile: NULL/empty file name', the two strings of Linux's body, and is registered as a script function at 0x38c611. cdecl
+				}
 				"CTFGameRules::DeathNotice"
 				{
 					type  "fixed"
@@ -11066,6 +11094,15 @@
 					lib   "server"
 					// call
 				}
+				"CTFBot::OpportunisticallyUseWeaponAbilities"
+				{
+					type  "fixed"
+					sym   "_ZN6CTFBot35OpportunisticallyUseWeaponAbilitiesEv"
+					addr  "0x55f9c0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: what CTFBotTacticalMonitor::Update (0x576023) and CTFBotDeliverFlag::Update (0x588520) call right before pushing 'Opportunistically using buff item', as Linux's both do. Opens with the countdown timer's Now (+0x28e4), RandomFloat(0.1, 0.2) and the timer restart, then the class tests, Linux's body. Thiscall, plain ret
+				}
 				"CTFBot::PopRequiredWeapon"
 				{
 					type  "fixed"
@@ -11211,6 +11248,15 @@
 					build "11087207"
 					lib   "server"
 					// consensus
+				}
+				"CTFBot::EquipLongRangeWeapon"
+				{
+					type  "fixed"
+					sym   "_ZN6CTFBot20EquipLongRangeWeaponEv"
+					addr  "0x550d40"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: IsPlayerClass 3, 4, 6 and 2 (0x4fbfe0), then Weapon_GetSlot through +0x45c and Weapon_Switch through +0x428 (Linux +0x460 and +0x42c), Linux's body. Four call sites in CTFBotUberAttackEnemySentry::Update (0x56fdf0) and CTFBotDestroyEnemySentry::Update (0x56f0b0), two each as on Linux. Thiscall, plain ret
 				}
 				"CTFBot::GetDesiredAttackRange"
 				{
@@ -12521,6 +12567,15 @@
 					lib   "server"
 					// call
 				}
+				"CTFPlayerShared::RadiusCurrencyCollectionCheck"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFPlayerShared29RadiusCurrencyCollectionCheckEv"
+					addr  "0x528dd0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: GetTeamNumber of the outer player (+0x18c) compared with 2 and the MvM test first, then the currency pack loop with ApplyAbsVelocityImpulse (0x5292aa, 0x5292b7), Linux's body. Its one caller is ConditionGameRulesThink (0x51dad6), as on Linux. Thiscall, plain ret
+				}
 				"CTFPlayerShared::IsControlStunned"
 				{
 					type  "fixed"
@@ -12738,6 +12793,24 @@
 					build "11087207"
 					lib   "server"
 					// verified: string lead, agreed by strings: 43 shared string(s), 28/29 matched callees, windows/linux size 4976/5797
+				}
+				"SendProxy_PlayerObjectList"
+				{
+					type  "fixed"
+					sym   "_Z26SendProxy_PlayerObjectListPK8SendPropPKvS3_P8DVariantii"
+					addr  "0x50bb20"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the proxy of 'player_object_array_element' (0x4dc9dc), which ends in SendProxy_EHandleToInt (0x328020) as Linux's does. cdecl, plain ret
+				}
+				"SendProxyArrayLength_PlayerObjects"
+				{
+					type  "fixed"
+					sym   "_Z34SendProxyArrayLength_PlayerObjectsPKvi"
+					addr  "0x50bb10"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the array length proxy of 'player_object_array' (0x4dc9fb), returning the object count at +0x234c, Linux's body. cdecl, plain ret
 				}
 				"CTFPlayer::GetObjectCount"
 				{
@@ -13530,6 +13603,15 @@
 					build "11087207"
 					lib   "server"
 					// verified: read by hand: server.dll has no BurnEntities, MSVC inlined it into its only caller. BurnThink is 0x542230, which StartTouch (0x542720) passes to the think setter, and it is Linux's BurnThink with BurnEntities in it: the time of the last burn at +0x4b8, the walk over the touching handles (+0x494, count +0x4a0), IsPlayer twice, a vcall at slot 0x1ec, CTakeDamageInfo (0x339e80), IsInvulnerable, InCond 0x16, IgniteEntity (0x5423f0) and TakeDamage (0x1fcc30), then the next think when something burned. A detour on it counts the TakeDamage calls made while burning, which is the scope BurnEntities has on Linux. No arguments, plain ret, no return value
+				}
+				"CVoteController::TryCastVote [clone]"
+				{
+					type  "fixed"
+					sym   "_ZN15CVoteController11TryCastVoteEiPKc"
+					addr  "0x37cf50"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the whole TryCastVote, opening with the sv_allow_votes test (+0x30 of the convar) that Linux's wrapper makes before the .part.0 clone, then the active issue and the cast; thiscall with the index and the issue, ret 8. A spectator's vote with no vote running now gets SpectatorVoteFix's code rather than the no-issue one
 				}
 				"CWeaponMedigun::CycleResistType [clone]"
 				{
