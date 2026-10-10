@@ -4417,5 +4417,47 @@
  "_ZN15CTFPlayerShared13OnRemovePhaseEv": {
   "bad": true,
   "why": "read by hand, 11087207: no body of its own; OnConditionRemoved (0x5261d0; 'started_dodging:0' and 'DamageDodged' at 0x5264c6 and 0x5264f4) carries it inline for its one condition, where Linux's calls it. The mods that hook it hook that function on Windows"
+ },
+ "_ZN12CTFBotVision33UpdatePotentiallyVisibleNPCVectorEv": {
+  "rva": "0x567320",
+  "build": "11087207",
+  "why": "read by hand: called by CTFBotVision::CollectPotentiallyVisibleEntities (0x566bb4), its one Linux caller. The update timer, then the loop that keeps 'obj_dispenser' (0x5674f7) among the objects, Linux's body. Thiscall, plain ret"
+ },
+ "_ZN22CTFBotHintEngineerNest19HintTeleporterThinkEv": {
+  "rva": "0x593850",
+  "build": "11087207",
+  "why": "read by hand: the think CTFBotHintEngineerNest::HintThink sets with ThinkSet, as Linux's sets it at 0xe831e6. Reads the teleporter handle (+0x3b0, Linux +0x3c8), asks the building through a virtual, writes the active teleporter flag (+0x3b8) with a state change and sets the next think with no context, Linux's body. Thiscall, plain ret"
+ },
+ "_ZN19CTFPointWeaponMimic4FireEv": {
+  "bad": true,
+  "why": "read by hand, 11087207: no body of its own. Its Linux callers are InputFireOnce and InputFireMultiple, and here both carry its switch on the weapon type inline (0x5e1fd6, 0x5e1f87) with direct calls to FireRocket, FireGrenade, FireArrow and FireStickyGrenade. The stub's Windows Fire is that switch; Weapon_Mimic_Teamnum hooks the two inputs"
+ },
+ "_ZN17CTFBaseProjectile13GetDamageTypeEv": {
+  "rva": "0x533db0",
+  "build": "11087207",
+  "vtidx": 243,
+  "why": "read by hand: slot 243 of CTFBaseProjectile, the last of its table (Linux 246, after GetProjectileType and GetDamageForce, also the last two here). GetWeaponID through +0x3b0 (Linux +0x3b4), the damage type table, and DMG_CRITICAL or'd in for the crit flag (+0x4ec, Linux +0x504), Linux's body. Thiscall, plain ret"
+ },
+ "_Z24UTIL_GetHolidayForStringPKc": {
+  "rva": "0x36f8c0",
+  "build": "11087207",
+  "why": "read by hand: returns 0 for a null string and otherwise tail jumps to EconHolidays_GetHolidayForString (0x3a0540, the 14-entry holiday name loop), Linux's body. Called by CTFPlayer::ItemIsAllowed (0x4fc973) and three more, Linux's four. cdecl"
+ },
+ "_ZN18CPopulationManager22SetNumRespecsForPlayerEP9CTFPlayeri": {
+  "rva": "0x5e6ea0",
+  "build": "11087207",
+  "why": "read by hand: GetSteamID, then the find and insert on the map at +0x6fc, the one GetNumRespecsAvailableForPlayer (0x5e4210) reads; SetBuybackCreditsForPlayer is the same body on the map at +0x724 (0x5e6b40). Called by CTFPlayer::GetAutoTeam (0x4f28ba) as on Linux. Thiscall, ret 8"
+ },
+ "_ZN19CTFProjectile_Flare20PerformCustomPhysicsEP6VectorS1_P6QAngleS3_": {
+  "rva": "0x5fe200",
+  "build": "11087207",
+  "vtidx": 176,
+  "why": "read by hand: slot 176 of CTFProjectile_Flare (Linux 177), where CTFBaseRocket holds 0x1575f0; the slots before are PhysicsSolidMaskForEntity (0x63f8c0) and ResolveFlyCollisionCustom, those after GetStepOrigin and GetStepAngles, as on Linux. Thiscall, ret 0x10"
+ },
+ "_ZN16CTFBotMainAction5DodgeEP6CTFBot": {
+  "name": "CTFBotMainAction::Dodge [clone]",
+  "rva": "0x56a050",
+  "build": "11087207",
+  "why": "read by hand: the whole Dodge with the wrapper's bot skill test (+0x27bc) first, then IsInvulnerable and InCond 1 and 7, the Linux clone's body. Its one caller is CTFBotMainAction::Update (0x56d180), which carries Linux's wrapper inline. Takes the action as this and the bot as its argument, ret 4, where the Linux clone takes the bot in eax"
  }
 }

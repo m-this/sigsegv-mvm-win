@@ -4894,6 +4894,16 @@
 					vtidx "336"
 					// verified: read by hand: empty on Linux (a lone ret), so on Windows it is the shared empty body, and only the slot says which virtual it is: slot 336 of CTFBaseBoss, the one before GetCurrencyValue (337, 0x5de290), where CTFTankBoss has its own bounds code (0x5f5010); Linux has two INextBot virtuals between them that MSVC keeps in the INextBot vtable
 				}
+				"CTFBaseProjectile::GetDamageType"
+				{
+					type  "fixed"
+					sym   "_ZN17CTFBaseProjectile13GetDamageTypeEv"
+					addr  "0x533db0"
+					build "11087207"
+					lib   "server"
+					vtidx "243"
+					// verified: read by hand: slot 243 of CTFBaseProjectile, the last of its table (Linux 246, after GetProjectileType and GetDamageForce, also the last two here). GetWeaponID through +0x3b0 (Linux +0x3b4), the damage type table, and DMG_CRITICAL or'd in for the crit flag (+0x4ec, Linux +0x504), Linux's body. Thiscall, plain ret
+				}
 				"CTFBaseProjectile::SetScorer"
 				{
 					type  "fixed"
@@ -4996,6 +5006,15 @@
 					build "11087207"
 					lib   "server"
 					// verified: read by hand: calls DetonateObjectsFromHints (0x593bc0) on the sentry hints (+0x390) and then on the teleporter hints (+0x3a4), the Linux body with both vectors 0x18 lower (+0x3a8, +0x3bc), as in IsStaleNest (0x5940c0). thiscall, plain ret
+				}
+				"CTFBotHintEngineerNest::HintTeleporterThink"
+				{
+					type  "fixed"
+					sym   "_ZN22CTFBotHintEngineerNest19HintTeleporterThinkEv"
+					addr  "0x593850"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the think CTFBotHintEngineerNest::HintThink sets with ThinkSet, as Linux's sets it at 0xe831e6. Reads the teleporter handle (+0x3b0, Linux +0x3c8), asks the building through a virtual, writes the active teleporter flag (+0x3b8) with a state change and sets the next think with no context, Linux's body. Thiscall, plain ret
 				}
 				"CTFBotHintEngineerNest::IsStaleNest"
 				{
@@ -5827,6 +5846,16 @@
 					lib   "server"
 					vtidx "159"
 					// verified: mov al,1; ret, the Linux body, in slot 159 where Linux has it at 160 (WorldSpaceCenter 157 to 156 matched, GetSoundEmissionOrigin and ModifyEmitSoundParams between)
+				}
+				"CTFProjectile_Flare::PerformCustomPhysics"
+				{
+					type  "fixed"
+					sym   "_ZN19CTFProjectile_Flare20PerformCustomPhysicsEP6VectorS1_P6QAngleS3_"
+					addr  "0x5fe200"
+					build "11087207"
+					lib   "server"
+					vtidx "176"
+					// verified: read by hand: slot 176 of CTFProjectile_Flare (Linux 177), where CTFBaseRocket holds 0x1575f0; the slots before are PhysicsSolidMaskForEntity (0x63f8c0) and ResolveFlyCollisionCustom, those after GetStepOrigin and GetStepAngles, as on Linux. Thiscall, ret 0x10
 				}
 				"CTFProjectile_Flare::SendDeathNotice"
 				{
@@ -8019,6 +8048,15 @@
 					lib   "server"
 					// call
 				}
+				"UTIL_GetHolidayForString"
+				{
+					type  "fixed"
+					sym   "_Z24UTIL_GetHolidayForStringPKc"
+					addr  "0x36f8c0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: returns 0 for a null string and otherwise tail jumps to EconHolidays_GetHolidayForString (0x3a0540, the 14-entry holiday name loop), Linux's body. Called by CTFPlayer::ItemIsAllowed (0x4fc973) and three more, Linux's four. cdecl
+				}
 				"UTIL_IsHolidayActive"
 				{
 					type  "fixed"
@@ -8319,6 +8357,15 @@
 					build "11087207"
 					lib   "server"
 					// call
+				}
+				"CTFBotVision::UpdatePotentiallyVisibleNPCVector"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFBotVision33UpdatePotentiallyVisibleNPCVectorEv"
+					addr  "0x567320"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: called by CTFBotVision::CollectPotentiallyVisibleEntities (0x566bb4), its one Linux caller. The update timer, then the loop that keeps 'obj_dispenser' (0x5674f7) among the objects, Linux's body. Thiscall, plain ret
 				}
 				"TE_PlayerAnimEvent"
 				{
@@ -10453,6 +10500,15 @@
 					lib   "server"
 					// string
 				}
+				"CPopulationManager::SetNumRespecsForPlayer"
+				{
+					type  "fixed"
+					sym   "_ZN18CPopulationManager22SetNumRespecsForPlayerEP9CTFPlayeri"
+					addr  "0x5e6ea0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: GetSteamID, then the find and insert on the map at +0x6fc, the one GetNumRespecsAvailableForPlayer (0x5e4210) reads; SetBuybackCreditsForPlayer is the same body on the map at +0x724 (0x5e6b40). Called by CTFPlayer::GetAutoTeam (0x4f28ba) as on Linux. Thiscall, ret 8
+				}
 				"CPopulationManager::Spawn"
 				{
 					type  "fixed"
@@ -11516,6 +11572,15 @@
 					build "11087207"
 					lib   "server"
 					// string
+				}
+				"CTFBotMainAction::Dodge"
+				{
+					type  "fixed"
+					sym   "_ZN16CTFBotMainAction5DodgeEP6CTFBot"
+					addr  "0x56a050"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the whole Dodge with the wrapper's bot skill test (+0x27bc) first, then IsInvulnerable and InCond 1 and 7, the Linux clone's body. Its one caller is CTFBotMainAction::Update (0x56d180), which carries Linux's wrapper inline. Takes the action as this and the bot as its argument, ret 4, where the Linux clone takes the bot in eax
 				}
 				"CTFBotScenarioMonitor::Update"
 				{
@@ -13666,6 +13731,15 @@
 					build "11087207"
 					lib   "server"
 					// verified: read by hand: the whole function, where Linux detours the .part clone GCC split after the wrapper's null target and AttribHookValueInt checks, which this body makes first (0x616c1e, then 0x101dec80 on the string at 0x108d6cd0). Then the MvM flag at gamerules +0xc6d with the owner's checks, InCond 0x79 and 0x78 on the owner, IsBehindAndFacingTarget (0x617100), and the MvM spy branch with InCond 0x47 and 0x32, as the clone does. Called from 0x616acb and 0x617514, two callers as the Linux clone has (PrimaryAttack, BackstabVMThink). thiscall, ret 4
+				}
+				"CTFBotMainAction::Dodge [clone]"
+				{
+					type  "fixed"
+					sym   "_ZN16CTFBotMainAction5DodgeEP6CTFBot"
+					addr  "0x56a050"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the whole Dodge with the wrapper's bot skill test (+0x27bc) first, then IsInvulnerable and InCond 1 and 7, the Linux clone's body. Its one caller is CTFBotMainAction::Update (0x56d180), which carries Linux's wrapper inline. Takes the action as this and the bot as its argument, ret 4, where the Linux clone takes the bot in eax
 				}
 				"CTFPlayerShared::UpdateCloakMeter [clone]"
 				{

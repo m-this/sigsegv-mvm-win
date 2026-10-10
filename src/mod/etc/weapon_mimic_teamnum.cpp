@@ -422,7 +422,10 @@ namespace Mod::Etc::Weapon_Mimic_Teamnum
 		CMod() : IMod("Etc:Weapon_Mimic_Teamnum")
 		{
 			bulletDamageHook.DoLoad();
+#if !defined _WINDOWS
+			/* inline in the two inputs there, which are hooked below */
 			MOD_ADD_DETOUR_MEMBER(CTFPointWeaponMimic_Fire, "CTFPointWeaponMimic::Fire");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CTFPointWeaponMimic_InputFireOnce, "CTFPointWeaponMimic::InputFireOnce");
 			MOD_ADD_DETOUR_MEMBER(CTFPointWeaponMimic_InputFireMultiple, "CTFPointWeaponMimic::InputFireMultiple");
 			MOD_ADD_DETOUR_STATIC(CTFProjectile_Rocket_Create,  "CTFProjectile_Rocket::Create");
