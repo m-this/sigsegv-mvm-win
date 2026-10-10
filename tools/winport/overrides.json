@@ -5137,5 +5137,27 @@
   "rva": "0x8640",
   "build": "11087207",
   "why": "read by hand in datacache.dll: locks the cache's two members through vcall 0x44 on [this+0x10], then tail jumps to the same on [this+0x14], as the Linux body does; no stack arguments, so the mod's ret is safe"
+ },
+ "_ZN13CCurrencyPack10ComeToRestEv": {
+  "name": "CCurrencyPack::ComeToRest",
+  "rva": "0x44b0a0",
+  "build": "11087207",
+  "vtidx": 231,
+  "why": "read by hand: slot 231 of CCurrencyPack's table, the one that differs from CItem's and calls CItem::ComeToRest (0x28e590) first, then tests the two bools (+0x52d, +0x52e; Linux +0x545, +0x546) as the Linux body does"
+ },
+ "_ZN9CTFPlayer16UpdateExpressionEv": {
+  "rva": "0x4f1dd0",
+  "build": "11087207",
+  "why": "read by hand: gated on a next-time field (+0x12a0), asks GetResponseSceneFromConcept (0x4f3910) for concept 0, stops the old scene (StopScriptedScene 0x322bb0) and plays the new one through InstancedScriptedScene (0x3204d0), advancing the ring index at +0x23b4: the Linux body's shape. Thiscall, plain ret"
+ },
+ "_ZN9CTFPlayer24CreateDisguiseWeaponListEPS_": {
+  "rva": "0x4e6820",
+  "build": "11087207",
+  "why": "read by hand: the Linux body's calls (SetSolid 0x1022b7e0, SetSolidFlags 0x1022b9c0, AddEffects 0x101fed50) in order, one argument (the disguise target), ret 4; candidates.py ranks it first with its caller and two callees matched"
+ },
+ "_Z22Physics_SimulateEntityP11CBaseEntity": {
+  "rva": "0x2c10a0",
+  "build": "11087207",
+  "why": "read by hand: cdecl on the entity, the UnsetPlayerSimulated and player-simulated tests, then the vprof scope exit through vcall +0x68 as a jmp: the Linux body without its profile scope"
  }
 }

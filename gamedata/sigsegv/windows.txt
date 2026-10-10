@@ -1170,6 +1170,16 @@
 					lib   "server"
 					// verified: read by hand: PassesDamageFilter(info) through slot 61 (reads m_hDamageFilter at +0x100), then TraceAttack(info, dir, trace, accumulator) through slot 62, which pops 16; the Linux body at slots 62 and 63. Pops 16. 26 callers, CTFRadiusDamageInfo::ApplyToEntity (0x480a30) among them where Linux calls it between ClearMultiDamage and ApplyMultiDamage
 				}
+				"CCurrencyPack::ComeToRest"
+				{
+					type  "fixed"
+					sym   "_ZN13CCurrencyPack10ComeToRestEv"
+					addr  "0x44b0a0"
+					build "11087207"
+					lib   "server"
+					vtidx "231"
+					// verified: read by hand: slot 231 of CCurrencyPack's table, the one that differs from CItem's and calls CItem::ComeToRest (0x28e590) first, then tests the two bools (+0x52d, +0x52e; Linux +0x545, +0x546) as the Linux body does
+				}
 				"CTFReviveMarker::Create"
 				{
 					type  "fixed"
@@ -8223,6 +8233,15 @@
 					lib   "server"
 					// consensus
 				}
+				"Physics_SimulateEntity"
+				{
+					type  "fixed"
+					sym   "_Z22Physics_SimulateEntityP11CBaseEntity"
+					addr  "0x2c10a0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: cdecl on the entity, the UnsetPlayerSimulated and player-simulated tests, then the vprof scope exit through vcall +0x68 as a jmp: the Linux body without its profile scope
+				}
 				"CTFGameRules::CalcDominationAndRevenge"
 				{
 					type  "fixed"
@@ -14145,6 +14164,15 @@
 					lib   "server"
 					// consensus, ret 8 as its arguments say
 				}
+				"CTFPlayer::UpdateExpression"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer16UpdateExpressionEv"
+					addr  "0x4f1dd0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: gated on a next-time field (+0x12a0), asks GetResponseSceneFromConcept (0x4f3910) for concept 0, stops the old scene (StopScriptedScene 0x322bb0) and plays the new one through InstancedScriptedScene (0x3204d0), advancing the ring index at +0x23b4: the Linux body's shape. Thiscall, plain ret
+				}
 				"CTFPlayerShared::ConditionGameRulesThink"
 				{
 					type  "fixed"
@@ -14279,6 +14307,15 @@
 					build "11087207"
 					lib   "server"
 					// verified: string lead, agreed by strings+callees: 1 shared string(s), 5/6 matched callees, windows/linux size 752/974
+				}
+				"CTFPlayer::CreateDisguiseWeaponList"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer24CreateDisguiseWeaponListEPS_"
+					addr  "0x4e6820"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the Linux body's calls (SetSolid 0x1022b7e0, SetSolidFlags 0x1022b9c0, AddEffects 0x101fed50) in order, one argument (the disguise target), ret 4; candidates.py ranks it first with its caller and two callees matched
 				}
 				"CTFPlayerShared::RemoveDisguiseWeapon"
 				{
