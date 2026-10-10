@@ -351,6 +351,15 @@
 					lib   "server"
 					// verified: read by hand: slot 75 of INextBot's table and of the table at offset 0x2668 of CTFBot, both 80 slots long. Linux has the same function at 75 of 81: one destructor slot less moves everything down by one and MSVC reverses each overload pair, so the entity overload (0x420200) comes after the Vector one (0x4201d0, a squared distance from GetPosition) and lands on the same number. Both builds call this slot through +0x12c with an entity for SelectCloserThreat's inlined body. Same body: GetEntity (+0xb8, Linux +0xbc), the other entity's WorldSpaceCenter (+0x270, Linux +0x274), CCollisionProperty::CalcNearestPoint and CalcDistanceFromPoint on the collision property (+0x184, Linux +0x19c), squared, 0 for a null bot or entity. CTFBot does not override it, either build. Takes the INextBot part as this, pops 4
 				}
+				"CKnownEntity::operator=="
+				{
+					type  "fixed"
+					sym   "_ZNK12CKnownEntityeqERKS_"
+					addr  "0x4245f0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: compares GetEntity (vcall +0xc) of both sides, null on either side is false; thiscall ret 4, the Linux operator==
+				}
 				"CTFBaseBossLocomotion::FaceTowards"
 				{
 					type  "fixed"
@@ -10356,6 +10365,24 @@
 					build "11087207"
 					lib   "engine"
 					// verified: read by hand, engine.dll: slot 52 of CModelInfoServer's table (Linux 53), between GetModelClientSideIndex and IsDynamicModelLoading as on Linux; copies the name into 0x100 bytes, V_RemoveDotSlashes with '/', then the model lookups through the string table, Linux's body. Thiscall, ret 8
+				}
+				"CMDLCache::BeginLock"
+				{
+					type  "fixed"
+					sym   "_ZN9CMDLCache9BeginLockEv"
+					addr  "0x7b30"
+					build "11087207"
+					lib   "datacache"
+					// verified: read by hand in datacache.dll: locks the cache's two members through vcall 0x38 on [this+0x10], then tail jumps to the same on [this+0x14], as the Linux body does; no stack arguments, so the mod's ret is safe
+				}
+				"CMDLCache::EndLock"
+				{
+					type  "fixed"
+					sym   "_ZN9CMDLCache7EndLockEv"
+					addr  "0x8640"
+					build "11087207"
+					lib   "datacache"
+					// verified: read by hand in datacache.dll: locks the cache's two members through vcall 0x44 on [this+0x10], then tail jumps to the same on [this+0x14], as the Linux body does; no stack arguments, so the mod's ret is safe
 				}
 				"CAttributeManager::ApplyAttributeStringWrapper"
 				{

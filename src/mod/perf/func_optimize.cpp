@@ -130,7 +130,16 @@ namespace Mod::Perf::Func_Optimize
 	};
     
     constexpr uint8_t s_Buf_CTFPlayer_GetEquippedWearableForLoadoutSlot[] = {
-#ifdef PLATFORM_64BITS
+#if defined _WINDOWS
+        0x6a, 0x00,                          // +0x0000 push    0
+        0x68, 0x00, 0x00, 0x00, 0x00,        // +0x0002 push    offset CTFWearable's type descriptor
+        0x68, 0x00, 0x00, 0x00, 0x00,        // +0x0007 push    offset CEconWearable's type descriptor
+        0x6a, 0x00,                          // +0x000c push    0
+        0x50,                                // +0x000e push    eax
+        0xe8, 0x00, 0x00, 0x00, 0x00,        // +0x000f call    __RTDynamicCast
+        0x8b, 0xf8,                          // +0x0014 mov     edi, eax
+        0x83, 0xc4, 0x14,                    // +0x0016 add     esp, 14h
+#elif defined PLATFORM_64BITS
         0x48, 0x8d, 0x15, 0x49, 0xd3, 0xdb, 0x00,  // +0x0000 lea     rdx, _ZTI11CTFWearable; lpdtype
         0x31, 0xc9,                                // +0x0007 xor     ecx, ecx; s2d
         0x48, 0x8d, 0x35, 0x68, 0xb3, 0xd9, 0x00,  // +0x0009 lea     rsi, _ZTI13CEconWearable; lpstype
@@ -155,7 +164,11 @@ namespace Mod::Perf::Func_Optimize
 		{
 			buf.CopyFrom(s_Buf_CTFPlayer_GetEquippedWearableForLoadoutSlot);
 			
-#ifdef PLATFORM_64BITS
+#if defined _WINDOWS
+			mask.SetDword(0x02 + 1, 0);
+			mask.SetDword(0x07 + 1, 0);
+			mask.SetDword(0x0f + 1, 0);
+#elif defined PLATFORM_64BITS
 			mask.SetDword(0x00 + 3, 0);
 			mask.SetDword(0x07 + 1, 0);
 			mask.SetDword(0x09 + 3, 0);
@@ -178,6 +191,9 @@ namespace Mod::Perf::Func_Optimize
             buf[0x13] = 0x90;
             buf[0x14] = 0x90;
 			mask.SetRange(0x10, 5, 0xFF);
+#elif defined _WINDOWS
+			buf.SetRange(0x0f, 5, 0x90);
+			mask.SetRange(0x0f, 5, 0xFF);
 #else
 			buf.SetRange(0x0d, 5, 0x90);
 			mask.SetRange(0x0d, 5, 0xFF);
@@ -188,7 +204,9 @@ namespace Mod::Perf::Func_Optimize
 		
 		virtual bool AdjustPatchInfo(ByteBuf& buf) const override
 		{
-#ifndef PLATFORM_64BITS
+#if defined _WINDOWS
+			buf.SetRange(0x0f, 5, 0x90);
+#elif !defined PLATFORM_64BITS
 			buf.SetRange(0x0d, 5, 0x90);
 #endif
 			return true;

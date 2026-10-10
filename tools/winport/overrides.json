@@ -5117,5 +5117,25 @@
   "rva": "0x4f0750",
   "build": "11087207",
   "why": "read by hand: thiscall ret 8 (info, bool deathnotice); CTFPlayer::OnTakeDamage's inlined SpyDeadRingerDeath calls it with true, Event_Killed with false"
+ },
+ "_ZNK12CKnownEntityeqERKS_": {
+  "name": "CKnownEntity::operator==",
+  "rva": "0x4245f0",
+  "build": "11087207",
+  "why": "read by hand: compares GetEntity (vcall +0xc) of both sides, null on either side is false; thiscall ret 4, the Linux operator=="
+ },
+ "_ZN9CMDLCache9BeginLockEv": {
+  "lib": "datacache",
+  "name": "CMDLCache::BeginLock",
+  "rva": "0x7b30",
+  "build": "11087207",
+  "why": "read by hand in datacache.dll: locks the cache's two members through vcall 0x38 on [this+0x10], then tail jumps to the same on [this+0x14], as the Linux body does; no stack arguments, so the mod's ret is safe"
+ },
+ "_ZN9CMDLCache7EndLockEv": {
+  "lib": "datacache",
+  "name": "CMDLCache::EndLock",
+  "rva": "0x8640",
+  "build": "11087207",
+  "why": "read by hand in datacache.dll: locks the cache's two members through vcall 0x44 on [this+0x10], then tail jumps to the same on [this+0x14], as the Linux body does; no stack arguments, so the mod's ret is safe"
  }
 }

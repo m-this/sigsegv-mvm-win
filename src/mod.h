@@ -271,9 +271,19 @@ protected:
 	this->AddVirtualHook(new CVirtualHook(class_name, class_name_for_offset_calc, func_name, GET_VHOOK_CALLBACK(detour), GET_VHOOK_INNERPTR(detour)))
 #define MOD_ADD_VHOOK_INHERIT(detour, class_name, func_name) \
 	this->AddVirtualHook(new CVirtualHookInherit(class_name, func_name, GET_VHOOK_CALLBACK(detour), GET_VHOOK_INNERPTR(detour)))
+#if defined _MSC_VER
+/* COFF has no section bounds to copy a body by, so the replacement is a detour that never calls back */
+#define MOD_ADD_REPLACE_FUNC_MEMBER(patch, addr) \
+	{ static void *s_Inner_##patch; \
+	this->AddDetour((new CDetour(addr, GetAddrOfMemberFunc(&FuncReplaceClass_##patch::callback), &s_Inner_##patch))->ExpectPop(DetourPopOf(&FuncReplaceClass_##patch::callback))); }
+#define MOD_ADD_REPLACE_FUNC_STATIC(patch, addr) \
+	{ static void *s_Inner_##patch; \
+	this->AddDetour((new CDetour(addr, (void *)&FuncReplace_##patch, &s_Inner_##patch))->ExpectPop(DetourPopOf(&FuncReplace_##patch))); }
+#else
 #define MOD_ADD_REPLACE_FUNC_MEMBER(patch, addr) \
 	this->AddPatch(new CFuncReplace(__stop_##patch - __start_##patch, GetAddrOfMemberFunc(&FuncReplaceClass_##patch::callback), addr));
 #define MOD_ADD_REPLACE_FUNC_STATIC(patch, addr) \
 	this->AddPatch(new CFuncReplace(__stop_##patch - __start_##patch, (void *)&FuncReplace_##patch, addr));
+#endif
 
 #endif
