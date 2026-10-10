@@ -1692,6 +1692,15 @@
 					lib   "server"
 					// verified: read by hand: the call match, the function CServerTools::SetMoveType forwards its two arguments to; pops 8
 				}
+				"CBaseEntity::CalcAbsoluteVelocity"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity20CalcAbsoluteVelocityEv"
+					addr  "0x1ec1c0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: clears EFL_DIRTY_ABSVELOCITY (bit 12 of +0x13c), takes the move parent through the handle at +0x178 and, when there is one, adds its absolute velocity (recursing on itself) to the child's, writing +0x250: the Linux body. GetAbsVelocity (0x1f0bf0) calls it under the dirty test. Thiscall, plain ret
+				}
 				"CBaseEntity::PrecacheScriptSound"
 				{
 					type  "fixed"

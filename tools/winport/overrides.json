@@ -5419,5 +5419,10 @@
   "rva": "0x3dcbc0",
   "build": "11087207",
   "why": "read by hand: clears the func-nav-cost bit (0x20000000) of the attribute flags at +0x54 and zeroes the cost vector's size at +0x154, then ret: the Linux body (flags +0x54, size +0x158). Found by the and with 0xdfffffff, which only this and one other nav function carry"
+ },
+ "_ZN11CBaseEntity20CalcAbsoluteVelocityEv": {
+  "rva": "0x1ec1c0",
+  "build": "11087207",
+  "why": "read by hand: clears EFL_DIRTY_ABSVELOCITY (bit 12 of +0x13c), takes the move parent through the handle at +0x178 and, when there is one, adds its absolute velocity (recursing on itself) to the child's, writing +0x250: the Linux body. GetAbsVelocity (0x1f0bf0) calls it under the dirty test. Thiscall, plain ret"
  }
 }
