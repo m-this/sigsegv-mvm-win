@@ -4358,5 +4358,64 @@
   "build": "11087207",
   "vtidx": 2,
   "why": "read by hand: slot 2 of CTFCompoundBow's table at offset 0x800, its ITFChargeUpWeapon base, where MSVC keeps the override (Linux has it at 503 of the primary table and a thunk in the secondary). Steps back 0x800 to the bow, calls the virtual at +0x678 with 1.0 and ApplyRefireSpeedModifications (0x6050e0), Linux's body. Takes the ITFChargeUpWeapon part as this"
+ },
+ "_ZN6CTFBot35OpportunisticallyUseWeaponAbilitiesEv": {
+  "rva": "0x55f9c0",
+  "build": "11087207",
+  "why": "read by hand: what CTFBotTacticalMonitor::Update (0x576023) and CTFBotDeliverFlag::Update (0x588520) call right before pushing 'Opportunistically using buff item', as Linux's both do. Opens with the countdown timer's Now (+0x28e4), RandomFloat(0.1, 0.2) and the timer restart, then the class tests, Linux's body. Thiscall, plain ret"
+ },
+ "_ZN6CTFBot20EquipLongRangeWeaponEv": {
+  "rva": "0x550d40",
+  "build": "11087207",
+  "why": "read by hand: IsPlayerClass 3, 4, 6 and 2 (0x4fbfe0), then Weapon_GetSlot through +0x45c and Weapon_Switch through +0x428 (Linux +0x460 and +0x42c), Linux's body. Four call sites in CTFBotUberAttackEnemySentry::Update (0x56fdf0) and CTFBotDestroyEnemySentry::Update (0x56f0b0), two each as on Linux. Thiscall, plain ret"
+ },
+ "_ZNK15CTFBat_Giftwrap11GetWeaponIDEv": {
+  "rva": "0x5ffe00",
+  "build": "11087207",
+  "vtidx": 382,
+  "why": "read by hand: 'mov eax, 0x52; ret', the only such body in server.dll, at slot 382 of CTFBat_Giftwrap. Linux's returns 0x52 too. Trivial, so SigMod hooks the slot"
+ },
+ "_ZN12CTFGameRules18PushAllPlayersAwayERK6VectorffiP10CUtlVectorIP9CTFPlayer10CUtlMemoryIS5_iEE": {
+  "rva": "0x498c90",
+  "build": "11087207",
+  "why": "read by hand: CollectPlayers into a local vector for the team argument, then the push loop, Linux's body; five arguments, ret 0x14. Called from both MvM engineer build actions' Update (0x57d47e, 0x57dde9), CTFPlayer::OnTakeDamage (0x5014d1) and the rocket pack, among Linux's callers"
+ },
+ "_ZN15CTFPlayerShared29RadiusCurrencyCollectionCheckEv": {
+  "rva": "0x528dd0",
+  "build": "11087207",
+  "why": "read by hand: GetTeamNumber of the outer player (+0x18c) compared with 2 and the MvM test first, then the currency pack loop with ApplyAbsVelocityImpulse (0x5292aa, 0x5292b7), Linux's body. Its one caller is ConditionGameRulesThink (0x51dad6), as on Linux. Thiscall, plain ret"
+ },
+ "_ZL19Script_StringToFilePKcS0_": {
+  "rva": "0x389710",
+  "build": "11087207",
+  "why": "read by hand: holds 'StringToFile() file name cannot contain '..'' and 'Script_StringToFile: NULL/empty file name', the two strings of Linux's body, and is registered as a script function at 0x38c611. cdecl"
+ },
+ "_ZN15CVoteController11TryCastVoteEiPKc": {
+  "name": "CVoteController::TryCastVote [clone]",
+  "rva": "0x37cf50",
+  "build": "11087207",
+  "why": "read by hand: the whole TryCastVote, opening with the sv_allow_votes test (+0x30 of the convar) that Linux's wrapper makes before the .part.0 clone, then the active issue and the cast; thiscall with the index and the issue, ret 8. A spectator's vote with no vote running now gets SpectatorVoteFix's code rather than the no-issue one"
+ },
+ "_Z34SendProxyArrayLength_PlayerObjectsPKvi": {
+  "rva": "0x50bb10",
+  "build": "11087207",
+  "why": "read by hand: the array length proxy of 'player_object_array' (0x4dc9fb), returning the object count at +0x234c, Linux's body. cdecl, plain ret"
+ },
+ "_Z26SendProxy_PlayerObjectListPK8SendPropPKvS3_P8DVariantii": {
+  "rva": "0x50bb20",
+  "build": "11087207",
+  "why": "read by hand: the proxy of 'player_object_array_element' (0x4dc9dc), which ends in SendProxy_EHandleToInt (0x328020) as Linux's does. cdecl, plain ret"
+ },
+ "_ZN15CTFPlayerShared18OnAddHalloweenTinyEv": {
+  "bad": true,
+  "why": "read by hand, 11087207: no body of its own; OnConditionAdded (0x525560) carries it inline for its one condition, where Linux's calls it. The mods that hook it hook that function on Windows"
+ },
+ "_ZN15CTFPlayerShared15OnRemoveStunnedEv": {
+  "bad": true,
+  "why": "read by hand, 11087207: no body of its own; OnConditionRemoved (0x5261d0) carries it inline for its one condition, where Linux's calls it. The mods that hook it hook that function on Windows"
+ },
+ "_ZN15CTFPlayerShared13OnRemovePhaseEv": {
+  "bad": true,
+  "why": "read by hand, 11087207: no body of its own; OnConditionRemoved (0x5261d0; 'started_dodging:0' and 'DamageDodged' at 0x5264c6 and 0x5264f4) carries it inline for its one condition, where Linux's calls it. The mods that hook it hook that function on Windows"
  }
 }
