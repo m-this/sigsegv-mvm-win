@@ -6468,6 +6468,15 @@
 					vtidx "24"
 					// vtable
 				}
+				"CWeaponMedigun::AddCharge"
+				{
+					type  "fixed"
+					sym   "_ZN14CWeaponMedigun9AddChargeEf"
+					addr  "0x61ab70"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: adds the argument to the charge level at +0x824 with a state change and clamps it, Linux's body. CTFWeaponBase::ApplyOnHitAttributes (0x630800) calls it twice, as Linux's does at 0xdf6951 and 0xdf71d0; 7 callers here and on Linux. Thiscall, ret 4
+				}
 				"CWeaponMedigun::AllowedToHealTarget"
 				{
 					type  "fixed"
@@ -7861,6 +7870,15 @@
 					build "11087207"
 					lib   "server"
 					// call
+				}
+				"UTIL_IsHolidayActive"
+				{
+					type  "fixed"
+					sym   "_Z20UTIL_IsHolidayActivei"
+					addr  "0x36f8e0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the holiday bits with UTIL_CalculateHolidays inline behind its 'calculated' flag (0xa7ef6c), Linux's body. TF_IsHolidayActive tail jumps to it (0x4a37a9) as Linux's calls it, and CTFGameRules::PlayerKilled calls it three times. cdecl, plain ret
 				}
 				"CanScatterGunKnockBack"
 				{
@@ -9636,6 +9654,15 @@
 					build "11087207"
 					lib   "server"
 					// string
+				}
+				"CTFTeamManager::GetTeam"
+				{
+					type  "fixed"
+					sym   "_ZN14CTFTeamManager7GetTeamEi"
+					addr  "0x540490"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: bounds-checks the index against the team count and returns the entry of the team array, Linux's body. FindTarget calls it with the enemy team (0x4ca7ac) right after TFTeamMgr (0x540a30, which returns s_TFTeamManager), as Linux's does at 0xca6eec. 22 direct callers here and on Linux. Thiscall, ret 4
 				}
 				"CGameRules::DefaultFOV"
 				{
@@ -11686,6 +11713,15 @@
 					lib   "server"
 					// string
 				}
+				"CTFBotMedicHeal::IsVisibleToEnemy"
+				{
+					type  "fixed"
+					sym   "_ZNK15CTFBotMedicHeal16IsVisibleToEnemyEP6CTFBotRK6Vector"
+					addr  "0x5810d0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: takes the bot and the position (ret 8), and asks the bot's INextBot part (+0x2668) for its vision interface (+0xcc) to collect the known entities (+0xbc), then for each enemy (IsEnemy +0xd8) the entity's +0x414 with the position: what Linux's body does with CollectKnownEntities inline. Three callers, CTFBotMedicHeal::Update (0x583070) and twice ComputeFollowPosition (0x580120), Linux's three
+				}
 				"CTFBotAttack::Update"
 				{
 					type  "fixed"
@@ -12319,6 +12355,15 @@
 					build "11087207"
 					lib   "server"
 					// call
+				}
+				"CTFPlayerShared::ModifyRage"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFPlayerShared10ModifyRageEf"
+					addr  "0x5246d0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: adds the argument to the rage meter at +0x288, Linux's offset, then SetRageMeter inline where Linux tail jumps to it. HandleRageGain (0x4f54e0) calls it at 0x4f55a5 and 0x4f566b, as Linux's does. 7 callers against Linux's 8. Thiscall, ret 4
 				}
 				"CTFPlayerShared::GetConditionProvider"
 				{
@@ -13909,6 +13954,16 @@
 					build "11087207"
 					lib   "server"
 					// verified: read by hand: bounds-checks the index against the healer count (+0x19c), reads the handle from the 0x24-byte healer records at +0x190 and resolves it through the entity list, Linux's body. Called from SelectMoreDangerousThreat's inline GetHealerOfThreat (0x56c127) among others. Thiscall, ret 4
+				}
+				"CFlagDetectionZone::StartTouch"
+				{
+					type  "fixed"
+					sym   "_ZN18CFlagDetectionZone10StartTouchEP11CBaseEntity"
+					addr  "0x453010"
+					build "11087207"
+					lib   "server"
+					vtidx "104"
+					// verified: read by hand: slot 104 of CFlagDetectionZone (Linux 105), anchored at 97 and 105 (Linux 98 and 106). Carries EntityIsFlagCarrier inline: IsPlayer, HasItem (0x522b10) and GetItem (0x521f80) on the entity, then the list insert and the output, Linux's StartTouch clone. Thiscall, ret 4
 				}
 			}
 		}

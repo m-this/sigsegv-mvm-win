@@ -2022,9 +2022,8 @@ namespace Mod::Etc::Mapentity_Additions
 		DETOUR_MEMBER_CALL(other);
 	}
 
-	DETOUR_DECL_MEMBER(bool, CFlagDetectionZone_EntityIsFlagCarrier, CBaseEntity *other)
+	bool FlagCarrierFiltered(CBaseTrigger *trigger, CBaseEntity *other)
 	{
-		auto trigger = reinterpret_cast<CBaseTrigger *>(this);
         variant_t val;
         auto player = ToTFPlayer(other);
         if (player != nullptr && player->GetItem() != nullptr) {
@@ -2032,17 +2031,33 @@ namespace Mod::Etc::Mapentity_Additions
             val.Convert(FIELD_EHANDLE);
             auto filterEnt = rtti_cast<CBaseFilter *>(val.Entity().Get());
             if (filterEnt != nullptr && !filterEnt->PassesFilter(trigger, player->GetItem())) {
-                return false;
+                return true;
             }
             trigger->GetCustomVariableVariant<"filterplayer">(val);
             val.Convert(FIELD_EHANDLE);
             auto filterPlayerEnt = rtti_cast<CBaseFilter *>(val.Entity().Get());
             if (filterPlayerEnt != nullptr && !filterPlayerEnt->PassesFilter(trigger, player)) {
-                return false;
+                return true;
             }
         }
+		return false;
+	}
+
+	DETOUR_DECL_MEMBER(bool, CFlagDetectionZone_EntityIsFlagCarrier, CBaseEntity *other)
+	{
+		if (FlagCarrierFiltered(reinterpret_cast<CBaseTrigger *>(this), other)) return false;
 		return DETOUR_MEMBER_CALL(other);
 	}
+
+#if defined _WINDOWS
+	/* EntityIsFlagCarrier is inline in StartTouch there, its one Linux caller,
+	 * which does nothing more when it says no */
+	DETOUR_DECL_MEMBER(void, CFlagDetectionZone_StartTouch, CBaseEntity *other)
+	{
+		if (FlagCarrierFiltered(reinterpret_cast<CBaseTrigger *>(this), other)) return;
+		DETOUR_MEMBER_CALL(other);
+	}
+#endif
     
     RefCount rc_CTFBotDeliverFlag_UpgradeOverTime;
 	DETOUR_DECL_MEMBER(bool,CTFBotDeliverFlag_UpgradeOverTime, CTFBot *bot)
@@ -2373,7 +2388,11 @@ namespace Mod::Etc::Mapentity_Additions
             
             MOD_ADD_DETOUR_MEMBER(CTFBot_GetFlagToFetch, "CTFBot::GetFlagToFetch");
             MOD_ADD_DETOUR_MEMBER(CCaptureFlag_FlagTouch, "CCaptureFlag::FlagTouch");
+#if defined _WINDOWS
+            MOD_ADD_DETOUR_MEMBER(CFlagDetectionZone_StartTouch, "CFlagDetectionZone::StartTouch");
+#else
             MOD_ADD_DETOUR_MEMBER(CFlagDetectionZone_EntityIsFlagCarrier, "CFlagDetectionZone::EntityIsFlagCarrier");
+#endif
             MOD_ADD_DETOUR_MEMBER(CBaseEntity_Activate, "CBaseEntity::Activate");
             
             // Execute -1 delay events immediately
