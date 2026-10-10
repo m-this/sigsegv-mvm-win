@@ -286,14 +286,20 @@ SIZE_CHECK(CTFBotMissionSuicideBomber, 0x4854);
 class CTFBotMainAction : public ActionStub<CTFBot>
 {
 public:
+#if defined _WINDOWS
+	const CKnownEntity *SelectCloserThreat(CTFBot *actor, const CKnownEntity *threat1, const CKnownEntity *threat2) const;
+#else
 	const CKnownEntity *SelectCloserThreat(CTFBot *actor, const CKnownEntity *threat1, const CKnownEntity *threat2) const { return ft_SelectCloserThreat(this, actor, threat1, threat2); }
+#endif
 	
 protected:
 //	CTFBotMainAction() = default;
 	CTFBotMainAction() = delete;
 	
+#if !defined _WINDOWS
 private:
 	static MemberFuncThunk<const CTFBotMainAction *, const CKnownEntity *, CTFBot *, const CKnownEntity *, const CKnownEntity *> ft_SelectCloserThreat;
+#endif
 };
 // TODO: SIZE_CHECK etc
 
