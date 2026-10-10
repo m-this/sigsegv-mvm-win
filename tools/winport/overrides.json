@@ -4170,5 +4170,75 @@
   "build": "11087207",
   "vtidx": 277,
   "why": "read by hand: slot 277 of CTFMinigun (Linux 283), where the base gun holds 0x1e1470. Sets the weapon state at +0x88c inline twice around SendWeaponAnim through +0x3e8, as Linux's calls SetWeaponState twice around SendWeaponAnim. Thiscall, plain ret"
+ },
+ "_ZNK16CTFBotMainAction25SelectMoreDangerousThreatEPK8INextBotPK20CBaseCombatCharacterPK12CKnownEntityS8_": {
+  "rva": "0x56c030",
+  "build": "11087207",
+  "why": "read by hand: slot 8 of CTFBotMainAction's table at offset 4, the IContextualQuery one, where MSVC keeps the interface's virtuals (Linux has it at 97 of the primary table and a thunk in the secondary). Same body with the virtual calls 4 lower (GetEntity +0xb8, Linux +0xbc; IsPlayer +0x14c, Linux +0x150), calls SelectMoreDangerousThreatInternal (0x56c1b0) as Linux does, then the healer check inline. Takes the IContextualQuery part as this, ret 0x10"
+ },
+ "_ZNK16CTFBotMainAction17GetHealerOfThreatEPK12CKnownEntity": {
+  "bad": true,
+  "why": "read by hand, 11087207: no body of its own. Its only Linux caller is SelectMoreDangerousThreat (0xe29fd8), and here that carries it inline at 0x56c0ec to 0x56c172, calling CTFPlayerShared::GetHealerByIndex at 0x56c127. SigMod hooks that instead"
+ },
+ "_ZN15CTFPlayerShared16GetHealerByIndexEi": {
+  "name": "CTFPlayerShared::GetHealerByIndex",
+  "rva": "0x521f20",
+  "build": "11087207",
+  "why": "read by hand: bounds-checks the index against the healer count (+0x19c), reads the handle from the 0x24-byte healer records at +0x190 and resolves it through the entity list, Linux's body. Called from SelectMoreDangerousThreat's inline GetHealerOfThreat (0x56c127) among others. Thiscall, ret 4"
+ },
+ "_ZN16CTFBotMainAction9OnContactEP6CTFBotP11CBaseEntityP10CGameTrace": {
+  "rva": "0x56b1b0",
+  "build": "11087207",
+  "vtidx": 53,
+  "why": "read by hand: slot 53 of CTFBotMainAction (Linux 54), between the anchors at 46 (Linux 47) and 56 (57). Same body: the entity's IsPlayer, IsMiniBoss (0x524070), then the virtuals at +0x598 and +0x1ec (Linux +0x5a0 and +0x1f0)"
+ },
+ "_ZN6CTFBot10SuspectSpyEP9CTFPlayer": {
+  "rva": "0x562c70",
+  "build": "11087207",
+  "why": "read by hand: what CTFBot::Touch (0x562f80) calls after the IsStealthed and InCond tests (0x5630ed), as Linux's calls SuspectSpy at 0xe97a99. Same body: IsSuspectedSpy (0x557490, walks the suspect list at +0x27e8 with its count at +0x27f4), operator new and the insert for a new suspect, TestForRealizing (0x562c20), then RealizeSpy (0x560a30), which calls it back as on Linux. Thiscall, ret 4"
+ },
+ "_ZN8CTFFists15SecondaryAttackEv": {
+  "rva": "0x606e10",
+  "build": "11087207",
+  "vtidx": 288,
+  "why": "read by hand: slot 288 of CTFFists (Linux 294), anchored at 284 and 285 (Linux 290 and 291). Same body: CanAttack through +0x6b0, GetTFPlayerOwner, IsControlStunned, the right-hand flag at +0x6cc and a tail jump to CTFFists::Punch (0x607070)"
+ },
+ "_ZN8CTFFists5PunchEv": {
+  "rva": "0x607070",
+  "build": "11087207",
+  "why": "read by hand: the tail jump of CTFFists::PrimaryAttack (0x606dfd) and SecondaryAttack (0x606e57), as Linux's both jump to Punch. Opens with GetTFPlayerOwner and a null test as Linux's does. Thiscall, plain ret"
+ },
+ "_ZN10CTFMinigun15SecondaryAttackEv": {
+  "rva": "0x6203c0",
+  "build": "11087207",
+  "vtidx": 288,
+  "why": "read by hand: slot 288 of CTFMinigun (Linux 294), same anchors as the other weapons. Tail jumps to SharedAttack (0x620490) at 0x6203df, as Linux's does at 0xdce5c1"
+ },
+ "_ZN18CTFWeaponBaseMelee15SecondaryAttackEv": {
+  "rva": "0x63e460",
+  "build": "11087207",
+  "vtidx": 288,
+  "why": "read by hand: slot 288 of every melee weapon class (Linux 294), anchored at 284 and 285. Same body: CanAttack through +0x6b0 (Linux +0x6cc), GetTFPlayerOwner, DoClassSpecialSkill (0x51f680)"
+ },
+ "_Z13ClassCanBuildii": {
+  "rva": "0x53e3d0",
+  "build": "11087207",
+  "why": "read by hand: compares the class with 9 and returns the result, Linux's body. Its one caller is CBaseObject::CanBeUpgraded (0x4bed3a), Linux's one caller too. cdecl, plain ret"
+ },
+ "_ZN9CTFPlayer20EndClassSpecialSkillEv": {
+  "rva": "0x51f8f0",
+  "build": "11087207",
+  "why": "read by hand: Weapon_OwnsThisID(0x18), GetEquippedDemoShield and CTFWearableDemoShield::EndSpecialAction (0x6409a0), Linux's body. Callers are CTFWeaponBaseMelee::PrimaryAttack (0x63e3db) and 0x4d5179, CPasstimeBall::SetStateCarried, Linux's two. Thiscall, plain ret"
+ },
+ "_ZN16CTFWeaponBaseGun13DoFireEffectsEv": {
+  "rva": "0x63aa60",
+  "build": "11087207",
+  "vtidx": 470,
+  "why": "read by hand: slot 470 of the gun classes (Linux 477), anchored at 472 to 477 (Linux 479 to 484). Same body: the owner and IsPlayer, the virtual at +0x75c, then a tail call to the player's virtual at +0x4f8 (Linux +0x778 and +0x4fc)"
+ },
+ "_Z14TE_FireBulletsiRK6VectorRK6QAngleiiifb": {
+  "rva": "0x4700f0",
+  "build": "11087207",
+  "why": "read by hand: what FX_FireBullets calls first (0x470824), as Linux's calls TE_FireBullets at 0xc26552. Builds a CRecipientFilter (0x30e970), AddRecipientsByPAS (0x30ee10), UsePredictionRules (0x30f540), then fills the temp entity, Linux's body. cdecl, plain ret"
  }
 }

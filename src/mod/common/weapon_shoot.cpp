@@ -239,6 +239,17 @@ namespace Mod::Common::Weapon_Shoot
 		DETOUR_MEMBER_CALL(player);
 	}
 
+#if defined _WINDOWS
+	/* UpdatePunchAngles is inline in FireProjectile there, and SetPunchAngle
+	 * is the only thing it calls that changes the player */
+	DETOUR_DECL_MEMBER(void, CBasePlayer_SetPunchAngle, const QAngle &angle)
+	{
+		if (rc_FireWeapon) return;
+
+		DETOUR_MEMBER_CALL(angle);
+	}
+#endif
+
 	DETOUR_DECL_MEMBER(void, CTFWeaponBaseGun_DoFireEffects)
 	{
 		if (rc_FireWeapon) return;
@@ -438,7 +449,11 @@ namespace Mod::Common::Weapon_Shoot
             //MOD_ADD_DETOUR_MEMBER(CBaseEntity_CBaseEntity, "CBaseEntity::CBaseEntity");
 
 			MOD_ADD_DETOUR_MEMBER(CTFWeaponBaseGun_RemoveProjectileAmmo,  "CTFWeaponBaseGun::RemoveProjectileAmmo");
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_MEMBER(CBasePlayer_SetPunchAngle,  "CBasePlayer::SetPunchAngle");
+#else
 			MOD_ADD_DETOUR_MEMBER(CTFWeaponBaseGun_UpdatePunchAngles,  "CTFWeaponBaseGun::UpdatePunchAngles");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CTFWeaponBaseGun_DoFireEffects,  "CTFWeaponBaseGun::DoFireEffects");
 
 			MOD_ADD_DETOUR_STATIC(GetKilleaterWeaponFromDamageInfo,  "GetKilleaterWeaponFromDamageInfo");

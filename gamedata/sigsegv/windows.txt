@@ -3025,6 +3025,16 @@
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: shares the string 'honorbound' with the Linux function, and 3 of its 3 matched callees
 				}
+				"CTFWeaponBaseGun::DoFireEffects"
+				{
+					type  "fixed"
+					sym   "_ZN16CTFWeaponBaseGun13DoFireEffectsEv"
+					addr  "0x63aa60"
+					build "11087207"
+					lib   "server"
+					vtidx "470"
+					// verified: read by hand: slot 470 of the gun classes (Linux 477), anchored at 472 to 477 (Linux 479 to 484). Same body: the owner and IsPlayer, the virtual at +0x75c, then a tail call to the player's virtual at +0x4f8 (Linux +0x778 and +0x4fc)
+				}
 				"CTFWeaponBaseGun::FireProjectile"
 				{
 					type  "fixed"
@@ -5021,6 +5031,25 @@
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: shares the string 'ChargeLevelDegradeThink' with the Linux function, and 5 of its 5 matched callees
 				}
+				"CTFFists::Punch"
+				{
+					type  "fixed"
+					sym   "_ZN8CTFFists5PunchEv"
+					addr  "0x607070"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the tail jump of CTFFists::PrimaryAttack (0x606dfd) and SecondaryAttack (0x606e57), as Linux's both jump to Punch. Opens with GetTFPlayerOwner and a null test as Linux's does. Thiscall, plain ret
+				}
+				"CTFFists::SecondaryAttack"
+				{
+					type  "fixed"
+					sym   "_ZN8CTFFists15SecondaryAttackEv"
+					addr  "0x606e10"
+					build "11087207"
+					lib   "server"
+					vtidx "288"
+					// verified: read by hand: slot 288 of CTFFists (Linux 294), anchored at 284 and 285 (Linux 290 and 291). Same body: CanAttack through +0x6b0, GetTFPlayerOwner, IsControlStunned, the right-hand flag at +0x6cc and a tail jump to CTFFists::Punch (0x607070)
+				}
 				"CTFFlameEntity::OnCollide"
 				{
 					type  "fixed"
@@ -5295,6 +5324,16 @@
 					lib   "server"
 					vtidx "259"
 					// verified: AttribHookValue int, the owner's shared state, InCond 0x55 and the byte field (0x2018 to 0x200c), the 0x459 and 0x6b9 activity compare, then the tail jump to CTFWeaponBase::CanHolster, as the Linux body; slot 259 is Linux 265 less 6 (Holster 269 to 263 matched)
+				}
+				"CTFMinigun::SecondaryAttack"
+				{
+					type  "fixed"
+					sym   "_ZN10CTFMinigun15SecondaryAttackEv"
+					addr  "0x6203c0"
+					build "11087207"
+					lib   "server"
+					vtidx "288"
+					// verified: read by hand: slot 288 of CTFMinigun (Linux 294), same anchors as the other weapons. Tail jumps to SharedAttack (0x620490) at 0x6203df, as Linux's does at 0xdce5c1
 				}
 				"CTFMinigun::SetWeaponState"
 				{
@@ -6193,6 +6232,16 @@
 					build "11087207"
 					lib   "server"
 					// string
+				}
+				"CTFWeaponBaseMelee::SecondaryAttack"
+				{
+					type  "fixed"
+					sym   "_ZN18CTFWeaponBaseMelee15SecondaryAttackEv"
+					addr  "0x63e460"
+					build "11087207"
+					lib   "server"
+					vtidx "288"
+					// verified: read by hand: slot 288 of every melee weapon class (Linux 294), anchored at 284 and 285. Same body: CanAttack through +0x6b0 (Linux +0x6cc), GetTFPlayerOwner, DoClassSpecialSkill (0x51f680)
 				}
 				"CTFWeaponBaseMelee::Smack"
 				{
@@ -8757,6 +8806,15 @@
 					lib   "server"
 					// consensus
 				}
+				"ClassCanBuild"
+				{
+					type  "fixed"
+					sym   "_Z13ClassCanBuildii"
+					addr  "0x53e3d0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: compares the class with 9 and returns the result, Linux's body. Its one caller is CBaseObject::CanBeUpgraded (0x4bed3a), Linux's one caller too. cdecl, plain ret
+				}
 				"CEventQueue::AddEvent [CBaseEntity]"
 				{
 					type  "fixed"
@@ -10951,6 +11009,15 @@
 					lib   "server"
 					// consensus
 				}
+				"CTFBot::SuspectSpy"
+				{
+					type  "fixed"
+					sym   "_ZN6CTFBot10SuspectSpyEP9CTFPlayer"
+					addr  "0x562c70"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: what CTFBot::Touch (0x562f80) calls after the IsStealthed and InCond tests (0x5630ed), as Linux's calls SuspectSpy at 0xe97a99. Same body: IsSuspectedSpy (0x557490, walks the suspect list at +0x27e8 with its count at +0x27f4), operator new and the insert for a new suspect, TestForRealizing (0x562c20), then RealizeSpy (0x560a30), which calls it back as on Linux. Thiscall, ret 4
+				}
 				"CTFBot::GetFlagCaptureZone"
 				{
 					type  "fixed"
@@ -11211,6 +11278,15 @@
 					lib   "server"
 					// string
 				}
+				"CTFBotMainAction::SelectMoreDangerousThreat"
+				{
+					type  "fixed"
+					sym   "_ZNK16CTFBotMainAction25SelectMoreDangerousThreatEPK8INextBotPK20CBaseCombatCharacterPK12CKnownEntityS8_"
+					addr  "0x56c030"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: slot 8 of CTFBotMainAction's table at offset 4, the IContextualQuery one, where MSVC keeps the interface's virtuals (Linux has it at 97 of the primary table and a thunk in the secondary). Same body with the virtual calls 4 lower (GetEntity +0xb8, Linux +0xbc; IsPlayer +0x14c, Linux +0x150), calls SelectMoreDangerousThreatInternal (0x56c1b0) as Linux does, then the healer check inline. Takes the IContextualQuery part as this, ret 0x10
+				}
 				"CTFBotMainAction::SelectMoreDangerousThreatInternal"
 				{
 					type  "fixed"
@@ -11219,6 +11295,16 @@
 					build "11087207"
 					lib   "server"
 					// verified: read by hand: the one callee of CTFBotMainAction::SelectMoreDangerousThreat (slot 8 of the IContextualQuery table at offset 4, 0x56c030), called with this-4 and the four arguments, as the Linux wrapper calls it. Same body: GetEntity and the IsPlayer chain on the first argument, bot flags at +0x27b4 bit 0 (melee only) choosing SelectCloserThreat, the MvM gamerules flag at +0xc72 choosing SelectClosestSpyToMe; ret 0x10
+				}
+				"CTFBotMainAction::OnContact"
+				{
+					type  "fixed"
+					sym   "_ZN16CTFBotMainAction9OnContactEP6CTFBotP11CBaseEntityP10CGameTrace"
+					addr  "0x56b1b0"
+					build "11087207"
+					lib   "server"
+					vtidx "53"
+					// verified: read by hand: slot 53 of CTFBotMainAction (Linux 54), between the anchors at 46 (Linux 47) and 56 (57). Same body: the entity's IsPlayer, IsMiniBoss (0x524070), then the virtuals at +0x598 and +0x1ec (Linux +0x5a0 and +0x1f0)
 				}
 				"CTFBotMainAction::OnStuck"
 				{
@@ -12700,6 +12786,15 @@
 					lib   "server"
 					// string
 				}
+				"CTFPlayer::EndClassSpecialSkill"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer20EndClassSpecialSkillEv"
+					addr  "0x51f8f0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: Weapon_OwnsThisID(0x18), GetEquippedDemoShield and CTFWearableDemoShield::EndSpecialAction (0x6409a0), Linux's body. Callers are CTFWeaponBaseMelee::PrimaryAttack (0x63e3db) and 0x4d5179, CPasstimeBall::SetStateCarried, Linux's two. Thiscall, plain ret
+				}
 				"CTFPlayer::GetMaxHealthForBuffing"
 				{
 					type  "fixed"
@@ -13144,6 +13239,15 @@
 					lib   "server"
 					vtidx "1"
 					// verified: read by hand: slot 1 of CCollisionEvent's table at offset 0, after PreCollision, as on Linux. Same body with every virtual call 4 lower than Linux's (+0x44, +0x5c, +0xcc, +0x2a0 and +0x298 for Linux +0x48, +0x60, +0xd0, +0x2a4 and +0x29c): one destructor slot less. Thiscall, ret 4
+				}
+				"TE_FireBullets"
+				{
+					type  "fixed"
+					sym   "_Z14TE_FireBulletsiRK6VectorRK6QAngleiiifb"
+					addr  "0x4700f0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: what FX_FireBullets calls first (0x470824), as Linux's calls TE_FireBullets at 0xc26552. Builds a CRecipientFilter (0x30e970), AddRecipientsByPAS (0x30ee10), UsePredictionRules (0x30f540), then fills the temp entity, Linux's body. cdecl, plain ret
 				}
 				"CServerGameDLL::Shutdown"
 				{
@@ -13796,6 +13900,15 @@
 					lib   "server"
 					vtidx "277"
 					// verified: read by hand: slot 277 of CTFMinigun (Linux 283), where the base gun holds 0x1e1470. Sets the weapon state at +0x88c inline twice around SendWeaponAnim through +0x3e8, as Linux's calls SetWeaponState twice around SendWeaponAnim. Thiscall, plain ret
+				}
+				"CTFPlayerShared::GetHealerByIndex"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFPlayerShared16GetHealerByIndexEi"
+					addr  "0x521f20"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: bounds-checks the index against the healer count (+0x19c), reads the handle from the 0x24-byte healer records at +0x190 and resolves it through the entity list, Linux's body. Called from SelectMoreDangerousThreat's inline GetHealerOfThreat (0x56c127) among others. Thiscall, ret 4
 				}
 			}
 		}
