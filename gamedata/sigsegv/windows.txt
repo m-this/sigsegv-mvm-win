@@ -14,6 +14,16 @@
 		{
 			"addrs"
 			{
+				"CBotNPCArcherIntention::Reset"
+				{
+					type  "fixed"
+					sym   "_ZN13CBotNPCArcher22CBotNPCArcherIntention5ResetEv"
+					addr  "0x597070"
+					build "11087207"
+					lib   "server"
+					vtidx "42"
+					// verified: read by hand: slot 42 of CBotNPCArcherIntention's table (Linux 43, one destructor fewer); deletes the behavior at +0x1c, news a Behavior<CBotNPCArcher> (0x50) with a fresh CBotNPCArcherBehavior (0x34, vtables 0x108a1e78/0x108a1fe8) and stores it at +0x1c, Linux's body. Thiscall, plain ret
+				}
 				"IBody::IsHeadSteady"
 				{
 					type  "fixed"
@@ -2530,6 +2540,16 @@
 					build "11087207"
 					lib   "server"
 					// vtable
+				}
+				"NextBotCombatCharacter::Spawn"
+				{
+					type  "fixed"
+					sym   "_ZN22NextBotCombatCharacter5SpawnEv"
+					addr  "0x410380"
+					build "11087207"
+					lib   "server"
+					vtidx "24"
+					// verified: read by hand: slot 24 of NextBotCombatCharacter's table (Linux 25, one destructor fewer; vtslot2's anchors pick 26, an unrelated body). Calls CBaseCombatCharacter::Spawn (0x1d8c40), then Reset on the INextBot part at +0x874 (+0xa8, Linux +0xac on +0x88c) and SetSolid(2), Linux's order. Thiscall, plain ret
 				}
 				"CZombie::SpawnAtPos"
 				{
@@ -8496,6 +8516,15 @@
 					vtidx "0"
 					// vtable
 				}
+				"CGameClient::ShouldSendMessages"
+				{
+					type  "fixed"
+					sym   "_ZN11CGameClient18ShouldSendMessagesEv"
+					addr  "0x1270b0"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: slot 5 of CGameClient's primary table (dtor, FireGameEvent, then CBaseClient's own virtuals, which Linux keeps after the IClient ones). Tests m_bIsHLTV at +0x94 and the hltv global (0x637664) first, as Linux 0xc5c30. Thiscall, plain ret
+				}
 				"SV_ComputeClientPacks"
 				{
 					type  "fixed"
@@ -8504,6 +8533,15 @@
 					build "11087207"
 					lib   "engine"
 					// verified: read by hand, engine.dll: the only function referencing 'SV_ComputeClientPacks' (five profiler scopes); the MDL cache lock, then for each of clientCount (arg 1) clients (arg 2): SetupPackInfo(snapshot), serverGameEnts->CheckTransmit(&m_PackInfo, snapshot->m_pValidEntities, m_nValidEntities), SetupPrevPackInfo, then the entity packing, as the SDK's sv_main.cpp writes it
+				}
+				"CHLTVServer::RunFrame"
+				{
+					type  "fixed"
+					sym   "_ZN11CHLTVServer8RunFrameEv"
+					addr  "0x17eb10"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: the only code with the 'CHLTVServer::RunFrame' profiler scope; NET_RunFrame, then UpdateTick (0x17f7e0), CBaseServer::RunFrame on the part at +8 (0x140840, as SV_Frame calls it on sv) and UpdateStats (0x17f660), Linux's order. Thiscall on the whole object, plain ret
 				}
 				"CGameServer::SetHibernating"
 				{
@@ -8619,6 +8657,15 @@
 					lib   "server"
 					// string
 				}
+				"CHLTVServer::IsTVRelay"
+				{
+					type  "fixed"
+					sym   "_ZN11CHLTVServer9IsTVRelayEv"
+					addr  "0x17deb0"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: SendUpdatedServerDetails calls it on hltv; tests the master-proxy virtual (+0x20) of the part at +0x1f0 and returns its negation, Linux's body (the part at +0x1ec there, the CBaseServer part 4 bytes further on Windows). Thiscall, plain ret
+				}
 				"CServerGameDLL::SetServerHibernation"
 				{
 					type  "fixed"
@@ -8676,6 +8723,15 @@
 					lib   "server"
 					// string
 				}
+				"CHLTVDemoRecorder::StopRecording"
+				{
+					type  "fixed"
+					sym   "_ZN17CHLTVDemoRecorder13StopRecordingEv"
+					addr  "0x17b6c0"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: slot 7 of CHLTVDemoRecorder's table, as on Linux. Returns unless recording (+0x540), then writes the stop command and closes the file with the body Linux keeps in StopRecording [clone .part.0]; HLTV_Optimize hooks the whole function here. Thiscall, plain ret
+				}
 				"CMultiPlayerAnimState::AddToGestureSlot"
 				{
 					type  "fixed"
@@ -8712,6 +8768,24 @@
 					build "11087207"
 					lib   "engine"
 					// verified: read by hand, engine.dll: opens the 'CBaseServer::WriteDeltaEntities' VPROF scope of sv_ents_write.cpp, then the 'Delta: [%d] deletions', 'delta [%s]', 'leave [%s]', 'enter [%s]', 'Delta Entities Overhead' and 'Delta Finish' traces in Linux order, and calls SV_DetermineUpdateType (0x128050) and SV_WriteDeltaHeader (0x1289e0). Pops 0x10: four arguments
+				}
+				"CHLTVServer::UpdateTick"
+				{
+					type  "fixed"
+					sym   "_ZN11CHLTVServer10UpdateTickEv"
+					addr  "0x17f7e0"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: RunFrame calls it first (0x17ec5e). Reads the frame fields at +0x5368..+0x5370 (Linux +0x534c..+0x5354), the delta cache at +0x658c (Linux +0x6570) and carries RestoreTick inline: the master-proxy test, a CNetworkStringTable::RestoreTick (0x1bc510) per table, then EntityPVSCheck (0x17d370). The call match 0x17aad0 is the client state's RunFrame. Thiscall, plain ret
+				}
+				"CNetworkStringTable::RestoreTick"
+				{
+					type  "fixed"
+					sym   "_ZN19CNetworkStringTable11RestoreTickEi"
+					addr  "0x1bc510"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: called per table from the inline CHLTVServer::RestoreTick in UpdateTick (0x17f941). Clears +0x18, takes the item count from the dictionary at +0x34, calls CNetworkStringTableItem::RestoreTick (0x1bd9e0) on each and keeps the latest tick in +0x18, as Linux 0x1723d0. Thiscall, ret 4
 				}
 				"CTFBotSquad::Leave"
 				{
@@ -8777,6 +8851,24 @@
 					lib   "server"
 					vtidx "46"
 					// string
+				}
+				"CHLTVClient::ExecuteStringCommand"
+				{
+					type  "fixed"
+					sym   "_ZN11CHLTVClient20ExecuteStringCommandEPKc"
+					addr  "0x178a60"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: slot 2 of CHLTVClient's IClient table (+4), the only code with "Camera settings can't be changed during a live broadcast." and 'tv_chatgroup'. Called with the IClient part as this; Linux's symbol takes the whole client and its thunk adjusts. Thiscall, ret 4
+				}
+				"CHLTVServer::ConnectClient"
+				{
+					type  "fixed"
+					sym   "_ZN11CHLTVServer13ConnectClientER8netadr_siiiiPKcS3_S3_i"
+					addr  "0x17cec0"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: slot 51 of CHLTVServer's CBaseServer table (+8), where CGameServer has CBaseServer::ConnectClient. Calls that (0x13e790) with its nine arguments and copies the password into the new CHLTVClient at +0x27374, Linux's body. The consensus match 0x17ccc0 is not a function start. Called with the CBaseServer part as this
 				}
 				"CHLTVServer::Shutdown"
 				{
@@ -9583,6 +9675,15 @@
 					lib   "server"
 					// vtable
 				}
+				"CNetworkStringTableContainer::DirectUpdate"
+				{
+					type  "fixed"
+					sym   "_ZN28CNetworkStringTableContainer12DirectUpdateEi"
+					addr  "0x1ba9c0"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: the only code with the 'CNetworkStringTableContainer::DirectUpdate' profiler scope. For each table (GetTable, +0x10) whose ChangedSinceTick (+0x1c) holds for the tick, mirrors it into the table at +0x30 with UpdateMirrorTable inline: the tick from +0x14, then each item past the tick through GetUserData (0x1bd9c0) and SetStringUserData or AddString on the mirror. Thiscall, ret 4
+				}
 				"CServerNetworkProperty::AttachEdict"
 				{
 					type  "fixed"
@@ -9766,6 +9867,15 @@
 					vtidx "4"
 					// vtable
 				}
+				"CBaseServer::CheckProtocol"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseServer13CheckProtocolER8netadr_sii"
+					addr  "0x13e3c0"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: slot 57 of CGameServer's table (Linux 58), the only code with '#GameUI_ServerRejectNewProtocol' and '#GameUI_ServerRejectOldProtocol'. Thiscall
+				}
 				"CEconItemAttributeIterator_ApplyAttributeString::OnIterateAttributeValue"
 				{
 					type  "fixed"
@@ -9793,6 +9903,24 @@
 					build "11087207"
 					lib   "engine"
 					// verified: (buffer, length): reads the LZSS tag's stored size or asks Snappy for it behind the SNAP tag, else -1
+				}
+				"CBaseServer::CheckPassword"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseServer13CheckPasswordER8netadr_sPKcS3_"
+					addr  "0x13e350"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: slot 60 of CGameServer's table (Linux 61, one destructor fewer), between CheckChallengeType and ReplyChallenge as on Linux. Gets the password through the virtual at +0x78, true on none, IsLocalhost (0x2498f0) or IsLoopback (0x249910), then compares lengths and bytes with the given one. Thiscall, ret 0xc
+				}
+				"CBaseServer::ConnectClient"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseServer13ConnectClientER8netadr_siiiiPKcS3_S3_i"
+					addr  "0x13e790"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: slot 51 of CGameServer's table (Linux 52), the only code with 'CBaseServer::ConnectClient:  GetFreeClient' and 'NULL ISteamGameServer in ConnectClient'. Thiscall, nine arguments
 				}
 				"CTFGameStats::Event_PlayerFiredWeapon"
 				{
@@ -9829,6 +9957,15 @@
 					build "11087207"
 					lib   "server"
 					// string
+				}
+				"SV_Frame"
+				{
+					type  "fixed"
+					sym   "_Z8SV_Frameb"
+					addr  "0x130420"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: calls a virtual +0x7c on the global at 0x10658b74 with the bool when it is set, returns unless the server state (0x105ec2a4) is past 1 and Host_ShouldRun (0x183690) agrees, compares the state with 3, locks the string tables and runs CBaseServer::RunFrame on sv (0x105ec2a0), Linux's order with the HLTV test inline. cdecl, plain ret
 				}
 				"CGlobalEntityList::FindEntityByClassname"
 				{
@@ -11591,6 +11728,16 @@
 					lib   "server"
 					// string
 				}
+				"CTFBotMainAction::InitialContainedAction"
+				{
+					type  "fixed"
+					sym   "_ZN16CTFBotMainAction22InitialContainedActionEP6CTFBot"
+					addr  "0x56ac40"
+					build "11087207"
+					lib   "server"
+					vtidx "50"
+					// verified: read by hand: slot 50 of CTFBotMainAction's primary table (Linux 51, anchors 47/46 and 54/53); news 0x7c bytes and builds the tactical monitor in place (vtables 0x10894bb0/0x10894d20, three timers at +0x34), Linux's body. Thiscall, ret 4
+				}
 				"CTFBotMainAction::Dodge"
 				{
 					type  "fixed"
@@ -11638,6 +11785,34 @@
 					build "11087207"
 					lib   "server"
 					// string
+				}
+				"~CTFBotMvMEngineerIdle [D0]"
+				{
+					type  "fixed"
+					sym   "_ZN21CTFBotMvMEngineerIdleD0Ev"
+					addr  "0x573940"
+					build "11087207"
+					lib   "server"
+					vtidx "0"
+					// verified: read by hand: slot 0 of CTFBotMvMEngineerIdle's table, the scalar deleting destructor: ~PathFollower at +0x34, the Action base destructor, frees 0x486c bytes on flag 1, ret 4. The class has no subclass, so every one goes through it
+				}
+				"CTFBotMvMEngineerBuildSentryGun::CTFBotMvMEngineerBuildSentryGun [C1]"
+				{
+					type  "fixed"
+					sym   "_ZN31CTFBotMvMEngineerBuildSentryGunC1EP19CTFBotHintSentrygun"
+					addr  "0x57cf50"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the only writer of CTFBotMvMEngineerBuildSentryGun's vtable 0x1089a340 (and 0x1089a4b0 at +4); clears the Action fields, the hint handle at +0x34 and two timers, PathFollower at +0x54, then the hint's handle through its GetRefEHandle, as Linux does. Thiscall, ret 4; CTFBotMvMEngineerIdle::Update calls it twice
+				}
+				"CTFBotMvMEngineerBuildTeleportExit::CTFBotMvMEngineerBuildTeleportExit [C1]"
+				{
+					type  "fixed"
+					sym   "_ZN34CTFBotMvMEngineerBuildTeleportExitC1EP24CTFBotHintTeleporterExit"
+					addr  "0x57d780"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the only writer of CTFBotMvMEngineerBuildTeleportExit's vtable 0x1089a550 (and 0x1089a6c0 at +4); the hint handle at +0x34, two timers, PathFollower, then the hint's handle, Linux's body. Thiscall, ret 4; CTFBotMvMEngineerIdle::Update calls it twice
 				}
 				"CTFBotSeekAndDestroy::CTFBotSeekAndDestroy [C1]"
 				{
@@ -13479,6 +13654,15 @@
 					vtidx "314"
 					// verified: read by hand: slot 314 of CTFPlayer's table (Linux 315). Calls SetActiveWeapon (0x1d86c0), Weapon_Detach (0x1d96a0), UTIL_Remove (0x36d3e0) and RemoveDisguiseWeapon (0x52a040) as the Linux body does, with the RemoveWearable vcall at +0x6e0 (Linux +0x6e4); ret
 				}
+				"CTFPlayerShared::SetItemChargeMeter"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFPlayerShared18SetItemChargeMeterE19loadout_positions_tf"
+					addr  "0x52ad90"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: CheckBlockBackstab calls it with (1, 0.0) right after AddEffects(0x20) (0x4e3e34), as Linux does. Returns on a slot above 10, clamps the value to 0..100, keeps the old meter (+0x2c8 to +0x2f4) and stores it with a state change: the body Linux splits into the slot test and its [clone .part.0]. Thiscall, ret 8
+				}
 				"CTFPlayerShared::Heal"
 				{
 					type  "fixed"
@@ -13596,6 +13780,15 @@
 					build "11087207"
 					lib   "server"
 					// string
+				}
+				"GetCurrentSkyCamera"
+				{
+					type  "fixed"
+					sym   "_Z19GetCurrentSkyCamerav"
+					addr  "0x329bc0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: mov eax,[0x10a72054]; ret, Linux's body. The inlined ClientData_Update in UpdateAllClientData calls it per player (0x2f0a19)
 				}
 				"VScriptServerInit"
 				{
@@ -14276,6 +14469,25 @@
 					lib   "server"
 					vtidx "104"
 					// verified: read by hand: slot 104 of CFlagDetectionZone (Linux 105), anchored at 97 and 105 (Linux 98 and 106). Carries EntityIsFlagCarrier inline: IsPlayer, HasItem (0x522b10) and GetItem (0x521f80) on the entity, then the list insert and the output, Linux's StartTouch clone. Thiscall, ret 4
+				}
+				"UpdateAllClientData"
+				{
+					type  "fixed"
+					sym   "_Z19UpdateAllClientDatav"
+					addr  "0x2f09f0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: called by CServerGameDLL::GameFrame after CleanupDeleteList (0x26fb41, and 0x26faa7 on the early path), as on Linux. Loops UTIL_PlayerByIndex over the clients with ClientData_Update inline: GetCurrentSkyCamera, the stored camera at +0x8ec, the skybox3d copy from camera+0x388, and 0xff into m_skybox3darea (+0x928) when there is none. No VPROF here. cdecl, plain ret
+				}
+				"~CBotNPCArcher [D0]"
+				{
+					type  "fixed"
+					sym   "_ZN13CBotNPCArcherD0Ev"
+					addr  "0x595ba0"
+					build "11087207"
+					lib   "server"
+					vtidx "0"
+					// verified: read by hand: slot 0 of CBotNPCArcher's table (0x108a0e38), the scalar deleting destructor: deletes the intention, locomotion and body at +0x8dc, +0x8e0, +0x8e4 (Linux +0x8f4..+0x8fc, the order its constructor sets them), restores the base vtables, frees 0x904 bytes on flag 1, ret 4. The Windows m_pIntentionInterface extractor reads its first load
 				}
 			}
 		}

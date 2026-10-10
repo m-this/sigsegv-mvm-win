@@ -145,7 +145,11 @@ namespace Mod::Attr::BlockBackstab_OldStyle
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_CheckBlockBackstab,                 "CTFPlayer::CheckBlockBackstab");
 			MOD_ADD_DETOUR_MEMBER(CAttributeManager_ApplyAttributeFloatWrapper, "CAttributeManager::ApplyAttributeFloatWrapper");
 		//	MOD_ADD_DETOUR_MEMBER(CBaseEntity_AddEffects,                       "CBaseEntity::AddEffects");
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_SetItemChargeMeter,           "CTFPlayerShared::SetItemChargeMeter");
+#else
 			MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_SetItemChargeMeter,           "CTFPlayerShared::SetItemChargeMeter [clone]");
+#endif
 		}
 	};
 	CMod s_Mod;

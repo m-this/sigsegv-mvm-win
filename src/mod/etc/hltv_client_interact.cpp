@@ -10,7 +10,12 @@ namespace Mod::Etc::HLTV_Client_Interact
 {
     DETOUR_DECL_MEMBER(bool, CHLTVClient_ExecuteStringCommand, const char *cmd)
 	{
+#if defined _WINDOWS
+        /* engine.dll's body is IClient's slot, called with that part */
+        auto client = static_cast<CHLTVClient *>(reinterpret_cast<IClient *>(this));
+#else
         auto client = reinterpret_cast<CHLTVClient *>(this);
+#endif
         CCommand args;
         if (!args.Tokenize(cmd)) {
             return DETOUR_MEMBER_CALL(cmd);
