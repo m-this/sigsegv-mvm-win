@@ -15216,6 +15216,15 @@
 					lib   "engine"
 					// verified: read by hand, engine.dll: the receive list at this+0x128+n*0x12c (Linux +0x120), the fragment counts at +0x120/+0x124 of it, decompression, then HandleUpload inline for a file ('FileReceived: %s, %i bytes (ID %i)', 'ignored. File uploads are disabled!') and the buffer freed (0x1a1510) before returning true. Thiscall, ret 4
 				}
+				"CTFPlayer::FeignDeath"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer10FeignDeathERK15CTakeDamageInfob"
+					addr  "0x4f0750"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: thiscall ret 8 (info, bool deathnotice); CTFPlayer::OnTakeDamage's inlined SpyDeadRingerDeath calls it with true, Event_Killed with false
+				}
 			}
 		}
 	}

@@ -5111,5 +5111,11 @@
   "rva": "0x5e5450",
   "build": "11087207",
   "why": "read by hand: CTFGameRules::DistributeCurrencyAmount calls it (0x4892e9) as Linux does; the RoundEvent_AcquiredCredits pair (0x5e0a80, 0x5e09d0), the respec counters at +0x718/+0x71c, CollectPlayers<CTFPlayer>(2) and the per player respec history by SteamID, Linux's body. Thiscall, ret 0xc"
+ },
+ "_ZN9CTFPlayer10FeignDeathERK15CTakeDamageInfob": {
+  "name": "CTFPlayer::FeignDeath",
+  "rva": "0x4f0750",
+  "build": "11087207",
+  "why": "read by hand: thiscall ret 8 (info, bool deathnotice); CTFPlayer::OnTakeDamage's inlined SpyDeadRingerDeath calls it with true, Event_Killed with false"
  }
 }

@@ -7,7 +7,15 @@
 namespace Mod::MvM::Human_Death_Yells
 {
 	constexpr uint8_t s_Buf_CTFPlayer_DeathSound[] = {
-#ifdef PLATFORM_64BITS
+#if defined _WINDOWS
+		0x80, 0xbf, 0x28, 0x24, 0x00, 0x00, 0x00,  // +0x0000 cmp     byte ptr [edi+2428h], 0
+		0x75, 0x00,                                // +0x0007 jnz     skip
+		0xd9, 0xee,                                // +0x0009 fldz
+		0x6a, 0x00,                                // +0x000b push    0
+		0x51,                                      // +0x000d push    ecx
+		0xd9, 0x1c, 0x24,                          // +0x000e fstp    dword ptr [esp]
+		0x68, 0x00, 0x00, 0x00, 0x00,              // +0x0011 push    offset aMvmPlayerdied; "MVM.PlayerDied"
+#elif defined PLATFORM_64BITS
 		0x41, 0x80, 0xbc, 0x24, 0x1c, 0x29, 0x00, 0x00, 0x00,  // +0x0000 cmp     byte ptr [r12+291Ch], 0
 		0x0f, 0x85, 0x0d, 0xff, 0xff, 0xff,                    // +0x0009 jnz     loc_11B4CDF
 		0x48, 0x8d, 0x35, 0x94, 0x3c, 0x31, 0x00,              // +0x000f lea     rsi, aMvmPlayerdied; "MVM.PlayerDied"
@@ -37,7 +45,11 @@ namespace Mod::MvM::Human_Death_Yells
 		{
 			buf.CopyFrom(s_Buf_CTFPlayer_DeathSound);
 
-#ifdef PLATFORM_64BITS
+#if defined _WINDOWS
+			mask.SetRange(0x00 + 2, 4, 0x00);
+			mask.SetRange(0x07 + 1, 1, 0x00);
+			mask.SetRange(0x11 + 1, 4, 0x00);
+#elif defined PLATFORM_64BITS
 			mask.SetRange(0x00 + 4, 4, 0x00);
 			mask.SetRange(0x09 + 2, 4, 0x00);
 			mask.SetRange(0x0f + 3, 4, 0x00);
@@ -57,7 +69,11 @@ namespace Mod::MvM::Human_Death_Yells
 			// Avoid going into the branch playing mvm sound
 
 			/* make the conditional jump unconditional */
-#ifdef PLATFORM_64BITS
+#if defined _WINDOWS
+			buf[0x07] = 0xeb;
+			
+			mask[0x07] = 0xFF;
+#elif defined PLATFORM_64BITS
 			buf[0x09] = 0x90;
 			buf[0x0a] = 0xe9;
 			
@@ -81,6 +97,15 @@ namespace Mod::MvM::Human_Death_Yells
 		DETOUR_MEMBER_CALL(info);
 	
 	}
+
+#if defined _WINDOWS
+	/* SpyDeadRingerDeath is inline in OnTakeDamage: it calls FeignDeath with the deathnotice flag, Event_Killed with false */
+	DETOUR_DECL_MEMBER(void, CTFPlayer_FeignDeath, const CTakeDamageInfo& info, bool bDeathnotice)
+	{
+		SCOPED_INCREMENT_IF(rc_CTFPlayer_SpyDeadRingerDeath, bDeathnotice);
+		DETOUR_MEMBER_CALL(info, bDeathnotice);
+	}
+#endif
 
 	DETOUR_DECL_MEMBER(void, CTFPlayer_DeathSound, const CTakeDamageInfo& info)
 	{
@@ -112,7 +137,11 @@ namespace Mod::MvM::Human_Death_Yells
 			this->AddPatch(new CPatch_CTFPlayer_DeathSound());
 			
 			MOD_ADD_DETOUR_MEMBER_PRIORITY(CTFPlayer_DeathSound, "CTFPlayer::DeathSound", LOWEST);
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_MEMBER(CTFPlayer_FeignDeath, "CTFPlayer::FeignDeath");
+#else
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_SpyDeadRingerDeath, "CTFPlayer::SpyDeadRingerDeath");
+#endif
 		}
 	};
 	CMod s_Mod;
