@@ -890,6 +890,105 @@
 					vtidx "71"
 					// string
 				}
+				"NDebugOverlay::Axis"
+				{
+					type  "fixed"
+					sym   "_ZN13NDebugOverlay4AxisERK6VectorRK6QAnglefbf"
+					addr  "0x237c40"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: AngleVectors (0x6d9540) and three Line calls in red, green and blue, Linux's body. cdecl, plain ret
+				}
+				"NDebugOverlay::Box"
+				{
+					type  "fixed"
+					sym   "_ZN13NDebugOverlay3BoxERK6VectorS2_S2_iiiif"
+					addr  "0x237d80"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: debugoverlay (0x10a31cd4) AddBoxOverlay (+4) with vec3_angle (0x10ba3544) for the angles and the rest passed on, Linux's body. cdecl, plain ret
+				}
+				"NDebugOverlay::BoxAngles"
+				{
+					type  "fixed"
+					sym   "_ZN13NDebugOverlay9BoxAnglesERK6VectorS2_S2_RK6QAngleiiiif"
+					addr  "0x237dc0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: debugoverlay AddBoxOverlay (+4) with the given angles, Linux's body. cdecl, plain ret
+				}
+				"NDebugOverlay::BoxDirection"
+				{
+					type  "fixed"
+					sym   "_ZN13NDebugOverlay12BoxDirectionERK6VectorS2_S2_S2_iiiif"
+					addr  "0x237e00"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: UTIL_VecToYaw (0x370490) of the orientation into a yaw-only QAngle, then AddBoxOverlay (+4), Linux's body. cdecl, plain ret
+				}
+				"NDebugOverlay::Circle"
+				{
+					type  "fixed"
+					sym   "_ZN13NDebugOverlay6CircleERK6Vectorfiiiibf"
+					addr  "0x238060"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the listen server host's EyeVectors, VectorAngles, AngleMatrix, two MatrixGetColumn and the axes Circle, Linux's body. cdecl, plain ret
+				}
+				"NDebugOverlay::Circle_ang"
+				{
+					type  "fixed"
+					sym   "_ZN13NDebugOverlay6CircleERK6VectorRK6QAnglefiiiibf"
+					addr  "0x237ff0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: AngleMatrix (0x6d9260), two MatrixGetColumn (0x6dc1b0) and the axes Circle (0x237e60), Linux's body. cdecl, plain ret
+				}
+				"NDebugOverlay::Circle_axes"
+				{
+					type  "fixed"
+					sym   "_ZN13NDebugOverlay6CircleERK6VectorS2_S2_fiiiibf"
+					addr  "0x237e60"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the segment loop with Line and, for a nonzero alpha, AddTriangleOverlay (+8); the other Circle and Sphere overloads call it. cdecl, plain ret
+				}
+				"NDebugOverlay::Cross3D_ext"
+				{
+					type  "fixed"
+					sym   "_ZN13NDebugOverlay7Cross3DERK6VectorS2_S2_iiibf"
+					addr  "0x2380f0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: four Line calls (0x238ed0), Linux's body. cdecl, plain ret
+				}
+				"NDebugOverlay::Cross3D_size"
+				{
+					type  "fixed"
+					sym   "_ZN13NDebugOverlay7Cross3DERK6Vectorfiiibf"
+					addr  "0x238250"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: three Line calls and nothing else, Linux's body. cdecl, plain ret
+				}
+				"NDebugOverlay::DrawGroundCrossHairOverlay"
+				{
+					type  "fixed"
+					sym   "_ZN13NDebugOverlay26DrawGroundCrossHairOverlayEv"
+					addr  "0x238380"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: UTIL_PlayerByIndex, the player virtual at +0x224 (Linux +0x228), EyeVectors, a trace (0x16d5a0) and two Line calls, Linux's body. cdecl, plain ret
+				}
+				"NDebugOverlay::DrawTickMarkedLine"
+				{
+					type  "fixed"
+					sym   "_ZN13NDebugOverlay18DrawTickMarkedLineERK6VectorS2_fiiiibf"
+					addr  "0x238520"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: UTIL_PlayerByIndex, Line, V_snprintf of the tick label, Line, and Text inline (the host clip and AddTextOverlay +0x14), Linux's callees. cdecl, plain ret
+				}
 				"NDebugOverlay::EntityBounds"
 				{
 					type  "fixed"
@@ -897,7 +996,133 @@
 					addr  "0x2389b0"
 					build "11087207"
 					lib   "server"
-					// call
+					// verified: read by hand: the collision property at +0x184 (origin, angles, mins, maxs through its virtuals) into AddBoxOverlay (+4), Linux's body. cdecl, plain ret
+				}
+				"NDebugOverlay::EntityText"
+				{
+					type  "fixed"
+					sym   "_ZN13NDebugOverlay10EntityTextEiiPKcfiiii"
+					addr  "0x238a10"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: AddEntityTextOverlay (slot 0, varargs) with the colors scaled and clamped to 0..255 and the text as its format, Linux's body. cdecl, plain ret
+				}
+				"NDebugOverlay::EntityTextAtPosition"
+				{
+					type  "fixed"
+					sym   "_ZN13NDebugOverlay20EntityTextAtPositionERK6VectoriPKcfiiii"
+					addr  "0x238b00"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: AddTextOverlayRGB (+0x3c, Linux +0x40: MSVC orders the AddTextOverlay overloads differently) with '%s' and the text, Linux's body. cdecl, plain ret
+				}
+				"NDebugOverlay::Grid"
+				{
+					type  "fixed"
+					sym   "_ZN13NDebugOverlay4GridERK6Vector"
+					addr  "0x238b40"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: debugoverlay AddGridOverlay (+0x20) with the position, Linux's body. cdecl, plain ret
+				}
+				"NDebugOverlay::HorzArrow"
+				{
+					type  "fixed"
+					sym   "_ZN13NDebugOverlay9HorzArrowERK6VectorS2_fiiiibf"
+					addr  "0x238b60"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: six Line and six Triangle calls around the arrow's length, Linux's body; YawArrow calls it. cdecl, plain ret
+				}
+				"NDebugOverlay::Line"
+				{
+					type  "fixed"
+					sym   "_ZN13NDebugOverlay4LineERK6VectorS2_iiibf"
+					addr  "0x238ed0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the listen server host test (UTIL_GetListenServerHost 0x36c670), its eye vectors and the distance clip, then AddLineOverlay (+0xc); called by every other line drawing function here. cdecl, plain ret
+				}
+				"NDebugOverlay::ScreenText"
+				{
+					type  "fixed"
+					sym   "_ZN13NDebugOverlay10ScreenTextEffPKciiiif"
+					addr  "0x2390e0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: debugoverlay AddScreenTextOverlay (+0x18) with every argument, Linux's body. cdecl, plain ret
+				}
+				"NDebugOverlay::ScreenTextLine"
+				{
+					type  "fixed"
+					sym   "_ZN13NDebugOverlay14ScreenTextLineEffiPKciiiif"
+					addr  "0x239120"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: debugoverlay slot +0x4c with every argument, as Linux. cdecl, plain ret
+				}
+				"NDebugOverlay::Sphere"
+				{
+					type  "fixed"
+					sym   "_ZN13NDebugOverlay6SphereERK6Vectorfiiibf"
+					addr  "0x239240"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: six Line calls around the center at the radius, Linux's body. cdecl, plain ret
+				}
+				"NDebugOverlay::Sphere_ang"
+				{
+					type  "fixed"
+					sym   "_ZN13NDebugOverlay6SphereERK6VectorRK6QAnglefiiiibf"
+					addr  "0x239160"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: AngleMatrix, three MatrixGetColumn and the axes Circle three times, Linux's body. cdecl, plain ret
+				}
+				"NDebugOverlay::SweptBox"
+				{
+					type  "fixed"
+					sym   "_ZN13NDebugOverlay8SweptBoxERK6VectorS2_S2_S2_RK6QAngleiiiif"
+					addr  "0x2395e0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: debugoverlay AddSweptBoxOverlay (+0x1c) with every argument, Linux's body. cdecl, plain ret
+				}
+				"NDebugOverlay::Text"
+				{
+					type  "fixed"
+					sym   "_ZN13NDebugOverlay4TextERK6VectorPKcbf"
+					addr  "0x239620"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the listen server host clip, the view check trace (UTIL_TraceLine 0x16d5a0, mask 0x4081), then AddTextOverlay (+0x14, Linux +0x10) with '%s', Linux's body. cdecl, plain ret
+				}
+				"NDebugOverlay::Triangle"
+				{
+					type  "fixed"
+					sym   "_ZN13NDebugOverlay8TriangleERK6VectorS2_S2_iiiibf"
+					addr  "0x2397a0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the listen server host clip as in Line, then AddTriangleOverlay (+8), Linux's body; VertArrow calls it six times. cdecl, plain ret
+				}
+				"NDebugOverlay::VertArrow"
+				{
+					type  "fixed"
+					sym   "_ZN13NDebugOverlay9VertArrowERK6VectorS2_fiiiibf"
+					addr  "0x2399f0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: VectorVectors (0x6de000), six Line and six Triangle (0x2397a0) calls, Linux's body. cdecl, plain ret
+				}
+				"NDebugOverlay::YawArrow"
+				{
+					type  "fixed"
+					sym   "_ZN13NDebugOverlay8YawArrowERK6Vectorfffiiiibf"
+					addr  "0x239dd0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: UTIL_YawToVector (0x3704f0) then HorzArrow (0x238b60), Linux's body. cdecl, plain ret
 				}
 				"CBaseEntity::DispatchTraceAttack"
 				{
@@ -963,6 +1188,15 @@
 					build "11087207"
 					lib   "server"
 					// verified: read by hand: slot 1 of the table at offset 0x14 in CQuestItemTracker's vtable (0x1084ffec), the IGameEventListener2 subobject, where Linux has a thunk that subtracts 0x14 and jumps to FireGameEvent. MSVC compiles the override against the subobject: the body keeps its this in esi and reaches the tracker as esi-0x14 (lea ecx,[esi-0x14] at 0x45c99c). It is the same address the table already gives CQuestItemTracker::FireGameEvent, which MSVC does not put in the primary table. thiscall, one argument, ret 4
+				}
+				"_SpewMessage [internal]"
+				{
+					type  "fixed"
+					sym   "_ZL12_SpewMessage10SpewType_tPKciPK5ColorS1_Pc"
+					addr  "0x4bf0"
+					build "11087207"
+					lib   "tier0"
+					// verified: read by hand, tier0.dll: the exported _SpewMessage (0x6640) calls it with the current spew type (0x10048728), the empty group, level 0, the default color, the format and its va_list, as Linux's exported one calls the static _SpewMessage. cdecl, six arguments, plain ret
 				}
 				"CBaseEntity::AddTimedOverlay"
 				{
@@ -7596,6 +7830,24 @@
 					lib   "server"
 					// string
 				}
+				"clear_debug_overlays"
+				{
+					type  "fixed"
+					sym   "_ZL20clear_debug_overlaysRK8CCommand"
+					addr  "0x2a2010"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the callback the 'clear_debug_overlays' ConCommand registers (0x175f9): UTIL_IsCommandIssuedByServerAdmin, clears every entity's overlay bits (+0x104) and tail-calls debugoverlay ClearAllOverlays (+0x38). cdecl, plain ret
+				}
+				"ConColorMsg"
+				{
+					type  "fixed"
+					sym   "_Z11ConColorMsgRK5ColorPKcz"
+					addr  "0x45a0"
+					build "11087207"
+					lib   "tier0"
+					// verified: tier0.dll exports it as ?ConColorMsg@@YAXABVColor@@PBDZZ, ConColorMsg(const Color&, const char *, ...), at this address. cdecl varargs, plain ret
+				}
 				"CTFGameRules::RadiusDamage"
 				{
 					type  "fixed"
@@ -7924,6 +8176,33 @@
 					vtidx "39"
 					// string
 				}
+				"SetDebugBits"
+				{
+					type  "fixed"
+					sym   "_Z12SetDebugBitsP11CBasePlayerPKci"
+					addr  "0x228ad0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the ent_text and ent_bbox command callbacks (0x1eba50, 0x1ea620) call it with UTIL_GetCommandClient (0x272770), the name and the bit (1, 4); GetNextCommandEntity inline, NameMatchesComplex, then the picker entity fallback, Linux's body. cdecl, plain ret
+				}
+				"GetNextCommandEntity"
+				{
+					type  "fixed"
+					sym   "_Z20GetNextCommandEntityP11CBasePlayerPKcP11CBaseEntity"
+					addr  "0x228320"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: no player returns null; the name against the empty string (0x10755850) then V_stricmp, atoi for an index, and the entity search, Linux's wrapper and its [clone .part.0] in one. cdecl, plain ret
+				}
+				"DrawAllDebugOverlays"
+				{
+					type  "fixed"
+					sym   "_Z20DrawAllDebugOverlaysv"
+					addr  "0x271120"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: CServerGameDLL::PreClientUpdate (0x26fbd0) calls it when its bool is set, as Linux does; UTIL_DrawOverlayLines (0x2a1ac0), the engine virtual +0xc and the entity overlay passes. cdecl, plain ret
+				}
 				"CTFGameRules::FPlayerCanTakeDamage"
 				{
 					type  "fixed"
@@ -7987,6 +8266,15 @@
 					build "11087207"
 					lib   "server"
 					// verified: read by hand: returns string_t through a hidden pointer with the string as its one argument, and inserts it with itself as the value into the global pooled string hashtable (0x10a35508) through 0x2815c0, keeping the answer when it is a non-empty string, the Linux body; cdecl
+				}
+				"FindPooledString"
+				{
+					type  "fixed"
+					sym   "_Z16FindPooledStringPKc"
+					addr  "0x281590"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: CStringPoolBase::Find (0x6ee260) on the pool inside g_GameStringPool (0x10a3471c, +4) and an empty result made null, Linux's body; AllocPooledString (0x281060) is the same with Allocate (0x6ee130). Returns the string_t through the hidden pointer, cdecl, plain ret
 				}
 				"CEventQueue::ServiceEvents"
 				{
@@ -8115,6 +8403,33 @@
 					lib   "server"
 					// consensus
 				}
+				"Con_NPrintf"
+				{
+					type  "fixed"
+					sym   "_Z11Con_NPrintfiPKcz"
+					addr  "0xc4cb0"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: CVEngineServer::Con_NPrintf calls it (0x13c142) with the position, '%s' and its formatted text. Formats into 0x1000 bytes and, for a position below 0x80, stores the line in the notify area (0x214 bytes each); the dedicated Linux engine keeps only the formatting. cdecl varargs, plain ret
+				}
+				"IVEngineServer::Con_NPrintf"
+				{
+					type  "fixed"
+					sym   "_ZN14CVEngineServer11Con_NPrintfEiPKcz"
+					addr  "0x13c100"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: slot 46 of CVEngineServer's table, as on Linux. Returns when IsDedicatedServer (+0x8) holds, else formats and calls Con_NPrintf (0xc4cb0); the Linux one is an empty ret. A varargs member: cdecl with this on the stack, plain ret
+				}
+				"IVEngineServer::Con_NXPrintf"
+				{
+					type  "fixed"
+					sym   "_ZN14CVEngineServer12Con_NXPrintfEPK12con_nprint_sPKcz"
+					addr  "0x13c150"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: slot 47 of CVEngineServer's table, as on Linux. Returns when IsDedicatedServer (+0x8) holds, else formats and calls Con_NXPrintf; the Linux one is an empty ret. A varargs member: cdecl with this on the stack, plain ret
+				}
 				"CTeamplayRoundBasedRules::State_Transition"
 				{
 					type  "fixed"
@@ -8213,6 +8528,15 @@
 					build "11087207"
 					lib   "server"
 					// verified: read by hand: clears the vector's count unless shouldAppend (arg 4), walks players 1 to maxClients through UTIL_PlayerByIndex (0x36d470), keeps one with an edict and IsPlayer (vtable +0x14c), skips one whose field at +0xe74 is 2 (Linux +0xe8c), lets team -2 through or compares GetTeamNumber with arg 2, then the isAlive test and the append, the Linux body. cdecl, plain ret; called with (vector, team, isAlive, append) and add esp, 0x10 by UpdateMission (0x5f0791), UpdateMissionDestroySentries (0x5f0dab) and ScoutPrimary::Push (0x624601)
+				}
+				"DataTable_Warning"
+				{
+					type  "fixed"
+					sym   "_Z17DataTable_WarningPKcz"
+					addr  "0x167e60"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: the only code with 'DataTable warning: %s': V_vsnprintf into a 0x1000 byte buffer, then the warning print, Linux's body. cdecl varargs, plain ret
 				}
 				"CServerGameDLL::ServerActivate"
 				{
@@ -8834,6 +9158,15 @@
 					build "11087207"
 					lib   "engine"
 					// verified: read by hand, engine.dll: opens the 'CBaseServer::WriteDeltaEntities' VPROF scope of sv_ents_write.cpp, then the 'Delta: [%d] deletions', 'delta [%s]', 'leave [%s]', 'enter [%s]', 'Delta Entities Overhead' and 'Delta Finish' traces in Linux order, and calls SV_DetermineUpdateType (0x128050) and SV_WriteDeltaHeader (0x1289e0). Pops 0x10: four arguments
+				}
+				"CCommandBuffer::AddText"
+				{
+					type  "fixed"
+					sym   "_ZN14CCommandBuffer7AddTextEPKci"
+					addr  "0x24ac50"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: Cbuf_AddText (0x1504e0, the only code with 'Cbuf_AddText: buffer overflow') calls it on s_CommandBuffer (0x10621fc8) with the text and 0 under the command buffer mutex, as Linux does. Compares each command with 'wait' and wraps the text in a CUtlBuffer (flags 9) for GetNextCommandLength, Linux's body. The consensus match 0x4d980 is the mutex lock helper. Thiscall, ret 8
 				}
 				"CHLTVServer::UpdateTick"
 				{
@@ -9933,6 +10266,15 @@
 					vtidx "4"
 					// vtable
 				}
+				"CServerPlugin::OnQueryCvarValueFinished"
+				{
+					type  "fixed"
+					sym   "_ZN13CServerPlugin24OnQueryCvarValueFinishedEiP7edict_t21EQueryCvarValueStatusPKcS4_"
+					addr  "0x134990"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: slot 15 of CServerPlugin's table, as on Linux; for each enabled plugin with interface version 2 or later (+0x88) calls its OnQueryCvarValueFinished (+0x44), Linux's body. Thiscall, ret 0x14
+				}
 				"CBaseServer::CheckProtocol"
 				{
 					type  "fixed"
@@ -9941,6 +10283,15 @@
 					build "11087207"
 					lib   "engine"
 					// verified: read by hand, engine.dll: slot 57 of CGameServer's table (Linux 58), the only code with '#GameUI_ServerRejectNewProtocol' and '#GameUI_ServerRejectOldProtocol'. Thiscall
+				}
+				"CServerPlugin::ClientSettingsChanged"
+				{
+					type  "fixed"
+					sym   "_ZN13CServerPlugin21ClientSettingsChangedEP7edict_t"
+					addr  "0x134030"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: slot 11 of CServerPlugin's table, as on Linux; for each plugin that is not disabled (+0x80) calls its ClientSettingsChanged (+0x34), Linux's body. Thiscall, ret 4
 				}
 				"CEconItemAttributeIterator_ApplyAttributeString::OnIterateAttributeValue"
 				{
@@ -9996,6 +10347,15 @@
 					build "11087207"
 					lib   "server"
 					// consensus
+				}
+				"SQVM::Call"
+				{
+					type  "fixed"
+					sym   "_ZN4SQVM4CallER11SQObjectPtriiS1_j"
+					addr  "0x2dfa0"
+					build "11087207"
+					lib   "vscript"
+					// verified: read by hand, vscript.dll: the closure dispatch on the object type (0x8000200, 0x8004000), and the only code with "SCRIPT PERF WARNING --- \"%s\" ran long at %fms" and '<lambda or free run script>', Linux's body. The string match picked 0x2ded0, the arithmetic compare before the jump table that precedes it. Thiscall, ret 0x14
 				}
 				"CTFWorkshopMap::GetLocalFile"
 				{
@@ -10326,6 +10686,24 @@
 					build "11087207"
 					lib   "server"
 					// vtable
+				}
+				"UTIL_SetOrigin"
+				{
+					type  "fixed"
+					sym   "_Z14UTIL_SetOriginP11CBaseEntityRK6Vectorb"
+					addr  "0x36ddc0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: SetLocalOrigin (0x1fb890) then PhysicsTouchTriggers(0) (0x1f7ea0) when the bool is set, Linux's body. RestorePlayerTo (0x2ee720), which FinishLagCompensation calls, uses it after its UTIL_TraceEntity as Linux's inline copy does. cdecl, plain ret
+				}
+				"[clone]"
+				{
+					type  "fixed"
+					sym   "_Z16VScriptRunScriptPKcP9HSCRIPT__b"
+					addr  "0x398d40"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: g_pScriptVM test, 'IncludeScript stack overflow', 'Error running script named %s' and 'Cannot run script: NULL script name': Linux's wrapper and its [clone .part.0] in one. Called by RunScriptFile, DoIncludeScript and VScriptServerInit. cdecl, plain ret
 				}
 				"CBaseServer::FillServerInfo"
 				{
@@ -13901,6 +14279,15 @@
 					lib   "server"
 					// verified: read by hand: the function holding both references to "VSCRIPT: Started VScript virtual machine using script language '%s'" (0x38a860, 0x38a87c); it checks scriptmanager, reads a command line parameter and compares it, creates the VM when there is none and prints the message, the Linux head in order. The old 0x38a700 just before it is a CUtlLinkedList unlink, ret 4
 				}
+				"VScriptRunScript"
+				{
+					type  "fixed"
+					sym   "_Z16VScriptRunScriptPKcP9HSCRIPT__b"
+					addr  "0x398d40"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: g_pScriptVM test, 'IncludeScript stack overflow', 'Error running script named %s' and 'Cannot run script: NULL script name': Linux's wrapper and its [clone .part.0] in one. Called by RunScriptFile, DoIncludeScript and VScriptServerInit. cdecl, plain ret
+				}
 				"CServerGameDLL::GetServerBrowserMapOverride"
 				{
 					type  "fixed"
@@ -14134,6 +14521,15 @@
 					build "11087207"
 					lib   "server"
 					// verified: turned away for field disagreement, pop as expected (ret 4); returns null on a null name, then walks the definition map at +0xe8 comparing each definition's name at +0xdc with the argument, the body Linux jumps to; the whole function, where Linux detours the .part clone GCC split after the null name check, which this body makes first (ECAttr_Extensions' detour maps a custom weapon name and is null safe)
+				}
+				"CBaseClient::SetName"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseClient7SetNameEPKc"
+					addr  "0x84510"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: slot 17 of CGameClient's primary table (CBaseClient's own virtuals after the destructor and FireGameEvent, UpdateAcknowledgedFramecount at slot 4 as Linux has it first); copies the name with 'unnamed' for an empty one, Linux's body. Thiscall, ret 4
 				}
 				"CAmbientGeneric::m_DataMap"
 				{

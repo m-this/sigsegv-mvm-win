@@ -10,6 +10,16 @@
 
 #define	MAX_OVERLAY_DIST_SQR	90000000
 
+#if defined _WINDOWS
+/* MSVC makes an empty body a lone ret, which a detour cannot patch and the
+ * linker may fold with others; Overlay_Send detours the empty ones below. */
+static const char *volatile s_EmptyOverlayCall;
+__declspec(noinline) static void EmptyOverlayCall(const char *name)
+{
+	s_EmptyOverlayCall = name;
+}
+#endif
+
 CBasePlayer *GetLocalPlayer( void )
 {
 	// sigsegv: horrendously ugly hack!
@@ -73,14 +83,23 @@ void NDebugOverlay::LineAlpha(const Vector& origin, const Vector& target, int r,
 // sigsegv: only implemented in overlay recv mod
 void NDebugOverlay::ScreenRect(float xFrom, float yFrom, float xTo, float yTo, const Color& cFill, const Color& cEdge, float flDuration)
 {
+#if defined _WINDOWS
+	EmptyOverlayCall("ScreenRect");
+#endif
 }
 
 // sigsegv: only implemented in overlay recv mod
 void NDebugOverlay::ScreenLine(float xFrom, float yFrom, float xTo, float yTo, const Color& cFrom, const Color& cTo, float flDuration)
 {
+#if defined _WINDOWS
+	EmptyOverlayCall("ScreenLine 2 colors");
+#endif
 }
 
 // sigsegv: only implemented in overlay recv mod
 void NDebugOverlay::ScreenLine(float xFrom, float yFrom, float xTo, float yTo, const Color& color, float flDuration)
 {
+#if defined _WINDOWS
+	EmptyOverlayCall("ScreenLine 1 color");
+#endif
 }
