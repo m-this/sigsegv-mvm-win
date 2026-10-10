@@ -135,7 +135,24 @@ Seven of them failed before too. The changes:
 - In shard 3 only, `Pop:TFBot_Extensions` loaded FAILED: its virtual hook on
   `CBaseEntity::KeyValue` for `CObjectTeleporter` found no vtable on that
   server start. The hook is upstream's and no other shard, in either sweep,
-  failed it. Shard 3 played its eleven missions without the mod.
+  failed it. Shard 3 played its eleven missions without the mod. Without it
+  the game's own parser refuses every TFBot block that carries `NoIdleSound`,
+  `SpawnTemplate`, `action` or `FireInput` (822 `TFBotSpawner: Unknown field`
+  lines in shard 3, none in the others), which is why `dismal_devilry` spawned
+  nothing on wave 1.
+  The cause is `RTTI::PreLoad`. It finds a vtable by scanning `.rdata` for the
+  class's locator address and takes it only when exactly one word matches. The
+  scan reads the loaded image, strings included, so at some `server.dll` bases
+  a string equals the address: at 0x73e10000 the locator of `CObjectTeleporter`
+  is 0x74757074, "tput" of "output", and 76 words of `.rdata` hold it. Re-running the scan
+  over the shipped `server.dll` relocated to every 64 KiB base from 0x50000000
+  to 0x7a000000, 868 of 10752 bases lose at least one class and 12 lose
+  `CObjectTeleporter`. The bed does not log the base, so which one shard 3
+  drew is not known. The scan now keeps only a match that has a relocation
+  (`IMAGE_REL_BASED_HIGHLOW` in the module's base relocation table): a pointer
+  has one, a string does not. Replayed over the same 10752 bases, 8122 locator
+  and 7689 type descriptor collisions, none has a relocation, and all 3135
+  vtables still resolve at the same addresses.
 - Shard 3's private memory reached 1621 MB, against 878 MB before, during
   `mvm_oilrig_rc5d_adv_waters_of_wrath` wave 8 (1337 bots spawned in the 15
   minutes), mostly 16 MB allocations. No other shard rose by more than 30 MB.
