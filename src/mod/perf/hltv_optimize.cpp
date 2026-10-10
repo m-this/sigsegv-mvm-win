@@ -165,6 +165,28 @@ namespace Mod::Perf::HLTV_Optimize
         }
     }
 
+#if defined _WINDOWS
+    /* UpdateMirrorTable is inline in DirectUpdate there, run for each table
+     * changed since the tick. */
+    DETOUR_DECL_MEMBER(void, CNetworkStringTableContainer_DirectUpdate, int tick)
+    {
+        auto container = reinterpret_cast<INetworkStringTableContainer *>(this);
+        CNetworkStringTable *mirrors[MAX_TABLES];
+        int mirror_count = 0;
+        int table_count = Min(container->GetNumTables(), MAX_TABLES);
+        for (int i = 0; i < table_count; i++) {
+            auto table = static_cast<CNetworkStringTable *>(container->GetTable(i));
+            if (table->ChangedSinceTick(tick) && table->m_pMirrorTable != nullptr) {
+                mirrors[mirror_count++] = table->m_pMirrorTable;
+            }
+        }
+        DETOUR_MEMBER_CALL(tick);
+        for (int i = 0; i < mirror_count; i++) {
+            tickChanges.emplace(mirrors[i], mirrors[i]->m_nTickCount);
+        }
+    }
+#endif
+
 #ifdef SE_IS_TF2
 	DETOUR_DECL_MEMBER(void, NextBotPlayer_CTFPlayer_PhysicsSimulate)
 	{
@@ -205,6 +227,21 @@ namespace Mod::Perf::HLTV_Optimize
         auto result = DETOUR_MEMBER_CALL();
         return result || (cbaseplayer != nullptr && (create_hltv_bot == edict->m_EdictIndex || cbaseplayer->IsHLTV()));
     }
+
+#if defined _WINDOWS
+    /* SourceMod's Windows build has no symbols for CPlayer, but IsSourceTV is
+     * a virtual of IGamePlayer: hook it through SourceHook instead. */
+    SH_DECL_HOOK0(IGamePlayer, IsSourceTV, const, 0, bool);
+    int is_source_tv_hook = 0;
+    bool IGamePlayer_IsSourceTV_Post()
+    {
+        auto player = META_IFACEPTR(IGamePlayer);
+        bool result = META_RESULT_ORIG_RET(bool);
+        auto edict = player->GetEdict();
+        auto cbaseplayer = edict != nullptr ? reinterpret_cast<CBasePlayer *>(edict->GetUnknown()) : nullptr;
+        RETURN_META_VALUE(MRES_OVERRIDE, result || (cbaseplayer != nullptr && (create_hltv_bot == edict->m_EdictIndex || cbaseplayer->IsHLTV())));
+    }
+#endif
 
 	DETOUR_DECL_MEMBER(void, CHLTVDemoRecorder_RecordStringTables)
 	{
@@ -256,9 +293,15 @@ namespace Mod::Perf::HLTV_Optimize
 			MOD_ADD_DETOUR_MEMBER(CHLTVServer_RunFrame,                      "CHLTVServer::RunFrame");
 
 			MOD_ADD_DETOUR_MEMBER(CHLTVServer_UpdateTick,                      "CHLTVServer::UpdateTick");
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(CHLTVServer_RestoreTick,                     "CHLTVServer::RestoreTick");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CNetworkStringTable_RestoreTick, "CNetworkStringTable::RestoreTick");
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_MEMBER(CNetworkStringTableContainer_DirectUpdate,                 "CNetworkStringTableContainer::DirectUpdate");
+#else
 			MOD_ADD_DETOUR_MEMBER(CNetworkStringTable_UpdateMirrorTable,                     "CNetworkStringTable::UpdateMirrorTable");
+#endif
 
 #ifdef SE_IS_TF2
 			MOD_ADD_DETOUR_MEMBER(NextBotPlayer_CTFPlayer_PhysicsSimulate,  "NextBotPlayer<CTFPlayer>::PhysicsSimulate");
@@ -266,11 +309,13 @@ namespace Mod::Perf::HLTV_Optimize
 			MOD_ADD_DETOUR_MEMBER(CBasePlayer_PhysicsSimulate,              "CBasePlayer::PhysicsSimulate");
 
 			MOD_ADD_DETOUR_MEMBER(CBaseServer_GetFreeClient,       "CBaseServer::GetFreeClient");
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(CPlayer_IsSourceTV,              "CPlayer::IsSourceTV");
+#endif
 
             // Limit snapshot rate when between rounds or when hltv server is empty and not recording
 			MOD_ADD_DETOUR_MEMBER(CHLTVDemoRecorder_RecordStringTables, "CHLTVDemoRecorder::RecordStringTables");
-#ifdef SE_IS_SDK2013_BASED
+#if defined SE_IS_SDK2013_BASED && !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(CHLTVDemoRecorder_StopRecording_clone, "CHLTVDemoRecorder::StopRecording [clone]");
 #else
 			MOD_ADD_DETOUR_MEMBER(CHLTVDemoRecorder_StopRecording, "CHLTVDemoRecorder::StopRecording");
@@ -281,6 +326,19 @@ namespace Mod::Perf::HLTV_Optimize
 			//MOD_ADD_DETOUR_MEMBER(CTFPlayer_ShouldTransmit,               "CTFPlayer::ShouldTransmit");
             //MOD_ADD_DETOUR_STATIC(SendTable_CalcDelta,   "SendTable_CalcDelta");
 		}
+
+#if defined _WINDOWS
+        virtual void OnEnable() override
+        {
+            is_source_tv_hook = SH_ADD_VPHOOK(IGamePlayer, IsSourceTV, playerhelpers->GetGamePlayer(1), SH_STATIC(&IGamePlayer_IsSourceTV_Post), true);
+        }
+
+        virtual void OnDisable() override
+        {
+            SH_REMOVE_HOOK_ID(is_source_tv_hook);
+            is_source_tv_hook = 0;
+        }
+#endif
 
         virtual bool ShouldReceiveCallbacks() const override { return this->IsEnabled(); }
 

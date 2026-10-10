@@ -47,6 +47,21 @@ namespace Mod::Etc::Crash_Fixes
 	}	
 
 #if defined _WINDOWS
+	/* ClientData_Update is inline in UpdateAllClientData there, with the same
+	 * copy from a removed camera. */
+	DETOUR_DECL_STATIC(void, UpdateAllClientData)
+	{
+		if (ft_GetCurrentSkyCamera() == nullptr) {
+			ForEachPlayer([](CBasePlayer *pl) {
+				pl->m_Local->m_skybox3darea = 255;
+			});
+			return;
+		}
+		DETOUR_STATIC_CALL();
+	}
+#endif
+
+#if defined _WINDOWS
 	/* CVariantBase as the game passes it: 16 bytes by value, popped by the
 	 * callee with the name (ret 0x14). Only passed through. */
 	struct ScriptVariantBytes { uint32 data[4]; };
@@ -75,7 +90,11 @@ namespace Mod::Etc::Crash_Fixes
 			MOD_ADD_DETOUR_MEMBER(CTFPipebombLauncher_FireProjectile, "CTFPipebombLauncher::FireProjectile");
 
 			// Fix crash after sky_camera being removed
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_STATIC(UpdateAllClientData, "UpdateAllClientData");
+#else
 			MOD_ADD_DETOUR_STATIC(ClientData_Update, "ClientData_Update");
+#endif
 
 #if defined _WINDOWS
 			// Fix VScript's Convars.SetValue at level shutdown, once the game rules are gone

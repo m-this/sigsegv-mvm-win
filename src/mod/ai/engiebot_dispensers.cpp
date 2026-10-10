@@ -428,8 +428,10 @@ namespace Mod::AI::EngieBot_Dispensers
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_SpeakConceptIfAllowed, "CTFPlayer::SpeakConceptIfAllowed");
 
 			MOD_ADD_DETOUR_MEMBER(CTFBotMvMEngineerIdle_dtor0, "~CTFBotMvMEngineerIdle [D0]");
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(CTFBotMvMEngineerIdle_dtor1, "~CTFBotMvMEngineerIdle [D1]");
 			MOD_ADD_DETOUR_MEMBER(CTFBotMvMEngineerIdle_dtor2, "~CTFBotMvMEngineerIdle [D2]");
+#endif
 			
 			//MOD_ADD_DETOUR_MEMBER(CTFBotHintEngineerNest_HintTeleporterThink, "CTFBotHintEngineerNest::HintTeleporterThink");
 		}

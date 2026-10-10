@@ -13,6 +13,16 @@ namespace Mod::Sound::Unused_Sapper
 		SCOPED_INCREMENT(rc_CObjectSapper_ApplyRoboSapperEffects);
 		return DETOUR_MEMBER_CALL(target, duration);
 	}
+
+#if defined _WINDOWS
+	/* ApplyRoboSapperEffects is inline there, and the rest of ApplyRoboSapper
+	 * stuns no one */
+	DETOUR_DECL_MEMBER(void, CObjectSapper_ApplyRoboSapper, CTFPlayer *target, float duration, int radius)
+	{
+		SCOPED_INCREMENT(rc_CObjectSapper_ApplyRoboSapperEffects);
+		DETOUR_MEMBER_CALL(target, duration, radius);
+	}
+#endif
 	
 	DETOUR_DECL_MEMBER(bool, CTFPlayer_SpeakConceptIfAllowed, int iConcept, const char *modifiers, char *pszOutResponseChosen, size_t bufsize, IRecipientFilter *filter)
 	{
@@ -29,7 +39,11 @@ namespace Mod::Sound::Unused_Sapper
 	public:
 		CMod() : IMod("Sound:Unused_Sapper")
 		{
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_MEMBER(CObjectSapper_ApplyRoboSapper,        "CObjectSapper::ApplyRoboSapper");
+#else
 			MOD_ADD_DETOUR_MEMBER(CObjectSapper_ApplyRoboSapperEffects, "CObjectSapper::ApplyRoboSapperEffects [clone]");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_SpeakConceptIfAllowed,      "CTFPlayer::SpeakConceptIfAllowed");
 		}
 	};

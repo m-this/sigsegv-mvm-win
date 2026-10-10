@@ -69,7 +69,14 @@ private:
 	
 };
 
+#if defined _WINDOWS
+/* The engine's CBaseServer holds doubles, which MSVC aligns to 8 and GCC's
+ * i386 ABI to 4: CHLTVServer's CBaseServer part is at +8 in engine.dll, +4 in
+ * engine_srv.so. */
+class alignas(8) CBaseServer : public IServer
+#else
 class CBaseServer : public IServer
+#endif
 {
 public:
     CBaseClient *CreateFakeClient(const char *name) { return ft_CreateFakeClient(this, name); }
