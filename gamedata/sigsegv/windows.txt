@@ -3884,6 +3884,15 @@
 					vtidx "242"
 					// vtable
 				}
+				"CBaseMultiplayerPlayer::ShouldRunRateLimitedCommand [str]"
+				{
+					type  "fixed"
+					sym   "_ZN22CBaseMultiplayerPlayer27ShouldRunRateLimitedCommandEPKc"
+					addr  "0x20b770"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: CTFGameRules::ClientCommandKeyValues calls it on the player with 'use_action_slot_item_server' (0x4867b1, 0x4867ee) as Linux does; a null name passes, then the CUtlMap of last command times at +0x1260 (Linux +0x1278) is searched from its root (+0x10) and the rate limit applied, Linux's body. Thiscall, ret 4
+				}
 				"CBaseObject::CanBeUpgraded"
 				{
 					type  "fixed"
@@ -5560,6 +5569,15 @@
 					lib   "server"
 					vtidx "273"
 					// verified: the only slot between ItemPreFrame (272) and ItemBusyFrame (274, matched) that differs from the base class, next to GetProjectileSpeed (0x60e0e0, verified) in the grappling hook's code; the same tail structure with a virtual call 0x494 to 0x47c (6 slots lower); slot 273 is Linux 279 less 6
+				}
+				"CTFGrenadePipebombProjectile::Create"
+				{
+					type  "fixed"
+					sym   "_ZN28CTFGrenadePipebombProjectile6CreateERK6VectorRK6QAngleS2_S2_P20CBaseCombatCharacterRK13CTFWeaponInfoif"
+					addr  "0x60ef90"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the projectile type (seventh argument) picks 'tf_projectile_pipe_remote' for 4 and 0xe and 'tf_projectile_pipe' otherwise with the pipebomb type 1/2/3, then CBaseEntity::CreateNoSpawn (0x1ee130), Linux's body. cdecl, plain ret
 				}
 				"CTFGrenadePipebombProjectile::IsDeflectable"
 				{
@@ -7758,6 +7776,33 @@
 					lib   "server"
 					// string
 				}
+				"[engine] CUtlBuffer::EnsureCapacity"
+				{
+					type  "fixed"
+					sym   "_ZN10CUtlBuffer14EnsureCapacityEi"
+					addr  "0x245360"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: num+1 against the allocation count (+4), ConvertToGrowableMemory (0x1abaa0) for external memory flagged growable (+0x15 & 2), then the realloc (0x1a1740), Linux's body. Thiscall, ret 4
+				}
+				"[engine] bf_read::bf_read"
+				{
+					type  "fixed"
+					sym   "_ZN7bf_readC1EPKcPKvii"
+					addr  "0x2473f0"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: stores the debug name at +0x14, the data, the byte count and the bit count (bytes*8 for -1) and clears the position, the named constructor; SendTable_WritePropList builds its reader with it (0x171c84), as Linux calls bf_read::bf_read(const char *, const void *, int, int) there. Thiscall, ret 0x10
+				}
+				"[engine] bf_write::bf_write"
+				{
+					type  "fixed"
+					sym   "_ZN8bf_writeC1EPvii"
+					addr  "0x2474a0"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: the data at +0, the byte count rounded down to 4, the bit count (bytes*8 for -1), the debug name cleared and the overflow flags, Linux's bf_write::bf_write(void *, int, int). Thiscall, ret 0xc
+				}
 				"CTFGameRules::PlayerKilled"
 				{
 					type  "fixed"
@@ -8970,6 +9015,15 @@
 					vtidx "6"
 					// vtable
 				}
+				"SendTable_CalcDelta"
+				{
+					type  "fixed"
+					sym   "_Z19SendTable_CalcDeltaPK9SendTablePKviS3_iPiii"
+					addr  "0x1705a0"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: the only code with 'SendTable_CalcDelta/toBits' and 'SendTable_CalcDelta/fromBits'; SV_DetermineUpdateType calls it (0x12820b) as Linux does. cdecl, eight arguments, plain ret
+				}
 				"CAttributeManager::ClearCache"
 				{
 					type  "fixed"
@@ -9008,6 +9062,15 @@
 					lib   "server"
 					vtidx "5"
 					// string
+				}
+				"_Host_RunFrame"
+				{
+					type  "fixed"
+					sym   "_Z14_Host_RunFramef"
+					addr  "0x1846d0"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: Host_RunFrame calls it (0x1835ba, 0x1835d6) with the frame time; Cbuf_AddText of 'quit' on an exit request, MapReslistGenerator and its RunFrame (0x199ac0) first, the '_Host_RunFrame_Upto_MarkFrame' and 'hltv->RunFrame()' profiler scopes, CHLTVServer::RunFrame (0x17eb10), and Host_CheckDumpMemoryStats inline at the end ('Heap is corrupt'). cdecl, float argument, plain ret
 				}
 				"FX_FireBullets"
 				{
@@ -9149,6 +9212,24 @@
 					build "11087207"
 					lib   "server"
 					// verified: read by hand: CAttributeManager::OnAttributeValuesChanged (0x39e6f0) is { ClearCache(); } in the SDK and on Windows a lone jmp here; the whole function, where Linux detours the .part clone GCC split after its early return
+				}
+				"PackedEntity::GetPropsChangedAfterTick"
+				{
+					type  "fixed"
+					sym   "_ZN12PackedEntity24GetPropsChangedAfterTickEiPii"
+					addr  "0x1bde40"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: the change frame list at +0x2c, its GetPropsChangedAfterTick (+0xc) through a tail jump or -1 without one, Linux's body. SV_DetermineUpdateType calls it (0x12818d). Thiscall, ret 0xc
+				}
+				"SendTable_WritePropList"
+				{
+					type  "fixed"
+					sym   "_Z23SendTable_WritePropListPK9SendTablePKviP8bf_writeiPKii"
+					addr  "0x171c00"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: the debug watch test (0x168640), a named bf_read (0x2473f0) over the input and the prop loop; two callers, as Linux. cdecl, seven arguments, plain ret
 				}
 				"CBaseServer::WriteDeltaEntities"
 				{
@@ -10210,6 +10291,15 @@
 					lib   "server"
 					// call
 				}
+				"CModelInfoServer::RegisterDynamicModel"
+				{
+					type  "fixed"
+					sym   "_ZN16CModelInfoServer20RegisterDynamicModelEPKcb"
+					addr  "0x1a35c0"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: slot 52 of CModelInfoServer's table (Linux 53), between GetModelClientSideIndex and IsDynamicModelLoading as on Linux; copies the name into 0x100 bytes, V_RemoveDotSlashes with '/', then the model lookups through the string table, Linux's body. Thiscall, ret 8
+				}
 				"CAttributeManager::ApplyAttributeStringWrapper"
 				{
 					type  "fixed"
@@ -10383,6 +10473,24 @@
 					build "11087207"
 					lib   "server"
 					// string
+				}
+				"CGameClient::FileDenied"
+				{
+					type  "fixed"
+					sym   "_ZThn4_N11CGameClient10FileDeniedEPKcj"
+					addr  "0x125950"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: slot 8 of CGameClient's INetChannelHandler table (+4, Linux 9), the only code with "Downloading file '%s' from client %s failed.". Called with the +4 part as this, as Linux's thunk symbol is. Thiscall, ret 8
+				}
+				"CGameClient::FileReceived"
+				{
+					type  "fixed"
+					sym   "_ZThn4_N11CGameClient12FileReceivedEPKcj"
+					addr  "0x125970"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: slot 7 of CGameClient's INetChannelHandler table (+4, Linux 8 with two destructors), the only code with 'CGameClient::FileReceived: %s not wanted.'. Called with the +4 part as this, as Linux's thunk symbol is. Thiscall, ret 8
 				}
 				"SV_Frame"
 				{
@@ -10713,6 +10821,24 @@
 					build "11087207"
 					lib   "engine"
 					// verified: read by hand, engine.dll: V_FileBase of the map name, protocol 0x18 at +0x14, server count at +0x18, the four MD5 dwords copied from +0xf1..+0xfd to +0x24..+0x30, max clients, the OS byte at +0x1f (0x57 'W' here, 0x4c 'L' on Linux), tick interval at +0x40, game dir, map and hostname; the Linux field list. Pops 4
+				}
+				"CGameServer::SendClientMessages"
+				{
+					type  "fixed"
+					sym   "_ZN11CGameServer18SendClientMessagesEb"
+					addr  "0x1311c0"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: slot 46 of CGameServer's table (Linux 47), the only code with the 'SendClientMessages' profiler scope in sv_main.cpp, Linux's body. Thiscall, ret 4
+				}
+				"CMapReslistGenerator::RunFrame"
+				{
+					type  "fixed"
+					sym   "_ZN20CMapReslistGenerator8RunFrameEv"
+					addr  "0x199ac0"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: _Host_RunFrame calls it (0x18475c) on MapReslistGenerator's object right after the sleep, as Linux does; tests the logging flag at +1, the quit flag at +5, and uses '-forever' and '-startmap', Linux's body. Thiscall, plain ret
 				}
 				"SV_DetermineUpdateType"
 				{
@@ -14996,6 +15122,15 @@
 					lib   "server"
 					vtidx "14"
 					// verified: read by hand: slot 14 of the issue tables (CKickIssue's +0x38, Linux 15). Walks players 1 to 101 through UTIL_PlayerByIndex with IsValidVoter inline (connection state +0xe74, team, sv_vote_allow_spectators, sv_vote_bots_allowed with the two bot virtuals, the bytes at +0xba8/+0xba9, team 2 in MvM) and the issue's team restriction, counting the valid ones. Thiscall, plain ret
+				}
+				"CNetChan::CheckReceivingList"
+				{
+					type  "fixed"
+					sym   "_ZN8CNetChan18CheckReceivingListEi"
+					addr  "0x1a5320"
+					build "11087207"
+					lib   "engine"
+					// verified: read by hand, engine.dll: the receive list at this+0x128+n*0x12c (Linux +0x120), the fragment counts at +0x120/+0x124 of it, decompression, then HandleUpload inline for a file ('FileReceived: %s, %i bytes (ID %i)', 'ignored. File uploads are disabled!') and the buffer freed (0x1a1510) before returning true. Thiscall, ret 4
 				}
 			}
 		}

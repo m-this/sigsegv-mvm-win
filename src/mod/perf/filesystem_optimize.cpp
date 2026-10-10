@@ -28,7 +28,10 @@ namespace Mod::Perf::Filesystem_Optimize
 		CMod() : IMod("Perf:Filesystem_Optimize")
 		{
 			// Faster implementation of findFileInDirCaseInsensitive, instead of looking for any matching file with a different case, only look for files with lowercase letters instead
+			/* dedicated.dll has no such function: Windows paths are case-insensitive already */
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_STATIC(findFileInDirCaseInsensitive, "findFileInDirCaseInsensitive");
+#endif
 		}
 		virtual bool OnLoad() override
 		{

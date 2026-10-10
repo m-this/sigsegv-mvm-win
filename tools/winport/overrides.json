@@ -4960,5 +4960,107 @@
   "rva": "0x36ddc0",
   "build": "11087207",
   "why": "read by hand: SetLocalOrigin (0x1fb890) then PhysicsTouchTriggers(0) (0x1f7ea0) when the bool is set, Linux's body. RestorePlayerTo (0x2ee720), which FinishLagCompensation calls, uses it after its UTIL_TraceEntity as Linux's inline copy does. cdecl, plain ret"
+ },
+ "_ZThn4_N11CGameClient12FileReceivedEPKcj": {
+  "lib": "engine",
+  "rva": "0x125970",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: slot 7 of CGameClient's INetChannelHandler table (+4, Linux 8 with two destructors), the only code with 'CGameClient::FileReceived: %s not wanted.'. Called with the +4 part as this, as Linux's thunk symbol is. Thiscall, ret 8"
+ },
+ "_ZThn4_N11CGameClient10FileDeniedEPKcj": {
+  "lib": "engine",
+  "rva": "0x125950",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: slot 8 of CGameClient's INetChannelHandler table (+4, Linux 9), the only code with \"Downloading file '%s' from client %s failed.\". Called with the +4 part as this, as Linux's thunk symbol is. Thiscall, ret 8"
+ },
+ "_ZN8CNetChan18CheckReceivingListEi": {
+  "lib": "engine",
+  "name": "CNetChan::CheckReceivingList",
+  "rva": "0x1a5320",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: the receive list at this+0x128+n*0x12c (Linux +0x120), the fragment counts at +0x120/+0x124 of it, decompression, then HandleUpload inline for a file ('FileReceived: %s, %i bytes (ID %i)', 'ignored. File uploads are disabled!') and the buffer freed (0x1a1510) before returning true. Thiscall, ret 4"
+ },
+ "_ZN8CNetChan12HandleUploadEPNS_15dataFragments_sEP18INetChannelHandler": {
+  "lib": "engine",
+  "bad": true,
+  "why": "read by hand, engine.dll 11087207: no body of its own; CNetChan::CheckReceivingList (0x1a5320), its one Linux caller, carries it inline. Download_Manager hooks that instead"
+ },
+ "_Z14_Host_RunFramef": {
+  "lib": "engine",
+  "rva": "0x1846d0",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: Host_RunFrame calls it (0x1835ba, 0x1835d6) with the frame time; Cbuf_AddText of 'quit' on an exit request, MapReslistGenerator and its RunFrame (0x199ac0) first, the '_Host_RunFrame_Upto_MarkFrame' and 'hltv->RunFrame()' profiler scopes, CHLTVServer::RunFrame (0x17eb10), and Host_CheckDumpMemoryStats inline at the end ('Heap is corrupt'). cdecl, float argument, plain ret"
+ },
+ "_ZN20CMapReslistGenerator8RunFrameEv": {
+  "lib": "engine",
+  "rva": "0x199ac0",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: _Host_RunFrame calls it (0x18475c) on MapReslistGenerator's object right after the sleep, as Linux does; tests the logging flag at +1, the quit flag at +5, and uses '-forever' and '-startmap', Linux's body. Thiscall, plain ret"
+ },
+ "_Z25Host_CheckDumpMemoryStatsv": {
+  "lib": "engine",
+  "bad": true,
+  "why": "read by hand, engine.dll 11087207: no body of its own; the end of _Host_RunFrame (0x18573e) carries it inline: the CrtCheckMemory virtual and 'Heap is corrupt'. Client_Cmds and Frame_Prof take the frame's end after _Host_RunFrame returns instead"
+ },
+ "_ZN11CGameServer18SendClientMessagesEb": {
+  "lib": "engine",
+  "rva": "0x1311c0",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: slot 46 of CGameServer's table (Linux 47), the only code with the 'SendClientMessages' profiler scope in sv_main.cpp, Linux's body. Thiscall, ret 4"
+ },
+ "_ZN12PackedEntity24GetPropsChangedAfterTickEiPii": {
+  "lib": "engine",
+  "rva": "0x1bde40",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: the change frame list at +0x2c, its GetPropsChangedAfterTick (+0xc) through a tail jump or -1 without one, Linux's body. SV_DetermineUpdateType calls it (0x12818d). Thiscall, ret 0xc"
+ },
+ "_Z19SendTable_CalcDeltaPK9SendTablePKviS3_iPiii": {
+  "lib": "engine",
+  "rva": "0x1705a0",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: the only code with 'SendTable_CalcDelta/toBits' and 'SendTable_CalcDelta/fromBits'; SV_DetermineUpdateType calls it (0x12820b) as Linux does. cdecl, eight arguments, plain ret"
+ },
+ "_Z23SendTable_WritePropListPK9SendTablePKviP8bf_writeiPKii": {
+  "lib": "engine",
+  "rva": "0x171c00",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: the debug watch test (0x168640), a named bf_read (0x2473f0) over the input and the prop loop; two callers, as Linux. cdecl, seven arguments, plain ret"
+ },
+ "_ZN7bf_readC1EPKcPKvii": {
+  "lib": "engine",
+  "name": "[engine] bf_read::bf_read",
+  "rva": "0x2473f0",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: stores the debug name at +0x14, the data, the byte count and the bit count (bytes*8 for -1) and clears the position, the named constructor; SendTable_WritePropList builds its reader with it (0x171c84), as Linux calls bf_read::bf_read(const char *, const void *, int, int) there. Thiscall, ret 0x10"
+ },
+ "_ZN8bf_writeC1EPvii": {
+  "lib": "engine",
+  "name": "[engine] bf_write::bf_write",
+  "rva": "0x2474a0",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: the data at +0, the byte count rounded down to 4, the bit count (bytes*8 for -1), the debug name cleared and the overflow flags, Linux's bf_write::bf_write(void *, int, int). Thiscall, ret 0xc"
+ },
+ "_ZN10CUtlBuffer14EnsureCapacityEi": {
+  "lib": "engine",
+  "name": "[engine] CUtlBuffer::EnsureCapacity",
+  "rva": "0x245360",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: num+1 against the allocation count (+4), ConvertToGrowableMemory (0x1abaa0) for external memory flagged growable (+0x15 & 2), then the realloc (0x1a1740), Linux's body. Thiscall, ret 4"
+ },
+ "_ZN16CModelInfoServer20RegisterDynamicModelEPKcb": {
+  "lib": "engine",
+  "rva": "0x1a35c0",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: slot 52 of CModelInfoServer's table (Linux 53), between GetModelClientSideIndex and IsDynamicModelLoading as on Linux; copies the name into 0x100 bytes, V_RemoveDotSlashes with '/', then the model lookups through the string table, Linux's body. Thiscall, ret 8"
+ },
+ "_ZN22CBaseMultiplayerPlayer27ShouldRunRateLimitedCommandEPKc": {
+  "rva": "0x20b770",
+  "build": "11087207",
+  "why": "read by hand: CTFGameRules::ClientCommandKeyValues calls it on the player with 'use_action_slot_item_server' (0x4867b1, 0x4867ee) as Linux does; a null name passes, then the CUtlMap of last command times at +0x1260 (Linux +0x1278) is searched from its root (+0x10) and the rate limit applied, Linux's body. Thiscall, ret 4"
+ },
+ "_ZN28CTFGrenadePipebombProjectile6CreateERK6VectorRK6QAngleS2_S2_P20CBaseCombatCharacterRK13CTFWeaponInfoif": {
+  "rva": "0x60ef90",
+  "build": "11087207",
+  "why": "read by hand: the projectile type (seventh argument) picks 'tf_projectile_pipe_remote' for 4 and 0xe and 'tf_projectile_pipe' otherwise with the pipebomb type 1/2/3, then CBaseEntity::CreateNoSpawn (0x1ee130), Linux's body. cdecl, plain ret"
  }
 }
