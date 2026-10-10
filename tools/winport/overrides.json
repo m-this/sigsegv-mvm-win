@@ -5062,5 +5062,45 @@
   "rva": "0x60ef90",
   "build": "11087207",
   "why": "read by hand: the projectile type (seventh argument) picks 'tf_projectile_pipe_remote' for 4 and 0xe and 'tf_projectile_pipe' otherwise with the pipebomb type 1/2/3, then CBaseEntity::CreateNoSpawn (0x1ee130), Linux's body. cdecl, plain ret"
+ },
+ "_ZNK16CObjectDispenser17GetAvailableMetalEv": {
+  "rva": "0x4b6fe0",
+  "build": "11087207",
+  "vtidx": 405,
+  "why": "read by hand: slot 405 of CObjectDispenser's table (Linux 419), the slot CObjectSentrygun has GetTurretAngles in (0x4cc430, lea eax,[ecx+0xae8]); mov eax,[ecx+0xae0] (the metal, Linux +0xaf8); ret. CTFBotMvMEngineerIdle::Update calls that slot on the sentry hint's owner (0x57f5e1), which EngieBot_Dispensers makes a dispenser"
+ },
+ "_ZN20CBaseCombatCharacter9ShouldGibERK15CTakeDamageInfo": {
+  "rva": "0x1521d0",
+  "build": "11087207",
+  "vtidx": 297,
+  "why": "read by hand: slot 297 of CBaseCombatCharacter's table (Linux 298), xor al,al; ret 4: the false Linux returns. MSVC folded it with every other such body, so the slot is named for the virtual hooks on CBotNPCArcher and CZombie"
+ },
+ "_ZN8INextBot6UpdateEv": {
+  "rva": "0x420820",
+  "build": "11087207",
+  "why": "read by hand: slot 43 of the INextBot table of NextBotCombatCharacter's classes (Linux 44 after two destructors), the only code with the 'INextBot::Update' profiler scope. Thiscall, plain ret"
+ },
+ "_ZN8INextBot6UpkeepEv": {
+  "rva": "0x420b10",
+  "build": "11087207",
+  "why": "read by hand: slot 44 of the INextBot table of NextBotCombatCharacter's classes (Linux 45), the only code with the 'INextBot::Upkeep' profiler scope. Thiscall, plain ret"
+ },
+ "_ZN16CZombieIntention5ResetEv": {
+  "rva": "0x5bf2d0",
+  "build": "11087207",
+  "vtidx": 42,
+  "why": "read by hand: slot 42 of CZombieIntention's table (Linux 43, one destructor fewer); deletes the behavior at +0x1c and builds a new Behavior<CZombie> (0x50) around a fresh CZombieBehavior (0x40), Linux's body, as CBotNPCArcherIntention::Reset does. Thiscall, plain ret"
+ },
+ "_ZN11CBaseClient10DisconnectEPKcz": {
+  "lib": "engine",
+  "rva": "0x81dc0",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: slot 13 of CHLTVClient's IClient table (+4, Linux 14 after two destructors), the only code with 'Dropped %s from server (%s)'; formats the reason into 0x400 bytes, Linux's body. A varargs member: cdecl with the IClient part as this on the stack, plain ret"
+ },
+ "_ZN11CBaseClient14ActivatePlayerEv": {
+  "lib": "engine",
+  "rva": "0x812a0",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: slot 16 of CHLTVClient's primary table (CBaseClient's own virtuals after the destructor and FireGameEvent), the only code with the 'CBaseClient::ActivatePlayer' profiler scope. Thiscall, plain ret"
  }
 }

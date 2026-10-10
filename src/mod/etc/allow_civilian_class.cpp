@@ -12,8 +12,13 @@ namespace Mod::Etc::Allow_Civilian_Class
 {
 	extern ConVar cvar_enable;
 	constexpr uint8_t s_Buf_HandleCommand_JoinClass[] = {
+#if defined _WINDOWS
+		0x83, 0xFE, 0x0A,                   // +0000 cmp     esi, 0Ah
+		0x7C, 0x00,                         // +0003 jl      valid (else 'invalid class name')
+#else
 		0x83, 0xFE, 0x0A,                   // +0000 cmp     esi, 0Ah
         0x0F, 0x84, 0x97, 0xFB, 0xFF, 0xFF  // +0003 jz      loc_F5DEF7
+#endif
 	};
 	
 	struct CPatch_HandleCommand_JoinClass : public CPatch
@@ -24,7 +29,11 @@ namespace Mod::Etc::Allow_Civilian_Class
 		{
 			buf.CopyFrom(s_Buf_HandleCommand_JoinClass);
 			mask[0x01] = 0x00;
+#if defined _WINDOWS
+			mask[0x04] = 0x00;
+#else
             mask.SetDword(0x05, 0);
+#endif
 			return true;
 		}
 		
@@ -36,8 +45,13 @@ namespace Mod::Etc::Allow_Civilian_Class
 		}
 		
 		virtual const char *GetFuncName() const override { return "CTFPlayer::HandleCommand_JoinClass"; }
+#if defined _WINDOWS
+		virtual uint32_t GetFuncOffMin() const override  { return 0x0300; }
+		virtual uint32_t GetFuncOffMax() const override  { return 0x0400; } // @ 0x038e
+#else
 		virtual uint32_t GetFuncOffMin() const override  { return 0x0400; }
 		virtual uint32_t GetFuncOffMax() const override  { return 0x0BF0; } // @ 0x072a
+#endif
 	};
 
     bool disabling = false;

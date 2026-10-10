@@ -70,6 +70,23 @@ namespace Mod::Etc::HLTV_Client_Interact
         return client;
     }
 
+#if defined _WINDOWS
+    /* A varargs member, so cdecl with this on the stack, and engine.dll has
+     * it only in IClient's table: this is that part */
+    VHOOK_DECL(void, CHLTVClient_Disconnect, char const *reason, ...)
+	{
+        auto client = static_cast<CHLTVClient *>(reinterpret_cast<IClient *>(this));
+        if (sig_etc_hltv_notify_clients.GetBool() && client->m_nSignonState >= 5) {
+            PrintToChatAllSM("%t\n", "Source TV spectator disconnected", client->GetClientName());
+        }
+        char buf[1024];
+        va_list args;
+        va_start(args, reason);
+        V_vsnprintf(buf, sizeof(buf), reason, args);
+        va_end(args);
+        VHOOK_CALL("%s", buf);
+    }
+#else
     VHOOK_DECL(void, CHLTVClient_Disconnect, char const *reason)
 	{
         auto client = reinterpret_cast<CHLTVClient *>(this);
@@ -78,6 +95,7 @@ namespace Mod::Etc::HLTV_Client_Interact
         }
         VHOOK_CALL(reason);
     }
+#endif
 
 
     VHOOK_DECL(void, CBaseClient_ActivatePlayer)
