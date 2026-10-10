@@ -193,6 +193,12 @@ Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort
   $name = $_.Name
   Select-String -Path $_.FullName -Pattern '(SigMod: (bot spawn refused|task below|suicide)|WAVEPROBE (wear|death|wave stood|hit)) .*' | Select-Object -First 120 | ForEach-Object { Write-Host "spawn in ${name}: $($_.Matches[0].Value)" }
 }
+# What a wave that stopped moving waits on: the dumps sig_pop_wave_stall_dump
+# makes, three a wave at most.
+Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort-Object Name | ForEach-Object {
+  $name = $_.Name
+  Select-String -Path $_.FullName -Pattern 'sig_wave_dump: .*' | Select-Object -First 400 | ForEach-Object { Write-Host "wave dump in ${name}: $($_.Matches[0].Value)" }
+}
 # Where the frame callbacks spend a slow server's time, the last reports of
 # each console.
 Get-ChildItem "$Out\consoles\console-*.log" -ErrorAction SilentlyContinue | Sort-Object Name | ForEach-Object {
