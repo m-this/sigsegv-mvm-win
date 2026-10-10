@@ -1,6 +1,29 @@
 #include "stub/objects.h"
 #include "mem/extract.h"
 
+#if defined _WINDOWS
+/* server.dll carries this inline in FindSnapToBuildPos. The Linux body: the
+ * wrapper's null test, then the .part.0 clone. */
+bool CBaseObject::FindBuildPointOnPlayer(CTFPlayer *pTFPlayer, CBasePlayer *pBuilder, float &flNearestPoint, Vector &vecNearestBuildPoint)
+{
+	if (pTFPlayer == nullptr) return false;
+	if (pTFPlayer->m_Shared->InCond(TF_COND_SAPPED) || pTFPlayer->m_Shared->IsInvulnerable() || pTFPlayer->m_Shared->InCond(TF_COND_PHASE)) return false;
+	
+	Vector origin = pTFPlayer->GetAbsOrigin();
+	QAngle angles = pTFPlayer->GetAbsAngles();
+	float distSqr = (origin - pBuilder->GetAbsOrigin()).LengthSqr();
+	if (distSqr > 25600.002f) return false;
+	
+	flNearestPoint = sqrtf(distSqr);
+	vecNearestBuildPoint = origin;
+	if (this->GetBuiltOnEntity() != pTFPlayer) {
+		this->SetBuiltOnEntity(pTFPlayer);
+	}
+	this->SetAbsAngles(angles);
+	return true;
+}
+#endif
+
 #if defined _LINUX
 
 static constexpr uint8_t s_Buf_CObjectSentrygun_FireRocket[] = {
