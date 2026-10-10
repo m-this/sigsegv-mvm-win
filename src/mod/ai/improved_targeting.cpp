@@ -41,6 +41,34 @@ namespace Mod::AI::Improved_Targeting
 	std::map<CHandle<CTFBot>, DamageTracker> damage_trackers;
 
 	const INextBot *thread_bot_caller = nullptr;
+
+	bool HealersIgnored(const CTFBotMainAction *action)
+	{
+		if (action->GetActor() == nullptr) return true;
+
+		if (thread_bot_caller != nullptr) {
+			CTFBot *actor = ToTFBot(thread_bot_caller->GetEntity());
+			if (actor != nullptr && actor->m_nBotSkill > 0 && actor->IsMiniBoss()) {
+				if (actor->GetActiveWeapon() != nullptr && actor->GetActiveWeapon()->IsMeleeWeapon()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+#if defined _WINDOWS
+	/* GetHealerOfThreat is inline in SelectMoreDangerousThreat there. Its loop
+	 * over the threat's healers asks GetHealerByIndex, and with no healer it
+	 * returns the threat, which is what the Linux detour returns. */
+	bool healers_ignored = false;
+	DETOUR_DECL_MEMBER(CBaseEntity *, CTFPlayerShared_GetHealerByIndex, int index)
+	{
+		if (healers_ignored) return nullptr;
+		return DETOUR_MEMBER_CALL(index);
+	}
+#endif
+
 	DETOUR_DECL_MEMBER(const CKnownEntity *, CTFBotMainAction_SelectMoreDangerousThreat, const INextBot *nextbot, const CBaseCombatCharacter *them, const CKnownEntity *threat1, const CKnownEntity *threat2)
 	{
 		auto action = reinterpret_cast<const CTFBotMainAction *>(this);
@@ -83,7 +111,14 @@ namespace Mod::AI::Improved_Targeting
 		else if (threat2nonsentrybuilding && !threat1nonsentrybuilding) {
 			return threat1;
 		}
+#if defined _WINDOWS
+		/* this is the IContextualQuery part there, at +4 in the action */
+		healers_ignored = HealersIgnored(reinterpret_cast<const CTFBotMainAction *>(reinterpret_cast<const uint8_t *>(this) - 4));
 		auto ret = DETOUR_MEMBER_CALL(nextbot, them, threat1, threat2);
+		healers_ignored = false;
+#else
+		auto ret = DETOUR_MEMBER_CALL(nextbot, them, threat1, threat2);
+#endif
 
 		thread_bot_caller = nullptr;
 
@@ -92,16 +127,7 @@ namespace Mod::AI::Improved_Targeting
 
 	DETOUR_DECL_MEMBER(const CKnownEntity *, CTFBotMainAction_GetHealerOfThreat, const CKnownEntity *threat)
 	{
-		if (reinterpret_cast<CTFBotMainAction *>(this)->GetActor() == nullptr) return threat;
-
-		if (thread_bot_caller != nullptr) {
-			CTFBot *actor = ToTFBot(thread_bot_caller->GetEntity());
-			if (actor != nullptr && actor->m_nBotSkill > 0 && actor->IsMiniBoss()) {
-				if (actor->GetActiveWeapon() != nullptr && actor->GetActiveWeapon()->IsMeleeWeapon()) {
-					return threat;
-				}
-			}
-		}
+		if (HealersIgnored(reinterpret_cast<CTFBotMainAction *>(this))) return threat;
 		
 		return DETOUR_MEMBER_CALL(threat);
 	}
@@ -224,7 +250,11 @@ namespace Mod::AI::Improved_Targeting
 		CMod() : IMod("AI:Improved_Targeting")
 		{
 			/* Don't allow melee bots to chase medic healers */
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_GetHealerByIndex,           "CTFPlayerShared::GetHealerByIndex");
+#else
 			MOD_ADD_DETOUR_MEMBER(CTFBotMainAction_GetHealerOfThreat,         "CTFBotMainAction::GetHealerOfThreat");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CTFBotMainAction_SelectMoreDangerousThreat, "CTFBotMainAction::SelectMoreDangerousThreat");
 			MOD_ADD_DETOUR_MEMBER(CTFBotMainAction_OnContact,                 "CTFBotMainAction::OnContact");
 			MOD_ADD_DETOUR_MEMBER(CTFBot_Touch,                               "CTFBot::Touch");

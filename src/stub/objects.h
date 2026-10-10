@@ -23,7 +23,11 @@ public:
 	bool HasSapper()                       { return ft_HasSapper        (this); }
 	bool MustBeBuiltOnAttachmentPoint()    { return ft_MustBeBuiltOnAttachmentPoint(this); }
 
+#if defined _WINDOWS
+	bool FindBuildPointOnPlayer(CTFPlayer *pTFPlayer, CBasePlayer *pBuilder, float &flNearestPoint, Vector &vecNearestBuildPoint);
+#else
 	bool FindBuildPointOnPlayer(CTFPlayer *pTFPlayer, CBasePlayer *pBuilder, float &flNearestPoint, Vector &vecNearestBuildPoint) { return ft_FindBuildPointOnPlayer(this, pTFPlayer, pBuilder, flNearestPoint, vecNearestBuildPoint); }
+#endif
 	void AttachObjectToObject(CBaseEntity *pEntity, int iPoint, Vector &vecOrigin)                                                {        ft_AttachObjectToObject(this, pEntity, iPoint, vecOrigin); }
 	bool FindNearestBuildPoint(CBaseEntity *pEntity, CBasePlayer *pBuilder, float &flNearestPoint, Vector &vecNearestBuildPoint, bool bIgnoreChecks) { return ft_FindNearestBuildPoint(this, pEntity, pBuilder, flNearestPoint, vecNearestBuildPoint, bIgnoreChecks); }
 

@@ -181,7 +181,35 @@ struct CExtract_CBotNPCArcher_m_pIntentionInterface : public IExtract<uint32_t>
 
 #elif defined _WINDOWS
 
-using CExtract_CBotNPCArcher_m_pIntentionInterface = IExtractStub;
+/* GetIntentionInterface is a getter folded with others on the INextBot part;
+ * the scalar deleting destructor deletes the three interfaces first. */
+static constexpr uint8_t s_Buf_CBotNPCArcher_m_pIntentionInterface[] = {
+	0x55,                               // +0000  push ebp
+	0x8b, 0xec,                         // +0001  mov ebp,esp
+	0x56,                               // +0003  push esi
+	0x8b, 0xf1,                         // +0004  mov esi,ecx
+	0x57,                               // +0006  push edi
+	0x8b, 0x8e, 0x00, 0x00, 0x00, 0x00, // +0007  mov ecx,[esi+m_pIntentionInterface]
+};
+
+struct CExtract_CBotNPCArcher_m_pIntentionInterface : public IExtract<uint32_t>
+{
+	CExtract_CBotNPCArcher_m_pIntentionInterface() : IExtract<uint32_t>(sizeof(s_Buf_CBotNPCArcher_m_pIntentionInterface)) {}
+	
+	virtual bool GetExtractInfo(ByteBuf& buf, ByteBuf& mask) const override
+	{
+		buf.CopyFrom(s_Buf_CBotNPCArcher_m_pIntentionInterface);
+		
+		mask.SetDword(0x07 + 2, 0x00000000);
+		
+		return true;
+	}
+	
+	virtual const char *GetFuncName() const override   { return "~CBotNPCArcher [D0]"; }
+	virtual uint32_t GetFuncOffMin() const override    { return 0x0000; }
+	virtual uint32_t GetFuncOffMax() const override    { return 0x0000; }
+	virtual uint32_t GetExtractOffset() const override { return 0x0007 + 2; }
+};
 
 #endif
 MemberVFuncThunk<CTFBaseBoss *, void> CTFBaseBoss::vt_UpdateCollisionBounds(TypeName<CTFBaseBoss>(), "CTFBaseBoss::UpdateCollisionBounds");

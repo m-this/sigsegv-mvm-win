@@ -742,6 +742,10 @@ constexpr uintptr_t s_CallOff_CollectPlayers_RadiusSpyScan = 0x2c;
 		0x48, 0x8b, 0xbf, 0xc0, 0x01, 0x00, 0x00,  // +0x0000 mov     rdi, [rdi+1C0h]; this
 		0xe8, 0x00, 0xbe, 0x20, 0x00,              // +0x0007 call    _ZNK11CBaseEntity13GetTeamNumberEv; CBaseEntity::GetTeamNumber(void)
 		0x83, 0xf8, 0x02,                          // +0x000c cmp     eax, 2
+#elif defined _WINDOWS
+		0x8b, 0x8e, 0x8c, 0x01, 0x00, 0x00,  // +0x0000 mov     ecx, [esi+18Ch]
+		0xe8, 0x09, 0x81, 0xcc, 0xff,        // +0x0006 call    CBaseEntity::GetTeamNumber
+		0x83, 0xf8, 0x02,                    // +0x000b cmp     eax, 2
 #else
 		0xff, 0xb7, 0x8c, 0x01, 0x00, 0x00,  // +0x0000 push    dword ptr [edi+18Ch]
 		0xe8, 0x49, 0xf5, 0x1f, 0x00,        // +0x0006 call    _ZNK11CBaseEntity13GetTeamNumberEv; CBaseEntity::GetTeamNumber(void)
@@ -768,6 +772,10 @@ constexpr uintptr_t s_CallOff_CollectPlayers_RadiusSpyScan = 0x2c;
 			buf.SetDword(0x00 + 3, off_CTFPlayerShared_m_pOuter);
 			
 			mask.SetDword(0x07 + 1, 0x00000000);
+#elif defined _WINDOWS
+			buf.SetDword(0x00 + 2, off_CTFPlayerShared_m_pOuter);
+			
+			mask.SetDword(0x06 + 1, 0x00000000);
 #else
 			buf.SetDword(0x00 + 2, off_CTFPlayerShared_m_pOuter);
 			
@@ -787,6 +795,13 @@ constexpr uintptr_t s_CallOff_CollectPlayers_RadiusSpyScan = 0x2c;
 			buf[0x0c + 2] = 0x90;
 			
 			mask.SetRange(0x0c, 3, 0xff);
+#elif defined _WINDOWS
+			/* replace 'cmp eax,TF_TEAM_RED' with 'cmp eax,eax; nop' */
+			buf[0x0b + 0] = 0x39;
+			buf[0x0b + 1] = 0xc0;
+			buf[0x0b + 2] = 0x90;
+			
+			mask.SetRange(0x0b, 3, 0xff);
 #else
 			/* replace 'cmp eax,TF_TEAM_RED' with 'cmp eax,eax; nop' */
 			buf[0x0e + 0] = 0x39;
@@ -1092,8 +1107,61 @@ constexpr uintptr_t s_CallOff_CollectPlayers_RadiusSpyScan = 0x2c;
 		DETOUR_MEMBER_CALL(event);
 	}
 	
+#if defined _WINDOWS
+	/* The CollectPlayers caller patches are GCC byte patterns. Each of these
+	 * callers makes one CollectPlayers<CTFPlayer> call in server.dll, and none
+	 * of their callees makes another, so count them and pick the replacement
+	 * in the CollectPlayers detour instead. JumpToWave carries
+	 * RestorePlayerCurrency inline. */
+	RefCount rc_CollectPlayers_RedAndBlue;
+	RefCount rc_CollectPlayers_RedAndBlue_NotBot;
+	extern RefCount rc_CTFPlayerShared_RadiusSpyScan;
+	static int CollectPlayers_RadiusSpyScan(CUtlVector<CTFPlayer *> *playerVector, int team, bool isAlive, bool shouldAppend);
+
+	DETOUR_DECL_MEMBER(void, CPopulationManager_ClearCheckpoint)
+	{
+		SCOPED_INCREMENT(rc_CollectPlayers_RedAndBlue);
+		DETOUR_MEMBER_CALL();
+	}
+
+	DETOUR_DECL_MEMBER(void, CPopulationManager_RestoreCheckpoint)
+	{
+		SCOPED_INCREMENT(rc_CollectPlayers_RedAndBlue);
+		DETOUR_MEMBER_CALL();
+	}
+
+	DETOUR_DECL_MEMBER(void, CPopulationManager_RestorePlayerCurrency)
+	{
+		SCOPED_INCREMENT(rc_CollectPlayers_RedAndBlue);
+		DETOUR_MEMBER_CALL();
+	}
+
+	DETOUR_DECL_MEMBER(void, CPopulationManager_JumpToWave, unsigned int wave, float money)
+	{
+		SCOPED_INCREMENT(rc_CollectPlayers_RedAndBlue);
+		DETOUR_MEMBER_CALL(wave, money);
+	}
+
+	DETOUR_DECL_MEMBER(void, CWave_WaveCompleteUpdate)
+	{
+		SCOPED_INCREMENT(rc_CollectPlayers_RedAndBlue_NotBot);
+		DETOUR_MEMBER_CALL();
+	}
+#endif
+
 	DETOUR_DECL_STATIC(int, CollectPlayers_CTFPlayer, CUtlVector<CTFPlayer *> *playerVector, int team, bool isAlive, bool shouldAppend)
 	{
+#if defined _WINDOWS
+		if (rc_CollectPlayers_RedAndBlue > 0 && team == TF_TEAM_RED) {
+			return CollectPlayers_RedAndBlue(playerVector, team, isAlive, shouldAppend);
+		}
+		if (rc_CollectPlayers_RedAndBlue_NotBot > 0 && team == TF_TEAM_RED) {
+			return CollectPlayers_RedAndBlue_NotBot(playerVector, team, isAlive, shouldAppend);
+		}
+		if (rc_CTFPlayerShared_RadiusSpyScan > 0 && team == TF_TEAM_BLUE && isAlive) {
+			return CollectPlayers_RadiusSpyScan(playerVector, team, isAlive, shouldAppend);
+		}
+#endif
 		if (rc_CTFGameRules_FireGameEvent__teamplay_round_start > 0 && (team == TF_TEAM_BLUE && !isAlive && !shouldAppend)) {
 			/* collect players on BOTH teams */
 			return CollectPlayers_RedAndBlue_IsBot(playerVector, team, isAlive, shouldAppend);
@@ -1645,6 +1713,31 @@ constexpr uintptr_t s_CallOff_CollectPlayers_RadiusSpyScan = 0x2c;
 		return ret;
 	}
 
+#if defined _WINDOWS
+	/* IsValidVoter is inline in CountPotentialVoters there, its only caller,
+	 * per player. Its MvM test is the only one that turns a blue human away;
+	 * dropping it for the whole loop also keeps blue bots out as long as bots
+	 * may not vote. */
+	DETOUR_DECL_MEMBER(int, CBaseIssue_CountPotentialVoters)
+	{
+		static ConVarRef sv_vote_bots_allowed("sv_vote_bots_allowed");
+		bool blueHumans = false;
+		if (!sv_vote_bots_allowed.GetBool()) {
+			ForEachTFPlayer([&](CTFPlayer *player) {
+				if (IsMvMBlueHuman(player)) blueHumans = true;
+			});
+		}
+		if (blueHumans) {
+			TFGameRules()->Set_m_bPlayingMannVsMachine(false);
+		}
+		int ret = DETOUR_MEMBER_CALL();
+		if (blueHumans) {
+			TFGameRules()->Set_m_bPlayingMannVsMachine(true);
+		}
+		return ret;
+	}
+#endif
+
 	CBasePlayer *killed = nullptr;
 	bool team_change_back = false;
 	DETOUR_DECL_MEMBER(void, CTFGameRules_PlayerKilled, CBasePlayer *pVictim, const CTakeDamageInfo& info)
@@ -1759,8 +1852,19 @@ constexpr uintptr_t s_CallOff_CollectPlayers_RadiusSpyScan = 0x2c;
 			//MOD_ADD_DETOUR_MEMBER(CTFBot_Event_Killed, "IGameEventManager2::FireEvent");
 
 			// Make voting work properly for blue players
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_MEMBER(CBaseIssue_CountPotentialVoters, "CBaseIssue::CountPotentialVoters");
+#else
 			MOD_ADD_DETOUR_MEMBER(CVoteController_IsValidVoter, "CVoteController::IsValidVoter [clone]");
+#endif
 
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_MEMBER(CPopulationManager_ClearCheckpoint,        "CPopulationManager::ClearCheckpoint");
+			MOD_ADD_DETOUR_MEMBER(CPopulationManager_RestoreCheckpoint,      "CPopulationManager::RestoreCheckpoint");
+			MOD_ADD_DETOUR_MEMBER(CPopulationManager_RestorePlayerCurrency,  "CPopulationManager::RestorePlayerCurrency");
+			MOD_ADD_DETOUR_MEMBER(CPopulationManager_JumpToWave,             "CPopulationManager::JumpToWave");
+			MOD_ADD_DETOUR_MEMBER(CWave_WaveCompleteUpdate,                  "CWave::WaveCompleteUpdate");
+#else
 			/* fix hardcoded teamnum check when clearing MvM checkpoints */
 			this->AddPatch(new CPatch_CollectPlayers_Caller_Regcall<0x0000, 0x0200, TF_TEAM_RED, false, false, CollectPlayers_RedAndBlue>("CPopulationManager::ClearCheckpoint",
 				sizeof(s_Buf_CollectPlayers_Common_Regcall), s_Buf_CollectPlayers_Common_Regcall, s_Mask_CollectPlayers_Common_Regcall, s_CallOff_CollectPlayers_Common_Regcall));
@@ -1776,18 +1880,21 @@ constexpr uintptr_t s_CallOff_CollectPlayers_RadiusSpyScan = 0x2c;
 			/* fix hardcoded teamnum check when respawning dead players and resetting their sentry stats at wave end */
 			this->AddPatch(new CPatch_CollectPlayers_Caller_Regcall<0x0000, 0x0400, TF_TEAM_RED, false, false, CollectPlayers_RedAndBlue_NotBot>("CWave::WaveCompleteUpdate", 
 				sizeof(s_Buf_CollectPlayers_WaveCompleteUpdate), s_Buf_CollectPlayers_WaveCompleteUpdate, s_Mask_CollectPlayers_WaveCompleteUpdate, s_CallOff_CollectPlayers_WaveCompleteUpdate));
+#endif
 
 			// Show only spy bots on the enemy team
 			// this->AddPatch(new CPatch_CollectPlayers_Caller1<0x0500, 0x0930, TF_TEAM_BLUE, true, false, CollectPlayers_RedAndBlue>("CTFBot::Event_Killed"));
 			
 			/* fix hardcoded teamnum checks in the radius spy scan ability */
 			MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_RadiusSpyScan, "CTFPlayerShared::RadiusSpyScan");
+#if !defined _WINDOWS
 			this->AddPatch(new CPatch_CollectPlayers_Caller_Regcall<0x0000, 0x0100, TF_TEAM_BLUE, true, false, CollectPlayers_RadiusSpyScan>("CTFPlayerShared::RadiusSpyScan",
 #ifdef PLATFORM_64BITS
 				sizeof(s_Buf_CollectPlayers_RadiusSpyScan), s_Buf_CollectPlayers_RadiusSpyScan, s_Mask_CollectPlayers_RadiusSpyScan, s_CallOff_CollectPlayers_RadiusSpyScan));
 #else
 				sizeof(s_Buf_CollectPlayers_Common_Regcall), s_Buf_CollectPlayers_Common_Regcall, s_Mask_CollectPlayers_Common_Regcall, s_CallOff_CollectPlayers_Common_Regcall));
 #endif			
+#endif
 			this->AddPatch(new CPatch_RadiusSpyScan());
 			
 			/* this is purely for debugging the blue-robots-spawning-between-waves situation */

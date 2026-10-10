@@ -13,6 +13,10 @@ namespace Mod::Bot::Medieval_NonMelee
 		0x0f, 0xb6, 0x80, 0x1b, 0x0d, 0x00, 0x00,  // +0x000a movzx   eax, byte ptr [rax+0D1Bh]
 		0x84, 0xc0,                                // +0x0011 test    al, al
 		0x75, 0x2a,                                // +0x0013 jnz     short loc_1038FF0
+#elif defined _WINDOWS
+		0xa1, 0x00, 0x00, 0x00, 0x00,                   // +0000  mov eax,[g_pGameRules]
+		0x80, 0xb8, 0x00, 0x00, 0x00, 0x00, 0x00,       // +0005  cmp byte ptr [eax+m_bPlayingMedieval],0
+		0x75, 0x00,                                     // +000C  jnz +0xXX
 #else
 		0xa1, 0x00, 0x00, 0x00, 0x00,             // +0000  mov eax,[g_pGameRules]
 		0x0f, 0xb6, 0x80, 0x00, 0x00, 0x00, 0x00, // +0005  movzx eax,byte ptr [eax+m_bPlayingMedieval]
@@ -32,7 +36,7 @@ namespace Mod::Bot::Medieval_NonMelee
 		virtual uint32_t GetFuncOffMax() const override { return 0x0120; } // @ 0x00b0
 #elif defined _WINDOWS
 		virtual uint32_t GetFuncOffMin() const override { return 0x0000; }
-		virtual uint32_t GetFuncOffMax() const override { return 0x00c0; } // @ 0x0071
+		virtual uint32_t GetFuncOffMax() const override { return 0x00c0; } // @ 0x007a
 #endif
 		
 		virtual bool GetVerifyInfo(ByteBuf& buf, ByteBuf& mask) const override
@@ -49,6 +53,11 @@ namespace Mod::Bot::Medieval_NonMelee
 			mask.SetRange(0x00 + 3, 4, 0x00);
 			mask.SetRange(0x03 + 1, 4, 0x00);
 			mask.SetRange(0x13 + 1, 1, 0x00);
+#elif defined _WINDOWS
+			buf.SetDword(0x00 + 1, (uint32_t)&g_pGameRules.GetRef());
+			buf.SetDword(0x05 + 2, (uint32_t)off_CTFGameRules_m_bPlayingMedieval);
+			
+			mask.SetRange(0x0c + 1, 1, 0x00);
 #else
 			buf.SetDword(0x00 + 1, (uint32_t)&g_pGameRules.GetRef());
 			buf.SetDword(0x05 + 3, (uint32_t)off_CTFGameRules_m_bPlayingMedieval);
@@ -64,6 +73,9 @@ namespace Mod::Bot::Medieval_NonMelee
 #ifdef PLATFORM_64BITS
 			buf .SetRange(0x13, 2, 0x90);
 			mask.SetRange(0x13, 2, 0xff);
+#elif defined _WINDOWS
+			buf .SetRange(0x0c, 2, 0x90);
+			mask.SetRange(0x0c, 2, 0xff);
 #else
 			buf .SetRange(0x0e, 2, 0x90);
 			mask.SetRange(0x0e, 2, 0xff);

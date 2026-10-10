@@ -4,6 +4,7 @@
 #include "stub/gamerules.h"
 #include "stub/objects.h"
 #include "stub/tfbot.h"
+#include "util/iterate.h"
 
 
 class CTFBotMvMEngineerIdle : public Action<CTFBot> {};
@@ -167,6 +168,21 @@ namespace Mod::AI::EngieBot_Wrangler
 	
 	
 	CBaseEntity *laser_dot = nullptr;
+#if defined _WINDOWS
+	/* CLaserDot::Create is inline in CreateLaserDot there. The dot it made is
+	 * the env_laserdot the weapon's owner owns. */
+	DETOUR_DECL_MEMBER(void, CTFLaserPointer_CreateLaserDot)
+	{
+		DETOUR_MEMBER_CALL();
+		CBaseEntity *owner = reinterpret_cast<CBaseEntity *>(this)->GetOwnerEntity();
+		if (owner == nullptr || !TFGameRules()->IsMannVsMachineMode()) return;
+		ForEachEntityByClassname("env_laserdot", [&](CBaseEntity *dot) {
+			if (dot->GetOwnerEntity() == owner && dot->GetTeamNumber() == TF_TEAM_BLUE) {
+				dot->SetTeamNumber(TF_TEAM_RED);
+			}
+		});
+	}
+#else
 	DETOUR_DECL_MEMBER(void, CTFLaserPointer_CreateLaserDot)
 	{
 		laser_dot = nullptr;
@@ -180,22 +196,38 @@ namespace Mod::AI::EngieBot_Wrangler
 	{
 		return laser_dot = DETOUR_STATIC_CALL(origin, owner, visibleDot);
 	}
+#endif
 
+	bool Wrangle(CTFBot *actor, const char *cmd, EventDesiredResult<CTFBot> &result)
+	{
+		if (V_stricmp(cmd, "wrangle") != 0) return false;
+		if (CTFBotMvMEngineerDisableAutopilot::IsPossible(actor)) {
+			result = EventDesiredResult<CTFBot>::SuspendFor(new CTFBotMvMEngineerDisableAutopilot(), "This thing ain't on autopilot, son!");
+			return true;
+		}
+		Warning("This thing can't disengage autopilot, son!\n");
+		return false;
+	}
+
+#if defined _WINDOWS
+	/* Action<CTFBot>::OnCommandString's body is shared with other virtuals
+	 * there, so it is hooked in the one action the command is for */
+	VHOOK_DECL(EventDesiredResult<CTFBot>, CTFBotMvMEngineerIdle_OnCommandString, CTFBot *actor, const char *cmd)
+	{
+		EventDesiredResult<CTFBot> result;
+		if (Wrangle(actor, cmd, result)) return result;
+		return VHOOK_CALL(actor, cmd);
+	}
+#else
 	DETOUR_DECL_MEMBER(EventDesiredResult<CTFBot>, Action_CTFBot_OnCommandString, CTFBot *actor, const char *cmd)
 	{
-		if (V_stricmp(cmd, "wrangle") == 0) {
-			auto action = reinterpret_cast<Action<CTFBot> *>(this);
-			if (rtti_cast<CTFBotMvMEngineerIdle *>(action) != nullptr) {
-				if (CTFBotMvMEngineerDisableAutopilot::IsPossible(actor)) {
-					return EventDesiredResult<CTFBot>::SuspendFor(new CTFBotMvMEngineerDisableAutopilot(), "This thing ain't on autopilot, son!");
-				} else {
-					Warning("This thing can't disengage autopilot, son!\n");
-				}
-			}
-		}
+		auto action = reinterpret_cast<Action<CTFBot> *>(this);
+		EventDesiredResult<CTFBot> result;
+		if (rtti_cast<CTFBotMvMEngineerIdle *>(action) != nullptr && Wrangle(actor, cmd, result)) return result;
 		
 		return DETOUR_MEMBER_CALL(actor, cmd);
 	}
+#endif
 	DETOUR_DECL_MEMBER(ActionResult< CTFBot >, CTFBotMvMEngineerIdle_Update, CTFBot *actor, float interval)
 	{
 		
@@ -211,12 +243,18 @@ namespace Mod::AI::EngieBot_Wrangler
 	public:
 		CMod() : IMod("AI:EngieBot_Wrangler")
 		{
+#if defined _WINDOWS
+			MOD_ADD_VHOOK(CTFBotMvMEngineerIdle_OnCommandString, TypeName<CTFBotMvMEngineerIdle>(), "Action<CTFBot>::OnCommandString");
+#else
 			MOD_ADD_DETOUR_MEMBER(Action_CTFBot_OnCommandString, "Action<CTFBot>::OnCommandString");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CTFBotMvMEngineerIdle_Update, "CTFBotMvMEngineerIdle::Update");
 
 			// Stop blue team wrangler dot
 			MOD_ADD_DETOUR_MEMBER(CTFLaserPointer_CreateLaserDot, "CTFLaserPointer::CreateLaserDot");
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_STATIC(CLaserDot_Create, "CLaserDot::Create");
+#endif
 		}
 	};
 	CMod s_Mod;

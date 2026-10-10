@@ -32,6 +32,7 @@
 #include "CommandBuffer.h"
 #include <regex>
 #include "util/translation.h"
+#include <gamemovement.h>
 #include <dirent.h>
 
 // WARN_IGNORE__REORDER()
@@ -4550,6 +4551,24 @@ namespace Mod::Pop::PopMgr_Extensions
 		}
 	}
 
+#if defined _WINDOWS
+	/* PreventBunnyJumping is inline in CheckJumpButton there, and its clamp is
+	 * CheckJumpButton's only read of m_flMaxspeed: a speed it cannot reach
+	 * turns the clamp off for the call. */
+	DETOUR_DECL_MEMBER(bool, CTFGameMovement_CheckJumpButton)
+	{
+		auto jumper = reinterpret_cast<CGameMovement *>(this)->player;
+		if (!state.m_iBunnyHop || jumper == nullptr) {
+			return DETOUR_MEMBER_CALL();
+		}
+		float maxspeed = jumper->MaxSpeed();
+		jumper->SetMaxSpeed(FLT_MAX / 2.0f);
+		bool ret = DETOUR_MEMBER_CALL();
+		jumper->SetMaxSpeed(maxspeed);
+		return ret;
+	}
+#endif
+
 	DETOUR_DECL_MEMBER(bool, CHeadlessHatmanLocomotion_ShouldCollideWith, CBaseEntity *entity)
 	{
 		if (state.m_bHHHNonSolidToPlayers && entity->IsPlayer()) {
@@ -7264,7 +7283,11 @@ namespace Mod::Pop::PopMgr_Extensions
 		CMod() : IMod("Pop:PopMgr_Extensions")
 		{
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_PlayerRunCommand,					 "CTFPlayer::PlayerRunCommand");
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_MEMBER(CTFGameMovement_CheckJumpButton,			 "CTFGameMovement::CheckJumpButton");
+#else
 			MOD_ADD_DETOUR_MEMBER(CTFGameMovement_PreventBunnyJumping,			 "CTFGameMovement::PreventBunnyJumping");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CTFGameRules_PlayerKilled,                     "CTFGameRules::PlayerKilled");
 			//MOD_ADD_DETOUR_STATIC(CTFGameRules_DropSpellPickup,                  "CTFGameRules::DropSpellPickup [clone]");
 			MOD_ADD_DETOUR_MEMBER(CTFGameRules_IsUsingSpells,                    "CTFGameRules::IsUsingSpells");

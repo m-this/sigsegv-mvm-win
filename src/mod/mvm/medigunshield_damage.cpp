@@ -17,6 +17,11 @@ namespace Mod::MvM::MedigunShield_Damage
 		0x83, 0xf8, 0x03,                    // +0x0008 cmp     eax, 3
 		0x0f, 0x85, 0x7f, 0xfd, 0xff, 0xff,  // +0x000b jnz     loc_BE1E58
 		0xe9, 0x65, 0xff, 0xff, 0xff,        // +0x0011 jmp     loc_BE2043
+#elif defined _WINDOWS
+		0x8b, 0xcf,                          // +0x0000 mov     ecx, edi
+		0xe8, 0x00, 0x00, 0x00, 0x00,        // +0x0002 call    CBaseEntity::GetTeamNumber
+		0x83, 0xf8, 0x03,                    // +0x0007 cmp     eax, 3
+		0x0f, 0x84, 0x00, 0x00, 0x00, 0x00,  // +0x000a jz      no damage
 #else
 		0x57,                                // +0x0000 push    edi
 		0xe8, 0x87, 0x98, 0x16, 0x00,        // +0x0001 call    _ZNK11CBaseEntity13GetTeamNumberEv; CBaseEntity::GetTeamNumber(void)
@@ -32,8 +37,13 @@ namespace Mod::MvM::MedigunShield_Damage
 		CPatch_CTFMedigunShield_ShieldTouch() : CPatch(sizeof(s_Buf)) {}
 		
 		virtual const char *GetFuncName() const override { return "CTFMedigunShield::ShieldTouch"; }
+#if defined _WINDOWS
+		virtual uint32_t GetFuncOffMin() const override { return 0x0080; }
+		virtual uint32_t GetFuncOffMax() const override { return 0x0100; } // @ 0xbc
+#else
 		virtual uint32_t GetFuncOffMin() const override { return 0x02c0; }
 		virtual uint32_t GetFuncOffMax() const override { return 0x0400; } // @ 0x2e0
+#endif
 		
 		virtual bool GetVerifyInfo(ByteBuf& buf, ByteBuf& mask) const override
 		{
@@ -43,6 +53,9 @@ namespace Mod::MvM::MedigunShield_Damage
 			mask.SetRange(0x03 + 1, 4, 0x00);
 			mask.SetRange(0x0b + 2, 4, 0x00);
 			mask.SetRange(0x11 + 1, 4, 0x00);
+#elif defined _WINDOWS
+			mask.SetRange(0x02 + 1, 4, 0x00);
+			mask.SetRange(0x0a + 2, 4, 0x00);
 #else
 			mask.SetRange(0x01 + 1, 4, 0x00);
 			mask.SetRange(0x06 + 2, 1, 0x00);
@@ -60,6 +73,10 @@ namespace Mod::MvM::MedigunShield_Damage
 			buf.SetDword(0x0b + 0, 0x90);
 			buf.SetDword(0x0b + 1, 0xe9);
 			mask.SetRange(0x0b, 2, 0xff);
+#elif defined _WINDOWS
+			/* drop the jump that skips a blue owner's shield */
+			buf.SetRange(0x0a, 6, 0x90);
+			mask.SetRange(0x0a, 6, 0xff);
 #else
 			buf.SetDword(0x0c + 0, 0x90);
 			buf.SetDword(0x0c + 1, 0xe9);

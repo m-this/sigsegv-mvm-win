@@ -12,7 +12,12 @@ namespace Mod::MvM::Set_Credit_Team
 	
 	
 	constexpr uint8_t s_Buf_CCurrencyPack_MyTouch[] = {
+#if defined _WINDOWS
+		0x8b, 0x80, 0x00, 0x00, 0x00, 0x00,  // +0x0000 mov     eax, [eax+IsBot]
+		0xff, 0xd0,                          // +0x0006 call    eax
+#else
 		0xff, 0x90, 0x4c, 0x01, 0x00, 0x00,  // +0x0001 call    dword ptr [eax+14Ch]
+#endif
 	};
 	
 	struct CPatch_CCurrencyPack_MyTouch : public CPatch
@@ -44,8 +49,15 @@ namespace Mod::MvM::Set_Credit_Team
 			buf[0x00 + 3] = 0x90;
 			buf[0x00 + 4] = 0x90;
 			buf[0x00 + 5] = 0x90;
+#if defined _WINDOWS
+			buf[0x00 + 6] = 0x90;
+			buf[0x00 + 7] = 0x90;
+			
+			mask.SetRange(0x00, 8, 0xff);
+#else
 			
 			mask.SetRange(0x00, 6, 0xff);
+#endif
 			
 			return true;
 		}
@@ -57,6 +69,10 @@ namespace Mod::MvM::Set_Credit_Team
 		0xe8, 0xf8, 0x6f, 0xb5, 0xff,  // +0x0000 call    _ZNK11CBaseEntity13GetTeamNumberEv; CBaseEntity::GetTeamNumber(void)
 		0x83, 0xf8, 0x03,              // +0x0005 cmp     eax, 3
 		0x0f, 0x95, 0xc0,              // +0x0008 setnz   al
+#elif defined _WINDOWS
+		0xe8, 0x00, 0x00, 0x00, 0x00,  // +0x0000 call    CBaseEntity::GetTeamNumber
+		0x83, 0xf8, 0x03,              // +0x0005 cmp     eax, 3
+		0x74, 0x00,                    // +0x0008 jz      refuse
 #else
 		0xe8, 0xff, 0x9d, 0xb8, 0xff,  // +0x0000 call    _ZNK11CBaseEntity13GetTeamNumberEv; CBaseEntity::GetTeamNumber(void)
 		0x83, 0xc4, 0x10,              // +0x0005 add     esp, 10h
@@ -70,8 +86,13 @@ namespace Mod::MvM::Set_Credit_Team
 		CPatch_CTFPowerup_ValidTouch() : CPatch(sizeof(s_Buf_CTFPowerup_ValidTouch)) {}
 		
 		virtual const char *GetFuncName() const override { return "CTFPowerup::ValidTouch"; }
+#if defined _WINDOWS
+		virtual uint32_t GetFuncOffMin() const override  { return 0x0040; }
+		virtual uint32_t GetFuncOffMax() const override  { return 0x0080; } // @ +0x005f
+#else
 		virtual uint32_t GetFuncOffMin() const override  { return 0x0060; }
 		virtual uint32_t GetFuncOffMax() const override  { return 0x00f0; } // @ +0x00a8
+#endif
 		
 		virtual bool GetVerifyInfo(ByteBuf& buf, ByteBuf& mask) const override
 		{
@@ -79,6 +100,9 @@ namespace Mod::MvM::Set_Credit_Team
 
 #ifdef PLATFORM_64BITS
 			mask.SetDword(0x00 + 1, 0x00000000);
+#elif defined _WINDOWS
+			mask.SetDword(0x00 + 1, 0x00000000);
+			mask[0x08 + 1] = 0x00;
 #else
 			mask.SetDword(0x00 + 1, 0x00000000);
 			mask.SetRange(0x05 + 2, 1, 0x00);
@@ -97,6 +121,15 @@ namespace Mod::MvM::Set_Credit_Team
 			
 			mask[0x05 + 2] = 0xff;
 			mask[0x08 + 1] = 0xff;
+#elif defined _WINDOWS
+			/* for now, replace the comparison operand with TEAM_INVALID */
+			buf[0x05 + 2] = (uint8_t)TEAM_INVALID;
+			
+			/* refuse the other teams: jz to jnz */
+			buf[0x08 + 0] = 0x75;
+			
+			mask[0x05 + 2] = 0xff;
+			mask[0x08 + 0] = 0xff;
 #else
 			/* for now, replace the comparison operand with TEAM_INVALID */
 			buf[0x08 + 2] = (uint8_t)TEAM_INVALID;
@@ -114,7 +147,7 @@ namespace Mod::MvM::Set_Credit_Team
 		virtual bool AdjustPatchInfo(ByteBuf& buf) const override
 		{
 			/* set the comparison operand to the actual user-requested teamnum */
-#ifdef PLATFORM_64BITS
+#if defined PLATFORM_64BITS || defined _WINDOWS
 			buf[0x05 + 2] = (uint8_t)GetCreditTeamNum();
 #else
 			buf[0x08 + 2] = (uint8_t)GetCreditTeamNum();
@@ -130,6 +163,10 @@ namespace Mod::MvM::Set_Credit_Team
 		0x48, 0x8b, 0xbf, 0xc0, 0x01, 0x00, 0x00,  // +0x0000 mov     rdi, [rdi+1C0h]; this
 		0xe8, 0xd0, 0xfc, 0x21, 0x00,              // +0x0007 call    _ZNK11CBaseEntity13GetTeamNumberEv; CBaseEntity::GetTeamNumber(void)
 		0x83, 0xf8, 0x02,                          // +0x000c cmp     eax, 2
+#elif defined _WINDOWS
+		0x8b, 0x8f, 0x8c, 0x01, 0x00, 0x00,  // +0x0000 mov     ecx, [edi+m_pOuter]
+		0xe8, 0x00, 0x00, 0x00, 0x00,        // +0x0006 call    CBaseEntity::GetTeamNumber
+		0x83, 0xf8, 0x02,                    // +0x000b cmp     eax, 2
 #else
 		0xff, 0xb0, 0x8c, 0x01, 0x00, 0x00,  // +0x0000 push    dword ptr [eax+18Ch]
 		0xe8, 0xb9, 0x2d, 0x21, 0x00,        // +0x0006 call    _ZNK11CBaseEntity13GetTeamNumberEv; CBaseEntity::GetTeamNumber(void)
@@ -159,6 +196,13 @@ namespace Mod::MvM::Set_Credit_Team
 			mask[0x00 + 2] = 0b11000000;
 			
 			mask.SetDword(0x07 + 1, 0x00000000);
+#elif defined _WINDOWS
+			buf.SetDword(0x00 + 2, off_CTFPlayerShared_m_pOuter);
+			
+			/* allow any 3-bit source or destination register code */
+			mask[0x00 + 1] = 0b11000000;
+			
+			mask.SetDword(0x06 + 1, 0x00000000);
 #else
 			buf.SetDword(0x00 + 2, off_CTFPlayerShared_m_pOuter);
 			
@@ -179,6 +223,10 @@ namespace Mod::MvM::Set_Credit_Team
 			buf[0x0c + 2] = (uint8_t)TEAM_INVALID;
 			
 			mask[0x0c + 2] = 0xff;
+#elif defined _WINDOWS
+			buf[0x0b + 2] = (uint8_t)TEAM_INVALID;
+			
+			mask[0x0b + 2] = 0xff;
 #else
 			buf[0x0e + 2] = (uint8_t)TEAM_INVALID;
 			
@@ -193,6 +241,8 @@ namespace Mod::MvM::Set_Credit_Team
 			/* set the comparison operand to the actual user-requested teamnum */
 #ifdef PLATFORM_64BITS
 			buf[0x0c + 2] = (uint8_t)GetCreditTeamNum();
+#elif defined _WINDOWS
+			buf[0x0b + 2] = (uint8_t)GetCreditTeamNum();
 #else
 			buf[0x0e + 2] = (uint8_t)GetCreditTeamNum();
 #endif
@@ -210,6 +260,13 @@ namespace Mod::MvM::Set_Credit_Team
 		0x48, 0x89, 0xc7,              // +0x0009 mov     rdi, rax
 		0x48, 0x89, 0x45, 0xa8,        // +0x000c mov     [rbp+var_58], rax
 		0xe8,  // +0x0010 call    _Z14CollectPlayersI9CTFPlayerEiP10CUtlVectorIPT_10CUtlMemoryIS3_iEEibb; CollectPlayers<CTFPlayer>(CUtlVector<CTFPlayer *,CUtlMemory<CTFPlayer *,int>> *,int,bool,bool)
+#elif defined _WINDOWS
+		0x50,                          // +0x0000 push    eax (0)
+		0x50,                          // +0x0001 push    eax (0)
+		0x8d, 0x45, 0x00,              // +0x0002 lea     eax, [ebp-N]
+		0x6a, 0x02,                    // +0x0005 push    2
+		0x50,                          // +0x0007 push    eax
+		0xe8,                          // +0x0008 call    CollectPlayers<CTFPlayer>
 #else
 		0x6a, 0x00,                    // +0x0000 push    0
 		0x6a, 0x00,                    // +0x0002 push    0
@@ -230,6 +287,9 @@ namespace Mod::MvM::Set_Credit_Team
 		virtual bool GetVerifyInfo(ByteBuf& buf, ByteBuf& mask) const override
 		{
 			buf.CopyFrom(s_Buf_CTFGameRules_DistributeCurrencyAmount);
+#if defined _WINDOWS
+			mask[0x02 + 2] = 0x00;
+#endif
 			
 			return true;
 		}
@@ -241,6 +301,10 @@ namespace Mod::MvM::Set_Credit_Team
 			buf.SetDword(0x04 + 1, TEAM_INVALID);
 			
 			mask.SetRange(0x04 + 1, 4, 0xFF);
+#elif defined _WINDOWS
+			buf[0x05 + 1] = TEAM_INVALID;
+			
+			mask[0x05 + 1] = 0xFF;
 #else
 			buf[0x04 + 1] = TEAM_INVALID;
 			
@@ -253,6 +317,8 @@ namespace Mod::MvM::Set_Credit_Team
 		{
 #ifdef PLATFORM_64BITS
 			buf.SetDword(0x04 + 1, GetCreditTeamNum());
+#elif defined _WINDOWS
+			buf[0x05 + 1] = GetCreditTeamNum();
 #else
 			/* set the teamnum argument to the actual user-requested teamnum */
 			buf[0x04 + 1] = GetCreditTeamNum();
@@ -266,6 +332,11 @@ namespace Mod::MvM::Set_Credit_Team
 #ifdef PLATFORM_64BITS
 		0xbe, 0x02, 0x00, 0x00, 0x00,  // +0x0000 mov     esi, 2
 		0x4c, 0x89, 0xff,              // +0x0005 mov     rdi, r15
+#elif defined _WINDOWS
+		0x6a, 0x00,                                // +0x0000 push    0
+		0x6a, 0x00,                                // +0x0002 push    0
+		0x6a, 0x02,                                // +0x0004 push    2
+		0x50,                                      // +0x0006 push    eax
 #else
 		0xba, 0x02, 0x00, 0x00, 0x00,              // +0x0000 mov     edx, 2
 		0x89, 0xf8,                                // +0x0005 mov     eax, edi
@@ -291,9 +362,15 @@ namespace Mod::MvM::Set_Credit_Team
 		virtual bool GetPatchInfo(ByteBuf& buf, ByteBuf& mask) const override
 		{
 			/* for now, replace the teamnum argument with TEAM_INVALID */
+#if defined _WINDOWS
+			buf[0x04 + 1] = (uint8_t)TEAM_INVALID;
+			
+			mask[0x04 + 1] = 0xff;
+#else
 			buf.SetDword(0x00 + 1, TEAM_INVALID);
 			
 			mask.SetDword(0x0 + 1, 0xffffffff);
+#endif
 			
 			return true;
 		}
@@ -301,7 +378,11 @@ namespace Mod::MvM::Set_Credit_Team
 		virtual bool AdjustPatchInfo(ByteBuf& buf) const override
 		{
 			/* set the teamnum argument to the actual user-requested teamnum */
+#if defined _WINDOWS
+			buf[0x04 + 1] = (uint8_t)TEAM_INVALID;
+#else
 			buf.SetDword(0x00 + 1, TEAM_INVALID);
+#endif
 			
 			return true;
 		}

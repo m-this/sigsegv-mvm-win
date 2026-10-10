@@ -185,7 +185,34 @@ struct CExtract_CTFPlayerShared_m_ConditionData : public IExtract<uint8_t>
 
 #elif defined _WINDOWS
 
-using CExtract_CTFPlayerShared_m_pOuter   = IExtractStub;
+/* RadiusSpyScan starts with its outer player's team. */
+static constexpr uint8_t s_Buf_CTFPlayerShared_m_pOuter[] = {
+	0x8b, 0xf1,                         // +0000  mov esi,ecx
+	0x89, 0x75, 0x00,                   // +0002  mov [ebp-N],esi
+	0x8b, 0x8e, 0x00, 0x00, 0x00, 0x00, // +0005  mov ecx,[esi+m_pOuter]
+	0xe8,                               // +000B  call CBaseEntity::GetTeamNumber
+};
+
+struct CExtract_CTFPlayerShared_m_pOuter : public IExtract<uint32_t>
+{
+	CExtract_CTFPlayerShared_m_pOuter() : IExtract<uint32_t>(sizeof(s_Buf_CTFPlayerShared_m_pOuter)) {}
+	
+	virtual bool GetExtractInfo(ByteBuf& buf, ByteBuf& mask) const override
+	{
+		buf.CopyFrom(s_Buf_CTFPlayerShared_m_pOuter);
+		
+		mask[0x02 + 2] = 0x00;
+		mask.SetRange(0x05 + 2, 4, 0x00);
+		
+		return true;
+	}
+	
+	virtual const char *GetFuncName() const override   { return "CTFPlayerShared::RadiusSpyScan"; }
+	virtual uint32_t GetFuncOffMin() const override    { return 0x0000; }
+	virtual uint32_t GetFuncOffMax() const override    { return 0x0010; }
+	virtual uint32_t GetExtractOffset() const override { return 0x0005 + 2; }
+};
+
 using CExtract_CTFPlayer_m_bFeigningDeath = IExtractStub;
 
 /* GetConditionDuration is inlined into its one caller on Windows; its
@@ -373,6 +400,7 @@ CAttributeManager *CTFPlayer::GetAttributeManager() { return rtti_cast<IHasAttri
 #endif
 MemberFuncThunk<      CTFPlayer *, CBaseEntity *, int, bool        > CTFPlayer::ft_GetEntityForLoadoutSlot            ("CTFPlayer::GetEntityForLoadoutSlot");
 MemberFuncThunk<      CTFPlayer *, void                            > CTFPlayer::ft_RemoveInvisibility               ("CTFPlayer::RemoveInvisibility");
+MemberFuncThunk<      CTFPlayer *, void, const CTakeDamageInfo &, bool, bool> CTFPlayer::ft_DropAmmoPack            ("CTFPlayer::DropAmmoPack");
 MemberFuncThunk<      CTFPlayer *, void, PlayerAnimEvent_t, int    > CTFPlayer::ft_DoAnimationEvent            ("CTFPlayer::DoAnimationEvent");
 MemberFuncThunk<      CTFPlayer *, void, const char *              > CTFPlayer::ft_PlaySpecificSequence        ("CTFPlayer::PlaySpecificSequence");
 MemberFuncThunk<      CTFPlayer *, void, taunts_t, int             > CTFPlayer::ft_Taunt                       ("CTFPlayer::Taunt");

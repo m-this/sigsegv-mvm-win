@@ -154,6 +154,19 @@ namespace Mod::Bot::IsSpaceToSpawnHere_Scale
 		DETOUR_MEMBER_CALL();
 	}
 
+#if defined _WINDOWS
+	/* OnAddHalloweenTiny is inline in OnConditionAdded there, which calls it
+	 * for this one condition on Linux */
+	DETOUR_DECL_MEMBER(void, CTFPlayerShared_OnConditionAdded, ETFCond cond)
+	{
+		if (cond == TF_COND_HALLOWEEN_TINY) {
+			CTFPlayer *player = reinterpret_cast<CTFPlayerShared *>(this)->GetOuter();
+			old_scale_map[player] = player->GetModelScale();
+		}
+		DETOUR_MEMBER_CALL(cond);
+	}
+#endif
+
 	DETOUR_DECL_MEMBER(void, IEngineTrace_TraceRay, const Ray_t& ray, unsigned int fMask, ITraceFilter *pTraceFilter, trace_t *pTrace)
 	{
 		if (rc_IsSpaceToSpawnHere > 0 && the_pos != nullptr) {
@@ -300,7 +313,11 @@ namespace Mod::Bot::IsSpaceToSpawnHere_Scale
 
 			// Fix tiny spell being too suicidal, also restore to the original scale
 			MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_OnRemoveHalloweenTiny, "CTFPlayerShared::OnRemoveHalloweenTiny");
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_OnConditionAdded, "CTFPlayerShared::OnConditionAdded");
+#else
 			MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_OnAddHalloweenTiny, "CTFPlayerShared::OnAddHalloweenTiny");
+#endif
 			
 			MOD_ADD_DETOUR_MEMBER(IEngineTrace_TraceRay, "IEngineTrace::TraceRay");
 		}

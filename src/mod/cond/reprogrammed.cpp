@@ -1686,7 +1686,10 @@ namespace Mod::Cond::Reprogrammed
 			// Fix spectator team bots ignoring disguise
 			MOD_ADD_DETOUR_MEMBER(CTFBotVision_IsIgnored, "CTFBotVision::IsIgnored");
 
+#if !defined _WINDOWS
+            /* no address there; AddCond sizes the condition data instead */
             MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_C2, "CTFPlayerShared::CTFPlayerShared");
+#endif
             MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_AddCond, "CTFPlayerShared::AddCond");
             MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_RemoveAllCond, "CTFPlayerShared::RemoveAllCond");
 			

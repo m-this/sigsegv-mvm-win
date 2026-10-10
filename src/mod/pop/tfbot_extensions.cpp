@@ -2093,6 +2093,59 @@ namespace Mod::Pop::TFBot_Extensions
         return VHOOK_CALL(szKeyName, szValue);
     }
 	
+#if defined _WINDOWS
+	/* FindBuildPointOnPlayer is inline in FindSnapToBuildPos there, and its
+	 * player loop keeps the last player a sapper fits on. The Linux detour
+	 * keeps whichever of each pair the builder looks at more directly, which
+	 * ends on the one he looks at most directly: that one is attached here. */
+	DETOUR_DECL_MEMBER(bool, CBaseObject_FindSnapToBuildPos, CBaseObject *pObjectOverride)
+	{
+		auto object = reinterpret_cast<CBaseObject *>(this);
+		bool result = DETOUR_MEMBER_CALL(pObjectOverride);
+		auto builder = object->GetBuilder();
+		if (!result || builder == nullptr || ToTFPlayer(object->GetBuiltOnEntity()) == nullptr) return result;
+
+		Vector forward;
+		AngleVectors(builder->EyeAngles(), &forward);
+		CTFPlayer *best = nullptr;
+		float bestDot = -2.0f;
+		ForEachTFPlayer([&](CTFPlayer *player) {
+			if (!player->IsAlive() || player->GetTeamNumber() == builder->GetTeamNumber() || player->GetTeamNumber() < TF_TEAM_RED) return;
+			if (player->m_Shared->InCond(TF_COND_SAPPED) || player->m_Shared->IsInvulnerable() || player->m_Shared->InCond(TF_COND_PHASE)) return;
+			if ((player->GetAbsOrigin() - builder->GetAbsOrigin()).LengthSqr() > 25600.002f) return;
+			float dot = DotProduct((player->GetAbsOrigin() - builder->EyePosition()).Normalized(), forward);
+			if (dot >= bestDot) {
+				bestDot = dot;
+				best = player;
+			}
+		});
+		if (best != nullptr && best != object->GetBuiltOnEntity()) {
+			float nearest = 9999.0f;
+			Vector point;
+			if (object->FindBuildPointOnPlayer(best, builder, nearest, point)) {
+				object->AttachObjectToObject(best, 0, point);
+				object->m_vecBuildOrigin = point;
+			}
+		}
+		return result;
+	}
+
+	/* ShouldDropAmmoPack is inline in Event_Killed there. In MvM its bot test
+	 * is what keeps a robot from dropping anything, so a robot its popfile
+	 * lets drop its weapon drops it here, before the game's Event_Killed. */
+	DETOUR_DECL_MEMBER(void, CTFPlayer_Event_Killed_DropWeapon, const CTakeDamageInfo &info)
+	{
+		auto player = reinterpret_cast<CTFPlayer *>(this);
+		if (TFGameRules()->IsMannVsMachineMode() && player->IsBot()) {
+			auto data = GetDataForBot(player);
+			if (data != nullptr && data->drop_weapon) {
+				player->DropAmmoPack(info, false, false);
+			}
+		}
+		DETOUR_MEMBER_CALL(info);
+	}
+#endif
+
 	DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, bool, CBaseObject_FindBuildPointOnPlayer, CTFPlayer *pTFPlayer, CBasePlayer *pBuilder, float &flNearestPoint, Vector &vecNearestBuildPoint)
 	{
 		auto object = reinterpret_cast<CBaseObject *>(this);
@@ -2337,7 +2390,9 @@ namespace Mod::Pop::TFBot_Extensions
 			//MOD_ADD_DETOUR_STATIC(FireEvent,           "FireEvent");
 			
 //#ifdef ENABLE_BROKEN_STUFF
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_ShouldDropAmmoPack, "CTFPlayer::ShouldDropAmmoPack");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_DropAmmoPack,       "CTFPlayer::DropAmmoPack");
 			MOD_ADD_DETOUR_STATIC(CTFDroppedWeapon_Create,      "CTFDroppedWeapon::Create");
 			MOD_ADD_DETOUR_STATIC(CTFAmmoPack_Create,           "CTFAmmoPack::Create");
@@ -2431,7 +2486,12 @@ namespace Mod::Pop::TFBot_Extensions
 			//MOD_ADD_DETOUR_MEMBER(CTFBotMainAction_SelectCloserThreat, "CTFBotMainAction::SelectCloserThreat");
 			
 			// Sap the closest bot to the cursor
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_MEMBER(CBaseObject_FindSnapToBuildPos, "CBaseObject::FindSnapToBuildPos");
+			MOD_ADD_DETOUR_MEMBER(CTFPlayer_Event_Killed_DropWeapon, "CTFPlayer::Event_Killed");
+#else
 			MOD_ADD_DETOUR_MEMBER(CBaseObject_FindBuildPointOnPlayer, "CBaseObject::FindBuildPointOnPlayer [clone]");
+#endif
 
 			// Switch action command
 			MOD_ADD_VHOOK(CTFBotScenarioMonitor_OnCommandString, TypeName<CTFBotScenarioMonitor>(), "Action<CTFBot>::OnCommandString");

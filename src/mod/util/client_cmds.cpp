@@ -1782,9 +1782,8 @@ namespace Mod::Util::Client_Cmds
     CCycleCount timespentEnd;
     float prevTime = 0.0f;
 
-	DETOUR_DECL_STATIC(void, Host_CheckDumpMemoryStats)
+	void FrameEnd()
 	{
-		DETOUR_STATIC_CALL();
 		timespentEnd.Sample();
 		timespent.m_Int64 += timespentEnd.m_Int64 - timespentStart.m_Int64;
         if (floor(gpGlobals->curtime) != floor(prevTime) ) {
@@ -1793,6 +1792,21 @@ namespace Mod::Util::Client_Cmds
             prevTime = gpGlobals->curtime;
         }
 	}
+
+	DETOUR_DECL_STATIC(void, Host_CheckDumpMemoryStats)
+	{
+		DETOUR_STATIC_CALL();
+		FrameEnd();
+	}
+
+#if defined _WINDOWS
+	/* Host_CheckDumpMemoryStats is inline at the end of _Host_RunFrame there */
+	DETOUR_DECL_STATIC(void, _Host_RunFrame, float time)
+	{
+		DETOUR_STATIC_CALL(time);
+		FrameEnd();
+	}
+#endif
 
 	
 
@@ -1808,7 +1822,11 @@ namespace Mod::Util::Client_Cmds
 		CMod() : IMod("Util:Client_Cmds")
 		{
 			MOD_ADD_DETOUR_STATIC(CTFDroppedWeapon_Create, "CTFDroppedWeapon::Create");
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_STATIC(_Host_RunFrame,                          "_Host_RunFrame");
+#else
 			MOD_ADD_DETOUR_STATIC(Host_CheckDumpMemoryStats,               "Host_CheckDumpMemoryStats");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CMapReslistGenerator_RunFrame,               "CMapReslistGenerator::RunFrame");
 		}
 		virtual bool ShouldReceiveCallbacks() const override { return this->IsEnabled(); }

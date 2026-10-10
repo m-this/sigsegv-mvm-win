@@ -47,7 +47,13 @@ namespace Mod::Etc::Huntsman_Damage_Fix
 
 		float actual_charge = DETOUR_MEMBER_CALL();
 
+#if defined _WINDOWS
+		/* this is the bow's ITFChargeUpWeapon part there, the vtable MSVC keeps
+		 * the override in */
+		auto bow = rtti_cast<CTFCompoundBow *>(reinterpret_cast<ITFChargeUpWeapon *>(this));
+#else
 		auto bow = reinterpret_cast<CTFCompoundBow *>(this);
+#endif
 		
 		if (ToTFPlayer(bow->GetOwner())->IsBot())
 			return actual_charge;

@@ -271,19 +271,14 @@ void *GetAddrOfMemberFunc(MemberPtrTypeVaConst<C, RET, PARAMS...> ptr)
 }
 
 
+/* The pointer is a vcall thunk. SourceHook reads MSVC's, and the patched copy
+ * this build compiles against reads clang-cl's (tools/winport/patches). */
 template<class C, typename RET, typename... PARAMS>
 int GetVIdxOfMemberFunc(MemberPtrType<C, RET, PARAMS...> ptr)
 {
-	return -1;
-	
-	// TODO:
-	// make union
-	// assign ptr to u.fptr
-	// now, u.guts.ptr should point to a __thiscall thunk like this:
-	//   mov eax,[ecx]
-	//   jmp dword ptr [eax+VTOFF]
-	// we need proper disassembler support so we can do this robustly
-	// (e.g. [eax] vs [eax+4] is different in bytes, but disasm can handle it seamlessly)
+	SourceHook::MemFuncInfo info;
+	SourceHook::GetFuncInfo(ptr, info);
+	return info.isVirtual ? info.vtblindex : -1;
 }
 template<class C, typename RET, typename... PARAMS>
 int GetVIdxOfMemberFunc(MemberPtrTypeVa<C, RET, PARAMS...> ptr)

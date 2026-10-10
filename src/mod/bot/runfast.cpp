@@ -11,6 +11,14 @@ namespace Mod::Bot::RunFast
 		0xf3, 0x0f, 0x10, 0x0d, 0xb2, 0x73, 0x48, 0x00,  // +0x0005 movss   xmm1, cs:dword_148A3DC
 		0xf3, 0x0f, 0x10, 0x05, 0xb6, 0x73, 0x48, 0x00,  // +0x000d movss   xmm0, cs:dword_148A3E8
 		0xe8, 0x19, 0x44, 0x6c, 0xff,                    // +0x0015 call    _RandomFloat
+#elif defined _WINDOWS
+		0xe8, 0x00, 0x00, 0x00, 0x00,       // +0000  call Path::Compute<CTFBotPathCost>
+		0xd9, 0x05, 0x00, 0x00, 0x00, 0x00, // +0005  fld dword ptr [2.0f]
+		0x83, 0xec, 0x08,                   // +000B  sub esp,8
+		0xd9, 0x5c, 0x24, 0x04,             // +000E  fstp dword ptr [esp+4]
+		0xd9, 0xe8,                         // +0012  fld1
+		0xd9, 0x1c, 0x24,                   // +0014  fstp dword ptr [esp]
+		0xff, 0x15, 0x00, 0x00, 0x00, 0x00, // +0017  call dword ptr [RandomFloat]
 #else
 		0xE8, 0xFA, 0x16, 0xFE, 0xFF, // +0000  call Path::Compute<CTFBotPathCost>
 		0x83, 0xC4, 0x18,             // +0005  add esp, 18h
@@ -25,8 +33,13 @@ namespace Mod::Bot::RunFast
 		CPatch_CTFBotPushToCapturePoint_Update() : CPatch(sizeof(s_Buf_Verify)) {}
 		
 		virtual const char *GetFuncName() const override { return "CTFBotPushToCapturePoint::Update"; }
+#if defined _WINDOWS
+		virtual uint32_t GetFuncOffMin() const override { return 0x0000; }
+		virtual uint32_t GetFuncOffMax() const override { return 0x0300; } // @ 0x015f
+#else
 		virtual uint32_t GetFuncOffMin() const override { return 0x0200; }
 		virtual uint32_t GetFuncOffMax() const override { return 0x0680; } // @ 0x01d3
+#endif
 		
 		virtual bool GetVerifyInfo(ByteBuf& buf, ByteBuf& mask) const override
 		{
@@ -37,6 +50,10 @@ namespace Mod::Bot::RunFast
 			mask.SetRange(0x05 + 4, 4, 0x00);
 			mask.SetRange(0x0d + 4, 4, 0x00);
 			mask.SetRange(0x15 + 1, 4, 0x00);
+#elif defined _WINDOWS
+			mask.SetRange(0x00 + 1, 4, 0x00);
+			mask.SetRange(0x05 + 2, 4, 0x00);
+			mask.SetRange(0x17 + 2, 4, 0x00);
 #else
 			mask.SetRange(0x00 + 1, 4, 0x00);
 			mask.SetRange(0x05 + 2, 1, 0x00);
@@ -51,6 +68,9 @@ namespace Mod::Bot::RunFast
 #ifdef PLATFORM_64BITS
 			buf.SetRange(0x15, 5, 0x90);
 			mask.SetRange(0x15, 5, 0xff);
+#elif defined _WINDOWS
+			buf.SetRange(0x17, 6, 0x90);
+			mask.SetRange(0x17, 6, 0xff);
 #else
 			buf.SetRange(0x12, 5, 0x90);
 			mask.SetRange(0x12, 5, 0xff);
