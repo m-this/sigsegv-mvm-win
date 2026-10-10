@@ -79,7 +79,30 @@ struct CExtract_CObjectSentrygun_FireRocket : public IExtract<uint32_t>
 
 #elif defined _WINDOWS
 
-using CExtract_CObjectSentrygun_FireRocket = IExtractStub;
+static constexpr uint8_t s_Buf_CExtract_CObjectSentrygun_FireRocket_Windows[] = {
+	0x8b, 0xf9, 0xf3, 0x0f, 0x10, 0x87, 0x00, 0x00, 0x00, 0x00, 0x0f, 0x2f, 0x40, 0x0c,
+};
+
+struct CExtract_CObjectSentrygun_FireRocket : public IExtract<uint32_t>
+{
+	using T = uint32_t;
+	
+	CExtract_CObjectSentrygun_FireRocket() : IExtract<T>(sizeof(s_Buf_CExtract_CObjectSentrygun_FireRocket_Windows)) {}
+	
+	virtual bool GetExtractInfo(ByteBuf& buf, ByteBuf& mask) const override
+	{
+		buf.CopyFrom(s_Buf_CExtract_CObjectSentrygun_FireRocket_Windows);
+		
+		mask.SetRange(0x06, 4, 0x00);
+		
+		return true;
+	}
+	
+	virtual const char *GetFuncName() const override   { return "CObjectSentrygun::FireRocket"; }
+	virtual uint32_t GetFuncOffMin() const override    { return 0x0000; }
+	virtual uint32_t GetFuncOffMax() const override    { return 0x0040; }
+	virtual uint32_t GetExtractOffset() const override { return 0x0006; }
+};
 
 #endif
 

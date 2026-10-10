@@ -59,7 +59,31 @@ struct CExtract_CNavArea_m_funcNavCostVector : public IExtract<int32_t>
 
 #elif defined _WINDOWS
 
-using CExtract_CNavArea_m_funcNavCostVector = IExtractStub;
+static constexpr uint8_t s_Buf_CExtract_CNavArea_m_funcNavCostVector_Windows[] = {
+	0x81, 0x61, 0x54, 0xff, 0xff, 0xff, 0xdf, 0xc7, 0x81, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xc3,
+};
+
+struct CExtract_CNavArea_m_funcNavCostVector : public IExtract<int32_t>
+{
+	using T = int32_t;
+	
+	CExtract_CNavArea_m_funcNavCostVector() : IExtract<T>(sizeof(s_Buf_CExtract_CNavArea_m_funcNavCostVector_Windows)) {}
+	
+	virtual bool GetExtractInfo(ByteBuf& buf, ByteBuf& mask) const override
+	{
+		buf.CopyFrom(s_Buf_CExtract_CNavArea_m_funcNavCostVector_Windows);
+		
+		mask.SetRange(0x09, 4, 0x00);
+		
+		return true;
+	}
+	
+	virtual const char *GetFuncName() const override   { return "CNavArea::ClearAllNavCostEntities"; }
+	virtual uint32_t GetFuncOffMin() const override    { return 0x0000; }
+	virtual uint32_t GetFuncOffMax() const override    { return 0x0000; }
+	virtual uint32_t GetExtractOffset() const override { return 0x0009; }
+	virtual T AdjustValue(T val) const override        { return (int32_t)val - (int32_t)sizeof(CUtlMemory<int>); }
+};
 
 #endif
 
@@ -131,7 +155,33 @@ struct CExtract_CNavArea_m_center : public IExtract<int8_t>
 
 #elif defined _WINDOWS
 
-using CExtract_CNavArea_m_center = IExtractStub;
+static constexpr uint8_t s_Buf_CExtract_CNavArea_m_center_Windows[] = {
+	0xf3, 0x0f, 0x10, 0x56, 0x00, 0x8d, 0x45, 0xf8, 0xf3, 0x0f, 0x10, 0x4e, 0x00, 0x8d, 0x4b, 0x16, 0xf3, 0x0f, 0x5c, 0x4f, 0x00, 0xf3, 0x0f, 0x5c, 0x57, 0x00,
+};
+
+struct CExtract_CNavArea_m_center : public IExtract<int8_t>
+{
+	using T = int8_t;
+	
+	CExtract_CNavArea_m_center() : IExtract<T>(sizeof(s_Buf_CExtract_CNavArea_m_center_Windows)) {}
+	
+	virtual bool GetExtractInfo(ByteBuf& buf, ByteBuf& mask) const override
+	{
+		buf.CopyFrom(s_Buf_CExtract_CNavArea_m_center_Windows);
+		
+		mask.SetRange(0x04, 1, 0x00);
+		mask.SetRange(0x0c, 1, 0x00);
+		mask.SetRange(0x14, 1, 0x00);
+		mask.SetRange(0x19, 1, 0x00);
+		
+		return true;
+	}
+	
+	virtual const char *GetFuncName() const override   { return "CNavArea::ConnectTo"; }
+	virtual uint32_t GetFuncOffMin() const override    { return 0x0000; }
+	virtual uint32_t GetFuncOffMax() const override    { return 0x0060; }
+	virtual uint32_t GetExtractOffset() const override { return 0x0004; }
+};
 
 #endif
 
@@ -186,7 +236,31 @@ struct CExtract_CNavArea_m_attributeFlags : public IExtract<uint8_t>
 
 #elif defined _WINDOWS
 
-using CExtract_CNavArea_m_attributeFlags = IExtractStub;
+static constexpr uint8_t s_Buf_CExtract_CNavArea_m_attributeFlags_Windows[] = {
+	0x81, 0x61, 0x00, 0xff, 0xff, 0xff, 0xdf, 0xc7, 0x81, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xc3,
+};
+
+struct CExtract_CNavArea_m_attributeFlags : public IExtract<uint8_t>
+{
+	using T = uint8_t;
+	
+	CExtract_CNavArea_m_attributeFlags() : IExtract<T>(sizeof(s_Buf_CExtract_CNavArea_m_attributeFlags_Windows)) {}
+	
+	virtual bool GetExtractInfo(ByteBuf& buf, ByteBuf& mask) const override
+	{
+		buf.CopyFrom(s_Buf_CExtract_CNavArea_m_attributeFlags_Windows);
+		
+		mask.SetRange(0x02, 1, 0x00);
+		mask.SetRange(0x09, 4, 0x00);
+		
+		return true;
+	}
+	
+	virtual const char *GetFuncName() const override   { return "CNavArea::ClearAllNavCostEntities"; }
+	virtual uint32_t GetFuncOffMin() const override    { return 0x0000; }
+	virtual uint32_t GetFuncOffMax() const override    { return 0x0000; }
+	virtual uint32_t GetExtractOffset() const override { return 0x0002; }
+};
 
 #endif
 
@@ -369,7 +443,33 @@ struct CExtract_CTFNavArea_m_IncursionDistances : public IExtract<uint32_t>
 
 #elif defined _WINDOWS
 
-using CExtract_CTFNavArea_m_IncursionDistances = IExtractStub;
+static constexpr uint8_t s_Buf_CExtract_CTFNavArea_m_IncursionDistances_Windows[] = {
+	0x83, 0xf8, 0x03, 0x77, 0x00, 0x8b, 0x4d, 0x0c, 0xf3, 0x0f, 0x10, 0x84, 0x81, 0x00, 0x00, 0x00, 0x00, 0xeb, 0x00, 0xf3, 0x0f, 0x10, 0x05, 0x00, 0x00, 0x00, 0x00,
+};
+
+struct CExtract_CTFNavArea_m_IncursionDistances : public IExtract<uint32_t>
+{
+	using T = uint32_t;
+	
+	CExtract_CTFNavArea_m_IncursionDistances() : IExtract<T>(sizeof(s_Buf_CExtract_CTFNavArea_m_IncursionDistances_Windows)) {}
+	
+	virtual bool GetExtractInfo(ByteBuf& buf, ByteBuf& mask) const override
+	{
+		buf.CopyFrom(s_Buf_CExtract_CTFNavArea_m_IncursionDistances_Windows);
+		
+		mask.SetRange(0x04, 1, 0x00);
+		mask.SetRange(0x0d, 4, 0x00);
+		mask.SetRange(0x12, 1, 0x00);
+		mask.SetRange(0x17, 4, 0x00);
+		
+		return true;
+	}
+	
+	virtual const char *GetFuncName() const override   { return "CTFBotTacticalMonitor::Update"; }
+	virtual uint32_t GetFuncOffMin() const override    { return 0x0000; }
+	virtual uint32_t GetFuncOffMax() const override    { return 0x0a00; }
+	virtual uint32_t GetExtractOffset() const override { return 0x000d; }
+};
 
 #endif
 
@@ -417,7 +517,31 @@ struct CExtract_CNavArea_m_potentiallyVisibleAreas : public IExtract<uint32_t>
 
 #elif defined _WINDOWS
 
-using CExtract_CNavArea_m_potentiallyVisibleAreas = IExtractStub;
+static constexpr uint8_t s_Buf_CExtract_CNavArea_m_potentiallyVisibleAreas_Windows[] = {
+	0x8b, 0xb7, 0x00, 0x00, 0x00, 0x00, 0x33, 0xc0, 0x85, 0xf6, 0x7e, 0x1a, 0x8b, 0x9f, 0x00, 0x00, 0x00, 0x00, 0x8b, 0xcb,
+};
+
+struct CExtract_CNavArea_m_potentiallyVisibleAreas : public IExtract<uint32_t>
+{
+	using T = uint32_t;
+	
+	CExtract_CNavArea_m_potentiallyVisibleAreas() : IExtract<T>(sizeof(s_Buf_CExtract_CNavArea_m_potentiallyVisibleAreas_Windows)) {}
+	
+	virtual bool GetExtractInfo(ByteBuf& buf, ByteBuf& mask) const override
+	{
+		buf.CopyFrom(s_Buf_CExtract_CNavArea_m_potentiallyVisibleAreas_Windows);
+		
+		mask.SetRange(0x02, 4, 0x00);
+		mask.SetRange(0x0e, 4, 0x00);
+		
+		return true;
+	}
+	
+	virtual const char *GetFuncName() const override   { return "CNavArea::IsPotentiallyVisible"; }
+	virtual uint32_t GetFuncOffMin() const override    { return 0x0000; }
+	virtual uint32_t GetFuncOffMax() const override    { return 0x0200; }
+	virtual uint32_t GetExtractOffset() const override { return 0x000e; }
+};
 
 #endif
 

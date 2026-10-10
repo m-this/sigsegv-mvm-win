@@ -7,6 +7,14 @@ static constexpr uint8_t s_Buf_CBaseServer_m_Clients[] =
 	0x48, 0x8b, 0x87, 0x80, 0x01, 0x00, 0x00,  // +0x0000 mov     rax, [rdi+180h]
 	0x89, 0xf6,                                // +0x0007 mov     esi, esi
 	0x48, 0x8b, 0x04, 0xf0,                    // +0x0009 mov     rax, [rax+rsi*8]
+#elif defined _WINDOWS
+	0x8b, 0xd9,                          // +0x0000 mov     ebx, ecx
+	0x33, 0xf6,                          // +0x0002 xor     esi, esi
+	0x57,                                // +0x0004 push    edi
+	0x33, 0xff,                          // +0x0005 xor     edi, edi
+	0x39, 0xb3, 0x64, 0x01, 0x00, 0x00,  // +0x0007 cmp     [ebx+m_Clients.m_Size], esi
+	0x7e, 0x27,                          // +0x000d jle     done
+	0x8b, 0x83, 0x58, 0x01, 0x00, 0x00,  // +0x000f mov     eax, [ebx+m_Clients.m_pMemory]
 #else
 	0x55,                                // +0x0000 push    ebp
 	0x89, 0xe5,                          // +0x0001 mov     ebp, esp
@@ -28,6 +36,10 @@ struct CExtract_CBaseServer_m_Clients : public IExtract<uint32_t>
 		buf.CopyFrom(s_Buf_CBaseServer_m_Clients);
 #ifdef PLATFORM_64BITS
 		mask.SetRange(0x00 + 3, 4, 0x00);
+#elif defined _WINDOWS
+		mask.SetRange(0x07 + 2, 4, 0x00);
+		mask.SetRange(0x0d + 1, 1, 0x00);
+		mask.SetRange(0x0f + 2, 4, 0x00);
 #else
 		mask.SetRange(0x0a + 2, 4, 0x00);
 #endif
@@ -35,11 +47,23 @@ struct CExtract_CBaseServer_m_Clients : public IExtract<uint32_t>
 		return true;
 	}
 	
+#if defined _WINDOWS
+	/* GetClient is inline in engine.dll; GetNumClients walks the same vector */
+	virtual const char *GetFuncName() const override   { return "CBaseServer::GetNumClients"; }
+#else
 	virtual const char *GetFuncName() const override   { return "CBaseServer::GetClient"; }
+#endif
 	virtual uint32_t GetFuncOffMin() const override    { return 0x0000; }
+#if defined _WINDOWS
+	/* the same bytes follow in the loop, so only the first match is looked for */
+	virtual uint32_t GetFuncOffMax() const override    { return 0x0010; }
+#else
 	virtual uint32_t GetFuncOffMax() const override    { return 0x00FF; }
+#endif
 #ifdef PLATFORM_64BITS
 	virtual uint32_t GetExtractOffset() const override { return 0x0000 + 3; }
+#elif defined _WINDOWS
+	virtual uint32_t GetExtractOffset() const override { return 0x000f + 2; }
 #else
 	virtual uint32_t GetExtractOffset() const override { return 0x000a + 2; }
 #endif

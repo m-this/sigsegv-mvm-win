@@ -76,7 +76,32 @@ struct CExtract_perteamvisuals_t_m_Sounds : public IExtract<int32_t>
 
 #elif defined _WINDOWS
 
-using CExtract_perteamvisuals_t_m_Sounds = IExtractStub;
+static constexpr uint8_t s_Buf_CExtract_perteamvisuals_t_m_Sounds_Windows[] = {
+	0x8b, 0x4d, 0x08, 0x5f, 0x5e, 0x85, 0xc0, 0x74, 0x00, 0x83, 0xf9, 0x0f, 0x77, 0x00, 0x8b, 0x84, 0x88, 0x00, 0x00, 0x00, 0x00,
+};
+
+struct CExtract_perteamvisuals_t_m_Sounds : public IExtract<int32_t>
+{
+	using T = int32_t;
+	
+	CExtract_perteamvisuals_t_m_Sounds() : IExtract<T>(sizeof(s_Buf_CExtract_perteamvisuals_t_m_Sounds_Windows)) {}
+	
+	virtual bool GetExtractInfo(ByteBuf& buf, ByteBuf& mask) const override
+	{
+		buf.CopyFrom(s_Buf_CExtract_perteamvisuals_t_m_Sounds_Windows);
+		
+		mask.SetRange(0x08, 1, 0x00);
+		mask.SetRange(0x0d, 1, 0x00);
+		mask.SetRange(0x11, 4, 0x00);
+		
+		return true;
+	}
+	
+	virtual const char *GetFuncName() const override   { return "CTFWeaponBase::GetShootSound"; }
+	virtual uint32_t GetFuncOffMin() const override    { return 0x0000; }
+	virtual uint32_t GetFuncOffMax() const override    { return 0x0100; }
+	virtual uint32_t GetExtractOffset() const override { return 0x0011; }
+};
 
 #endif
 
@@ -127,7 +152,31 @@ struct CExtract_CEconItemDefinition_m_Visuals : public IExtract<int32_t>
 
 #elif defined _WINDOWS
 
-using CExtract_CEconItemDefinition_m_Visuals = IExtractStub;
+static constexpr uint8_t s_Buf_CExtract_CEconItemDefinition_m_Visuals_Windows[] = {
+	0x83, 0xbc, 0xb0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x75, 0x02, 0x33, 0xff, 0x8b, 0x84, 0xb8, 0x00, 0x00, 0x00, 0x00,
+};
+
+struct CExtract_CEconItemDefinition_m_Visuals : public IExtract<int32_t>
+{
+	using T = int32_t;
+	
+	CExtract_CEconItemDefinition_m_Visuals() : IExtract<T>(sizeof(s_Buf_CExtract_CEconItemDefinition_m_Visuals_Windows)) {}
+	
+	virtual bool GetExtractInfo(ByteBuf& buf, ByteBuf& mask) const override
+	{
+		buf.CopyFrom(s_Buf_CExtract_CEconItemDefinition_m_Visuals_Windows);
+		
+		mask.SetRange(0x03, 4, 0x00);
+		mask.SetRange(0x0f, 4, 0x00);
+		
+		return true;
+	}
+	
+	virtual const char *GetFuncName() const override   { return "CTFWeaponBase::GetShootSound"; }
+	virtual uint32_t GetFuncOffMin() const override    { return 0x0000; }
+	virtual uint32_t GetFuncOffMax() const override    { return 0x0100; }
+	virtual uint32_t GetExtractOffset() const override { return 0x000f; }
+};
 
 #endif
 
@@ -203,8 +252,58 @@ struct CExtract_CEconItemDefinition_m_nEquipRegionMask : public CExtract_CEconIt
 
 #elif defined _WINDOWS
 
-using CExtract_CEconItemDefinition_m_nEquipRegionBitMask = IExtractStub;
-using CExtract_CEconItemDefinition_m_nEquipRegionMask    = IExtractStub;
+static constexpr uint8_t s_Buf_CExtract_CEconItemDefinition_m_nEquipRegionBitMask_Windows[] = {
+	0x33, 0xff, 0x33, 0xdb, 0xc7, 0x86, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x57, 0x68, 0x00, 0x00, 0x00, 0x00, 0xc7, 0x86, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+};
+
+struct CExtract_CEconItemDefinition_m_nEquipRegionBitMask : public IExtract<int32_t>
+{
+	using T = int32_t;
+	
+	CExtract_CEconItemDefinition_m_nEquipRegionBitMask() : IExtract<T>(sizeof(s_Buf_CExtract_CEconItemDefinition_m_nEquipRegionBitMask_Windows)) {}
+	
+	virtual bool GetExtractInfo(ByteBuf& buf, ByteBuf& mask) const override
+	{
+		buf.CopyFrom(s_Buf_CExtract_CEconItemDefinition_m_nEquipRegionBitMask_Windows);
+		
+		mask.SetRange(0x06, 4, 0x00);
+		mask.SetRange(0x10, 4, 0x00);
+		mask.SetRange(0x16, 4, 0x00);
+		
+		return true;
+	}
+	
+	virtual const char *GetFuncName() const override   { return "CEconItemDefinition::BInitFromKV"; }
+	virtual uint32_t GetFuncOffMin() const override    { return 0x0000; }
+	virtual uint32_t GetFuncOffMax() const override    { return 0x2000; }
+	virtual uint32_t GetExtractOffset() const override { return 0x0006; }
+};
+static constexpr uint8_t s_Buf_CExtract_CEconItemDefinition_m_nEquipRegionMask_Windows[] = {
+	0x33, 0xff, 0x33, 0xdb, 0xc7, 0x86, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x57, 0x68, 0x00, 0x00, 0x00, 0x00, 0xc7, 0x86, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+};
+
+struct CExtract_CEconItemDefinition_m_nEquipRegionMask : public IExtract<int32_t>
+{
+	using T = int32_t;
+	
+	CExtract_CEconItemDefinition_m_nEquipRegionMask() : IExtract<T>(sizeof(s_Buf_CExtract_CEconItemDefinition_m_nEquipRegionMask_Windows)) {}
+	
+	virtual bool GetExtractInfo(ByteBuf& buf, ByteBuf& mask) const override
+	{
+		buf.CopyFrom(s_Buf_CExtract_CEconItemDefinition_m_nEquipRegionMask_Windows);
+		
+		mask.SetRange(0x06, 4, 0x00);
+		mask.SetRange(0x10, 4, 0x00);
+		mask.SetRange(0x16, 4, 0x00);
+		
+		return true;
+	}
+	
+	virtual const char *GetFuncName() const override   { return "CEconItemDefinition::BInitFromKV"; }
+	virtual uint32_t GetFuncOffMin() const override    { return 0x0000; }
+	virtual uint32_t GetFuncOffMax() const override    { return 0x2000; }
+	virtual uint32_t GetExtractOffset() const override { return 0x0016; }
+};
 
 #endif
 

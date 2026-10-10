@@ -36,7 +36,30 @@ struct CExtract_CBasePlayer_SetVCollisionState : public IExtract<int32_t>
 
 #elif defined _WINDOWS
 
-using CExtract_CBasePlayer_SetVCollisionState = IExtractStub;
+static constexpr uint8_t s_Buf_CExtract_CBasePlayer_SetVCollisionState_Windows[] = {
+	0x8b, 0x45, 0x10, 0x56, 0x8b, 0xf1, 0x89, 0x86, 0x00, 0x00, 0x00, 0x00,
+};
+
+struct CExtract_CBasePlayer_SetVCollisionState : public IExtract<int32_t>
+{
+	using T = int32_t;
+	
+	CExtract_CBasePlayer_SetVCollisionState() : IExtract<T>(sizeof(s_Buf_CExtract_CBasePlayer_SetVCollisionState_Windows)) {}
+	
+	virtual bool GetExtractInfo(ByteBuf& buf, ByteBuf& mask) const override
+	{
+		buf.CopyFrom(s_Buf_CExtract_CBasePlayer_SetVCollisionState_Windows);
+		
+		mask.SetRange(0x08, 4, 0x00);
+		
+		return true;
+	}
+	
+	virtual const char *GetFuncName() const override   { return "CBasePlayer::SetVCollisionState"; }
+	virtual uint32_t GetFuncOffMin() const override    { return 0x0000; }
+	virtual uint32_t GetFuncOffMax() const override    { return 0x0010; }
+	virtual uint32_t GetExtractOffset() const override { return 0x0008; }
+};
 
 #endif
 

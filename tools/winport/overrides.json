@@ -5401,5 +5401,23 @@
   "rva": "0x434720",
   "build": "11087207",
   "why": "read against the Linux body, 11087207: returns the address of the class's server class; the structural match was held back for lack of field evidence and is the same address"
+ },
+ "_ZNK11CBaseServer13GetNumClientsEv": {
+  "lib": "engine",
+  "name": "CBaseServer::GetNumClients",
+  "rva": "0x13f650",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: walks m_Clients (data at +0x158, size at +0x164) counting the clients whose IClient vcall +0x7c answers true; the Linux body. Windows has no CBaseServer::GetClient to read the vector from: it is inline there"
+ },
+ "_ZN8CNavArea9ConnectToEPS_10NavDirType": {
+  "name": "CNavArea::ConnectTo",
+  "rva": "0x3df390",
+  "build": "11087207",
+  "why": "read by hand: the same-area test, the connection list scan at +0x58 + dir*4, then the distance between the two centres (+0x2c to +0x34) and the add to the list; the consensus match is the same address. Thiscall, ret 8"
+ },
+ "_ZN8CNavArea23ClearAllNavCostEntitiesEv": {
+  "rva": "0x3dcbc0",
+  "build": "11087207",
+  "why": "read by hand: clears the func-nav-cost bit (0x20000000) of the attribute flags at +0x54 and zeroes the cost vector's size at +0x154, then ret: the Linux body (flags +0x54, size +0x158). Found by the and with 0xdfffffff, which only this and one other nav function carry"
  }
 }
