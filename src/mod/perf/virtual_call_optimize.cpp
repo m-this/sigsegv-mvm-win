@@ -865,8 +865,12 @@ namespace Mod::Perf::Virtual_Call_Optimize
             // MOD_ADD_DETOUR_MEMBER(CSpatialPartition_CreateHandle, "CSpatialPartition::CreateHandle");
 
             // Rewrite those functions with assumption that an entity handle is static prop if vtable is of static prop
+#if !defined _WINDOWS
+            /* the bodies take their arguments on the stack and look up an Itanium vtable name, and the engine's
+             * IsStaticProp and GetStaticProp are not in the Windows table */
             this->AddPatch(new CPatch_CStaticPropMgr_IsStaticProp());
             this->AddPatch(new CPatch_CStaticPropMgr_GetStaticProp());
+#endif
 //          this->AddPatch(new CPatch_CStaticPropMgr_GetStaticPropIndex());
             
             // this->AddPatch(new CPatch_CStaticProp_GetEntityHandle());
@@ -877,7 +881,7 @@ namespace Mod::Perf::Virtual_Call_Optimize
             this->AddPatch(new CPatch_CBasePlayer_IsPlayer());
 #endif
             //this->AddPatch(new CPatch_CBaseEntity_GetBaseEntity());
-#ifndef PLATFORM_64BITS
+#if !defined PLATFORM_64BITS && !defined _WINDOWS
             this->AddPatch(new CPatch_CBaseEntity_GetTeamNumber());
 #endif
             
@@ -900,7 +904,9 @@ namespace Mod::Perf::Virtual_Call_Optimize
             MOD_ADD_DETOUR_MEMBER(CBaseEntity_GetBaseEntity, "CBaseEntity::GetBaseEntity");
             MOD_ADD_DETOUR_MEMBER(CBaseEntity_GetNetworkable, "CBaseEntity::GetNetworkable");
             MOD_ADD_DETOUR_MEMBER(CBaseEntity_GetCollideable, "CBaseEntity::GetCollideable");
+#if !defined _WINDOWS
             MOD_ADD_DETOUR_MEMBER(CServerNetworkProperty_GetClassName, "CServerNetworkProperty::GetClassName");
+#endif
             MOD_ADD_DETOUR_MEMBER(CBaseEntity_GetModelIndex, "CBaseEntity::GetModelIndex");
 
             // uint8_t buf_CBaseEntity_GetBaseEntity[] {
