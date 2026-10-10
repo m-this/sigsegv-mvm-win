@@ -170,8 +170,17 @@ $reverse = @($missions | Where-Object { $_ -like '*_rev_*' })
 $missions = @($missions | Where-Object { $_ -notlike '*_rev_*' })
 Say "$($missions.Count) missions in this shard, $($reverse.Count) reverse ones left out"
 $failed = 0
+# A focus run starts the server again before every mission after the first,
+# so each mission is a fresh boot with its own server.dll base.
+$restart = $focus.Count -gt 0
+$played = 0
 foreach ($mission in $missions) {
-  if (-not (Alive) -and -not (Start-Bed)) { Say "giving up at ${mission}: the server does not start"; $failed++; break }
+  if (-not (Alive) -or ($restart -and $played -gt 0)) {
+    if (-not (Start-Bed)) { Say "giving up at ${mission}: the server does not start"; $failed++; break }
+    # A cvar set over rcon does not survive the restart.
+    foreach ($command in $Commands) { & bedbin\rcon.exe $command *> $null }
+  }
+  $played++
   & bedbin\waveprobe.exe -rcon "$($script:address):27015" -mission $mission @single >> "$out\results.jsonl" 2>> "$out\waveprobe.err"
   if ($LASTEXITCODE -ne 0) { $failed++ }
   if (-not (Alive)) { Say "died in ${mission}: $(Death-Reason)" }
