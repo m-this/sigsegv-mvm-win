@@ -468,10 +468,9 @@
   "why": "corroborated by tools/winport/corroborate.py: calls all 6 of the Linux function's matched callees, and no string disagrees"
  },
  "_ZN16CTFMedigunShield11ShieldTouchEP11CBaseEntity": {
-  "rva": "0x61e0a0",
+  "rva": "0x61e480",
   "build": "11087207",
-  "carried": "from 11076587 0x61ebb0 by hand: the only function calling every anchored callee (19/19) and called by every anchored caller of the 11076587 body, with the same strings and the same ret",
-  "why": "string lead, agreed by strings+callees: 2 shared string(s), 8/8 matched callees, windows/linux size 1616/957"
+  "why": "read by hand: InSameTeam (0x1f16d0) first, the MvM test with a blue owner skipped, AttribHookValue<int> of 'generate_rage_on_heal', TakeDamage (0x1fcc30), StunPlayer and 'WeaponMedi_Shield.Burn_lp': Linux's body. The string match took 0x61e0a0, the medigun function two before it whose boundaries hid this one. Thiscall, ret 4"
  },
  "_ZN16CTFMedigunShield6CreateEP9CTFPlayer": {
   "rva": "0x61ad50",
@@ -5102,5 +5101,15 @@
   "rva": "0x812a0",
   "build": "11087207",
   "why": "read by hand, engine.dll: slot 16 of CHLTVClient's primary table (CBaseClient's own virtuals after the destructor and FireGameEvent), the only code with the 'CBaseClient::ActivatePlayer' profiler scope. Thiscall, plain ret"
+ },
+ "_ZN10CTFPowerup10ValidTouchEP11CBasePlayer": {
+  "rva": "0x533620",
+  "build": "11087207",
+  "why": "read by hand: slot 232 of CCurrencyPack's table (Linux 235); a disabled flag at +0x504, the player's alive (+0x14c) and team-allowed (+0x10c) virtuals, the pack's team against the player's, then in MvM a player on team 3 is refused, Linux's body (which ends in setne). Thiscall, ret 4"
+ },
+ "_ZN18CPopulationManager19OnCurrencyCollectedEibb": {
+  "rva": "0x5e5450",
+  "build": "11087207",
+  "why": "read by hand: CTFGameRules::DistributeCurrencyAmount calls it (0x4892e9) as Linux does; the RoundEvent_AcquiredCredits pair (0x5e0a80, 0x5e09d0), the respec counters at +0x718/+0x71c, CollectPlayers<CTFPlayer>(2) and the per player respec history by SteamID, Linux's body. Thiscall, ret 0xc"
  }
 }

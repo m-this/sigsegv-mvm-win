@@ -5786,10 +5786,10 @@
 				{
 					type  "fixed"
 					sym   "_ZN16CTFMedigunShield11ShieldTouchEP11CBaseEntity"
-					addr  "0x61e0a0"
+					addr  "0x61e480"
 					build "11087207"
 					lib   "server"
-					// verified: string lead, agreed by strings+callees: 2 shared string(s), 8/8 matched callees, windows/linux size 1616/957
+					// verified: read by hand: InSameTeam (0x1f16d0) first, the MvM test with a blue owner skipped, AttribHookValue<int> of 'generate_rage_on_heal', TakeDamage (0x1fcc30), StunPlayer and 'WeaponMedi_Shield.Burn_lp': Linux's body. The string match took 0x61e0a0, the medigun function two before it whose boundaries hid this one. Thiscall, ret 4
 				}
 				"CTFMinigun::AttackEnemyProjectiles"
 				{
@@ -5995,6 +5995,15 @@
 					build "11087207"
 					lib   "server"
 					// verified: read by hand: SetMoveType, SetSolidFlags, the 'idle' sequence through LookupSequence and ResetSequence, the Linux body; seven direct callers as on Linux
+				}
+				"CTFPowerup::ValidTouch"
+				{
+					type  "fixed"
+					sym   "_ZN10CTFPowerup10ValidTouchEP11CBasePlayer"
+					addr  "0x533620"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: slot 232 of CCurrencyPack's table (Linux 235); a disabled flag at +0x504, the player's alive (+0x14c) and team-allowed (+0x10c) virtuals, the pack's team against the player's, then in MvM a player on team 3 is refused, Linux's body (which ends in setne). Thiscall, ret 4
 				}
 				"CTFPowerupBottle::ReapplyProvision"
 				{
@@ -11245,6 +11254,15 @@
 					build "11087207"
 					lib   "server"
 					// string
+				}
+				"CPopulationManager::OnCurrencyCollected"
+				{
+					type  "fixed"
+					sym   "_ZN18CPopulationManager19OnCurrencyCollectedEibb"
+					addr  "0x5e5450"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: CTFGameRules::DistributeCurrencyAmount calls it (0x4892e9) as Linux does; the RoundEvent_AcquiredCredits pair (0x5e0a80, 0x5e09d0), the respec counters at +0x718/+0x71c, CollectPlayers<CTFPlayer>(2) and the per player respec history by SteamID, Linux's body. Thiscall, ret 0xc
 				}
 				"CPopulationManager::Parse"
 				{
