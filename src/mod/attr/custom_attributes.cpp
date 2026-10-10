@@ -4670,15 +4670,29 @@ namespace Mod::Attr::Custom_Attributes
 		ReplaceBackCond(wep->GetTFPlayerOwner()->m_Shared.Get(), TF_COND_STEALTHED);
 	}
 	
+#if defined _WINDOWS
+	/* SpyDeadRingerDeath is inline in OnTakeDamage there: its call to FeignDeath passes the deathnotice flag, Event_Killed's does not */
+	DETOUR_DECL_MEMBER(void, CTFPlayer_FeignDeath, const CTakeDamageInfo& info, bool bDeathnotice)
+	{
+		if (!bDeathnotice) {
+			DETOUR_MEMBER_CALL(info, bDeathnotice);
+			return;
+		}
+#else
 	DETOUR_DECL_MEMBER(void, CTFPlayer_SpyDeadRingerDeath, const CTakeDamageInfo& info)
 	{
+#endif
 		SCOPED_INCREMENT(rc_CTFPlayerShared_AddCond);
 		SCOPED_INCREMENT(rc_CTFPlayerShared_InCond);
 		auto me = reinterpret_cast<CTFPlayer *>(this);
 		addcond_provider = me;
 		addcond_provider_item = GetEconEntityAtLoadoutSlot(me, LOADOUT_POSITION_PDA2);
 		ReplaceCond(me->m_Shared.Get(), TF_COND_STEALTHED);
+#if defined _WINDOWS
+		DETOUR_MEMBER_CALL(info, bDeathnotice);
+#else
 		DETOUR_MEMBER_CALL(info);
+#endif
 		ReplaceBackCond(me->m_Shared.Get(), TF_COND_STEALTHED);
 	}
 	
@@ -10414,7 +10428,11 @@ namespace Mod::Attr::Custom_Attributes
             MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_FadeInvis, "CTFPlayerShared::FadeInvis");
             MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_UpdateCloakMeter, "CTFPlayerShared::UpdateCloakMeter [clone]");
             //MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_InCond, "CTFPlayerShared::InCond");
+#if defined _WINDOWS
+            MOD_ADD_DETOUR_MEMBER(CTFPlayer_FeignDeath, "CTFPlayer::FeignDeath");
+#else
             MOD_ADD_DETOUR_MEMBER(CTFPlayer_SpyDeadRingerDeath, "CTFPlayer::SpyDeadRingerDeath");
+#endif
             MOD_ADD_DETOUR_MEMBER(CTFWeaponInvis_CleanupInvisibilityWatch, "CTFWeaponInvis::CleanupInvisibilityWatch");
             MOD_ADD_DETOUR_MEMBER(CTFWeaponInvis_GetViewModel, "CTFWeaponInvis::GetViewModel");
 #if !defined _WINDOWS
