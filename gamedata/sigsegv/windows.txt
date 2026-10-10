@@ -3244,6 +3244,16 @@
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: shares the string 'set_weapon_mode' with the Linux function, and 4 of its 4 matched callees
 				}
+				"CWeaponMedigun::PrimaryAttack"
+				{
+					type  "fixed"
+					sym   "_ZN14CWeaponMedigun13PrimaryAttackEv"
+					addr  "0x61d120"
+					build "11087207"
+					lib   "server"
+					vtidx "287"
+					// verified: read by hand: slot 287 of CWeaponMedigun's table (Linux 293, the weapon shift of six); the owner from the handle at +0x210 (Linux +0x228) and its alive virtual (+0x14c, Linux +0x150) first, Linux's body. Thiscall, plain ret
+				}
 				"CTFWeaponFlameBall::FireProjectile"
 				{
 					type  "fixed"
@@ -3704,6 +3714,15 @@
 					build "11087207"
 					lib   "server"
 					// verified: read by hand: clamps to the max health (+0xa3c, Linux +0xa54) when the flag at +0xa31 (Linux +0xa49) is set, stores m_flHealth (+0xa48, Linux +0xa60), writes the ceiling to m_iHealth (+0xf4, Linux +0x108) with NetworkStateChanged, and fires m_OnObjectHealthChanged (+0x9c8, Linux +0x9e0) with the float when it changed, the Linux body; thiscall, ret 4 for the float
+				}
+				"CBaseObject::ShouldQuickBuild"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseObject16ShouldQuickBuildEv"
+					addr  "0x4c4230"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: Linux's body test for test: no game rules or a type (+0x598) of 3 (sapper) is false, IsQuickBuildTime (0x4920c0), MvM (+0xc72) with a team other than 3, the flag at +0xa31 (Linux +0xa49) or a game type of 10 at +0x3cc, else the byte at +0xac4 (Linux +0xadc). Thiscall, plain ret
 				}
 				"CBaseObject::StartBuilding"
 				{
@@ -4680,6 +4699,15 @@
 					build "11087207"
 					lib   "server"
 					// verified: string lead, agreed by strings: 3 shared string(s), 1/2 matched callees, windows/linux size 400/463
+				}
+				"CObjectTeleporter::DeterminePlaybackRate"
+				{
+					type  "fixed"
+					sym   "_ZN17CObjectTeleporter21DeterminePlaybackRateEv"
+					addr  "0x4cef60"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: Linux's body with the teleporter fields 0x18 lower (+0x3ac playback rate, +0xa22/+0xa21 flags, +0xad0, +0xaec, +0xb0c bodygroup): the rate approach, two Approach calls (0x2b7cf0), the MvM (+0xc72) team test and the bodygroup changes. Thiscall, plain ret
 				}
 				"CObjectTeleporter::PlayerCanBeTeleported"
 				{
@@ -6191,6 +6219,16 @@
 					build "11087207"
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: shares the string 'Player.DenyWeaponSelection' with the Linux function, and 11 of its 11 matched callees
+				}
+				"CTFSniperRifleDecap::SniperRifleChargeRateMod"
+				{
+					type  "fixed"
+					sym   "_ZN19CTFSniperRifleDecap24SniperRifleChargeRateModEv"
+					addr  "0x62a490"
+					build "11087207"
+					lib   "server"
+					vtidx "498"
+					// verified: read by hand: slot 498 of CTFSniperRifleDecap's table (Linux 505, shift 7 as its anchors); the owner from +0x210, its alive virtual, the head count at +0x1f10 (Linux +0x1f1c) capped at 6, then the scaled rate: Linux's body. Thiscall, plain ret
 				}
 				"CTFSodaPopper::SecondaryAttack"
 				{
@@ -7896,6 +7934,15 @@
 					vtidx "63"
 					// verified: read by hand: slot 63 of CTFGameRules (FlPlayerFallDamage pops 4 at 62). Null checks, the flag at +0xc83 with player != attacker and the red/blue team pairs, the weapon and attacker vcall at +0x310, damage custom 0x47 at info+0x40, m_bPlayingMannVsMachine at +0xc72 and info+0x5c, then the base rules' FPlayerCanTakeDamage; the Linux body. Pops 12
 				}
+				"CTFGameRules::GetCurrentMatchGroup"
+				{
+					type  "fixed"
+					sym   "_ZNK12CTFGameRules20GetCurrentMatchGroupEv"
+					addr  "0x48c320"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: GTFGCClientSystem (0x5c7e20), the match at +0x384 (Linux +0x3b8), its group at +0x10 or -1, ret: Linux's body; most callers carry it inline, this is the out-of-line copy. Thiscall, plain ret
+				}
 				"MapEntity_ParseAllEntities"
 				{
 					type  "fixed"
@@ -8378,6 +8425,15 @@
 					lib   "server"
 					// verified: read by hand: the whole Linux body in the same order. CGCClientSystem::PreClientUpdate, CRTime::UpdateRealTime, GCClientSystem, LaunchNewMatchForLobby, the SO cache listener swap ('removing listener to old Steam ID'), UpdateConnectedPlayersAndServerInfo(0, 0), the lobby state switch ('Lobby in invalid state %d') and the MvM block ('You must set maxplayers to 32', sv_visiblemaxplayers, 'Setting tf_mm_servermode=0 due to sv_password'). MatchPlayerAbandonThink is inlined here, which is why the string overlap was under the gate: its 'Match player %s dropped before going active' strings sit in this body
 				}
+				"CTFGameRules::PlayerReadyStatus_ShouldStartCountdown"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules38PlayerReadyStatus_ShouldStartCountdownEv"
+					addr  "0x497450"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: Linux's body: GTFGCClientSystem, then in MvM the ready flag at +0x46a, the countdown time against +0x3e0 and ArePlayersOnTeamReady(2) (0x497040) setting the flag with a state change; outside MvM both teams ready. Thiscall, plain ret
+				}
 				"UTIL_HudMessage"
 				{
 					type  "fixed"
@@ -8395,6 +8451,16 @@
 					build "11087207"
 					lib   "server"
 					// verified: read by hand: called by CTFBotVision::CollectPotentiallyVisibleEntities (0x566bb4), its one Linux caller. The update timer, then the loop that keeps 'obj_dispenser' (0x5674f7) among the objects, Linux's body. Thiscall, plain ret
+				}
+				"CTFGameRules::ShouldRespawnQuickly"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules20ShouldRespawnQuicklyEP11CBasePlayer"
+					addr  "0x4a19e0"
+					build "11087207"
+					lib   "server"
+					vtidx "178"
+					// verified: read by hand: slot 178 of CTFGameRules' table (Linux 179); Linux's body: a player that is alive (+0x14c) on team 2 in MvM with +0x22d0 (Linux +0x22d8) at 1, else GetMatchGroupDescription of the GC match group with a type of 2 or 3 and a game type of 10. Thiscall, ret 4
 				}
 				"TE_PlayerAnimEvent"
 				{
@@ -10646,6 +10712,15 @@
 					lib   "server"
 					// verified: references Announcer.MVM_Get_To_Upgrade and the upgrade-history message, as on Linux; called by the matched caller
 				}
+				"CPopulationManager::RestorePlayerCurrency"
+				{
+					type  "fixed"
+					sym   "_ZN18CPopulationManager21RestorePlayerCurrencyEv"
+					addr  "0x5e69a0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: CTFGameRules::FireGameEvent calls it (0x48b819) right before CollectPlayers(3) as Linux does; GetAcquiredCredits (0x5dfa80) plus the two counters, CollectPlayers<CTFPlayer>(2), then FindOrAddPlayerUpgradeHistory by SteamID (0x5e3d10) per player, Linux's body. JumpToWave carries a copy inline. Thiscall, plain ret
+				}
 				"CPopulationManager::SetCheckpoint"
 				{
 					type  "fixed"
@@ -10767,10 +10842,10 @@
 				{
 					type  "fixed"
 					sym   "_ZN18CPopulationManager29FindPopulationFileByShortNameEPKcR10CUtlString"
-					addr  "0x5e3d10"
+					addr  "0x5e3dd0"
 					build "11087207"
 					lib   "server"
-					// string
+					// verified: read by hand: the code with 'scripts/population/%s_%s.pop' and "Population file '%s' not found, falling back to %s.pop" starts at 0x5e3dd0, straight after the ret 8 of FindOrAddPlayerUpgradeHistory(CSteamID) (0x5e3d10) with no padding, so the string match took that function's start. Called by tf_mvm_popfile, the vote issue and InitPopulationManager (ecx g_pPopulationManager), as on Linux. Thiscall, ret 8
 				}
 				"CMissionPopulator::~CMissionPopulator [D0]"
 				{
@@ -12390,6 +12465,15 @@
 					lib   "server"
 					// call, ret 8 as its arguments say
 				}
+				"CTFPlayer::CanBuild"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer8CanBuildEii"
+					addr  "0x51a690"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: MakeDisposableBuilding calls it with (2, 0) after GetNumObjects (0x4cc8b3) as Linux does. A type above 3 returns 5, GetObjectInfo (0x53e5e0) and its mode count at +0x60, then the body Linux keeps in CanBuild [clone .part.0], with its three GetNumObjects (0x522550) calls. Thiscall, ret 8
+				}
 				"CTFPlayer::ManageRegularWeapons"
 				{
 					type  "fixed"
@@ -12690,6 +12774,15 @@
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: shares the string 'MVM.GiantCommonExplodes', 'MVM.GiantHeavyExplodes', 'MVM.PlayerDied' with the Linux function, and 7 of its 7 matched callees
 				}
+				"CTFPlayer::GetNumObjects"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer13GetNumObjectsEii"
+					addr  "0x522550"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: counts the objects (GetObjectCount 0x4f3700, GetObject 0x4f3600) that are not being placed (+0xa33), have the type (+0x598) and the mode at +0xa1c or any mode for -1, Linux's body. CanBuild calls it three times, MakeDisposableBuilding once. Thiscall, ret 8
+				}
 				"CTFPlayer::DoClassSpecialSkill"
 				{
 					type  "fixed"
@@ -12842,6 +12935,15 @@
 					build "11087207"
 					lib   "server"
 					// call
+				}
+				"CTFPlayerShared::RadiusSpyScan"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFPlayerShared13RadiusSpyScanEv"
+					addr  "0x529330"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: GetTeamNumber of the outer player (+0x18c), CollectPlayers<CTFPlayer> (0x450180) on the other team, then per enemy two CalcAbsolutePosition and the distance test, with OnSpyTouchedByEnemy inline (AddCond 0x5191e0): Linux's body. Thiscall, plain ret
 				}
 				"CTFPlayerShared::GetActiveTFWeapon"
 				{
@@ -14488,6 +14590,16 @@
 					lib   "server"
 					vtidx "0"
 					// verified: read by hand: slot 0 of CBotNPCArcher's table (0x108a0e38), the scalar deleting destructor: deletes the intention, locomotion and body at +0x8dc, +0x8e0, +0x8e4 (Linux +0x8f4..+0x8fc, the order its constructor sets them), restores the base vtables, frees 0x904 bytes on flag 1, ret 4. The Windows m_pIntentionInterface extractor reads its first load
+				}
+				"CBaseIssue::CountPotentialVoters"
+				{
+					type  "fixed"
+					sym   "_ZN10CBaseIssue20CountPotentialVotersEv"
+					addr  "0x37b580"
+					build "11087207"
+					lib   "server"
+					vtidx "14"
+					// verified: read by hand: slot 14 of the issue tables (CKickIssue's +0x38, Linux 15). Walks players 1 to 101 through UTIL_PlayerByIndex with IsValidVoter inline (connection state +0xe74, team, sv_vote_allow_spectators, sv_vote_bots_allowed with the two bot virtuals, the bytes at +0xba8/+0xba9, team 2 in MvM) and the issue's team restriction, counting the valid ones. Thiscall, plain ret
 				}
 			}
 		}
