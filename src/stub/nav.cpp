@@ -1,5 +1,6 @@
 #include "stub/nav.h"
 #include "mem/extract.h"
+#include "stub/tfbot.h"
 
 IMPL_DATAMAP(int,                   CFuncNavCost, m_team);
 IMPL_DATAMAP(bool,                  CFuncNavCost, m_isDisabled);
@@ -584,6 +585,22 @@ IMPL_REL_AFTER(CUtlVector<CHandle<CBaseCombatCharacter>>[4], CTFNavArea, m_poten
 
 MemberFuncThunk<const CTFNavArea *, float>           CTFNavArea::ft_GetCombatIntensity("CTFNavArea::GetCombatIntensity");
 MemberFuncThunk<      CTFNavArea *, void, CBaseCombatCharacter *> CTFNavArea::ft_AddPotentiallyVisibleActor("CTFNavArea::AddPotentiallyVisibleActor");
+
+#if defined _WINDOWS
+void CTFNavArea::AddPotentiallyVisibleActor(CBaseCombatCharacter *actor)
+{
+	if (actor == nullptr) return;
+	auto &teams = this->m_potentiallyVisibleActor.Get();
+	int team = actor->GetTeamNumber();
+	if (team < 0 || team >= (int)std::size(teams)) return;
+	CTFBot *bot = ToTFBot(actor);
+	if (bot != nullptr && bot->HasAttribute(CTFBot::ATTR_IS_NPC)) return;
+	auto &actors = teams[team];
+	if (actors.Find(actor) == actors.InvalidIndex()) {
+		actors.AddToTail(actor);
+	}
+}
+#endif
 MemberFuncThunk<      CTFNavArea *, void> CTFNavArea::ft_TFMark("CTFNavArea::TFMark");
 MemberFuncThunk<      CTFNavArea *, bool> CTFNavArea::ft_IsTFMarked("CTFNavArea::IsTFMarked");
 MemberFuncThunk<      CTFNavArea *, bool> CTFNavArea::ft_IsValidForWanderingPopulation("CTFNavArea::IsValidForWanderingPopulation");

@@ -5486,5 +5486,23 @@
   "rva": "0x4988f0",
   "build": "11087207",
   "why": "read by hand: the one caller of CTFPlayer::PrecacheMvM (0x507d20), as on Linux, which calls it when the map name starts with \"mvm_\" (0x860ec4); before that it switches on the game type (+0x11b8) to the per-mode precaches, as the Linux body does"
+ },
+ "_ZN11CBaseServer8RunFrameEv": {
+  "lib": "engine",
+  "rva": "0x140840",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: opens with the vprof scopes of source lines 0x78c and 0x78d, as the Linux body does, and SV_Frame calls it on sv; CHLTVServer::RunFrame calls it on its CBaseServer part at +8. Thiscall, no arguments"
+ },
+ "_ZN12CModelLoader18FlushDynamicModelsEv": {
+  "lib": "engine",
+  "rva": "0xfc6a0",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: push 1, call InternalUpdateDynamicModels (0xff570, the string match), ret: the Linux body. The twin at 0xfc690 pushes 0 and is UpdateDynamicModels. Thiscall, no arguments"
+ },
+ "modelloader": {
+  "lib": "engine",
+  "rva": "0x3c8100",
+  "build": "11087207",
+  "why": "read by hand, engine.dll: the one .data word holding the address of g_ModelLoader (0x3c8348), the static object whose first word is CModelLoader's vtable (0x30d87c) and that the engine's own CModelLoader calls take as this"
  }
 }

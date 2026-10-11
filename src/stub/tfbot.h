@@ -162,7 +162,7 @@ public:
 		
 		ATTR_REMOVE_ON_DEATH             = (1 << 0),
 		ATTR_AGGRESSIVE                  = (1 << 1),
-		// 2?
+		ATTR_IS_NPC                      = (1 << 2),
 		ATTR_SUPPRESS_FIRE               = (1 << 3),
 		ATTR_DISABLE_DODGE               = (1 << 4),
 		ATTR_BECOME_SPECTATOR_ON_DEATH   = (1 << 5),

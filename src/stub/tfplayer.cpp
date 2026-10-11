@@ -282,6 +282,8 @@ IMPL_REL_AFTER(bool,        CTFPlayerShared, m_bMotionCloak, m_flInvisChangeComp
 IMPL_EXTRACT (CTFPlayer *, CTFPlayerShared, m_pOuter,                  new CExtract_CTFPlayerShared_m_pOuter());
 IMPL_EXTRACT (CUtlVector<condition_source_t>, CTFPlayerShared, m_ConditionData, new CExtract_CTFPlayerShared_m_ConditionData());
 IMPL_SENDPROP(int,         CTFPlayerShared, m_iTauntIndex,   CTFPlayer);
+IMPL_SENDPROP(int,         CTFPlayerShared, m_iStunFlags,    CTFPlayer);
+IMPL_SENDPROP(int,         CTFPlayerShared, m_iStunIndex,    CTFPlayer);
 IMPL_REL_BEFORE(CUtlVector<bleed_struct_t>, CTFPlayerShared, m_BleedInfo, m_iTauntIndex, 0);
 IMPL_SENDPROP(CHandle<CTFWeaponBase>, CTFPlayerShared, m_hDisguiseWeapon,CTFPlayer);
 IMPL_SENDPROP(int,         CTFPlayerShared, m_iDecapitations,            CTFPlayer);
@@ -780,5 +782,10 @@ int CTFPlayerShared::FindHealerIndex(CBaseEntity *pHealer)
 		if (healers[i].pHealer == pHealer) return i;
 	}
 	return -1;
+}
+
+bool CTFPlayerShared::IsLoserStateStunned() const
+{
+	return this->m_iStunIndex >= 0 && this->InCond(TF_COND_STUNNED) && (this->m_iStunFlags & TF_STUNFLAG_THIRDPERSON) != 0;
 }
 #endif

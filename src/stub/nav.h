@@ -382,7 +382,12 @@ public:
 	float GetIncursionDistance(int team) const          { return this->m_IncursionDistances[team]; }
 	
 	float GetCombatIntensity() const                                 { return ft_GetCombatIntensity(this); }
+#if defined _WINDOWS
+	/* Inline in server.dll; the Linux body */
+	void AddPotentiallyVisibleActor(CBaseCombatCharacter *actor);
+#else
 	void AddPotentiallyVisibleActor(CBaseCombatCharacter *actor)     {        ft_AddPotentiallyVisibleActor(this, actor); }
+#endif
 	void TFMark()                                                    {        ft_TFMark(this); }
 	bool IsTFMarked()                                                { return ft_IsTFMarked(this); }
 #if defined _WINDOWS

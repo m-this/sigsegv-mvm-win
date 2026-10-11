@@ -371,7 +371,13 @@ public:
 	bool IsStealthed() const                                                            { return ft_IsStealthed               (this); }
 	float GetPercentInvisible() const                                                   { return ft_GetPercentInvisible       (this); }
 	bool IsControlStunned()                                                             { return ft_IsControlStunned          (this); }
+#if defined _WINDOWS
+	/* Inline in server.dll. The Linux body, less its bounds check of the
+	 * index against m_PlayerStuns, which only guards the pointer it forms. */
+	bool IsLoserStateStunned() const;
+#else
 	bool IsLoserStateStunned() const                                                    { return ft_IsLoserStateStunned       (this); }
+#endif
 	void SetDefaultItemChargeMeters()                                                   {        ft_SetDefaultItemChargeMeters(this); }
 	void SetItemChargeMeter(loadout_positions_t slot, float value)                      {        ft_SetItemChargeMeter        (this, slot, value); }
 	void Burn(CTFPlayer *igniter, CTFWeaponBase *weapon, float duration = 10.0f)        {        ft_Burn        (this, igniter, weapon, duration); }
@@ -411,6 +417,8 @@ public:
 	DECL_SENDPROP(float,       m_flInvisChangeCompleteTime);
 	DECL_RELATIVE(bool,        m_bMotionCloak);
 	DECL_SENDPROP(int,         m_iTauntIndex);
+	DECL_SENDPROP(int,         m_iStunFlags);
+	DECL_SENDPROP(int,         m_iStunIndex);
 	DECL_RELATIVE(CUtlVector<bleed_struct_t>, m_BleedInfo);
 	DECL_SENDPROP(CHandle<CTFWeaponBase>, m_hDisguiseWeapon);
 	DECL_SENDPROP(int,         m_iDecapitations);
