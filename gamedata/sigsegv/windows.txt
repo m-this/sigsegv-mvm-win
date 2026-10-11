@@ -1425,6 +1425,16 @@
 					lib   "server"
 					// verified: read by hand: the Linux body at offsets 0x18 lower; thiscall, ret 4. Returns when the argument equals m_vecAbsVelocity (+0x250, Linux +0x268), else InvalidatePhysicsRecursive(4) (0x201520), clears EFL_DIRTY_ABSVELOCITY in m_iEFlags (+0x13c), stores it, and with a move parent (+0x178) subtracts the parent's abs velocity (CalcAbsoluteVelocity 0x1ec810 when dirty), VectorIRotate through its coordinate frame (+0x268, CalcAbsolutePosition when dirty) and writes m_vecVelocity (+0x2c4) through the NetworkStateChanged slot (+0x2f8, Linux +0x300); without one it writes the argument there. CBaseEntity::ApplyAbsVelocityImpulse (0x1ff4b0) calls it with GetAbsVelocity plus the impulse, as on Linux
 				}
+				"CBaseEntity::Spawn"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity5SpawnEv"
+					addr  "0x1305b0"
+					build "11087207"
+					lib   "server"
+					vtidx "24"
+					// verified: read by hand: slot 24 of CBaseEntity's table, the slot every derived Spawn (CBasePlayer, CBaseProjectile, CTFBot, CUpgrades) fills on Windows; the base body is the shared ret 0, pure on Linux
+				}
 				"CBaseEntity::Remove"
 				{
 					type  "fixed"
@@ -3209,6 +3219,16 @@
 					vtidx "303"
 					// verified: read by hand: slot 303 of CBaseCombatWeapon's table (Linux 309, after GetRandomBurst, before StopWeaponSound which pops 4); reads the weapon's file info and plays the shoot sound; ret 8 for its two arguments
 				}
+				"CBaseCombatWeapon::GetShootSound"
+				{
+					type  "fixed"
+					sym   "_ZNK17CBaseCombatWeapon13GetShootSoundEi"
+					addr  "0x1e1170"
+					build "11087207"
+					lib   "server"
+					vtidx "338"
+					// verified: read by hand: the weapon info of the handle at +0x642 (GetFileWeaponInfoFromHandle, 0x39ae10) plus 0x1c0 plus 80 bytes times the sound, ret 4: the Linux body, slot 338 of CBaseCombatWeapon's table (Linux 344, shift 6)
+				}
 				"CBaseCombatWeapon::SetSubType"
 				{
 					type  "fixed"
@@ -3816,6 +3836,16 @@
 					build "11087207"
 					lib   "server"
 					// verified: read by hand: bit 1 of the flags word at +0x90c (Linux +0x924), shifted down and masked, the Linux body; the twin of both matched callers
+				}
+				"CBaseObject::IsHostileUpgrade"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseObject16IsHostileUpgradeEv"
+					addr  "0x1578d0"
+					build "11087207"
+					lib   "server"
+					vtidx "361"
+					// verified: read by hand: xor al,al; ret, slot 361 of CBaseObject's table (Linux 363, shift 2 from the matched anchors at 354 and 373 in CObjectSentrygun and CObjectTeleporter), as the Linux body
 				}
 				"CObjectSapper::GetSapperModelName"
 				{
@@ -4577,6 +4607,16 @@
 					build "11087207"
 					lib   "server"
 					// verified: read against the Linux body, 11087207: the matched callee of the Linux body is called; the structural match was held back for lack of field evidence and is the same address
+				}
+				"CCurrencyPack::AffectedByRadiusCollection"
+				{
+					type  "fixed"
+					sym   "_ZNK13CCurrencyPack26AffectedByRadiusCollectionEv"
+					addr  "0x5b7c0"
+					build "11087207"
+					lib   "server"
+					vtidx "238"
+					// verified: read by hand: mov al,1; ret, slot 238 of CCurrencyPack's table (Linux 241, shift 3 from the matched ComeToRest and ValidTouch anchors)
 				}
 				"CCurrencyPack::MyTouch"
 				{

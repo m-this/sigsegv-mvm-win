@@ -5508,5 +5508,29 @@
   "rva": "0xa89250",
   "build": "11087207",
   "why": "read by hand: the static CTFInventoryManager that TFInventoryManager() returns the address of on Linux (0x18619a0), inline here. Its constructor stores the vtable 0x10828424 (CTFInventoryManager's) at 0x10a89250, in the static initializer at 0x100296ef and its twin"
+ },
+ "_ZN11CBaseEntity5SpawnEv": {
+  "rva": "0x1305b0",
+  "build": "11087207",
+  "vtidx": 24,
+  "why": "read by hand: slot 24 of CBaseEntity's table, the slot every derived Spawn (CBasePlayer, CBaseProjectile, CTFBot, CUpgrades) fills on Windows; the base body is the shared ret 0, pure on Linux"
+ },
+ "_ZNK13CCurrencyPack26AffectedByRadiusCollectionEv": {
+  "rva": "0x5b7c0",
+  "build": "11087207",
+  "vtidx": 238,
+  "why": "read by hand: mov al,1; ret, slot 238 of CCurrencyPack's table (Linux 241, shift 3 from the matched ComeToRest and ValidTouch anchors)"
+ },
+ "_ZN11CBaseObject16IsHostileUpgradeEv": {
+  "rva": "0x1578d0",
+  "build": "11087207",
+  "vtidx": 361,
+  "why": "read by hand: xor al,al; ret, slot 361 of CBaseObject's table (Linux 363, shift 2 from the matched anchors at 354 and 373 in CObjectSentrygun and CObjectTeleporter), as the Linux body"
+ },
+ "_ZNK17CBaseCombatWeapon13GetShootSoundEi": {
+  "rva": "0x1e1170",
+  "build": "11087207",
+  "vtidx": 338,
+  "why": "read by hand: the weapon info of the handle at +0x642 (GetFileWeaponInfoFromHandle, 0x39ae10) plus 0x1c0 plus 80 bytes times the sound, ret 4: the Linux body, slot 338 of CBaseCombatWeapon's table (Linux 344, shift 6)"
  }
 }
