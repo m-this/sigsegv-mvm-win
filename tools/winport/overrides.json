@@ -5532,5 +5532,11 @@
   "build": "11087207",
   "vtidx": 338,
   "why": "read by hand: the weapon info of the handle at +0x642 (GetFileWeaponInfoFromHandle, 0x39ae10) plus 0x1c0 plus 80 bytes times the sound, ret 4: the Linux body, slot 338 of CBaseCombatWeapon's table (Linux 344, shift 6)"
+ },
+ "_ZN13CTFWeaponBase13IncrementAmmoEv": {
+  "name": "CTFWeaponBase::IncrementAmmo",
+  "rva": "0x636170",
+  "build": "11087207",
+  "why": "read by hand: the one function that calls the shared ammo virtuals (+0x428, +0x514, +0x424) as the Linux IncrementAmmo does, with Energy_Recharge inlined: the energy weapon branch adds a recharge step to m_flEnergy (+0x7a0, Linux +0x7ac) through AttribHookValue and the same NetworkStateChanged call. 4 callers, as Linux has. Thiscall, no arguments"
  }
 }

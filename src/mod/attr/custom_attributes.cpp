@@ -6548,6 +6548,24 @@ namespace Mod::Attr::Custom_Attributes
 		startHealingTargetHealer = nullptr;
     }
 
+#if defined _WINDOWS
+	/* Energy_Recharge is inlined into IncrementAmmo, its one caller: call that until the weapon is full */
+	DETOUR_DECL_MEMBER(void, CTFWeaponBase_IncrementAmmo)
+	{
+		auto weapon = reinterpret_cast<CTFWeaponBase *>(this);
+		
+		int iWeaponMod = 0;
+		CALL_ATTRIB_HOOK_INT_ON_OTHER(weapon, iWeaponMod, reload_full_clip_at_once );
+		if (iWeaponMod == 1 && weapon->IsEnergyWeapon()) {
+			for (int i = 0; i < 64 && weapon->m_flEnergy < weapon->Energy_GetMaxEnergy(); ++i) {
+				DETOUR_MEMBER_CALL();
+			}
+			return;
+		}
+
+		DETOUR_MEMBER_CALL();
+	}
+#else
 	DETOUR_DECL_MEMBER(bool, CTFWeaponBase_Energy_Recharge)
 	{
 		auto weapon = reinterpret_cast<CTFWeaponBase *>(this);
@@ -6567,6 +6585,7 @@ namespace Mod::Attr::Custom_Attributes
 
 		return DETOUR_MEMBER_CALL();
 	}
+#endif
 
 	DETOUR_DECL_MEMBER(void, CBasePlayer_ItemPostFrame)
 	{
@@ -10405,7 +10424,11 @@ namespace Mod::Attr::Custom_Attributes
 			MOD_ADD_DETOUR_MEMBER(CWeaponMedigun_RemoveHealingTarget, "CWeaponMedigun::RemoveHealingTarget");
 			MOD_ADD_DETOUR_MEMBER(CWeaponMedigun_StartHealingTarget, "CWeaponMedigun::StartHealingTarget");
 			MOD_ADD_DETOUR_STATIC(FX_FireBullets, "FX_FireBullets");
+#if defined _WINDOWS
+            MOD_ADD_DETOUR_MEMBER(CTFWeaponBase_IncrementAmmo, "CTFWeaponBase::IncrementAmmo");
+#else
             MOD_ADD_DETOUR_MEMBER(CTFWeaponBase_Energy_Recharge, "CTFWeaponBase::Energy_Recharge");
+#endif
             MOD_ADD_DETOUR_MEMBER(CWeaponMedigun_GetHealRate, "CWeaponMedigun::GetHealRate");
             MOD_ADD_DETOUR_MEMBER(CTFProjectile_EnergyBall_Explode, "CTFProjectile_EnergyBall::Explode");
             MOD_ADD_DETOUR_MEMBER(CTFPlayer_Taunt, "CTFPlayer::Taunt");
