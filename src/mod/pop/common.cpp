@@ -465,13 +465,6 @@ class PeriodicTaskAddAttribute : public PeriodicTask
     virtual void Update(CTFBot *bot) override
     {
         auto list = GetAttributeListByItemIndex(bot, itemDefIndex);
-#if defined _WINDOWS
-        static int logged = 0;
-        if (logged++ < 20) {
-            Msg("sig_dbg: AddAttribute item %d list %p attr %s value \"%s\" on %s\n", itemDefIndex, list,
-                attrDef != nullptr ? attrDef->GetName() : "(null)", param.c_str(), bot->GetPlayerName());
-        }
-#endif
 
         if (list != nullptr && attrDef != nullptr) {
             list->AddStringAttribute(attrDef, param);
