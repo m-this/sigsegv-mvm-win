@@ -3544,17 +3544,7 @@ namespace Mod::Attr::Custom_Attributes
 			Vector pos = player->GetAbsOrigin();
 			CTakeDamageInfo info = CTakeDamageInfo(player, player, nullptr, vec3_origin, pos, iSuicideCounter, DMG_PREVENT_PHYSICS_FORCE, 0, &pos);
 			info.SetDamageCustom(TF_DMG_CUSTOM_TELEFRAG);
-#if defined _WINDOWS
-			int health = player->GetHealth();
-			int taken = player->TakeDamage(info);
-			static int logged_damage = 0;
-			if (logged_damage++ < 20) {
-				Msg("sig_dbg: suicide TakeDamage returned %d, health %d -> %d, takedamage %d, alive %d, info damage %.1f type %x custom %d attacker %p\n",
-					taken, health, player->GetHealth(), (int)player->m_takedamage, player->IsAlive(), info.GetDamage(), info.GetDamageType(), info.GetDamageCustom(), info.GetAttacker());
-			}
-#else
 			player->TakeDamage(info);
-#endif
 		}
 	}
 
