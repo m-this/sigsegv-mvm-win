@@ -3534,6 +3534,12 @@ namespace Mod::Attr::Custom_Attributes
 
 		int iSuicideCounter = 0;
 		CALL_ATTRIB_HOOK_INT_ON_OTHER ( player, iSuicideCounter, is_suicide_counter );
+#if defined _WINDOWS
+		static int logged = 0;
+		if (iSuicideCounter != 0 && logged++ < 20) {
+			Msg("sig_dbg: suicide counter %d on %s team %d\n", iSuicideCounter, player->GetPlayerName(), player->GetTeamNumber());
+		}
+#endif
 		if (iSuicideCounter != 0) {
 			Vector pos = player->GetAbsOrigin();
 			CTakeDamageInfo info = CTakeDamageInfo(player, player, nullptr, vec3_origin, pos, iSuicideCounter, DMG_PREVENT_PHYSICS_FORCE, 0, &pos);
