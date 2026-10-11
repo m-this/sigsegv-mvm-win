@@ -1202,6 +1202,19 @@ namespace Mod::Pop::Wave_Extensions
 				ws->m_waitForAllSpawned.Get(), ws->m_waitForAllDead.Get(), ws->m_countSpawnedSoFar, ws->m_totalCount,
 				ws->m_activeVector.Count(), alive, ws->m_spawnCount, ws->m_maxActive, squad != nullptr ? squad->m_SubSpawners.Count() : 0,
 				ws->m_myReservedSlotCount, ws->m_bPaused, ws->m_where.m_teamSpawnVector.Count(), (int)ws->m_spawnLocationResult);
+			if (ws->m_state != CWaveSpawnPopulator::DONE) {
+				int shown = 0;
+				for (auto &handle : ws->m_where.m_teamSpawnVector) {
+					CTFTeamSpawn *spawn = handle;
+					if (++shown > 8) break;
+					if (spawn == nullptr) {
+						Msg("sig_wave_dump:   where #%d handle 0x%08x does not resolve\n", shown, handle.ToInt());
+						continue;
+					}
+					Msg("sig_wave_dump:   where #%d %s \"%s\" team=%d disabled=%d mode=%d\n", ENTINDEX(spawn), spawn->GetClassname(),
+						STRING(spawn->GetEntityName()), spawn->GetTeamNumber(), (int)spawn->m_bDisabled, spawn->m_nSpawnMode.Get());
+				}
+			}
 			int listed = 0;
 			for (auto &handle : ws->m_activeVector) {
 				CBaseEntity *ent = handle;
