@@ -41,15 +41,22 @@ dust_to_dust` w5, `rottenburg_adv_marathon` w4, `spybase_rc8_exp_waters_of_a_
 robot_regime` w6, `condemned_b3_exp_trespasser_remaster` w1 and `villa_b13f_adv_
 forgotten` w6.
 
-`sig_wave_dump` names what each waits on. Two shapes:
+`sig_wave_dump` (now with the spawn points of each unfinished wave spawn) shows
+three shapes:
 
-- squad or limited-support wave spawns in SPAWNING with `spawned=0` and
-  `result=0` (`SPAWN_LOCATION_NOT_FOUND`) while spectators hold 19 to 22 bots;
-  `CSpawnLocation::FindSpawnLocation` (0x5ecfd0, reads `m_bDisabled` at 0x388,
-  Linux 0x3a0) never finds a spawn for them, though `where` holds 1 to 20
-  entries. Seen in spybase, trespasser, devilry.
-- a wave spawn in WAIT_FOR_ALL_DEAD with one robot alive that the bed never
-  kills (marathon w4 waits on `w4e`, villa).
+- spybase `waters_of_a_robot_regime` w6: the stuck squad and limited-support
+  wave spawns are SPAWNING with `spawned=0`, `result=0`, and every entry of their
+  `Where` is `disabled=1` (`spawnbot_chief_demo`, `spawnbot_emp` to `emp5`,
+  `spawnbot`). `FindSpawnLocation` is right to find none; what enables them
+  (a map output, an input) did not run. The read of `m_bDisabled` (0x388 in the
+  function, Linux 0x3a0) is the game's own.
+- one robot alive that the bed never kills, on a team it cannot reach: marathon
+  w4 waits on `w4e` for a RED bot at 1 health, dust_to_dust w5 for RED giants,
+  villa w6 for a Samurai Demo, trespasser_remaster for a WAVE3-3 bot and an
+  `eyeball_boss` on team 5.
+- trespasser_remaster's pop holds over a hundred wave spawns in its first wave;
+  its PENDING ones read garbage in `m_countSpawnedSoFar` (83886082) where the
+  mod made them with no spawn count.
 
 Not understood yet:
 
