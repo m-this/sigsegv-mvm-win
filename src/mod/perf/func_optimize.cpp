@@ -433,9 +433,8 @@ namespace Mod::Perf::Func_Optimize
     }
     
 #ifdef SE_IS_TF2
-    DETOUR_DECL_STATIC(void, CTFPlayer_PrecacheMvM)
+    void PrecacheRomePromoItems()
 	{
-        DETOUR_STATIC_CALL();
         for (int i = 1; i < TF_CLASS_COUNT; i++) {
             auto hatDef = GetItemSchema()->GetItemDefinitionByName(g_szRomePromoItems_Hat[i]);
             auto hatModel = hatDef != nullptr ? hatDef->GetKeyValues()->GetString("model_player") : nullptr;
@@ -449,6 +448,22 @@ namespace Mod::Perf::Func_Optimize
             }
         }
     }
+#if defined _WINDOWS
+    /* PrecacheMvM loops back to its third byte, inside a detour's jump, so hook its one caller */
+    DETOUR_DECL_MEMBER(void, CTFGameRules_Precache)
+	{
+        DETOUR_MEMBER_CALL();
+        if (StringAfterPrefix(STRING(gpGlobals->mapname), "mvm_") != nullptr) {
+            PrecacheRomePromoItems();
+        }
+    }
+#else
+    DETOUR_DECL_STATIC(void, CTFPlayer_PrecacheMvM)
+	{
+        DETOUR_STATIC_CALL();
+        PrecacheRomePromoItems();
+    }
+#endif
     DETOUR_DECL_MEMBER(bool, CTFPlayer_SpeakConceptIfAllowed, int iConcept, const char *modifiers, char *pszOutResponseChosen, size_t bufsize, IRecipientFilter *filter)
 	{
         if (iConcept == MP_CONCEPT_HURT) {
@@ -808,7 +823,11 @@ namespace Mod::Perf::Func_Optimize
 			this->AddPatch(new CPatch_CMDLCache_BeginEndLock("CMDLCache::BeginLock"));
 			this->AddPatch(new CPatch_CMDLCache_BeginEndLock("CMDLCache::EndLock"));
 #ifdef SE_IS_TF2
+#if defined _WINDOWS
+            MOD_ADD_DETOUR_MEMBER(CTFGameRules_Precache, "CTFGameRules::Precache");
+#else
             MOD_ADD_DETOUR_STATIC(CTFPlayer_PrecacheMvM, "CTFPlayer::PrecacheMvM");
+#endif
             
             // Prevent player hurt from triggering speak too often
             MOD_ADD_DETOUR_MEMBER(CTFPlayer_SpeakConceptIfAllowed, "CTFPlayer::SpeakConceptIfAllowed");

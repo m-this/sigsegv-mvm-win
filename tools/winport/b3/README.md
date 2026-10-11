@@ -19,6 +19,7 @@ with. They expect the working layout the port was done in, a directory
 | `hexat.py RVA [LEN] [DLL]` | bytes at an RVA |
 | `chkpat.py` | checks an extractor's byte pattern against `server.dll` and prints the value it reads |
 | `addov.py [-e] KEY RVA\|bad WHY [name=X] [vtidx=N]` | adds an entry to `overrides.json` |
+| `loopback.py [TABLE] [LISTING]` | names the table's addresses a branch re-enters inside the first 5 bytes, which a detour's jmp would cut through |
 | `winext.py FILE NAME TYPE 'HEX with ??' FN MIN MAX OFFSET [ADJUST]` | writes a Windows byte-pattern extractor into a stub in place of `IExtractStub` |
 
 A pattern an extractor looks for has to match exactly once in the range

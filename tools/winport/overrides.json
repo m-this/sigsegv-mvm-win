@@ -5480,5 +5480,11 @@
   "rva": "0x5e4320",
   "build": "11087207",
   "why": "read by hand, 11087207: the player's steam id through CBasePlayer::GetSteamID, FindOrAdd (0x5e3d10) and the entry's upgrade vector at +8, null when there is no entry: the Linux body (lea eax+8, cmovne); ret 4"
+ },
+ "_ZN12CTFGameRules8PrecacheEv": {
+  "name": "CTFGameRules::Precache",
+  "rva": "0x4988f0",
+  "build": "11087207",
+  "why": "read by hand: the one caller of CTFPlayer::PrecacheMvM (0x507d20), as on Linux, which calls it when the map name starts with \"mvm_\" (0x860ec4); before that it switches on the game type (+0x11b8) to the per-mode precaches, as the Linux body does"
  }
 }

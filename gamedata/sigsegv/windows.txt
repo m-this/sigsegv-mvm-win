@@ -15831,6 +15831,15 @@
 					lib   "server"
 					// verified: read by hand: the scorer handle at +0x50c (Linux +0x524) resolved through the entity list, then the cast; a named address so the m_hScorer extractor can read the offset
 				}
+				"CTFGameRules::Precache"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules8PrecacheEv"
+					addr  "0x4988f0"
+					build "11087207"
+					lib   "server"
+					// verified: read by hand: the one caller of CTFPlayer::PrecacheMvM (0x507d20), as on Linux, which calls it when the map name starts with "mvm_" (0x860ec4); before that it switches on the game type (+0x11b8) to the per-mode precaches, as the Linux body does
+				}
 			}
 		}
 	}
