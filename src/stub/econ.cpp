@@ -548,8 +548,14 @@ MemberFuncThunk<CTFInventoryManager *, CEconItemView *, int, int> CTFInventoryMa
 static StaticFuncThunk<CInventoryManager *> ft_InventoryManager("InventoryManager");
 CInventoryManager *InventoryManager() { return ft_InventoryManager(); }
 
+#if defined _WINDOWS
+/* TFInventoryManager() is inline in server.dll: the static object it returns the address of */
+static GlobalThunk<char> g_TFInventoryManager("g_TFInventoryManager");
+CTFInventoryManager *TFInventoryManager() { return reinterpret_cast<CTFInventoryManager *>(&g_TFInventoryManager.GetRef()); }
+#else
 static StaticFuncThunk<CTFInventoryManager *> ft_TFInventoryManager("TFInventoryManager");
 CTFInventoryManager *TFInventoryManager() { return ft_TFInventoryManager(); }
+#endif
 
 CAttribute_String *last_parsed_string_attribute_value = nullptr;
 

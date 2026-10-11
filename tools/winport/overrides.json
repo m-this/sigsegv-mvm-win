@@ -473,10 +473,8 @@
   "why": "read by hand: InSameTeam (0x1f16d0) first, the MvM test with a blue owner skipped, AttribHookValue<int> of 'generate_rage_on_heal', TakeDamage (0x1fcc30), StunPlayer and 'WeaponMedi_Shield.Burn_lp': Linux's body. The string match took 0x61e0a0, the medigun function two before it whose boundaries hid this one. Thiscall, ret 4"
  },
  "_ZN16CTFMedigunShield6CreateEP9CTFPlayer": {
-  "rva": "0x61ad50",
-  "build": "11087207",
-  "carried": "from 11076587 0x61b860 by tools/winport/carry.py: server.dll, 635 bytes",
-  "why": "corroborated by tools/winport/corroborate.py: shares the string 'WeaponMedi_Shield.Deploy', 'generate_rage_on_heal', 'models/props_mvm/mvm_player_shield2.mdl' with the Linux function, and 3 of its 3 matched callees"
+  "bad": true,
+  "why": "0x61ad50 is a CWeaponMedigun member (thiscall on the medigun, no arguments; it reads the owner from +0x210, 'WeaponMedi_Shield.Deploy') with Create inlined into it, so a detour of the Linux static Create(CTFPlayer*) got the medigun as the player and faulted on the first deployed shield. No standalone Create exists in server.dll"
  },
  "_ZN16CTFWeaponBuilder13StartBuildingEv": {
   "rva": "0x603aa0",
@@ -5504,5 +5502,11 @@
   "rva": "0x3c8100",
   "build": "11087207",
   "why": "read by hand, engine.dll: the one .data word holding the address of g_ModelLoader (0x3c8348), the static object whose first word is CModelLoader's vtable (0x30d87c) and that the engine's own CModelLoader calls take as this"
+ },
+ "g_TFInventoryManager": {
+  "name": "g_TFInventoryManager",
+  "rva": "0xa89250",
+  "build": "11087207",
+  "why": "read by hand: the static CTFInventoryManager that TFInventoryManager() returns the address of on Linux (0x18619a0), inline here. Its constructor stores the vtable 0x10828424 (CTFInventoryManager's) at 0x10a89250, in the static initializer at 0x100296ef and its twin"
  }
 }
