@@ -8223,6 +8223,15 @@
 					lib   "server"
 					// consensus
 				}
+				"Physics_SimulateEntity"
+				{
+					type  "fixed"
+					sym   "_Z22Physics_SimulateEntityP11CBaseEntity"
+					addr  "0x2c10a0"
+					build "11117211"
+					lib   "server"
+					// verified: called twice by Physics_RunThinkFunctions (0x2c0f80), as on Linux. Same body as Linux's: the vprof scope virtual (+0x64), GetTimeBase, UnsetPlayerSimulated, the entity's PhysicsSimulate virtual (+0x1b8) and the scope's exit as a tail jump (+0x68). cdecl, one argument, plain ret
+				}
 				"CTFGameRules::CalcDominationAndRevenge"
 				{
 					type  "fixed"
@@ -14279,6 +14288,15 @@
 					build "11117211"
 					lib   "server"
 					// verified: string lead, agreed by strings+callees: 1 shared string(s), 5/6 matched callees, windows/linux size 752/974
+				}
+				"CTFPlayer::CreateDisguiseWeaponList"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer24CreateDisguiseWeaponListEPS_"
+					addr  "0x4e6820"
+					build "11117211"
+					lib   "server"
+					// verified: called with one argument, ret 4, from CTFPlayerShared::FindDisguiseTarget (0x51fc20), the only Linux caller. Opens with the loop over the disguise weapon list (+0x25c4, count +0x25d0) that ClearDisguiseWeaponList (0x4e49c0) runs, as Linux's calls it first
 				}
 				"CTFPlayerShared::RemoveDisguiseWeapon"
 				{

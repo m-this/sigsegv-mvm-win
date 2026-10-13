@@ -73,6 +73,12 @@
   "carried": "from 11087207 0x628180 by tools/winport/carry.py: server.dll, 101 bytes",
   "why": "string lead (scored), agreed by strings: 2 shared string(s), 2/2 matched callees, windows/linux size 112/129"
  },
+ "_Z22Physics_SimulateEntityP11CBaseEntity": {
+  "rva": "0x2c10a0",
+  "build": "11117211",
+  "carried": "read by hand on 11117211",
+  "why": "called twice by Physics_RunThinkFunctions (0x2c0f80), as on Linux. Same body as Linux's: the vprof scope virtual (+0x64), GetTimeBase, UnsetPlayerSimulated, the entity's PhysicsSimulate virtual (+0x1b8) and the scope's exit as a tail jump (+0x68). cdecl, one argument, plain ret"
+ },
  "_Z23COM_GetUncompressedSizePKvj": {
   "lib": "engine",
   "rva": "0x15e280",
@@ -788,6 +794,16 @@
   "carried": "from 11087207 0x4fa820 by tools/winport/carry.py: server.dll, 365 bytes",
   "why": "corroborated by tools/winport/corroborate.py: calls all 6 of the Linux function's matched callees, and no string disagrees"
  },
+ "_ZN9CTFPlayer16UpdateExpressionEv": {
+  "bad": true,
+  "build": "11117211",
+  "why": "read by hand, 11117211: no body of its own. Its only Linux caller is CTFPlayer::TFPlayerThink, which calls ClearExpression then it. Here TFPlayerThink (0x50faa0) carries it inline at 0x5105e6 to 0x510753: ClearExpression (0x4e4a70), RandomFloat, AllocPooledString (0x281060), the scene call (0x3204d0)"
+ },
+ "_ZN9CTFPlayer18SpyDeadRingerDeathERK15CTakeDamageInfo": {
+  "bad": true,
+  "build": "11117211",
+  "why": "read by hand, 11117211: no body of its own. Its only Linux caller is CTFPlayer::OnTakeDamage (0x500c70), and here OnTakeDamage carries it inline at 0x50320b to 0x5032ca: the dead ringer cond tests, CanGoInvisible(true) (0x51aaa0), FeignDeath (0x4f0750) and AddCond 13"
+ },
  "_ZN9CTFPlayer19DoClassSpecialSkillEv": {
   "rva": "0x51f680",
   "build": "11117211",
@@ -799,6 +815,11 @@
   "build": "11117211",
   "carried": "from 11087207 0x4fd2c0 by tools/winport/carry.py: server.dll, 846 bytes",
   "why": "corroborated by tools/winport/corroborate.py: shares the string 'tf_weapon_builder' with the Linux function, and 4 of its 4 matched callees"
+ },
+ "_ZN9CTFPlayer20MaybeDrawRailgunBeamEP16IRecipientFilterP13CTFWeaponBaseRK6VectorS6_": {
+  "bad": true,
+  "build": "11117211",
+  "why": "read by hand, 11117211: no body of its own. Its only Linux caller is CTFPlayer::FireBullet, and here FireBullet (0x51fe50, the penetration_damage_penalty string) holds all of its strings: dxhr_sniper_rail_blue and red, set_weapon_mode, sniper_fires_tracer_HIDDEN"
  },
  "_ZN9CTFPlayer21PickupWeaponFromOtherEP16CTFDroppedWeapon": {
   "rva": "0x505710",
@@ -818,6 +839,12 @@
   "carried": "from 11087207 0x506230 by tools/winport/carry.py: server.dll, 3063 bytes",
   "why": "string lead, agreed by strings: 13 shared string(s), 19/22 matched callees, windows/linux size 2912/5299"
  },
+ "_ZN9CTFPlayer24CreateDisguiseWeaponListEPS_": {
+  "rva": "0x4e6820",
+  "build": "11117211",
+  "carried": "read by hand on 11117211",
+  "why": "called with one argument, ret 4, from CTFPlayerShared::FindDisguiseTarget (0x51fc20), the only Linux caller. Opens with the loop over the disguise weapon list (+0x25c4, count +0x25d0) that ClearDisguiseWeaponList (0x4e49c0) runs, as Linux's calls it first"
+ },
  "_ZN9CTFPlayer26CheckInstantLoadoutRespawnEv": {
   "rva": "0x4e41e0",
   "build": "11117211",
@@ -829,6 +856,11 @@
   "build": "11117211",
   "carried": "from 11087207 0x4e11c0 by tools/winport/carry.py: server.dll, 311 bytes",
   "why": "string lead, agreed by strings: 2 shared string(s), 7/8 matched callees, windows/linux size 320/440"
+ },
+ "_ZN9CTFPlayer35IsAllowedToInitiateTauntWithPartnerEPK13CEconItemViewPci": {
+  "bad": true,
+  "build": "11117211",
+  "why": "read by hand, 11117211: no body of its own. Its only Linux caller is CTFPlayer::PlayTauntSceneFromItem, and here that (0x506230) holds both of its strings, #TF_PartnerTaunt_Blocked at 0x50653e and #TF_PartnerTaunt_TooHigh at 0x506558"
  },
  "_ZN9CTFPlayer9PainSoundERK15CTakeDamageInfo": {
   "rva": "0x505490",
@@ -883,6 +915,11 @@
   "build": "11117211",
   "carried": "from 11087207 0x3b85c0 by tools/winport/carry.py: server.dll, 106 bytes",
   "why": "called by 7 of its 8 matched callers; a map lookup on this+0x1bc. The Linux const overload is a jmp to the same body"
+ },
+ "_ZNK15CTFFlameManager23BCanBurnEntityThisFrameEP11CBaseEntity": {
+  "bad": true,
+  "build": "11117211",
+  "why": "read by hand, 11117211: no body of its own. Its only Linux caller is CTFFlameManager::OnCollide (0x46eba0), and here OnCollide carries it inline at 0x46ed22 to 0x46ed5e: the burned-entity tree's Find (0x46d610, also called at 0x46ec97) and the time-since-burned compare against +0x4d8"
  },
  "_ZNK9CTFPlayer12GetMaxHealthEv": {
   "rva": "0x4f30d0",
