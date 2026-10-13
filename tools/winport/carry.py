@@ -2,12 +2,14 @@
 """Move overrides.json from the build it holds for to the build served now.
 
     carry.py OLD_DIR NEW_DIR OLD_BUILD NEW_BUILD
+    carry.py --files
 
 OLD_DIR and NEW_DIR are game trees holding the libraries in LIBS.
 Every entry whose build is OLD_BUILD goes through rebase.py against its own
 library. One that carries gets the new rva and build and says so in `carried`;
 one that does not keeps its old build, so emitgamedata.py leaves it out, and is
-listed on stderr to be read by hand. overrides.json is rewritten in place.
+listed on stderr to be read by hand. overrides.json is rewritten in place. --files prints the path of each library
+in LIBS, one per line, for the workflow to download and keep.
 """
 
 import json
@@ -22,6 +24,8 @@ LIBS = {
     "engine": "bin/engine.dll",
     "dedicated": "bin/dedicated.dll",
     "soundemittersystem": "bin/SoundEmitterSystem.dll",
+    "tier0": "bin/tier0.dll",
+    "vscript": "bin/vscript.dll",
 }
 
 
@@ -46,6 +50,9 @@ def unmoved(old_path, new_path, rva, reason):
 
 
 def main():
+    if sys.argv[1:] == ["--files"]:
+        print("\n".join(LIBS.values()))
+        return
     if len(sys.argv) != 5:
         sys.exit(__doc__)
     old_dir, new_dir, old_build, new_build = sys.argv[1:5]
