@@ -218,6 +218,7 @@ public:
 		return (obj->*pFunc)(args...);
 #endif
 	}
+	bool IsLinked() const { return link.IsLinked(); }
 private:
 	MemberFuncThunkBase link;
 };
@@ -261,6 +262,7 @@ public:
 		return (obj->*pFunc)(args...);
 #endif
 	}
+	bool IsLinked() const { return link.IsLinked(); }
 private:
 	MemberFuncThunkBase link;
 };

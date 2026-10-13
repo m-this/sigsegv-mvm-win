@@ -195,6 +195,8 @@ namespace Mod::Debug::Tele_Sapper
 			MOD_ADD_DETOUR_MEMBER(CBaseObject_SetPlasmaDisabled, "CBaseObject::SetPlasmaDisabled");
 		}
 		
+		virtual bool OnLoad() override { return CTFBot::IsRequiredWeaponStackLinked(); }
+		
 		virtual bool ShouldReceiveCallbacks() const override { return this->IsEnabled(); }
 		
 		virtual void FrameUpdatePreEntityThink() override

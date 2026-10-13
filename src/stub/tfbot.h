@@ -398,6 +398,8 @@ public:
 	float GetDesiredPathLookAheadRange() const                         { return ft_GetDesiredPathLookAheadRange(this); }
 	void PushRequiredWeapon(CTFWeaponBase *weapon)                     { return ft_PushRequiredWeapon          (this, weapon); }
 	void PopRequiredWeapon()                                           { return ft_PopRequiredWeapon           (this); }
+	/* the stack is a count: a Push that does nothing against a Pop that runs underflows it */
+	static bool IsRequiredWeaponStackLinked()                          { return ft_PushRequiredWeapon.IsLinked() && ft_PopRequiredWeapon.IsLinked(); }
 #if defined _WINDOWS
 	/* server.dll has only the two-vector overload as a function; MSVC
 	 * inlined the others. As in the game source, the one-argument forms trace

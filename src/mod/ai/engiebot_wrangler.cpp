@@ -256,6 +256,8 @@ namespace Mod::AI::EngieBot_Wrangler
 			MOD_ADD_DETOUR_STATIC(CLaserDot_Create, "CLaserDot::Create");
 #endif
 		}
+		
+		virtual bool OnLoad() override { return CTFBot::IsRequiredWeaponStackLinked(); }
 	};
 	CMod s_Mod;
 	
