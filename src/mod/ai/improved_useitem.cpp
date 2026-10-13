@@ -362,6 +362,8 @@ namespace Mod::AI::Improved_UseItem
 			MOD_ADD_DETOUR_MEMBER(CTFBot_EquipLongRangeWeapon, "CTFBot::EquipLongRangeWeapon");
 			MOD_ADD_DETOUR_MEMBER(CPlayerInventory_GetInventoryItemByItemID, "CPlayerInventory::GetInventoryItemByItemID");
 		}
+		
+		virtual bool OnLoad() override { return CTFBot::IsRequiredWeaponStackLinked(); }
 	};
 	CMod s_Mod;
 	

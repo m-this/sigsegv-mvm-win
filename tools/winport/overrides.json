@@ -5458,5 +5458,15 @@
   "build": "11117211",
   "why": "read by hand: CTFGameRules::DistributeCurrencyAmount calls it (0x4892e9) as Linux does; the RoundEvent_AcquiredCredits pair (0x5e0a80, 0x5e09d0), the respec counters at +0x718/+0x71c, CollectPlayers<CTFPlayer>(2) and the per player respec history by SteamID, Linux's body. Thiscall, ret 0xc",
   "carried": "from 11087207 0x5e5450 by tools/winport/carry.py: server.dll, 590 bytes"
+ },
+ "_ZN6CTFBot18PushRequiredWeaponEP13CTFWeaponBase": {
+  "rva": "0x560940",
+  "build": "11117211",
+  "why": "read by hand: takes the weapon's handle through the virtual at +8 (-1 for a null weapon), grows the CUtlVector at +0x28ac (capacity +0x28b0, grow size +0x28b4, count +0x28b8, the stack PopRequiredWeapon 0x560400 decrements) and stores the handle as the last element, Linux's body. Its one caller is CTFBotUseItem::OnStart (0x576acb), whose OnEnd pops through 0x576a80, as on Linux. Thiscall, ret 4"
+ },
+ "_ZNK15CTFPlayerShared19IsLoserStateStunnedEv": {
+  "rva": "0x524010",
+  "build": "11117211",
+  "why": "read by hand: the condition slot test through +0x404, +0x4d4 and +0x4e0, InCond of 15 (stunned), then bit 6 of the flags at +0x400, Linux's body. Eleven callers as on Linux, among them the three CTFBot Press*FireButton functions (0x56044c, 0x56053c, 0x5606fc). Thiscall, plain ret"
  }
 }

@@ -11941,6 +11941,15 @@
 					lib   "server"
 					// verified: read by hand: what CTFBotTacticalMonitor::Update (0x576023) and CTFBotDeliverFlag::Update (0x588520) call right before pushing 'Opportunistically using buff item', as Linux's both do. Opens with the countdown timer's Now (+0x28e4), RandomFloat(0.1, 0.2) and the timer restart, then the class tests, Linux's body. Thiscall, plain ret
 				}
+				"CTFBot::PushRequiredWeapon"
+				{
+					type  "fixed"
+					sym   "_ZN6CTFBot18PushRequiredWeaponEP13CTFWeaponBase"
+					addr  "0x560940"
+					build "11117211"
+					lib   "server"
+					// verified: read by hand: takes the weapon's handle through the virtual at +8 (-1 for a null weapon), grows the CUtlVector at +0x28ac (capacity +0x28b0, grow size +0x28b4, count +0x28b8, the stack PopRequiredWeapon 0x560400 decrements) and stores the handle as the last element, Linux's body. Its one caller is CTFBotUseItem::OnStart (0x576acb), whose OnEnd pops through 0x576a80, as on Linux. Thiscall, ret 4
+				}
 				"CTFBot::PopRequiredWeapon"
 				{
 					type  "fixed"
@@ -13487,6 +13496,15 @@
 					build "11117211"
 					lib   "server"
 					// call
+				}
+				"CTFPlayerShared::IsLoserStateStunned"
+				{
+					type  "fixed"
+					sym   "_ZNK15CTFPlayerShared19IsLoserStateStunnedEv"
+					addr  "0x524010"
+					build "11117211"
+					lib   "server"
+					// verified: read by hand: the condition slot test through +0x404, +0x4d4 and +0x4e0, InCond of 15 (stunned), then bit 6 of the flags at +0x400, Linux's body. Eleven callers as on Linux, among them the three CTFBot Press*FireButton functions (0x56044c, 0x56053c, 0x5606fc). Thiscall, plain ret
 				}
 				"CTFPlayerShared::RadiusSpyScan"
 				{
