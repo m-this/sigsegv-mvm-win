@@ -675,9 +675,9 @@
  },
  "_ZN24CTFProjectile_BallOfFire4BurnEP11CBaseEntity": {
   "rva": "0x534bd0",
-  "build": "11087207",
-  "carried": "from 11076587 0x5356a0 by tools/winport/carry.py: server.dll, 3436 bytes",
-  "why": "string lead, agreed by strings: 4 shared string(s), 16/16 matched callees, windows/linux size 3440/5261"
+  "build": "11117211",
+  "carried": "re-matched on 11117211 by hand; was 0x534bd0 on 11087207, still the same address",
+  "why": "string lead, agreed by strings: 4 shared string(s), 16/16 matched callees; read by hand on 11117211 (carry.py found no body): CTFProjectile_BallOfFire::RocketTouch (0x5349c0) calls it with the other entity, thiscall ret 4, and its strings are Weapon_DragonsFury.BonusDamage, BonusDamageHit, BonusDamagePain"
  },
  "_ZN24CTeamplayRoundBasedRules11State_EnterE22gamerules_roundstate_t": {
   "rva": "0x350620",
@@ -5045,20 +5045,23 @@
  "_Z11ConColorMsgRK5ColorPKcz": {
   "lib": "tier0",
   "rva": "0x45a0",
-  "build": "11087207",
-  "why": "tier0.dll exports it as ?ConColorMsg@@YAXABVColor@@PBDZZ, ConColorMsg(const Color&, const char *, ...), at this address. cdecl varargs, plain ret"
+  "build": "11117211",
+  "why": "tier0.dll exports it as ?ConColorMsg@@YAXABVColor@@PBDZZ, ConColorMsg(const Color&, const char *, ...), at this address. cdecl varargs, plain ret",
+  "carried": "unmoved on 11117211: same 0x45a0 in tier0.dll, still the ?ConColorMsg@@YAXABVColor@@PBDZZ export"
  },
  "_ZL12_SpewMessage10SpewType_tPKciPK5ColorS1_Pc": {
   "lib": "tier0",
   "rva": "0x4bf0",
-  "build": "11087207",
-  "why": "read by hand, tier0.dll: the exported _SpewMessage (0x6640) calls it with the current spew type (0x10048728), the empty group, level 0, the default color, the format and its va_list, as Linux's exported one calls the static _SpewMessage. cdecl, six arguments, plain ret"
+  "build": "11117211",
+  "why": "read by hand, tier0.dll: the exported _SpewMessage (0x6640) calls it with the current spew type (0x10048728), the empty group, level 0, the default color, the format and its va_list, as Linux's exported one calls the static _SpewMessage. cdecl, six arguments, plain ret",
+  "carried": "unmoved on 11117211: same 0x4bf0 in tier0.dll, still the callee of the exported _SpewMessage (0x6640)"
  },
  "_ZN4SQVM4CallER11SQObjectPtriiS1_j": {
   "lib": "vscript",
   "rva": "0x2dfa0",
-  "build": "11087207",
-  "why": "read by hand, vscript.dll: the closure dispatch on the object type (0x8000200, 0x8004000), and the only code with \"SCRIPT PERF WARNING --- \\\"%s\\\" ran long at %fms\" and '<lambda or free run script>', Linux's body. The string match picked 0x2ded0, the arithmetic compare before the jump table that precedes it. Thiscall, ret 0x14"
+  "build": "11117211",
+  "why": "read by hand, vscript.dll: the closure dispatch on the object type (0x8000200, 0x8004000), and the only code with \"SCRIPT PERF WARNING --- \\\"%s\\\" ran long at %fms\" and '<lambda or free run script>', Linux's body. The string match picked 0x2ded0, the arithmetic compare before the jump table that precedes it. Thiscall, ret 0x14",
+  "carried": "unmoved on 11117211: same 0x2dfa0 in vscript.dll, still the only xref of the SCRIPT PERF WARNING string (0x2e138), ret 0x14"
  },
  "_ZN13NDebugOverlay3BoxERK6VectorS2_S2_iiiif": {
   "rva": "0x237d80",

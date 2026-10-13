@@ -1217,6 +1217,15 @@
 					lib   "server"
 					// verified: read by hand: slot 1 of the table at offset 0x14 in CQuestItemTracker's vtable (0x1084ffec), the IGameEventListener2 subobject, where Linux has a thunk that subtracts 0x14 and jumps to FireGameEvent. MSVC compiles the override against the subobject: the body keeps its this in esi and reaches the tracker as esi-0x14 (lea ecx,[esi-0x14] at 0x45c99c). It is the same address the table already gives CQuestItemTracker::FireGameEvent, which MSVC does not put in the primary table. thiscall, one argument, ret 4
 				}
+				"_SpewMessage [internal]"
+				{
+					type  "fixed"
+					sym   "_ZL12_SpewMessage10SpewType_tPKciPK5ColorS1_Pc"
+					addr  "0x4bf0"
+					build "11117211"
+					lib   "tier0"
+					// verified: read by hand, tier0.dll: the exported _SpewMessage (0x6640) calls it with the current spew type (0x10048728), the empty group, level 0, the default color, the format and its va_list, as Linux's exported one calls the static _SpewMessage. cdecl, six arguments, plain ret
+				}
 				"CBaseEntity::AddTimedOverlay"
 				{
 					type  "fixed"
@@ -6107,6 +6116,15 @@
 					lib   "server"
 					// verified: string lead, agreed by strings+callees: 1 shared string(s), 9/10 matched callees, windows/linux size 1872/2054
 				}
+				"CTFProjectile_BallOfFire::Burn"
+				{
+					type  "fixed"
+					sym   "_ZN24CTFProjectile_BallOfFire4BurnEP11CBaseEntity"
+					addr  "0x534bd0"
+					build "11117211"
+					lib   "server"
+					// verified: string lead, agreed by strings: 4 shared string(s), 16/16 matched callees; read by hand on 11117211 (carry.py found no body): CTFProjectile_BallOfFire::RocketTouch (0x5349c0) calls it with the other entity, thiscall ret 4, and its strings are Weapon_DragonsFury.BonusDamage, BonusDamageHit, BonusDamagePain
+				}
 				"CTFProjectile_BallOfFire::RocketTouch"
 				{
 					type  "fixed"
@@ -7931,6 +7949,15 @@
 					build "11117211"
 					lib   "server"
 					// verified: read by hand: the callback the 'clear_debug_overlays' ConCommand registers (0x175f9): UTIL_IsCommandIssuedByServerAdmin, clears every entity's overlay bits (+0x104) and tail-calls debugoverlay ClearAllOverlays (+0x38). cdecl, plain ret
+				}
+				"ConColorMsg"
+				{
+					type  "fixed"
+					sym   "_Z11ConColorMsgRK5ColorPKcz"
+					addr  "0x45a0"
+					build "11117211"
+					lib   "tier0"
+					// verified: tier0.dll exports it as ?ConColorMsg@@YAXABVColor@@PBDZZ, ConColorMsg(const Color&, const char *, ...), at this address. cdecl varargs, plain ret
 				}
 				"CTFGameRules::RadiusDamage"
 				{
@@ -10494,6 +10521,15 @@
 					build "11117211"
 					lib   "server"
 					// consensus
+				}
+				"SQVM::Call"
+				{
+					type  "fixed"
+					sym   "_ZN4SQVM4CallER11SQObjectPtriiS1_j"
+					addr  "0x2dfa0"
+					build "11117211"
+					lib   "vscript"
+					// verified: read by hand, vscript.dll: the closure dispatch on the object type (0x8000200, 0x8004000), and the only code with "SCRIPT PERF WARNING --- \"%s\" ran long at %fms" and '<lambda or free run script>', Linux's body. The string match picked 0x2ded0, the arithmetic compare before the jump table that precedes it. Thiscall, ret 0x14
 				}
 				"CTFWorkshopMap::GetLocalFile"
 				{
