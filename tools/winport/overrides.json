@@ -486,6 +486,11 @@
   "build": "11117211",
   "why": "read by hand: the class data table's base from the global at 0x109c5c48 (the manager), plus 0xc, plus the class index times 0x8f0, Linux's body to the byte. 46 direct callers (49 on Linux, a few inlined), among them CTFPlayerClassShared::GetHandModelName (0x531ac0). cdecl, plain ret"
  },
+ "_Z18TFInventoryManagerv": {
+  "rva": "0x3c9e20",
+  "build": "11117211",
+  "why": "read by hand: 'mov eax, 0xa89250; ret', the address of the global CTFInventoryManager, as Linux's returns its own. 31 direct callers, each feeding the result to GetBaseItemForClass (0x3c9880) or the loadout code, among them CTFPlayer::GetLoadoutItem (0x4f3020). cdecl, plain ret"
+ },
  "_ZN16CTFWeaponBuilder13StartBuildingEv": {
   "rva": "0x603aa0",
   "build": "11117211",
