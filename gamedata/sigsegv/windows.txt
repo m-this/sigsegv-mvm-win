@@ -5755,14 +5755,14 @@
 					lib   "server"
 					// verified: read by hand: the think CTFLaserPointer::Deploy (0x617f10) sets with ThinkSet and 'CREATE_LASER_DOT' (0x617f3b), as Linux's sets CreateLaserDot. Tests the flag at +0x80d and the dot handle at +0x800 (Linux +0x819 and +0x80c), then CLaserDot::Create inline ('env_laserdot' at 0x617e04). Thiscall, plain ret
 				}
-				"CTFMedigunShield::Create"
+				"GetPlayerClassData"
 				{
 					type  "fixed"
-					sym   "_ZN16CTFMedigunShield6CreateEP9CTFPlayer"
-					addr  "0x61ad50"
+					sym   "_Z18GetPlayerClassDataj"
+					addr  "0x468480"
 					build "11117211"
 					lib   "server"
-					// verified: corroborated by tools/winport/corroborate.py: shares the string 'WeaponMedi_Shield.Deploy', 'generate_rage_on_heal', 'models/props_mvm/mvm_player_shield2.mdl' with the Linux function, and 3 of its 3 matched callees
+					// verified: read by hand: the class data table's base from the global at 0x109c5c48 (the manager), plus 0xc, plus the class index times 0x8f0, Linux's body to the byte. 46 direct callers (49 on Linux, a few inlined), among them CTFPlayerClassShared::GetHandModelName (0x531ac0). cdecl, plain ret
 				}
 				"CTFMedigunShield::ShieldThink"
 				{
