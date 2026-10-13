@@ -4670,15 +4670,29 @@ namespace Mod::Attr::Custom_Attributes
 		ReplaceBackCond(wep->GetTFPlayerOwner()->m_Shared.Get(), TF_COND_STEALTHED);
 	}
 	
+#if defined _WINDOWS
+	/* SpyDeadRingerDeath is inline in OnTakeDamage there: its call to FeignDeath passes the deathnotice flag, Event_Killed's does not */
+	DETOUR_DECL_MEMBER(void, CTFPlayer_FeignDeath, const CTakeDamageInfo& info, bool bDeathnotice)
+	{
+		if (!bDeathnotice) {
+			DETOUR_MEMBER_CALL(info, bDeathnotice);
+			return;
+		}
+#else
 	DETOUR_DECL_MEMBER(void, CTFPlayer_SpyDeadRingerDeath, const CTakeDamageInfo& info)
 	{
+#endif
 		SCOPED_INCREMENT(rc_CTFPlayerShared_AddCond);
 		SCOPED_INCREMENT(rc_CTFPlayerShared_InCond);
 		auto me = reinterpret_cast<CTFPlayer *>(this);
 		addcond_provider = me;
 		addcond_provider_item = GetEconEntityAtLoadoutSlot(me, LOADOUT_POSITION_PDA2);
 		ReplaceCond(me->m_Shared.Get(), TF_COND_STEALTHED);
+#if defined _WINDOWS
+		DETOUR_MEMBER_CALL(info, bDeathnotice);
+#else
 		DETOUR_MEMBER_CALL(info);
+#endif
 		ReplaceBackCond(me->m_Shared.Get(), TF_COND_STEALTHED);
 	}
 	
@@ -6528,6 +6542,24 @@ namespace Mod::Attr::Custom_Attributes
 		startHealingTargetHealer = nullptr;
     }
 
+#if defined _WINDOWS
+	/* Energy_Recharge is inlined into IncrementAmmo, its one caller: call that until the weapon is full */
+	DETOUR_DECL_MEMBER(void, CTFWeaponBase_IncrementAmmo)
+	{
+		auto weapon = reinterpret_cast<CTFWeaponBase *>(this);
+		
+		int iWeaponMod = 0;
+		CALL_ATTRIB_HOOK_INT_ON_OTHER(weapon, iWeaponMod, reload_full_clip_at_once );
+		if (iWeaponMod == 1 && weapon->IsEnergyWeapon()) {
+			for (int i = 0; i < 64 && weapon->m_flEnergy < weapon->Energy_GetMaxEnergy(); ++i) {
+				DETOUR_MEMBER_CALL();
+			}
+			return;
+		}
+
+		DETOUR_MEMBER_CALL();
+	}
+#else
 	DETOUR_DECL_MEMBER(bool, CTFWeaponBase_Energy_Recharge)
 	{
 		auto weapon = reinterpret_cast<CTFWeaponBase *>(this);
@@ -6547,6 +6579,7 @@ namespace Mod::Attr::Custom_Attributes
 
 		return DETOUR_MEMBER_CALL();
 	}
+#endif
 
 	DETOUR_DECL_MEMBER(void, CBasePlayer_ItemPostFrame)
 	{
@@ -10269,7 +10302,10 @@ namespace Mod::Attr::Custom_Attributes
 			MOD_ADD_DETOUR_MEMBER(CTraceFilterObject_ShouldHitEntity, "CTraceFilterObject::ShouldHitEntity");
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_RegenThink, "CTFPlayer::RegenThink");
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_StopTaunt, "CTFPlayer::StopTaunt");
+#if !defined _WINDOWS
+			/* inline in PlayTauntSceneFromItem on Windows: always_allow_taunt has no effect there */
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_IsAllowedToInitiateTauntWithPartner, "CTFPlayer::IsAllowedToInitiateTauntWithPartner");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CTFWeaponBase_DeflectEntity, "CTFWeaponBase::DeflectEntity");
 			MOD_ADD_DETOUR_MEMBER(CTFGameRules_GetKillingWeaponName, "CTFGameRules::GetKillingWeaponName");
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_Touch, "CTFPlayer::Touch");
@@ -10293,7 +10329,10 @@ namespace Mod::Attr::Custom_Attributes
 #endif
 			MOD_ADD_DETOUR_MEMBER(CTFProjectile_Arrow_ArrowTouch, "CTFProjectile_Arrow::ArrowTouch");
 			MOD_ADD_DETOUR_MEMBER(CTFRadiusDamageInfo_ApplyToEntity, "CTFRadiusDamageInfo::ApplyToEntity [clone]");
+#if !defined _WINDOWS
+			/* inline in CTFFlameManager::OnCollide on Windows: the flamethrower's max_aoe_targets has no effect there */
 			MOD_ADD_DETOUR_MEMBER(CTFFlameManager_BCanBurnEntityThisFrame,        "CTFFlameManager::BCanBurnEntityThisFrame");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CTFProjectile_BallOfFire_RocketTouch, "CTFProjectile_BallOfFire::RocketTouch");
 			MOD_ADD_DETOUR_MEMBER(CTFProjectile_EnergyRing_ProjectileTouch, "CTFProjectile_EnergyRing::ProjectileTouch");
 			MOD_ADD_DETOUR_MEMBER(CTFProjectile_EnergyRing_ShouldPenetrate, "CTFProjectile_EnergyRing::ShouldPenetrate");
@@ -10385,7 +10424,11 @@ namespace Mod::Attr::Custom_Attributes
 			MOD_ADD_DETOUR_MEMBER(CWeaponMedigun_RemoveHealingTarget, "CWeaponMedigun::RemoveHealingTarget");
 			MOD_ADD_DETOUR_MEMBER(CWeaponMedigun_StartHealingTarget, "CWeaponMedigun::StartHealingTarget");
 			MOD_ADD_DETOUR_STATIC(FX_FireBullets, "FX_FireBullets");
+#if defined _WINDOWS
+            MOD_ADD_DETOUR_MEMBER(CTFWeaponBase_IncrementAmmo, "CTFWeaponBase::IncrementAmmo");
+#else
             MOD_ADD_DETOUR_MEMBER(CTFWeaponBase_Energy_Recharge, "CTFWeaponBase::Energy_Recharge");
+#endif
             MOD_ADD_DETOUR_MEMBER(CWeaponMedigun_GetHealRate, "CWeaponMedigun::GetHealRate");
             MOD_ADD_DETOUR_MEMBER(CTFProjectile_EnergyBall_Explode, "CTFProjectile_EnergyBall::Explode");
             MOD_ADD_DETOUR_MEMBER(CTFPlayer_Taunt, "CTFPlayer::Taunt");
@@ -10414,7 +10457,11 @@ namespace Mod::Attr::Custom_Attributes
             MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_FadeInvis, "CTFPlayerShared::FadeInvis");
             MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_UpdateCloakMeter, "CTFPlayerShared::UpdateCloakMeter [clone]");
             //MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_InCond, "CTFPlayerShared::InCond");
+#if defined _WINDOWS
+            MOD_ADD_DETOUR_MEMBER(CTFPlayer_FeignDeath, "CTFPlayer::FeignDeath");
+#else
             MOD_ADD_DETOUR_MEMBER(CTFPlayer_SpyDeadRingerDeath, "CTFPlayer::SpyDeadRingerDeath");
+#endif
             MOD_ADD_DETOUR_MEMBER(CTFWeaponInvis_CleanupInvisibilityWatch, "CTFWeaponInvis::CleanupInvisibilityWatch");
             MOD_ADD_DETOUR_MEMBER(CTFWeaponInvis_GetViewModel, "CTFWeaponInvis::GetViewModel");
 #if !defined _WINDOWS

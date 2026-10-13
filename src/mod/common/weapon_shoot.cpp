@@ -478,7 +478,10 @@ namespace Mod::Common::Weapon_Shoot
 			// Bullet tracers
 			MOD_ADD_DETOUR_STATIC(TE_FireBullets,  "TE_FireBullets");
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_FireBullet,    "CTFPlayer::FireBullet");
+#if !defined _WINDOWS
+			/* inline in FireBullet on Windows: no custom tracer particle and no broadcast beam there */
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_MaybeDrawRailgunBeam,    "CTFPlayer::MaybeDrawRailgunBeam");
+#endif
 
 			// Fix lag compensation crash
 			MOD_ADD_DETOUR_MEMBER(CLagCompensationManager_StartLagCompensation, "CLagCompensationManager::StartLagCompensation");

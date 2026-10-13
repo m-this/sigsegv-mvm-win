@@ -10257,6 +10257,15 @@
 					lib   "server"
 					// verified: read by hand from CTFPlayer::OnTakeDamage: at 0x503eca it is called with the damage info's address alone (cdecl, add esp 4) and its result, tested for null, is the econ entity handed to the kill eater event (0x48a8e0) with kKillEaterEvent 0x52, damage dealt, as the Linux body does with GetKilleaterWeaponFromDamageInfo
 				}
+				"EconItemInterface_OnOwnerKillEaterEvent_Batched"
+				{
+					type  "fixed"
+					sym   "_Z47EconItemInterface_OnOwnerKillEaterEvent_BatchedP18IEconItemInterfaceP9CTFPlayerS2_18kill_eater_event_ti"
+					addr  "0x48a4a0"
+					build "11117211"
+					lib   "server"
+					// verified: EconEntity_OnOwnerKillEaterEvent_Batched with the interface body inline: takes the entity, not the interface, and calls ValidateAndSendStrangeMessageToGC_Batched (0x48a6b0, matched to Linux's) twice around the owner's list loop (+0xef0, count +0xefc). Called from the same four places as Linux's wrapper: OnTakeDamage twice (0x5039f0, 0x5039fe), 0x51c46f (ConditionGameRulesThink) and 0x5f9e6e (HealingBolt::ImpactTeamPlayer). Its owner is the second argument, which is all the Weapon_Shoot detour reads
+				}
 				"OnBotTeleported"
 				{
 					type  "fixed"
@@ -10270,10 +10279,10 @@
 				{
 					type  "fixed"
 					sym   "_Z39EconItemInterface_OnOwnerKillEaterEventP18IEconItemInterfaceP9CTFPlayerS2_18kill_eater_event_ti"
-					addr  "0x48a4a0"
+					addr  "0x48a9f0"
 					build "11117211"
 					lib   "server"
-					// verified: read by hand from CTFPlayer::OnTakeDamage, which calls it twice with (econ entity, attacker, victim, event 0x52 or 0x5e, amount), cdecl, add esp 0x28 for both. MSVC folded the econ entity wrapper and the IEconItemInterface body into this one function: it takes the entity, not the interface, and reaches the item through +0x4ac itself. Its owner, the second argument, is where the Linux one is, which is all the Weapon_Shoot detour reads: a fake weapon's damage with no player owner faulted here reading owner+0xefc
+					// verified: the IEconItemInterface body, cdecl (interface, owner, victim, event, amount) with the owner's list at +0xef0, count +0xefc (Linux +0xf14), and the non-batched ValidateAndSendStrangeMessageToGC (0x48a5a0) as callee. The entity wrapper 0x48a440 (CHealthKit::MyTouch, CObjectSapper::Killed and 16 more callers) jumps here with the interface at entity+0x4ac+0x60, as Linux's EconEntity_OnOwnerKillEaterEvent does
 				}
 				"CTFGameRules::FlPlayerFallDamage"
 				{
@@ -14154,6 +14163,15 @@
 					lib   "server"
 					// consensus, ret 8 as its arguments say
 				}
+				"CTFPlayer::UpdateExpression"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer16UpdateExpressionEv"
+					addr  "0x4f1dd0"
+					build "11117211"
+					lib   "server"
+					// verified: a standalone body: gated on a next-time field (+0x12a0), asks GetResponseSceneFromConcept (0x4f3910) for concept 0, stops the old scene (StopScriptedScene 0x322bb0) and plays the new one through InstancedScriptedScene (0x3204d0). Thiscall, plain ret. TFPlayerThink (0x50faa0) also carries an inline copy (ClearExpression 0x4e4a70, 0x4f3910, 0x3204d0 at 0x5105e6 to 0x510753) that no detour reaches; the standalone copy is stored as a function pointer at 0x4f6b75
+				}
 				"CTFPlayerShared::ConditionGameRulesThink"
 				{
 					type  "fixed"
@@ -14992,6 +15010,24 @@
 					build "11117211"
 					lib   "engine"
 					// verified: one of three engine.dll functions using the SNAP tag 0x50414e53; the one that writes it into a caller's buffer, takes (dest, destLen*, source, sourceLen) and returns bool. The allocating COM_CompressBuffer_Snappy is inlined away
+				}
+				"CTFWeaponBase::IncrementAmmo"
+				{
+					type  "fixed"
+					sym   "_ZN13CTFWeaponBase13IncrementAmmoEv"
+					addr  "0x636170"
+					build "11117211"
+					lib   "server"
+					// verified: the one function that calls the shared ammo virtuals (+0x428, +0x514, +0x424) as the Linux IncrementAmmo does, with Energy_Recharge inlined: the energy weapon branch adds a recharge step to m_flEnergy (+0x7a0, Linux +0x7ac). 4 callers (0x6253f0, 0x6259f0, 0x636b50, 0x637250), as Linux has. Thiscall, no arguments
+				}
+				"CTFPlayer::FeignDeath"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer10FeignDeathERK15CTakeDamageInfob"
+					addr  "0x4f0750"
+					build "11117211"
+					lib   "server"
+					// verified: thiscall ret 8 (info, bool deathnotice); CTFPlayer::OnTakeDamage's inlined SpyDeadRingerDeath calls it with true (0x5032aa), Event_Killed with false (0x4ec81a), the two Linux callers
 				}
 				"g_pGameRules"
 				{

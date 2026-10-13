@@ -19,7 +19,7 @@ Measured on 2026-10-14 against TF2 ServerVersion 11117211 (depot 232255), main `
 | Compiled out on both platforms | 23 |
 | All SigMod mods (`IMod`/`CModule` names) | 309 |
 
-Of the 36 with gaps, 23 are `Debug:`, `Visualize:` or `Prof:` tools. The mission-facing ones are `Attr:Custom_Attributes` (4 of 298 detours), `Common:Weapon_Shoot` (2 of 21), `Etc:Entity_Limit_Manager` (1 of 11), `AI:Improved_Targeting` (1 of 7), `MvM:Drop_Weapons` and `MvM:Human_Death_Yells` (1 each). Every one of those but `EconItemInterface_OnOwnerKillEaterEvent_Batched`, `CTFWeaponBase::Energy_Recharge` and `CTFBot::IsExplosiveProjectileWeapon` is recorded in `overrides.json` as inlined into its caller on 11117211 (`bad`), so the detour cannot exist there.
+Of the 36 with gaps (30 after the second batch), the mission-facing mods are at zero unresolved detours: every remaining gap is under `#if !defined _WINDOWS` with the feature it loses listed below. What is left is `Debug:`, `Visualize:` and `Prof:` tools, `Etc:Workshop_Map_Fix`, `Util:Vehicle_Fix`, `Util:Overlay_Send` and four `Perf:` mods.
 
 Address names: 2,860 are defined in the Linux gamedata, 2,163 of them are named in `src/`. Of those 2,163: 1,450 have a `windows.txt` entry, 214 resolve at run time, 14 are recorded `bad` (inlined, no body of their own), 43 are client-side, and **442 have no Windows entry**.
 
@@ -27,9 +27,6 @@ Address names: 2,860 are defined in the Linux gamedata, 2,163 of them are named 
 
 `missing`: no entry and no override. `bad`: read by hand, no body of its own on 11117211.
 
-- `AI:Improved_Targeting` (1 of 7): `CTFBot::IsExplosiveProjectileWeapon` (missing)
-- `Attr:Custom_Attributes` (4 of 298): `CTFPlayer::IsAllowedToInitiateTauntWithPartner` (bad), `CTFFlameManager::BCanBurnEntityThisFrame` (bad), `CTFWeaponBase::Energy_Recharge` (missing), `CTFPlayer::SpyDeadRingerDeath` (bad)
-- `Common:Weapon_Shoot` (2 of 21): `EconItemInterface_OnOwnerKillEaterEvent_Batched` (missing), `CTFPlayer::MaybeDrawRailgunBeam` (bad)
 - `Debug:CTFBotProxy` (2 of 4): `CTFBotProxy::CTFBotProxy [C1]` (missing), `CEventQueue::AddEvent [EventQueuePrioritizedEvent_t *]` (missing)
 - `Debug:ChangeLevel` (4 of 4): `CChangeLevelIssue::CanCallVote` (missing), `CChangeLevelIssue::ExecuteCommand` (missing), `CVEngineServer::ChangeLevel` (missing), `Host_Changelevel_f` (missing)
 - `Debug:Flamethrower_Mojo` (6 of 16): `CTFFlameThrower::GetFlameOriginPos` (missing), `CTFFlameEntity::Create` (missing), `CTFFlameEntity::RemoveFlame` (missing), `CBaseProjectile::CollideWithTeammatesThink` (missing), `CBaseEntity::PhysicsNoclip` (missing), `CBaseEntity::PhysicsRunThink` (missing)
@@ -48,10 +45,7 @@ Address names: 2,860 are defined in the Linux gamedata, 2,163 of them are named 
 - `Debug:UserMsg_Overflow_v2` (1 of 2): `CNetChan::SendNetMsg` (missing)
 - `Debug:VProf_Record` (2 of 2): `VProfRecord_Snapshot` (missing), `VProfRecord_StartOrStop` (missing)
 - `Debug:Vaccinator` (1 of 1): `CheckMedicResist` (missing)
-- `Etc:Entity_Limit_Manager` (1 of 11): `CTFPlayer::UpdateExpression` (bad)
 - `Etc:Workshop_Map_Fix` (5 of 8): `CTFWorkshopMap::OnUGCItemInstalled` (missing), `CTFMapsWorkshop::Steam_OnUGCItemInstalled` (missing), `CTFMapsWorkshop::AddMap` (missing), `CDownloadListGenerator::OnResourcePrecachedFullPath` (missing), `CVEngineServer::FindMap` (missing)
-- `MvM:Drop_Weapons` (1 of 4): `CTFPlayer::ShouldDropAmmoPack` (bad)
-- `MvM:Human_Death_Yells` (1 of 2): `CTFPlayer::SpyDeadRingerDeath` (bad)
 - `Perf::CSS_Bot_Vision_Optimize` (3 of 3): `CCSBot::IsVisible` (missing), `CCSBot::GetPartPosition` (missing), `CCSBot::FindMostDangerousThreat` (missing)
 - `Perf::Virtual_Call_Optimize_Inline_Virtuals` (1 of 5): `CServerNetworkProperty::GetClassName` (missing)
 - `Perf:HLTV_Optimize` (1 of 12): `CHLTVDemoRecorder::StopRecording [clone]` (missing)
@@ -63,6 +57,25 @@ Address names: 2,860 are defined in the Linux gamedata, 2,163 of them are named 
 - `Visualize:Flamethrower` (2 of 4): `CTFFlameEntity::Create` (missing), `CTFFlameEntity::RemoveFlame` (missing)
 - `Visualize:Minigun_Deflect` (2 of 4): `CTFPlayer::IsMiniBoss` (missing), `CalcDistanceToLineSegment` (missing)
 - `Visualize:Taunt_Attacks` (1 of 4): `CEntitySphereQuery::CEntitySphereQuery [C1]` (missing)
+
+## Inlined functions and what the Windows build loses
+
+Each was checked to have no standalone body on 11117211: the only Linux caller holds the inline, and the strings or the callee that would belong to a standalone copy appear once.
+
+| Function | Inline in | Feature lost on Windows |
+| --- | --- | --- |
+| `CTFFlameManager::BCanBurnEntityThisFrame` | `OnCollide` 0x46eba0 (0x46ed22) | `Custom_Attributes` max_aoe_targets throttle on flamethrowers |
+| `CTFPlayer::IsAllowedToInitiateTauntWithPartner` | `PlayTauntSceneFromItem` 0x506230 | `Custom_Attributes` always_allow_taunt |
+| `CTFPlayer::MaybeDrawRailgunBeam` | `FireBullet` 0x51fe50 | `Weapon_Shoot` custom tracer particle and broadcast beam |
+| `CTFBot::IsExplosiveProjectileWeapon` | `FireWeaponAtEnemy` 0x56a3c0 (as four `IsWeapon` calls) | `Improved_Targeting` close explosive attack cvar |
+| `CTFPlayer::SpyDeadRingerDeath` | `OnTakeDamage` 0x500c70 | none: `Custom_Attributes` and `Human_Death_Yells` hook `FeignDeath` (0x4f0750) called with deathnotice true |
+| `CTFWeaponBase::Energy_Recharge` | `IncrementAmmo` 0x636170 | none: `reload_full_clip_at_once` hooks `IncrementAmmo` |
+| `CTFPlayer::ShouldDropAmmoPack` | `Event_Killed` 0x4ec3b0 | none: `Drop_Weapons` and `TFBot_Extensions` drop in an `Event_Killed` detour |
+| `CTFBotMainAction::SelectCloserThreat` | `SelectMoreDangerousThreatInternal` | none: native body in `stub/tfbot_behavior.cpp` |
+
+`CTFPlayer::UpdateExpression` is not inlined everywhere: 0x4f1dd0 is a standalone copy (stored as a function pointer at 0x4f6b75); `TFPlayerThink` (0x50faa0) also carries one inline, which the `Entity_Limit_Manager` detour does not reach.
+
+`EconItemInterface_OnOwnerKillEaterEvent` was pinned to 0x48a4a0, which is the Batched wrapper; the non-batched interface body is 0x48a9f0 and 0x48a4a0 is now the Batched entry.
 
 ## Client-side only gaps
 
