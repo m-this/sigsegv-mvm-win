@@ -61,6 +61,13 @@
   "carried": "from 11087207 0x39b340 by tools/winport/carry.py: server.dll, 344 bytes",
   "why": "corroborated by tools/winport/corroborate.py: shares the string '%s.ctx', 'WeaponDatafile' with the Linux function, and 5 of its 5 matched callees"
  },
+ "_Z20AllocChangeFrameListii": {
+  "lib": "engine",
+  "rva": "0x14f090",
+  "build": "11117211",
+  "carried": "read by hand on 11117211",
+  "why": "operator new(0x18), the CChangeFrameList constructor inline (vtable, five zeroed fields), then the init call (0x14f1b0) with both arguments; cdecl, two arguments, plain ret; two callers matched to Linux's"
+ },
  "_Z21SpawnHierarchicalListiP19HierarchicalSpawn_tb": {
   "rva": "0x2979e0",
   "build": "11117211",
@@ -93,6 +100,20 @@
   "carried": "from 11087207 0x15d9c0 by tools/winport/carry.py: engine.dll, 300 bytes",
   "why": "(dest, destLen*, source, sourceLen): checks source for the LZSS and SNAP tags and decompresses into dest"
  },
+ "_Z30SendTable_CullPropsFromProxiesPK9SendTablePKiiiPK20CSendProxyRecipientsiS6_iPii": {
+  "lib": "engine",
+  "rva": "0x170db0",
+  "build": "11117211",
+  "carried": "read by hand on 11117211",
+  "why": "the only code with both 'CPropCullStack::AddProp - m_pOutProps overflowed' and \"CullPropsFromProxies: overflow in '%s'.\" (string overlap 1.0 with the Linux body); cdecl, eleven stack arguments, plain ret"
+ },
+ "_Z32InvalidateSharedEdictChangeInfosv": {
+  "lib": "engine",
+  "rva": "0x13d4c0",
+  "build": "11117211",
+  "carried": "read by hand on 11117211",
+  "why": "the Linux body: bump a 16-bit change-frame counter, and on wrap reset it to 1 and clear every edict's change info through CBaseEdict::GetChangeAccessor (0x1be4c0) at 20 bytes per edict, then zero the second counter; cdecl, no arguments"
+ },
  "_Z45AllocPooledString_StaticConstantStringPointerPKc": {
   "rva": "0x2810a0",
   "build": "11117211",
@@ -123,6 +144,13 @@
   "build": "11117211",
   "carried": "from 11087207 0xa34718 by tools/winport/carry.py: server.dll, 5 reference sites agree",
   "why": "AllocPooledString, CC_DumpGameStringTable and AllocPooledString_StaticConstantStringPointer all address it from here; field offsets +0x4, +0x8 and +0x14 agree with Linux"
+ },
+ "_ZN10CBaseEdict17GetChangeAccessorEv": {
+  "lib": "engine",
+  "rva": "0x1be4c0",
+  "build": "11117211",
+  "carried": "read by hand on 11117211",
+  "why": "thiscall: movsx of the index at +6, the edict array at 0x105ec498 with 20 byte entries, and the change-info array beside it, as the Linux body; called by InvalidateSharedEdictChangeInfos and three other engine functions"
  },
  "_ZN10CTFMinigun22AttackEnemyProjectilesEv": {
   "rva": "0x61f750",
@@ -190,6 +218,20 @@
   "build": "11117211",
   "carried": "from 11087207 0x39fe20 by tools/winport/carry.py: server.dll, 624 bytes",
   "why": "corroborated by tools/winport/corroborate.py: calls all 7 of the Linux function's matched callees, and no string disagrees"
+ },
+ "_ZN11CGameClient13SetupPackInfoEP14CFrameSnapshot": {
+  "lib": "engine",
+  "rva": "0x126e80",
+  "build": "11117211",
+  "carried": "read by hand on 11117211",
+  "why": "opens with the virtual at +0x20 and AllocateFrame, calls CClientFrame::Init, then CClientFrameManager::AddClientFrame (0xb8f40, matched to Linux's), as the Linux body does; thiscall, one argument, ret 4; sits next to CGameClient::SendSnapshot (0x1265e0)"
+ },
+ "_ZN11CHLTVClient12SendSnapshotEP12CClientFrame": {
+  "lib": "engine",
+  "rva": "0x1791d0",
+  "build": "11117211",
+  "carried": "read by hand on 11117211",
+  "why": "the only code with the 'CHLTVClient::SendSnapshot' profiler scope, a 0x46550 byte frame; thiscall, one argument, ret 4"
  },
  "_ZN11CTFAmmoPack6CreateERK6VectorRK6QAngleP11CBaseEntityPKc": {
   "rva": "0x460b50",
@@ -359,6 +401,13 @@
   "build": "11117211",
   "carried": "from 11087207 0x5423f0 by tools/winport/carry.py: server.dll, 619 bytes",
   "why": "corroborated by tools/winport/corroborate.py: calls all 7 of the Linux function's matched callees, and no string disagrees"
+ },
+ "_ZN14CVEngineServer19CheckAreasConnectedEii": {
+  "lib": "engine",
+  "rva": "0x13cd10",
+  "build": "11117211",
+  "carried": "read by hand on 11117211",
+  "why": "two arguments pushed to CM_AreasConnected (0x1532e0, matched to Linux's by its 'area(1==%i, 2==%i) >= numareas' string), movzx of the bool; ret 8 as a method with two arguments"
  },
  "_ZN14CWeaponMedigun15HealTargetThinkEv": {
   "rva": "0x61c350",

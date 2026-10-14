@@ -9270,6 +9270,15 @@
 					lib   "server"
 					// string
 				}
+				"CBaseEdict::GetChangeAccessor"
+				{
+					type  "fixed"
+					sym   "_ZN10CBaseEdict17GetChangeAccessorEv"
+					addr  "0x1be4c0"
+					build "11117211"
+					lib   "server"
+					// verified: thiscall: movsx of the index at +6, the edict array at 0x105ec498 with 20 byte entries, and the change-info array beside it, as the Linux body; called by InvalidateSharedEdictChangeInfos and three other engine functions
+				}
 				"CHLTVDemoRecorder::StopRecording"
 				{
 					type  "fixed"
@@ -9287,6 +9296,15 @@
 					build "11117211"
 					lib   "server"
 					// consensus
+				}
+				"AllocChangeFrameList"
+				{
+					type  "fixed"
+					sym   "_Z20AllocChangeFrameListii"
+					addr  "0x14f090"
+					build "11117211"
+					lib   "engine"
+					// verified: operator new(0x18), the CChangeFrameList constructor inline (vtable, five zeroed fields), then the init call (0x14f1b0) with both arguments; cdecl, two arguments, plain ret; two callers matched to Linux's
 				}
 				"CMultiPlayerAnimState::RestartGesture"
 				{
@@ -9333,6 +9351,15 @@
 					build "11117211"
 					lib   "engine"
 					// verified: read by hand, engine.dll: opens the 'CBaseServer::WriteDeltaEntities' VPROF scope of sv_ents_write.cpp, then the 'Delta: [%d] deletions', 'delta [%s]', 'leave [%s]', 'enter [%s]', 'Delta Entities Overhead' and 'Delta Finish' traces in Linux order, and calls SV_DetermineUpdateType (0x128050) and SV_WriteDeltaHeader (0x1289e0). Pops 0x10: four arguments
+				}
+				"SendTable_CullPropsFromProxies"
+				{
+					type  "fixed"
+					sym   "_Z30SendTable_CullPropsFromProxiesPK9SendTablePKiiiPK20CSendProxyRecipientsiS6_iPii"
+					addr  "0x170db0"
+					build "11117211"
+					lib   "engine"
+					// verified: the only code with both 'CPropCullStack::AddProp - m_pOutProps overflowed' and "CullPropsFromProxies: overflow in '%s'." (string overlap 1.0 with the Linux body); cdecl, eleven stack arguments, plain ret
 				}
 				"CCommandBuffer::AddText"
 				{
@@ -10440,6 +10467,15 @@
 					lib   "server"
 					// verified: read by hand: holds 'StringToFile() file name cannot contain '..'' and 'Script_StringToFile: NULL/empty file name', the two strings of Linux's body, and is registered as a script function at 0x38c611. cdecl
 				}
+				"CHLTVClient::SendSnapshot"
+				{
+					type  "fixed"
+					sym   "_ZN11CHLTVClient12SendSnapshotEP12CClientFrame"
+					addr  "0x1791d0"
+					build "11117211"
+					lib   "engine"
+					// verified: the only code with the 'CHLTVClient::SendSnapshot' profiler scope, a 0x46550 byte frame; thiscall, one argument, ret 4
+				}
 				"CBaseClient::Disconnect"
 				{
 					type  "fixed"
@@ -10961,6 +10997,15 @@
 					lib   "engine"
 					// verified: read by hand, engine.dll: slot 46 of CGameServer's table (Linux 47), the only code with the 'SendClientMessages' profiler scope in sv_main.cpp, Linux's body. Thiscall, ret 4
 				}
+				"CVEngineServer::CheckAreasConnected"
+				{
+					type  "fixed"
+					sym   "_ZN14CVEngineServer19CheckAreasConnectedEii"
+					addr  "0x13cd10"
+					build "11117211"
+					lib   "engine"
+					// verified: two arguments pushed to CM_AreasConnected (0x1532e0, matched to Linux's by its 'area(1==%i, 2==%i) >= numareas' string), movzx of the bool; ret 8 as a method with two arguments
+				}
 				"CMapReslistGenerator::RunFrame"
 				{
 					type  "fixed"
@@ -10978,6 +11023,15 @@
 					build "11117211"
 					lib   "engine"
 					// verified: read by hand, engine.dll: compares m_nNewEntity (+0x18) with m_nOldEntity (+0x14) and sets m_UpdateType (+0x10) to 0 or 1, then for equal ones tests the 'checkProps' profiler scope, the delta cache lookups and the pack comparisons at +0x2c/+0x30/+0x134/+0x138/+0x148, every offset of Linux 0xc6220. Takes the CEntityWriteInfo pointer on the stack (Linux in eax), plain ret
+				}
+				"InvalidateSharedEdictChangeInfo"
+				{
+					type  "fixed"
+					sym   "_Z32InvalidateSharedEdictChangeInfosv"
+					addr  "0x13d4c0"
+					build "11117211"
+					lib   "engine"
+					// verified: the Linux body: bump a 16-bit change-frame counter, and on wrap reset it to 1 and clear every edict's change info through CBaseEdict::GetChangeAccessor (0x1be4c0) at 20 bytes per edict, then zero the second counter; cdecl, no arguments
 				}
 				"CNavMesh::GetNavArea [vec]"
 				{
@@ -14840,6 +14894,15 @@
 					build "11117211"
 					lib   "engine"
 					// verified: read by hand, engine.dll: slot 17 of CGameClient's primary table (CBaseClient's own virtuals after the destructor and FireGameEvent, UpdateAcknowledgedFramecount at slot 4 as Linux has it first); copies the name with 'unnamed' for an empty one, Linux's body. Thiscall, ret 4
+				}
+				"CGameClient::SetupPackInfo"
+				{
+					type  "fixed"
+					sym   "_ZN11CGameClient13SetupPackInfoEP14CFrameSnapshot"
+					addr  "0x126e80"
+					build "11117211"
+					lib   "engine"
+					// verified: opens with the virtual at +0x20 and AllocateFrame, calls CClientFrame::Init, then CClientFrameManager::AddClientFrame (0xb8f40, matched to Linux's), as the Linux body does; thiscall, one argument, ret 4; sits next to CGameClient::SendSnapshot (0x1265e0)
 				}
 				"CAmbientGeneric::m_DataMap"
 				{
