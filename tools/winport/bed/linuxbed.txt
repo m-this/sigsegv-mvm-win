@@ -1,3 +1,2 @@
-# Missions the Linux bed plays, one job each.
 mvm_creepside_b2_adv_dismal_devilry
-mvm_rottenburg_adv_marathon
+mvm_creepside_b2_adv_dust_to_dust
