@@ -21,7 +21,12 @@ public:
 	void SetHealth(float amt)              {        ft_SetHealth        (this, amt); }
 	void SetPlasmaDisabled(float duration) {        ft_SetPlasmaDisabled(this, duration); }
 	bool HasSapper()                       { return ft_HasSapper        (this); }
+#if defined _WINDOWS
+	/* Inline in server.dll: the Linux body, bit 1 of m_fObjectFlags (OF_MUST_BE_BUILT_ON_ATTACHMENT) */
+	bool MustBeBuiltOnAttachmentPoint()    { return (this->m_fObjectFlags & 2) != 0; }
+#else
 	bool MustBeBuiltOnAttachmentPoint()    { return ft_MustBeBuiltOnAttachmentPoint(this); }
+#endif
 
 #if defined _WINDOWS
 	bool FindBuildPointOnPlayer(CTFPlayer *pTFPlayer, CBasePlayer *pBuilder, float &flNearestPoint, Vector &vecNearestBuildPoint);
@@ -46,6 +51,7 @@ public:
 	DECL_DATAMAP(int, m_nDefaultUpgradeLevel);
 	
 	DECL_SENDPROP(int,                m_iUpgradeLevel);
+	DECL_SENDPROP(int,                m_fObjectFlags);
 	DECL_SENDPROP(bool,               m_bMiniBuilding);
 	DECL_SENDPROP(bool,               m_bDisposableBuilding);
 	DECL_SENDPROP(bool,               m_bBuilding);
