@@ -372,6 +372,10 @@ namespace Mod::Common::Weapon_Shoot
 	int customDamageTypeBullet = 0;
 	RefCount rc_FireWeaponDoTrace;
     bool isCritTrace = false;
+#if defined _WINDOWS
+	RefCount rc_FireBullet;
+	CTFPlayer *fire_bullet_player = nullptr;
+#endif
 	DETOUR_DECL_MEMBER(void, CTFPlayer_FireBullet, CTFWeaponBase *weapon, FireBulletsInfo_t& info, bool bDoEffects, int nDamageType, int nCustomDamageType)
 	{
 		bool doTrace = false;
@@ -387,9 +391,37 @@ namespace Mod::Common::Weapon_Shoot
 
 		SCOPED_INCREMENT_IF(rc_FireWeaponDoTrace, doTrace);
 
+#if defined _WINDOWS
+		SCOPED_INCREMENT(rc_FireBullet);
+		fire_bullet_player = reinterpret_cast<CTFPlayer *>(this);
+#endif
 		
 		DETOUR_MEMBER_CALL(weapon, info, bDoEffects, nDamageType, nCustomDamageType);
 	}
+
+#if defined _WINDOWS
+	/* MaybeDrawRailgunBeam is inline in FireBullet there, and its one effect is this call: the beam
+	 * from the muzzle (origin) to the hit point (the control point's offset). Do what the detour on
+	 * MaybeDrawRailgunBeam does to the call instead */
+	DETOUR_DECL_STATIC(void, TE_TFParticleEffectComplex, IRecipientFilter &filter, float flDelay, const char *pszParticleName, Vector vecOrigin, QAngle vecAngles, te_tf_particle_effects_colors_t *pOptionalColors, te_tf_particle_effects_control_point_t *pOptionalControlPoint1, CBaseEntity *pEntity, ParticleAttachment_t eAttachType, Vector vecStart)
+	{
+		if (rc_FireBullet && fire_bullet_player != nullptr && pOptionalControlPoint1 != nullptr && strncmp(pszParticleName, "dxhr_sniper_rail", strlen("dxhr_sniper_rail")) == 0) {
+			if (rc_FireWeaponDoTrace) {
+				te_tf_particle_effects_control_point_t cp;
+				cp.m_eParticleAttachment = PATTACH_ABSORIGIN;
+				cp.m_vecOffset = pOptionalControlPoint1->m_vecOffset;
+				auto tracerName = fire_bullet_player->GetTracerType();
+				DispatchParticleEffect(isCritTrace ? CFmtStr("%s_crit", tracerName).Get() : tracerName, PATTACH_ABSORIGIN, nullptr, nullptr, vecOrigin, true, vec3_origin, vec3_origin, false, false, &cp, nullptr);
+			}
+			if (rc_FireWeapon) {
+				CBroadcastRecipientFilter filter2;
+				DETOUR_STATIC_CALL(filter2, flDelay, pszParticleName, vecOrigin, vecAngles, pOptionalColors, pOptionalControlPoint1, pEntity, eAttachType, vecStart);
+				return;
+			}
+		}
+		DETOUR_STATIC_CALL(filter, flDelay, pszParticleName, vecOrigin, vecAngles, pOptionalColors, pOptionalControlPoint1, pEntity, eAttachType, vecStart);
+	}
+#endif
 
 	DETOUR_DECL_MEMBER(void, CTFPlayer_MaybeDrawRailgunBeam, IRecipientFilter *filter, CTFWeaponBase *weapon, const Vector &vStartPos, const Vector &vEndPos)
 	{
@@ -478,8 +510,10 @@ namespace Mod::Common::Weapon_Shoot
 			// Bullet tracers
 			MOD_ADD_DETOUR_STATIC(TE_FireBullets,  "TE_FireBullets");
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_FireBullet,    "CTFPlayer::FireBullet");
-#if !defined _WINDOWS
-			/* inline in FireBullet on Windows: no custom tracer particle and no broadcast beam there */
+#if defined _WINDOWS
+			/* inline in FireBullet there: the beam call itself is hooked instead */
+			MOD_ADD_DETOUR_STATIC(TE_TFParticleEffectComplex,    "TE_TFParticleEffectComplex");
+#else
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_MaybeDrawRailgunBeam,    "CTFPlayer::MaybeDrawRailgunBeam");
 #endif
 
