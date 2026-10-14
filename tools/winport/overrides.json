@@ -539,6 +539,12 @@
   "carried": "from 11087207 0x4ce050 by tools/winport/carry.py: server.dll, 410 bytes",
   "why": "corroborated by tools/winport/corroborate.py: shares the string 'aim_pitch', 'aim_yaw' with the Linux function, and 9 of its 9 matched callees"
  },
+ "_ZN16CTFBotMainAction7OnStartEP6CTFBotP6ActionIS0_E": {
+  "rva": "0x56bb40",
+  "build": "11117211",
+  "carried": "read by hand on 11117211",
+  "why": "slot 45 of CTFBotMainAction's table, the neighbours of Linux's slot 46 (the Windows table has one destructor slot where Linux has two) both matched; opens with the same field resets as the Linux body: +0x68 to -1 and +0x6c, +0x4c, +0x50, +0x60, +0x54, +0x58 to 0. Thiscall, two arguments"
+ },
  "_ZN16CTFDroppedWeapon17InitDroppedWeaponEP9CTFPlayerP13CTFWeaponBasebb": {
   "rva": "0x5f6f10",
   "build": "11117211",
@@ -1021,6 +1027,12 @@
   "build": "11117211",
   "carried": "read by hand on 11117211",
   "why": "thiscall, one argument, ret 4, called once, by FireWeaponAtEnemy (0x56a3c0, at 0x56aad8). Falls back to the active weapon at +0x1ae8 (GetActiveTFWeapon 0x520ca0) when the argument is null, then switches on GetWeaponID (vcall +0x5f8; Linux +0x610): the jump table at 0x10556fe8 sends weapon ids 0x16, 0x17, 0x18, 0x3c and 0x41 to true and the rest to false, the Linux body's set"
+ },
+ "_ZNK9CTFPlayer10IsMiniBossEv": {
+  "rva": "0x524070",
+  "build": "11117211",
+  "carried": "read by hand on 11117211",
+  "why": "mov al,[ecx+0x244c]; ret: the bool getter called by CTFGameRules::DeathNotice (0x488440) and CTFStunBall::ApplyBallImpactEffectOnVictim (0x600a90), the two Linux callers that are matched, each with the same single unmatched callee"
  },
  "_ZNK9CTFPlayer12GetMaxHealthEv": {
   "rva": "0x4f30d0",
