@@ -5783,24 +5783,6 @@
 					lib   "server"
 					// verified: read by hand: the think CTFLaserPointer::Deploy (0x617f10) sets with ThinkSet and 'CREATE_LASER_DOT' (0x617f3b), as Linux's sets CreateLaserDot. Tests the flag at +0x80d and the dot handle at +0x800 (Linux +0x819 and +0x80c), then CLaserDot::Create inline ('env_laserdot' at 0x617e04). Thiscall, plain ret
 				}
-				"GetPlayerClassData"
-				{
-					type  "fixed"
-					sym   "_Z18GetPlayerClassDataj"
-					addr  "0x468480"
-					build "11117211"
-					lib   "server"
-					// verified: read by hand: the class data table's base from the global at 0x109c5c48 (the manager), plus 0xc, plus the class index times 0x8f0, Linux's body to the byte. 46 direct callers (49 on Linux, a few inlined), among them CTFPlayerClassShared::GetHandModelName (0x531ac0). cdecl, plain ret
-				}
-				"TFInventoryManager"
-				{
-					type  "fixed"
-					sym   "_Z18TFInventoryManagerv"
-					addr  "0x3c9e20"
-					build "11117211"
-					lib   "server"
-					// verified: read by hand: 'mov eax, 0xa89250; ret', the address of the global CTFInventoryManager, as Linux's returns its own. 31 direct callers, each feeding the result to GetBaseItemForClass (0x3c9880) or the loadout code, among them CTFPlayer::GetLoadoutItem (0x4f3020). cdecl, plain ret
-				}
 				"CTFMedigunShield::ShieldThink"
 				{
 					type  "fixed"
@@ -9676,6 +9658,15 @@
 					vtidx "1"
 					// vtable
 				}
+				"GetPlayerClassData"
+				{
+					type  "fixed"
+					sym   "_Z18GetPlayerClassDataj"
+					addr  "0x468480"
+					build "11117211"
+					lib   "server"
+					// verified: read by hand: the class data table's base from the global at 0x109c5c48 (the manager), plus 0xc, plus the class index times 0x8f0, Linux's body to the byte. 46 direct callers (49 on Linux, a few inlined), among them CTFPlayerClassShared::GetHandModelName (0x531ac0). cdecl, plain ret
+				}
 				"CalculatePhysicsImpactDamage"
 				{
 					type  "fixed"
@@ -10897,6 +10888,15 @@
 					build "11117211"
 					lib   "server"
 					// verified: turned away (call match); returns the empty string for -1 and otherwise the loadout name table's entry, the Linux body; cdecl
+				}
+				"TFInventoryManager"
+				{
+					type  "fixed"
+					sym   "_Z18TFInventoryManagerv"
+					addr  "0x3c9e20"
+					build "11117211"
+					lib   "server"
+					// verified: read by hand: 'mov eax, 0xa89250; ret', the address of the global CTFInventoryManager, as Linux's returns its own. 31 direct callers, each feeding the result to GetBaseItemForClass (0x3c9880) or the loadout code, among them CTFPlayer::GetLoadoutItem (0x4f3020). cdecl, plain ret
 				}
 				"CGameMovement::FullNoClipMove"
 				{
@@ -12454,6 +12454,15 @@
 					lib   "server"
 					// call
 				}
+				"CTFBotMainAction::OnStart"
+				{
+					type  "fixed"
+					sym   "_ZN16CTFBotMainAction7OnStartEP6CTFBotP6ActionIS0_E"
+					addr  "0x56bb40"
+					build "11117211"
+					lib   "server"
+					// verified: slot 45 of CTFBotMainAction's table, the neighbours of Linux's slot 46 (the Windows table has one destructor slot where Linux has two) both matched; opens with the same field resets as the Linux body: +0x68 to -1 and +0x6c, +0x4c, +0x50, +0x60, +0x54, +0x58 to 0. Thiscall, two arguments
+				}
 				"CTFBotMainAction::Update"
 				{
 					type  "fixed"
@@ -13070,6 +13079,15 @@
 					build "11117211"
 					lib   "server"
 					// string
+				}
+				"CTFPlayer::IsMiniBoss"
+				{
+					type  "fixed"
+					sym   "_ZNK9CTFPlayer10IsMiniBossEv"
+					addr  "0x524070"
+					build "11117211"
+					lib   "server"
+					// verified: mov al,[ecx+0x244c]; ret: the bool getter called by CTFGameRules::DeathNotice (0x488440) and CTFStunBall::ApplyBallImpactEffectOnVictim (0x600a90), the two Linux callers that are matched, each with the same single unmatched callee
 				}
 				"CTFPlayer::Taunt"
 				{
