@@ -4235,30 +4235,7 @@ namespace Mod::Attr::Custom_Attributes
 		int penetrationCount = 0;
 	};
 	
-#if defined _WINDOWS
-	/* BCanBurnEntityThisFrame is inline in OnCollide there, so the throttle goes in front of it. The
-	 * counter moves when a collision passes, where Linux moves it when the game would burn: a
-	 * collision the game turns away for its own per-entity interval also uses up the slot */
-	DETOUR_DECL_MEMBER(void, CTFFlameManager_OnCollide, CBaseEntity *entity, int idx)
-	{
-		auto flamemgr = reinterpret_cast<CBaseEntity *>(this);
-
-		int iMaxAoe = GetFastAttributeInt(flamemgr->GetOwnerEntity(), 0, MAX_AOE_TARGETS);
-		if (iMaxAoe != 0) {
-			int &counter = flamemgr->GetOrCreateEntityModule<PenetrationNumberModule>("penetrationnumber")->penetrationCount;
-			int min_delay;
-			switch(iMaxAoe) {
-				case 1: min_delay = 5; break;
-				case 2: min_delay = 3; break;
-				case 3: min_delay = 2; break;
-				default: min_delay = 1;
-			}
-			if (gpGlobals->tickcount - counter < min_delay) return;
-			counter = gpGlobals->tickcount;
-		}
-		DETOUR_MEMBER_CALL(entity, idx);
-	}
-#else
+#if !defined _WINDOWS
 	DETOUR_DECL_MEMBER(bool, CTFFlameManager_BCanBurnEntityThisFrame, CBaseEntity* entity)
 	{
 		auto flamemgr = reinterpret_cast<CBaseEntity *>(this);
@@ -8245,6 +8222,24 @@ namespace Mod::Attr::Custom_Attributes
 		auto flame = reinterpret_cast<CBaseEntity *>(this);
 		SCOPED_INCREMENT_IF(rc_CTFFlameManager_OnCollide, flame->GetOwnerEntity() != nullptr && HasAllowFriendlyFire(flame->GetOwnerEntity(), flame->GetOwnerEntity()->GetOwnerEntity()));
 
+#if defined _WINDOWS
+		/* BCanBurnEntityThisFrame is inline in OnCollide there, so its max_aoe_targets throttle goes in front.
+		 * The counter moves when a collision passes, where Linux moves it when the game would burn: a
+		 * collision the game turns away for its own per-entity interval also uses up the slot */
+		int iMaxAoe = GetFastAttributeInt(flame->GetOwnerEntity(), 0, MAX_AOE_TARGETS);
+		if (iMaxAoe != 0) {
+			int &counter = flame->GetOrCreateEntityModule<PenetrationNumberModule>("penetrationnumber")->penetrationCount;
+			int min_delay;
+			switch(iMaxAoe) {
+				case 1: min_delay = 5; break;
+				case 2: min_delay = 3; break;
+				case 3: min_delay = 2; break;
+				default: min_delay = 1;
+			}
+			if (gpGlobals->tickcount - counter < min_delay) return;
+			counter = gpGlobals->tickcount;
+		}
+#endif
 		DETOUR_MEMBER_CALL(entity, value);
 	}
 
@@ -10354,9 +10349,7 @@ namespace Mod::Attr::Custom_Attributes
 #endif
 			MOD_ADD_DETOUR_MEMBER(CTFProjectile_Arrow_ArrowTouch, "CTFProjectile_Arrow::ArrowTouch");
 			MOD_ADD_DETOUR_MEMBER(CTFRadiusDamageInfo_ApplyToEntity, "CTFRadiusDamageInfo::ApplyToEntity [clone]");
-#if defined _WINDOWS
-			MOD_ADD_DETOUR_MEMBER(CTFFlameManager_OnCollide,                      "CTFFlameManager::OnCollide");
-#else
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(CTFFlameManager_BCanBurnEntityThisFrame,        "CTFFlameManager::BCanBurnEntityThisFrame");
 #endif
 			MOD_ADD_DETOUR_MEMBER(CTFProjectile_BallOfFire_RocketTouch, "CTFProjectile_BallOfFire::RocketTouch");
