@@ -750,8 +750,10 @@ namespace Mod::Perf::Func_Optimize
 	public:
 		CMod() : IMod("Perf::Func_Optimize")
 		{
+#if !defined _MSC_VER // function copies, CFuncReplace has no size on COFF; the patches below are Linux code or datacache.dll
             // Rewrite CKnownEntity::OperatorEquals to compare handle indexes instead of entity pointers
             MOD_ADD_REPLACE_FUNC_MEMBER(CKnownEntity_OperatorEquals, "CKnownEntity::operator==");
+#endif
             
 #ifdef SE_IS_TF2
             // Not enough speed up from condition optimization after update
@@ -766,9 +768,11 @@ namespace Mod::Perf::Func_Optimize
             // MOD_ADD_DETOUR_MEMBER(CTFConditionList_Remove, "CTFConditionList::_Remove");
 
             // Rewrite CEconItemView::GetStaticData to not use dynamic_cast (always assume CEconItemDefintion is CTFItemDefintion)
+#if !defined _MSC_VER
             MOD_ADD_REPLACE_FUNC_MEMBER(CEconItemView_GetStaticData, "CEconItemView::GetStaticData");
             // Modify CTFPlayer::GetEquippedWearableForLoadoutSlot to not use dynamic_cast (always assume CEconWearable is CTFWearable)
 			this->AddPatch(new CPatch_CTFPlayer_GetEquippedWearableForLoadoutSlot());
+#endif
             
             //MOD_ADD_DETOUR_STATIC(GEconItemSchema, "GEconItemSchema");
             //MOD_ADD_DETOUR_STATIC(GetItemSchema, "GetItemSchema");
@@ -787,8 +791,10 @@ namespace Mod::Perf::Func_Optimize
             MOD_ADD_DETOUR_MEMBER(CModelInfoServer_RegisterDynamicModel, "CModelInfoServer::RegisterDynamicModel");
             // MOD_ADD_DETOUR_MEMBER(CMDLCache_BeginLock, "CMDLCache::BeginLock");
             // MOD_ADD_DETOUR_MEMBER(CMDLCache_EndLock, "CMDLCache::EndLock");
+#if !defined _MSC_VER
 			this->AddPatch(new CPatch_CMDLCache_BeginEndLock("CMDLCache::BeginLock"));
 			this->AddPatch(new CPatch_CMDLCache_BeginEndLock("CMDLCache::EndLock"));
+#endif
 #ifdef SE_IS_TF2
             MOD_ADD_DETOUR_STATIC(CTFPlayer_PrecacheMvM, "CTFPlayer::PrecacheMvM");
             

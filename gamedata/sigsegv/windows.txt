@@ -1161,6 +1161,15 @@
 					lib   "server"
 					// verified: read by hand: PassesDamageFilter(info) through slot 61 (reads m_hDamageFilter at +0x100), then TraceAttack(info, dir, trace, accumulator) through slot 62, which pops 16; the Linux body at slots 62 and 63. Pops 16. 26 callers, CTFRadiusDamageInfo::ApplyToEntity (0x480a30) among them where Linux calls it between ClearMultiDamage and ApplyMultiDamage
 				}
+				"CTFKnife::PrimaryAttack"
+				{
+					type  "fixed"
+					sym   "_ZN8CTFKnife13PrimaryAttackEv"
+					addr  "0x617430"
+					build "11117211"
+					lib   "server"
+					// verified: read by hand: slot 287 of CTFKnife's table (0x47c), Linux slot 293 (0x494) less 6 destructor and reversed-overload slots, as SecondaryAttack 0x617a10 is Linux 294. Calls CanPerformBackstabAgainstTarget (0x616c10) at 0x617514, as the Linux PrimaryAttack does; the vcall at slot 0x71c (Linux 0x720) is followed by the MvM flag test at gamerules +0xc72 and CTFPlayer::RemoveDisguise (0x529f50), the branch YER_Unnerf patches (Linux +0x5cd). Thiscall, plain ret
+				}
 				"CTFReviveMarker::Create"
 				{
 					type  "fixed"
@@ -12077,6 +12086,15 @@
 					lib   "server"
 					// call
 				}
+				"CTFBot::AddItem"
+				{
+					type  "fixed"
+					sym   "_ZN6CTFBot7AddItemEPKc"
+					addr  "0x54ec00"
+					build "11117211"
+					lib   "server"
+					// verified: read by hand: the only reference to 'CTFBotSpawner::AddItemToBot: Invalid item %s.' (0x54eeb8) is inside it. Same calls in the Linux order: ItemGeneration (0x3a01f0), CItemGeneration::GenerateRandomItem (0x3a01a0) through the vcall at 0x270 (Linux 0x274) with a CItemSelectionCriteria built on the stack, CEconItemView::GetStaticData, CTFItemDefinition::GetLoadoutSlot, CTFPlayer::GetEntityForLoadoutSlot, CBaseCombatCharacter::Weapon_Detach, DispatchSpawn. Thiscall, one argument, ret 4
+				}
 				"CTFBot::OpportunisticallyUseWeaponAbilities"
 				{
 					type  "fixed"
@@ -13088,6 +13106,15 @@
 					build "11117211"
 					lib   "server"
 					// verified: mov al,[ecx+0x244c]; ret: the bool getter called by CTFGameRules::DeathNotice (0x488440) and CTFStunBall::ApplyBallImpactEffectOnVictim (0x600a90), the two Linux callers that are matched, each with the same single unmatched callee
+				}
+				"CTFPlayer::SpeakConceptIfAllowed"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer21SpeakConceptIfAllowedEiPKcPcjP16IRecipientFilter"
+					addr  "0x50e230"
+					build "11117211"
+					lib   "server"
+					// verified: read by hand: slot 0x764 of CTFPlayer's table (Linux 0x768), between CBaseMultiplayerPlayer::SpeakIfAllowed (0x20ba30, Linux 0x764) and CanBeAutobalanced (0x4e32d0, Linux 0x76c). The only reference to 'disguiseclass:%s' (0x50e45e) is inside it, after the CTFPlayerShared::InCond call (0x50e3de) as in the Linux body. Thiscall, five arguments, ret 0x14
 				}
 				"CTFPlayer::Taunt"
 				{
