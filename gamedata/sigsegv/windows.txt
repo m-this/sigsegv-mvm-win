@@ -3573,15 +3573,6 @@
 					lib   "server"
 					// verified: takes five stack arguments (ret 0x14, as the Linux (entity, player, float&, Vector&, bool)), starts with the dynamic_cast of the first argument and a virtual call on the result, ray-traces and ends with SetAbsAngles; FindSnapToBuildPos (0x4c0d10) calls it twice where the Linux FindSnapToBuildPos calls FindNearestBuildPoint twice; alphabetical neighbour of FindSnapToBuildPos in server.dll's CBaseObject run
 				}
-				"CBaseObject::MustBeBuiltOnAttachmentPoint"
-				{
-					type  "fixed"
-					sym   "_ZNK11CBaseObject28MustBeBuiltOnAttachmentPointEv"
-					addr  "0x442f40"
-					build "11117211"
-					lib   "server"
-					// verified: read by hand: returns bit 1 of the dword at +0x90c (Linux +0x924), the Linux body. Thiscall, plain ret. Eight direct callers against Linux's eight call sites, one of them the opening call of FindSnapToBuildPos (0x4c0d1d), as on Linux
-				}
 				"CObjectSapper::GetSapperModelName"
 				{
 					type  "fixed"
