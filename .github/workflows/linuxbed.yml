@@ -18,6 +18,20 @@ on:
         description: fill RED with defender bots, which buy upgrades (needs a tf2-archipelago ref with winbed -bots)
         type: boolean
         default: false
+      no_sigmod:
+        description: install and load no SigMod, as a server without it runs (needs a tf2-archipelago ref with winbed -no-sigmod)
+        type: boolean
+        default: false
+      test_mode:
+        description: serve the test multiworld (needs a tf2-archipelago ref with winbed -test-mode)
+        type: boolean
+        default: false
+      bot_team_size:
+        description: defender bots on RED
+        default: '6'
+      missions:
+        description: missions to play instead of linuxbed.txt, separated by commas
+        default: ''
       sigmod_run:
         description: id of a Build and Release run whose package-linux to install instead of the pinned release
         default: ''
@@ -39,6 +53,10 @@ jobs:
     - id: missions
       run: |
         # a line is a mission, then any extra probe arguments (-start-wave 7)
+        if [ -n "${{ inputs.missions }}" ]; then
+          echo "list=$(python3 -c 'import json,sys;print(json.dumps(sys.argv[1].split(",")))' "${{ inputs.missions }}")" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
         list=$(grep -v '^#' win/tools/winport/bed/linuxbed.txt | sed 's/#.*//' | awk 'NF' | python3 -c 'import json,sys;print(json.dumps([" ".join(l.split()) for l in sys.stdin if l.strip()]))')
         echo "list=$list" >> "$GITHUB_OUTPUT"
     - uses: actions/checkout@v4
@@ -99,6 +117,8 @@ jobs:
         run-id: ${{ inputs.sigmod_run }}
         github-token: ${{ github.token }}
     - name: Install
+      env:
+        WINBED_NO_SIGMOD: ${{ inputs.no_sigmod && '1' || '' }}
       run: |
         sigmod=
         [ -f sigmod/package-linux.zip ] && sigmod="-sigmod sigmod/package-linux.zip"
@@ -113,6 +133,9 @@ jobs:
     - name: Play
       env:
         WINBED_BOTS: ${{ inputs.bots && '1' || '' }}
+        WINBED_NO_SIGMOD: ${{ inputs.no_sigmod && '1' || '' }}
+        WINBED_TEST_MODE: ${{ inputs.test_mode && '1' || '' }}
+        WINBED_BOT_TEAM_SIZE: ${{ inputs.bot_team_size }}
       run: |
         mkdir -p out
         tf="$BED/tf-dedicated/tf"
@@ -151,6 +174,7 @@ jobs:
         bedbin/waveprobe -rcon "$addr:27015" -mission "$mission" $probeargs -mode normal -timeout 900s \
           >> out/results.jsonl 2>> out/waveprobe.err || true
         cp "$tf/console.log" out/ 2>/dev/null || true
+        cp -r "$tf/addons/sourcemod/logs" out/smlogs 2>/dev/null || true
     - name: Report
       if: always()
       run: |
@@ -177,6 +201,8 @@ jobs:
         grep -a -m3 "compiled @" out/console.log out/winbed.out | cut -c1-220 || true
         echo "-- upgrades and crashes"
         grep -a -i -E "Shopping:|bought|segfault|SIGSEGV|crash|Segmentation" out/console.log out/winbed.out out/winbed.err 2>/dev/null | head -200 | cut -c1-300 || true
+        echo "-- sourcemod logs"
+        grep -a -h -i -E "error|exception|assert|native|stack trace|\[[0-9]+\]|cosmetic|hat" out/smlogs/* 2>/dev/null | head -150 | cut -c1-300 || true
         echo "-- script errors"
         grep -a -c "AN ERROR HAS OCCURRED" out/console.log || true
         grep -a -A3 "AN ERROR HAS OCCURRED" out/console.log | head -60 | cut -c1-220
@@ -190,10 +216,12 @@ jobs:
     # SigMod from 2025: the probe gives up quietly and nothing else looked.
     # More than one start is a crash, and no SigMod build line is no SigMod.
     - name: Verdict
+      env:
+        WINBED_NO_SIGMOD: ${{ inputs.no_sigmod && '1' || '' }}
       run: |
         starts=$(grep -a -c "server_srv.so loaded" out/winbed.out || true)
         echo "server starts: $starts"
-        grep -a -q "CExtSigsegv: compiled @" out/winbed.out out/console.log || { echo "SigMod did not load"; exit 1; }
+        [ -n "$WINBED_NO_SIGMOD" ] || grep -a -q "CExtSigsegv: compiled @" out/winbed.out out/console.log || { echo "SigMod did not load"; exit 1; }
         [ "${starts:-0}" -le 1 ] || { echo "the server started $starts times: it crashed"; exit 1; }
         # A crash late in the job restarts the server after the count above
         # was taken, so the fault itself is the other half of the check.
