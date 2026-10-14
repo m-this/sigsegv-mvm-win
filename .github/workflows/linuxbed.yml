@@ -22,6 +22,13 @@ on:
         description: install and load no SigMod, as a server without it runs (needs a tf2-archipelago ref with winbed -no-sigmod)
         type: boolean
         default: false
+      test_mode:
+        description: serve the test multiworld (needs a tf2-archipelago ref with winbed -test-mode)
+        type: boolean
+        default: false
+      bot_team_size:
+        description: defender bots on RED
+        default: '6'
       missions:
         description: missions to play instead of linuxbed.txt, separated by commas
         default: ''
@@ -127,6 +134,8 @@ jobs:
       env:
         WINBED_BOTS: ${{ inputs.bots && '1' || '' }}
         WINBED_NO_SIGMOD: ${{ inputs.no_sigmod && '1' || '' }}
+        WINBED_TEST_MODE: ${{ inputs.test_mode && '1' || '' }}
+        WINBED_BOT_TEAM_SIZE: ${{ inputs.bot_team_size }}
       run: |
         mkdir -p out
         tf="$BED/tf-dedicated/tf"
