@@ -87,6 +87,7 @@ using CExtract_CObjectSentrygun_FireRocket = IExtractStub;
 IMPL_DATAMAP (int,                CBaseObject, m_nDefaultUpgradeLevel);
 
 IMPL_SENDPROP(int,                CBaseObject, m_iUpgradeLevel,       CBaseObject);
+IMPL_SENDPROP(int,                CBaseObject, m_fObjectFlags,        CBaseObject);
 IMPL_SENDPROP(int,                CBaseObject, m_iObjectType,         CBaseObject);
 IMPL_SENDPROP(int,                CBaseObject, m_iObjectMode,         CBaseObject);
 IMPL_SENDPROP(CHandle<CTFPlayer>, CBaseObject, m_hBuilder,            CBaseObject);
