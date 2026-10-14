@@ -5629,5 +5629,10 @@
   "rva": "0x524010",
   "build": "11117211",
   "why": "read by hand: the condition slot test through +0x404, +0x4d4 and +0x4e0, InCond of 15 (stunned), then bit 6 of the flags at +0x400, Linux's body. Eleven callers as on Linux, among them the three CTFBot Press*FireButton functions (0x56044c, 0x56053c, 0x5606fc). Thiscall, plain ret"
+ },
+ "_ZNK11CBaseObject28MustBeBuiltOnAttachmentPointEv": {
+  "rva": "0x442f40",
+  "build": "11117211",
+  "why": "read by hand: returns bit 1 of the dword at +0x90c (Linux +0x924), the Linux body. Thiscall, plain ret. Eight direct callers against Linux's eight call sites, one of them the opening call of FindSnapToBuildPos (0x4c0d1d), as on Linux"
  }
 }
