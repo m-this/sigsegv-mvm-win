@@ -25,7 +25,13 @@ public:
 	bool IsMeleeWeapon() const { return ft_IsMeleeWeapon(this); }
 	void SetOwner(CBaseCombatCharacter *owner) { return ft_SetOwner(this, owner); }
 	FileWeaponInfo_t const &GetWpnData() const       { return ft_GetWpnData(this); }
+#if defined _WINDOWS
+	/* SetIdealActivity is inline in the base SendWeaponAnim there, after a
+	 * hand activity translation that leaves a translated activity as it is. */
+	bool SetIdealActivity(Activity act) const        { return ft_SendWeaponAnim_Base(this, act); }
+#else
 	bool SetIdealActivity(Activity act) const        { return ft_SetIdealActivity(this, act); }
+#endif
 #ifdef SE_IS_TF2
 	void SetCustomViewModel(const char *model) {        ft_SetCustomViewModel(this, model); }
 #endif
@@ -83,6 +89,9 @@ private:
 	static MemberFuncThunk<CBaseCombatWeapon *, void, CBaseCombatCharacter *> ft_SetOwner;
 	static MemberFuncThunk<const CBaseCombatWeapon *, FileWeaponInfo_t const &> ft_GetWpnData;
 	static MemberFuncThunk<const CBaseCombatWeapon *, bool, Activity> ft_SetIdealActivity;
+#if defined _WINDOWS
+	static MemberFuncThunk<const CBaseCombatWeapon *, bool, int> ft_SendWeaponAnim_Base;
+#endif
 #ifdef SE_IS_TF2
 	static MemberFuncThunk<CBaseCombatWeapon *, void, const char *> ft_SetCustomViewModel;
 #endif

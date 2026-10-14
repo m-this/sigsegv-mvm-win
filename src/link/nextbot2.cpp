@@ -76,8 +76,12 @@ THUNK_VTABLE(9ChasePath, 0x200);
 
 #include "re/nextbot.h"
 #include "re/path.h"
+#include "stub/nextbot_cc.h"
 
-static MemberFuncThunk<Action<CTFBot> *, void> ft_Action_dtor_D2("Action<CTFBot>::~Action [D2]");
+/* Not the [D2] entry: on Windows it reads slot 0, the scalar deleting
+ * destructor, which takes flags, may free, and pops 4. Called without the
+ * flags it freed actions at random and unbalanced the stack under them. */
+static MemberFuncThunk<Action<CTFBot> *, void> ft_Action_dtor_D2("Action<CTFBot>::~Action [D2 windows]");
 
 /* oh god... good luck declaring mangled symbols in C for MSVC++, given that
  * they use wonderful characters like "@$?"... */
@@ -86,9 +90,18 @@ static MemberFuncThunk<Action<CTFBot> *, void> ft_Action_dtor_D2("Action<CTFBot>
  * than the horrible alternative */
 template<> Action<CTFBot>::~Action() { ft_Action_dtor_D2(this); }
 
-/* not implemented */
-INextBotEventResponder::~INextBotEventResponder() { assert(false); }
-IContextualQuery::~IContextualQuery()             { assert(false); }
+/* Action<CBotNPCArcher> shares its code with Action<CZombie>, as the thunks in
+ * nextbot1.cpp already assume. */
+static MemberFuncThunk<Action<CBotNPCArcher> *, void> ft_Action_CBotNPCArcher_dtor_D2("Action<CZombie>::~Action [D2 windows]");
+template<> Action<CBotNPCArcher>::~Action() { ft_Action_CBotNPCArcher_dtor_D2(this); }
+
+/* Empty, as the game's are. An MSVC destructor destroys its bases itself, so
+ * after the game's ~Action above has run them the compiler runs these two
+ * again for the wrapper; on Linux the [D2] symbol thunk replaces the whole
+ * destructor and they were never reached. As assert(false) they ended every
+ * server that removed a mod action. */
+INextBotEventResponder::~INextBotEventResponder() {}
+IContextualQuery::~IContextualQuery()             {}
 //Path::Path()                                      { assert(false); }
 //Path::~Path()                                     { assert(false); }
 //PathFollower::PathFollower()                      { assert(false); }

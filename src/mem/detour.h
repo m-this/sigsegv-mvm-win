@@ -2,6 +2,7 @@
 #define _INCLUDE_SIGSEGV_MEM_DETOUR_H_
 
 
+#include <type_traits>
 #include "abi.h"
 #include "library.h"
 #include "util/scope.h"
@@ -39,6 +40,13 @@ public:
 	DetourPriority GetPriority() const { return this->m_Priority; }
 	void SetPriority(DetourPriority priority) { this->m_Priority = priority; }
 	
+#if defined _WINDOWS
+	/* For a detour DoLoad refused because MSVC shares the function's body with
+	 * others: the same callback on the function's own vtable slot, or nullptr
+	 * when it has none that can be hooked. See CDetour's. */
+	virtual CVirtualHook *AsVirtualHookWhenRefused() { return nullptr; }
+#endif
+	
 protected:
 	IDetour() {}
 	
@@ -69,6 +77,13 @@ protected:
 	
 	virtual bool DoLoad() override;
 	virtual void DoUnload() override;
+	
+#if defined _WINDOWS
+	/* set when DoLoad refused the function for a body MSVC shares */
+	bool m_bRefusedShared = false;
+	const std::string& FuncName() const { return this->m_strFuncName; }
+	bool FuncByName() const { return this->m_bFuncByName; }
+#endif
 	
 private:
 	std::string m_strName;
@@ -102,9 +117,22 @@ private:
 };
 
 
+/* How many argument bytes a detour callback pops, from its type: a member
+ * callback is __thiscall and pops its arguments, each rounded to 4, plus the
+ * hidden return pointer MSVC passes for any class returned by value; a plain
+ * function is __cdecl and pops nothing. Anything else, another convention or
+ * a variadic, is -1 and not checked. */
+template<class A> constexpr int DetourArgBytes() { if constexpr (std::is_reference_v<A>) return 4; else return (int)((sizeof(A) + 3) & ~3); }
+template<class T> constexpr int DetourPopOf(T) { return -1; }
+template<class R, class... A> constexpr int DetourPopOf(R (*)(A...)) { return 0; }
+template<class C, class R, class... A> constexpr int DetourPopOf(R (C::*)(A...)) { return (0 + ... + DetourArgBytes<A>()) + (std::is_class_v<R> ? 4 : 0); }
+
 class CDetour : public IDetour_SymNormal
 {
 public:
+	/* what the callback pops, for DoLoad to hold against the game's function */
+	CDetour *ExpectPop(int pop) { this->m_iCallbackPop = pop; return this; }
+	
 	/* by pointer */
 	CDetour(const char *name, void *func_ptr, void *callback, void **inner_ptr, DetourPriority priority = NORMAL) :
 		IDetour_SymNormal(name, func_ptr), m_pCallback(callback), m_pInner(inner_ptr) { SetPriority(priority); }
@@ -119,10 +147,17 @@ private:
 	virtual void DoEnable() override;
 	virtual void DoDisable() override;
 	
+#if defined _WINDOWS
+public:
+	virtual CVirtualHook *AsVirtualHookWhenRefused() override;
+private:
+#endif
+	
 	bool EnsureUniqueInnerPtrs();
 	
 	void *m_pCallback;
 	void **m_pInner;
+	int m_iCallbackPop = -1;
 	
 	static inline std::list<CDetour *> s_LoadedDetours;
 	static inline std::list<CDetour *> s_ActiveDetours;
@@ -282,6 +317,20 @@ private:
 
 	bool m_bModifiedByPatch = false;
 
+#if defined _WINDOWS
+	/* The prologue jumps here: a jmp through the pointer stored right after
+	 * it, in the same executable block. A plugin that detours the function
+	 * after us (DHooks on CTFPlayer::GetMaxAmmo, from tf2-archipelago) copies
+	 * our jump into its own trampoline; changing where SigMod's chain starts
+	 * then only changes that pointer, and the prologue with the other hook on
+	 * it is left alone. The pointer lives in the block and not in this object
+	 * because the other hook can outlive this object (CleanUp). */
+	uint8_t *m_pStub = nullptr;
+	void EnsureStub();
+	void SetStubTarget(void *target);
+	bool ReconfigureUnderForeignHook();
+#endif
+
 	CVirtualHookBase m_VirtualHookOptional;
 	void *m_pVirtualHookInner;
 	std::set<std::pair<void **, void *>> m_FoundFuncPtrAndVTablePtr;
@@ -344,6 +393,18 @@ public:
 #define DETOUR_MEMBER_CALL(...) (this->*Actual)(__VA_ARGS__)
 #endif
 #define DETOUR_STATIC_CALL(...) (Actual)(__VA_ARGS__)
+
+/* A detour on a deleting destructor, the [D0] and [D2] a Linux symbol names.
+ * MSVC has one of them, the scalar deleting destructor, and it takes a flags
+ * word saying whether to free: a detour declared without it pops 4 bytes too
+ * few, which CDetour::DoLoad refuses on Windows. */
+#if defined(_WINDOWS) && !defined(PLATFORM_64BITS)
+#define DETOUR_DECL_DTOR(name) DETOUR_DECL_MEMBER(void, name, unsigned int dtor_flags)
+#define DETOUR_DTOR_CALL() DETOUR_MEMBER_CALL(dtor_flags)
+#else
+#define DETOUR_DECL_DTOR(name) DETOUR_DECL_MEMBER(void, name)
+#define DETOUR_DTOR_CALL() DETOUR_MEMBER_CALL()
+#endif
 
 #define __DETOUR_DECL_STATIC(prefix, name, ...) \
 namespace detour_ns_##name {\

@@ -7,6 +7,32 @@
 #include "util/rtti.h"
 
 
+#if defined _WINDOWS
+/* A call through a thunk the Windows address table has no entry for. It
+ * names the function once and the call returns zero. Ending the server there
+ * lost the whole run to one mechanic the table does not cover yet; a zero
+ * leaves that mechanic doing nothing and the mission playing, and the name in
+ * the console says which. */
+void UnresolvedCall(const char *what, const char *name);
+
+template<typename R>
+inline R UnresolvedValue()
+{
+	if constexpr (std::is_void_v<R>) {
+		return;
+	} else if constexpr (std::is_reference_v<R>) {
+		/* The referenced type may be incomplete here: one zeroed block,
+		 * larger than any game object a thunk hands back, serves them all. */
+		alignas(16) static unsigned char zero[0x10000] = {};
+		return *reinterpret_cast<std::remove_reference_t<R> *>(zero);
+	} else {
+		alignas(R) static const unsigned char zero[sizeof(R)] = {};
+		return *reinterpret_cast<const R *>(zero);
+	}
+}
+#endif
+
+
 class ILinkage : public AutoListNoDelete<ILinkage>
 {
 public:
@@ -63,6 +89,7 @@ public:
 	}
 
 	virtual const char *GetNameDebug() { return m_pszFuncName; }
+	const char *GetFuncName() const { return m_pszFuncName; }
 	virtual const char *GetTypeDebug() { return "STATIC_FUNC"; }
 	virtual uintptr_t GetAddressDebug() { return (uintptr_t) m_pFuncPtr; }
 	const void *GetFuncPtr() const { return this->m_pFuncPtr; }
@@ -89,6 +116,10 @@ public:
 	
 	inline RET operator()(PARAMS... args) const
 	{
+#if defined _WINDOWS
+		/* the Windows address table is incomplete; name the gap instead of jumping to 0 */
+		if (link.GetFuncPtr() == nullptr) { UnresolvedCall("called unresolved function", link.GetFuncName()); return UnresolvedValue<RET>(); }
+#endif
 #ifdef DEBUG
 		assert(link.GetFuncPtr() != nullptr); 
 #endif
@@ -123,6 +154,7 @@ public:
 	}
 	
 	virtual const char *GetNameDebug() { return m_pszFuncName; }
+	const char *GetFuncName() const { return m_pszFuncName; }
 	virtual const char *GetTypeDebug() { return "MEMBER_FUNC"; }
 	virtual uintptr_t GetAddressDebug() { return (uintptr_t)m_pFuncPtr; }
 	const void *GetFuncPtr() const { return this->m_pFuncPtr; }
@@ -165,6 +197,10 @@ public:
 	inline RET operator()(const C *obj, PARAMS... args) const = delete;
 	inline RET operator()(      C *obj, PARAMS... args) const
 	{
+#if defined _WINDOWS
+		/* the Windows address table is incomplete; name the gap instead of jumping to 0 */
+		if (link.GetFuncPtr() == nullptr) { UnresolvedCall("called unresolved function", link.GetFuncName()); return UnresolvedValue<RET>(); }
+#endif
 #ifdef __GNUC__
 		FPtr pFunc= (FPtr)link.GetFuncPtr();
 #else
@@ -182,6 +218,7 @@ public:
 		return (obj->*pFunc)(args...);
 #endif
 	}
+	bool IsLinked() const { return link.IsLinked(); }
 private:
 	MemberFuncThunkBase link;
 };
@@ -204,6 +241,10 @@ public:
 	inline RET operator()(      C *obj, PARAMS... args) const = delete;
 	inline RET operator()(const C *obj, PARAMS... args) const
 	{
+#if defined _WINDOWS
+		/* the Windows address table is incomplete; name the gap instead of jumping to 0 */
+		if (link.GetFuncPtr() == nullptr) { UnresolvedCall("called unresolved function", link.GetFuncName()); return UnresolvedValue<RET>(); }
+#endif
 #ifdef __GNUC__
 		FPtr pFunc= (FPtr)link.GetFuncPtr();
 #else
@@ -221,6 +262,7 @@ public:
 		return (obj->*pFunc)(args...);
 #endif
 	}
+	bool IsLinked() const { return link.IsLinked(); }
 private:
 	MemberFuncThunkBase link;
 };
@@ -251,8 +293,18 @@ public:
 			}
 			
 			bool found = false;
+#if defined _WINDOWS
+			/* MSVC folds identical functions, so the address may fill several
+			 * slots and the first is not necessarily this one: the table names
+			 * the slot. It is checked against the vtable, not trusted. */
+			int idx = AddrManager::GetVTIndex(this->m_pszFuncName);
+			if (this->m_iEntryNumber == 0 && idx >= 0 && idx < 0x1000 && pVT[idx] == pFunc) {
+				this->m_iVTIndex = idx;
+				found = true;
+			}
+#endif
 			int num = 0;
-			for (int i = 0; i < 0x1000; ++i) {
+			for (int i = 0; !found && i < 0x1000; ++i) {
 				if (pVT[i] == pFunc) {
 					if(num++ >= m_iEntryNumber) {
 						this->m_iVTIndex = i;
@@ -276,6 +328,7 @@ public:
 	virtual const char *GetTypeDebug() { return "VIRTUAL_FUNC"; }
 	virtual uintptr_t GetAddressDebug() { return GetVTableIndex() * sizeof(uintptr_t); }
 	int GetVTableIndex() const { return this->m_iVTIndex; }
+	const char *GetFuncName() const { return this->m_pszFuncName; }
 	
 private:
 	virtual void ForceAddr(uintptr_t addr) override { this->m_iVTIndex = addr; }
@@ -325,6 +378,11 @@ public:
 		assert(vt_index != -1);
 		assert(obj != nullptr);
 #endif
+#if defined _WINDOWS
+		/* an index of -1 would read the slot before the vtable and call whatever
+		   is there; the Windows address table is still incomplete */
+		if (vt_index == -1) { UnresolvedCall("virtual function with no vtable index", link.GetFuncName()); return UnresolvedValue<RET>(); }
+#endif
 		
 		auto pVT = *reinterpret_cast<void **const *>(obj);
 #ifdef __GNUC__
@@ -360,6 +418,11 @@ public:
 #ifdef DEBUG
 		assert(vt_index != -1);
 		assert(obj != nullptr);
+#endif
+#if defined _WINDOWS
+		/* an index of -1 would read the slot before the vtable and call whatever
+		   is there; the Windows address table is still incomplete */
+		if (vt_index == -1) { UnresolvedCall("virtual function with no vtable index", link.GetFuncName()); return UnresolvedValue<RET>(); }
 #endif
 		
 		auto pVT = *reinterpret_cast<void **const *>(obj);
@@ -398,6 +461,7 @@ public:
 	
 	virtual const char *GetNameDebug() { return m_pszObjName; }
 	virtual const char *GetTypeDebug() { return "GLOBAL"; }
+	const char *GetObjName() const { return m_pszObjName; }
 	virtual uintptr_t GetAddressDebug() { return  (uintptr_t) this->m_pObjPtr; }
 	void *m_pObjPtr = nullptr;
 
@@ -430,12 +494,44 @@ public:
 		return this->GetRef();
 	}
 	
-	inline T& GetRef() const { return *(T *)link.m_pObjPtr; }
+	inline T& GetRef() const
+	{
+		/* A function has no size to zero. An array of unknown bound has none
+		 * either, so it reads the shared zero block: g_aConditionNames reads
+		 * as an empty list rather than as a null dereference. */
+		if constexpr (!std::is_function_v<T>) {
+			if (link.m_pObjPtr == nullptr) {
+				return this->Unresolved();
+			}
+		}
+		return *(T *)link.m_pObjPtr;
+	}
+	inline bool IsLinked() const { return link.m_pObjPtr != nullptr; }
 	
 protected:
-	inline T *GetPtr() const { return (T *)link.m_pObjPtr; }
+	inline T *GetPtr() const { return std::addressof(this->GetRef()); }
 private:
+	/* A global the gamedata could not find, which on Windows is dozens.
+	 * Reading one dereferenced null and killed the server as soon as a mod
+	 * touched it, at load for any mod the convar file enables. It reads as
+	 * zero bytes of its own now, so a pointer global reads null and the
+	 * caller's null check runs. */
+	T& Unresolved() const
+	{
+		if (this->m_pUnresolved == nullptr) {
+			if constexpr (std::is_unbounded_array_v<T>) {
+				alignas(16) static unsigned char zero[0x10000] = {};
+				this->m_pUnresolved = reinterpret_cast<T *>(zero);
+			} else {
+				this->m_pUnresolved = static_cast<T *>(calloc(1, sizeof(T)));
+			}
+			Warning("GlobalThunk: \"%s\" is unresolved and reads as zero\n", link.GetObjName());
+		}
+		return *this->m_pUnresolved;
+	}
+	
 	GlobalThunkBase link;
+	mutable T *m_pUnresolved = nullptr;
 };
 
 template<typename T>
@@ -503,12 +599,10 @@ public:
 			return false;
 		}
 		
-#if defined __clang__
-		ptrdiff_t adj = -offsetof(vtable, vfptrs);
-#elif defined __GNUC__
-		ptrdiff_t adj = -offsetof(vtable, vfptrs);
-#elif defined _MSC_VER
+#if defined _MSC_VER
 		ptrdiff_t adj = 0;
+#else
+		ptrdiff_t adj = -offsetof(vtable, vfptrs);
 #endif
 		
 		memcpy(m_pDest, (void *)((uintptr_t)vt + adj), SIZE);

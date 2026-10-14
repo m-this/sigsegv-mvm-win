@@ -215,20 +215,24 @@ namespace Mod::AI::NPC_Nextbot
         }
     });
 
+    void MakeMyNextbot(CBotNPCArcher *bot)
+    {
+        bot->SetCollisionGroup(COLLISION_GROUP_PLAYER_MOVEMENT);
+        auto mod = bot->GetOrCreateEntityModule<MyNextbotModule>("mynextbotmodule");
+        bot->m_bow = (CBaseAnimating *) mod;
+        uintptr_t ptrdif = *((void ***)bot->MyNextBotPointer()) -*((void ***)bot);
+        *((void ***)bot) = MyBotVTable+4;
+        *((void ***)bot->GetBodyInterface()) = MyBodyVTable+4;
+        *((void ***)bot->GetLocomotionInterface()) = MyLocomotionVTable+4;
+        *((void ***)bot->GetVisionInterface()) = MyVisionVTable+4;
+        *((void ***)bot->MyNextBotPointer()) = MyBotVTable+4+ptrdif;
+    }
+
 	DETOUR_DECL_MEMBER(void, CBotNPCArcher_CBotNPCArcher)
 	{
 		DETOUR_MEMBER_CALL();
-        auto bot = reinterpret_cast<CBotNPCArcher *>(this);
         if (create_my_nextbot) {
-            bot->SetCollisionGroup(COLLISION_GROUP_PLAYER_MOVEMENT);
-            auto mod = bot->GetOrCreateEntityModule<MyNextbotModule>("mynextbotmodule");
-            bot->m_bow = (CBaseAnimating *) mod;
-            uintptr_t ptrdif = *((void ***)bot->MyNextBotPointer()) -*((void ***)bot);
-            *((void ***)bot) = MyBotVTable+4;
-            *((void ***)bot->GetBodyInterface()) = MyBodyVTable+4;
-            *((void ***)bot->GetLocomotionInterface()) = MyLocomotionVTable+4;
-            *((void ***)bot->GetVisionInterface()) = MyVisionVTable+4;
-            *((void ***)bot->MyNextBotPointer()) = MyBotVTable+4+ptrdif;
+            MakeMyNextbot(reinterpret_cast<CBotNPCArcher *>(this));
         }
 	}
 
@@ -860,6 +864,15 @@ namespace Mod::AI::NPC_Nextbot
             create_my_nextbot = true;
             auto result = orig->Create(pClassName);
             create_my_nextbot = false;
+#if defined _WINDOWS
+            /* Both constructors are inline in the archer's factory there */
+            if (result != nullptr) {
+                auto bot = static_cast<CBotNPCArcher *>(result->GetBaseEntity());
+                auto intention = reinterpret_cast<CBotNPCArcherIntention *>(bot->GetIntentionInterface());
+                intention->m_behavior->SetAction(new CMyNextbotMainAction());
+                MakeMyNextbot(bot);
+            }
+#endif
             return result;
 
         }
@@ -874,9 +887,13 @@ namespace Mod::AI::NPC_Nextbot
 	public:
 		CMod() : IMod("AI:My_Nextbot")
 		{
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(CBotNPCArcher_CBotNPCArcher,                   "CBotNPCArcher::CBotNPCArcher");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CBotNPCArcher_Spawn,                   "CBotNPCArcher::Spawn");
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(CBotNPCArcherIntention_CBotNPCArcherIntention, "CBotNPCArcherIntention::CBotNPCArcherIntention");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CBotNPCArcherIntention_Reset,            "CBotNPCArcherIntention::Reset");
 			MOD_ADD_DETOUR_MEMBER(CTraceFilterIgnorePlayers_ShouldHitEntity,            "CTraceFilterIgnorePlayers::ShouldHitEntity");
 			MOD_ADD_DETOUR_MEMBER(CTFGameRules_GetKillingWeaponName,            "CTFGameRules::GetKillingWeaponName");
@@ -896,6 +913,12 @@ namespace Mod::AI::NPC_Nextbot
             nb_head_aim_settle_duration = g_pCVar->FindVar("nb_head_aim_settle_duration");
 
             auto botVtable = RTTI::GetVTable(TypeName<CBotNPCArcher>());
+            auto bodyVtable = RTTI::GetVTable(TypeName<CBotNPCBody>());
+            auto locomotionVtable = RTTI::GetVTable("23NextBotGroundLocomotion");
+            auto visionVtable = RTTI::GetVTable("7IVision");
+            if (botVtable == nullptr || bodyVtable == nullptr || locomotionVtable == nullptr || visionVtable == nullptr) {
+                return false;
+            }
             memcpy(MyBotVTable, botVtable-4, sizeof(MyBotVTable));
 
             CVirtualHook hooks[] = {
@@ -912,23 +935,28 @@ namespace Mod::AI::NPC_Nextbot
                 CVirtualHook(TypeName<CBotNPCArcher>(), TypeName<CBaseCombatCharacter>(), "CBaseCombatCharacter::ShouldGib", GET_VHOOK_CALLBACK(CBotNPCArcher_ShouldGib), GET_VHOOK_INNERPTR(CBotNPCArcher_ShouldGib))
                 
             };
+            /* A hook that did not load has no offset; installing it anyway
+             * writes through an uninitialised index. The NPC is not offered
+             * unless every hook is in place. */
+            bool ok = true;
             for (auto &hook : hooks) {
-                hook.DoLoad();
-                hook.AddToVTable(MyBotVTable+4);
+                if (hook.DoLoad()) {
+                    hook.AddToVTable(MyBotVTable+4);
+                } else {
+                    ok = false;
+                }
             }
 
-            auto bodyVtable = RTTI::GetVTable(TypeName<CBotNPCBody>());
             memcpy(MyBodyVTable, bodyVtable-4, sizeof(MyBodyVTable));
-
-            auto locomotionVtable = RTTI::GetVTable("23NextBotGroundLocomotion");
             memcpy(MyLocomotionVTable, locomotionVtable-4, sizeof(MyLocomotionVTable));
-
-            auto visionVtable = RTTI::GetVTable("7IVision");
             memcpy(MyVisionVTable, visionVtable-4, sizeof(MyVisionVTable));
 
-            LoadBodyHooks(MyBodyVTable+4);
-            LoadLocomotionHooks(MyLocomotionVTable+4);
-            LoadVisionHooks(MyVisionVTable+4);
+            ok = LoadBodyHooks(MyBodyVTable+4) && ok;
+            ok = LoadLocomotionHooks(MyLocomotionVTable+4) && ok;
+            ok = LoadVisionHooks(MyVisionVTable+4) && ok;
+            if (!ok) {
+                return false;
+            }
             
             servertools->GetEntityFactoryDictionary()->InstallFactory(new MyNPCFactory(servertools->GetEntityFactoryDictionary()->FindFactory("bot_npc_archer")), "$bot_npc");
             return true;

@@ -1,0 +1,182 @@
+# Start the bed's server, wait for rcon, run -Commands into bedout/, and with
+# -Probe play the probe's plan one mission at a time. A server that dies is
+# started again before the next mission and the reason is written down, so one
+# run finds every mission that stops the server rather than the first one.
+# Exits with 1 when any mission failed or the server never answered.
+param(
+  [string[]]$Commands = @(),
+  [string]$Probe = '',
+  [int]$BootMinutes = 20,
+  [int]$MaxStarts = 40
+)
+$ErrorActionPreference = 'Stop'
+$out = "$env:BED\bedout"
+$tf = "$env:BED\tf-dedicated\tf"
+New-Item -ItemType Directory -Force $out, "$out\consoles" | Out-Null
+# collect.ps1 prints this last, so the verdict is at the end of the job log.
+function Say($text) { Write-Host $text; Add-Content "$out\boot.txt" $text }
+$env:SRCDS_RCONPW = $env:WAVEPROBE_RCONPW
+$cdb = 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x86\cdb.exe'
+$script:server = $null
+$script:starts = 0
+$script:address = $null
+$script:srcdsId = $null
+
+function Attach-Debugger($srcds, $n) {
+  # cdb follows srcds from the moment it exists: every access violation, a
+  # heap corruption and the process's own exit are logged with a stack. srcds
+  # catches its own crashes and writes nothing useful.
+  $extensions = "$tf\addons\sourcemod\extensions"
+  $log = if ($n -eq 1) { "$out\cdb.log" } else { "$out\cdb-$n.log" }
+  @(
+    ".logopen $log"
+    ".sympath $extensions"
+    '.lines -e'
+    '.reload'
+    # Nothing stops the process except what is named below: the engine calls
+    # DebuggerBreakIfDebugging (int 3) once it sees a debugger, and a stopped
+    # cdb reading an empty stdin is a server that never answers rcon.
+    'sxn *'
+    'sxe -c ".echo BREAKPOINT; kv 20; gh" bpe'
+    'sxe -c ".echo FIRST-CHANCE AV; r; kv 16; .echo FAULT-CODE; u @eip-10 L8; .echo STACK-WORDS; dps @esp L16; .echo ECX-WORDS; dd @ecx L12; .echo ECX-TEXT; da @ecx L40; .echo FRAME-PARAMS; kP 12; .echo MODULE-BASES; lm m server; lm m engine; lm m sigsegv*; gn" -c2 ".echo SECOND-CHANCE AV; r; kv 60; lm; q" av'
+    'sxe -c ".echo HEAP CORRUPTION; kv 60; q" c0000374'
+    'sxe -c ".echo STACK BUFFER OVERRUN; kv 60; q" c0000409'
+    # A C++ exception nobody catches ends in abort() and a quiet exit, so each
+    # one is logged where it is thrown; the ones SigMod catches are noise.
+    'sxe -c ".echo CPP EXCEPTION; kv 24; gn" eh'
+    # Who ends the process: a thread of its own through ExitProcess or
+    # NtTerminateProcess stops here with its stack; a kill from outside does not.
+    'bp KERNELBASE!ExitProcess ".echo EXIT CALLED; kv 40; gc"'
+    'bp ntdll!NtTerminateProcess ".echo TERMINATE CALLED; kv 40; gc"'
+    'sxe -c ".echo PROCESS EXIT; .lastevent; ~* kv 30; q" epr'
+    'g'
+  ) | Set-Content "$out\cdb-$n.script"
+  # When an event stops cdb outside the handlers above, it reads its next
+  # command from stdin; at end of file it quits and takes srcds with it, which
+  # looked like the server exiting on its own a second into a mission. A stdin
+  # of nothing but "gn" keeps it going, and each one used is logged.
+  $resume = "$out\cdb-$n.stdin"
+  Set-Content $resume ((1..5000 | ForEach-Object { '.echo UNHANDLED STOP; kv 12; gn' }) -join "`n")
+  Start-Process $cdb -ArgumentList '-p', $srcds.Id, '-cf', "$out\cdb-$n.script" `
+    -RedirectStandardInput $resume `
+    -RedirectStandardOutput "$out\cdb-$n.out" -RedirectStandardError "$out\cdb-$n.err" | Out-Null
+}
+
+# The srcds this script started and attached to, not winbed, which can
+# outlive it, and not whatever srcds is running, which after a crash can be a
+# fresh one no debugger is on.
+function Alive { return $script:srcdsId -and [bool](Get-Process -Id $script:srcdsId -ErrorAction SilentlyContinue) }
+
+# Why the last server stopped, from the console it left: the unresolved
+# function SigMod refused to call, or the last lines before it went quiet.
+function Death-Reason {
+  $console = "$tf\console.log"
+  if (-not (Test-Path $console)) { return 'no console' }
+  $fatal = Select-String -Path $console -Pattern 'SigMod: fault|has no vtable index|FATAL ERROR|Host_Error|Sys_Error|Assertion failed' |
+    Select-Object -Last 1
+  if ($fatal) { return $fatal.Line.Trim() }
+  # An unresolved call only warns now, so it names what ran last, not the cause.
+  $unresolved = Select-String -Path $console -Pattern 'which does nothing on Windows yet' | Select-Object -Last 1
+  if ($unresolved) { return 'no fatal line; last unresolved call: ' + $unresolved.Line.Trim() }
+  return 'no fatal line; last: ' + ((Get-Content $console -Tail 1) -join ' ')
+}
+
+function Start-Bed {
+  if ($script:starts -ge $MaxStarts) { return $false }
+  $script:starts++
+  $n = $script:starts
+  if (Test-Path "$tf\console.log") { Copy-Item "$tf\console.log" "$out\consoles\console-$($n - 1).log" }
+  Get-Process srcds, winbed, cdb -ErrorAction SilentlyContinue | Stop-Process -Force
+  # The next srcds cannot bind the port until the last one is gone.
+  Get-Process srcds -ErrorAction SilentlyContinue | Wait-Process -Timeout 60 -ErrorAction SilentlyContinue
+  Start-Sleep 5
+  $script:server = Start-Process bedbin\winbed.exe -ArgumentList '-serve', '-root', $env:BED `
+    -RedirectStandardOutput "$out\winbed-$n.out" -RedirectStandardError "$out\winbed-$n.err" -PassThru
+  $srcds = $null
+  $until = (Get-Date).AddMinutes(5)
+  while (-not $srcds -and (Get-Date) -lt $until -and -not $script:server.HasExited) {
+    $srcds = Get-Process srcds -ErrorAction SilentlyContinue | Select-Object -First 1
+    if (-not $srcds) { Start-Sleep -Milliseconds 200 }
+  }
+  $script:srcdsId = if ($srcds) { $srcds.Id } else { $null }
+  # BED_DEBUGGER=none plays without cdb: the bed's servers die a second into
+  # a mission with cdb attached, and whether they do without it says whose
+  # fault that is. A crash still leaves a WER dump.
+  if ($srcds -and (Test-Path $cdb) -and $env:BED_DEBUGGER -ne 'none') { Attach-Debugger $srcds $n }
+  # srcds on a LAN reach binds rcon to the address its hostname resolves to,
+  # so try loopback and every IPv4 the runner has.
+  $candidates = @('127.0.0.1') + @(Get-NetIPAddress -AddressFamily IPv4 |
+    Where-Object { $_.IPAddress -ne '127.0.0.1' } | ForEach-Object { $_.IPAddress })
+  $deadline = (Get-Date).AddMinutes($BootMinutes)
+  while ((Get-Date) -lt $deadline) {
+    if (-not (Alive)) { Say "start ${n}: the server exited while booting: $(Death-Reason)"; return $false }
+    foreach ($candidate in $candidates) {
+      $env:SRCDS_RCON_HOST = $candidate
+      & bedbin\rcon.exe status *> $null
+      if ($LASTEXITCODE -eq 0) { $script:address = $candidate; return $true }
+    }
+    Start-Sleep 10
+  }
+  Say "start ${n}: rcon never answered"
+  return $false
+}
+
+if (-not (Start-Bed)) { exit 1 }
+Say "rcon answers on $($script:address)"
+foreach ($command in $Commands) {
+  $name = ($command -replace '[^a-z0-9_]', '_')
+  & bedbin\rcon.exe $command > "$out\$name.txt"
+}
+
+# A server without SigMod boots, answers rcon and plays every mission as
+# vanilla, and the exit tracer still prints, so nothing else notices. No mod
+# reporting OK means the extension is not running: say why SourceMod refused it.
+$mods = @(& bedbin\rcon.exe sig_list_mods)
+if (-not ($mods | Select-String '\bOK\b')) {
+  Say 'SigMod is not running: sig_list_mods lists no mods'
+  $why = @(@(& bedbin\rcon.exe 'sm exts list') | Select-String 'sigsegv|FAILED')
+  $why += @(Select-String -Path "$tf\console.log", "$tf\addons\sourcemod\logs\*.log" -Pattern 'Unable to load extension.*sigsegv' -ErrorAction SilentlyContinue)
+  if ($why) { $why | ForEach-Object { Say "  $($_.Line.Trim())" } } else { Say '  sm exts list does not name it and no log says why' }
+  exit 1
+}
+
+if (-not $Probe) {
+  Start-Sleep 30
+  if (-not (Alive)) { Say "the server died after booting: $(Death-Reason)"; exit 1 }
+  exit 0
+}
+
+$probeArgs = @($Probe -split '\s+' | Where-Object { $_ })
+$missions = & bedbin\waveprobe.exe -plan @probeArgs | ForEach-Object { ($_ | ConvertFrom-Json).mission } | Select-Object -Unique
+$single = @()
+for ($i = 0; $i -lt $probeArgs.Count; $i++) {
+  # A named mission needs no shard or SigMod filter.
+  if ($probeArgs[$i] -in '-shards', '-shard') { $i++; continue }
+  if ($probeArgs[$i] -eq '-only-sigmod') { continue }
+  $single += $probeArgs[$i]
+}
+# focus.txt, when it names missions, is the whole run: shard 0 plays them and
+# the other shards stop here. One mission is a fix checked in minutes.
+$focus = @(Get-Content "$PSScriptRoot\focus.txt" -ErrorAction SilentlyContinue | ForEach-Object { ($_ -split '#')[0].Trim() } | Where-Object { $_ })
+if ($focus.Count -gt 0) {
+  $shard = 0
+  for ($i = 0; $i -lt $probeArgs.Count - 1; $i++) { if ($probeArgs[$i] -eq '-shard') { $shard = [int]$probeArgs[$i + 1] } }
+  if ($shard -ne 0) { Say "focus run: $($focus -join ', ') on shard 0 only"; exit 0 }
+  $missions = $focus
+}
+# The probe cannot play reverse MvM (it has no BLU objective simulator) and
+# refuses one by name, so those are counted rather than failed.
+$reverse = @($missions | Where-Object { $_ -like '*_rev_*' })
+$missions = @($missions | Where-Object { $_ -notlike '*_rev_*' })
+Say "$($missions.Count) missions in this shard, $($reverse.Count) reverse ones left out"
+$failed = 0
+foreach ($mission in $missions) {
+  if (-not (Alive) -and -not (Start-Bed)) { Say "giving up at ${mission}: the server does not start"; $failed++; break }
+  & bedbin\waveprobe.exe -rcon "$($script:address):27015" -mission $mission @single >> "$out\results.jsonl" 2>> "$out\waveprobe.err"
+  if ($LASTEXITCODE -ne 0) { $failed++ }
+  if (-not (Alive)) { Say "died in ${mission}: $(Death-Reason)" }
+}
+Copy-Item "$tf\console.log" "$out\consoles\console-$($script:starts).log" -ErrorAction SilentlyContinue
+Say "$failed of $($missions.Count) missions failed, $($script:starts) server starts"
+if ($failed -gt 0) { exit 1 }
+exit 0

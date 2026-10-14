@@ -6,6 +6,10 @@
 
 
 static const char *const configs[] = {
+#if defined _WINDOWS
+	/* first, so its addresses take the names before the Linux symbols do */
+	"sigsegv/windows",
+#endif
 	"sigsegv/datamaps",
 	"sigsegv/entities",
 	"sigsegv/globals",
@@ -56,6 +60,13 @@ inline const std::string &GetSymbolName(const std::map<std::string, std::string>
 bool CSigsegvGameConf::LoadAll(char *error, size_t maxlen)
 {
 	gameconfs->AddUserConfigHook("sigsegv", this);
+	
+#if defined _WINDOWS
+	this->m_Names.clear();
+	for (IAddr *addr : AutoList<IAddr>::List()) {
+		this->m_Names.insert(addr->GetName());
+	}
+#endif
 	
 	for (const char *const *c_name = configs; *c_name != nullptr; ++c_name) {
 		IGameConfig *conf = nullptr;
@@ -248,6 +259,9 @@ SMCResult CSigsegvGameConf::AddrEntry_End()
 	}
 	
 	auto parser = this->m_AddrParsers.at(type);
+#if defined _WINDOWS
+	if (this->NameTaken(name)) return SMCResult_Continue;
+#endif
 	return (this->*parser)();
 }
 
@@ -378,6 +392,9 @@ SMCResult CSigsegvGameConf::AddrGroup_End()
 		};
 		(*handler)(data);
 		
+#if defined _WINDOWS
+		if (this->NameTaken(this->m_AddrEntry_State.m_Name)) continue;
+#endif
 		SMCResult result = (this->*parser)();
 		if (result != SMCResult_Continue) {
 			return SMCResult_HaltFail;
@@ -419,6 +436,20 @@ SMCResult CSigsegvGameConf::AddrGroup_Common_End()
 	
 	return SMCResult_Continue;
 }
+
+
+#if defined _WINDOWS
+/* windows.txt loads first and carries the address derived for this build, so a
+ * Linux block under the same name, or a static IAddr, is left out rather than
+ * registered a second time for AddrManager::Load to report. */
+bool CSigsegvGameConf::NameTaken(const std::string& name)
+{
+	if (this->m_Names.insert(name).second) return false;
+	
+	DevMsg("GameData: addr \"%s\" is already held by an earlier block, left out\n", name.c_str());
+	return true;
+}
+#endif
 
 
 void CSigsegvGameConf::AddrEntry_Load_Common(IAddr *addr)
@@ -487,7 +518,11 @@ SMCResult CSigsegvGameConf::AddrEntry_Load_Fixed()
 	int addr        = stoi(kv.at("addr"), nullptr, 0);
 	int build       = stoi(kv.at("build"), nullptr, 0);
 	
+	++IAddr_FixedAddr::s_Builds[build];
 	auto a = new CAddr_FixedAddr(name, sym, addr, build);
+	if (kv.find("vtidx") != kv.end()) {
+		a->SetVTIndex(stoi(kv.at("vtidx"), nullptr, 0));
+	}
 	this->AddrEntry_Load_Common(a);
 	this->m_AddrPtrs.push_back(std::unique_ptr<IAddr>(a));
 	return SMCResult_Continue;
@@ -554,6 +589,9 @@ SMCResult CSigsegvGameConf::AddrEntry_Load_Func_KnownVTIdx()
 	int idx            = stoi(kv.at("idx"), nullptr, 0);
 	
 	auto a = new CAddr_Func_KnownVTIdx(name, sym, vtable, idx);
+	/* The slot is what names the virtual when MSVC folded its body with others,
+	 * and a hook or a thunk on that body needs it (link.h, virtual_hook.cpp). */
+	a->SetVTIndex(idx);
 	this->AddrEntry_Load_Common(a);
 	this->m_AddrPtrs.push_back(std::unique_ptr<IAddr>(a));
 	return SMCResult_Continue;
@@ -687,6 +725,22 @@ SMCResult CSigsegvGameConf::AddrEntry_Load_Func_EBPPrologue_VProf()
 	const auto& v_group = kv.at("v_group");
 	
 	auto a = new CAddr_Func_EBPPrologue_VProf(name, sym, v_name, v_group);
+	this->AddrEntry_Load_Common(a);
+	this->m_AddrPtrs.push_back(std::unique_ptr<IAddr>(a));
+	return SMCResult_Continue;
+}
+
+SMCResult CSigsegvGameConf::AddrEntry_Load_SendTable()
+{
+	const auto& name = this->m_AddrEntry_State.m_Name;
+	const auto& kv   = this->m_AddrEntry_State.m_KeyValues;
+	
+	if (kv.find("table") == kv.end()) {
+		DevMsg("GameData error: addr \"%s\" lacks required key \"table\"\n", name.c_str());
+		return SMCResult_HaltFail;
+	}
+	
+	auto a = new CAddr_SendTable(name, kv.at("table"));
 	this->AddrEntry_Load_Common(a);
 	this->m_AddrPtrs.push_back(std::unique_ptr<IAddr>(a));
 	return SMCResult_Continue;

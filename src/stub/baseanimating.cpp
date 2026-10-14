@@ -2,6 +2,7 @@
 #ifdef SE_IS_TF2
 #include "stub/econ.h"
 #include "stub/tfweaponbase.h"
+#include "util/rtti.h"
 #endif
 
 
@@ -44,6 +45,9 @@ MemberFuncThunk<CBaseAnimating *, void, int, matrix3x4_t&>         CBaseAnimatin
 MemberFuncThunk<CBaseAnimating *, int, const char *>               CBaseAnimating::ft_LookupBone          ("CBaseAnimating::LookupBone");
 MemberFuncThunk<CBaseAnimating *, int, const char *>               CBaseAnimating::ft_LookupAttachment    ("CBaseAnimating::LookupAttachment");
 MemberFuncThunk<CBaseAnimating *, int, const char *>               CBaseAnimating::ft_LookupSequence      ("CBaseAnimating::LookupSequence");
+#if defined _WINDOWS
+MemberFuncThunk<CBaseAnimating *, int, const char *>               CBaseAnimating::ft_LookupActivity      ("CBaseAnimating::LookupActivity");
+#endif
 MemberFuncThunk<CBaseAnimating *, void, int, Vector&, QAngle&>     CBaseAnimating::ft_GetBonePosition     ("CBaseAnimating::GetBonePosition");
 MemberFuncThunk<CBaseAnimating *, bool, int, Vector&, QAngle&>     CBaseAnimating::ft_GetAttachment       ("CBaseAnimating::GetAttachment");
 MemberFuncThunk<CBaseAnimating *, bool, int, matrix3x4_t&>         CBaseAnimating::ft_GetAttachment2      ("CBaseAnimating::GetAttachment [matrix]");
@@ -71,6 +75,9 @@ MemberFuncThunk<CBaseAnimatingOverlay *, void, int, float> CBaseAnimatingOverlay
 
 #ifdef SE_IS_TF2
 IMPL_SENDPROP(bool, CEconEntity, m_bValidatedAttachedEntity, CEconEntity);
+#if defined _WINDOWS
+IMPL_SENDPROP(uint8_t, CEconEntity, m_AttributeManager, CEconEntity);
+#endif
 
 MemberFuncThunk<CEconEntity *, void> CEconEntity::ft_DebugDescribe("CEconEntity::DebugDescribe");
 
@@ -78,6 +85,12 @@ MemberVFuncThunk<CEconEntity *, CAttributeContainer *> CEconEntity::vt_GetAttrib
 MemberVFuncThunk<CEconEntity *, CAttributeManager *>   CEconEntity::vt_GetAttributeManager  (TypeName<CEconEntity>(), "CEconEntity::GetAttributeManager");
 MemberVFuncThunk<CEconEntity *, void, CBaseEntity *>   CEconEntity::vt_GiveTo               (TypeName<CEconEntity>(), "CEconEntity::GiveTo");
 MemberVFuncThunk<CEconEntity *, void>                  CEconEntity::vt_ReapplyProvision     (TypeName<CEconEntity>(), "CEconEntity::ReapplyProvision");
+#if defined _WINDOWS
+void CEconEntity::ReapplyProvision()
+{
+	if (auto attrs = rtti_cast<IHasAttributes *>(this); attrs != nullptr) attrs->ReapplyProvision();
+}
+#endif
 MemberVFuncThunk<CEconEntity *, bool, CBaseCombatCharacter *, bool> CEconEntity::vt_UpdateBodygroups(TypeName<CEconEntity>(), "CEconEntity::UpdateBodygroups");
 MemberVFuncThunk<CEconEntity *, Activity, Activity>    CEconEntity::vt_TranslateViewmodelHandActivityInternal(TypeName<CEconEntity>(), "CEconEntity::TranslateViewmodelHandActivityInternal");
 

@@ -30,6 +30,9 @@ MemberFuncThunk<const CBaseCombatWeapon *, bool> CBaseCombatWeapon::ft_IsMeleeWe
 MemberFuncThunk<CBaseCombatWeapon *, void, CBaseCombatCharacter *> CBaseCombatWeapon::ft_SetOwner("CBaseCombatWeapon::SetOwner");
 MemberFuncThunk<const CBaseCombatWeapon *, FileWeaponInfo_t const &> CBaseCombatWeapon::ft_GetWpnData("CBaseCombatWeapon::GetWpnData");
 MemberFuncThunk<const CBaseCombatWeapon *, bool, Activity> CBaseCombatWeapon::ft_SetIdealActivity("CBaseCombatWeapon::SetIdealActivity");
+#if defined _WINDOWS
+MemberFuncThunk<const CBaseCombatWeapon *, bool, int> CBaseCombatWeapon::ft_SendWeaponAnim_Base("CBaseCombatWeapon::SendWeaponAnim");
+#endif
 #ifdef SE_IS_TF2
 MemberFuncThunk<CBaseCombatWeapon *, void, const char *> CBaseCombatWeapon::ft_SetCustomViewModel("CBaseCombatWeapon::SetCustomViewModel");
 #endif

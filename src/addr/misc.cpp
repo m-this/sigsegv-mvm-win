@@ -51,6 +51,10 @@ struct CExtract_g_pGameRules : public IExtract<uintptr_t>
 using CExtract_g_pGameRules = IExtractStub;
 #endif
 
+/* Not on Windows: the extraction below reads the CGameRules destructor's bytes
+ * through a vtable index that is the Linux one, and a static address here would
+ * take the name before gamedata/sigsegv/windows.txt could give it. */
+#if !defined _WINDOWS
 class CAddr_g_pGameRules : public IAddr_Sym
 {
 public:
@@ -70,6 +74,7 @@ public:
 	}
 };
 static CAddr_g_pGameRules addr_g_pGameRules;
+#endif
 
 
 class CAddr_pszWpnEntTranslationList : public IAddr_Sym
@@ -1009,13 +1014,17 @@ public:
 			return false;
 		}
 		
-		CScan<StrRefScanner> scan1(CLibSegBounds(this->GetLibrary(), Segment::RODATA), p_str);
-		if (!scan1.ExactlyOneMatch()) {
-			DevMsg("CAddr_g_aConditionNames: \"%s\": %u string ref matches\n", this->GetName(), scan1.Matches().size());
-			return false;
+		/* The array is not const, so MSVC puts it in .data; the strings it
+		 * points at are in .rdata. */
+		for (Segment seg : { Segment::DATA, Segment::RODATA }) {
+			CScan<StrRefScanner> scan1(CLibSegBounds(this->GetLibrary(), seg), p_str);
+			if (scan1.ExactlyOneMatch()) {
+				addr = (uintptr_t)scan1.FirstMatch();
+				return true;
+			}
+			DevMsg("CAddr_g_aConditionNames: \"%s\": %u string ref matches in segment %d\n", this->GetName(), scan1.Matches().size(), (int)seg);
 		}
-		
-		addr = (uintptr_t)scan1.FirstMatch();
+		return false;
 #endif
 		return true;
 	}

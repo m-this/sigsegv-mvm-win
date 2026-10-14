@@ -1,0 +1,3 @@
+# SigMod frames to name, as the bed report prints them. The bed now names
+# the frames of its own faults against its own build; this is for a frame
+# read off an older report, and names it against the current build.

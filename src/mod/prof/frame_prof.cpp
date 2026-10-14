@@ -37,9 +37,8 @@ namespace Mod::Prof::Frame_Prof
 		// prevOverflow = false;
 	}
 	
-	DETOUR_DECL_STATIC(void, Host_CheckDumpMemoryStats)
+	void FrameEnd()
 	{
-		DETOUR_STATIC_CALL();
 		timespent2End.Sample();
 		timespent2.m_Int64 += timespent2End.m_Int64 - timespent2Start.m_Int64;
 		highestTime = Max((timespent2End.GetSeconds() - timespent2Start.GetSeconds()), highestTime);
@@ -61,6 +60,21 @@ namespace Mod::Prof::Frame_Prof
             prevTime2 = gpGlobals->curtime/5;
         }
 	}
+
+	DETOUR_DECL_STATIC(void, Host_CheckDumpMemoryStats)
+	{
+		DETOUR_STATIC_CALL();
+		FrameEnd();
+	}
+
+#if defined _WINDOWS
+	/* Host_CheckDumpMemoryStats is inline at the end of _Host_RunFrame there */
+	DETOUR_DECL_STATIC(void, _Host_RunFrame_End, float time)
+	{
+		DETOUR_STATIC_CALL(time);
+		FrameEnd();
+	}
+#endif
 
 	
 
@@ -119,7 +133,11 @@ namespace Mod::Prof::Frame_Prof
 		CMod() : IMod("Prof:Frame_Prof")
 		{
 			//MOD_ADD_DETOUR_STATIC(_Host_RunFrame,               "_Host_RunFrame");
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_STATIC(_Host_RunFrame_End,                      "_Host_RunFrame");
+#else
 			MOD_ADD_DETOUR_STATIC(Host_CheckDumpMemoryStats,               "Host_CheckDumpMemoryStats");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CMapReslistGenerator_RunFrame,               "CMapReslistGenerator::RunFrame");
 			//MOD_ADD_DETOUR_MEMBER(CNetChan_SendDatagram,               "CNetChan::SendDatagram");
 

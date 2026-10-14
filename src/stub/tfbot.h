@@ -19,10 +19,78 @@ class IBody;
 class IVision;
 class IIntention;
 
+#if defined _WINDOWS
+/* NextBotPlayer<T> is T, INextBot and this. The buttons are virtuals of this
+ * interface, and MSVC keeps them in its own vtable at its own offset in the
+ * object: the player's vtable holds none of them, so the Linux thunks, which
+ * look for each in the player's vtable, find nothing. Declared here in the
+ * SDK's order, a call through it is the game's own virtual call. */
+class INextBotPlayerInput
+{
+public:
+	virtual void PressFireButton(float duration = -1.0f) = 0;
+	virtual void ReleaseFireButton() = 0;
+	virtual void PressAltFireButton(float duration = -1.0f) = 0;
+	virtual void ReleaseAltFireButton() = 0;
+	virtual void PressMeleeButton(float duration = -1.0f) = 0;
+	virtual void ReleaseMeleeButton() = 0;
+	virtual void PressSpecialFireButton(float duration = -1.0f) = 0;
+	virtual void ReleaseSpecialFireButton() = 0;
+	virtual void PressUseButton(float duration = -1.0f) = 0;
+	virtual void ReleaseUseButton() = 0;
+	virtual void PressReloadButton(float duration = -1.0f) = 0;
+	virtual void ReleaseReloadButton() = 0;
+	virtual void PressForwardButton(float duration = -1.0f) = 0;
+	virtual void ReleaseForwardButton() = 0;
+	virtual void PressBackwardButton(float duration = -1.0f) = 0;
+	virtual void ReleaseBackwardButton() = 0;
+	virtual void PressLeftButton(float duration = -1.0f) = 0;
+	virtual void ReleaseLeftButton() = 0;
+	virtual void PressRightButton(float duration = -1.0f) = 0;
+	virtual void ReleaseRightButton() = 0;
+	virtual void PressJumpButton(float duration = -1.0f) = 0;
+	virtual void ReleaseJumpButton() = 0;
+	virtual void PressCrouchButton(float duration = -1.0f) = 0;
+	virtual void ReleaseCrouchButton() = 0;
+	virtual void PressWalkButton(float duration = -1.0f) = 0;
+	virtual void ReleaseWalkButton() = 0;
+	virtual void SetButtonScale(float forward, float side) = 0;
+};
+#endif
+
 template<typename T>
 class NextBotPlayer : public T
 {
 public:
+#if defined _WINDOWS
+	void PressFireButton(float duration = -1.0f)        { Input()->PressFireButton(duration); }
+	void ReleaseFireButton()                            { Input()->ReleaseFireButton(); }
+	void PressAltFireButton(float duration = -1.0f)     { Input()->PressAltFireButton(duration); }
+	void ReleaseAltFireButton()                         { Input()->ReleaseAltFireButton(); }
+	void PressMeleeButton(float duration = -1.0f)       { Input()->PressMeleeButton(duration); }
+	void ReleaseMeleeButton()                           { Input()->ReleaseMeleeButton(); }
+	void PressSpecialFireButton(float duration = -1.0f) { Input()->PressSpecialFireButton(duration); }
+	void ReleaseSpecialFireButton()                     { Input()->ReleaseSpecialFireButton(); }
+	void PressUseButton(float duration = -1.0f)         { Input()->PressUseButton(duration); }
+	void ReleaseUseButton()                             { Input()->ReleaseUseButton(); }
+	void PressReloadButton(float duration = -1.0f)      { Input()->PressReloadButton(duration); }
+	void ReleaseReloadButton()                          { Input()->ReleaseReloadButton(); }
+	void PressForwardButton(float duration = -1.0f)     { Input()->PressForwardButton(duration); }
+	void ReleaseForwardButton()                         { Input()->ReleaseForwardButton(); }
+	void PressBackwardButton(float duration = -1.0f)    { Input()->PressBackwardButton(duration); }
+	void ReleaseBackwardButton()                        { Input()->ReleaseBackwardButton(); }
+	void PressLeftButton(float duration = -1.0f)        { Input()->PressLeftButton(duration); }
+	void ReleaseLeftButton()                            { Input()->ReleaseLeftButton(); }
+	void PressRightButton(float duration = -1.0f)       { Input()->PressRightButton(duration); }
+	void ReleaseRightButton()                           { Input()->ReleaseRightButton(); }
+	void PressJumpButton(float duration = -1.0f)        { Input()->PressJumpButton(duration); }
+	void ReleaseJumpButton()                            { Input()->ReleaseJumpButton(); }
+	void PressCrouchButton(float duration = -1.0f)      { Input()->PressCrouchButton(duration); }
+	void ReleaseCrouchButton()                          { Input()->ReleaseCrouchButton(); }
+	void PressWalkButton(float duration = -1.0f)        { Input()->PressWalkButton(duration); }
+	void ReleaseWalkButton()                            { Input()->ReleaseWalkButton(); }
+	void SetButtonScale(float forward, float side)      { Input()->SetButtonScale(forward, side); }
+#else
 	void PressFireButton(float duration = -1.0f)        { GetVFT_PressFireButton         ()(this, duration);      }
 	void ReleaseFireButton()                            { GetVFT_ReleaseFireButton       ()(this);                }
 	void PressAltFireButton(float duration = -1.0f)     { GetVFT_PressAltFireButton      ()(this, duration);      }
@@ -50,8 +118,12 @@ public:
 	void PressWalkButton(float duration = -1.0f)        { GetVFT_PressWalkButton         ()(this, duration);      }
 	void ReleaseWalkButton()                            { GetVFT_ReleaseWalkButton       ()(this);                }
 	void SetButtonScale(float forward, float side)      { GetVFT_SetButtonScale          ()(this, forward, side); }
+#endif
 	
 private:
+#if defined _WINDOWS
+	INextBotPlayerInput *Input() { return rtti_cast<INextBotPlayerInput *>(this); }
+#endif
 	static MemberVFuncThunk<NextBotPlayer<T> *, void, float       >& GetVFT_PressFireButton();
 	static MemberVFuncThunk<NextBotPlayer<T> *, void              >& GetVFT_ReleaseFireButton();
 	static MemberVFuncThunk<NextBotPlayer<T> *, void, float       >& GetVFT_PressAltFireButton();
@@ -310,17 +382,41 @@ public:
 	void SetMission(MissionType val) { this->m_nMission = val; }
 	
 	/* thunk */
+#if defined _WINDOWS
+	/* Trivial getters MSVC folded with others, so no address names them;
+	 * INextBot's virtuals reach the same members, as NextBotCombatCharacter does. */
+	ILocomotion *GetLocomotionInterface() const                        { return this->MyNextBotPointer()->GetLocomotionInterface(); }
+	IBody *GetBodyInterface() const                                    { return this->MyNextBotPointer()->GetBodyInterface(); }
+	IVision *GetVisionInterface() const                                { return this->MyNextBotPointer()->GetVisionInterface(); }
+	IIntention *GetIntentionInterface() const                          { return this->MyNextBotPointer()->GetIntentionInterface(); }
+#else
 	ILocomotion *GetLocomotionInterface() const                        { return ft_GetLocomotionInterface      (this); }
 	IBody *GetBodyInterface() const                                    { return ft_GetBodyInterface            (this); }
 	IVision *GetVisionInterface() const                                { return ft_GetVisionInterface          (this); }
 	IIntention *GetIntentionInterface() const                          { return ft_GetIntentionInterface       (this); }
+#endif
 	float GetDesiredPathLookAheadRange() const                         { return ft_GetDesiredPathLookAheadRange(this); }
 	void PushRequiredWeapon(CTFWeaponBase *weapon)                     { return ft_PushRequiredWeapon          (this, weapon); }
 	void PopRequiredWeapon()                                           { return ft_PopRequiredWeapon           (this); }
+	/* the stack is a count: a Push that does nothing against a Pop that runs underflows it */
+	static bool IsRequiredWeaponStackLinked()                          { return ft_PushRequiredWeapon.IsLinked() && ft_PopRequiredWeapon.IsLinked(); }
+#if defined _WINDOWS
+	/* server.dll has only the two-vector overload as a function; MSVC
+	 * inlined the others. As in the game source, the one-argument forms trace
+	 * from the bot's shoot position, and the entity forms trace to the
+	 * entity's WorldSpaceCenter under MASK_SOLID_BRUSHONLY, which can only hit
+	 * the target itself when it is a brush: for a player, a bot, a tank or a
+	 * building the two-vector trace gives the same answer. */
+	bool IsLineOfFireClear(const Vector& to) const                     { return ft_IsLineOfFireClear_vec_vec   (this, const_cast<CTFBot *>(this)->Weapon_ShootPosition(), to); }
+	bool IsLineOfFireClear(CBaseEntity *to) const                      { return ft_IsLineOfFireClear_vec_vec   (this, const_cast<CTFBot *>(this)->Weapon_ShootPosition(), to->WorldSpaceCenter()); }
+	bool IsLineOfFireClear(const Vector& from, const Vector& to) const { return ft_IsLineOfFireClear_vec_vec   (this, from, to); }
+	bool IsLineOfFireClear(const Vector& from, CBaseEntity *to) const  { return ft_IsLineOfFireClear_vec_vec   (this, from, to->WorldSpaceCenter()); }
+#else
 	bool IsLineOfFireClear(const Vector& to) const                     { return ft_IsLineOfFireClear_vec       (this, to); }
 	bool IsLineOfFireClear(CBaseEntity *to) const                      { return ft_IsLineOfFireClear_ent       (this, to); }
 	bool IsLineOfFireClear(const Vector& from, const Vector& to) const { return ft_IsLineOfFireClear_vec_vec   (this, from, to); }
 	bool IsLineOfFireClear(const Vector& from, CBaseEntity *to) const  { return ft_IsLineOfFireClear_vec_ent   (this, from, to); }
+#endif
 	SuspectedSpyInfo_t *IsSuspectedSpy(CTFPlayer *spy)                 { return ft_IsSuspectedSpy              (this, spy); }
 	void SuspectSpy(CTFPlayer *spy)                                    {        ft_SuspectSpy                  (this, spy); }
 	void StopSuspectingSpy(CTFPlayer *spy)                             {        ft_StopSuspectingSpy           (this, spy); }
@@ -430,6 +526,15 @@ inline CTFBot *ToTFBot(CBasePlayer *pPlayer)
 
 	return static_cast<CTFBot *>(pPlayer);
 }
+
+#if defined _WINDOWS
+/* MSVC compiles CTFBot's overrides of INextBot's virtuals against the INextBot
+ * subobject, so a detour on one of them gets that subobject as this. */
+inline CTFBot *TFBotFromNextBot(void *self)
+{
+	return static_cast<CTFBot *>(reinterpret_cast<INextBot *>(self)->GetEntity());
+}
+#endif
 
 template<typename T> T *NextBotCreatePlayerBot(const char *name, bool fake_client = true);
 template<> CTFBot *NextBotCreatePlayerBot<CTFBot>(const char *name, bool fake_client);

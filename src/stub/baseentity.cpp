@@ -170,6 +170,9 @@ MemberVFuncThunk<      CBaseEntity *, int, CCheckTransmitInfo *                 
 
 MemberFuncThunk<CBaseEntityOutput *, void, variant_t, CBaseEntity *, CBaseEntity *, float> CBaseEntityOutput::ft_FireOutput("CBaseEntityOutput::FireOutput");
 MemberFuncThunk<CBaseEntityOutput *, void, const char *                                  > CBaseEntityOutput::ft_ParseEventAction("CBaseEntityOutput::ParseEventAction");
+#if defined _WINDOWS
+MemberFuncThunk<CBaseEntityOutput *, bool, CBaseEntityOutput **, const char *> CBaseEntityOutput::ft_ParseEventAction_Windows("CBaseEntityOutput::ParseEventAction [windows]");
+#endif
 MemberFuncThunk<CBaseEntityOutput *, void                                                > CBaseEntityOutput::ft_DeleteAllElements("CBaseEntityOutput::DeleteAllElements");
 
 StaticFuncThunk<CBaseEntity *, const char *, const Vector&, const QAngle&, CBaseEntity *>                        CBaseEntity::ft_Create             ("CBaseEntity::Create");
@@ -328,3 +331,69 @@ void UnloadAllCustomThinkFunc()
 		}
 	}
 }
+
+
+#if defined _WINDOWS
+/* A null classname matches a null, empty or "*" query. Otherwise compare
+ * letter by letter ignoring case; the query matches if it ends with the name
+ * or reaches a '*' where they differ. */
+bool CBaseEntity::ClassMatchesComplex(const char *pszClassOrWildcard)
+{
+	const char *name = STRING((string_t)this->m_iClassname);
+	if (name == nullptr) {
+		return pszClassOrWildcard == nullptr || *pszClassOrWildcard == '\0' || *pszClassOrWildcard == '*';
+	}
+	const char *query = pszClassOrWildcard;
+	if (query == name) return true;
+	for (; *name != '\0'; ++name, ++query) {
+		if (*query == '\0') return false;
+		if (*name != *query && tolower((unsigned char)*name) != tolower((unsigned char)*query)) return *query == '*';
+	}
+	return *query == '\0' || *query == '*';
+}
+#endif
+
+
+#if defined _WINDOWS
+/* Walk the datamaps from the entity's own to its bases and set var from the
+ * first key or output field whose external name matches, ignoring case. */
+bool CBaseEntity::ReadKeyField(const char *name, variant_t *var)
+{
+	if (name == nullptr) return false;
+	for (datamap_t *dmap = this->GetDataDescMap(); dmap != nullptr; dmap = dmap->baseMap) {
+		for (int i = 0; i < dmap->dataNumFields; ++i) {
+			const typedescription_t &desc = dmap->dataDesc[i];
+			if ((desc.flags & (FTYPEDESC_OUTPUT | FTYPEDESC_KEY)) && V_stricmp(desc.externalName, name) == 0) {
+				var->Set(desc.fieldType, (char *)this + desc.fieldOffset[TD_OFFSET_NORMAL]);
+				return true;
+			}
+		}
+	}
+	return false;
+}
+#endif
+
+#if defined _WINDOWS
+/* The SDK's per type object store (entitydatainstantiator.h). */
+class IEntityDataInstantiator
+{
+public:
+	virtual ~IEntityDataInstantiator() {}
+	virtual void *GetDataObject(const CBaseEntity *instance) = 0;
+	virtual void *CreateDataObject(const CBaseEntity *instance) = 0;
+	virtual void DestroyDataObject(const CBaseEntity *instance) = 0;
+};
+
+static GlobalThunk<IEntityDataInstantiator *[32]> g_DataObjectAccessors("g_DataObjectAccessSystem::m_Accessors [windows]");
+
+/* The Linux body tests the type's bit in m_fDataObjectTypes before asking the
+ * type's accessor. The bit is set and cleared together with the accessor's
+ * entry, so the accessor alone gives the same answer: null when the entity
+ * has no object of that type. */
+void *CBaseEntity::GetDataObject(int type)
+{
+	if (type < 0 || type >= 32) return nullptr;
+	IEntityDataInstantiator *accessor = g_DataObjectAccessors[type];
+	return accessor != nullptr ? accessor->GetDataObject(this) : nullptr;
+}
+#endif

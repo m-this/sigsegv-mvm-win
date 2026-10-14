@@ -194,10 +194,11 @@ template<class PathCost> bool Path::Compute(INextBot *nextbot, CBaseCombatCharac
 	return ft_Path_CTFBotPathCost_Compute(this, nextbot, subject, reinterpret_cast<CTFBotPathCost &>(cost_func), maxPathLength, b1);
 }
 
-MemberFuncThunk<Path *, bool, INextBot *, const Vector &, CTFBotPathCost &, float, bool> ft_Path_CTFBotPathCost_Compute_Vector("Path::Compute<CTFBotPathCost> [vec]");
+MemberFuncThunk<Path *, bool, INextBot *, const Vector &, CTFBotPathCost &, float, bool, bool> ft_Path_CTFBotPathCost_Compute_Vector("Path::Compute<CTFBotPathCost> [vec]");
 template<class PathCost> bool Path::Compute(INextBot *nextbot, const Vector &subject, PathCost& cost_func, float maxPathLength, bool b1)
 {
-	return ft_Path_CTFBotPathCost_Compute_Vector(this, nextbot, subject, reinterpret_cast<CTFBotPathCost &>(cost_func), maxPathLength, b1);
+	/* The game's last parameter, requireGoalArea, defaults to false. */
+	return ft_Path_CTFBotPathCost_Compute_Vector(this, nextbot, subject, reinterpret_cast<CTFBotPathCost &>(cost_func), maxPathLength, b1, false);
 }
 
 template bool Path::Compute(INextBot *nextbot, CBaseCombatCharacter *subject, CTFBotPathCost& cost_func, float maxPathLength, bool b1);

@@ -253,57 +253,6 @@ public:
 	virtual INextBotEventResponder *FirstContainedResponder() const override final;
 	virtual INextBotEventResponder *NextContainedResponder(INextBotEventResponder *prev) const override final;
 	
-	virtual void OnLeaveGround(CBaseEntity *ent) override final;
-	virtual void OnLandOnGround(CBaseEntity *ent) override final;
-	
-	virtual void OnContact(CBaseEntity *ent, CGameTrace *trace) override final;
-	
-	virtual void OnMoveToSuccess(const Path *path) override final;
-	virtual void OnMoveToFailure(const Path *path, MoveToFailureType fail) override final;
-	
-	virtual void OnStuck() override final;
-	virtual void OnUnStuck() override final;
-	
-	virtual void OnPostureChanged() override final;
-	virtual void OnAnimationActivityComplete(int i1) override final;
-	virtual void OnAnimationActivityInterrupted(int i1) override final;
-	virtual void OnAnimationEvent(animevent_t *a1) override final;
-	
-	virtual void OnIgnite() override final;
-	virtual void OnInjured(const CTakeDamageInfo& info) override final;
-	virtual void OnKilled(const CTakeDamageInfo& info) override final;
-	virtual void OnOtherKilled(CBaseCombatCharacter *who, const CTakeDamageInfo& info) override final;
-	
-	virtual void OnSight(CBaseEntity *ent) override final;
-	virtual void OnLostSight(CBaseEntity *ent) override final;
-	
-	virtual void OnSound(CBaseEntity *ent, const Vector& v1, KeyValues *kv) override final;
-	virtual void OnSpokeConcept(CBaseCombatCharacter *who, const char *s1, AI_Response *response) override final;
-	virtual void OnWeaponFired(CBaseCombatCharacter *who, CBaseCombatWeapon *weapon) override final;
-	
-	virtual void OnNavAreaChanged(CNavArea *area1, CNavArea *area2) override final;
-	virtual void OnModelChanged() override final;
-	virtual void OnPickUp(CBaseEntity *ent, CBaseCombatCharacter *who) override final;
-	virtual void OnDrop(CBaseEntity *ent) override final;
-	virtual void OnActorEmoted(CBaseCombatCharacter *who, int emote_concept) override final;
-	
-	virtual void OnCommandAttack(CBaseEntity *ent) override final;
-	virtual void OnCommandApproach(const Vector& v1, float f1) override final;
-	virtual void OnCommandApproach(CBaseEntity *ent) override final;
-	virtual void OnCommandRetreat(CBaseEntity *ent, float f1) override final;
-	virtual void OnCommandPause(float f1) override final;
-	virtual void OnCommandResume() override final;
-	virtual void OnCommandString(const char *cmd) override final;
-	
-	virtual void OnShoved(CBaseEntity *ent) override final;
-	virtual void OnBlinded(CBaseEntity *ent) override final;
-	
-	virtual void OnTerritoryContested(int i1) override final;
-	virtual void OnTerritoryCaptured(int i1) override final;
-	virtual void OnTerritoryLost(int i1) override final;
-	
-	virtual void OnWin() override final;
-	virtual void OnLose() override final;
 	
 	
 	virtual const char *GetName() const = 0;
@@ -372,6 +321,63 @@ public:
 	virtual EventDesiredResult<T> OnLose(T *actor);
 	
 	virtual bool IsAbleToBlockMovementOf(const INextBot *nextbot) const;
+	
+	/* INextBotEventResponder's events, declared after the actor versions as in
+	 * Valve's header. MSVC places a new overload beside the first declaration of
+	 * its name in the class, so declared first they pulled OnLeaveGround(T *, ...)
+	 * and every event after it eight slots ahead of the game's table. Itanium
+	 * gives an override no slot of its own, so Linux is laid out as before. */
+	virtual void OnLeaveGround(CBaseEntity *ent) override final;
+	virtual void OnLandOnGround(CBaseEntity *ent) override final;
+	
+	virtual void OnContact(CBaseEntity *ent, CGameTrace *trace) override final;
+	
+	virtual void OnMoveToSuccess(const Path *path) override final;
+	virtual void OnMoveToFailure(const Path *path, MoveToFailureType fail) override final;
+	
+	virtual void OnStuck() override final;
+	virtual void OnUnStuck() override final;
+	
+	virtual void OnPostureChanged() override final;
+	virtual void OnAnimationActivityComplete(int i1) override final;
+	virtual void OnAnimationActivityInterrupted(int i1) override final;
+	virtual void OnAnimationEvent(animevent_t *a1) override final;
+	
+	virtual void OnIgnite() override final;
+	virtual void OnInjured(const CTakeDamageInfo& info) override final;
+	virtual void OnKilled(const CTakeDamageInfo& info) override final;
+	virtual void OnOtherKilled(CBaseCombatCharacter *who, const CTakeDamageInfo& info) override final;
+	
+	virtual void OnSight(CBaseEntity *ent) override final;
+	virtual void OnLostSight(CBaseEntity *ent) override final;
+	
+	virtual void OnSound(CBaseEntity *ent, const Vector& v1, KeyValues *kv) override final;
+	virtual void OnSpokeConcept(CBaseCombatCharacter *who, const char *s1, AI_Response *response) override final;
+	virtual void OnWeaponFired(CBaseCombatCharacter *who, CBaseCombatWeapon *weapon) override final;
+	
+	virtual void OnNavAreaChanged(CNavArea *area1, CNavArea *area2) override final;
+	virtual void OnModelChanged() override final;
+	virtual void OnPickUp(CBaseEntity *ent, CBaseCombatCharacter *who) override final;
+	virtual void OnDrop(CBaseEntity *ent) override final;
+	virtual void OnActorEmoted(CBaseCombatCharacter *who, int emote_concept) override final;
+	
+	virtual void OnCommandAttack(CBaseEntity *ent) override final;
+	virtual void OnCommandApproach(const Vector& v1, float f1) override final;
+	virtual void OnCommandApproach(CBaseEntity *ent) override final;
+	virtual void OnCommandRetreat(CBaseEntity *ent, float f1) override final;
+	virtual void OnCommandPause(float f1) override final;
+	virtual void OnCommandResume() override final;
+	virtual void OnCommandString(const char *cmd) override final;
+	
+	virtual void OnShoved(CBaseEntity *ent) override final;
+	virtual void OnBlinded(CBaseEntity *ent) override final;
+	
+	virtual void OnTerritoryContested(int i1) override final;
+	virtual void OnTerritoryCaptured(int i1) override final;
+	virtual void OnTerritoryLost(int i1) override final;
+	
+	virtual void OnWin() override final;
+	virtual void OnLose() override final;
 	
 	T *GetActor() const;
 

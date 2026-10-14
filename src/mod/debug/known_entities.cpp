@@ -924,7 +924,11 @@ namespace Mod::Debug::Known_Entities
 	
 	DETOUR_DECL_MEMBER(void, CTFBot_OnWeaponFired, CBaseCombatCharacter *who, CBaseCombatWeapon *weapon)
 	{
+#if defined _WINDOWS
+		auto bot = TFBotFromNextBot(this);
+#else
 		auto bot = reinterpret_cast<CTFBot *>(this);
+#endif
 		
 		if (rtti_cast<INextBot *>(bot) == thebot) {
 			const char *str_who = "nullptr";

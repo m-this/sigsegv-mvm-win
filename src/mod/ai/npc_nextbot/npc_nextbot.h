@@ -5,9 +5,9 @@
 namespace Mod::AI::NPC_Nextbot
 {
 	using MyNextbotEntity = CBotNPCArcher;
-	void LoadBodyHooks(void **vtable);
-	void LoadLocomotionHooks(void **vtable);
-	void LoadVisionHooks(void **vtable);
+	bool LoadBodyHooks(void **vtable);
+	bool LoadLocomotionHooks(void **vtable);
+	bool LoadVisionHooks(void **vtable);
 
 
     class MyNextbotModule : public EntityModule, public LagCompensatedEntity

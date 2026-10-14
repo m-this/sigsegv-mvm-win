@@ -1,0 +1,39 @@
+== mvm_decoy
+   rcon 192.168.50.133:27018
+map           mvm_decoy
+mission asked the map default
+mission run   scripts/population/mvm_decoy.pop
+waves started 1
+server alive  yes
+sigsegv       1 load line(s)
+addresses     OK 1245  FAIL 1524
+mods          OK 10  FAILED 22
+unresolved calls 0
+0
+
+== mvm_deathpour_rc1
+   rcon 192.168.50.133:27018
+map           mvm_deathpour_rc1
+mission asked the map default
+mission run   scripts/population/mvm_deathpour_rc1_exp_blackout.pop
+waves started 1
+server alive  yes
+sigsegv       1 load line(s)
+addresses     OK 1244  FAIL 1525
+mods          OK 10  FAILED 22
+unresolved calls 0
+0
+
+== mvm_mannworks
+   rcon 192.168.50.133:27018
+map           mvm_mannworks
+mission asked the map default
+mission run   scripts/population/mvm_mannworks.pop
+waves started 1
+server alive  yes
+sigsegv       1 load line(s)
+addresses     OK 1244  FAIL 1525
+mods          OK 10  FAILED 22
+unresolved calls 0
+0
+FINAL3-DONE

@@ -1,0 +1,194 @@
+// CANDIDATES from tools/winport/leads.py. Not verified, do not ship.
+// Merging these 19 into windows.txt stopped mvm_decoy starting a wave on
+// the Wine bed, where the table without them reaches wave 1. At least one
+// is wrong. The first ten alone reproduce it.
+
+"CMannVsMachineStats::SendUpgradesToPlayer"
+{
+	type "fixed"
+	sym  "_ZN19CMannVsMachineStats20SendUpgradesToPlayerEP9CTFPlayerP10CUtlVectorI12CUpgradeInfo10CUtlMemoryIS3_iEE"
+	addr "0x5e12d0"
+	// string 'MVMLocalPlayerUpgradesClear'
+	// string 'MVMLocalPlayerUpgradesValue'
+}
+
+"CObjectSapper::GetSapperModelName"
+{
+	type "fixed"
+	sym  "_ZN13CObjectSapper18GetSapperModelNameE13SapperModel_tPKc"
+	addr "0x4c8e50"
+	// string '_placed.mdl'
+	// string '_placement.mdl'
+	// string 'models/buildables/%s%s'
+}
+
+"CObjectSentrygun::FireRocket"
+{
+	type "fixed"
+	sym  "_ZN16CObjectSentrygun10FireRocketEv"
+	addr "0x4cbf40"
+	// string 'Building_Sentrygun.FireRocket'
+	// string 'mult_engy_sentry_damage'
+	// string 'tf_projectile_sentryrocket'
+}
+
+"CObjectSentrygun::FoundTarget"
+{
+	type "fixed"
+	sym  "_ZN16CObjectSentrygun11FoundTargetEP11CBaseEntityRK6Vectorb"
+	addr "0x4cc2c0"
+	// string 'Building_Sentrygun.Alert'
+	// string 'Building_Sentrygun.AlertTarget'
+}
+
+"CObjectSentrygun::StartUpgrading"
+{
+	type "fixed"
+	sym  "_ZN16CObjectSentrygun14StartUpgradingEv"
+	addr "0x4cebc0"
+	// string 'models/buildables/sentry2_heavy.mdl'
+	// string 'models/buildables/sentry3_heavy.mdl'
+	// string 'mvm_sentry_ammo'
+}
+
+"CTFBaseRocket::Create"
+{
+	type "fixed"
+	sym  "_ZN13CTFBaseRocket6CreateEP11CBaseEntityPKcRK6VectorRK6QAngleS1_"
+	addr "0x63f490"
+	// string 'mult_projectile_speed'
+	// string 'rocket_specialist'
+}
+
+"CTFGCServerSystem::PreClientUpdate"
+{
+	type "fixed"
+	sym  "_ZN17CTFGCServerSystem15PreClientUpdateEv"
+	addr "0x5ca630"
+	// string 'CTFGCServerSystem - removing listener to old Steam ID %s\n'
+	// string 'Lobby in invalid state %d\n'
+	// string 'Restoring sv_visiblemaxplayers to %d\n'
+	// string 'Setting sv_visiblemaxplayers to %d for MvM\n'
+}
+
+"CTFPipebombLauncher::DetonateRemotePipebombs"
+{
+	type "fixed"
+	sym  "_ZN19CTFPipebombLauncher23DetonateRemotePipebombsEb"
+	addr "0x623280"
+	// string 'set_detonate_mode'
+	// string 'stickies_detonate_stickies'
+}
+
+"CTFPlayer::ApplyGenericPushbackImpulse"
+{
+	type "fixed"
+	sym  "_ZN9CTFPlayer27ApplyGenericPushbackImpulseERK6VectorPS_"
+	addr "0x4e15d0"
+	// string 'airblast_vertical_vulnerability_multiplier'
+	// string 'airblast_vulnerability_multiplier'
+}
+
+"CTFPlayer::ModifyOrAppendCriteria"
+{
+	type "fixed"
+	sym  "_ZN9CTFPlayer22ModifyOrAppendCriteriaER14AI_CriteriaSet"
+	addr "0x4fec90"
+	// string 'GameRound'
+	// string 'IsAprilFoolsTaunt'
+	// string 'IsComp6v6'
+	// string 'IsCompWinner'
+}
+
+"CTFPlayer::PainSound"
+{
+	type "fixed"
+	sym  "_ZN9CTFPlayer9PainSoundERK15CTakeDamageInfo"
+	addr "0x5059c0"
+	// string 'TFPlayer.Drown'
+	// string 'damagecritical:1'
+}
+
+"CTFPlayerShared::DetermineDisguiseWeapon"
+{
+	type "fixed"
+	sym  "_ZN15CTFPlayerShared23DetermineDisguiseWeaponEb"
+	addr "0x51ec90"
+	// string 'DisguiseWeaponThink'
+	// string 'tf_weapon_builder'
+}
+
+"CTFProjectile_Arrow::CheckSkyboxImpact"
+{
+	type "fixed"
+	sym  "_ZN19CTFProjectile_Arrow17CheckSkyboxImpactEP11CBaseEntity"
+	addr "0x5f9c70"
+	// string 'TFBoltImpact'
+	// string 'Weapon_Arrow.ImpactConcrete'
+	// string 'Weapon_Arrow.ImpactMetal'
+	// string 'Weapon_Arrow.ImpactWood'
+}
+
+"CTFProjectile_BallOfFire::Burn"
+{
+	type "fixed"
+	sym  "_ZN24CTFProjectile_BallOfFire4BurnEP11CBaseEntity"
+	addr "0x5350d0"
+	// string 'Weapon_DragonsFury.BonusDamage'
+	// string 'Weapon_DragonsFury.BonusDamageHit'
+	// string 'Weapon_DragonsFury.BonusDamagePain'
+	// string 'torch_player_burn'
+}
+
+"CTFProjectile_GrapplingHook::HookTarget"
+{
+	type "fixed"
+	sym  "_ZN27CTFProjectile_GrapplingHook10HookTargetEP11CBaseEntity"
+	addr "0x5fb0f0"
+	// string 'HookLatchedThink'
+	// string 'WeaponGrapplingHook.ImpactDefault'
+	// string 'WeaponGrapplingHook.ImpactFlesh'
+}
+
+"CTFStickBomb::Smack"
+{
+	type "fixed"
+	sym  "_ZN12CTFStickBomb5SmackEv"
+	addr "0x6022f0"
+	// string 'halloween_explosion'
+	// string 'halloween_pumpkin_explosions'
+	// string 'mult_dmg'
+	// string 'mult_explosion_radius'
+}
+
+"EvaluateConditional"
+{
+	type "fixed"
+	sym  "_Z19EvaluateConditionalPKc"
+	addr "0x6e71a0"
+	// string '$LINUX'
+	// string '$POSIX'
+	// string '$WIN32'
+	// string '$WINDOWS'
+}
+
+"FX_FireBullets"
+{
+	type "fixed"
+	sym  "_Z14FX_FireBulletsP13CTFWeaponBaseiRK6VectorRK6QAngleiiiffb"
+	addr "0x470b80"
+	// string 'FX_FireBullets: LookupWeaponInfoSlot failed for weapon %s\n'
+	// string 'FX_FireBullets: weapon alias for ID %i not found\n'
+	// string 'mod_use_metal_ammo_type'
+	// string 'mult_bullets_per_shot'
+}
+
+"Script_StringToFile"
+{
+	type "fixed"
+	sym  "_ZL19Script_StringToFilePKcS0_"
+	addr "0x387e80"
+	// string 'Script_StringToFile: NULL/empty file name\n'
+	// string "StringToFile() file name cannot contain '..'\n"
+}
+

@@ -1171,6 +1171,20 @@ namespace Mod::Util::Overlay_Send
 		
 		return DETOUR_MEMBER_CALL();
 	}
+
+#if defined _WINDOWS
+	/* engine.dll's IsDedicatedServer is a two-byte body nothing can detour;
+	 * the server calls it through the engine interface, so hook that. */
+	SH_DECL_HOOK0(IVEngineServer, IsDedicatedServer, SH_NOATTRIB, 0, bool);
+	int is_dedicated_server_hook = 0;
+	bool IVEngineServer_IsDedicatedServer_Pre()
+	{
+		if (rc_DrawAllDebugOverlays > 0) {
+			RETURN_META_VALUE(MRES_SUPERCEDE, false);
+		}
+		RETURN_META_VALUE(MRES_IGNORED, false);
+	}
+#endif
 	
 	
 	class CMod : public IMod, public IFrameUpdatePostEntityThinkListener
@@ -1194,8 +1208,11 @@ namespace Mod::Util::Overlay_Send
 			MOD_ADD_DETOUR_STATIC(NDebugOverlay_ScreenText,           "NDebugOverlay::ScreenText");
 			MOD_ADD_DETOUR_STATIC(NDebugOverlay_Cross3D_ext,          "NDebugOverlay::Cross3D_ext");
 			MOD_ADD_DETOUR_STATIC(NDebugOverlay_Cross3D_size,         "NDebugOverlay::Cross3D_size");
+#if !defined _WINDOWS
+			/* server.dll has no body for these: nothing calls them */
 			MOD_ADD_DETOUR_STATIC(NDebugOverlay_Cross3DOriented_ang,  "NDebugOverlay::Cross3DOriented_ang");
 			MOD_ADD_DETOUR_STATIC(NDebugOverlay_Cross3DOriented_mat,  "NDebugOverlay::Cross3DOriented_mat");
+#endif
 			MOD_ADD_DETOUR_STATIC(NDebugOverlay_HorzArrow,            "NDebugOverlay::HorzArrow");
 			MOD_ADD_DETOUR_STATIC(NDebugOverlay_YawArrow,             "NDebugOverlay::YawArrow");
 			MOD_ADD_DETOUR_STATIC(NDebugOverlay_VertArrow,            "NDebugOverlay::VertArrow");
@@ -1245,8 +1262,23 @@ namespace Mod::Util::Overlay_Send
 			MOD_ADD_DETOUR_STATIC(ConColorMsg,                             "ConColorMsg");
 			
 			MOD_ADD_DETOUR_STATIC(DrawAllDebugOverlays,             "DrawAllDebugOverlays");
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(IVEngineServer_IsDedicatedServer, "IVEngineServer::IsDedicatedServer");
+#endif
 		}
+
+#if defined _WINDOWS
+		virtual void OnEnable() override
+		{
+			is_dedicated_server_hook = SH_ADD_HOOK(IVEngineServer, IsDedicatedServer, engine, SH_STATIC(&IVEngineServer_IsDedicatedServer_Pre), false);
+		}
+
+		virtual void OnDisable() override
+		{
+			SH_REMOVE_HOOK_ID(is_dedicated_server_hook);
+			is_dedicated_server_hook = 0;
+		}
+#endif
 		
 #if 0
 		virtual bool OnLoad() override

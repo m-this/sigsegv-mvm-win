@@ -38,6 +38,11 @@
 					type "sym"
 					sym  "_ZNK8INextBot18IsRangeGreaterThanERK6Vectorf"
 				}
+				"INextBot::GetRangeSquaredTo"
+				{
+					type "sym"
+					sym  "_ZNK8INextBot17GetRangeSquaredToEP11CBaseEntity"
+				}
 				
 			}
 		}

@@ -650,6 +650,23 @@ namespace Mod::Util::Overlay_Serverside
 		}
 	}
 	
+#if defined _WINDOWS
+	/* DrawTimedOverlays is inline at the start of the base
+	 * DrawDebugGeometryOverlays there, which every override calls */
+	DETOUR_DECL_MEMBER(void, CBaseEntity_DrawDebugGeometryOverlays)
+	{
+		auto entity = reinterpret_cast<CBaseEntity *>(this);
+		ExtraEntityData *oldData = entity->m_extraEntityData;
+		if (oldData != nullptr) {
+			oldData->SetEntityTimedOverlay();
+		}
+		DETOUR_MEMBER_CALL();
+		if (oldData != nullptr) {
+			oldData->RestoreExtraEntityData();
+		}
+	}
+#endif
+
 	DETOUR_DECL_MEMBER(void, CBaseEntity_AddTimedOverlay, const char *msg, int time)
 	{
 		auto entity = reinterpret_cast<CBaseEntity *>(this);
@@ -704,7 +721,11 @@ namespace Mod::Util::Overlay_Serverside
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_UpdateOnRemove, "CTFPlayer::UpdateOnRemove");
 			MOD_ADD_DETOUR_MEMBER(CServerGameClients_ClientPutInServer, "CServerGameClients::ClientPutInServer");
 			MOD_ADD_DETOUR_STATIC(UTIL_GetListenServerHost, "UTIL_GetListenServerHost");
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_MEMBER(CBaseEntity_DrawDebugGeometryOverlays, "CBaseEntity::DrawDebugGeometryOverlays");
+#else
 			MOD_ADD_DETOUR_MEMBER(CBaseEntity_DrawTimedOverlays, "CBaseEntity::DrawTimedOverlays");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CBaseEntity_AddTimedOverlay, "CBaseEntity::AddTimedOverlay");
 		}
 		

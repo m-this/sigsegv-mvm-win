@@ -69,7 +69,14 @@ private:
 	
 };
 
+#if defined _WINDOWS
+/* The engine's CBaseServer holds doubles, which MSVC aligns to 8 and GCC's
+ * i386 ABI to 4: CHLTVServer's CBaseServer part is at +8 in engine.dll, +4 in
+ * engine_srv.so. */
+class alignas(8) CBaseServer : public IServer
+#else
 class CBaseServer : public IServer
+#endif
 {
 public:
     CBaseClient *CreateFakeClient(const char *name) { return ft_CreateFakeClient(this, name); }
@@ -101,6 +108,10 @@ class CGameServer : public CBaseServer
 public:
 #ifdef PLATFORM_64BITS
 	int GetNumEdicts() {return *(int *)((uintptr_t)(this) + 0x218);}
+#elif defined _WINDOWS
+	/* engine.dll's GetIServer returns 0x5eb2a0 and its edict functions read
+	 * num_edicts at 0x5eb48c, eight bytes further in than on Linux. */
+	int GetNumEdicts() {return *(int *)((uintptr_t)(this) + 0x1EC);}
 #else
 	int GetNumEdicts() {return *(int *)((uintptr_t)(this) + 0x1E4);}
 #endif

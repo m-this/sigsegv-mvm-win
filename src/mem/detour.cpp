@@ -9,6 +9,7 @@
 #include "util/demangle.h"
 #include "util/misc.h"
 #include "stub/server.h"
+#include "util/rtti.h"
 
 #include <udis86.h>
 
@@ -184,6 +185,101 @@ void IDetour::DoDisable()
 }
 
 
+#if defined _WINDOWS
+/* A function of a few instructions that returns without calling or branching:
+ * `return false`, `return 0`, a getter. MSVC's /OPT:ICF gives every function
+ * with the same code one address, so the address a vtable or a match hands us
+ * for one of them is the address of all of them, and detouring it hooks every
+ * one. CBaseServerVehicle::IsPassengerVisible is CUtlBuffer::GetOverflow in
+ * server.dll: Util:Vehicle_Fix's detour ran for every buffer read to its end,
+ * with a CUtlBuffer for a vehicle, and a map load died calling through text.
+ * Such a function is often shorter than the jump a detour writes, too. */
+static bool IsFoldableTrivialFunction(const uint8_t *func)
+{
+	ud_t ud;
+	ud_init(&ud);
+	ud_set_mode(&ud, 32);
+	ud_set_pc(&ud, (uint64_t)func);
+	ud_set_input_buffer(&ud, func, 0x40);
+	
+	for (int i = 0; i < 4; ++i) {
+		if (ud_decode(&ud) == 0) return false;
+		
+		enum ud_mnemonic_code mnemonic = ud_insn_mnemonic(&ud);
+		if (mnemonic == UD_Iret) return true;
+		if (mnemonic == UD_Icall || mnemonic == UD_Ijmp) return false;
+		
+		const ud_operand_t *op = ud_insn_opr(&ud, 0);
+		if (op != nullptr && op->type == UD_OP_JIMM) return false;
+	}
+	return false;
+}
+
+/* A body MSVC folded with other virtuals sits at more than one slot index
+ * across the game's vtables, while a virtual that is only itself keeps one
+ * index in every class that has it. Action<CTFBot>::OnCommandString is one
+ * body with twenty others: a detour on it ran for every one of them, and
+ * EngieBot_Wrangler's read Update's interval as the command string. Built
+ * once, over every vtable RTTI names. */
+static bool FillsSeveralSlotIndices(const void *func)
+{
+	static std::unordered_map<const void *, int> index_of;
+	static bool built = false;
+	if (!built && !RTTI::GetAllVTableInfo().empty()) {
+		built = true;
+		const SegInfo& text = LibMgr::GetInfo(Library::SERVER).GetSeg(Segment::TEXT);
+		for (const auto &[name, info] : RTTI::GetAllVTableInfo()) {
+			auto vt = reinterpret_cast<const void *const *>(info.vtable);
+			int n = (int)(info.size / sizeof(void *));
+			/* The size RTTI gives can run past the table into the next one's
+			 * locator and slots, which would put its functions at shifted
+			 * indices: a table ends at its first entry that is not code. */
+			for (int i = 0; i < n && text.ContainsAddr(vt[i], 1); ++i) {
+				auto [it, inserted] = index_of.emplace(vt[i], i);
+				if (!inserted && it->second != i) it->second = -1;
+			}
+		}
+	}
+	auto it = index_of.find(func);
+	return it != index_of.end() && it->second == -1;
+}
+
+/* How many argument bytes a function pops, read from its returns: every `ret`
+ * up to the int3 padding after it must agree, or the answer is unknown. A
+ * jump at the entry, an ILT thunk or someone else's hook, is followed once. */
+static bool PopBytes(const uint8_t *func, int &pop)
+{
+	ud_t ud;
+	ud_init(&ud);
+	ud_set_mode(&ud, 32);
+	ud_set_pc(&ud, (uint64_t)func);
+	ud_set_input_buffer(&ud, func, 0x10);
+	if (ud_decode(&ud) != 0 && ud_insn_mnemonic(&ud) == UD_Ijmp) {
+		const ud_operand_t *op = ud_insn_opr(&ud, 0);
+		if (op != nullptr && op->type == UD_OP_JIMM) {
+			func = func + ud_insn_len(&ud) + (op->size == 8 ? op->lval.sbyte : op->lval.sdword);
+		}
+	}
+	
+	ud_init(&ud);
+	ud_set_mode(&ud, 32);
+	ud_set_pc(&ud, (uint64_t)func);
+	ud_set_input_buffer(&ud, func, 0x4000);
+	
+	pop = -1;
+	while (ud_decode(&ud) != 0) {
+		enum ud_mnemonic_code mnemonic = ud_insn_mnemonic(&ud);
+		if (mnemonic == UD_Iint3 || mnemonic == UD_Iinvalid) break;
+		if (mnemonic != UD_Iret) continue;
+		const ud_operand_t *op = ud_insn_opr(&ud, 0);
+		int here = (op != nullptr && op->type == UD_OP_IMM) ? op->lval.uword : 0;
+		if (pop != -1 && pop != here) return false;
+		pop = here;
+	}
+	return pop != -1;
+}
+#endif
+
 bool IDetour_SymNormal::DoLoad()
 {
 	TRACE("[this: %08x \"%s\"]", (uintptr_t)this, this->GetName());
@@ -203,6 +299,21 @@ bool IDetour_SymNormal::DoLoad()
 		}
 	}
 
+#if defined _WINDOWS
+	if (IsFoldableTrivialFunction(reinterpret_cast<const uint8_t *>(this->m_pFunc))) {
+		this->m_bRefusedShared = true;
+		Warning("IDetour_SymNormal::DoLoad: \"%s\": refused, a trivial function MSVC may have merged with others (%s)\n",
+			this->GetName(), this->m_bFuncByName ? this->m_strFuncName.c_str() : "by pointer");
+		return false;
+	}
+	if (FillsSeveralSlotIndices(this->m_pFunc)) {
+		this->m_bRefusedShared = true;
+		Warning("IDetour_SymNormal::DoLoad: \"%s\": refused, its body is shared by virtuals at several vtable slots (%s)\n",
+			this->GetName(), this->m_bFuncByName ? this->m_strFuncName.c_str() : "by pointer");
+		return false;
+	}
+#endif
+	
 	CDetouredFunc::Find(this->m_pFunc);
 	
 	return true;
@@ -279,11 +390,75 @@ void IDetour_SymRegex::DoUnload()
 }
 
 
+#if defined _WINDOWS
+/* A function whose body MSVC shares with others cannot take a jump in its
+ * prologue: every function folded into it would run the callback. When it is a
+ * virtual the address table gives a slot for, the game reaches the class's own
+ * version through that slot, so the callback goes there instead: the class's
+ * vtable and every derived one still holding the same pointer, which is what a
+ * detour on it catches on Linux. A direct, non-virtual call to it is missed,
+ * and MSVC inlines those for bodies this small. The slot has to hold the
+ * function in the class's own vtable, and the callback has to pop what the
+ * game's body pops, or it stays a failed detour. */
+CVirtualHook *CDetour::AsVirtualHookWhenRefused()
+{
+	if (!this->m_bRefusedShared || !this->FuncByName()) return nullptr;
+	const std::string &func = this->FuncName();
+	
+	int idx = AddrManager::GetVTIndex(func.c_str());
+	size_t sep = func.rfind("::");
+	if (idx < 0 || idx >= 0x1000 || sep == std::string::npos) return nullptr;
+	std::string cls = func.substr(0, sep);
+	if (cls.find_first_of("<>: ") != std::string::npos) return nullptr;
+	
+	int game_pop;
+	if (this->m_iCallbackPop >= 0 &&
+		(!PopBytes(reinterpret_cast<const uint8_t *>(this->GetFuncPtr()), game_pop) || game_pop != this->m_iCallbackPop)) {
+		return nullptr;
+	}
+	
+	/* the vtable name outlives the hook, which keeps the pointer */
+	static std::list<std::string> s_VTableNames;
+	for (const char *prefix : {".?AV", ".?AU"}) {
+		std::string name = prefix + cls + "@@";
+		const void **vt = RTTI::GetVTable(name.c_str());
+		if (vt == nullptr || vt[idx] != this->GetFuncPtr()) continue;
+		
+		s_VTableNames.push_back(name);
+		Warning("CDetour: \"%s\": hooked at slot %d of %s and the classes inheriting it, its body being shared\n",
+			this->GetName(), idx, cls.c_str());
+		return new CVirtualHookInherit(s_VTableNames.back().c_str(), func.c_str(), this->m_pCallback, this->m_pInner);
+	}
+	return nullptr;
+}
+#endif
+
 bool CDetour::DoLoad()
 {
 	if (!IDetour_SymNormal::DoLoad()) {
 		return false;
 	}
+	
+#if defined _WINDOWS
+	/* A __thiscall or __stdcall function pops its own arguments, and a detour
+	 * has to pop exactly what the game's function does or every call through
+	 * it leaves the caller's stack off. The two differ when the address is the
+	 * wrong function (CTFPlayer::Spawn was ShouldTransmit, one slot over),
+	 * when the detour declares the wrong parameters (Holster with none), or
+	 * when MSVC's whole-program optimisation gave the game's function a
+	 * caller-pops convention. None of them shows on Linux, where the caller
+	 * always pops, so the check is here, where the two are compiled code. */
+	/* The detour's side comes from its declared type (DetourPopOf): its code
+	 * can end in a tail jump, and a scan for `ret` then reads the next function. */
+	int game_pop;
+	if (this->m_iCallbackPop >= 0 &&
+		PopBytes(reinterpret_cast<const uint8_t *>(this->GetFuncPtr()), game_pop) &&
+		game_pop != this->m_iCallbackPop) {
+		Warning("CDetour::DoLoad: \"%s\": refused, the game's function pops %d bytes and the detour %d\n",
+			this->GetName(), game_pop, this->m_iCallbackPop);
+		return false;
+	}
+#endif
 	
 	if (!this->EnsureUniqueInnerPtrs()) {
 		return false;
@@ -440,6 +615,16 @@ CDetouredFunc::~CDetouredFunc()
 	
 	this->RemoveAllDetours();
 	this->DestroyWrapper();
+#if defined _WINDOWS
+	/* Under another plugin's hook the stub and the trampoline are still
+	 * reached through its copy of our jump: RemoveAllDetours pointed the stub
+	 * at the trampoline, and both are left where they are. */
+	if (this->m_bJumpInstalled && this->m_pStub != nullptr && !this->ValidateCurrentPrologue()) return;
+	if (this->m_pStub != nullptr) {
+		TheExecMemManager()->FreeTrampoline(this->m_pStub);
+		this->m_pStub = nullptr;
+	}
+#endif
 	this->DestroyTrampoline();
 }
 
@@ -649,6 +834,12 @@ void CDetouredFunc::Reconfigure()
 
 	TRACE("[this: %08x] with %zu detour(s)", (uintptr_t)this, this->m_Detours.size());
 	
+#if defined _WINDOWS
+	if (this->ReconfigureUnderForeignHook()) {
+		return;
+	}
+#endif
+	
 	this->DestroyWrapper();
 
 	this->UninstallJump();
@@ -660,8 +851,14 @@ void CDetouredFunc::Reconfigure()
 		//Msg("Installing detour %s\n", AddrManager::ReverseLookup(this->m_pFunc));
 		CDetour *first = this->m_Detours.front();
 		CDetour *last  = this->m_Detours.back();
+#if defined _WINDOWS
+		this->EnsureStub();
+		this->m_bJumpIsRelative = Jump_ShouldUseRelativeJump((intptr_t)this->m_pFunc, (intptr_t)this->m_pStub);
+		this->m_zJumpSize = Jump_CalculateSize((intptr_t)this->m_pFunc, (intptr_t)this->m_pStub);
+#else
 		this->m_bJumpIsRelative = Jump_ShouldUseRelativeJump((intptr_t)this->m_pFunc, (intptr_t)first->m_pCallback);
 		this->m_zJumpSize = Jump_CalculateSize((intptr_t)this->m_pFunc, (intptr_t)first->m_pCallback);
+#endif
 		this->CreateTrampoline();
 		TRACE_MSG("detour[\"%s\"].inner [%08x] -> trampoline [%08x]\n",
 			last->GetName(), (uintptr_t)last->m_pInner, (uintptr_t)this->m_pTrampoline);
@@ -708,9 +905,71 @@ void CDetouredFunc::Reconfigure()
 #endif
 	
 	if (jump_to != nullptr) {
+#if defined _WINDOWS
+		this->SetStubTarget(jump_to);
+		this->InstallJump(this->m_pStub);
+#else
 		this->InstallJump(jump_to);
+#endif
 	}
 }
+
+#if defined _WINDOWS
+void CDetouredFunc::EnsureStub()
+{
+	if (this->m_pStub != nullptr) return;
+	
+	this->m_pStub = TheExecMemManager()->AllocTrampoline(JmpIndirectMem32::Size() + sizeof(void *));
+	MemProtModifier_RX_RWX(this->m_pStub, JmpIndirectMem32::Size() + sizeof(void *));
+	JmpIndirectMem32(this->m_pStub, (uint32_t)(this->m_pStub + JmpIndirectMem32::Size())).Write();
+	*reinterpret_cast<void **>(this->m_pStub + JmpIndirectMem32::Size()) = nullptr;
+}
+
+void CDetouredFunc::SetStubTarget(void *target)
+{
+	MemProtModifier_RX_RWX(this->m_pStub, JmpIndirectMem32::Size() + sizeof(void *));
+	*reinterpret_cast<void **>(this->m_pStub + JmpIndirectMem32::Size()) = target;
+}
+
+/* Our jump is installed and the prologue no longer holds it: another plugin
+ * detoured the function after us, and its trampoline starts with a copy of
+ * our jump to the stub. Restoring the original bytes, which a reconfigure used
+ * to do, deleted that plugin's hook without a word to it, and the conflict
+ * warning was the only trace. So the prologue and the trampoline stay as they
+ * are, the chain is relinked, and the stub is pointed at its head, or straight
+ * at the original function when no detour is left. */
+bool CDetouredFunc::ReconfigureUnderForeignHook()
+{
+	if (!this->m_bJumpInstalled || this->m_pStub == nullptr || this->m_pTrampoline == nullptr) return false;
+	if (this->ValidateCurrentPrologue()) return false;
+	
+	for (auto &[pVFuncPtr, pVT] : this->m_FoundFuncPtrAndVTablePtr) {
+		auto vhook = CVirtualHookFunc::FindOptional(pVFuncPtr);
+		if (vhook != nullptr) {
+			vhook->RemoveVirtualHook(&this->m_VirtualHookOptional);
+		}
+	}
+	
+	if (this->m_Detours.empty()) {
+		this->SetStubTarget(this->m_pTrampoline);
+		return true;
+	}
+	
+	CDetour *first = this->m_Detours.front();
+	CDetour *last  = this->m_Detours.back();
+	*last->m_pInner = this->m_pTrampoline;
+	for (int i = this->m_Detours.size() - 2; i >= 0; --i) {
+		*this->m_Detours[i]->m_pInner = this->m_Detours[i + 1]->m_pCallback;
+	}
+	
+	this->m_VirtualHookOptional = CVirtualHookBase(first->m_pCallback, CVirtualHookBase::DETOUR_HOOK, first->GetName());
+	for (auto &[pVFuncPtr, pVT] : this->m_FoundFuncPtrAndVTablePtr) {
+		CVirtualHookFunc::Find(pVFuncPtr, pVT).AddVirtualHook(&this->m_VirtualHookOptional);
+	}
+	this->SetStubTarget(first->m_pCallback);
+	return true;
+}
+#endif
 
 
 void CDetouredFunc::InstallJump(void *target)
@@ -738,6 +997,14 @@ void CDetouredFunc::InstallJump(void *target)
 		MemProtModifier_RX_RWX(this->m_pFunc, this->m_OriginalPrologue.size());
 		
 		Jump_WriteJump(this->m_pFunc, (uintptr_t)target, this->m_OriginalPrologue.size() > this->m_zJumpSize ? this->m_OriginalPrologue.size() : 0);
+	}
+	
+	{
+		const char *func_name = AddrManager::ReverseLookup(this->m_pFunc);
+		auto bytes = (const uint8_t *)this->m_pFunc;
+		DevMsg("CDetouredFunc::InstallJump: \"%s\" at %08x -> %08x, prologue %zu, now %02x %02x %02x %02x %02x\n",
+			func_name != nullptr ? func_name : "???", (uintptr_t)this->m_pFunc, (uintptr_t)target,
+			this->m_OriginalPrologue.size(), bytes[0], bytes[1], bytes[2], bytes[3], bytes[4]);
 	}
 	
 	this->m_CurrentPrologue.resize(this->m_OriginalPrologue.size());
@@ -770,7 +1037,7 @@ void CDetouredFunc::UninstallJump()
 	}
 	
 	// Check if some extension had overriden our jump, but not when the game is in shutdown/restart state as it does not matter by then
-	int state = g_HostState.GetRef().m_currentState;
+	int state = g_HostState.IsLinked() ? g_HostState.GetRef().m_currentState : 0;
 	if (!this->ValidateCurrentPrologue() && !(state == 6 || state == 7)) {
 		const char *func_name = AddrManager::ReverseLookup(this->m_pFunc);
 		if (func_name == nullptr) func_name = "???";

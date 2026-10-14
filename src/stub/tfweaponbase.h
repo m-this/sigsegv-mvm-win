@@ -22,13 +22,30 @@ public:
 class CTFWeaponBase : public CBaseCombatWeapon, public IHasGenericMeter
 {
 public:
+#if defined _WINDOWS
+	/* No address for it in server.dll yet, and none is needed: the Linux body
+	 * is the owner read back as a player, which costs no call at all. */
+	CTFPlayer *GetTFPlayerOwner() const;
+#else
 	CTFPlayer *GetTFPlayerOwner() const { return ft_GetTFPlayerOwner(this); }
+#endif
 	
 	bool IsSilentKiller() { return ft_IsSilentKiller(this); }
+#if defined _WINDOWS
+	/* Inlined into its callers in server.dll. The Linux body: as many whole
+	 * shots as ENERGY_WEAPON_MAX_CHARGE (20) holds, times the shot cost. */
+	float Energy_GetMaxEnergy() { int shots = 20.0f / Energy_GetShotCost(); return shots * Energy_GetShotCost(); }
+#else
 	float Energy_GetMaxEnergy() { return ft_Energy_GetMaxEnergy(this); }
+#endif
 	void CalcIsAttackCritical() { ft_CalcIsAttackCritical(this); }
 	bool CalcIsAttackCriticalPoll(bool checkRandom);
+#if defined _WINDOWS
+	/* Inlined in server.dll: GetFileWeaponInfoFromHandle of m_hWeaponFileInfo. */
+	CTFWeaponInfo const& GetTFWpnData() const;
+#else
 	CTFWeaponInfo const& GetTFWpnData() const { return ft_GetTFWeaponData(this); }
+#endif
 	void StartEffectBarRegen()   { ft_StartEffectBarRegen(this); }
 	bool DeflectProjectiles()    { return ft_DeflectProjectiles(this); }
 	
@@ -132,14 +149,27 @@ class CTFGrenadeLauncher : public CTFWeaponBaseGun {};
 
 class CTFSpellBook : public CTFWeaponBaseGun {
 public:
-	void RollNewSpell(int tier) { ft_RollNewSpell(this, tier); }
+	void RollNewSpell(int tier, bool bForceReroll = false) { ft_RollNewSpell(this, tier, bForceReroll); }
 	
 public:
 	DECL_SENDPROP(int, m_iSelectedSpellIndex);
 	DECL_SENDPROP(int, m_iSpellCharges);
 private:
-	static MemberFuncThunk<CTFSpellBook *, void, int> ft_RollNewSpell;
+	static MemberFuncThunk<CTFSpellBook *, void, int, bool> ft_RollNewSpell;
 };
+
+#if defined _WINDOWS
+/* The game's interface, in its declaration order, which is the order of its
+ * vtable. Only the bow's stub calls it. */
+class ITFChargeUpWeapon
+{
+public:
+	virtual bool CanCharge() = 0;
+	virtual float GetChargeBeginTime() = 0;
+	virtual float GetChargeMaxTime() = 0;
+	virtual float GetCurrentCharge() = 0;
+};
+#endif
 
 class CTFCompoundBow : public CTFPipebombLauncher
 {
@@ -153,8 +183,16 @@ public:
 	 * type to pass to rtti_cast... what a mess */
 //	bool CanCharge()           { return vt_CanCharge         (this); }
 //	float GetChargeBeginTime() { return vt_GetChargeBeginTime(this); }
+#if defined _WINDOWS
+	/* MSVC keeps an override of a secondary base's virtual in that base's own
+	 * vtable only, so on Windows these have no slot in the bow's primary one
+	 * and are called through its ITFChargeUpWeapon base. */
+	float GetChargeMaxTime()   { return rtti_cast<ITFChargeUpWeapon *>(this)->GetChargeMaxTime(); }
+	float GetCurrentCharge()   { return rtti_cast<ITFChargeUpWeapon *>(this)->GetCurrentCharge(); }
+#else
 	float GetChargeMaxTime()   { return vt_GetChargeMaxTime  (this); }
 	float GetCurrentCharge()   { return vt_GetCurrentCharge  (this); }
+#endif
 
 	DECL_SENDPROP(bool, m_bArrowAlight);
 	

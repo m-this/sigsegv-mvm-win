@@ -1,0 +1,1481 @@
+// CANDIDATES from tools/winport/alignprimary.py. Not verified, do not ship.
+// Merging these into windows.txt made the game server shut itself down
+// on the Wine bed, twice, where the table as it stands reaches wave 1.
+// Each one still needs the per-address evidence matchfuncs.py looks for.
+
+"CAmmoPack::Precache"
+{
+	type    "func knownvtidx"
+	vtable  "CAmmoPack"
+	idx     "25"
+	// interface-drop; windows 0x10443b10; 126/128 anchors agree in this class
+	// CAmmoPack::Precache()
+}
+
+"CBaseAnimating::GetAttachment"
+{
+	type    "func knownvtidx"
+	vtable  "CAI_BaseActor"
+	idx     "216"
+	// interface-drop; windows 0x101cb080; 178/190 anchors agree in this class
+	// CBaseAnimating::GetAttachment(int, matrix3x4_t&)
+}
+
+"CBaseAnimating::GetBoneTransform"
+{
+	type    "func knownvtidx"
+	vtable  "CAI_BaseActor"
+	idx     "210"
+	// interface-drop; windows 0x101cb620; 178/190 anchors agree in this class
+	// CBaseAnimating::GetBoneTransform(int, matrix3x4_t&)
+}
+
+"CBaseCombatCharacter::GetBossType"
+{
+	type    "func knownvtidx"
+	vtable  "CAI_BaseActor"
+	idx     "330"
+	// interface-drop; windows 0x10157970; 178/190 anchors agree in this class
+	// CBaseCombatCharacter::GetBossType() const
+}
+
+"CBaseCombatCharacter::ShouldGib"
+{
+	type    "func knownvtidx"
+	vtable  "CAI_BaseActor"
+	idx     "297"
+	// interface-drop; windows 0x10152770; 178/190 anchors agree in this class
+	// CBaseCombatCharacter::ShouldGib(CTakeDamageInfo const&)
+}
+
+"CBaseCombatWeapon::ActivityOverride"
+{
+	type    "func knownvtidx"
+	vtable  "CBaseCombatWeapon"
+	idx     "355"
+	// interface-drop; windows 0x101e0430; 128/131 anchors agree in this class
+	// CBaseCombatWeapon::ActivityOverride(Activity, bool*)
+}
+
+"CBaseCombatWeapon::CanPerformSecondaryAttack"
+{
+	type    "func knownvtidx"
+	vtable  "CBaseCombatWeapon"
+	idx     "278"
+	// interface-drop; windows 0x101e0520; 128/131 anchors agree in this class
+	// CBaseCombatWeapon::CanPerformSecondaryAttack() const
+}
+
+"CBaseCombatWeapon::CheckReload"
+{
+	type    "func knownvtidx"
+	vtable  "CBaseCombatWeapon"
+	idx     "281"
+	// interface-drop; windows 0x101e0570; 128/131 anchors agree in this class
+	// CBaseCombatWeapon::CheckReload()
+}
+
+"CBaseCombatWeapon::Deploy"
+{
+	type    "func knownvtidx"
+	vtable  "CBaseCombatWeapon"
+	idx     "262"
+	// interface-drop; windows 0x101e0cb0; 128/131 anchors agree in this class
+	// CBaseCombatWeapon::Deploy()
+}
+
+"CBaseCombatWeapon::Drop"
+{
+	type    "func knownvtidx"
+	vtable  "CBaseCombatWeapon"
+	idx     "235"
+	// interface-drop; windows 0x101e0e60; 128/131 anchors agree in this class
+	// CBaseCombatWeapon::Drop(Vector const&)
+}
+
+"CBaseCombatWeapon::Equip"
+{
+	type    "func knownvtidx"
+	vtable  "CBaseCombatWeapon"
+	idx     "234"
+	// interface-drop; windows 0x101e1080; 128/131 anchors agree in this class
+	// CBaseCombatWeapon::Equip(CBaseCombatCharacter*)
+}
+
+"CBaseCombatWeapon::GetMaxClip2"
+{
+	type    "func knownvtidx"
+	vtable  "CBaseCombatWeapon"
+	idx     "326"
+	// interface-drop; windows 0x101e1640; 128/131 anchors agree in this class
+	// CBaseCombatWeapon::GetMaxClip2() const
+}
+
+"CBaseCombatWeapon::GetPrimaryAmmoType"
+{
+	type    "func knownvtidx"
+	vtable  "CBaseCombatWeapon"
+	idx     "343"
+	// interface-drop; windows 0x101e1710; 128/131 anchors agree in this class
+	// CBaseCombatWeapon::GetPrimaryAmmoType() const
+}
+
+"CBaseCombatWeapon::GetShootSound"
+{
+	type    "func knownvtidx"
+	vtable  "CBaseCombatWeapon"
+	idx     "338"
+	// interface-drop; windows 0x101e17e0; 128/131 anchors agree in this class
+	// CBaseCombatWeapon::GetShootSound(int) const
+}
+
+"CBaseCombatWeapon::GetSlot"
+{
+	type    "func knownvtidx"
+	vtable  "CBaseCombatWeapon"
+	idx     "334"
+	// interface-drop; windows 0x101e1810; 128/131 anchors agree in this class
+	// CBaseCombatWeapon::GetSlot() const
+}
+
+"CBaseCombatWeapon::GetViewModel"
+{
+	type    "func knownvtidx"
+	vtable  "CBaseCombatWeapon"
+	idx     "322"
+	// interface-drop; windows 0x101e1950; 128/131 anchors agree in this class
+	// CBaseCombatWeapon::GetViewModel(int) const
+}
+
+"CBaseCombatWeapon::GetWorldModel"
+{
+	type    "func knownvtidx"
+	vtable  "CBaseCombatWeapon"
+	idx     "323"
+	// interface-drop; windows 0x101e19c0; 128/131 anchors agree in this class
+	// CBaseCombatWeapon::GetWorldModel() const
+}
+
+"CBaseCombatWeapon::HasAmmo"
+{
+	type    "func knownvtidx"
+	vtable  "CBaseCombatWeapon"
+	idx     "240"
+	// interface-drop; windows 0x101e1b50; 128/131 anchors agree in this class
+	// CBaseCombatWeapon::HasAmmo()
+}
+
+"CBaseCombatWeapon::HasPrimaryAmmo"
+{
+	type    "func knownvtidx"
+	vtable  "CBaseCombatWeapon"
+	idx     "257"
+	// interface-drop; windows 0x101e1c50; 128/131 anchors agree in this class
+	// CBaseCombatWeapon::HasPrimaryAmmo()
+}
+
+"CBaseCombatWeapon::Holster"
+{
+	type    "func knownvtidx"
+	vtable  "CBaseCombatWeapon"
+	idx     "263"
+	// interface-drop; windows 0x101e1e20; 128/131 anchors agree in this class
+	// CBaseCombatWeapon::Holster(CBaseCombatWeapon*)
+}
+
+"CBaseCombatWeapon::ItemPostFrame"
+{
+	type    "func knownvtidx"
+	vtable  "CBaseCombatWeapon"
+	idx     "273"
+	// interface-drop; windows 0x101e2790; 128/131 anchors agree in this class
+	// CBaseCombatWeapon::ItemPostFrame()
+}
+
+"CBaseCombatWeapon::OnActiveStateChanged"
+{
+	type    "func knownvtidx"
+	vtable  "CBaseCombatWeapon"
+	idx     "268"
+	// interface-drop; windows 0x10130ba0; 128/131 anchors agree in this class
+	// CBaseCombatWeapon::OnActiveStateChanged(int)
+}
+
+"CBaseCombatWeapon::SecondaryAttack"
+{
+	type    "func knownvtidx"
+	vtable  "CBaseCombatWeapon"
+	idx     "288"
+	// interface-drop; windows 0x10130b50; 128/131 anchors agree in this class
+	// CBaseCombatWeapon::SecondaryAttack()
+}
+
+"CBaseCombatWeapon::SetSubType"
+{
+	type    "func knownvtidx"
+	vtable  "CBaseCombatWeapon"
+	idx     "233"
+	// interface-drop; windows 0x101e44c0; 128/131 anchors agree in this class
+	// CBaseCombatWeapon::SetSubType(int)
+}
+
+"CBaseCombatWeapon::SetViewModel"
+{
+	type    "func knownvtidx"
+	vtable  "CBaseCombatWeapon"
+	idx     "252"
+	// interface-drop; windows 0x101e44d0; 128/131 anchors agree in this class
+	// CBaseCombatWeapon::SetViewModel()
+}
+
+"CBaseCombatWeapon::SetViewModelIndex"
+{
+	type    "func knownvtidx"
+	vtable  "CBaseCombatWeapon"
+	idx     "249"
+	// interface-drop; windows 0x101e45b0; 128/131 anchors agree in this class
+	// CBaseCombatWeapon::SetViewModelIndex(int)
+}
+
+"CBaseCombatWeapon::SetWeaponVisible"
+{
+	type    "func knownvtidx"
+	vtable  "CBaseCombatWeapon"
+	idx     "265"
+	// interface-drop; windows 0x101e4620; 128/131 anchors agree in this class
+	// CBaseCombatWeapon::SetWeaponVisible(bool)
+}
+
+"CBaseCombatWeapon::UpdateTransmitState"
+{
+	type    "func knownvtidx"
+	vtable  "CBaseCombatWeapon"
+	idx     "21"
+	// interface-drop; windows 0x101dec60; 128/131 anchors agree in this class
+	// CBaseCombatWeapon::UpdateTransmitState()
+}
+
+"CBaseCombatWeapon::WeaponSound"
+{
+	type    "func knownvtidx"
+	vtable  "CBaseCombatWeapon"
+	idx     "303"
+	// interface-drop; windows 0x101e4d50; 128/131 anchors agree in this class
+	// CBaseCombatWeapon::WeaponSound(WeaponSound_t, float)
+}
+
+"CBaseEntity::GetDefaultItemChargeMeterValue"
+{
+	type    "func knownvtidx"
+	vtable  "CAI_AssaultGoal"
+	idx     "197"
+	// interface-drop; windows 0x10160120; 94/96 anchors agree in this class
+	// CBaseEntity::GetDefaultItemChargeMeterValue() const
+}
+
+"CBasePlayer::IsPlayer"
+{
+	type    "func knownvtidx"
+	vtable  "CTFPlayer"
+	idx     "83"
+	// interface-drop; windows 0x1005bd70; 263/271 anchors agree in this class
+	// CBasePlayer::IsPlayer() const
+}
+
+"CBasePlayer::Weapon_ShootPosition"
+{
+	type    "func knownvtidx"
+	vtable  "CTFPlayer"
+	idx     "276"
+	// interface-drop; windows 0x1015e390; 263/271 anchors agree in this class
+	// CBasePlayer::Weapon_ShootPosition()
+}
+
+"CEconEntity::TranslateViewmodelHandActivityInternal"
+{
+	type    "func knownvtidx"
+	vtable  "CBaseCombatWeapon"
+	idx     "230"
+	// interface-drop; windows 0x101d7380; 128/131 anchors agree in this class
+	// CEconEntity::TranslateViewmodelHandActivityInternal(Activity)
+}
+
+"CEconEntity::UpdateBodygroups"
+{
+	type    "func knownvtidx"
+	vtable  "CBaseCombatWeapon"
+	idx     "229"
+	// interface-drop; windows 0x103a0000; 128/131 anchors agree in this class
+	// CEconEntity::UpdateBodygroups(CBaseCombatCharacter*, int)
+}
+
+"CEconEntity::UpdateOnRemove"
+{
+	type    "func knownvtidx"
+	vtable  "CBaseCombatWeapon"
+	idx     "111"
+	// interface-drop; windows 0x103a04e0; 128/131 anchors agree in this class
+	// CEconEntity::UpdateOnRemove()
+}
+
+"CEconWearable::GetSkin"
+{
+	type    "func knownvtidx"
+	vtable  "CEconWearable"
+	idx     "238"
+	// interface-drop; windows 0x103c7360; 124/127 anchors agree in this class
+	// CEconWearable::GetSkin()
+}
+
+"CEconWearable::RemoveFrom"
+{
+	type    "func knownvtidx"
+	vtable  "CEconWearable"
+	idx     "231"
+	// interface-drop; windows 0x103c74f0; 124/127 anchors agree in this class
+	// CEconWearable::RemoveFrom(CBaseEntity*)
+}
+
+"CEconWearable::UnEquip"
+{
+	type    "func knownvtidx"
+	vtable  "CEconWearable"
+	idx     "234"
+	// interface-drop; windows 0x103c7570; 124/127 anchors agree in this class
+	// CEconWearable::UnEquip(CBasePlayer*)
+}
+
+"CItem::ItemTouch"
+{
+	type    "func knownvtidx"
+	vtable  "CAmmoPack"
+	idx     "227"
+	// interface-drop; windows 0x1028eca0; 126/128 anchors agree in this class
+	// CItem::ItemTouch(CBaseEntity*)
+}
+
+"CPropVehicleDriveable::TraceAttack"
+{
+	type    "func knownvtidx"
+	vtable  "CPropVehicleDriveable"
+	idx     "62"
+	// interface-drop; windows 0x103737b0; 114/115 anchors agree in this class
+	// CPropVehicleDriveable::TraceAttack(CTakeDamageInfo const&, Vector const&, CGameTrace*, CDmgAccumulator*)
+}
+
+"CPropVehicleDriveable::Use"
+{
+	type    "func knownvtidx"
+	vtable  "CPropVehicleDriveable"
+	idx     "103"
+	// interface-drop; windows 0x10373980; 114/115 anchors agree in this class
+	// CPropVehicleDriveable::Use(CBaseEntity*, CBaseEntity*, USE_TYPE, float)
+}
+
+"CTFBat_Giftwrap::GetWeaponID"
+{
+	type    "func knownvtidx"
+	vtable  "CTFBat_Giftwrap"
+	idx     "382"
+	// interface-drop; windows 0x10600310; 148/153 anchors agree in this class
+	// CTFBat_Giftwrap::GetWeaponID() const
+}
+
+"CTFBonesaw::GetWeaponID"
+{
+	type    "func knownvtidx"
+	vtable  "CTFBonesaw"
+	idx     "382"
+	// interface-drop; windows 0x103d3770; 149/155 anchors agree in this class
+	// CTFBonesaw::GetWeaponID() const
+}
+
+"CTFChargedSMG::SecondaryAttack"
+{
+	type    "func knownvtidx"
+	vtable  "CTFChargedSMG"
+	idx     "288"
+	// interface-drop; windows 0x106293d0; 151/156 anchors agree in this class
+	// CTFChargedSMG::SecondaryAttack()
+}
+
+"CTFCompoundBow::GetProjectileDamage"
+{
+	type    "func knownvtidx"
+	vtable  "CTFCompoundBow"
+	idx     "488"
+	// interface-drop; windows 0x106058f0; 149/153 anchors agree in this class
+	// CTFCompoundBow::GetProjectileDamage()
+}
+
+"CTFCompoundBow::GetProjectileSpeed"
+{
+	type    "func knownvtidx"
+	vtable  "CTFCompoundBow"
+	idx     "484"
+	// interface-drop; windows 0x10605ae0; 149/153 anchors agree in this class
+	// CTFCompoundBow::GetProjectileSpeed()
+}
+
+"CTFCompoundBow::LaunchGrenade"
+{
+	type    "func knownvtidx"
+	vtable  "CTFCompoundBow"
+	idx     "495"
+	// interface-drop; windows 0x10605d60; 149/153 anchors agree in this class
+	// CTFCompoundBow::LaunchGrenade()
+}
+
+"CTFCompoundBow::Reload"
+{
+	type    "func knownvtidx"
+	vtable  "CTFCompoundBow"
+	idx     "284"
+	// interface-drop; windows 0x10606460; 149/153 anchors agree in this class
+	// CTFCompoundBow::Reload()
+}
+
+"CTFCrossbow::GetProjectileSpeed"
+{
+	type    "func knownvtidx"
+	vtable  "CTFCrossbow"
+	idx     "484"
+	// interface-drop; windows 0x106261c0; 155/159 anchors agree in this class
+	// CTFCrossbow::GetProjectileSpeed()
+}
+
+"CTFFists::SecondaryAttack"
+{
+	type    "func knownvtidx"
+	vtable  "CTFFists"
+	idx     "288"
+	// interface-drop; windows 0x10607320; 145/150 anchors agree in this class
+	// CTFFists::SecondaryAttack()
+}
+
+"CTFFlareGun_Revenge::Deploy"
+{
+	type    "func knownvtidx"
+	vtable  "CTFFlareGun_Revenge"
+	idx     "262"
+	// interface-drop; windows 0x1060d5e0; 149/153 anchors agree in this class
+	// CTFFlareGun_Revenge::Deploy()
+}
+
+"CTFFlareGun_Revenge::Holster"
+{
+	type    "func knownvtidx"
+	vtable  "CTFFlareGun_Revenge"
+	idx     "263"
+	// interface-drop; windows 0x1060d740; 149/153 anchors agree in this class
+	// CTFFlareGun_Revenge::Holster(CBaseCombatWeapon*)
+}
+
+"CTFGameStats::Event_PlayerConnected"
+{
+	type    "func knownvtidx"
+	vtable  "CTFGameStats"
+	idx     "20"
+	// interface-drop; windows 0x104a8010; 29/29 anchors agree in this class
+	// CTFGameStats::Event_PlayerConnected(CBasePlayer*)
+}
+
+"CTFGrapplingHook::GetProjectileSpeed"
+{
+	type    "func knownvtidx"
+	vtable  "CTFGrapplingHook"
+	idx     "484"
+	// interface-drop; windows 0x1060e660; 150/154 anchors agree in this class
+	// CTFGrapplingHook::GetProjectileSpeed()
+}
+
+"CTFGrapplingHook::ItemPostFrame"
+{
+	type    "func knownvtidx"
+	vtable  "CTFGrapplingHook"
+	idx     "273"
+	// interface-drop; windows 0x1060e7a0; 150/154 anchors agree in this class
+	// CTFGrapplingHook::ItemPostFrame()
+}
+
+"CTFGrenadeLauncher::SecondaryAttack"
+{
+	type    "func knownvtidx"
+	vtable  "CTFCannon"
+	idx     "288"
+	// interface-drop; windows 0x106117c0; 148/153 anchors agree in this class
+	// CTFGrenadeLauncher::SecondaryAttack()
+}
+
+"CTFJar::FireJar"
+{
+	type    "func knownvtidx"
+	vtable  "CTFCleaver"
+	idx     "479"
+	// interface-drop; windows 0x10613310; 152/157 anchors agree in this class
+	// CTFJar::FireJar(CTFPlayer*)
+}
+
+"CTFJar::TossJarThink"
+{
+	type    "func knownvtidx"
+	vtable  "CTFCleaver"
+	idx     "494"
+	// interface-drop; windows 0x10613350; 152/157 anchors agree in this class
+	// CTFJar::TossJarThink()
+}
+
+"CTFMinigun::CanHolster"
+{
+	type    "func knownvtidx"
+	vtable  "CTFMinigun"
+	idx     "259"
+	// interface-drop; windows 0x10620030; 148/152 anchors agree in this class
+	// CTFMinigun::CanHolster() const
+}
+
+"CTFMinigun::ItemPostFrame"
+{
+	type    "func knownvtidx"
+	vtable  "CTFMinigun"
+	idx     "273"
+	// interface-drop; windows 0x10620380; 148/152 anchors agree in this class
+	// CTFMinigun::ItemPostFrame()
+}
+
+"CTFMinigun::SecondaryAttack"
+{
+	type    "func knownvtidx"
+	vtable  "CTFMinigun"
+	idx     "288"
+	// interface-drop; windows 0x10620950; 148/152 anchors agree in this class
+	// CTFMinigun::SecondaryAttack()
+}
+
+"CTFPipebombLauncher::Deploy"
+{
+	type    "func knownvtidx"
+	vtable  "CTFCompoundBow"
+	idx     "262"
+	// interface-drop; windows 0x10623240; 149/153 anchors agree in this class
+	// CTFPipebombLauncher::Deploy()
+}
+
+"CTFPipebombLauncher::DetonateRemotePipebombs"
+{
+	type    "func knownvtidx"
+	vtable  "CTFPipebombLauncher"
+	idx     "497"
+	// interface-drop; windows 0x10623280; 147/152 anchors agree in this class
+	// CTFPipebombLauncher::DetonateRemotePipebombs(bool)
+}
+
+"CTFPipebombLauncher::SecondaryAttack"
+{
+	type    "func knownvtidx"
+	vtable  "CTFPipebombLauncher"
+	idx     "288"
+	// interface-drop; windows 0x10623e50; 147/152 anchors agree in this class
+	// CTFPipebombLauncher::SecondaryAttack()
+}
+
+"CTFPistol_ScoutSecondary::GetDamageType"
+{
+	type    "func knownvtidx"
+	vtable  "CTFPistol_ScoutSecondary"
+	idx     "134"
+	// interface-drop; windows 0x10624220; 152/157 anchors agree in this class
+	// CTFPistol_ScoutSecondary::GetDamageType() const
+}
+
+"CTFPlayer::CanHearAndReadChatFrom"
+{
+	type    "func knownvtidx"
+	vtable  "CTFPlayer"
+	idx     "433"
+	// interface-drop; windows 0x104e37c0; 263/271 anchors agree in this class
+	// CTFPlayer::CanHearAndReadChatFrom(CBasePlayer*)
+}
+
+"CTFPlayer::ChangeTeam"
+{
+	type    "func knownvtidx"
+	vtable  "CTFPlayer"
+	idx     "97"
+	// interface-drop; windows 0x1020b870; 263/271 anchors agree in this class
+	// CTFPlayer::ChangeTeam(int)
+}
+
+"CTFPlayer::CreateViewModel"
+{
+	type    "func knownvtidx"
+	vtable  "CTFPlayer"
+	idx     "333"
+	// interface-drop; windows 0x104e7b90; 263/271 anchors agree in this class
+	// CTFPlayer::CreateViewModel(int)
+}
+
+"CTFPlayer::DeathSound"
+{
+	type    "func knownvtidx"
+	vtable  "CTFPlayer"
+	idx     "374"
+	// interface-drop; windows 0x104e7d90; 263/271 anchors agree in this class
+	// CTFPlayer::DeathSound(CTakeDamageInfo const&)
+}
+
+"CTFPlayer::GetMaxHealth"
+{
+	type    "func knownvtidx"
+	vtable  "CTFPlayer"
+	idx     "123"
+	// interface-drop; windows 0x104f3500; 263/271 anchors agree in this class
+	// CTFPlayer::GetMaxHealth() const
+}
+
+"CTFPlayer::GetSceneSoundToken"
+{
+	type    "func knownvtidx"
+	vtable  "CTFPlayer"
+	idx     "375"
+	// interface-drop; windows 0x104f3ff0; 263/271 anchors agree in this class
+	// CTFPlayer::GetSceneSoundToken()
+}
+
+"CTFPlayer::IsReadyToPlay"
+{
+	type    "func knownvtidx"
+	vtable  "CTFPlayer"
+	idx     "445"
+	// interface-drop; windows 0x104fc4c0; 263/271 anchors agree in this class
+	// CTFPlayer::IsReadyToPlay()
+}
+
+"CTFPlayer::IsReadyToSpawn"
+{
+	type    "func knownvtidx"
+	vtable  "CTFPlayer"
+	idx     "446"
+	// interface-drop; windows 0x104fc560; 263/271 anchors agree in this class
+	// CTFPlayer::IsReadyToSpawn()
+}
+
+"CTFPlayer::ModifyOrAppendCriteria"
+{
+	type    "func knownvtidx"
+	vtable  "CTFPlayer"
+	idx     "124"
+	// interface-drop; windows 0x104fec90; 263/271 anchors agree in this class
+	// CTFPlayer::ModifyOrAppendCriteria(AI_CriteriaSet&)
+}
+
+"CTFPlayer::PlayScene"
+{
+	type    "func knownvtidx"
+	vtable  "CTFPlayer"
+	idx     "233"
+	// interface-drop; windows 0x10506150; 263/271 anchors agree in this class
+	// CTFPlayer::PlayScene(char const*, float, AI_Response*, IRecipientFilter*)
+}
+
+"CTFPlayer::RemoveAllWeapons"
+{
+	type    "func knownvtidx"
+	vtable  "CTFPlayer"
+	idx     "314"
+	// interface-drop; windows 0x1050a030; 263/271 anchors agree in this class
+	// CTFPlayer::RemoveAllWeapons()
+}
+
+"CTFPlayer::RemoveAmmo"
+{
+	type    "func knownvtidx"
+	vtable  "CTFPlayer"
+	idx     "264"
+	// interface-drop; windows 0x1050a150; 263/271 anchors agree in this class
+	// CTFPlayer::RemoveAmmo(int, int)
+}
+
+"CTFPlayer::ShouldGainInstantSpawn"
+{
+	type    "func knownvtidx"
+	vtable  "CTFPlayer"
+	idx     "447"
+	// interface-drop; windows 0x1050d0d0; 263/271 anchors agree in this class
+	// CTFPlayer::ShouldGainInstantSpawn()
+}
+
+"CTFPlayer::ShouldTransmit"
+{
+	type    "func knownvtidx"
+	vtable  "CTFPlayer"
+	idx     "20"
+	// interface-drop; windows 0x1050d380; 263/271 anchors agree in this class
+	// CTFPlayer::ShouldTransmit(CCheckTransmitInfo const*)
+}
+
+"CTFPlayer::UpdateOnRemove"
+{
+	type    "func knownvtidx"
+	vtable  "CTFPlayer"
+	idx     "111"
+	// interface-drop; windows 0x105141f0; 263/271 anchors agree in this class
+	// CTFPlayer::UpdateOnRemove()
+}
+
+"CTFPlayer::WantsLagCompensationOnEntity"
+{
+	type    "func knownvtidx"
+	vtable  "CTFPlayer"
+	idx     "335"
+	// interface-drop; windows 0x10515140; 263/271 anchors agree in this class
+	// CTFPlayer::WantsLagCompensationOnEntity(CBasePlayer const*, CUserCmd const*, CBitVec<2048> const*) const
+}
+
+"CTFPowerup::Spawn"
+{
+	type    "func knownvtidx"
+	vtable  "CHalloweenPickup"
+	idx     "24"
+	// interface-drop; windows 0x10533a30; 126/128 anchors agree in this class
+	// CTFPowerup::Spawn()
+}
+
+"CTFPowerup::ValidTouch"
+{
+	type    "func knownvtidx"
+	vtable  "CAmmoPack"
+	idx     "232"
+	// interface-drop; windows 0x10533b20; 126/128 anchors agree in this class
+	// CTFPowerup::ValidTouch(CBasePlayer*)
+}
+
+"CTFRaygun::GetProjectileSpeed"
+{
+	type    "func knownvtidx"
+	vtable  "CTFDRGPomson"
+	idx     "484"
+	// interface-drop; windows 0x10624cd0; 152/156 anchors agree in this class
+	// CTFRaygun::GetProjectileSpeed()
+}
+
+"CTFRevolver::CanFireCriticalShot"
+{
+	type    "func knownvtidx"
+	vtable  "CTFRevolver"
+	idx     "439"
+	// interface-drop; windows 0x10625140; 151/156 anchors agree in this class
+	// CTFRevolver::CanFireCriticalShot(bool, CBaseEntity*)
+}
+
+"CTFRevolver::Deploy"
+{
+	type    "func knownvtidx"
+	vtable  "CTFRevolver"
+	idx     "262"
+	// interface-drop; windows 0x10625280; 151/156 anchors agree in this class
+	// CTFRevolver::Deploy()
+}
+
+"CTFRevolver::GetDamageType"
+{
+	type    "func knownvtidx"
+	vtable  "CTFRevolver"
+	idx     "134"
+	// interface-drop; windows 0x10625360; 151/156 anchors agree in this class
+	// CTFRevolver::GetDamageType() const
+}
+
+"CTFRevolver::Holster"
+{
+	type    "func knownvtidx"
+	vtable  "CTFRevolver"
+	idx     "263"
+	// interface-drop; windows 0x10625510; 151/156 anchors agree in this class
+	// CTFRevolver::Holster(CBaseCombatWeapon*)
+}
+
+"CTFSMG::GetDamageType"
+{
+	type    "func knownvtidx"
+	vtable  "CTFChargedSMG"
+	idx     "134"
+	// interface-drop; windows 0x106292b0; 151/156 anchors agree in this class
+	// CTFSMG::GetDamageType() const
+}
+
+"CTFScatterGun::ApplyPostHitEffects"
+{
+	type    "func knownvtidx"
+	vtable  "CTFPEPBrawlerBlaster"
+	idx     "420"
+	// interface-drop; windows 0x10628150; 150/155 anchors agree in this class
+	// CTFScatterGun::ApplyPostHitEffects(CTakeDamageInfo const&, CTFPlayer*)
+}
+
+"CTFShotgunBuildingRescue::GetProjectileSpeed"
+{
+	type    "func knownvtidx"
+	vtable  "CTFShotgunBuildingRescue"
+	idx     "484"
+	// interface-drop; windows 0x106261c0; 151/156 anchors agree in this class
+	// CTFShotgunBuildingRescue::GetProjectileSpeed()
+}
+
+"CTFShotgun_Revenge::Deploy"
+{
+	type    "func knownvtidx"
+	vtable  "CTFShotgun_Revenge"
+	idx     "262"
+	// interface-drop; windows 0x10628780; 150/154 anchors agree in this class
+	// CTFShotgun_Revenge::Deploy()
+}
+
+"CTFShotgun_Revenge::Holster"
+{
+	type    "func knownvtidx"
+	vtable  "CTFShotgun_Revenge"
+	idx     "263"
+	// interface-drop; windows 0x106287f0; 150/154 anchors agree in this class
+	// CTFShotgun_Revenge::Holster(CBaseCombatWeapon*)
+}
+
+"CTFSniperRifle::GetDamageType"
+{
+	type    "func knownvtidx"
+	vtable  "CTFSniperRifle"
+	idx     "134"
+	// interface-drop; windows 0x1062a360; 150/154 anchors agree in this class
+	// CTFSniperRifle::GetDamageType() const
+}
+
+"CTFSniperRifle::GetPenetrateType"
+{
+	type    "func knownvtidx"
+	vtable  "CTFSniperRifle"
+	idx     "403"
+	// interface-drop; windows 0x1062a590; 150/154 anchors agree in this class
+	// CTFSniperRifle::GetPenetrateType() const
+}
+
+"CTFSniperRifle::ItemPostFrame"
+{
+	type    "func knownvtidx"
+	vtable  "CTFSniperRifle"
+	idx     "273"
+	// interface-drop; windows 0x10629f60; 150/154 anchors agree in this class
+	// CTFSniperRifle::ItemPostFrame()
+}
+
+"CTFSniperRifle::SniperRifleChargeRateMod"
+{
+	type    "func knownvtidx"
+	vtable  "CTFSniperRifle"
+	idx     "498"
+	// interface-drop; windows 0x1015d760; 150/154 anchors agree in this class
+	// CTFSniperRifle::SniperRifleChargeRateMod()
+}
+
+"CTFSniperRifleClassic::GetDamageType"
+{
+	type    "func knownvtidx"
+	vtable  "CTFSniperRifleClassic"
+	idx     "134"
+	// interface-drop; windows 0x103dab70; 148/152 anchors agree in this class
+	// CTFSniperRifleClassic::GetDamageType() const
+}
+
+"CTFSniperRifleClassic::ItemPostFrame"
+{
+	type    "func knownvtidx"
+	vtable  "CTFSniperRifleClassic"
+	idx     "273"
+	// interface-drop; windows 0x1062bda0; 148/152 anchors agree in this class
+	// CTFSniperRifleClassic::ItemPostFrame()
+}
+
+"CTFSniperRifleDecap::SniperRifleChargeRateMod"
+{
+	type    "func knownvtidx"
+	vtable  "CTFSniperRifleDecap"
+	idx     "498"
+	// interface-drop; windows 0x1062aa20; 150/154 anchors agree in this class
+	// CTFSniperRifleDecap::SniperRifleChargeRateMod()
+}
+
+"CTFSodaPopper::SecondaryAttack"
+{
+	type    "func knownvtidx"
+	vtable  "CTFSodaPopper"
+	idx     "288"
+	// interface-drop; windows 0x10628620; 149/154 anchors agree in this class
+	// CTFSodaPopper::SecondaryAttack()
+}
+
+"CTFWeaponBase::ApplyFireDelay"
+{
+	type    "func knownvtidx"
+	vtable  "CPasstimeGun"
+	idx     "414"
+	// interface-drop; windows 0x10630ae0; 140/144 anchors agree in this class
+	// CTFWeaponBase::ApplyFireDelay(float) const
+}
+
+"CTFWeaponBase::AutoFiresFullClip"
+{
+	type    "func knownvtidx"
+	vtable  "CPasstimeGun"
+	idx     "285"
+	// interface-drop; windows 0x106324e0; 140/144 anchors agree in this class
+	// CTFWeaponBase::AutoFiresFullClip() const
+}
+
+"CTFWeaponBase::CanFireCriticalShot"
+{
+	type    "func knownvtidx"
+	vtable  "CPasstimeGun"
+	idx     "439"
+	// interface-drop; windows 0x10632b50; 140/144 anchors agree in this class
+	// CTFWeaponBase::CanFireCriticalShot(bool, CBaseEntity*)
+}
+
+"CTFWeaponBase::CanHolster"
+{
+	type    "func knownvtidx"
+	vtable  "CTFCannon"
+	idx     "259"
+	// interface-drop; windows 0x10632d00; 148/153 anchors agree in this class
+	// CTFWeaponBase::CanHolster() const
+}
+
+"CTFWeaponBase::CanPerformSecondaryAttack"
+{
+	type    "func knownvtidx"
+	vtable  "CPasstimeGun"
+	idx     "278"
+	// interface-drop; windows 0x10632d90; 140/144 anchors agree in this class
+	// CTFWeaponBase::CanPerformSecondaryAttack() const
+}
+
+"CTFWeaponBase::CheckReloadMisfire"
+{
+	type    "func knownvtidx"
+	vtable  "CPasstimeGun"
+	idx     "411"
+	// interface-drop; windows 0x10157e70; 140/144 anchors agree in this class
+	// CTFWeaponBase::CheckReloadMisfire()
+}
+
+"CTFWeaponBase::DeflectEntity"
+{
+	type    "func knownvtidx"
+	vtable  "CPasstimeGun"
+	idx     "424"
+	// interface-drop; windows 0x10633180; 140/144 anchors agree in this class
+	// CTFWeaponBase::DeflectEntity(CBaseEntity*, CTFPlayer*, Vector&)
+}
+
+"CTFWeaponBase::Energy_GetShotCost"
+{
+	type    "func knownvtidx"
+	vtable  "CPasstimeGun"
+	idx     "448"
+	// interface-drop; windows 0x103dab60; 140/144 anchors agree in this class
+	// CTFWeaponBase::Energy_GetShotCost() const
+}
+
+"CTFWeaponBase::GetActivityWeaponRole"
+{
+	type    "func knownvtidx"
+	vtable  "CPasstimeGun"
+	idx     "415"
+	// interface-drop; windows 0x10634e10; 140/144 anchors agree in this class
+	// CTFWeaponBase::GetActivityWeaponRole() const
+}
+
+"CTFWeaponBase::GetAfterburnRateOnHit"
+{
+	type    "func knownvtidx"
+	vtable  "CTFBat"
+	idx     "460"
+	// interface-drop; windows 0x1015d760; 147/152 anchors agree in this class
+	// CTFWeaponBase::GetAfterburnRateOnHit() const
+}
+
+"CTFWeaponBase::GetDamageType"
+{
+	type    "func knownvtidx"
+	vtable  "CPasstimeGun"
+	idx     "134"
+	// interface-drop; windows 0x103dab70; 140/144 anchors agree in this class
+	// CTFWeaponBase::GetDamageType() const
+}
+
+"CTFWeaponBase::GetEffectBarProgress"
+{
+	type    "func knownvtidx"
+	vtable  "CTFBat"
+	idx     "462"
+	// interface-drop; windows 0x10634ed0; 147/152 anchors agree in this class
+	// CTFWeaponBase::GetEffectBarProgress()
+}
+
+"CTFWeaponBase::GetInitialAfterburnDuration"
+{
+	type    "func knownvtidx"
+	vtable  "CTFBat"
+	idx     "459"
+	// interface-drop; windows 0x1015d760; 147/152 anchors agree in this class
+	// CTFWeaponBase::GetInitialAfterburnDuration() const
+}
+
+"CTFWeaponBase::GetMaxHealthMod"
+{
+	type    "func knownvtidx"
+	vtable  "CPasstimeGun"
+	idx     "444"
+	// interface-drop; windows 0x10157970; 140/144 anchors agree in this class
+	// CTFWeaponBase::GetMaxHealthMod()
+}
+
+"CTFWeaponBase::GetParticleColor"
+{
+	type    "func knownvtidx"
+	vtable  "CPasstimeGun"
+	idx     "450"
+	// interface-drop; windows 0x106354a0; 140/144 anchors agree in this class
+	// CTFWeaponBase::GetParticleColor(int)
+}
+
+"CTFWeaponBase::GetPenetrateType"
+{
+	type    "func knownvtidx"
+	vtable  "CPasstimeGun"
+	idx     "403"
+	// interface-drop; windows 0x106356b0; 140/144 anchors agree in this class
+	// CTFWeaponBase::GetPenetrateType() const
+}
+
+"CTFWeaponBase::GetProjectileFireSetup"
+{
+	type    "func knownvtidx"
+	vtable  "CPasstimeGun"
+	idx     "404"
+	// interface-drop; windows 0x10635800; 140/144 anchors agree in this class
+	// CTFWeaponBase::GetProjectileFireSetup(CTFPlayer*, Vector, Vector*, QAngle*, bool, float)
+}
+
+"CTFWeaponBase::GetSkin"
+{
+	type    "func knownvtidx"
+	vtable  "CTFBat"
+	idx     "461"
+	// interface-drop; windows 0x10635d10; 147/152 anchors agree in this class
+	// CTFWeaponBase::GetSkin()
+}
+
+"CTFWeaponBase::GetSpreadAngles"
+{
+	type    "func knownvtidx"
+	vtable  "CPasstimeGun"
+	idx     "405"
+	// interface-drop; windows 0x10635d90; 140/144 anchors agree in this class
+	// CTFWeaponBase::GetSpreadAngles()
+}
+
+"CTFWeaponBase::GetViewModel"
+{
+	type    "func knownvtidx"
+	vtable  "CPasstimeGun"
+	idx     "322"
+	// interface-drop; windows 0x106361a0; 140/144 anchors agree in this class
+	// CTFWeaponBase::GetViewModel(int) const
+}
+
+"CTFWeaponBase::GetViewModelWeaponRole"
+{
+	type    "func knownvtidx"
+	vtable  "CPasstimeGun"
+	idx     "416"
+	// interface-drop; windows 0x103dabe0; 140/144 anchors agree in this class
+	// CTFWeaponBase::GetViewModelWeaponRole()
+}
+
+"CTFWeaponBase::Holster"
+{
+	type    "func knownvtidx"
+	vtable  "CTFWeaponBase"
+	idx     "263"
+	// interface-drop; windows 0x106365f0; 146/151 anchors agree in this class
+	// CTFWeaponBase::Holster(CBaseCombatWeapon*)
+}
+
+"CTFWeaponBase::InternalGetEffectBarRechargeTime"
+{
+	type    "func knownvtidx"
+	vtable  "CTFBat"
+	idx     "466"
+	// interface-drop; windows 0x1015d760; 147/152 anchors agree in this class
+	// CTFWeaponBase::InternalGetEffectBarRechargeTime()
+}
+
+"CTFWeaponBase::IsEnergyWeapon"
+{
+	type    "func knownvtidx"
+	vtable  "CTFBat"
+	idx     "446"
+	// interface-drop; windows 0x10157e70; 147/152 anchors agree in this class
+	// CTFWeaponBase::IsEnergyWeapon() const
+}
+
+"CTFWeaponBase::ItemBusyFrame"
+{
+	type    "func knownvtidx"
+	vtable  "CPasstimeGun"
+	idx     "274"
+	// interface-drop; windows 0x106369c0; 140/144 anchors agree in this class
+	// CTFWeaponBase::ItemBusyFrame()
+}
+
+"CTFWeaponBase::ItemHolsterFrame"
+{
+	type    "func knownvtidx"
+	vtable  "CTFBat"
+	idx     "275"
+	// interface-drop; windows 0x10636b30; 147/152 anchors agree in this class
+	// CTFWeaponBase::ItemHolsterFrame()
+}
+
+"CTFWeaponBase::ItemPostFrame"
+{
+	type    "func knownvtidx"
+	vtable  "CTFChargedSMG"
+	idx     "273"
+	// interface-drop; windows 0x10636b40; 151/156 anchors agree in this class
+	// CTFWeaponBase::ItemPostFrame()
+}
+
+"CTFWeaponBase::Misfire"
+{
+	type    "func knownvtidx"
+	vtable  "CPasstimeGun"
+	idx     "399"
+	// interface-drop; windows 0x10632520; 140/144 anchors agree in this class
+	// CTFWeaponBase::Misfire()
+}
+
+"CTFWeaponBase::OnActiveStateChanged"
+{
+	type    "func knownvtidx"
+	vtable  "CPasstimeGun"
+	idx     "268"
+	// interface-drop; windows 0x10636e80; 140/144 anchors agree in this class
+	// CTFWeaponBase::OnActiveStateChanged(int)
+}
+
+"CTFWeaponBase::PrimaryAttack"
+{
+	type    "func knownvtidx"
+	vtable  "CPasstimeGun"
+	idx     "287"
+	// interface-drop; windows 0x106375e0; 140/144 anchors agree in this class
+	// CTFWeaponBase::PrimaryAttack()
+}
+
+"CTFWeaponBase::Reload"
+{
+	type    "func knownvtidx"
+	vtable  "CPasstimeGun"
+	idx     "284"
+	// interface-drop; windows 0x10637820; 140/144 anchors agree in this class
+	// CTFWeaponBase::Reload()
+}
+
+"CTFWeaponBase::SecondaryAttack"
+{
+	type    "func knownvtidx"
+	vtable  "CPasstimeGun"
+	idx     "288"
+	// interface-drop; windows 0x10637f60; 140/144 anchors agree in this class
+	// CTFWeaponBase::SecondaryAttack()
+}
+
+"CTFWeaponBase::SendWeaponAnim"
+{
+	type    "func knownvtidx"
+	vtable  "CTFBat"
+	idx     "250"
+	// interface-drop; windows 0x10638020; 147/152 anchors agree in this class
+	// CTFWeaponBase::SendWeaponAnim(int)
+}
+
+"CTFWeaponBase::ShouldRemoveInvisibilityOnPrimaryAttack"
+{
+	type    "func knownvtidx"
+	vtable  "CTFBat"
+	idx     "464"
+	// interface-drop; windows 0x1005bd70; 147/152 anchors agree in this class
+	// CTFWeaponBase::ShouldRemoveInvisibilityOnPrimaryAttack() const
+}
+
+"CTFWeaponBase::UpdateHands"
+{
+	type    "func knownvtidx"
+	vtable  "CPasstimeGun"
+	idx     "389"
+	// interface-drop; windows 0x10638d40; 140/144 anchors agree in this class
+	// CTFWeaponBase::UpdateHands()
+}
+
+"CTFWeaponBase::UpdateOnRemove"
+{
+	type    "func knownvtidx"
+	vtable  "CTFBat"
+	idx     "111"
+	// interface-drop; windows 0x10638da0; 147/152 anchors agree in this class
+	// CTFWeaponBase::UpdateOnRemove()
+}
+
+"CTFWeaponBase::WeaponReset"
+{
+	type    "func knownvtidx"
+	vtable  "CTFCleaver"
+	idx     "430"
+	// interface-drop; windows 0x10639260; 152/157 anchors agree in this class
+	// CTFWeaponBase::WeaponReset()
+}
+
+"CTFWeaponBaseGun::DoFireEffects"
+{
+	type    "func knownvtidx"
+	vtable  "CTFCannon"
+	idx     "470"
+	// interface-drop; windows 0x1063b030; 148/153 anchors agree in this class
+	// CTFWeaponBaseGun::DoFireEffects()
+}
+
+"CTFWeaponBaseGun::FireArrow"
+{
+	type    "func knownvtidx"
+	vtable  "CTFCannon"
+	idx     "478"
+	// interface-drop; windows 0x1063b070; 148/153 anchors agree in this class
+	// CTFWeaponBaseGun::FireArrow(CTFPlayer*, ProjectileType_t)
+}
+
+"CTFWeaponBaseGun::FireEnergyBall"
+{
+	type    "func knownvtidx"
+	vtable  "CTFCannon"
+	idx     "481"
+	// interface-drop; windows 0x1063b280; 148/153 anchors agree in this class
+	// CTFWeaponBaseGun::FireEnergyBall(CTFPlayer*, bool)
+}
+
+"CTFWeaponBaseGun::FireFlameRocket"
+{
+	type    "func knownvtidx"
+	vtable  "CTFCannon"
+	idx     "479"
+	// interface-drop; windows 0x10150fd0; 148/153 anchors agree in this class
+	// CTFWeaponBaseGun::FireFlameRocket(CTFPlayer*)
+}
+
+"CTFWeaponBaseGun::GetAmmoPerShot"
+{
+	type    "func knownvtidx"
+	vtable  "CTFCannon"
+	idx     "487"
+	// interface-drop; windows 0x1063bfd0; 148/153 anchors agree in this class
+	// CTFWeaponBaseGun::GetAmmoPerShot()
+}
+
+"CTFWeaponBaseGun::GetProjectileGravity"
+{
+	type    "func knownvtidx"
+	vtable  "CTFCannon"
+	idx     "485"
+	// interface-drop; windows 0x1015d760; 148/153 anchors agree in this class
+	// CTFWeaponBaseGun::GetProjectileGravity()
+}
+
+"CTFWeaponBaseGun::GetProjectileSpeed"
+{
+	type    "func knownvtidx"
+	vtable  "CTFChargedSMG"
+	idx     "484"
+	// interface-drop; windows 0x1015d760; 151/156 anchors agree in this class
+	// CTFWeaponBaseGun::GetProjectileSpeed()
+}
+
+"CTFWeaponBaseGun::GetWeaponProjectileType"
+{
+	type    "func knownvtidx"
+	vtable  "CTFCannon"
+	idx     "472"
+	// interface-drop; windows 0x105bb950; 148/153 anchors agree in this class
+	// CTFWeaponBaseGun::GetWeaponProjectileType() const
+}
+
+"CTFWeaponBaseGun::ModifyProjectile"
+{
+	type    "func knownvtidx"
+	vtable  "CTFCannon"
+	idx     "475"
+	// interface-drop; windows 0x10130ba0; 148/153 anchors agree in this class
+	// CTFWeaponBaseGun::ModifyProjectile(CBaseEntity*)
+}
+
+"CTFWeaponBaseGun::RemoveProjectileAmmo"
+{
+	type    "func knownvtidx"
+	vtable  "CTFCannon"
+	idx     "474"
+	// interface-drop; windows 0x1063ca50; 148/153 anchors agree in this class
+	// CTFWeaponBaseGun::RemoveProjectileAmmo(CTFPlayer*)
+}
+
+"CTFWeaponBaseGun::ShouldPlayFireAnim"
+{
+	type    "func knownvtidx"
+	vtable  "CTFCannon"
+	idx     "489"
+	// interface-drop; windows 0x1005bd70; 148/153 anchors agree in this class
+	// CTFWeaponBaseGun::ShouldPlayFireAnim()
+}
+
+"CTFWeaponBaseGun::ZoomIn"
+{
+	type    "func knownvtidx"
+	vtable  "CTFCannon"
+	idx     "490"
+	// interface-drop; windows 0x1063cbb0; 148/153 anchors agree in this class
+	// CTFWeaponBaseGun::ZoomIn()
+}
+
+"CTFWeaponBaseMelee::DoSwingTrace"
+{
+	type    "func knownvtidx"
+	vtable  "CTFBonesaw"
+	idx     "472"
+	// interface-drop; windows 0x1063d850; 149/155 anchors agree in this class
+	// CTFWeaponBaseMelee::DoSwingTrace(CGameTrace&)
+}
+
+"CTFWeaponBaseMelee::GetSwingRange"
+{
+	type    "func knownvtidx"
+	vtable  "CTFBat"
+	idx     "470"
+	// interface-drop; windows 0x1063e1f0; 147/152 anchors agree in this class
+	// CTFWeaponBaseMelee::GetSwingRange()
+}
+
+"CTFWeaponBaseMelee::Holster"
+{
+	type    "func knownvtidx"
+	vtable  "CTFBat"
+	idx     "263"
+	// interface-drop; windows 0x1063e250; 147/152 anchors agree in this class
+	// CTFWeaponBaseMelee::Holster(CBaseCombatWeapon*)
+}
+
+"CTFWeaponBaseMelee::SecondaryAttack"
+{
+	type    "func knownvtidx"
+	vtable  "CTFBat"
+	idx     "288"
+	// interface-drop; windows 0x1063ea50; 147/152 anchors agree in this class
+	// CTFWeaponBaseMelee::SecondaryAttack()
+}
+
+"CTFWeaponBuilder::CanDeploy"
+{
+	type    "func knownvtidx"
+	vtable  "CTFWeaponBuilder"
+	idx     "261"
+	// interface-drop; windows 0x106031d0; 145/149 anchors agree in this class
+	// CTFWeaponBuilder::CanDeploy()
+}
+
+"CTFWeaponBuilder::GetViewModel"
+{
+	type    "func knownvtidx"
+	vtable  "CTFWeaponBuilder"
+	idx     "322"
+	// interface-drop; windows 0x10603520; 145/149 anchors agree in this class
+	// CTFWeaponBuilder::GetViewModel(int) const
+}
+
+"CTFWeaponInvis::ActivateInvisibilityWatch"
+{
+	type    "func knownvtidx"
+	vtable  "CTFWeaponInvis"
+	idx     "475"
+	// interface-drop; windows 0x10612c80; 145/150 anchors agree in this class
+	// CTFWeaponInvis::ActivateInvisibilityWatch()
+}
+
+"CTFWeaponInvis::CleanupInvisibilityWatch"
+{
+	type    "func knownvtidx"
+	vtable  "CTFWeaponInvis"
+	idx     "476"
+	// interface-drop; windows 0x10612e30; 145/150 anchors agree in this class
+	// CTFWeaponInvis::CleanupInvisibilityWatch()
+}
+
+"CTFWeaponInvis::GetViewModel"
+{
+	type    "func knownvtidx"
+	vtable  "CTFWeaponInvis"
+	idx     "322"
+	// interface-drop; windows 0x10612ea0; 145/150 anchors agree in this class
+	// CTFWeaponInvis::GetViewModel(int) const
+}
+
+"CTFWearable::CanEquip"
+{
+	type    "func knownvtidx"
+	vtable  "CTFPowerupBottle"
+	idx     "232"
+	// interface-drop; windows 0x103d1240; 124/127 anchors agree in this class
+	// CTFWearable::CanEquip(CBaseEntity*)
+}
+
+"CTFWearable::Equip"
+{
+	type    "func knownvtidx"
+	vtable  "CTFPowerupBottle"
+	idx     "233"
+	// interface-drop; windows 0x103d1190; 124/127 anchors agree in this class
+	// CTFWearable::Equip(CBasePlayer*)
+}
+
+"CWeaponMedigun::Deploy"
+{
+	type    "func knownvtidx"
+	vtable  "CWeaponMedigun"
+	idx     "262"
+	// interface-drop; windows 0x1061b780; 154/158 anchors agree in this class
+	// CWeaponMedigun::Deploy()
+}
+
+"CWeaponMedigun::GetTargetRange"
+{
+	type    "func knownvtidx"
+	vtable  "CWeaponMedigun"
+	idx     "494"
+	// interface-drop; windows 0x1061c8b0; 154/158 anchors agree in this class
+	// CWeaponMedigun::GetTargetRange()
+}
+
+"CWeaponMedigun::PrimaryAttack"
+{
+	type    "func knownvtidx"
+	vtable  "CWeaponMedigun"
+	idx     "287"
+	// interface-drop; windows 0x1061d6b0; 154/158 anchors agree in this class
+	// CWeaponMedigun::PrimaryAttack()
+}
+

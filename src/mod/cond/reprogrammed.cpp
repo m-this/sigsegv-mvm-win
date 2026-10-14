@@ -16,6 +16,62 @@
 
 namespace Mod::Cond::Reprogrammed
 {
+#if defined _WINDOWS
+	/* MSVC pushes CollectPlayers' arguments (vector, team, isAlive, append), so
+	 * the team is a push of an 8-bit immediate rather than a register load. The
+	 * two populators zero the vector differently, hence two patterns. */
+	constexpr uint8_t s_Buf_UpdateMission[] = {
+		0x6a, 0x01,                                // +0000  push 1
+		0x8d, 0x45, 0xa8,                          // +0002  lea eax, [ebp-58h]
+		0x89, 0x5d, 0xac,                          // +0005  mov [ebp-54h], ebx
+		0x6a, 0x03,                                // +0008  push TF_TEAM_PVE_INVADERS
+		0x50,                                      // +000A  push eax
+	};
+	constexpr uint8_t s_Buf_UpdateMissionDestroySentries[] = {
+		0x6a, 0x01,                                // +0000  push 1
+		0x8d, 0x45, 0x84,                          // +0002  lea eax, [ebp-7Ch]
+		0xc7, 0x45, 0x84, 0x00, 0x00, 0x00, 0x00,  // +0005  mov dword ptr [ebp-7Ch], 0
+		0x6a, 0x03,                                // +000C  push TF_TEAM_PVE_INVADERS
+		0x50,                                      // +000E  push eax
+	};
+	
+	template<const uint8_t *BUF, size_t SIZE, uint32_t OFF_MAX, int OFF_TEAM>
+	struct CPatch_CMissionPopulator_CollectTeam : public CPatch
+	{
+		CPatch_CMissionPopulator_CollectTeam(const char *func) : CPatch(SIZE), m_pszFunc(func) {}
+		
+		virtual const char *GetFuncName() const override { return this->m_pszFunc; }
+		virtual uint32_t GetFuncOffMin() const override  { return 0x0000; }
+		virtual uint32_t GetFuncOffMax() const override  { return OFF_MAX; }
+		
+		virtual bool GetVerifyInfo(ByteBuf& buf, ByteBuf& mask) const override
+		{
+			buf.CopyFrom(BUF);
+			return true;
+		}
+		
+		virtual bool GetPatchInfo(ByteBuf& buf, ByteBuf& mask) const override
+		{
+			/* change the teamnum to TEAM_ANY */
+			buf [OFF_TEAM] = (uint8_t)TEAM_ANY;
+			mask[OFF_TEAM] = 0xff;
+			return true;
+		}
+		
+	private:
+		const char *m_pszFunc;
+	};
+	
+	struct CPatch_CMissionPopulator_UpdateMission : public CPatch_CMissionPopulator_CollectTeam<s_Buf_UpdateMission, sizeof(s_Buf_UpdateMission), 0x0200, 0x08 + 1> // @ 0x009d
+	{
+		CPatch_CMissionPopulator_UpdateMission() : CPatch_CMissionPopulator_CollectTeam("CMissionPopulator::UpdateMission") {}
+	};
+	
+	struct CPatch_CMissionPopulator_UpdateMissionDestroySentries : public CPatch_CMissionPopulator_CollectTeam<s_Buf_UpdateMissionDestroySentries, sizeof(s_Buf_UpdateMissionDestroySentries), 0x0800, 0x0c + 1> // @ 0x0220
+	{
+		CPatch_CMissionPopulator_UpdateMissionDestroySentries() : CPatch_CMissionPopulator_CollectTeam("CMissionPopulator::UpdateMissionDestroySentries") {}
+	};
+#else
 	constexpr uint8_t s_Buf_UpdateMission[] = {
 #ifdef PLATFORM_64BITS
 		0xba, 0x01, 0x00, 0x00, 0x00,                    // +0x0000 mov     edx, 1
@@ -94,6 +150,62 @@ namespace Mod::Cond::Reprogrammed
 	};
 	
 	
+#endif
+	
+	
+#if defined _WINDOWS
+	/* MSVC reads m_pTFPlayer's team through a thiscall with the player in ecx,
+	 * so the call can become CBasePlayer::IsBot on the same player directly. */
+	constexpr uint8_t s_Buf_CheckStuck[] = {
+		0xe8, 0x00, 0x00, 0x00, 0x00,        // +0000  call CBaseEntity::GetTeamNumber
+		0x83, 0xf8, 0x03,                    // +0005  cmp eax, TF_TEAM_PVE_INVADERS
+		0x0f, 0x85, 0x00, 0x00, 0x00, 0x00,  // +0008  jnz +0x165
+	};
+	
+	struct CPatch_CTFGameMovement_CheckStuck : public CPatch
+	{
+		CPatch_CTFGameMovement_CheckStuck() : CPatch(sizeof(s_Buf_CheckStuck)) {}
+		
+		virtual const char *GetFuncName() const override { return "CTFGameMovement::CheckStuck"; }
+		virtual uint32_t GetFuncOffMin() const override  { return 0x0000; }
+		virtual uint32_t GetFuncOffMax() const override  { return 0x00a0; } // @ 0x0070
+		
+		virtual bool GetVerifyInfo(ByteBuf& buf, ByteBuf& mask) const override
+		{
+			buf.CopyFrom(s_Buf_CheckStuck);
+			
+			mask.SetRange(0x00 + 1, 4, 0x00);
+			mask.SetRange(0x08 + 2, 4, 0x00);
+			
+			return true;
+		}
+		
+		virtual bool GetPatchInfo(ByteBuf& buf, ByteBuf& mask) const override
+		{
+			/* call CBasePlayer::IsBot instead; the target is set in AdjustPatchInfo */
+			mask.SetRange(0x00 + 1, 4, 0xff);
+			
+			/* test result */
+			buf[0x05] = 0x84;
+			buf[0x06] = 0xc0;
+			buf[0x07] = 0x90;
+			mask.SetRange(0x05, 3, 0xff);
+			
+			/* invert the jump condition code */
+			buf [0x09] = 0x84;
+			mask[0x09] = 0xff;
+			
+			return true;
+		}
+		
+		virtual bool AdjustPatchInfo(ByteBuf& buf) const override
+		{
+			if (AddrManager::GetAddr("CBasePlayer::IsBot") == nullptr) return false;
+			buf.SetDword(0x00 + 1, AddrManager::GetAddrOffset("CBasePlayer::IsBot", GetFuncName(), 0x05 + this->GetActualOffset()));
+			return true;
+		}
+	};
+#else
 	constexpr uint8_t s_Buf_CheckStuck[] = {
 #ifdef PLATFORM_64BITS
 		0xe8, 0x85, 0x61, 0x2a, 0x00,        // +0x0000 call    _ZNK11CBaseEntity13GetTeamNumberEv; CBaseEntity::GetTeamNumber(void)
@@ -185,8 +297,51 @@ namespace Mod::Cond::Reprogrammed
 		static FPtr_IsBot s_CBasePlayer_IsBot;
 	};
 	FPtr_IsBot CPatch_CTFGameMovement_CheckStuck::s_CBasePlayer_IsBot = &CBasePlayer::IsBot;
+#endif
 	
 	
+#if defined _WINDOWS
+	/* MSVC did not inline CollectPlayers here: Push picks the enemy team and
+	 * collects only its players. Collecting every team instead is what the
+	 * Linux patch amounts to, since the loop that follows skips teammates. */
+	constexpr uint8_t s_Buf_CTFPistol_ScoutPrimary_Push[] = {
+		0x83, 0xf8, 0x02,              // +0000  cmp eax, TF_TEAM_RED
+		0x75, 0x07,                    // +0003  jnz +0x07
+		0xb8, 0x03, 0x00, 0x00, 0x00,  // +0005  mov eax, TF_TEAM_BLUE
+		0xeb, 0x0b,                    // +000A  jmp +0x0b
+		0x83, 0xf8, 0x03,              // +000C  cmp eax, TF_TEAM_BLUE
+		0xb9, 0x02, 0x00, 0x00, 0x00,  // +000F  mov ecx, TF_TEAM_RED
+		0x0f, 0x44, 0xc1,              // +0014  cmovz eax, ecx
+		0x6a, 0x00,                    // +0017  push 0
+		0x6a, 0x01,                    // +0019  push 1
+		0x50,                          // +001B  push eax
+	};
+	
+	struct CPatch_CTFPistol_ScoutPrimary_Push : public CPatch
+	{
+		CPatch_CTFPistol_ScoutPrimary_Push() : CPatch(sizeof(s_Buf_CTFPistol_ScoutPrimary_Push)) {}
+		
+		virtual const char *GetFuncName() const override { return "CTFPistol_ScoutPrimary::Push"; }
+		virtual uint32_t GetFuncOffMin() const override  { return 0x0000; }
+		virtual uint32_t GetFuncOffMax() const override  { return 0x0100; } // @ 0x0081
+		
+		virtual bool GetVerifyInfo(ByteBuf& buf, ByteBuf& mask) const override
+		{
+			buf.CopyFrom(s_Buf_CTFPistol_ScoutPrimary_Push);
+			return true;
+		}
+		
+		virtual bool GetPatchInfo(ByteBuf& buf, ByteBuf& mask) const override
+		{
+			/* mov eax, TEAM_ANY, and nothing else up to the pushes */
+			buf[0x00] = 0xb8;
+			buf.SetDword(0x01, (uint32_t)TEAM_ANY);
+			buf.SetRange(0x05, 0x17 - 0x05, 0x90);
+			mask.SetRange(0x00, 0x17, 0xff);
+			return true;
+		}
+	};
+#else
 	constexpr uint8_t s_Buf_CTFPistol_ScoutPrimary_Push[] = {
 #ifdef PLATFORM_64BITS
 		0x83, 0xbb, 0xac, 0x10, 0x00, 0x00, 0x02,  // +0x0000 cmp     dword ptr [rbx+10ACh], 2
@@ -242,6 +397,8 @@ namespace Mod::Cond::Reprogrammed
 		}
 		
 	};
+
+#endif
 
 #if 0
 	constexpr uint8_t s_Buf_GetShootSound[] = {
@@ -1055,7 +1212,28 @@ namespace Mod::Cond::Reprogrammed
 			}
 		}
 
+#if defined _WINDOWS
+		/* A neutral robot spawned a moment ago stands where the next member of
+		 * its squad spawns, and on Windows the game's space test there counts
+		 * it: the squad's second robot was refused every time and the squad
+		 * spawned its first again, for ever (dust to dust, wave 5). On Linux the
+		 * squad spawns. The neutral robots stay out of that test for the call. */
+		std::vector<CHandle<CTFPlayer>> unsolid;
+		for (auto bot : spec_players) {
+			if (bot != nullptr && !bot->CollisionProp()->IsSolidFlagSet(FSOLID_NOT_SOLID)) {
+				bot->CollisionProp()->SetSolidFlags(bot->CollisionProp()->GetSolidFlags() | FSOLID_NOT_SOLID);
+				unsolid.push_back(bot);
+			}
+		}
+#endif
 		bool result = DETOUR_MEMBER_CALL(where, ents);
+#if defined _WINDOWS
+		for (auto bot : unsolid) {
+			if (bot != nullptr) {
+				bot->CollisionProp()->SetSolidFlags(bot->CollisionProp()->GetSolidFlags() & ~FSOLID_NOT_SOLID);
+			}
+		}
+#endif
 
 		for (auto bot : spec_players) {
 			if (bot != nullptr && !bot->IsMarkedForDeletion() && bot->GetTeamNumber() == TEAM_SPECTATOR) {
@@ -1382,6 +1560,14 @@ namespace Mod::Cond::Reprogrammed
 		if (nCond < 0 || nCond >= GetExtraConditionCount()) {
             return;
         }
+#if defined _WINDOWS
+		/* The constructor detour that sizes m_ConditionData for the extra
+		 * conditions has no Windows address, and without it the game's AddCond
+		 * writes an extra condition past the vector's end. AddCond is the one
+		 * path that writes an extra condition's slot, so it is sized here,
+		 * before the game's AddCond indexes it. EnsureCount only grows it. */
+		reinterpret_cast<CTFPlayerShared *>(this)->m_ConditionData->EnsureCount(GetExtraConditionCount());
+#endif
 		DETOUR_MEMBER_CALL(nCond, flDuration, pProvider);
 	}
 	
@@ -1500,7 +1686,10 @@ namespace Mod::Cond::Reprogrammed
 			// Fix spectator team bots ignoring disguise
 			MOD_ADD_DETOUR_MEMBER(CTFBotVision_IsIgnored, "CTFBotVision::IsIgnored");
 
+#if !defined _WINDOWS
+            /* no address there; AddCond sizes the condition data instead */
             MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_C2, "CTFPlayerShared::CTFPlayerShared");
+#endif
             MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_AddCond, "CTFPlayerShared::AddCond");
             MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_RemoveAllCond, "CTFPlayerShared::RemoveAllCond");
 			

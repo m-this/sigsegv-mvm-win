@@ -21,6 +21,17 @@ namespace Mod::MvM::GoBackInTime
 		DETOUR_MEMBER_CALL();
 	}
 
+#if defined _WINDOWS
+	/* OnRemovePhase is inline in OnConditionRemoved there, which tail calls it
+	 * for this one condition on Linux */
+	DETOUR_DECL_MEMBER(void, CTFPlayerShared_OnConditionRemoved, ETFCond cond)
+	{
+		SCOPED_INCREMENT_IF(rc_CTFPlayerShared_OnRemovePhase, cond == TF_COND_PHASE);
+
+		DETOUR_MEMBER_CALL(cond);
+	}
+#endif
+
 
 	DETOUR_DECL_MEMBER(void, CTFPlayerShared_StunPlayer, float duration, float slowdown, int flags, CTFPlayer *attacker)
 	{
@@ -58,7 +69,11 @@ namespace Mod::MvM::GoBackInTime
 		{
 		
 			MOD_ADD_DETOUR_MEMBER(CTFSniperRifle_ExplosiveHeadShot, "CTFSniperRifle::ExplosiveHeadShot");
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_OnConditionRemoved, "CTFPlayerShared::OnConditionRemoved");
+#else
 			MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_OnRemovePhase,    "CTFPlayerShared::OnRemovePhase");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_StunPlayer,       "CTFPlayerShared::StunPlayer");
 			MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_MakeBleed,        "CTFPlayerShared::MakeBleed");
 			MOD_ADD_DETOUR_STATIC(CTFReviveMarker_Create,           "CTFReviveMarker::Create");

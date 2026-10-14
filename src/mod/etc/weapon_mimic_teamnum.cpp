@@ -333,18 +333,18 @@ namespace Mod::Etc::Weapon_Mimic_Teamnum
 		}
 	}
 
-	DETOUR_DECL_MEMBER(void, CTFPointWeaponMimic_dtor0)
+	DETOUR_DECL_DTOR(CTFPointWeaponMimic_dtor0)
 	{
 		OnRemove(reinterpret_cast<CTFPointWeaponMimic *>(this));
 		
-        DETOUR_MEMBER_CALL();
+        DETOUR_DTOR_CALL();
 	}
 	
-	DETOUR_DECL_MEMBER(void, CTFPointWeaponMimic_dtor2)
+	DETOUR_DECL_DTOR(CTFPointWeaponMimic_dtor2)
 	{
 		OnRemove(reinterpret_cast<CTFPointWeaponMimic *>(this));
 		
-        DETOUR_MEMBER_CALL();
+        DETOUR_DTOR_CALL();
 	}
 
 	DETOUR_DECL_MEMBER(void, CTFPointWeaponMimic_Spawn)
@@ -422,7 +422,10 @@ namespace Mod::Etc::Weapon_Mimic_Teamnum
 		CMod() : IMod("Etc:Weapon_Mimic_Teamnum")
 		{
 			bulletDamageHook.DoLoad();
+#if !defined _WINDOWS
+			/* inline in the two inputs there, which are hooked below */
 			MOD_ADD_DETOUR_MEMBER(CTFPointWeaponMimic_Fire, "CTFPointWeaponMimic::Fire");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CTFPointWeaponMimic_InputFireOnce, "CTFPointWeaponMimic::InputFireOnce");
 			MOD_ADD_DETOUR_MEMBER(CTFPointWeaponMimic_InputFireMultiple, "CTFPointWeaponMimic::InputFireMultiple");
 			MOD_ADD_DETOUR_STATIC(CTFProjectile_Rocket_Create,  "CTFProjectile_Rocket::Create");

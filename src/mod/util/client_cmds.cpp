@@ -1108,6 +1108,7 @@ namespace Mod::Util::Client_Cmds
 
 			ModCommandResponse("%s", displaystr.c_str());
 			displaystr = "";
+#if !defined _MSC_VER // __do_upcast is libstdc++'s
 			displaystr += CFmtStr("\n\nupcast casting tests: \n\n");
 			displaystr += CFmtStr("(tfplayer)entity->player %d | ", static_cast<const std::type_info *>(rtti_base_entity)->__do_upcast(rtti_tf_player, (void **)&testent));
 			displaystr += CFmtStr("(gamerules)entity->player %d | ", static_cast<const std::type_info *>(rtti_base_entity)->__do_upcast(rtti_tf_player, (void **)&gamerules));
@@ -1118,6 +1119,7 @@ namespace Mod::Util::Client_Cmds
 			displaystr += CFmtStr("(tfplayer)object->entity %d | ", static_cast<const std::type_info *>(rtti_base_object)->__do_upcast(rtti_base_entity, (void **)&testent));
 			displaystr += CFmtStr("(tfplayer)entity->object %d | ", static_cast<const std::type_info *>(rtti_base_entity)->__do_upcast(rtti_base_object, (void **)&testent));
 			displaystr += CFmtStr("(tfplayer)player->object %d | ", static_cast<const std::type_info *>(rtti_tf_player)->__do_upcast(rtti_base_object, (void **)&testent));
+#endif
 
 		}
 		else if (strcmp(args[2], "rtticastscorer") == 0) {
@@ -1238,6 +1240,7 @@ namespace Mod::Util::Client_Cmds
 			timer.End();
 			displaystr += CFmtStr("threadlocal time: %.9f\n", timer.GetDuration().GetSeconds());
 		}
+#if !defined _MSC_VER // pthread keys
 		else if (strcmp(args[2], "threadlocalmine") == 0) {
 			static pthread_key_t index;
 			static int done = pthread_key_create( &index, NULL );
@@ -1249,6 +1252,7 @@ namespace Mod::Util::Client_Cmds
 			timer.End();
 			displaystr += CFmtStr("threadlocalmine time: %.9f\n", timer.GetDuration().GetSeconds());
 		}
+#endif
 		else if (strcmp(args[2], "mgrtime") == 0) {
 			IHasAttributes *attrs = player->m_pAttributes;
 			attrs = rtti_cast<IHasAttributes *>(player);
@@ -1778,9 +1782,8 @@ namespace Mod::Util::Client_Cmds
     CCycleCount timespentEnd;
     float prevTime = 0.0f;
 
-	DETOUR_DECL_STATIC(void, Host_CheckDumpMemoryStats)
+	void FrameEnd()
 	{
-		DETOUR_STATIC_CALL();
 		timespentEnd.Sample();
 		timespent.m_Int64 += timespentEnd.m_Int64 - timespentStart.m_Int64;
         if (floor(gpGlobals->curtime) != floor(prevTime) ) {
@@ -1789,6 +1792,21 @@ namespace Mod::Util::Client_Cmds
             prevTime = gpGlobals->curtime;
         }
 	}
+
+	DETOUR_DECL_STATIC(void, Host_CheckDumpMemoryStats)
+	{
+		DETOUR_STATIC_CALL();
+		FrameEnd();
+	}
+
+#if defined _WINDOWS
+	/* Host_CheckDumpMemoryStats is inline at the end of _Host_RunFrame there */
+	DETOUR_DECL_STATIC(void, _Host_RunFrame, float time)
+	{
+		DETOUR_STATIC_CALL(time);
+		FrameEnd();
+	}
+#endif
 
 	
 
@@ -1804,7 +1822,11 @@ namespace Mod::Util::Client_Cmds
 		CMod() : IMod("Util:Client_Cmds")
 		{
 			MOD_ADD_DETOUR_STATIC(CTFDroppedWeapon_Create, "CTFDroppedWeapon::Create");
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_STATIC(_Host_RunFrame,                          "_Host_RunFrame");
+#else
 			MOD_ADD_DETOUR_STATIC(Host_CheckDumpMemoryStats,               "Host_CheckDumpMemoryStats");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CMapReslistGenerator_RunFrame,               "CMapReslistGenerator::RunFrame");
 		}
 		virtual bool ShouldReceiveCallbacks() const override { return this->IsEnabled(); }

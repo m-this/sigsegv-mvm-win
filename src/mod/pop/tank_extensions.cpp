@@ -85,7 +85,7 @@ namespace Mod::Pop::Tank_Extensions
 	}
 	
 	
-	DETOUR_DECL_MEMBER(void, CTankSpawner_dtor0)
+	DETOUR_DECL_DTOR(CTankSpawner_dtor0)
 	{
 		auto spawner = reinterpret_cast<CTankSpawner *>(this);
 		
@@ -93,10 +93,10 @@ namespace Mod::Pop::Tank_Extensions
 		
 		spawners.erase(spawner);
 		
-		DETOUR_MEMBER_CALL();
+		DETOUR_DTOR_CALL();
 	}
 	
-	DETOUR_DECL_MEMBER(void, CTankSpawner_dtor2)
+	DETOUR_DECL_DTOR(CTankSpawner_dtor2)
 	{
 		auto spawner = reinterpret_cast<CTankSpawner *>(this);
 		
@@ -104,7 +104,7 @@ namespace Mod::Pop::Tank_Extensions
 
 		spawners.erase(spawner);
 		
-		DETOUR_MEMBER_CALL();
+		DETOUR_DTOR_CALL();
 	}
 	
 	void Parse_Model(KeyValues *kv, SpawnerData &spawner) {
@@ -832,12 +832,14 @@ namespace Mod::Pop::Tank_Extensions
 
 	RefCount rc_CTFTankBoss_UpdatePingSound;
 
+#if !defined _WINDOWS
 	DETOUR_DECL_MEMBER(void, CTFTankBoss_UpdatePingSound)
 	{
 		SCOPED_INCREMENT(rc_CTFTankBoss_UpdatePingSound);
 		
 		DETOUR_MEMBER_CALL();
 	}
+#endif
 
 	RefCount rc_CTFTankBoss_Spawn;
 	DETOUR_DECL_MEMBER(void, CTFTankBoss_Spawn)
@@ -853,7 +855,14 @@ namespace Mod::Pop::Tank_Extensions
 		if (rc_CTFTankBoss_UpdatePingSound || rc_CTFTankBoss_TankBossThink || rc_CTankSpawner_Spawn) {
 			SpawnerData *data = rc_CTankSpawner_Spawn ? &(spawners[current_spawner]) : thinking_tank_data;
 			if (data != nullptr) {
-				if (rc_CTFTankBoss_UpdatePingSound && data->sound_ping != "")
+#if defined _WINDOWS
+				/* UpdatePingSound is inlined into TankBossThink in server.dll,
+				 * so the ping is told apart there by its name. */
+				bool ping = rc_CTFTankBoss_UpdatePingSound || (rc_CTFTankBoss_TankBossThink && FStrEq(sound, "MVM.TankPing"));
+#else
+				bool ping = rc_CTFTankBoss_UpdatePingSound;
+#endif
+				if (ping && data->sound_ping != "")
 					sound = data->sound_ping.c_str();
 				else if(rc_CTFTankBoss_TankBossThink && FStrEq(sound, "MVM.TankDeploy") && data->sound_deploy != "")
 					sound = data->sound_deploy.c_str();
@@ -1127,7 +1136,9 @@ namespace Mod::Pop::Tank_Extensions
 			MOD_ADD_DETOUR_MEMBER(CTFTankBoss_Event_Killed, "CTFTankBoss::Event_Killed");
 			MOD_ADD_DETOUR_MEMBER(CBaseEntity_EmitSound, "CBaseEntity::EmitSound [member: normal]");
 			MOD_ADD_DETOUR_STATIC(CBaseEntity_EmitSound2, "CBaseEntity::EmitSound [static: normal]");
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(CTFTankBoss_UpdatePingSound, "CTFTankBoss::UpdatePingSound");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CTFTankBoss_Spawn, "CTFTankBoss::Spawn");
 			MOD_ADD_DETOUR_STATIC(CreateEntityByName, "CreateEntityByName");
 			MOD_ADD_DETOUR_MEMBER(CTFTankDestruction_Spawn,      "CTFTankDestruction::Spawn");

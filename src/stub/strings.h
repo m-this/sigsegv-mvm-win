@@ -14,7 +14,13 @@ extern GlobalThunk<Color[4]>        g_aTeamColors;
 extern GlobalThunk<const char *[11]> g_aClassNames;
 extern GlobalThunk<const char *[13]> g_aPlayerClassNames;
 extern GlobalThunk<const char *[13]> g_aPlayerClassNames_NonLocalized;
+#if defined _WINDOWS
+/* Windows server.dll keeps only the short table ("demo", "heavy"): the SDK's
+ * long names are SigMod's own there. */
+extern const char *const g_aRawPlayerClassNames[13];
+#else
 extern GlobalThunk<const char *[13]> g_aRawPlayerClassNames;
+#endif
 extern GlobalThunk<const char *[13]> g_aRawPlayerClassNamesShort;
 
 extern GlobalThunk<const char *[]> g_aWeaponNames;

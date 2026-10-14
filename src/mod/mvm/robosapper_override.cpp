@@ -17,8 +17,14 @@ namespace Mod::MvM::RoboSapper_Override
 		"Mod: robo sapper will apply specified stun amount (usual: 0.85)");
 	
 	
+	RefCount rc_CObjectSapper_ApplyRoboSapperEffects;
 	DETOUR_DECL_MEMBER(void, CObjectSapper_ApplyRoboSapper, CTFPlayer *target, float duration, int radius)
 	{
+#if defined _WINDOWS
+		/* ApplyRoboSapperEffects is inline there, and the rest of
+		 * ApplyRoboSapper stuns no one */
+		SCOPED_INCREMENT(rc_CObjectSapper_ApplyRoboSapperEffects);
+#endif
 		if (cvar_duration.GetFloat() >= 0.0f) {
 			duration = cvar_duration.GetFloat();
 		}
@@ -30,7 +36,6 @@ namespace Mod::MvM::RoboSapper_Override
 		DETOUR_MEMBER_CALL(target, duration, radius);
 	}
 	
-	RefCount rc_CObjectSapper_ApplyRoboSapperEffects;
 	DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, bool, CObjectSapper_ApplyRoboSapperEffects, CTFPlayer *target, float duration)
 	{
 		SCOPED_INCREMENT(rc_CObjectSapper_ApplyRoboSapperEffects);
@@ -61,7 +66,9 @@ namespace Mod::MvM::RoboSapper_Override
 		CMod() : IMod("MvM:RoboSapper_Override")
 		{
 			MOD_ADD_DETOUR_MEMBER(CObjectSapper_ApplyRoboSapper,        "CObjectSapper::ApplyRoboSapper");
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(CObjectSapper_ApplyRoboSapperEffects, "CObjectSapper::ApplyRoboSapperEffects [clone]");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_StunPlayer,           "CTFPlayerShared::StunPlayer");
 		}
 	};

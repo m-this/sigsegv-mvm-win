@@ -78,3 +78,14 @@ namespace Link
 	static ConCommand ccmd_list_props("sig_list_linkage", &CC_ListLinks,
 		"List functions/globals linkage", FCVAR_NONE);
 }
+
+
+#if defined _WINDOWS
+void UnresolvedCall(const char *what, const char *name)
+{
+	static std::unordered_set<std::string> named;
+	if (named.insert(name).second) {
+		Warning("SigMod: %s \"%s\", which does nothing on Windows yet\n", what, name);
+	}
+}
+#endif

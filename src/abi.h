@@ -2,15 +2,17 @@
 #define _INCLUDE_SIGSEGV_ABI_H_
 
 
-#if defined __clang__
-#include <cxxabi.h>
-#elif defined __GNUC__
-#include <cxxabi.h>
-#elif defined _MSC_VER
+/* Test _MSC_VER first. clang-cl defines both __clang__ and _MSC_VER, so asking
+ * about __clang__ before _MSC_VER sends a Windows build down the Itanium path
+ * and into <cxxabi.h>, which does not exist there. Every MSVC branch below was
+ * already written; this is what stopped them being reachable. */
+#if defined _MSC_VER
 namespace abi
 {
 	typedef void __class_type_info;
 }
+#elif defined __clang__ || defined __GNUC__
+#include <cxxabi.h>
 #endif
 
 
@@ -30,7 +32,7 @@ struct vtable
 #pragma warning(disable:4200)
 #endif
 
-#if !defined _MSC_VER
+#if !defined _MSC_VER || defined __clang__
 struct _PMD
 {
 	int mdisp;
@@ -81,16 +83,14 @@ struct __RTTI_CompleteObjectLocator
 #endif
 
 #if defined _MSC_VER
-/* from VC/crt/src/vcruntime/rtti.cpp */
-extern "C" PVOID __CLRCALL_OR_CDECL __RTDynamicCast (
-	PVOID inptr,
-	LONG VfDelta,
-//	const _TypeDescriptor *SrcType,
-//	const _TypeDescriptor *TargetType,
-	PVOID SrcType,
-	PVOID TargetType,
-	BOOL isReference
-	) throw(...);
+/* from VC/crt/src/vcruntime/rtti.cpp
+ *
+ * Spelled with plain types rather than PVOID and LONG because abi.h is included
+ * long before anything pulls in <windows.h>, and with no exception
+ * specification because a dynamic one is an error in C++17, which is the
+ * standard this builds against. */
+extern "C" void *__cdecl __RTDynamicCast(void *inptr, long VfDelta, void *SrcType,
+                                         void *TargetType, int isReference);
 #endif
 
 
@@ -129,7 +129,9 @@ template<class C, typename RET, typename... PARAMS> using MemberPtrTypeRegcall  
 template<class C, typename RET, typename... PARAMS> using MemberPtrTypeConstRegcall = RET (C::*)(PARAMS...) const __gcc_regcall;
 #endif
 
-#if defined __clang__ || defined __GNUC__
+/* Itanium member-pointer layout. Same reason as above: a clang-cl build has
+ * to take the _MSC_VER branch, not this one. */
+#if !defined _MSC_VER
 
 template<class C, typename RET, typename... PARAMS>
 union MemberPtrUnion
@@ -269,19 +271,14 @@ void *GetAddrOfMemberFunc(MemberPtrTypeVaConst<C, RET, PARAMS...> ptr)
 }
 
 
+/* The pointer is a vcall thunk. SourceHook reads MSVC's, and the patched copy
+ * this build compiles against reads clang-cl's (tools/winport/patches). */
 template<class C, typename RET, typename... PARAMS>
 int GetVIdxOfMemberFunc(MemberPtrType<C, RET, PARAMS...> ptr)
 {
-	return -1;
-	
-	// TODO:
-	// make union
-	// assign ptr to u.fptr
-	// now, u.guts.ptr should point to a __thiscall thunk like this:
-	//   mov eax,[ecx]
-	//   jmp dword ptr [eax+VTOFF]
-	// we need proper disassembler support so we can do this robustly
-	// (e.g. [eax] vs [eax+4] is different in bytes, but disasm can handle it seamlessly)
+	SourceHook::MemFuncInfo info;
+	SourceHook::GetFuncInfo(ptr, info);
+	return info.isVirtual ? info.vtblindex : -1;
 }
 template<class C, typename RET, typename... PARAMS>
 int GetVIdxOfMemberFunc(MemberPtrTypeVa<C, RET, PARAMS...> ptr)

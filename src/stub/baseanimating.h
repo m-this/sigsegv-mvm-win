@@ -40,6 +40,9 @@ public:
 	int LookupBone(const char *name)                                       { return ft_LookupBone          (this, name); }
 	int LookupAttachment(const char *name)                                 { return ft_LookupAttachment    (this, name); }
 	int LookupSequence(const char *name)                                   { return ft_LookupSequence      (this, name); }
+#if defined _WINDOWS
+	int LookupActivity(const char *name)                                   { return ft_LookupActivity      (this, name); }
+#endif
 	void GetBonePosition(int id, Vector& vec, QAngle& ang)                 {        ft_GetBonePosition     (this, id, vec, ang); }
 	bool GetAttachment(int id, Vector& vec, QAngle& ang)                   { return ft_GetAttachment       (this, id, vec, ang); }
 	bool GetAttachment(int id, matrix3x4_t &transform)                     { return ft_GetAttachment2       (this, id, transform); }
@@ -98,6 +101,9 @@ private:
 	static MemberFuncThunk<CBaseAnimating *, int, int>                        ft_GetAttachmentBone;
 	static MemberFuncThunk<CBaseAnimating *, int, const char *>               ft_LookupAttachment;
 	static MemberFuncThunk<CBaseAnimating *, int, const char *>               ft_LookupSequence;
+#if defined _WINDOWS
+	static MemberFuncThunk<CBaseAnimating *, int, const char *>               ft_LookupActivity;
+#endif
 #ifdef SE_IS_TF2
 	static MemberFuncThunk<CBaseAnimating *, float, int>                      ft_SequenceDuration;
 #endif
@@ -165,16 +171,34 @@ public:
 	void DebugDescribe() { ft_DebugDescribe(this); }
 	
 	// GetAttributeContainer really ought to be in IHasAttributes...
+#if defined _WINDOWS
+	/* Both virtuals are `return &m_AttributeManager`, a body MSVC shares with
+	 * every other one-line getter at that offset, so neither has a slot this
+	 * port can name. The member is a network table of DT_EconEntity, whose
+	 * entry carries its offset. */
+	CAttributeManager *GetAttributeManager()	 { return reinterpret_cast<CAttributeManager *>(&this->m_AttributeManager); }
+	CAttributeContainer *GetAttributeContainer() { return reinterpret_cast<CAttributeContainer *>(&this->m_AttributeManager); }
+#else
 	CAttributeManager *GetAttributeManager()	 { return vt_GetAttributeManager  (this); }
 	CAttributeContainer *GetAttributeContainer() { return vt_GetAttributeContainer(this); }
+#endif
 	void GiveTo(CBaseEntity *ent)                {        vt_GiveTo(this, ent); }
+#if defined _WINDOWS
+	/* MSVC keeps IHasAttributes' virtuals in that interface's own table, not
+	 * CEconEntity's: its primary table has no slot for this one. */
+	void ReapplyProvision();
+#else
 	void ReapplyProvision()                      {        vt_ReapplyProvision(this); }
+#endif
 	bool UpdateBodygroups(CBaseCombatCharacter *owner, bool enable) { return vt_UpdateBodygroups(this, owner, enable); }
 	Activity TranslateViewmodelHandActivityInternal(Activity base) { return vt_TranslateViewmodelHandActivityInternal(this, base); }
 	
 	CEconItemView *GetItem();
 	
 	DECL_SENDPROP_RW(bool, m_bValidatedAttachedEntity);
+#if defined _WINDOWS
+	DECL_SENDPROP_RW(uint8_t, m_AttributeManager);
+#endif
 	
 	// make the model visible for other players
 	void Validate();

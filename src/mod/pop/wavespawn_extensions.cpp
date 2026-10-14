@@ -548,24 +548,24 @@ namespace Mod::Pop::WaveSpawn_Extensions
 	std::unordered_map<CWaveSpawnPopulator *, WaveSpawnData> wavespawns;
 	
 
-	DETOUR_DECL_MEMBER(void, CWaveSpawnPopulator_dtor0)
+	DETOUR_DECL_DTOR(CWaveSpawnPopulator_dtor0)
 	{
 		auto wavespawn = reinterpret_cast<CWaveSpawnPopulator *>(this);
 		
 	//	DevMsg("CWaveSpawnPopulator %08x: dtor0\n", (uintptr_t)wavespawn);
 		wavespawns.erase(wavespawn);
 
-		DETOUR_MEMBER_CALL();
+		DETOUR_DTOR_CALL();
 	}
 	
-	DETOUR_DECL_MEMBER(void, CWaveSpawnPopulator_dtor2)
+	DETOUR_DECL_DTOR(CWaveSpawnPopulator_dtor2)
 	{
 		auto wavespawn = reinterpret_cast<CWaveSpawnPopulator *>(this);
 		
 	//	DevMsg("CWaveSpawnPopulator %08x: dtor2\n", (uintptr_t)wavespawn);
 		wavespawns.erase(wavespawn);
 
-		DETOUR_MEMBER_CALL();
+		DETOUR_DTOR_CALL();
 	}
 
 	void DisplayMessages(std::vector<std::string> &messages ) {
@@ -966,6 +966,24 @@ namespace Mod::Pop::WaveSpawn_Extensions
 					if (entity->IsAlive()) {
 						entity->Remove();
 					}
+				}
+			}
+		}
+	}
+
+	/* The entities of each template a wave spawn is waiting on, for
+	 * sig_wave_dump: its sentinel says only that something is still there. */
+	void DumpTemplateInstances(CWaveSpawnPopulator *populator) {
+		for (auto spawner : template_spawners) {
+			if (spawner->m_Populator != populator) continue;
+			for (auto &[inst, pos] : spawner->m_Instances) {
+				if (inst == nullptr) continue;
+				Msg("sig_wave_dump:   template \"%s\" delete=%d killed=%d parent=%d\n", inst->templ != nullptr ? inst->templ->name.c_str() : "",
+					inst->mark_delete, inst->all_entities_killed, inst->has_parent);
+				for (auto &handle : inst->entities) {
+					CBaseEntity *ent = handle;
+					if (ent == nullptr) continue;
+					Msg("sig_wave_dump:     #%d %s name=\"%s\"\n", ENTINDEX(ent), ent->GetClassname(), STRING(ent->GetEntityName()));
 				}
 			}
 		}

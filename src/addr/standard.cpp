@@ -17,6 +17,15 @@ bool IAddr_Sym::FindAddrLinux(uintptr_t& addr) const
 }
 
 
+/* The same lookup on Windows, where LibMgr::FindSym is GetProcAddress. An
+ * Itanium-mangled name is never an export and returns nullptr here, which is
+ * what it did before by not being asked. */
+bool IAddr_Sym::FindAddrWin(uintptr_t& addr) const
+{
+	return this->FindAddrLinux(addr);
+}
+
+
 bool CAddr_Sym_Regex::FindAddrLinux(uintptr_t& addr) const
 {
 	static ConVarRef developer("developer");
@@ -484,6 +493,18 @@ void CAddr_Pattern::ProcessStrings()
 	this->m_strMask = buf_mask.data();
 }
 
+
+bool CAddr_SendTable::FindAddrLinux(uintptr_t& addr) const
+{
+	for (ServerClass *sc = gamedll->GetAllServerClasses(); sc != nullptr; sc = sc->m_pNext) {
+		if (sc->m_pTable != nullptr && strcmp(sc->m_pTable->GetName(), this->m_strTable.c_str()) == 0) {
+			addr = (uintptr_t)sc->m_pTable;
+			return true;
+		}
+	}
+	DevMsg("CAddr_SendTable: \"%s\": no server class has table \"%s\"\n", this->GetName(), this->m_strTable.c_str());
+	return false;
+}
 
 bool IAddr_ConCommandBase::FindAddrLinux(uintptr_t& addr) const
 {

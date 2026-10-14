@@ -104,7 +104,13 @@ namespace Mod::Etc::Entity_Limit_Manager
         disguise_weapon_player = nullptr;
     }
 
+    /* The game's takes no argument, and on Windows a detour declaring one
+     * pops four bytes the caller never pushed. */
+#if defined _WINDOWS
+    DETOUR_DECL_MEMBER(void, CTFPlayerShared_RemoveDisguiseWeapon)
+#else
     DETOUR_DECL_MEMBER(void, CTFPlayerShared_RemoveDisguiseWeapon, CTFPlayer *target)
+#endif
 	{
 
     }

@@ -58,6 +58,13 @@ private:
 	
 	std::list<std::unique_ptr<IAddr>> m_AddrPtrs;
 	
+#if defined _WINDOWS
+	/* Names held by an IAddr built before the block being read: the static ones
+	 * in src/addr, and every block loaded so far, windows.txt first. */
+	std::set<std::string> m_Names;
+	bool NameTaken(const std::string& name);
+#endif
+	
 	std::map<std::string, SMCResult (CSigsegvGameConf::*)()> m_AddrParsers {
 		{ "sym",                                   &CSigsegvGameConf::AddrEntry_Load_Sym },
 		{ "sym regex",                             &CSigsegvGameConf::AddrEntry_Load_Sym_Regex },
@@ -73,6 +80,7 @@ private:
 		{ "func ebpprologue vprof",                &CSigsegvGameConf::AddrEntry_Load_Func_EBPPrologue_VProf },
 		{ "convar",                                &CSigsegvGameConf::AddrEntry_Load_ConVar },
 		{ "concommand",                            &CSigsegvGameConf::AddrEntry_Load_ConCommand },
+		{ "sendtable",                             &CSigsegvGameConf::AddrEntry_Load_SendTable },
 	};
 	
 	void AddrEntry_Load_Common(IAddr *addr);
@@ -91,6 +99,7 @@ private:
 	
 	SMCResult AddrEntry_Load_ConCommandBase(bool is_command);
 	SMCResult AddrEntry_Load_ConVar()     { return this->AddrEntry_Load_ConCommandBase(false); }
+	SMCResult AddrEntry_Load_SendTable();
 	SMCResult AddrEntry_Load_ConCommand() { return this->AddrEntry_Load_ConCommandBase(true);  }
 };
 extern CSigsegvGameConf g_GCHook;

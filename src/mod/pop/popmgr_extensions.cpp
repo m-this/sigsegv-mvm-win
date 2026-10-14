@@ -32,6 +32,8 @@
 #include "CommandBuffer.h"
 #include <regex>
 #include "util/translation.h"
+#include <gamemovement.h>
+#include <dirent.h>
 
 // WARN_IGNORE__REORDER()
 // #include <../server/vote_controller.h>
@@ -39,7 +41,9 @@
 
 
 #define UNW_LOCAL_ONLY
+#if !defined _MSC_VER
 #include <cxxabi.h>
+#endif
 
 #define PLAYER_ANIM_WEARABLE_ITEM_ID 12138
 
@@ -307,6 +311,14 @@ namespace Mod::Pop::PopMgr_Extensions
 		PointTemplateInfo info;
 		std::vector<std::unique_ptr<ItemListEntry>> weapons;
 
+		/* Move-only, and saying so: MSVC's std::map and std::list moves are not
+		 * noexcept, so without this std::vector reallocates by copying, and the
+		 * unique_ptrs cannot be copied. */
+		WeaponPointTemplateInfo() = default;
+		WeaponPointTemplateInfo(WeaponPointTemplateInfo &&) = default;
+		WeaponPointTemplateInfo &operator=(WeaponPointTemplateInfo &&) = default;
+		WeaponPointTemplateInfo(const WeaponPointTemplateInfo &) = delete;
+		WeaponPointTemplateInfo &operator=(const WeaponPointTemplateInfo &) = delete;
 	};
 
 	struct ItemReplace
@@ -1606,11 +1618,21 @@ namespace Mod::Pop::PopMgr_Extensions
 	}
 
 	RefCount rc_CTFPlayerSharedUtils_GetEconItemViewByLoadoutSlot;
+#if defined _WINDOWS
+	/* A static function, cdecl on Windows: a member detour would pop the
+	 * three arguments its caller pops again. */
+	DETOUR_DECL_STATIC(CEconItemView *, CTFPlayerSharedUtils_GetEconItemViewByLoadoutSlot, CTFPlayer *player, int slot, CEconEntity **entity)
+	{
+		SCOPED_INCREMENT(rc_CTFPlayerSharedUtils_GetEconItemViewByLoadoutSlot);
+		return DETOUR_STATIC_CALL(player, slot, entity);
+	}
+#else
     DETOUR_DECL_MEMBER(CEconItemView *, CTFPlayerSharedUtils_GetEconItemViewByLoadoutSlot, CTFPlayer *player, int slot, CBaseEntity &entity)
 	{
         SCOPED_INCREMENT(rc_CTFPlayerSharedUtils_GetEconItemViewByLoadoutSlot);
         return DETOUR_MEMBER_CALL(player, slot, entity);
 	}
+#endif
 
 	RefCount rc_CTFPlayer_GiveDefaultItems;
 	RefCount rc_CTFPlayer_ValidateWeapons;
@@ -2554,7 +2576,13 @@ namespace Mod::Pop::PopMgr_Extensions
 		player_killer = nullptr;
 	}
 	
+	/* The game takes inputdata_t by reference and on Windows pops the one
+	 * pointer; a copy taken by value pops the whole struct. */
+#if defined _WINDOWS
+	DETOUR_DECL_MEMBER(void, CTFPlayer_InputSetCustomModel, inputdata_t &data)
+#else
 	DETOUR_DECL_MEMBER(void, CTFPlayer_InputSetCustomModel, inputdata_t data)
+#endif
 	{
 		DETOUR_MEMBER_CALL(data);
 		if (state.m_bFixSetCustomModelInput) {
@@ -3219,18 +3247,24 @@ namespace Mod::Pop::PopMgr_Extensions
         return DETOUR_MEMBER_CALL(player, slot, defindex, upgrade);
     }
 	
-	DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, void, CUpgrades_PlayerPurchasingUpgrade, CTFPlayer *player, int itemslot, int upgradeslot, bool sell, bool free, bool b3)
+#if defined _WINDOWS
+	using PurchaseResult = bool;
+#else
+	using PurchaseResult = void;
+#endif
+
+	DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, PurchaseResult, CUpgrades_PlayerPurchasingUpgrade, CTFPlayer *player, int itemslot, int upgradeslot, bool sell, bool free, bool b3)
 	{
 		if (!sell && !b3) {
 			auto upgrade = reinterpret_cast<CUpgrades *>(this);
 			
 			if (upgradeslot >= 0 && upgradeslot < CMannVsMachineUpgradeManager::Upgrades().Count()) {
 				if (!IsUpgradeAllowed(player, itemslot, upgradeslot)) {
-					return;
+					return PurchaseResult();
 				}
 			}
 		}
-		DETOUR_MEMBER_CALL(player, itemslot, upgradeslot, sell, free, b3);
+		return DETOUR_MEMBER_CALL(player, itemslot, upgradeslot, sell, free, b3);
 	}
 
     DETOUR_DECL_MEMBER(bool, CObjectSentrygun_FindTarget)
@@ -4335,12 +4369,22 @@ namespace Mod::Pop::PopMgr_Extensions
 		}
 	}
 
+	/* The game's GetBonusRoundTime takes (bool bGameOver) and on Windows pops
+	 * it, so the detour has to take it and pass it on. */
+#if defined _WINDOWS
+	DETOUR_DECL_MEMBER(int, CTFGameRules_GetBonusRoundTime, bool bGameOver)
+#else
 	DETOUR_DECL_MEMBER(int, CTFGameRules_GetBonusRoundTime)
+#endif
 	{
 		if (state.m_iLoseTime != -1) {
 			return state.m_iLoseTime;
 		}
+#if defined _WINDOWS
+		return DETOUR_MEMBER_CALL(bGameOver);
+#else
 		return DETOUR_MEMBER_CALL();
+#endif
 	}
 
 
@@ -4506,6 +4550,24 @@ namespace Mod::Pop::PopMgr_Extensions
 			DETOUR_MEMBER_CALL();
 		}
 	}
+
+#if defined _WINDOWS
+	/* PreventBunnyJumping is inline in CheckJumpButton there, and its clamp is
+	 * CheckJumpButton's only read of m_flMaxspeed: a speed it cannot reach
+	 * turns the clamp off for the call. */
+	DETOUR_DECL_MEMBER(bool, CTFGameMovement_CheckJumpButton)
+	{
+		auto jumper = reinterpret_cast<CGameMovement *>(this)->player;
+		if (!state.m_iBunnyHop || jumper == nullptr) {
+			return DETOUR_MEMBER_CALL();
+		}
+		float maxspeed = jumper->MaxSpeed();
+		jumper->SetMaxSpeed(FLT_MAX / 2.0f);
+		bool ret = DETOUR_MEMBER_CALL();
+		jumper->SetMaxSpeed(maxspeed);
+		return ret;
+	}
+#endif
 
 	DETOUR_DECL_MEMBER(bool, CHeadlessHatmanLocomotion_ShouldCollideWith, CBaseEntity *entity)
 	{
@@ -4726,7 +4788,9 @@ namespace Mod::Pop::PopMgr_Extensions
 		}
 	}
 
-	float vote_tf_mvm_popfile_time = 0.0f;
+	/* -FLT_MAX, not 0: at 0 every mission load in the first ten seconds of a map
+	 * looks like it followed a vote. */
+	float vote_tf_mvm_popfile_time = -FLT_MAX;
 	DETOUR_DECL_MEMBER(void, CMannVsMachineChangeChallengeIssue_ExecuteCommand)
 	{
 		vote_tf_mvm_popfile_time = gpGlobals->curtime;
@@ -4736,7 +4800,7 @@ namespace Mod::Pop::PopMgr_Extensions
 	DETOUR_DECL_MEMBER(bool, CPopulationManager_FindPopulationFileByShortName, const char *missionName, CUtlString &outFullPath)
 	{
 		// No voting for missions that are not on the list
-		if (vote_tf_mvm_popfile_time + 10 > gpGlobals->curtime && vote_tf_mvm_popfile_time <= gpGlobals->curtime) {
+		if (missionName != nullptr && vote_tf_mvm_popfile_time + 10 > gpGlobals->curtime && vote_tf_mvm_popfile_time <= gpGlobals->curtime) {
 			CUtlVector<CUtlString> vec;
 			CPopulationManager::FindDefaultPopulationFileShortNames(vec);
 			if (vec.Find(missionName) == -1 && !(FStrEq(missionName, STRING(gpGlobals->mapname)) && vec.Find("normal") != -1)) {
@@ -7219,7 +7283,11 @@ namespace Mod::Pop::PopMgr_Extensions
 		CMod() : IMod("Pop:PopMgr_Extensions")
 		{
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_PlayerRunCommand,					 "CTFPlayer::PlayerRunCommand");
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_MEMBER(CTFGameMovement_CheckJumpButton,			 "CTFGameMovement::CheckJumpButton");
+#else
 			MOD_ADD_DETOUR_MEMBER(CTFGameMovement_PreventBunnyJumping,			 "CTFGameMovement::PreventBunnyJumping");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CTFGameRules_PlayerKilled,                     "CTFGameRules::PlayerKilled");
 			//MOD_ADD_DETOUR_STATIC(CTFGameRules_DropSpellPickup,                  "CTFGameRules::DropSpellPickup [clone]");
 			MOD_ADD_DETOUR_MEMBER(CTFGameRules_IsUsingSpells,                    "CTFGameRules::IsUsingSpells");
@@ -7339,7 +7407,11 @@ namespace Mod::Pop::PopMgr_Extensions
 			MOD_ADD_DETOUR_MEMBER(CPopulationManager_RestoreCheckpoint, "CPopulationManager::RestoreCheckpoint");
 			MOD_ADD_DETOUR_MEMBER(CPopulationManager_SetCheckpoint, "CPopulationManager::SetCheckpoint");
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_GetEntityForLoadoutSlot, "CTFPlayer::GetEntityForLoadoutSlot");
+#if defined _WINDOWS
+            MOD_ADD_DETOUR_STATIC(CTFPlayerSharedUtils_GetEconItemViewByLoadoutSlot, "CTFPlayerSharedUtils::GetEconItemViewByLoadoutSlot");
+#else
             MOD_ADD_DETOUR_MEMBER(CTFPlayerSharedUtils_GetEconItemViewByLoadoutSlot, "CTFPlayerSharedUtils::GetEconItemViewByLoadoutSlot");
+#endif
             MOD_ADD_DETOUR_MEMBER(KeyValues_RecursiveMergeKeyValues, "KeyValues::RecursiveMergeKeyValues");
             MOD_ADD_DETOUR_MEMBER(KeyValues_LoadFromBuffer, "KeyValues::LoadFromBuffer");
 			
@@ -7352,7 +7424,9 @@ namespace Mod::Pop::PopMgr_Extensions
 
             MOD_ADD_DETOUR_STATIC(DispatchParticleEffect_2, "DispatchParticleEffect [overload 2]");
             MOD_ADD_DETOUR_STATIC(DispatchParticleEffect_3, "DispatchParticleEffect [overload 3]");
+#if !defined _WINDOWS
             MOD_ADD_DETOUR_STATIC(DispatchParticleEffect_4, "DispatchParticleEffect [overload 4]");
+#endif
             MOD_ADD_DETOUR_STATIC(DispatchParticleEffect_6, "DispatchParticleEffect [overload 6]");
             MOD_ADD_DETOUR_STATIC(DispatchParticleEffect_7, "DispatchParticleEffect [overload 7]");
             MOD_ADD_DETOUR_MEMBER(CBaseObject_StartBuilding, "CBaseObject::StartBuilding");

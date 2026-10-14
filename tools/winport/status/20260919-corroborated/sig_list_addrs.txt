@@ -1,0 +1,2771 @@
+server              76030670  
+server              FAIL      Action<CTFBot>::ApplyResult
+server              FAIL      Action<CTFBot>::BuildDecoratedName [clone]
+server              FAIL      Action<CTFBot>::DebugString
+server              75e870f0  Action<CTFBot>::FirstContainedResponder [INER]
+server              76212660  Action<CTFBot>::GetFullName
+server              75e10fd0  Action<CTFBot>::InitialContainedAction
+server              FAIL      Action<CTFBot>::InvokeOnEnd
+server              FAIL      Action<CTFBot>::InvokeOnResume
+server              75e195e0  Action<CTFBot>::IsAbleToBlockMovementOf
+server              760d78e0  Action<CTFBot>::IsNamed
+server              75e10fd0  Action<CTFBot>::NextContainedResponder [INER]
+server              760d7c80  Action<CTFBot>::OnActorEmoted
+server              76217da0  Action<CTFBot>::OnActorEmoted [INER]
+server              760d7fc0  Action<CTFBot>::OnAnimationActivityComplete
+server              762180b0  Action<CTFBot>::OnAnimationActivityComplete [INER]
+server              760d7fc0  Action<CTFBot>::OnAnimationActivityInterrupted
+server              762183c0  Action<CTFBot>::OnAnimationActivityInterrupted [INER]
+server              760d7fc0  Action<CTFBot>::OnAnimationEvent
+server              762186d0  Action<CTFBot>::OnAnimationEvent [INER]
+server              760d7fc0  Action<CTFBot>::OnBlinded
+server              762189e0  Action<CTFBot>::OnBlinded [INER]
+server              760d7c80  Action<CTFBot>::OnCommandApproach(ent)
+server              76218cf0  Action<CTFBot>::OnCommandApproach(ent) [INER]
+server              760d7fc0  Action<CTFBot>::OnCommandApproach(vec)
+server              76219000  Action<CTFBot>::OnCommandApproach(vec) [INER]
+server              760d7fc0  Action<CTFBot>::OnCommandAttack
+server              76219310  Action<CTFBot>::OnCommandAttack [INER]
+server              760d7fc0  Action<CTFBot>::OnCommandPause
+server              76219620  Action<CTFBot>::OnCommandPause [INER]
+server              760d9890  Action<CTFBot>::OnCommandResume
+server              76219930  Action<CTFBot>::OnCommandResume [INER]
+server              760d7c80  Action<CTFBot>::OnCommandRetreat
+server              76219c60  Action<CTFBot>::OnCommandRetreat [INER]
+server              760d7fc0  Action<CTFBot>::OnCommandString
+server              76219f70  Action<CTFBot>::OnCommandString [INER]
+server              760d7c80  Action<CTFBot>::OnContact
+server              7621a280  Action<CTFBot>::OnContact [INER]
+server              760d7fc0  Action<CTFBot>::OnDrop
+server              7621a590  Action<CTFBot>::OnDrop [INER]
+server              75e0fa90  Action<CTFBot>::OnEnd
+server              760d9890  Action<CTFBot>::OnIgnite
+server              7621ad40  Action<CTFBot>::OnIgnite [INER]
+server              760d7fc0  Action<CTFBot>::OnInjured
+server              7621b060  Action<CTFBot>::OnInjured [INER]
+server              760d7fc0  Action<CTFBot>::OnKilled
+server              7621b370  Action<CTFBot>::OnKilled [INER]
+server              760d7fc0  Action<CTFBot>::OnLandOnGround
+server              7621b680  Action<CTFBot>::OnLandOnGround [INER]
+server              760d7fc0  Action<CTFBot>::OnLeaveGround
+server              7621b990  Action<CTFBot>::OnLeaveGround [INER]
+server              760d9890  Action<CTFBot>::OnLose
+server              7621bca0  Action<CTFBot>::OnLose [INER]
+server              760d7fc0  Action<CTFBot>::OnLostSight
+server              7621bfd0  Action<CTFBot>::OnLostSight [INER]
+server              760d9890  Action<CTFBot>::OnModelChanged
+server              7621c320  Action<CTFBot>::OnModelChanged [INER]
+server              760d7c80  Action<CTFBot>::OnMoveToFailure
+server              7621c640  Action<CTFBot>::OnMoveToFailure [INER]
+server              760d7fc0  Action<CTFBot>::OnMoveToSuccess
+server              7621c950  Action<CTFBot>::OnMoveToSuccess [INER]
+server              760d7c80  Action<CTFBot>::OnNavAreaChanged
+server              7621cc60  Action<CTFBot>::OnNavAreaChanged [INER]
+server              760d7c80  Action<CTFBot>::OnOtherKilled
+server              7621cfd0  Action<CTFBot>::OnOtherKilled [INER]
+server              760d7c80  Action<CTFBot>::OnPickUp
+server              7621d2e0  Action<CTFBot>::OnPickUp [INER]
+server              760d9890  Action<CTFBot>::OnPostureChanged
+server              7621d5f0  Action<CTFBot>::OnPostureChanged [INER]
+server              760dd040  Action<CTFBot>::OnResume
+server              760d7fc0  Action<CTFBot>::OnShoved
+server              7621d910  Action<CTFBot>::OnShoved [INER]
+server              760d7fc0  Action<CTFBot>::OnSight
+server              7621dc20  Action<CTFBot>::OnSight [INER]
+server              760dd990  Action<CTFBot>::OnSound
+server              7621df30  Action<CTFBot>::OnSound [INER]
+server              760dd990  Action<CTFBot>::OnSpokeConcept
+server              7621e240  Action<CTFBot>::OnSpokeConcept [INER]
+server              760dd040  Action<CTFBot>::OnStart
+server              760d9890  Action<CTFBot>::OnStuck
+server              7621e550  Action<CTFBot>::OnStuck [INER]
+server              760dd040  Action<CTFBot>::OnSuspend
+server              760d7fc0  Action<CTFBot>::OnTerritoryCaptured
+server              7621e970  Action<CTFBot>::OnTerritoryCaptured [INER]
+server              760d7fc0  Action<CTFBot>::OnTerritoryContested
+server              7621ec80  Action<CTFBot>::OnTerritoryContested [INER]
+server              760d7fc0  Action<CTFBot>::OnTerritoryLost
+server              7621ef90  Action<CTFBot>::OnTerritoryLost [INER]
+server              760d9890  Action<CTFBot>::OnUnStuck
+server              7621f2a0  Action<CTFBot>::OnUnStuck [INER]
+server              760d7c80  Action<CTFBot>::OnWeaponFired
+server              7621f5c0  Action<CTFBot>::OnWeaponFired [INER]
+server              760d9890  Action<CTFBot>::OnWin
+server              7621fba0  Action<CTFBot>::OnWin [INER]
+server              FAIL      Action<CTFBot>::PrintStateToConsole
+server              760dd040  Action<CTFBot>::Update
+server              7620e840  Action<CTFBot>::~Action [D2]
+server              FAIL      Action<CZombie>::ApplyResult
+server              FAIL      Action<CZombie>::BuildDecoratedName [clone]
+server              FAIL      Action<CZombie>::DebugString
+server              75e870f0  Action<CZombie>::FirstContainedResponder [INER]
+server              7627ea70  Action<CZombie>::GetFullName
+server              75e10fd0  Action<CZombie>::InitialContainedAction
+server              FAIL      Action<CZombie>::InvokeOnEnd
+server              FAIL      Action<CZombie>::InvokeOnResume
+server              75e195e0  Action<CZombie>::IsAbleToBlockMovementOf
+server              760d78e0  Action<CZombie>::IsNamed
+server              75e10fd0  Action<CZombie>::NextContainedResponder [INER]
+server              760d7c80  Action<CZombie>::OnActorEmoted
+server              760d7970  Action<CZombie>::OnActorEmoted [INER]
+server              760d7fc0  Action<CZombie>::OnAnimationActivityComplete
+server              760d7cb0  Action<CZombie>::OnAnimationActivityComplete [INER]
+server              760d7fc0  Action<CZombie>::OnAnimationActivityInterrupted
+server              760d7ff0  Action<CZombie>::OnAnimationActivityInterrupted [INER]
+server              760d7fc0  Action<CZombie>::OnAnimationEvent
+server              760d8300  Action<CZombie>::OnAnimationEvent [INER]
+server              760d7fc0  Action<CZombie>::OnBlinded
+server              760d8610  Action<CZombie>::OnBlinded [INER]
+server              760d7c80  Action<CZombie>::OnCommandApproach(ent)
+server              760d8920  Action<CZombie>::OnCommandApproach(ent) [INER]
+server              760d7fc0  Action<CZombie>::OnCommandApproach(vec)
+server              760d8c30  Action<CZombie>::OnCommandApproach(vec) [INER]
+server              760d7fc0  Action<CZombie>::OnCommandAttack
+server              760d8f40  Action<CZombie>::OnCommandAttack [INER]
+server              760d7fc0  Action<CZombie>::OnCommandPause
+server              760d9250  Action<CZombie>::OnCommandPause [INER]
+server              760d9890  Action<CZombie>::OnCommandResume
+server              760d9560  Action<CZombie>::OnCommandResume [INER]
+server              760d7c80  Action<CZombie>::OnCommandRetreat
+server              760d98c0  Action<CZombie>::OnCommandRetreat [INER]
+server              760d7fc0  Action<CZombie>::OnCommandString
+server              760d9bd0  Action<CZombie>::OnCommandString [INER]
+server              760d7c80  Action<CZombie>::OnContact
+server              760d9ee0  Action<CZombie>::OnContact [INER]
+server              760d7fc0  Action<CZombie>::OnDrop
+server              760da1f0  Action<CZombie>::OnDrop [INER]
+server              75e0fa90  Action<CZombie>::OnEnd
+server              760d9890  Action<CZombie>::OnIgnite
+server              760da500  Action<CZombie>::OnIgnite [INER]
+server              760d7fc0  Action<CZombie>::OnInjured
+server              760da820  Action<CZombie>::OnInjured [INER]
+server              760d7fc0  Action<CZombie>::OnKilled
+server              760dab30  Action<CZombie>::OnKilled [INER]
+server              760d7fc0  Action<CZombie>::OnLandOnGround
+server              760dae50  Action<CZombie>::OnLandOnGround [INER]
+server              760d7fc0  Action<CZombie>::OnLeaveGround
+server              760db160  Action<CZombie>::OnLeaveGround [INER]
+server              760d9890  Action<CZombie>::OnLose
+server              760db470  Action<CZombie>::OnLose [INER]
+server              760d7fc0  Action<CZombie>::OnLostSight
+server              760db7a0  Action<CZombie>::OnLostSight [INER]
+server              760d9890  Action<CZombie>::OnModelChanged
+server              760dbab0  Action<CZombie>::OnModelChanged [INER]
+server              760d7c80  Action<CZombie>::OnMoveToFailure
+server              760dbdd0  Action<CZombie>::OnMoveToFailure [INER]
+server              760d7fc0  Action<CZombie>::OnMoveToSuccess
+server              760dc0e0  Action<CZombie>::OnMoveToSuccess [INER]
+server              760d7c80  Action<CZombie>::OnNavAreaChanged
+server              760dc3f0  Action<CZombie>::OnNavAreaChanged [INER]
+server              760d7c80  Action<CZombie>::OnOtherKilled
+server              760dc700  Action<CZombie>::OnOtherKilled [INER]
+server              760d7c80  Action<CZombie>::OnPickUp
+server              760dca10  Action<CZombie>::OnPickUp [INER]
+server              760d9890  Action<CZombie>::OnPostureChanged
+server              760dcd20  Action<CZombie>::OnPostureChanged [INER]
+server              760dd040  Action<CZombie>::OnResume
+server              760d7fc0  Action<CZombie>::OnShoved
+server              760dd060  Action<CZombie>::OnShoved [INER]
+server              760d7fc0  Action<CZombie>::OnSight
+server              760dd370  Action<CZombie>::OnSight [INER]
+server              760dd990  Action<CZombie>::OnSound
+server              760dd680  Action<CZombie>::OnSound [INER]
+server              760dd990  Action<CZombie>::OnSpokeConcept
+server              760dd9c0  Action<CZombie>::OnSpokeConcept [INER]
+server              760dd040  Action<CZombie>::OnStart
+server              760d9890  Action<CZombie>::OnStuck
+server              760ddd10  Action<CZombie>::OnStuck [INER]
+server              760dd040  Action<CZombie>::OnSuspend
+server              760d7fc0  Action<CZombie>::OnTerritoryCaptured
+server              760de060  Action<CZombie>::OnTerritoryCaptured [INER]
+server              760d7fc0  Action<CZombie>::OnTerritoryContested
+server              760de370  Action<CZombie>::OnTerritoryContested [INER]
+server              760d7fc0  Action<CZombie>::OnTerritoryLost
+server              760de680  Action<CZombie>::OnTerritoryLost [INER]
+server              760d9890  Action<CZombie>::OnUnStuck
+server              760de990  Action<CZombie>::OnUnStuck [INER]
+server              760d7c80  Action<CZombie>::OnWeaponFired
+server              760decb0  Action<CZombie>::OnWeaponFired [INER]
+server              760d9890  Action<CZombie>::OnWin
+server              760defc0  Action<CZombie>::OnWin [INER]
+server              FAIL      Action<CZombie>::PrintStateToConsole
+server              760dd040  Action<CZombie>::Update
+server              7627ddc0  Action<CZombie>::~Action [D2]
+server              75f41550  AllocPooledString
+server              FAIL      AllocPooledString_StaticConstantStringPointer
+server              FAIL      ApplyUpgrade_Default
+server              FAIL      Behavior<CTFBot>::FirstContainedResponder
+server              FAIL      CAI_BaseNPC::GetActivityID
+server              FAIL      CAI_BaseNPC::GetActivityName
+server              7666ef74  CAmbientGeneric::m_DataMap
+server              FAIL      CAmmoPack::Precache
+server              FAIL      CAnimationLayer::StudioFrameAdvance
+server              7605fb10  CAttributeContainer::OnAttributeValuesChanged
+server              761c01b0  CAttributeContainerPlayer::OnAttributeValuesChanged
+server              FAIL      CAttributeIterator_GetTypedAttributeValue::OnIterateAttributeValue
+server              FAIL      CAttributeList::AddAttribute
+server              FAIL      CAttributeList::DestroyAllAttributes
+server              FAIL      CAttributeList::GetAttributeByID
+server              FAIL      CAttributeList::GetAttributeByName
+server              FAIL      CAttributeList::IterateAttributes
+server              FAIL      CAttributeList::NotifyManagerOfAttributeValueChanges
+server              FAIL      CAttributeList::RemoveAttribute
+server              FAIL      CAttributeList::RemoveAttributeByIndex
+server              FAIL      CAttributeList::SetRuntimeAttributeRefundableCurrency
+server              FAIL      CAttributeList::SetRuntimeAttributeValue
+server              FAIL      CAttributeManager::AddProvider
+server              7605d9a0  CAttributeManager::ApplyAttributeFloat
+server              7605dc30  CAttributeManager::ApplyAttributeFloatWrapper
+server              7605e030  CAttributeManager::ApplyAttributeString
+server              7605e2d0  CAttributeManager::ApplyAttributeStringWrapper
+server              FAIL      CAttributeManager::AttribHookValue<float>
+server              FAIL      CAttributeManager::AttribHookValue<int>
+server              FAIL      CAttributeManager::ClearCache
+server              FAIL      CAttributeManager::ClearCache [clone]
+server              FAIL      CAttributeManager::GetGlobalCacheVersion
+server              FAIL      CAttributeManager::IsProvidingTo
+server              7605e6f0  CAttributeManager::OnAttributeValuesChanged
+server              FAIL      CAttributeManager::ProvideTo
+server              FAIL      CAttributeManager::RemoveProvider
+server              FAIL      CAttributeManager::StopProvidingTo
+server              7605d560  CAttributeManager::~CAttributeManager [D0]
+server              7605d560  CAttributeManager::~CAttributeManager [D2]
+server              75e8a180  CBaseAnimating::DispatchAnimEvents
+server              75e8a9e0  CBaseAnimating::DrawServerHitboxes
+server              FAIL      CBaseAnimating::FindBodygroupByName
+server              FAIL      CBaseAnimating::GetAttachment
+server              75e8b080  CBaseAnimating::GetAttachment [matrix]
+server              FAIL      CBaseAnimating::GetAttachmentBone
+server              FAIL      CBaseAnimating::GetBodygroup
+server              FAIL      CBaseAnimating::GetBodygroupCount
+server              FAIL      CBaseAnimating::GetBodygroupName
+server              FAIL      CBaseAnimating::GetBonePosition
+server              FAIL      CBaseAnimating::GetBoneTransform
+server              FAIL      CBaseAnimating::GetModelPtr
+server              FAIL      CBaseAnimating::GetNumBodyGroups
+server              FAIL      CBaseAnimating::GetNumBones
+server              FAIL      CBaseAnimating::GetPoseParameter [int]
+server              FAIL      CBaseAnimating::GetPoseParameter [str]
+server              FAIL      CBaseAnimating::InvalidateBoneCache
+server              FAIL      CBaseAnimating::LookupAttachment
+server              FAIL      CBaseAnimating::LookupBone
+server              FAIL      CBaseAnimating::LookupPoseParameter
+server              FAIL      CBaseAnimating::LookupSequence
+server              75e8f120  CBaseAnimating::RefreshCollisionBounds
+server              75e8f290  CBaseAnimating::ResetSequence
+server              FAIL      CBaseAnimating::ResetSequenceInfo
+server              FAIL      CBaseAnimating::SequenceDuration
+server              FAIL      CBaseAnimating::SetBodygroup
+server              75e2bdd0  CBaseAnimating::SetLightingOrigin
+server              75e8fd20  CBaseAnimating::SetModel
+server              FAIL      CBaseAnimating::SetModelScale
+server              FAIL      CBaseAnimating::SetPoseParameter
+server              75e90a20  CBaseAnimating::StudioFrameAdvance
+server              76638c50  CBaseAnimating::m_DataMap
+server              FAIL      CBaseAnimatingOverlay::AddGesture
+server              FAIL      CBaseAnimatingOverlay::AddGestureSequence
+server              FAIL      CBaseAnimatingOverlay::FastRemoveLayer
+server              FAIL      CBaseAnimatingOverlay::FastRemoveLayer [clone]
+server              FAIL      CBaseAnimatingOverlay::GetLayerDuration
+server              FAIL      CBaseAnimatingOverlay::RemoveAllGestures
+server              FAIL      CBaseAnimatingOverlay::RemoveGesture
+server              FAIL      CBaseAnimatingOverlay::RestartGesture
+server              FAIL      CBaseAnimatingOverlay::SetLayerCycle
+server              FAIL      CBaseAnimatingOverlay::SetLayerDuration
+server              75e93990  CBaseAnimatingOverlay::StudioFrameAdvance
+server              FAIL      CBaseCombatCharacter::AddGlowEffect
+server              75e947a0  CBaseCombatCharacter::BecomeRagdoll
+server              FAIL      CBaseCombatCharacter::CalcDamageForceVector
+server              FAIL      CBaseCombatCharacter::CalculatePhysicsStressDamage
+server              75e95320  CBaseCombatCharacter::ClearLastKnownArea
+server              75e95660  CBaseCombatCharacter::Event_Killed
+server              75e95c30  CBaseCombatCharacter::FInViewCone
+server              75e9b570  CBaseCombatCharacter::GetAmmoCount
+server              FAIL      CBaseCombatCharacter::GetBossType
+server              75e20630  CBaseCombatCharacter::GetLastKnownArea
+server              75e96bf0  CBaseCombatCharacter::GiveAmmo
+server              FAIL      CBaseCombatCharacter::IsAbleToSee [CBaseCombatCharacter *]
+server              FAIL      CBaseCombatCharacter::IsAbleToSee [CBaseEntity *]
+server              FAIL      CBaseCombatCharacter::IsGlowEffectActive
+server              75e975f0  CBaseCombatCharacter::OnTakeDamage
+server              75e9c470  CBaseCombatCharacter::RemoveAmmo
+server              FAIL      CBaseCombatCharacter::RemoveGlowEffect
+server              FAIL      CBaseCombatCharacter::SetAmmoCount
+server              FAIL      CBaseCombatCharacter::SetBloodColor
+server              FAIL      CBaseCombatCharacter::ShouldGib
+server              FAIL      CBaseCombatCharacter::SwitchToNextBestWeapon
+server              75e995d0  CBaseCombatCharacter::UpdateLastKnownArea
+server              75e9c700  CBaseCombatCharacter::Weapon_CanSwitchTo
+server              FAIL      CBaseCombatCharacter::Weapon_Detach
+server              75e9a420  CBaseCombatCharacter::Weapon_Equip
+server              75e9aee0  CBaseCombatCharacter::Weapon_GetSlot
+server              75e9c9d0  CBaseCombatCharacter::Weapon_Switch
+server              FAIL      CBaseCombatWeapon::ActivityOverride
+server              FAIL      CBaseCombatWeapon::CanPerformSecondaryAttack
+server              FAIL      CBaseCombatWeapon::CheckReload
+server              FAIL      CBaseCombatWeapon::Deploy
+server              FAIL      CBaseCombatWeapon::Drop
+server              FAIL      CBaseCombatWeapon::Equip
+server              75ea1600  CBaseCombatWeapon::GetMaxClip1
+server              FAIL      CBaseCombatWeapon::GetMaxClip2
+server              FAIL      CBaseCombatWeapon::GetPrimaryAmmoType
+server              FAIL      CBaseCombatWeapon::GetShootSound
+server              FAIL      CBaseCombatWeapon::GetSlot
+server              FAIL      CBaseCombatWeapon::GetViewModel
+server              FAIL      CBaseCombatWeapon::GetWorldModel
+server              FAIL      CBaseCombatWeapon::GetWpnData
+server              FAIL      CBaseCombatWeapon::HasAmmo
+server              FAIL      CBaseCombatWeapon::HasPrimaryAmmo
+server              FAIL      CBaseCombatWeapon::Holster
+server              75ea2680  CBaseCombatWeapon::IsMeleeWeapon
+server              FAIL      CBaseCombatWeapon::ItemPostFrame
+server              FAIL      CBaseCombatWeapon::Lower
+server              FAIL      CBaseCombatWeapon::OnActiveStateChanged
+server              75ea32b0  CBaseCombatWeapon::PrimaryAttack
+server              FAIL      CBaseCombatWeapon::SecondaryAttack
+server              FAIL      CBaseCombatWeapon::SetCustomViewModel
+server              FAIL      CBaseCombatWeapon::SetIdealActivity
+server              FAIL      CBaseCombatWeapon::SetOwner
+server              FAIL      CBaseCombatWeapon::SetSubType
+server              FAIL      CBaseCombatWeapon::SetViewModel
+server              FAIL      CBaseCombatWeapon::SetViewModelIndex
+server              FAIL      CBaseCombatWeapon::SetWeaponVisible
+server              FAIL      CBaseCombatWeapon::UpdateTransmitState
+server              FAIL      CBaseCombatWeapon::WeaponSound
+server              7663a090  CBaseCombatWeapon::m_DataMap
+server              FAIL      CBaseEdict::GetChangeAccessor
+server              75ea9c70  CBaseEntity::AcceptInput
+server              75eaa250  CBaseEntity::Activate
+server              FAIL      CBaseEntity::AddEffects
+server              FAIL      CBaseEntity::AddTimedOverlay
+server              75ebf4b0  CBaseEntity::ApplyAbsVelocityImpulse
+server              75ea8ea0  CBaseEntity::CBaseEntity
+server              75eac4d0  CBaseEntity::CalcAbsolutePosition
+server              FAIL      CBaseEntity::CalcAbsoluteVelocity
+server              75ead330  CBaseEntity::ChangeTeam
+server              FAIL      CBaseEntity::ClassMatchesComplex
+server              FAIL      CBaseEntity::Create
+server              FAIL      CBaseEntity::CreateNoSpawn
+server              FAIL      CBaseEntity::DispatchTraceAttack
+server              FAIL      CBaseEntity::DispatchUpdateTransmitState
+server              75eaefd0  CBaseEntity::DrawDebugGeometryOverlays
+server              75eafb30  CBaseEntity::DrawDebugTextOverlays
+server              FAIL      CBaseEntity::DrawTimedOverlays
+server              FAIL      CBaseEntity::EmitSound [member: normal + handle]
+server              75fee1f0  CBaseEntity::EmitSound [member: normal]
+server              75fee550  CBaseEntity::EmitSound [static: emitsound + handle]
+server              75fee460  CBaseEntity::EmitSound [static: emitsound]
+server              FAIL      CBaseEntity::EmitSound [static: normal + handle]
+server              FAIL      CBaseEntity::EmitSound [static: normal]
+server              75eb03e0  CBaseEntity::EndTouch
+server              FAIL      CBaseEntity::EntityText
+server              75eb0930  CBaseEntity::Event_Killed
+server              75e38920  CBaseEntity::EyeAngles
+server              75ebfbb0  CBaseEntity::EyePosition
+server              75eb09f0  CBaseEntity::FVisible [ent]
+server              75eb0b20  CBaseEntity::FVisible [vec]
+server              75ebfc40  CBaseEntity::FireBullets
+server              75eb1030  CBaseEntity::FireNamedOutput
+server              75e17970  CBaseEntity::GetBaseAnimating
+server              75e1fff0  CBaseEntity::GetBaseEntity
+server              75e20080  CBaseEntity::GetCollideable
+server              75e1d760  CBaseEntity::GetDamage
+server              FAIL      CBaseEntity::GetDamageType
+server              75eb1330  CBaseEntity::GetDataDescMap
+server              FAIL      CBaseEntity::GetDataObject
+server              FAIL      CBaseEntity::GetDefaultItemChargeMeterValue
+server              75ec0ec0  CBaseEntity::GetKeyValue
+server              75e20690  CBaseEntity::GetMaxHealth
+server              FAIL      CBaseEntity::GetModel
+server              75e206b0  CBaseEntity::GetModelIndex
+server              75e206c0  CBaseEntity::GetModelName
+server              75e207e0  CBaseEntity::GetNetworkable
+server              FAIL      CBaseEntity::GetNextThink
+server              FAIL      CBaseEntity::GetParametersForSound
+server              75e20860  CBaseEntity::GetRefEHandle
+server              75eb1a40  CBaseEntity::GetServerClass
+server              FAIL      CBaseEntity::GetTeamNumber
+server              FAIL      CBaseEntity::GetTouchTrace
+server              75e17970  CBaseEntity::GetTracerType
+server              FAIL      CBaseEntity::GetTransmitState
+server              75eb1b40  CBaseEntity::GetVelocity
+server              FAIL      CBaseEntity::InSameTeam
+server              75e230e0  CBaseEntity::IsAlive
+server              FAIL      CBaseEntity::IsBSPModel
+server              75e17e70  CBaseEntity::IsBaseCombatWeapon
+server              75e17e70  CBaseEntity::IsBaseObject
+server              75e17e70  CBaseEntity::IsCombatItem
+server              75e17e70  CBaseEntity::IsDeflectable
+server              75e17e70  CBaseEntity::IsPlayer
+server              75e17e70  CBaseEntity::IsWearable
+server              75ec17c0  CBaseEntity::KeyValue
+server              75df0ba0  CBaseEntity::ModifyFireBulletsDamage
+server              75e17970  CBaseEntity::MyCombatCharacterPointer
+server              75e17970  CBaseEntity::MyCombatWeaponPointer
+server              75e17970  CBaseEntity::MyNextBotPointer
+server              75eb7790  CBaseEntity::NameMatchesComplex
+server              75eb7ff0  CBaseEntity::OnTakeDamage
+server              75ec1e80  CBaseEntity::ParseMapData
+server              75eb8350  CBaseEntity::PassesDamageFilter
+server              75e17b90  CBaseEntity::PerformCustomPhysics
+server              75f7ff70  CBaseEntity::PhysicsDispatchThink
+server              FAIL      CBaseEntity::PhysicsNoclip
+server              75f85c40  CBaseEntity::PhysicsRunSpecificThink
+server              FAIL      CBaseEntity::PhysicsRunThink
+server              75f85e00  CBaseEntity::PhysicsSimulate
+server              75f861f0  CBaseEntity::PhysicsSolidMaskForEntity
+server              FAIL      CBaseEntity::PostClientActive
+server              75eb86f0  CBaseEntity::PrecacheModel
+server              FAIL      CBaseEntity::PrecacheScriptSound
+server              FAIL      CBaseEntity::PrecacheSound
+server              FAIL      CBaseEntity::ReadKeyField
+server              FAIL      CBaseEntity::Remove
+server              75ebb3a0  CBaseEntity::SetAbsAngles
+server              75ebb610  CBaseEntity::SetAbsOrigin
+server              FAIL      CBaseEntity::SetAbsVelocity
+server              75df0ba0  CBaseEntity::SetDamage
+server              FAIL      CBaseEntity::SetEffects
+server              75ebbc80  CBaseEntity::SetLocalAngles
+server              75ebbef0  CBaseEntity::SetLocalOrigin
+server              75ebc060  CBaseEntity::SetLocalVelocity
+server              75ebc1e0  CBaseEntity::SetModel
+server              75ebc240  CBaseEntity::SetModelIndex
+server              75ebc3d0  CBaseEntity::SetModelIndexOverride
+server              FAIL      CBaseEntity::SetMoveType
+server              FAIL      CBaseEntity::SetNextThink [index]
+server              FAIL      CBaseEntity::SetNextThink [name]
+server              75ebc5a0  CBaseEntity::SetOwnerEntity
+server              75ebc660  CBaseEntity::SetParent
+server              75ebcdf0  CBaseEntity::SetTransmit
+server              FAIL      CBaseEntity::SetTransmitState
+server              75ec2470  CBaseEntity::ShouldCollide
+server              75ebcfe0  CBaseEntity::ShouldTransmit
+server              FAIL      CBaseEntity::Spawn
+server              75ebd170  CBaseEntity::StartTouch
+server              FAIL      CBaseEntity::StopSound
+server              75ebd290  CBaseEntity::TakeDamage
+server              75ebdc10  CBaseEntity::TakeHealth
+server              75ebdd60  CBaseEntity::Teleport
+server              FAIL      CBaseEntity::ThinkSet
+server              75ebe2d0  CBaseEntity::Touch
+server              75ec26d0  CBaseEntity::TraceAttack
+server              FAIL      CBaseEntity::TransformStepData_ParentToParent
+server              FAIL      CBaseEntity::TransformStepData_WorldToParent
+server              75ebe350  CBaseEntity::UpdateOnRemove
+server              75ec2b00  CBaseEntity::VPhysicsDestroyObject
+server              FAIL      CBaseEntity::VPhysicsInitStatic
+server              75ec3300  CBaseEntity::WorldSpaceCenter
+server              7663ab5c  CBaseEntity::m_DataMap
+server              7663ab84  CBaseEntity::m_nPredictionRandomSeed
+server              FAIL      CBaseEntity::m_nPredictionRandomSeedServer
+server              FAIL      CBaseEntity::m_pPredictionPlayer
+server              FAIL      CBaseEntityOutput::DeleteAllElements
+server              75ee5ce0  CBaseEntityOutput::FireOutput
+server              FAIL      CBaseEntityOutput::ParseEventAction
+server              FAIL      CBaseFilter::InputTestActivator
+server              75f18a90  CBaseFilter::PassesDamageFilter
+server              75f18ac0  CBaseFilter::PassesDamageFilterImpl
+server              FAIL      CBaseFilter::PassesFilter
+server              75e236f0  CBaseFilter::PassesFilterImpl
+server              7664d35c  CBaseFilter::m_DataMap
+server              75ec55d0  CBaseFlex::AddSceneEvent
+server              75ec7eb0  CBaseFlex::ProcessSceneEvents
+server              75ec8cd0  CBaseGrenade::GetDamageRadius
+server              FAIL      CBaseGrenade::GetThrower
+server              75ec8ce0  CBaseGrenade::SetDamage
+server              FAIL      CBaseGrenade::SetThrower
+server              FAIL      CBaseIssue::CBaseIssue
+server              FAIL      CBaseMultiplayerPlayer::ShouldRunRateLimitedCommand [str]
+server              75ecc060  CBaseMultiplayerPlayer::SpeakConceptIfAllowed
+server              FAIL      CBaseObject::AttachObjectToObject
+server              FAIL      CBaseObject::CanBeUpgraded
+server              FAIL      CBaseObject::DetonateObject
+server              FAIL      CBaseObject::FindBuildPointOnPlayer
+server              FAIL      CBaseObject::FindBuildPointOnPlayer [clone]
+server              FAIL      CBaseObject::FindNearestBuildPoint
+server              FAIL      CBaseObject::FindSnapToBuildPos
+server              FAIL      CBaseObject::FinishedBuilding
+server              76181a30  CBaseObject::GetMaxHealthForCurrentLevel
+server              FAIL      CBaseObject::GetMaxUpgradeLevel
+server              FAIL      CBaseObject::GetMiniBuildingStartingHealth
+server              FAIL      CBaseObject::HasSapper
+server              FAIL      CBaseObject::InitializeMapPlacedObject
+server              FAIL      CBaseObject::IsHostileUpgrade
+server              FAIL      CBaseObject::MustBeBuiltOnAttachmentPoint
+server              76182ea0  CBaseObject::OnTakeDamage
+server              FAIL      CBaseObject::SetHealth
+server              FAIL      CBaseObject::SetPlasmaDisabled
+server              FAIL      CBaseObject::ShouldQuickBuild
+server              76184f80  CBaseObject::StartBuilding
+server              FAIL      CBaseObject::StartPlacement
+server              FAIL      CBaseObject::StartUpgrading
+server              FAIL      CBaseObject::UpdateOnRemove
+server              7668b734  CBaseObject::m_DataMap
+server              75f9c730  CBasePlayer::Activate
+server              FAIL      CBasePlayer::ChangeTeam [int, bool, bool, bool]
+server              75f9ec10  CBasePlayer::ClientCommand
+server              75f9f600  CBasePlayer::CommitSuicide
+server              75f9fb00  CBasePlayer::CreateViewModel
+server              FAIL      CBasePlayer::DisableButtons
+server              FAIL      CBasePlayer::EnableButtons
+server              75fa08d0  CBasePlayer::EquipWearable
+server              75fa0a80  CBasePlayer::Event_Killed
+server              75ecc4b0  CBasePlayer::EyeAngles
+server              FAIL      CBasePlayer::EyeVectors
+server              75ecc6d0  CBasePlayer::FindUseEntity
+server              FAIL      CBasePlayer::ForceButtons
+server              75fa1460  CBasePlayer::ForceRespawn
+server              FAIL      CBasePlayer::GetInVehicle
+server              FAIL      CBasePlayer::GetInVehicle [clone]
+server              75ecd4e0  CBasePlayer::GetPlayerMaxSpeed
+server              75fa23e0  CBasePlayer::GetSteamID
+server              FAIL      CBasePlayer::GetViewModel
+server              75fa4000  CBasePlayer::IsBot
+server              75ecbbf0  CBasePlayer::IsBotOfType
+server              75fa4000  CBasePlayer::IsFakeClient
+server              FAIL      CBasePlayer::IsPlayer
+server              75ecd780  CBasePlayer::ItemPostFrame
+server              75fa44b0  CBasePlayer::LeaveVehicle
+server              75fa5cd0  CBasePlayer::PhysicsSimulate
+server              75ecd9b0  CBasePlayer::PlayStepSound
+server              75fa6870  CBasePlayer::PlayerRunCommand
+server              75fa7b80  CBasePlayer::RemoveWearable
+server              FAIL      CBasePlayer::SetFOV
+server              75fa8860  CBasePlayer::SetModel
+server              FAIL      CBasePlayer::SetPlayerName
+server              FAIL      CBasePlayer::SetScriptOverlayMaterial
+server              FAIL      CBasePlayer::SetVCollisionState
+server              75fa9500  CBasePlayer::ShouldTransmit
+server              75fa9630  CBasePlayer::ShowViewPortPanel
+server              FAIL      CBasePlayer::SnapEyeAngles
+server              75fa9720  CBasePlayer::Spawn
+server              75faa360  CBasePlayer::Touch
+server              FAIL      CBasePlayer::UnforceButtons
+server              75faab90  CBasePlayer::UpdateOnRemove
+server              75fa6970  CBasePlayer::UpdatePlayerSound
+server              75fab6f0  CBasePlayer::WantsLagCompensationOnEntity
+server              FAIL      CBasePlayer::Weapon_Equip
+server              FAIL      CBasePlayer::Weapon_ShootPosition
+server              7666091c  CBasePlayer::m_DataMap
+server              75ec8b80  CBaseProjectile::CanCollideWithTeammates
+server              FAIL      CBaseProjectile::CollideWithTeammatesThink
+server              FAIL      CBaseProjectile::Destroy
+server              75ec8b90  CBaseProjectile::GetCollideWithTeammatesDelay
+server              75e29170  CBaseProjectile::GetProjectileType
+server              FAIL      CBaseProjectile::IsDestroyable
+server              75ecf950  CBaseProjectile::SetLauncher
+server              75ecfd50  CBaseProjectile::Spawn
+server              75ecf610  CBaseProjectile::~CBaseProjectile [D2]
+server              76034850  CBaseServerVehicle::GetDriver
+server              760349f0  CBaseServerVehicle::GetExitAnimToUse
+server              760328c0  CBaseServerVehicle::GetVehicleEnt
+server              76035940  CBaseServerVehicle::HandleEntryExitFinish
+server              76035b90  CBaseServerVehicle::HandlePassengerEntry
+server              76035cb0  CBaseServerVehicle::HandlePassengerExit
+server              75e12770  CBaseServerVehicle::IsPassengerUsingStandardWeapons
+server              75e12770  CBaseServerVehicle::IsPassengerVisible
+server              760362e0  CBaseServerVehicle::ItemPostFrame
+server              760388f0  CBaseServerVehicle::SetupMove
+server              760f4c20  CBaseTempEntity::Create
+server              760f4c80  CBaseTempEntity::GetServerClass
+server              76020270  CBaseTrigger::Activate
+server              76020910  CBaseTrigger::EndTouch
+server              76020630  CBaseTrigger::InputEndTouch
+server              76020610  CBaseTrigger::InputStartTouch
+server              FAIL      CBaseTrigger::PassesTriggerFilters
+server              76020860  CBaseTrigger::StartTouch
+server              76676000  CBaseTrigger::m_DataMap
+server              FAIL      CBaseViewModel::DestroyControlPanels
+server              FAIL      CBaseViewModel::SetControlPanelsActive
+server              FAIL      CBaseViewModel::SetWeaponModel
+server              FAIL      CBaseViewModel::SpawnControlPanels
+server              FAIL      CBeam::BeamCreate
+server              FAIL      CBeam::EntsInit
+server              FAIL      CBotNPCArcher::CBotNPCArcher
+server              FAIL      CBotNPCArcher::D1Thunk
+server              FAIL      CBotNPCArcher::GetIntentionInterface
+server              76257690  CBotNPCArcher::Spawn
+server              FAIL      CBotNPCArcherIntention::CBotNPCArcherIntention
+server              FAIL      CBotNPCArcherIntention::Reset
+server              76257c70  CBotNPCBody::AimHeadTowards [CBaseEntity *]
+server              76257ce0  CBotNPCBody::AimHeadTowards [Vector]
+server              FAIL      CBotNPCBody::CBotNPCBody
+server              76257d60  CBotNPCBody::GetSolidMask
+server              761dfe70  CBulletPenetrateEnum::EnumEntity
+server              76107240  CCaptureFlag::Drop
+server              FAIL      CCaptureFlag::FlagTouch
+server              FAIL      CCaptureFlag::GetMaxReturnTime
+server              FAIL      CCaptureFlag::PickUp
+server              76112340  CCaptureZone::Capture
+server              76113230  CCaptureZone::ShimTouch
+server              FAIL      CCollisionEvent::PostCollision
+server              FAIL      CCollisionEvent::ShouldCollide
+server              FAIL      CCollisionProperty::GetEntityHandle
+server              75eeb020  CCollisionProperty::GetSolid
+server              75eb1a50  CCollisionProperty::GetSolidFlags
+server              FAIL      CCollisionProperty::MarkPartitionHandleDirty
+server              75eeba60  CCollisionProperty::SetCollisionBounds
+server              FAIL      CCollisionProperty::SetSolid
+server              FAIL      CCollisionProperty::SetSolidFlags
+server              FAIL      CCollisionProperty::SetSurroundingBoundsType
+server              FAIL      CCurrencyPack::AffectedByRadiusCollection
+server              7610b4d0  CCurrencyPack::ComeToRest
+server              FAIL      CCurrencyPack::DistributedBy
+server              7610b1d0  CCurrencyPack::MyTouch
+server              FAIL      CCurrencyPack::SetAmount
+server              7610af50  CCurrencyPack::Spawn
+server              75fc8f00  CDynamicProp::Spawn
+server              FAIL      CEconEntity::DebugDescribe
+server              FAIL      CEconEntity::GetAttributeContainer
+server              FAIL      CEconEntity::GetAttributeManager
+server              FAIL      CEconEntity::GiveTo
+server              FAIL      CEconEntity::ReapplyProvision
+server              FAIL      CEconEntity::TranslateViewmodelHandActivity
+server              FAIL      CEconEntity::TranslateViewmodelHandActivityInternal
+server              FAIL      CEconEntity::UpdateBodygroups
+server              76060270  CEconEntity::UpdateModelToClass
+server              FAIL      CEconEntity::UpdateOnRemove
+server              FAIL      CEconItem::AddDynamicAttributeInternal
+server              FAIL      CEconItemAttribute::CEconItemAttribute [C1]
+server              FAIL      CEconItemAttribute::GetStaticData
+server              7605e840  CEconItemAttributeIterator_ApplyAttributeString::OnIterateAttributeValue
+server              7606e150  CEconItemDefinition::BInitFromKV
+server              76074fe0  CEconItemDefinition::BInitVisualBlockFromKV
+server              FAIL      CEconItemDefinition::GetActivityOverride
+server              FAIL      CEconItemDefinition::IterateAttributes
+server              7606c310  CEconItemSchema::BInitAttributes
+server              76078e30  CEconItemSchema::GetAttributeDefinition
+server              76078ea0  CEconItemSchema::GetAttributeDefinitionByName
+server              76078ea0  CEconItemSchema::GetAttributeDefinitionByName [non-const]
+server              FAIL      CEconItemSchema::GetEquipRegionBitMaskByName
+server              76079300  CEconItemSchema::GetItemDefinition
+server              FAIL      CEconItemSchema::GetItemDefinitionByName
+server              FAIL      CEconItemSchema::GetItemDefinitionByName [clone]
+server              FAIL      CEconItemSchema::GetItemDefinitionByName [const]
+server              FAIL      CEconItemSchema::ItemTesting_CreateTestDefinition
+server              7607e550  CEconItemSchema::Reset
+server              76083560  CEconItemView::CEconItemView [C1]
+server              FAIL      CEconItemView::GetAnimationSlot
+server              7605f620  CEconItemView::GetItemDefIndex
+server              76084500  CEconItemView::GetPlayerDisplayModel
+server              FAIL      CEconItemView::GetSOCData
+server              760846f0  CEconItemView::GetSkin
+server              76084830  CEconItemView::GetStaticData
+server              76084860  CEconItemView::GetStyle
+server              760848f0  CEconItemView::Init
+server              76084ba0  CEconItemView::IterateAttributes
+server              7667f84c  CEconItemView::m_DataMap
+server              FAIL      CEconWearable::GetSkin
+server              FAIL      CEconWearable::RemoveFrom
+server              FAIL      CEconWearable::UnEquip
+server              FAIL      CEntityFactory<CEnvEntityMaker>::Create
+server              FAIL      CEntityFactory<CEnvShake>::Create
+server              FAIL      CEntityFactory<CEnvViewPunch>::Create
+server              FAIL      CEntityFactory<CFuncNavAvoid>::Create
+server              FAIL      CEntityFactory<CFuncNavPrefer>::Create
+server              FAIL      CEntityFactory<CFuncNavPrerequisite>::Create
+server              FAIL      CEntityFactory<CGameText>::Create
+server              FAIL      CEntityFactory<CPathTrack>::Create
+server              FAIL      CEntityFactory<CPointClientCommand>::Create
+server              FAIL      CEntityFactory<CPointEntity>::Create
+server              FAIL      CEntityFactory<CPointHurt>::Create
+server              FAIL      CEntityFactory<CPointNavInterface>::Create
+server              FAIL      CEntityFactory<CPointPopulatorInterface>::Create
+server              FAIL      CEntityFactory<CPointServerCommand>::Create
+server              FAIL      CEntityFactory<CRagdollMagnet>::Create
+server              FAIL      CEntityFactory<CTFBotHint>::Create
+server              FAIL      CEntityFactory<CTFBotHintSentrygun>::Create
+server              FAIL      CEntityFactory<CTFBotHintTeleporterExit>::Create
+server              FAIL      CEntityFactory<CTFForceRespawn>::Create
+server              FAIL      CEntityFactory<CTFHudNotify>::Create
+server              FAIL      CEntityFactory<CTeamplayRoundWin>::Create
+server              FAIL      CEntityFactory<CTrainingAnnotation>::Create
+server              FAIL      CEntityFactory<CTriggerHurt>::Create
+server              FAIL      CEntityFactory<CTriggerMultiple>::Create
+server              FAIL      CEntitySphereQuery::CEntitySphereQuery [C1]
+server              FAIL      CEnvEntityMaker::InputForceSpawn
+server              FAIL      CEnvEntityMaker::InputForceSpawnAtEntityOrigin
+server              FAIL      CEnvEntityMaker::SpawnEntity
+server              FAIL      CEnvEntityMaker::m_DataMap
+server              FAIL      CEventAction::CEventAction [C2]
+server              75ee5330  CEventQueue::AddEvent
+server              75ee5210  CEventQueue::AddEvent [CBaseEntity]
+server              FAIL      CEventQueue::AddEvent [EventQueuePrioritizedEvent_t *]
+server              75ee5510  CEventQueue::CancelEvents
+server              75ee6950  CEventQueue::ServiceEvents
+server              FAIL      CEyeballBoss::GetLocomotionInterface
+server              FAIL      CEyeballBoss::GetVisionInterface
+server              762657b0  CEyeballBossApproachTarget::Update
+server              FAIL      CEyeballBossDead::Update
+server              76267200  CEyeballBossIdle::OnStart
+server              FAIL      CEyeballBossIdle::Update
+server              76267d70  CEyeballBossLaunchRockets::Update
+server              762614d0  CEyeballBossLocomotion::Approach
+server              FAIL      CFilterTFBotHasTag::m_DataMap
+server              FAIL      CFlagDetectionZone::EntityIsFlagCarrier
+server              75ed38e0  CFuncIllusionary::Spawn
+server              FAIL      CFuncNavCost::HasTag
+server              760b2af0  CFuncNavCost::IsApplicableTo
+server              FAIL      CFuncNavCost::IsApplicableTo [clone]
+server              FAIL      CFuncNavCost::m_DataMap
+server              7668217c  CFuncNavPrerequisite::m_DataMap
+server              FAIL      CFuncRotating::InputStartBackward
+server              FAIL      CFuncRotating::InputStartForward
+server              FAIL      CFuncRotating::InputStop
+server              FAIL      CFuncRotating::SetTargetSpeed
+server              7663e1d4  CFuncRotating::m_DataMap
+server              FAIL      CGameEventManager::CreateEvent
+server              FAIL      CGameEventManager::FireEventIntern
+server              75f38040  CGameMovement::Accelerate
+server              75f34e30  CGameMovement::AirAccelerate
+server              75f33fb0  CGameMovement::CheckFalling
+server              FAIL      CGameMovement::CheckFalling [clone]
+server              75f347a0  CGameMovement::CheckStuck
+server              FAIL      CGameMovement::FullNoClipMove
+server              FAIL      CGameMovement::GetPointContentsCached
+server              FAIL      CGameMovement::GetPointContentsCached [clone]
+server              FAIL      CGameMovement::PlayerMove
+server              FAIL      CGameMovement::ResetGetPointContentsCache
+server              75f3c720  CGameRules::DefaultFOV
+server              75f3cac0  CGameRules::GetViewVectors
+server              FAIL      CGameRules::IsConnectedUserInfoChangeAllowed
+server              75f3de20  CGameRules::ShouldCollide
+server              766f3c7c  CGameRulesProxy::s_pGameRulesProxy
+server              75f41450  CGameStringPool::LevelShutdownPostEntity
+server              75ec1d30  CGameText::KeyValue
+server              75f2e3d0  CGameUI::Deactivate
+server              FAIL      CGameUI::m_DataMap
+server              FAIL      CGlobalEntityList::FindEntityByClassname
+server              FAIL      CGlobalEntityList::FindEntityByName
+server              FAIL      CGlobalEntityList::NumberOfEntities
+server              FAIL      CHLTVDirector::BuildActivePlayerList
+server              FAIL      CHalloweenBaseBoss::SpawnBossAtPos
+server              FAIL      CHeadlessHatman [D2]
+server              FAIL      CHeadlessHatman::OnTakeDamage_Alive
+server              FAIL      CHeadlessHatman::Spawn
+server              7625df10  CHeadlessHatmanAttack::AttackTarget
+server              FAIL      CHeadlessHatmanAttack::RecomputeHomePosition
+server              7625b6a0  CHeadlessHatmanLocomotion::GetRunSpeed
+server              7625c9d0  CHeadlessHatmanLocomotion::ShouldCollideWith
+server              75f4eca0  CItem::ItemTouch
+server              766533a0  CItem::m_DataMap
+server              FAIL      CItemGeneration::GenerateItemFromScriptData
+server              FAIL      CItemGeneration::GenerateRandomItem
+server              FAIL      CItemGeneration::SpawnItem
+server              FAIL      CItemGeneration::SpawnItem [defIndex]
+server              FAIL      CKickIssue::RequestCallVote
+server              760e4e10  CKnownEntity::Destroy
+server              760e51c0  CKnownEntity::GetEntity
+server              760e5390  CKnownEntity::GetLastKnownArea
+server              75eb7b90  CKnownEntity::GetLastKnownPosition
+server              760e55f0  CKnownEntity::GetTimeSinceBecameKnown
+server              760e5600  CKnownEntity::GetTimeSinceBecameVisible
+server              760e5610  CKnownEntity::GetTimeSinceLastKnown
+server              760e5620  CKnownEntity::GetTimeSinceLastSeen
+server              760e56e0  CKnownEntity::GetTimeWhenBecameVisible
+server              760e56f0  CKnownEntity::HasLastKnownPositionBeenSeen
+server              760e5820  CKnownEntity::Is
+server              760e6210  CKnownEntity::IsObsolete
+server              760e6280  CKnownEntity::IsVisibleInFOVNow
+server              760e6290  CKnownEntity::IsVisibleRecently
+server              760e62d0  CKnownEntity::MarkLastKnownPositionAsSeen
+server              760e72c0  CKnownEntity::UpdatePosition
+server              760e7400  CKnownEntity::UpdateVisibilityStatus
+server              760e7430  CKnownEntity::WasEverVisible
+server              760e4b50  CKnownEntity::operator==
+server              FAIL      CLagCompensationManager::BacktrackPlayer
+server              FAIL      CLagCompensationManager::FinishLagCompensation
+server              75fac8c0  CLagCompensationManager::FrameUpdatePostEntityThink
+server              75facc30  CLagCompensationManager::StartLagCompensation
+server              FAIL      CLaserDot::Create
+server              7665465c  CLogicCase::m_DataMap
+server              76203a20  CMannVsMachineChangeChallengeIssue::ExecuteCommand
+server              FAIL      CMannVsMachineStats::GetBottleSpending
+server              FAIL      CMannVsMachineStats::GetBuyBackSpending
+server              FAIL      CMannVsMachineStats::GetUpgradeSpending
+server              762a08c0  CMannVsMachineStats::NotifyTargetPlayerEvent
+server              762a0500  CMannVsMachineStats::PlayerEvent_Upgraded
+server              FAIL      CMannVsMachineStats::ResetUpgradeSpending
+server              762a1000  CMannVsMachineStats::RoundEvent_WaveEnd
+server              FAIL      CMannVsMachineStats::SendUpgradesToPlayer
+server              762b69f0  CMannVsMachineUpgradeManager::LoadUpgradesFileFromPath
+server              76288e40  CMatchInfo::GetNumActiveMatchPlayers
+server              7626cd50  CMerasmusLocomotion::GetRunSpeed
+server              762adfb0  CMissionPopulator::Parse
+server              762af810  CMissionPopulator::Update
+server              762b06e0  CMissionPopulator::UpdateMission
+server              762b0b60  CMissionPopulator::UpdateMissionDestroySentries
+server              762acb00  CMissionPopulator::~CMissionPopulator [D0]
+server              762acb00  CMissionPopulator::~CMissionPopulator [D2]
+server              76117d60  CMultiPlayerAnimState::AddToGestureSlot
+server              FAIL      CMultiPlayerAnimState::OnNewModel
+server              76119cb0  CMultiPlayerAnimState::RestartGesture
+server              FAIL      CMultiPlayerAnimState::RestartGesture [clone]
+server              FAIL      CMultiplayRules::HaveAllPlayersSpeakConceptIfAllowed
+server              75f61680  CMultiplayRules::VoiceCommand
+server              FAIL      CNavArea::AddToOpenList
+server              FAIL      CNavArea::ClearAllNavCostEntities
+server              FAIL      CNavArea::ClearSearchLists
+server              FAIL      CNavArea::CollectAdjacentAreas
+server              7609d660  CNavArea::ComputeAdjacentConnectionHeightChange
+server              FAIL      CNavArea::Contains
+server              760a1970  CNavArea::DrawFilled
+server              760a2810  CNavArea::GetClosestPointOnArea
+server              760a3170  CNavArea::GetExtent
+server              760a33c0  CNavArea::GetZ [float float]
+server              760a36e0  CNavArea::IsBlocked
+server              760a3720  CNavArea::IsCompletelyVisible
+server              760a4890  CNavArea::IsOverlapping
+server              760a4cb0  CNavArea::IsPotentiallyVisible
+server              760a4df0  CNavArea::IsPotentiallyVisibleToTeam
+server              FAIL      CNavArea::RemoveFromOpenList
+server              FAIL      CNavArea::ResetPotentiallyVisibleAreas
+server              FAIL      CNavArea::Shift
+server              FAIL      CNavArea::m_masterMarker
+server              7674d1ec  CNavArea::m_openList
+server              7674d1f4  CNavArea::s_nCurrVisTestCounter
+server              760b91e0  CNavMesh::BeginGeneration
+server              760c8490  CNavMesh::GetGroundHeight
+server              FAIL      CNavMesh::GetNavArea [ent]
+server              FAIL      CNavMesh::GetNavArea [vec]
+server              FAIL      CNavMesh::GetNearestNavArea [ent]
+server              760c8de0  CNavMesh::GetNearestNavArea [vec]
+server              760b4d10  CNavMesh::Load
+server              FAIL      CObjectDispenser::DispenseAmmo
+server              FAIL      CObjectDispenser::DispenseMetal
+server              FAIL      CObjectDispenser::DispenseThink
+server              FAIL      CObjectDispenser::GetAvailableMetal
+server              76187630  CObjectDispenser::GetDispenserRadius
+server              FAIL      CObjectDispenser::GetHealRate
+server              FAIL      CObjectDispenser::SetModel
+server              FAIL      CObjectSapper::ApplyRoboSapper
+server              FAIL      CObjectSapper::ApplyRoboSapperEffects
+server              FAIL      CObjectSapper::ApplyRoboSapperEffects [clone]
+server              FAIL      CObjectSapper::GetSapperModelName
+server              FAIL      CObjectSapper::GetSapperSoundName
+server              FAIL      CObjectSapper::IsParentValid
+server              FAIL      CObjectSapper::IsValidRoboSapperTarget
+server              FAIL      CObjectSapper::Spawn
+server              76189ea0  CObjectSapper::UpdateOnRemove
+server              7618a2f0  CObjectSentrygun::Attack
+server              FAIL      CObjectSentrygun::EmitSentrySound
+server              FAIL      CObjectSentrygun::FindTarget
+server              FAIL      CObjectSentrygun::FireRocket
+server              FAIL      CObjectSentrygun::FirstSpawn
+server              FAIL      CObjectSentrygun::FoundTarget
+server              FAIL      CObjectSentrygun::GetTurretAngles
+server              FAIL      CObjectSentrygun::MakeDisposableBuilding
+server              7618ce10  CObjectSentrygun::MakeScaledBuilding
+server              FAIL      CObjectSentrygun::SentryRotate
+server              FAIL      CObjectSentrygun::SentryThink
+server              7618e470  CObjectSentrygun::SetModel
+server              7618e640  CObjectSentrygun::Spawn
+server              FAIL      CObjectSentrygun::StartUpgrading
+server              7618ab30  CObjectSentrygun::ValidTargetPlayer
+server              FAIL      CObjectTeleporter::DeterminePlaybackRate
+server              FAIL      CObjectTeleporter::PlayerCanBeTeleported
+server              FAIL      CObjectTeleporter::PlayerCanBeTeleported [clone]
+server              FAIL      CObjectTeleporter::RecieveTeleportingPlayer
+server              76190f60  CObjectTeleporter::SetModel
+server              FAIL      CObjectTeleporter::TeleporterSend
+server              76191a70  CObjectTeleporter::TeleporterThink
+server              FAIL      CObjectTeleporter::TeleporterTouch
+server              FAIL      CObjectTeleporter::m_DataMap
+server              76659cc8  CParticleSystem::m_DataMap
+server              FAIL      CParticleSystemMgr::CParticleSystemMgr
+server              FAIL      CParticleSystemMgr::GetParticleSystemCount
+server              763a2280  CParticleSystemMgr::Init
+server              FAIL      CParticleSystemMgr::UncacheAllParticleSystems
+server              FAIL      CParticleSystemMgr::~CParticleSystemMgr
+server              FAIL      CPathTrack::GetNext
+server              7665ae9c  CPathTrack::m_DataMap
+server              75f74cc0  CPhysicsHook::FindOrAddVehicleScript
+server              FAIL      CPlayerInventory::DumpInventoryToConsole
+server              76064ff0  CPlayerInventory::GetInventoryItemByItemID
+server              FAIL      CPlayerInventory::GetItemByPosition
+server              FAIL      CPlayerInventory::GetMaxItemCount
+server              75fac590  CPlayerMove::SetupMove
+server              75fac880  CPlayerMove::StartCommand
+server              FAIL      CPointPopulatorInterface::InputChangeBotAttributes
+server              FAIL      CPointPush::PushThink
+server              75fbb380  CPointTeleport::Activate
+server              FAIL      CPopulationManager::AddRespecToPlayer
+server              FAIL      CPopulationManager::AdjustMinPlayerSpawnTime
+server              762a2ec0  CPopulationManager::AllocateBots
+server              FAIL      CPopulationManager::CPopulationManager [C1]
+server              762a30b0  CPopulationManager::ClearCheckpoint
+server              FAIL      CPopulationManager::CollectMvMBots
+server              762a32b0  CPopulationManager::CycleMission
+server              FAIL      CPopulationManager::FindCheckpointSnapshot [CTFPlayer *]
+server              762a3e50  CPopulationManager::FindDefaultPopulationFileShortNames
+server              FAIL      CPopulationManager::FindOrAddPlayerUpgradeHistory
+server              FAIL      CPopulationManager::FindOrAddPlayerUpgradeHistory [CTFPlayer *]
+server              762a4220  CPopulationManager::FindPopulationFileByShortName
+server              FAIL      CPopulationManager::GetCurrentWave
+server              762a4720  CPopulationManager::GetNumRespecsAvailableForPlayer
+server              762a47b0  CPopulationManager::GetPlayerCurrencySpent
+server              FAIL      CPopulationManager::GetPlayerUpgradeHistory
+server              762a48b0  CPopulationManager::GetPopulationFilename
+server              FAIL      CPopulationManager::Initialize
+server              FAIL      CPopulationManager::Initialize [clone]
+server              FAIL      CPopulationManager::IsInEndlessWaves
+server              762a4fa0  CPopulationManager::IsValidPopfile
+server              762a50b0  CPopulationManager::JumpToWave
+server              FAIL      CPopulationManager::LoadMvMMission
+server              FAIL      CPopulationManager::OnCurrencyCollected
+server              762a5c40  CPopulationManager::Parse
+server              762a62a0  CPopulationManager::PauseSpawning
+server              762a4bf0  CPopulationManager::PostInitialize
+server              FAIL      CPopulationManager::RemovePlayerAndItemUpgradesFromHistory
+server              FAIL      CPopulationManager::RemoveRespecFromPlayer
+server              FAIL      CPopulationManager::ResetMap
+server              FAIL      CPopulationManager::ResetRespecPoints
+server              762a6b30  CPopulationManager::RestoreCheckpoint
+server              FAIL      CPopulationManager::RestorePlayerCurrency
+server              762a70f0  CPopulationManager::SetCheckpoint
+server              FAIL      CPopulationManager::SetNumRespecsForPlayer
+server              762a7450  CPopulationManager::SetPopulationFilename
+server              762a7500  CPopulationManager::Spawn
+server              FAIL      CPopulationManager::StartCurrentWave
+server              762a7610  CPopulationManager::UnpauseSpawning
+server              762a7650  CPopulationManager::Update
+server              FAIL      CPopulationManager::UpdateObjectiveResource
+server              FAIL      CPopulationManager::WaveEnd
+server              FAIL      CPopulationManager::~CPopulationManager [D0]
+server              FAIL      CPopulationManager::~CPopulationManager [D2]
+server              76677f60  CPropVehicle::m_DataMap
+server              FAIL      CPropVehicleDriveable::CanExitVehicle
+server              FAIL      CPropVehicleDriveable::DriveVehicle
+server              FAIL      CPropVehicleDriveable::PassengerShouldReceiveDamage
+server              760333e0  CPropVehicleDriveable::Spawn
+server              FAIL      CPropVehicleDriveable::TraceAttack
+server              FAIL      CPropVehicleDriveable::Use
+server              76677f78  CPropVehicleDriveable::m_DataMap
+server              7611cd00  CQuestItemTracker::FireGameEvent
+server              FAIL      CQuestItemTracker::FireGameEvent_NonVirtual
+server              762a8920  CRandomChoiceSpawner::GetClass
+server              762a8a30  CRandomChoiceSpawner::GetClassIcon
+server              762a8bb0  CRandomChoiceSpawner::GetHealth
+server              762a8cd0  CRandomChoiceSpawner::HasAttribute
+server              762a8ef0  CRandomChoiceSpawner::IsMiniBoss
+server              762a9250  CRandomChoiceSpawner::Parse
+server              FAIL      CRecipientFilter::IgnorePredictionCull
+server              FAIL      CRecipientFilter::RemoveRecipientsByPVS
+server              FAIL      CSceneEntity::m_pcvSndMixahead
+server              7606af30  CSchemaAttributeType_Default::ConvertStringToEconAttributeValue
+server              7606b050  CSchemaAttributeType_String::BConvertStringToEconAttributeValue
+server              FAIL      CSchemaFieldHandle<CEconItemDefinition>::CSchemaFieldHandle
+server              FAIL      CSchemaFieldHandle<CEconItemDefinition>::CSchemaFieldHandle2
+server              75f2eb30  CServerGameClients::ClientActive
+server              75f2edf0  CServerGameClients::ClientPutInServer
+server              76131270  CServerGameClients::GetPlayerLimits
+server              75f30b90  CServerGameDLL::GetServerBrowserMapOverride
+server              75f2fca0  CServerGameDLL::LevelInit
+server              75f2ff70  CServerGameDLL::ServerActivate
+server              75f30a50  CServerGameDLL::SetServerHibernation
+server              75f2fa70  CServerGameDLL::Shutdown
+server              75f31020  CServerGameEnts::CheckTransmit
+server              FAIL      CServerNetworkProperty::AreaNum
+server              75fe9330  CServerNetworkProperty::AttachEdict
+server              FAIL      CServerNetworkProperty::GetBaseEntity
+server              FAIL      CServerNetworkProperty::GetBaseNetworkable
+server              FAIL      CServerNetworkProperty::GetClassName
+server              FAIL      CServerNetworkProperty::GetEdict
+server              FAIL      CServerNetworkProperty::GetEntityHandle
+server              FAIL      CServerNetworkProperty::GetPVSInfo
+server              FAIL      CServerNetworkProperty::GetServerClass
+server              FAIL      CServerNetworkProperty::IsInPVS
+server              FAIL      CSingleUserRecipientFilter::CSingleUserRecipientFilter
+server              760f7b50  CSmokeStack::KeyValue
+server              7668353c  CSmokeStack::m_DataMap
+server              FAIL      CSniperDot::Create
+server              75ff0200  CSoundEnt::Initialize
+server              FAIL      CSpawnLocation::FindSpawnLocation
+server              762ae470  CSpawnLocation::Parse
+server              76275f80  CSpellPickup::ItemCanBeTouchedByPlayer
+server              FAIL      CSpellPickup::m_DataMap
+server              FAIL      CSprite::SpriteCreate
+server              762a8ae0  CSquadSpawner::GetClassIcon
+server              762a8d80  CSquadSpawner::HasAttribute
+server              762a8fa0  CSquadSpawner::IsMiniBoss
+server              762a9400  CSquadSpawner::Parse
+server              762ab140  CSquadSpawner::Spawn
+server              762a8750  CSquadSpawner::~CSquadSpawner [D0]
+server              762a8750  CSquadSpawner::~CSquadSpawner [D2]
+server              75ff6450  CSteamID::Render [member]
+server              FAIL      CSteamID::Render [static]
+server              75ff7680  CStudioHdr::GetNumPoseParameters
+server              75ff8970  CStudioHdr::pPoseParameter
+server              76120f80  CTFAmmoPack::Create
+server              FAIL      CTFAmmoPack::InitAmmoPack
+server              FAIL      CTFBall_Ornament::Create
+server              762c0590  CTFBall_Ornament::Explode
+server              762c0980  CTFBall_Ornament::PipebombTouch
+server              FAIL      CTFBaseBoss::GetCurrencyValue
+server              FAIL      CTFBaseBoss::OnTakeDamage
+server              FAIL      CTFBaseBoss::ResolvePlayerCollision
+server              FAIL      CTFBaseBoss::Touch
+server              FAIL      CTFBaseBoss::UpdateCollisionBounds
+server              7629e0a0  CTFBaseBossLocomotion::FaceTowards
+server              761e2cf0  CTFBaseBossLocomotion::GetStepHeight
+server              FAIL      CTFBaseProjectile::FlyThink
+server              FAIL      CTFBaseProjectile::GetDamage
+server              FAIL      CTFBaseProjectile::GetDamageType
+server              FAIL      CTFBaseProjectile::PhysicsSolidMaskForEntity
+server              FAIL      CTFBaseProjectile::SetDamage
+server              FAIL      CTFBaseProjectile::SetScorer
+server              FAIL      CTFBaseProjectile::Spawn
+server              762ff2a0  CTFBaseRocket::CheckForStunOnImpact
+server              FAIL      CTFBaseRocket::Create
+server              762f95c0  CTFBaseRocket::Destroy
+server              762ff6d0  CTFBaseRocket::Explode
+server              FAIL      CTFBaseRocket::GetOwnerPlayer
+server              762ffcc0  CTFBaseRocket::GetRadius
+server              762e6420  CTFBaseRocket::GetWeaponID
+server              762fff30  CTFBaseRocket::RocketTouch
+server              7618e3a0  CTFBaseRocket::SetDamage
+server              FAIL      CTFBat_Giftwrap::GetWeaponID
+server              762bf540  CTFBat_Wood::SecondaryAttack
+server              FAIL      CTFBonesaw::GetWeaponID
+server              7620f010  CTFBot::AddEventChangeAttributes
+server              7620f100  CTFBot::AddItem
+server              FAIL      CTFBot::AvoidPlayers
+server              FAIL      CTFBot::CTFBotIntention::Update
+server              762105f0  CTFBot::ChangeTeam
+server              FAIL      CTFBot::ClearTags
+server              FAIL      CTFBot::DelayedThreatNotice
+server              76210c10  CTFBot::DrawDebugTextOverlays
+server              FAIL      CTFBot::EquipBestWeaponForThreat
+server              FAIL      CTFBot::EquipLongRangeWeapon
+server              FAIL      CTFBot::EquipRequiredWeapon
+server              76211400  CTFBot::Event_Killed
+server              FAIL      CTFBot::ForgetSpy
+server              FAIL      CTFBot::GetBodyInterface
+server              FAIL      CTFBot::GetBotType
+server              FAIL      CTFBot::GetDesiredAttackRange
+server              76212080  CTFBot::GetDesiredPathLookAheadRange
+server              762120a0  CTFBot::GetEventChangeAttributes
+server              FAIL      CTFBot::GetFlagCaptureZone
+server              FAIL      CTFBot::GetFlagToFetch
+server              FAIL      CTFBot::GetIntentionInterface
+server              FAIL      CTFBot::GetLastKnownArea
+server              FAIL      CTFBot::GetLocomotionInterface
+server              FAIL      CTFBot::GetNearestKnownSappableTarget
+server              76212ef0  CTFBot::GetNextSpawnClassname
+server              FAIL      CTFBot::GetTimeLeftToCapture
+server              FAIL      CTFBot::GetVisionInterface
+server              76213ae0  CTFBot::HasTag
+server              FAIL      CTFBot::IsBarrageAndReloadWeapon
+server              FAIL      CTFBot::IsDormantWhenDead
+server              FAIL      CTFBot::IsExplosiveProjectileWeapon
+server              FAIL      CTFBot::IsKnownSpy
+server              FAIL      CTFBot::IsLineOfFireClear_ent
+server              FAIL      CTFBot::IsLineOfFireClear_vec
+server              FAIL      CTFBot::IsLineOfFireClear_vec_ent
+server              FAIL      CTFBot::IsLineOfFireClear_vec_vec
+server              FAIL      CTFBot::IsSuspectedSpy
+server              FAIL      CTFBot::LeaveSquad
+server              7621a8a0  CTFBot::OnEventChangeAttributes
+server              FAIL      CTFBot::OnWeaponFired
+server              FAIL      CTFBot::OpportunisticallyUseWeaponAbilities
+server              76220810  CTFBot::PhysicsSimulate
+server              76220910  CTFBot::PopRequiredWeapon
+server              FAIL      CTFBot::PressAltFireButton
+server              FAIL      CTFBot::PressFireButton
+server              FAIL      CTFBot::PressSpecialFireButton
+server              FAIL      CTFBot::PushRequiredWeapon
+server              FAIL      CTFBot::RealizeSpy
+server              FAIL      CTFBot::SelectRandomReachableEnemy
+server              FAIL      CTFBot::SetMission
+server              FAIL      CTFBot::ShouldAutoJump
+server              762227b0  CTFBot::ShouldFireCompressionBlast
+server              FAIL      CTFBot::ShouldGib
+server              FAIL      CTFBot::Spawn
+server              76222ff0  CTFBot::StartIdleSound
+server              FAIL      CTFBot::StopSuspectingSpy
+server              FAIL      CTFBot::SuspectSpy
+server              FAIL      CTFBot::SuspectedSpyInfo_t::IsCurrentlySuspected
+server              FAIL      CTFBot::SuspectedSpyInfo_t::Suspect
+server              FAIL      CTFBot::SuspectedSpyInfo_t::TestForRealizing
+server              76223490  CTFBot::Touch
+server              FAIL      CTFBot::TransientlyConsistentRandomValue
+server              76223910  CTFBot::UpdateLookingAroundForEnemies
+server              FAIL      CTFBot::UpdateOnRemove
+server              FAIL      CTFBot::~CTFBot [D0]
+server              FAIL      CTFBot::~CTFBot [D2]
+server              762295e0  CTFBotAttack::CTFBotAttack [C1]
+server              76229f60  CTFBotAttack::Update
+server              76247ec0  CTFBotAttackFlagDefenders::Update
+server              76224b50  CTFBotBody::GetHeadAimTrackingInterval
+server              7622dd60  CTFBotDead::OnStart
+server              7622dd90  CTFBotDead::Update
+server              FAIL      CTFBotDeliverFlag::OnEnd
+server              762489c0  CTFBotDeliverFlag::Update
+server              76249060  CTFBotDeliverFlag::UpgradeOverTime
+server              FAIL      CTFBotEngineerBuild::InitialContainedAction
+server              762496b0  CTFBotEscortFlagCarrier::Update
+server              75e0fa90  CTFBotEscortSquadLeader::OnEnd
+server              762512f0  CTFBotEscortSquadLeader::Update
+server              762511f0  CTFBotEscortSquadLeader::~CTFBotEscortSquadLeader [D0]
+server              762511f0  CTFBotEscortSquadLeader::~CTFBotEscortSquadLeader [D2]
+server              FAIL      CTFBotFetchFlag::CTFBotFetchFlag [C1]
+server              FAIL      CTFBotFetchFlag::OnStart
+server              76249c20  CTFBotFetchFlag::Update
+server              76230a70  CTFBotGetAmmo::IsPossible
+server              762316c0  CTFBotGetHealth::IsPossible
+server              FAIL      CTFBotHintEngineerNest::DetonateStaleNest
+server              FAIL      CTFBotHintEngineerNest::HintTeleporterThink
+server              FAIL      CTFBotHintEngineerNest::IsStaleNest
+server              76224be0  CTFBotLocomotion::Approach
+server              76224c30  CTFBotLocomotion::GetRunSpeed
+server              76224d10  CTFBotLocomotion::IsEntityTraversable
+server              76224f40  CTFBotLocomotion::Update
+server              FAIL      CTFBotMainAction::Dodge
+server              FAIL      CTFBotMainAction::Dodge [clone]
+server              FAIL      CTFBotMainAction::FireWeaponAtEnemy
+server              FAIL      CTFBotMainAction::GetHealerOfThreat
+server              FAIL      CTFBotMainAction::InitialContainedAction
+server              FAIL      CTFBotMainAction::OnContact
+server              FAIL      CTFBotMainAction::OnInjured
+server              7622bd50  CTFBotMainAction::OnOtherKilled
+server              FAIL      CTFBotMainAction::OnStart
+server              7622c100  CTFBotMainAction::OnStuck
+server              FAIL      CTFBotMainAction::SelectCloserThreat
+server              FAIL      CTFBotMainAction::SelectMoreDangerousThreat
+server              FAIL      CTFBotMainAction::SelectMoreDangerousThreatInternal
+server              FAIL      CTFBotMainAction::SelectTargetPoint
+server              FAIL      CTFBotMainAction::ShouldAttack
+server              FAIL      CTFBotMainAction::ShouldHurry
+server              7622d690  CTFBotMainAction::Update
+server              FAIL      CTFBotMainAction::~CTFBotMainAction [D0]
+server              FAIL      CTFBotMainAction::~CTFBotMainAction [D2]
+server              FAIL      CTFBotMedicHeal::IsVisibleToEnemy
+server              FAIL      CTFBotMedicHeal::SelectPatient
+server              762422f0  CTFBotMedicHeal::Update
+server              76243e40  CTFBotMissionSuicideBomber::Detonate
+server              76244760  CTFBotMissionSuicideBomber::OnKilled
+server              76244830  CTFBotMissionSuicideBomber::OnStart
+server              76244970  CTFBotMissionSuicideBomber::OnStuck
+server              762449c0  CTFBotMissionSuicideBomber::StartDetonate
+server              76244ac0  CTFBotMissionSuicideBomber::Update
+server              FAIL      CTFBotMvMEngineerBuildSentryGun::CTFBotMvMEngineerBuildSentryGun [C1]
+server              7623d6a0  CTFBotMvMEngineerBuildSentryGun::Update
+server              FAIL      CTFBotMvMEngineerBuildTeleportExit::CTFBotMvMEngineerBuildTeleportExit [C1]
+server              7623df30  CTFBotMvMEngineerBuildTeleportExit::Update
+server              7623e390  CTFBotMvMEngineerHintFinder::FindHint
+server              7623efd0  CTFBotMvMEngineerIdle::Update
+server              762402a0  CTFBotMvMEngineerTeleportSpawn::Update
+server              76228520  CTFBotPathCost::operator()
+server              FAIL      CTFBotProxy::CTFBotProxy [C1]
+server              FAIL      CTFBotPushToCapturePoint::CTFBotPushToCapturePoint [C1]
+server              76248e90  CTFBotPushToCapturePoint::Update
+server              76233f90  CTFBotScenarioMonitor::DesiredScenarioAndClassAction
+server              762347b0  CTFBotScenarioMonitor::InitialContainedAction
+server              762348d0  CTFBotScenarioMonitor::Update
+server              76234b00  CTFBotSeekAndDestroy::CTFBotSeekAndDestroy [C1]
+server              FAIL      CTFBotSniperLurk::SelectMoreDangerousThreat
+server              FAIL      CTFBotSniperLurk::ShouldAttack
+server              762a94c0  CTFBotSpawner::Parse
+server              762aa350  CTFBotSpawner::ParseEventChangeAttributes
+server              762ab4c0  CTFBotSpawner::Spawn
+server              762a87b0  CTFBotSpawner::~CTFBotSpawner [D0]
+server              762a87b0  CTFBotSpawner::~CTFBotSpawner [D2]
+server              7624dae0  CTFBotSpyAttack::Update
+server              7624f5d0  CTFBotSpyInfiltrate::Update
+server              76250340  CTFBotSpyLurk::Update
+server              FAIL      CTFBotSpySap::CTFBotSpySap [C1]
+server              FAIL      CTFBotSpySap::CTFBotSpySap [C2]
+server              76226af0  CTFBotSquad::Leave
+server              FAIL      CTFBotSquad::ShouldSquadLeaderWaitForFormation
+server              76238490  CTFBotStickybombSentrygun::Update
+server              FAIL      CTFBotTacticalMonitor::AvoidBumpingEnemies
+server              FAIL      CTFBotTacticalMonitor::FindNearbyTeleporter
+server              76235a60  CTFBotTacticalMonitor::InitialContainedAction
+server              76235d50  CTFBotTacticalMonitor::OnCommandString
+server              76236280  CTFBotTacticalMonitor::OnNavAreaChanged
+server              FAIL      CTFBotTacticalMonitor::ShouldOpportunisticallyTeleport
+server              762363e0  CTFBotTacticalMonitor::Update
+server              FAIL      CTFBotUseItem::CTFBotUseItem [C1]
+server              76236fd0  CTFBotUseItem::OnEnd
+server              76236fe0  CTFBotUseItem::OnStart
+server              762370b0  CTFBotUseItem::Update
+server              76236f90  CTFBotUseItem::~CTFBotUseItem [D2]
+server              76226fb0  CTFBotVision::CollectPotentiallyVisibleEntities
+server              762272b0  CTFBotVision::IsIgnored
+server              76227500  CTFBotVision::IsVisibleEntityNoticed
+server              762276b0  CTFBotVision::Update
+server              FAIL      CTFBotVision::UpdatePotentiallyVisibleNPCVector
+server              FAIL      CTFChargedSMG::SecondaryAttack
+server              FAIL      CTFCleaver::CreateJarProjectile
+server              FAIL      CTFCompoundBow::GetChargeMaxTime
+server              FAIL      CTFCompoundBow::GetCurrentCharge
+server              762c58f0  CTFCompoundBow::GetProjectileDamage
+server              FAIL      CTFCompoundBow::GetProjectileSpeed
+server              762c5d60  CTFCompoundBow::LaunchGrenade
+server              FAIL      CTFCompoundBow::Reload
+server              FAIL      CTFConditionList::_Add
+server              FAIL      CTFConditionList::_Remove
+server              FAIL      CTFCrossbow::GetProjectileSpeed
+server              762b7260  CTFDroppedWeapon::Create
+server              762b7420  CTFDroppedWeapon::InitDroppedWeapon
+server              762b7930  CTFDroppedWeapon::InitPickedUpWeapon
+server              FAIL      CTFFists::Punch
+server              FAIL      CTFFists::SecondaryAttack
+server              FAIL      CTFFlameEntity::Create
+server              762ca0b0  CTFFlameEntity::FlameThink
+server              762cb170  CTFFlameEntity::OnCollide
+server              FAIL      CTFFlameEntity::RemoveFlame
+server              762cc700  CTFFlameEntity::Spawn
+server              FAIL      CTFFlameManager::BCanBurnEntityThisFrame
+server              FAIL      CTFFlameManager::GetFlameDamageScale
+server              7612efd0  CTFFlameManager::OnCollide
+server              7612fc00  CTFFlameManager::ShouldCollide
+server              762c9c80  CTFFlameThrower::FireAirBlast
+server              762ca7f0  CTFFlameThrower::GetDeflectionRadius
+server              FAIL      CTFFlameThrower::GetFlameOriginPos
+server              762ca830  CTFFlameThrower::GetMuzzlePosHelper
+server              762cbb10  CTFFlameThrower::PrimaryAttack
+server              FAIL      CTFFlameThrower::SetWeaponState
+server              FAIL      CTFFlareGun_Revenge::Deploy
+server              FAIL      CTFFlareGun_Revenge::Holster
+server              76287b30  CTFGCServerSystem::ClientDisconnected
+server              FAIL      CTFGCServerSystem::PreClientUpdate
+server              FAIL      CTFGCServerSystem::SetHibernation
+server              761320e0  CTFGameMovement::CheckJumpButton
+server              76132c20  CTFGameMovement::CheckStuck
+server              76133000  CTFGameMovement::CheckWater
+server              76134020  CTFGameMovement::FullWalkMove
+server              761342f0  CTFGameMovement::GetAirSpeedCap
+server              76134590  CTFGameMovement::GrapplingHookMove
+server              76134de0  CTFGameMovement::HandleDuckingSpeedCrop
+server              76136370  CTFGameMovement::PlayerSolidMask
+server              FAIL      CTFGameMovement::PreventBunnyJumping
+server              761353a0  CTFGameMovement::ProcessMovement
+server              FAIL      CTFGameMovement::ToggleParachute
+server              FAIL      CTFGameMovement::ToggleParachute [clone]
+server              7613db80  CTFGameRules::ApplyOnDamageAliveModifyRules
+server              7613eb60  CTFGameRules::ApplyOnDamageModifyRules
+server              76143180  CTFGameRules::BetweenRounds_Start
+server              FAIL      CTFGameRules::BetweenRounds_Think
+server              FAIL      CTFGameRules::BroadcastSound
+server              7613ad20  CTFGameRules::CTFGameRules [C1]
+server              FAIL      CTFGameRules::CalcDominationAndRevenge
+server              FAIL      CTFGameRules::CalcDominationAndRevenge [clone]
+server              FAIL      CTFGameRules::CanPlayerUseRespec
+server              FAIL      CTFGameRules::CanUpgradeWithAttrib
+server              76145dc0  CTFGameRules::CleanUpMap
+server              761465a0  CTFGameRules::ClientCommandKeyValues
+server              76146f90  CTFGameRules::ClientConnected
+server              76147060  CTFGameRules::ClientDisconnected
+server              76148860  CTFGameRules::DeathNotice
+server              76149650  CTFGameRules::DistributeCurrencyAmount
+server              76149fa0  CTFGameRules::DropHalloweenSoulPack
+server              FAIL      CTFGameRules::DropSpellPickup
+server              FAIL      CTFGameRules::DropSpellPickup [clone]
+server              FAIL      CTFGameRules::FPlayerCanTakeDamage
+server              7614b680  CTFGameRules::FireGameEvent
+server              7614bdb0  CTFGameRules::FlPlayerFallDamage
+server              FAIL      CTFGameRules::FlagsMayBeCapped
+server              FAIL      CTFGameRules::GetAssister
+server              FAIL      CTFGameRules::GetBonusRoundTime
+server              FAIL      CTFGameRules::GetCostForUpgrade
+server              FAIL      CTFGameRules::GetCurrentMatchGroup
+server              7614cd40  CTFGameRules::GetKillingWeaponName
+server              7614e800  CTFGameRules::GetTaggedConVarList
+server              7614e890  CTFGameRules::GetTeamAssignmentOverride
+server              FAIL      CTFGameRules::GetUpgradeTier
+server              76152100  CTFGameRules::IsCompetitiveMode
+server              761524d0  CTFGameRules::IsPVEModeControlled
+server              FAIL      CTFGameRules::IsUpgradeTierEnabled
+server              FAIL      CTFGameRules::IsUsingSpells
+server              FAIL      CTFGameRules::LoadMapCycleFile
+server              FAIL      CTFGameRules::OnPlayerSpawned
+server              76155900  CTFGameRules::PlayerKilled
+server              76157600  CTFGameRules::PlayerReadyStatus_HaveMinPlayersToEnable
+server              FAIL      CTFGameRules::PlayerReadyStatus_ShouldStartCountdown
+server              FAIL      CTFGameRules::PlayerReadyStatus_UpdatePlayerState
+server              76158100  CTFGameRules::PowerupModeInitKillCountTimer
+server              761581d0  CTFGameRules::PowerupModeKillCountCompare
+server              FAIL      CTFGameRules::PushAllPlayersAway
+server              76159230  CTFGameRules::RadiusDamage
+server              FAIL      CTFGameRules::RoundCleanupShouldIgnore
+server              7615f2b0  CTFGameRules::SendWinPanelInfo
+server              76151030  CTFGameRules::SetCustomUpgradesFile
+server              FAIL      CTFGameRules::SetNextMvMPopfile
+server              7615fea0  CTFGameRules::SetWinningTeam
+server              76160a10  CTFGameRules::SetupOnRoundStart
+server              FAIL      CTFGameRules::ShouldCreateEntity
+server              FAIL      CTFGameRules::ShouldDropSpellPickup
+server              FAIL      CTFGameRules::ShouldRespawnQuickly
+server              FAIL      CTFGameStats::AccumulateAndResetPerLifeStats
+server              FAIL      CTFGameStats::Event_PlayerConnected
+server              76168640  CTFGameStats::Event_PlayerDisconnectedTF
+server              FAIL      CTFGameStats::Event_PlayerEarnedKillStreak
+server              76168780  CTFGameStats::Event_PlayerFiredWeapon
+server              76168ce0  CTFGameStats::Event_PlayerLeachedHealth
+server              FAIL      CTFGameStats::FindPlayerStats
+server              FAIL      CTFGameStats::IncrementStat
+server              FAIL      CTFGameStats::ResetKillHistory
+server              FAIL      CTFGameStats::ResetPlayerStats
+server              7616c8d0  CTFGameStats::SendStatsToPlayer
+server              FAIL      CTFGameStats::TrackKillStats
+server              762d6180  CTFGasManager::OnCollide
+server              FAIL      CTFGrapplingHook::GetProjectileSpeed
+server              FAIL      CTFGrapplingHook::ItemPostFrame
+server              FAIL      CTFGrenadeLauncher::SecondaryAttack
+server              FAIL      CTFGrenadePipebombProjectile::Create
+server              762cfb60  CTFGrenadePipebombProjectile::DetonateStickies
+server              75d1bd70  CTFGrenadePipebombProjectile::IsDeflectable
+server              762d0270  CTFGrenadePipebombProjectile::OnTakeDamage
+server              762d0750  CTFGrenadePipebombProjectile::PipebombTouch
+server              762d0f40  CTFGrenadePipebombProjectile::SetPipebombMode
+server              75df0ba0  CTFGrenadePipebombProjectile::StickybombTouch
+server              762d1130  CTFGrenadePipebombProjectile::VPhysicsCollision
+server              7608a340  CTFInventoryManager::GetBaseItemForClass
+server              FAIL      CTFInventoryManager::GetInventoryForPlayer
+server              FAIL      CTFItem::GetItemID
+server              7608f8c0  CTFItemDefinition::GetLoadoutSlot
+server              FAIL      CTFJar::CreateJarProjectile
+server              FAIL      CTFJar::FireJar
+server              FAIL      CTFJar::TossJarThink
+server              FAIL      CTFJarGas::CreateJarProjectile
+server              FAIL      CTFJarMilk::CreateJarProjectile
+server              FAIL      CTFKnife::CanPerformBackstabAgainstTarget
+server              FAIL      CTFKnife::CanPerformBackstabAgainstTarget [clone]
+server              FAIL      CTFKnife::DisguiseOnKill
+server              762d74f0  CTFKnife::GetMeleeDamage
+server              FAIL      CTFKnife::IsBehindAndFacingTarget
+server              762d79c0  CTFKnife::PrimaryAttack
+server              FAIL      CTFLaserPointer::CreateLaserDot
+server              FAIL      CTFMapsWorkshop::AddMap
+server              FAIL      CTFMapsWorkshop::FindOrCreateMapByNames
+server              FAIL      CTFMapsWorkshop::GetMapName
+server              760f3a90  CTFMapsWorkshop::PrepareLevelResources
+server              760f3ec0  CTFMapsWorkshop::Refresh
+server              FAIL      CTFMapsWorkshop::Steam_OnUGCItemInstalled
+server              FAIL      CTFMechanicalArm::ShockAttack
+server              762db2e0  CTFMedigunShield::Create
+server              FAIL      CTFMedigunShield::RemoveShield
+server              FAIL      CTFMedigunShield::ShieldThink
+server              FAIL      CTFMedigunShield::ShieldTouch
+server              FAIL      CTFMedigunShield::UpdateShieldPosition
+server              762dfce0  CTFMinigun::AttackEnemyProjectiles
+server              FAIL      CTFMinigun::CanHolster
+server              FAIL      CTFMinigun::ItemPostFrame
+server              FAIL      CTFMinigun::SecondaryAttack
+server              FAIL      CTFMinigun::SetWeaponState
+server              762e09c0  CTFMinigun::SharedAttack
+server              FAIL      CTFMinigun::WindDown
+server              FAIL      CTFMinigun::WindUp
+server              FAIL      CTFNavArea::AddPotentiallyVisibleActor
+server              76292c10  CTFNavArea::GetCombatIntensity
+server              FAIL      CTFNavArea::GetNextIncursionArea
+server              762953a0  CTFNavArea::IsBlocked
+server              FAIL      CTFNavArea::IsTFMarked
+server              FAIL      CTFNavArea::IsValidForWanderingPopulation
+server              FAIL      CTFNavArea::MakeNewTFMarker
+server              FAIL      CTFNavArea::TFMark
+server              FAIL      CTFNavMesh::CollectBuiltObjects
+server              FAIL      CTFNavMesh::RecomputeInternalData
+server              FAIL      CTFObjectiveResource::DecrementMannVsMachineWaveClassCount
+server              FAIL      CTFPipebombLauncher::Deploy
+server              FAIL      CTFPipebombLauncher::DetonateRemotePipebombs
+server              762e33d0  CTFPipebombLauncher::FireProjectile
+server              FAIL      CTFPipebombLauncher::SecondaryAttack
+server              FAIL      CTFPistol_ScoutPrimary::Push
+server              FAIL      CTFPistol_ScoutSecondary::GetDamageType
+server              FAIL      CTFPlayer::AddCustomAttribute
+server              FAIL      CTFPlayer::AddObject
+server              FAIL      CTFPlayer::AddObject [clone]
+server              761a1490  CTFPlayer::ApplyAbsVelocityImpulse
+server              FAIL      CTFPlayer::ApplyGenericPushbackImpulse
+server              761a1710  CTFPlayer::ApplyPunchImpulseX
+server              761a17e0  CTFPlayer::ApplyPushFromDamage
+server              FAIL      CTFPlayer::BeginPurchasableUpgrades
+server              761da900  CTFPlayer::CanAirDash
+server              FAIL      CTFPlayer::CanAttack
+server              FAIL      CTFPlayer::CanBeForcedToLaugh
+server              FAIL      CTFPlayer::CanBuild
+server              FAIL      CTFPlayer::CanBuild [clone]
+server              761dae50  CTFPlayer::CanDisguise
+server              FAIL      CTFPlayer::CanGoInvisible
+server              FAIL      CTFPlayer::CanHearAndReadChatFrom
+server              FAIL      CTFPlayer::CanMoveDuringTaunt
+server              FAIL      CTFPlayer::CancelTaunt
+server              FAIL      CTFPlayer::ChangeTeam
+server              761a4150  CTFPlayer::CheckBlockBackstab
+server              761a45e0  CTFPlayer::CheckInstantLoadoutRespawn
+server              FAIL      CTFPlayer::ClearDisguiseWeaponList
+server              FAIL      CTFPlayer::ClearTauntAttack
+server              761a5040  CTFPlayer::ClientCommand
+server              FAIL      CTFPlayer::CreateDisguiseWeaponList
+server              761a6e90  CTFPlayer::CreateFeignDeathRagdoll
+server              FAIL      CTFPlayer::CreateRagdollEntity [args]
+server              FAIL      CTFPlayer::CreateViewModel
+server              761a7d90  CTFPlayer::DeathSound
+server              761a8110  CTFPlayer::DetonateObjectOfType
+server              FAIL      CTFPlayer::DoAnimationEvent
+server              761dfb40  CTFPlayer::DoClassSpecialSkill
+server              761a8860  CTFPlayer::DoTauntAttack
+server              761ab6d0  CTFPlayer::DropAmmoPack
+server              FAIL      CTFPlayer::DropCurrencyPack
+server              FAIL      CTFPlayer::DropFlag
+server              FAIL      CTFPlayer::EndClassSpecialSkill
+server              FAIL      CTFPlayer::EndPurchasableUpgrades
+server              761ac7d0  CTFPlayer::Event_Killed
+server              761b1a80  CTFPlayer::FindPartnerTauntInitiator
+server              761e0310  CTFPlayer::FireBullet
+server              761b2370  CTFPlayer::ForceChangeTeam
+server              FAIL      CTFPlayer::ForceRegenerateAndRespawn
+server              761b25f0  CTFPlayer::ForceRespawn
+server              761b2a30  CTFPlayer::ForgetFirstUpgradeForItem
+server              FAIL      CTFPlayer::GetAttributeList
+server              FAIL      CTFPlayer::GetAttributeManager
+server              761b2bd0  CTFPlayer::GetAutoTeam
+server              FAIL      CTFPlayer::GetDesiredHandScale
+server              FAIL      CTFPlayer::GetDesiredHeadScale
+server              FAIL      CTFPlayer::GetDesiredTorsoScale
+server              FAIL      CTFPlayer::GetEntityForLoadoutSlot
+server              FAIL      CTFPlayer::GetEquippedWearableForLoadoutSlot
+server              FAIL      CTFPlayer::GetHandScaleSpeed
+server              FAIL      CTFPlayer::GetHeadScaleSpeed
+server              761b32f0  CTFPlayer::GetLoadoutItem
+server              761e2500  CTFPlayer::GetMaxAmmo
+server              761b3500  CTFPlayer::GetMaxHealth
+server              761b3530  CTFPlayer::GetMaxHealthForBuffing
+server              FAIL      CTFPlayer::GetNumObjects
+server              FAIL      CTFPlayer::GetObject
+server              FAIL      CTFPlayer::GetObjectCount
+server              FAIL      CTFPlayer::GetObjectOfType
+server              FAIL      CTFPlayer::GetOpposingTFTeam
+server              761e2a90  CTFPlayer::GetOverrideStepSound
+server              FAIL      CTFPlayer::GetPassiveWeapons
+server              761b3ec0  CTFPlayer::GetRuneHealthBonus
+server              FAIL      CTFPlayer::GetSceneSoundToken
+server              FAIL      CTFPlayer::GetTorsoScaleSpeed
+server              761b4180  CTFPlayer::GiveAmmo
+server              761bac50  CTFPlayer::GiveDefaultItems
+server              761b4300  CTFPlayer::GiveNamedItem
+server              761b4670  CTFPlayer::HandleAnimEvent
+server              761b4b80  CTFPlayer::HandleCommand_JoinClass
+server              761b5370  CTFPlayer::HandleCommand_JoinTeam
+server              FAIL      CTFPlayer::HandleCommand_JoinTeam_NoMenus
+server              FAIL      CTFPlayer::HasTheFlag
+server              FAIL      CTFPlayer::HolsterOffHandWeapon
+server              FAIL      CTFPlayer::InputIgnitePlayer
+server              FAIL      CTFPlayer::InputSetCustomModel
+server              FAIL      CTFPlayer::InspectButtonPressed
+server              FAIL      CTFPlayer::IsAllowedToInitiateTauntWithPartner
+server              761e3f20  CTFPlayer::IsAllowedToPickUpFlag
+server              FAIL      CTFPlayer::IsAllowedToTaunt
+server              FAIL      CTFPlayer::IsMiniBoss
+server              FAIL      CTFPlayer::IsPlayerClass
+server              FAIL      CTFPlayer::IsReadyToPlay
+server              FAIL      CTFPlayer::IsReadyToSpawn
+server              761bcd30  CTFPlayer::ItemIsAllowed
+server              FAIL      CTFPlayer::ItemsMatch
+server              FAIL      CTFPlayer::ItemsMatch [clone]
+server              761bd700  CTFPlayer::ManageBuilderWeapons
+server              761bda50  CTFPlayer::ManageRegularWeapons
+server              FAIL      CTFPlayer::MaybeDrawRailgunBeam
+server              FAIL      CTFPlayer::MedicGetChargeLevel
+server              FAIL      CTFPlayer::ModifyOrAppendCriteria
+server              FAIL      CTFPlayer::ModifyOrAppendCriteria::kSlotCriteriaName
+server              761c0b80  CTFPlayer::OnKilledOther_Effects
+server              761c0fa0  CTFPlayer::OnNavAreaChanged
+server              761c11a0  CTFPlayer::OnTakeDamage
+server              761c4320  CTFPlayer::OnTakeDamage_Alive
+server              761c5640  CTFPlayer::OnTauntSucceeded
+server              FAIL      CTFPlayer::PainSound
+server              761e8280  CTFPlayer::ParseSharedTauntDataFromEconItemView
+server              761c5c40  CTFPlayer::PickupWeaponFromOther
+server              FAIL      CTFPlayer::PlayScene
+server              FAIL      CTFPlayer::PlaySpecificSequence
+server              FAIL      CTFPlayer::PlayTauntRemapInputScene
+server              FAIL      CTFPlayer::PlayTauntSceneFromItem
+server              761c73c0  CTFPlayer::PlayerRunCommand
+server              FAIL      CTFPlayer::PostThink
+server              761c81b0  CTFPlayer::PrecacheMvM
+server              FAIL      CTFPlayer::ReapplyItemUpgrades
+server              FAIL      CTFPlayer::ReapplyPlayerUpgrades
+server              761c8e30  CTFPlayer::RegenThink
+server              761c9400  CTFPlayer::Regenerate
+server              761c9900  CTFPlayer::RememberUpgrade
+server              FAIL      CTFPlayer::RemoveAllCustomAttributes
+server              FAIL      CTFPlayer::RemoveAllOwnedEntitiesFromWorld
+server              FAIL      CTFPlayer::RemoveAllWeapons
+server              FAIL      CTFPlayer::RemoveAmmo
+server              FAIL      CTFPlayer::RemoveCurrency
+server              FAIL      CTFPlayer::RemoveCustomAttribute
+server              FAIL      CTFPlayer::RemoveInvisibility
+server              FAIL      CTFPlayer::RemoveObject
+server              FAIL      CTFPlayer::RemoveOwnedProjectiles
+server              FAIL      CTFPlayer::SetGrapplingHookTarget
+server              FAIL      CTFPlayer::SetOffHandWeapon
+server              FAIL      CTFPlayer::ShouldDropAmmoPack
+server              FAIL      CTFPlayer::ShouldGainInstantSpawn
+server              761cd190  CTFPlayer::ShouldGib
+server              FAIL      CTFPlayer::ShouldTransmit
+server              761cd380  CTFPlayer::Spawn
+server              761ce6f0  CTFPlayer::SpeakConceptIfAllowed
+server              FAIL      CTFPlayer::SpyDeadRingerDeath
+server              FAIL      CTFPlayer::StartBuildingObjectOfType
+server              FAIL      CTFPlayer::StartedBuildingObject
+server              761ced20  CTFPlayer::StateEnter
+server              FAIL      CTFPlayer::StateLeave
+server              FAIL      CTFPlayer::StateTransition
+server              FAIL      CTFPlayer::StopTaunt
+server              761d0090  CTFPlayer::TFPlayerThink
+server              761d1c70  CTFPlayer::TakeHealth
+server              761d1d80  CTFPlayer::Taunt
+server              761ec930  CTFPlayer::TeamFortress_CalculateMaxSpeed
+server              FAIL      CTFPlayer::TeamFortress_SetSpeed
+server              761d2d40  CTFPlayer::TeleportEffect
+server              761d2f40  CTFPlayer::Touch
+server              761d3990  CTFPlayer::TraceAttack
+server              761ed610  CTFPlayer::TryToPickupBuilding
+server              FAIL      CTFPlayer::UpdateExpression
+server              FAIL      CTFPlayer::UpdateModel
+server              FAIL      CTFPlayer::UpdateOnRemove
+server              761d4260  CTFPlayer::UseActionSlotItemPressed
+server              FAIL      CTFPlayer::UseActionSlotItemReleased
+server              FAIL      CTFPlayer::ValidateWeapons
+server              FAIL      CTFPlayer::WantsLagCompensationOnEntity
+server              761ef600  CTFPlayer::Weapon_GetWeaponByType
+server              FAIL      CTFPlayer::Weapon_OwnsThisID
+server              FAIL      CTFPlayerClassShared::CanBuildObject
+server              FAIL      CTFPlayerClassShared::GetHandModelName
+server              FAIL      CTFPlayerClassShared::SetCustomModel
+server              7608a690  CTFPlayerInventory::GetItemInLoadout
+server              761f23e0  CTFPlayerMove::SetupMove
+server              761f23d0  CTFPlayerMove::StartCommand
+server              FAIL      CTFPlayerResource::SetPlayerClassWhenKilled
+server              761d6480  CTFPlayerResource::UpdateConnectedPlayer
+server              FAIL      CTFPlayerResource::UpdateDisconnectedPlayer
+server              761d96a0  CTFPlayerShared::AddCond
+server              FAIL      CTFPlayerShared::Burn
+server              FAIL      CTFPlayerShared::CTFPlayerShared
+server              FAIL      CTFPlayerShared::CalculateObjectCost
+server              FAIL      CTFPlayerShared::CanRecieveMedigunChargeEffect
+server              761db910  CTFPlayerShared::ConditionGameRulesThink
+server              761de130  CTFPlayerShared::ConditionThink
+server              FAIL      CTFPlayerShared::DetermineDisguiseWeapon
+server              FAIL      CTFPlayerShared::DetermineDisguiseWearables
+server              761df8f0  CTFPlayerShared::Disguise
+server              761dff40  CTFPlayerShared::FadeInvis
+server              FAIL      CTFPlayerShared::FindHealerIndex
+server              761e1160  CTFPlayerShared::GetActiveTFWeapon
+server              761e1360  CTFPlayerShared::GetCarryingRuneType
+server              FAIL      CTFPlayerShared::GetConditionDuration
+server              FAIL      CTFPlayerShared::GetConditionProvider
+server              FAIL      CTFPlayerShared::GetConditionsBits
+server              761e1b80  CTFPlayerShared::GetDisguiseTeam
+server              FAIL      CTFPlayerShared::GetMaxBuffedHealth
+server              FAIL      CTFPlayerShared::GetPercentInvisible
+server              761e30f0  CTFPlayerShared::Heal
+server              761e34e0  CTFPlayerShared::InCond
+server              761e4190  CTFPlayerShared::IsControlStunned
+server              761e41f0  CTFPlayerShared::IsCritBoosted
+server              761e43d0  CTFPlayerShared::IsInvulnerable
+server              FAIL      CTFPlayerShared::IsLoserStateStunned
+server              761e4540  CTFPlayerShared::IsPlayerDominated
+server              761e4560  CTFPlayerShared::IsPlayerDominatingMe
+server              761e45b0  CTFPlayerShared::IsStealthed
+server              761e47a0  CTFPlayerShared::MakeBleed
+server              FAIL      CTFPlayerShared::ModifyRage
+server              FAIL      CTFPlayerShared::OnAddBalloonHead
+server              FAIL      CTFPlayerShared::OnAddHalloweenTiny
+server              FAIL      CTFPlayerShared::OnAddMVMBotRadiowave
+server              FAIL      CTFPlayerShared::OnAddTeleported
+server              FAIL      CTFPlayerShared::OnConditionAdded
+server              FAIL      CTFPlayerShared::OnConditionRemoved
+server              FAIL      CTFPlayerShared::OnRemoveHalloweenTiny
+server              FAIL      CTFPlayerShared::OnRemovePhase
+server              FAIL      CTFPlayerShared::OnRemoveStunned
+server              FAIL      CTFPlayerShared::OnRemoveTaunting
+server              FAIL      CTFPlayerShared::OnRemoveTeleported
+server              FAIL      CTFPlayerShared::PulseMedicRadiusHeal
+server              FAIL      CTFPlayerShared::PulseMedicRadiusHeal [clone]
+server              761e8fe0  CTFPlayerShared::PulseRageBuff
+server              FAIL      CTFPlayerShared::RadiusCurrencyCollectionCheck
+server              FAIL      CTFPlayerShared::RadiusSpyScan
+server              FAIL      CTFPlayerShared::RecalculatePlayerBodygroups
+server              761ea0c0  CTFPlayerShared::RemoveAllCond
+server              761ea260  CTFPlayerShared::RemoveCond
+server              FAIL      CTFPlayerShared::RemoveDisguiseWeapon
+server              761ea990  CTFPlayerShared::SelfBurn
+server              FAIL      CTFPlayerShared::SetChargeEffect
+server              FAIL      CTFPlayerShared::SetDefaultItemChargeMeters
+server              FAIL      CTFPlayerShared::SetItemChargeMeter
+server              FAIL      CTFPlayerShared::SetItemChargeMeter [clone]
+server              FAIL      CTFPlayerShared::SetPlayerDominated
+server              FAIL      CTFPlayerShared::SetPlayerDominatingMe
+server              FAIL      CTFPlayerShared::SetRageMeter
+server              761eb860  CTFPlayerShared::SetRevengeCrits
+server              761eb900  CTFPlayerShared::SetScoutHypeMeter
+server              761ec3c0  CTFPlayerShared::StopHealing
+server              761ec460  CTFPlayerShared::StunPlayer
+server              761ed370  CTFPlayerShared::TestAndExpireChargeEffect
+server              FAIL      CTFPlayerShared::UpdateChargeMeter
+server              FAIL      CTFPlayerShared::UpdateChargeMeter [clone]
+server              FAIL      CTFPlayerShared::UpdateCloakMeter
+server              FAIL      CTFPlayerShared::UpdateCloakMeter [clone]
+server              FAIL      CTFPlayerShared::UpdateEnergyDrinkMeter
+server              FAIL      CTFPlayerShared::UpdateEnergyDrinkMeter [clone]
+server              FAIL      CTFPlayerSharedUtils::GetEconItemViewByLoadoutSlot
+server              FAIL      CTFPointWeaponMimic::Fire
+server              FAIL      CTFPointWeaponMimic::GetFiringAngles
+server              762a2460  CTFPointWeaponMimic::InputFireMultiple
+server              FAIL      CTFPointWeaponMimic::InputFireOnce
+server              762a2530  CTFPointWeaponMimic::Spawn
+server              76692c10  CTFPointWeaponMimic::m_DataMap
+server              762a1650  CTFPointWeaponMimic::~CTFPointWeaponMimic [D0]
+server              762a1650  CTFPointWeaponMimic::~CTFPointWeaponMimic [D2]
+server              761f3610  CTFPowerup::DropSingleInstance
+server              FAIL      CTFPowerup::GetLifeTime
+server              FAIL      CTFPowerup::Spawn
+server              FAIL      CTFPowerup::ValidTouch
+server              7668d3b8  CTFPowerup::m_DataMap
+server              FAIL      CTFPowerupBottle::AllowedToUse
+server              FAIL      CTFPowerupBottle::GetNumCharges
+server              76171e10  CTFPowerupBottle::ReapplyProvision
+server              76172600  CTFPowerupBottle::SetNumCharges
+server              FAIL      CTFPowerupBottle::Use
+server              762b9650  CTFProjectile_Arrow::ArrowTouch
+server              FAIL      CTFProjectile_Arrow::BreakArrow
+server              FAIL      CTFProjectile_Arrow::CanHeadshot
+server              FAIL      CTFProjectile_Arrow::CheckSkyboxImpact
+server              FAIL      CTFProjectile_Arrow::Create
+server              FAIL      CTFProjectile_Arrow::CreateTrail
+server              FAIL      CTFProjectile_Arrow::FadeOut
+server              FAIL      CTFProjectile_Arrow::GetWeaponID
+server              FAIL      CTFProjectile_Arrow::IsDeflectable
+server              FAIL      CTFProjectile_Arrow::SetScorer
+server              FAIL      CTFProjectile_Arrow::Spawn
+server              FAIL      CTFProjectile_Arrow::StrikeTarget
+server              FAIL      CTFProjectile_BallOfFire::Burn
+server              FAIL      CTFProjectile_BallOfFire::RocketTouch
+server              FAIL      CTFProjectile_Cleaver::Create
+server              76261fa0  CTFProjectile_Cleaver::GetDamage
+server              75e17e70  CTFProjectile_EnergyBall::CanHeadshot
+server              762bbfe0  CTFProjectile_EnergyBall::Explode
+server              75d1bd70  CTFProjectile_EnergyBall::IsDeflectable
+server              FAIL      CTFProjectile_EnergyBall::SetScorer
+server              FAIL      CTFProjectile_EnergyRing::CanHeadshot
+server              FAIL      CTFProjectile_EnergyRing::Create
+server              FAIL      CTFProjectile_EnergyRing::GetInitialVelocity
+server              FAIL      CTFProjectile_EnergyRing::ProjectileTouch
+server              FAIL      CTFProjectile_EnergyRing::ShouldPenetrate
+server              762bd780  CTFProjectile_Flare::Explode
+server              762bdfd0  CTFProjectile_Flare::Explode_Air
+server              FAIL      CTFProjectile_Flare::GetDamageType
+server              FAIL      CTFProjectile_Flare::IsDeflectable
+server              FAIL      CTFProjectile_Flare::PerformCustomPhysics
+server              FAIL      CTFProjectile_Flare::SendDeathNotice
+server              FAIL      CTFProjectile_Flare::SetScorer
+server              FAIL      CTFProjectile_GrapplingHook::CanHeadshot
+server              FAIL      CTFProjectile_GrapplingHook::HookTarget
+server              FAIL      CTFProjectile_HealingBolt::CanHeadshot
+server              FAIL      CTFProjectile_Jar::Create
+server              762d3ca0  CTFProjectile_Jar::Explode
+server              FAIL      CTFProjectile_JarGas::Create
+server              FAIL      CTFProjectile_JarMilk::Create
+server              762d9bf0  CTFProjectile_MechanicalArmOrb::CheckForProjectiles
+server              761f6410  CTFProjectile_Rocket::Create
+server              FAIL      CTFProjectile_Rocket::IsDeflectable
+server              FAIL      CTFProjectile_Rocket::SetScorer
+server              761f6080  CTFProjectile_Rocket::Spawn
+server              FAIL      CTFProjectile_SentryRocket::Create
+server              7627b8b0  CTFProjectile_Throwable::GetAngularImpulse
+server              762ed4a0  CTFProjectile_Throwable::GetVelocityVector
+server              762ee510  CTFProjectile_ThrowableBreadMonster::GetDamage
+server              762edca0  CTFProjectile_ThrowableBrick::GetDamage
+server              762ed950  CTFProjectile_ThrowableRepel::GetDamage
+server              762ed5f0  CTFProjectile_ThrowableRepel::SetCustomPipebombModel
+server              FAIL      CTFRadiusDamageInfo::ApplyToEntity
+server              FAIL      CTFRadiusDamageInfo::ApplyToEntity [clone]
+server              FAIL      CTFRaygun::GetProjectileSpeed
+server              FAIL      CTFReviveMarker::AddMarkerHealth
+server              FAIL      CTFReviveMarker::Create
+server              FAIL      CTFReviveMarker::ReviveThink
+server              FAIL      CTFRevolver::CanFireCriticalShot
+server              FAIL      CTFRevolver::Deploy
+server              FAIL      CTFRevolver::GetDamageType
+server              FAIL      CTFRevolver::Holster
+server              FAIL      CTFRobotArm::Smack
+server              FAIL      CTFSMG::GetDamageType
+server              FAIL      CTFScatterGun::ApplyPostHitEffects
+server              FAIL      CTFShotgunBuildingRescue::GetProjectileSpeed
+server              FAIL      CTFShotgun_Revenge::Deploy
+server              FAIL      CTFShotgun_Revenge::Holster
+server              762ead40  CTFSniperRifle::ApplyChargeSpeedModifications
+server              762ea3f0  CTFSniperRifle::CanFireCriticalShot
+server              FAIL      CTFSniperRifle::CreateSniperDot
+server              762eb410  CTFSniperRifle::ExplosiveHeadShot
+server              FAIL      CTFSniperRifle::GetDamageType
+server              FAIL      CTFSniperRifle::GetPenetrateType
+server              762e9f60  CTFSniperRifle::ItemPostFrame
+server              FAIL      CTFSniperRifle::SniperRifleChargeRateMod
+server              FAIL      CTFSniperRifleClassic::GetDamageType
+server              762ebda0  CTFSniperRifleClassic::ItemPostFrame
+server              FAIL      CTFSniperRifleDecap::GetCount
+server              FAIL      CTFSniperRifleDecap::SniperRifleChargeRateMod
+server              FAIL      CTFSodaPopper::SecondaryAttack
+server              7627c7e0  CTFSpellBook::RollNewSpell
+server              FAIL      CTFSpellBook::SetSelectedSpell
+server              FAIL      CTFStickBomb::Smack
+server              762c0fa0  CTFStunBall::ApplyBallImpactEffectOnVictim
+server              FAIL      CTFStunBall::Create
+server              762c0020  CTFStunBall::GetDamage
+server              FAIL      CTFSword::GetSwordHealthMod
+server              FAIL      CTFSword::GetSwordSpeedMod
+server              762b1df0  CTFTankBoss::Event_Killed
+server              762b1f30  CTFTankBoss::Explode
+server              FAIL      CTFTankBoss::GetBodyInterface
+server              FAIL      CTFTankBoss::GetCurrencyValue
+server              762b2a10  CTFTankBoss::Spawn
+server              FAIL      CTFTankBoss::TankBossThink
+server              FAIL      CTFTankBoss::UpdateOnRemove
+server              FAIL      CTFTankBoss::UpdatePingSound
+server              75ea15f0  CTFTankBossBody::GetSolidMask
+server              762b39c0  CTFTankDestruction::Spawn
+server              76200790  CTFTeam::AddPlayer
+server              FAIL      CTFTeam::GetNumObjects
+server              FAIL      CTFTeam::GetObject
+server              76200d10  CTFTeam::RemovePlayer
+server              FAIL      CTFTeam::SetTeamLeader
+server              FAIL      CTFTeamManager::GetTeam
+server              FAIL      CTFTeamManager::IsValidTeam
+server              00000000  CTFTeamSpawn::m_DataMap
+server              FAIL      CTFWeaponBase::ApplyFireDelay
+server              762f0db0  CTFWeaponBase::ApplyOnHitAttributes
+server              FAIL      CTFWeaponBase::AutoFiresFullClip
+server              FAIL      CTFWeaponBase::CalcIsAttackCritical
+server              FAIL      CTFWeaponBase::CanFireCriticalShot
+server              762f2d00  CTFWeaponBase::CanHolster
+server              FAIL      CTFWeaponBase::CanPerformSecondaryAttack
+server              FAIL      CTFWeaponBase::CheckReloadMisfire
+server              FAIL      CTFWeaponBase::DeflectEntity
+server              762f3780  CTFWeaponBase::DeflectProjectiles
+server              762f3a70  CTFWeaponBase::Deploy
+server              FAIL      CTFWeaponBase::Energy_GetMaxEnergy
+server              FAIL      CTFWeaponBase::Energy_GetShotCost
+server              FAIL      CTFWeaponBase::Energy_Recharge
+server              762f4680  CTFWeaponBase::Equip
+server              FAIL      CTFWeaponBase::GetActivityWeaponRole
+server              FAIL      CTFWeaponBase::GetAfterburnRateOnHit
+server              FAIL      CTFWeaponBase::GetDamageType
+server              FAIL      CTFWeaponBase::GetEffectBarProgress
+server              FAIL      CTFWeaponBase::GetInitialAfterburnDuration
+server              FAIL      CTFWeaponBase::GetMaxHealthMod
+server              FAIL      CTFWeaponBase::GetParticleColor
+server              FAIL      CTFWeaponBase::GetPenetrateType
+server              FAIL      CTFWeaponBase::GetProjectileFireSetup
+server              762f5c40  CTFWeaponBase::GetShootSound
+server              FAIL      CTFWeaponBase::GetSkin
+server              FAIL      CTFWeaponBase::GetSpreadAngles
+server              FAIL      CTFWeaponBase::GetTFPlayerOwner
+server              FAIL      CTFWeaponBase::GetTFWpnData
+server              FAIL      CTFWeaponBase::GetViewModel
+server              FAIL      CTFWeaponBase::GetViewModelWeaponRole
+server              762f65f0  CTFWeaponBase::Holster
+server              FAIL      CTFWeaponBase::InternalGetEffectBarRechargeTime
+server              FAIL      CTFWeaponBase::IsEnergyWeapon
+server              762f6900  CTFWeaponBase::IsPassiveWeapon
+server              762f6930  CTFWeaponBase::IsSilentKiller
+server              FAIL      CTFWeaponBase::ItemBusyFrame
+server              FAIL      CTFWeaponBase::ItemHolsterFrame
+server              762f6b40  CTFWeaponBase::ItemPostFrame
+server              FAIL      CTFWeaponBase::Misfire
+server              762f6e80  CTFWeaponBase::OnActiveStateChanged
+server              FAIL      CTFWeaponBase::PrimaryAttack
+server              FAIL      CTFWeaponBase::Reload
+server              FAIL      CTFWeaponBase::SecondaryAttack
+server              FAIL      CTFWeaponBase::SendWeaponAnim
+server              FAIL      CTFWeaponBase::ShouldRemoveInvisibilityOnPrimaryAttack
+server              FAIL      CTFWeaponBase::StartEffectBarRegen
+server              FAIL      CTFWeaponBase::UpdateHands
+server              FAIL      CTFWeaponBase::UpdateOnRemove
+server              FAIL      CTFWeaponBase::WeaponReset
+server              762f95c0  CTFWeaponBaseGrenadeProj::Destroy
+server              762f99e0  CTFWeaponBaseGrenadeProj::Explode
+server              75e17970  CTFWeaponBaseGrenadeProj::GetWeaponID
+server              762fa170  CTFWeaponBaseGrenadeProj::InitGrenade
+server              762fa790  CTFWeaponBaseGrenadeProj::SetDetonateTimerLength
+server              FAIL      CTFWeaponBaseGun::DoFireEffects
+server              FAIL      CTFWeaponBaseGun::FireArrow
+server              FAIL      CTFWeaponBaseGun::FireEnergyBall
+server              FAIL      CTFWeaponBaseGun::FireFlameRocket
+server              FAIL      CTFWeaponBaseGun::FireFlare
+server              FAIL      CTFWeaponBaseGun::FireJar
+server              FAIL      CTFWeaponBaseGun::FireNail
+server              762fb470  CTFWeaponBaseGun::FirePipeBomb
+server              762fba00  CTFWeaponBaseGun::FireProjectile
+server              FAIL      CTFWeaponBaseGun::FireRocket
+server              FAIL      CTFWeaponBaseGun::GetAmmoPerShot
+server              762fc020  CTFWeaponBaseGun::GetCustomProjectileModel
+server              762fc130  CTFWeaponBaseGun::GetProjectileDamage
+server              FAIL      CTFWeaponBaseGun::GetProjectileGravity
+server              FAIL      CTFWeaponBaseGun::GetProjectileSpeed
+server              FAIL      CTFWeaponBaseGun::GetWeaponProjectileType
+server              FAIL      CTFWeaponBaseGun::ModifyProjectile
+server              762fc650  CTFWeaponBaseGun::PrimaryAttack
+server              FAIL      CTFWeaponBaseGun::RemoveProjectileAmmo
+server              FAIL      CTFWeaponBaseGun::ShouldPlayFireAnim
+server              FAIL      CTFWeaponBaseGun::UpdatePunchAngles
+server              FAIL      CTFWeaponBaseGun::ZoomIn
+server              FAIL      CTFWeaponBaseMelee::DoSwingTrace
+server              762fd870  CTFWeaponBaseMelee::DoSwingTraceInternal
+server              FAIL      CTFWeaponBaseMelee::GetSmackTime
+server              762fe1f0  CTFWeaponBaseMelee::GetSwingRange
+server              762fe250  CTFWeaponBaseMelee::Holster
+server              762fe400  CTFWeaponBaseMelee::OnSwingHit
+server              FAIL      CTFWeaponBaseMelee::SecondaryAttack
+server              762fead0  CTFWeaponBaseMelee::Smack
+server              FAIL      CTFWeaponBaseMelee::Swing
+server              FAIL      CTFWeaponBuilder::CanDeploy
+server              FAIL      CTFWeaponBuilder::GetViewModel
+server              762c3ed0  CTFWeaponBuilder::SetSubType
+server              762c3fb0  CTFWeaponBuilder::StartBuilding
+server              FAIL      CTFWeaponBuilder::StartPlacement
+server              FAIL      CTFWeaponBuilder::StopPlacement
+server              FAIL      CTFWeaponFlameBall::FireProjectile
+server              FAIL      CTFWeaponInvis::ActivateInvisibilityWatch
+server              FAIL      CTFWeaponInvis::CleanupInvisibilityWatch
+server              FAIL      CTFWeaponInvis::GetViewModel
+server              FAIL      CTFWearable::CanEquip
+server              FAIL      CTFWearable::Equip
+server              FAIL      CTFWearableDemoShield::DoCharge
+server              76300eb0  CTFWearableDemoShield::DoSpecialAction
+server              76300f90  CTFWearableDemoShield::EndSpecialAction
+server              760f2f60  CTFWorkshopMap::GetLocalFile
+server              FAIL      CTFWorkshopMap::OnUGCItemInstalled
+server              FAIL      CTFWrench::Smack
+server              FAIL      CTakeDamageInfo::CTakeDamageInfo [C1 | overload 5]
+server              FAIL      CTakeDamageInfo::Init
+server              762a8b90  CTankSpawner::GetClassIcon
+server              75e195e0  CTankSpawner::IsMiniBoss
+server              762a9810  CTankSpawner::Parse
+server              762ac5f0  CTankSpawner::Spawn
+server              762a8830  CTankSpawner::~CTankSpawner [D0]
+server              762a8830  CTankSpawner::~CTankSpawner [D2]
+server              FAIL      CTargetChangeGravity::InputChangeGrav
+server              FAIL      CTargetChangeGravity::InputResetGrav
+server              75ffcf80  CTeam::AddPlayer
+server              75ffd230  CTeam::GetName
+server              75e8b9f0  CTeam::GetNumPlayers
+server              75ffd250  CTeam::GetPlayer
+server              75ffd290  CTeam::GetTeamNumber
+server              75ffd370  CTeam::RemovePlayer
+server              FAIL      CTeamControlPointMaster::PointLastContestedAt
+server              FAIL      CTeamRoundTimer::InputSetTime
+server              FAIL      CTeamplayRoundBasedRules::BroadcastSound
+server              FAIL      CTeamplayRoundBasedRules::GetMinTimeWhenPlayerMaySpawn
+server              FAIL      CTeamplayRoundBasedRules::GetNextRespawnWave
+server              FAIL      CTeamplayRoundBasedRules::SetForceMapReset
+server              FAIL      CTeamplayRoundBasedRules::SetTeamRespawnWaveTime
+server              76010ae0  CTeamplayRoundBasedRules::State_Enter
+server              FAIL      CTeamplayRoundBasedRules::State_Enter_PREROUND
+server              FAIL      CTeamplayRoundBasedRules::State_Leave
+server              760128e0  CTeamplayRoundBasedRules::State_Transition
+server              76009060  CTeamplayRules::PlayerKilled
+server              75e17de0  CTeamplayRules::SetStalemate
+server              76009310  CTeamplayRules::SetWinningTeam
+server              760f9c80  CTempEntsSystem::DispatchEffect
+server              762f8510  CTraceFilterDeflection::ShouldHitEntity
+server              7602efc0  CTraceFilterEntity::ShouldHitEntity
+server              75ec2550  CTraceFilterIgnoreFriendlyCombatItems::ShouldHitEntity
+server              FAIL      CTraceFilterIgnorePlayers::ShouldHitEntity
+server              76135870  CTraceFilterObject::ShouldHitEntity
+server              FAIL      CTraceFilterSimple::CTraceFilterSimple
+server              FAIL      CTraceFilterSimple::CTraceFilterSimple [C1]
+server              7602f2e0  CTraceFilterSimple::ShouldHitEntity
+server              FAIL      CTriggerCamera::Disable
+server              76026ab0  CTriggerCamera::Enable
+server              FAIL      CTriggerCamera::m_DataMap
+server              FAIL      CTriggerCatapult::OnLaunchedVictim
+server              7668f1f0  CTriggerCatapult::m_DataMap
+server              FAIL      CTriggerHurt::HurtEntity
+server              FAIL      CTriggerHurt::HurtEntity [clone]
+server              FAIL      CTriggerIgnite::BurnEntities
+server              FAIL      CTriggerIgnite::BurnEntities [clone]
+server              76202940  CTriggerIgnite::IgniteEntity
+server              7668e7a8  CTriggerIgnite::m_DataMap
+server              FAIL      CUpgrades::ApplyUpgradeToItem
+server              FAIL      CUpgrades::ApplyUpgradeToItem [clone]
+server              FAIL      CUpgrades::EndTouch
+server              FAIL      CUpgrades::GetUpgradeAttributeName
+server              762b5de0  CUpgrades::GrantOrRemoveAllUpgrades
+server              FAIL      CUpgrades::PlayerPurchasingUpgrade
+server              FAIL      CUpgrades::PlayerPurchasingUpgrade [clone]
+server              FAIL      CUpgrades::Spawn
+server              FAIL      CUpgrades::UpgradeTouch
+server              FAIL      CUpgrades::~CUpgrades [D0]
+server              FAIL      CUpgrades::~CUpgrades [D2]
+server              76102370  CUserMessages::LookupUserMessage
+server              76102390  CUserMessages::Register
+server              FAIL      CUtlConstStringBase<char>::Set
+server              FAIL      CVGUILocalizationProvider::ConvertLoccharToANSI
+server              FAIL      CVoiceGameMgr::ClientConnected
+server              7603ab40  CVoiceGameMgr::UpdateMasks
+server              76138d80  CVoiceGameMgrHelper::CanPlayerHearPlayer
+server              7603a880  CVoiceGameMgrHelper::ClientCommand
+server              FAIL      CVoteController::IsValidVoter
+server              FAIL      CVoteController::IsValidVoter [clone]
+server              FAIL      CVoteController::RegisterIssue
+server              7603d210  CVoteController::Spawn
+server              FAIL      CVoteController::TryCastVote
+server              FAIL      CVoteController::TryCastVote [clone]
+server              762ace00  CWave::ActiveWaveUpdate
+server              FAIL      CWave::AddClassType
+server              FAIL      CWave::ForceFinish
+server              FAIL      CWave::IsDoneWithNonSupportWaves
+server              762ae640  CWave::Parse
+server              762b11d0  CWave::WaveCompleteUpdate
+server              762acbe0  CWave::~CWave [D0]
+server              762acbe0  CWave::~CWave [D2]
+server              FAIL      CWaveSpawnPopulator::GetCurrencyAmountPerDeath
+server              762aec40  CWaveSpawnPopulator::Parse
+server              762af5f0  CWaveSpawnPopulator::SetState
+server              762afcc0  CWaveSpawnPopulator::Update
+server              FAIL      CWaveSpawnPopulator::m_reservedPlayerSlotCount
+server              762acd00  CWaveSpawnPopulator::~CWaveSpawnPopulator [D0]
+server              762acd00  CWaveSpawnPopulator::~CWaveSpawnPopulator [D2]
+server              FAIL      CWeaponMedigun::AddCharge
+server              762db160  CWeaponMedigun::AllowedToHealTarget
+server              FAIL      CWeaponMedigun::CycleResistType
+server              FAIL      CWeaponMedigun::CycleResistType [clone]
+server              762db780  CWeaponMedigun::Deploy
+server              762dbb10  CWeaponMedigun::FindAndHealTargets
+server              762dc3a0  CWeaponMedigun::GetHealRate
+server              FAIL      CWeaponMedigun::GetTargetRange
+server              762dc8d0  CWeaponMedigun::HealTargetThink
+server              FAIL      CWeaponMedigun::PrimaryAttack
+server              762dd7c0  CWeaponMedigun::RemoveHealingTarget
+server              762dddf0  CWeaponMedigun::SecondaryAttack
+server              762dedc0  CWeaponMedigun::StartHealingTarget
+server              FAIL      CZombie::CZombie
+server              7627e770  CZombie::Event_Killed
+server              FAIL      CZombie::GetIntentionInterface
+server              FAIL      CZombie::OnTakeDamage_Alive
+server              FAIL      CZombie::Spawn
+server              FAIL      CZombie::SpawnAtPos
+server              7627ff30  CZombie::UpdateOnRemove
+server              FAIL      CZombieBehavior::OnKilled
+server              FAIL      CZombieIntention::CZombieIntention
+server              FAIL      CZombieIntention::Reset
+server              FAIL      CZombieIntention::Update
+server              FAIL      CZombieIntention::~CZombieIntention
+server              76277ac0  CZombieLocomotion::GetRunSpeed
+server              FAIL      CZombiePathCost::operator()
+server              FAIL      CalcDistanceToLineSegment
+server              75ffb050  CalculateMeleeDamageForce
+server              75f7dfd0  CalculatePhysicsImpactDamage
+server              FAIL      CanScatterGunKnockBack
+server              7622a380  ChasePath::Update
+server              762297e0  ChasePath::~ChasePath [D0]
+server              762297e0  ChasePath::~ChasePath [D2]
+server              FAIL      CheckChatText
+server              FAIL      CheckMedicResist
+server              FAIL      CheckValveSignature
+server              FAIL      ClassCanBuild
+server              FAIL      ClientActive
+server              FAIL      ClientData_Update
+server              FAIL      CollectPlayers<CTFPlayer>
+server              75d1ba60  ConCommandBase::GetName
+server              FAIL      ConVar::GetName
+server              FAIL      CopyStringAttributeValueToCharPointerOutput
+server              75f57530  CreateEntityByName
+server              FAIL      CreateSpellSpawnZombie
+server              FAIL      DT_CSPlayer::g_SendTable
+server              76711454  DT_PlayerResource::g_SendTable
+server              76840a38  DT_TFObjectiveResource::g_SendTable
+server              76842ad4  DT_TFPlayer::g_SendTable
+server              768453e0  DT_TFPlayerResource::g_SendTable
+server              FAIL      DispatchEffect
+server              FAIL      DispatchParticleEffect [overload 1]
+server              FAIL      DispatchParticleEffect [overload 2]
+server              FAIL      DispatchParticleEffect [overload 3]
+server              FAIL      DispatchParticleEffect [overload 4]
+server              FAIL      DispatchParticleEffect [overload 5]
+server              FAIL      DispatchParticleEffect [overload 6]
+server              FAIL      DispatchParticleEffect [overload 7]
+server              7602b4a0  DispatchSpawn
+server              FAIL      DoTeleporterOverride
+server              FAIL      DrawAllDebugOverlays
+server              FAIL      ENTINDEX
+server              FAIL      EconItemInterface_OnOwnerKillEaterEvent
+server              FAIL      EconItemInterface_OnOwnerKillEaterEvent_Batched
+server              FAIL      EvaluateConditional
+server              FAIL      FX_FireBullets
+server              FAIL      FindAttribute_UnsafeBitwiseCast<uint, float, CAttributeList>
+server              FAIL      FindAttribute_UnsafeBitwiseCast<uint, float, CTFItemDefinition>
+server              FAIL      FindHullIntersection
+server              FAIL      FindPooledString
+server              FAIL      FireEvent
+server              FAIL      GEconItemSchema
+server              FAIL      GameStringSystem
+server              FAIL      GetBotEscortCount
+server              FAIL      GetClassIndexFromString
+server              FAIL      GetCurrentSkyCamera
+server              FAIL      GetFileWeaponInfoFromHandle
+server              76078810  GetItemSchema
+server              FAIL      GetKilleaterWeaponFromDamageInfo
+server              FAIL      GetKilleaterWeaponFromDamageInfo::CTakeDamageInfo
+server              FAIL      GetLoadoutPositionByName
+server              FAIL      GetLoadoutPositionName
+server              FAIL      GetNextCommandEntity
+server              75f31ef0  GetParticleSystemIndex
+server              FAIL      GetParticleSystemNameFromIndex
+server              FAIL      GetPlayerClassData
+server              FAIL      GetUpgradeStepData
+server              FAIL      GetWeaponId
+server              760d3150  GroundLocomotionCollisionTraceFilter::ShouldHitEntity
+server              FAIL      HandleRageGain
+server              75ee8a30  Host_Say
+server              FAIL      IBaseObjectAutoList::m_IBaseObjectAutoListAutoList
+server              FAIL      IBaseProjectileAutoList::m_IBaseProjectileAutoListAutoList
+server              75df0b50  IBody::ClearPendingAimReply
+server              75e29170  IBody::GetActivity
+server              75e17970  IBody::GetActualPosture
+server              760cee30  IBody::GetCrouchHullHeight
+server              75e17970  IBody::GetDesiredPosture
+server              760dfca0  IBody::GetEyePosition
+server              75e1d760  IBody::GetHeadAimSubjectLeadTime
+server              75e1d760  IBody::GetHeadSteadyDuration
+server              760cee60  IBody::GetHullHeight
+server              760ceeb0  IBody::GetHullMaxs
+server              760ceef0  IBody::GetHullMins
+server              760cef20  IBody::GetHullWidth
+server              760cf080  IBody::GetStandHullHeight
+server              760dfcf0  IBody::GetViewVector
+server              75e12770  IBody::IsActivity
+server              75e195e0  IBody::IsActualPosture
+server              75e195e0  IBody::IsDesiredPosture
+server              75e17e70  IBody::IsHeadAimingOnTarget
+server              75d1bd70  IBody::IsHeadSteady
+server              75df0ba0  IBody::SetDesiredPosture
+server              75df1730  IBody::StartActivity
+server              75df0b50  IBody::Update
+server              76759b3c  ICaptureFlagAutoList::m_ICaptureFlagAutoListAutoList
+server              FAIL      ICaptureZoneAutoList::m_ICaptureZoneAutoListAutoList
+server              760cf8d0  IContextualQuery::IsHindrance
+server              760cf8d0  IContextualQuery::IsPositionAllowed
+server              75f6b0d0  IContextualQuery::SelectMoreDangerousThreat
+server              75f7b550  IContextualQuery::SelectTargetPoint
+server              760cf8d0  IContextualQuery::ShouldAttack
+server              760d0790  IContextualQuery::ShouldHurry
+server              760cf8d0  IContextualQuery::ShouldPickUp
+server              760d0790  IContextualQuery::ShouldRetreat
+server              FAIL      ICurrencyPackAutoList::m_ICurrencyPackAutoListAutoList
+server              FAIL      IDroppedWeaponAutoList::m_IDroppedWeaponAutoListAutoList
+server              FAIL      IEngineTrace::EnumerateEntities_ray
+server              FAIL      IEngineTrace::TraceRay
+server              75973a60  IGameEventManager2::FireEvent
+server              783d6040  IGameEventManager2::FireEventClientSide
+server              FAIL      IGameSystem::Add
+server              FAIL      IGameSystem::Remove
+server              FAIL      IHasGenericMeter::GetChargeInterval
+server              FAIL      IHasGenericMeter::GetMeterMultiplier
+server              FAIL      IHasGenericMeter::OnResourceMeterFilled
+server              FAIL      IHasGenericMeter::ShouldUpdateMeter
+server              FAIL      IIntention::IsHindrance
+server              760e3af0  ILocomotion::IsPotentiallyTraversable
+server              760e4130  ILocomotion::StuckMonitor
+server              FAIL      ILocomotion::TraceHull
+server              FAIL      INextBot::DisplayDebugText
+server              FAIL      INextBot::GetDebugIdentifier
+server              FAIL      INextBot::IsRangeGreaterThan
+server              FAIL      INextBot::IsRangeLessThan
+server              FAIL      INextBot::Update
+server              FAIL      INextBot::Upkeep
+server              75d1ba60  INextBotComponent::GetBot
+server              75df0b50  INextBotComponent::Upkeep
+server              75e17970  INextBotEventResponder::FirstContainedResponder
+server              75e10fd0  INextBotEventResponder::NextContainedResponder
+server              760cfa20  INextBotEventResponder::OnActorEmoted
+server              760cfa60  INextBotEventResponder::OnAnimationActivityComplete
+server              760cfaa0  INextBotEventResponder::OnAnimationActivityInterrupted
+server              760cfae0  INextBotEventResponder::OnAnimationEvent
+server              760cfb20  INextBotEventResponder::OnBlinded
+server              760cfb60  INextBotEventResponder::OnCommandApproach(ent)
+server              760cfba0  INextBotEventResponder::OnCommandApproach(vec)
+server              760cfbe0  INextBotEventResponder::OnCommandAttack
+server              760cfc20  INextBotEventResponder::OnCommandPause
+server              760cfc60  INextBotEventResponder::OnCommandResume
+server              760cfc90  INextBotEventResponder::OnCommandRetreat
+server              760cfcd0  INextBotEventResponder::OnCommandString
+server              760cfd10  INextBotEventResponder::OnContact
+server              760cfd50  INextBotEventResponder::OnDrop
+server              760cfd90  INextBotEventResponder::OnIgnite
+server              760cfdc0  INextBotEventResponder::OnInjured
+server              760cfe00  INextBotEventResponder::OnKilled
+server              760cfe40  INextBotEventResponder::OnLandOnGround
+server              760cfe80  INextBotEventResponder::OnLeaveGround
+server              760cfec0  INextBotEventResponder::OnLose
+server              760cfef0  INextBotEventResponder::OnLostSight
+server              760cff30  INextBotEventResponder::OnModelChanged
+server              760cff60  INextBotEventResponder::OnMoveToFailure
+server              760cffa0  INextBotEventResponder::OnMoveToSuccess
+server              760cffe0  INextBotEventResponder::OnNavAreaChanged
+server              760d0070  INextBotEventResponder::OnOtherKilled
+server              760d00b0  INextBotEventResponder::OnPickUp
+server              760d00f0  INextBotEventResponder::OnPostureChanged
+server              760d0120  INextBotEventResponder::OnShoved
+server              760d0160  INextBotEventResponder::OnSight
+server              760d01a0  INextBotEventResponder::OnSound
+server              760d01e0  INextBotEventResponder::OnSpokeConcept
+server              760d0220  INextBotEventResponder::OnStuck
+server              760d0410  INextBotEventResponder::OnTerritoryCaptured
+server              760d0450  INextBotEventResponder::OnTerritoryContested
+server              760d0490  INextBotEventResponder::OnTerritoryLost
+server              760d04d0  INextBotEventResponder::OnUnStuck
+server              760d0500  INextBotEventResponder::OnWeaponFired
+server              760d0540  INextBotEventResponder::OnWin
+server              762a8ba0  IPopulationSpawner::GetClassIcon
+server              75df1730  IPopulationSpawner::HasAttribute
+server              75e12770  IPopulationSpawner::IsMiniBoss
+server              762aa9a0  IPopulationSpawner::ParseSpawner
+server              76217aa0  ISearchSurroundingAreasFunctor::IterateAdjacentAreas
+server              FAIL      IServerGameDLL::GameFrame
+server              FAIL      IServerGameDLL::LevelInit
+server              FAIL      ISpatialPartition::EnumerateElementsInBox
+server              FAIL      ISpatialPartition::EnumerateElementsInSphere
+server              FAIL      ISurface::SetFontGlyphSet
+server              FAIL      ITFBotHintEntityAutoList::m_ITFBotHintEntityAutoListAutoList
+server              FAIL      ITFFlameEntityAutoList::m_ITFFlameEntityAutoListAutoList
+server              78328e20  IVDebugOverlay::ClearDeadOverlays
+server              FAIL      IVEngineServer::IsDedicatedServer
+server              FAIL      IVEngineServer::SetFakeClientConVarValue
+server              760e4c10  IVision::AddKnownEntity
+server              760e4ea0  IVision::ForgetAllKnownEntities
+server              760e4ee0  IVision::ForgetEntity
+server              7674fc8c  IVision::IsAbleToSee
+server              760e5850  IVision::IsAbleToSee2
+server              760e5ca0  IVision::IsLineOfSightClear
+server              760e5e20  IVision::IsLineOfSightClearToEntity
+server              760e64a0  IVision::Update
+server              760e65c0  IVision::UpdateKnownEntities
+server              FAIL      IZombieAutoList::m_IZombieAutoListAutoList
+server              FAIL      IgnoreActorsTraceFilterFunction
+server              FAIL      InstancedScriptedScene
+server              FAIL      InventoryManager
+server              FAIL      IsSpaceToSpawnHere
+server              FAIL      ItemGeneration
+server              762d4bf0  JarExplode
+server              763a8340  KeyValues::LoadFromBuffer
+server              763a89f0  KeyValues::LoadFromFile
+server              FAIL      KeyValues::MergeBaseKeys
+server              763a9d90  KeyValues::RecursiveMergeKeyValues
+server              FAIL      LookupWeaponInfoSlot
+server              FAIL      MannVsMachineStats_GetAcquiredCredits
+server              75f575e0  MapEntity_ParseAllEntities
+server              FAIL      MapEntity_ParseEntity
+server              FAIL      MapEntity_ParseToken
+server              75f327e0  MessageWriteString
+server              FAIL      NDebugOverlay::Axis
+server              FAIL      NDebugOverlay::Box
+server              FAIL      NDebugOverlay::BoxAngles
+server              FAIL      NDebugOverlay::BoxDirection
+server              FAIL      NDebugOverlay::Circle
+server              FAIL      NDebugOverlay::Circle_ang
+server              FAIL      NDebugOverlay::Circle_axes
+server              FAIL      NDebugOverlay::Cross3DOriented_ang
+server              FAIL      NDebugOverlay::Cross3DOriented_mat
+server              FAIL      NDebugOverlay::Cross3D_ext
+server              FAIL      NDebugOverlay::Cross3D_size
+server              FAIL      NDebugOverlay::DrawGroundCrossHairOverlay
+server              FAIL      NDebugOverlay::DrawTickMarkedLine
+server              75ef8fc0  NDebugOverlay::EntityBounds
+server              FAIL      NDebugOverlay::EntityText
+server              FAIL      NDebugOverlay::EntityTextAtPosition
+server              FAIL      NDebugOverlay::Grid
+server              FAIL      NDebugOverlay::HorzArrow
+server              FAIL      NDebugOverlay::Line
+server              FAIL      NDebugOverlay::ScreenText
+server              FAIL      NDebugOverlay::ScreenTextLine
+server              FAIL      NDebugOverlay::Sphere
+server              FAIL      NDebugOverlay::Sphere_ang
+server              FAIL      NDebugOverlay::SweptBox
+server              FAIL      NDebugOverlay::Text
+server              FAIL      NDebugOverlay::Triangle
+server              FAIL      NDebugOverlay::VertArrow
+server              FAIL      NDebugOverlay::YawArrow
+server              76227f60  NavAreaBuildPath<CTFBotPathCost>
+server              FAIL      NavAreaTravelDistance<CTFBotPathCost>
+server              FAIL      NextBotCombatCharacter [D0]
+server              FAIL      NextBotCombatCharacter [D2]
+server              FAIL      NextBotCombatCharacter::Spawn
+server              FAIL      NextBotCreatePlayerBot<CTFBot>
+server              760d10b0  NextBotGroundLocomotion::ApplyAccumulatedApproach
+server              760d1630  NextBotGroundLocomotion::Approach
+server              75e255c0  NextBotGroundLocomotion::ClimbUpToLedge
+server              FAIL      NextBotGroundLocomotion::DetectCollision
+server              75f35220  NextBotGroundLocomotion::GetDeathDropHeight
+server              760cf060  NextBotGroundLocomotion::GetGravity
+server              760d1e20  NextBotGroundLocomotion::GetGroundNormal
+server              760d1e40  NextBotGroundLocomotion::GetMaxAcceleration
+server              760d1e40  NextBotGroundLocomotion::GetMaxDeceleration
+server              760d1e50  NextBotGroundLocomotion::GetMaxJumpHeight
+server              760d1e60  NextBotGroundLocomotion::GetMaxYawRate
+server              760d1f60  NextBotGroundLocomotion::GetWalkSpeed
+server              760d1fe0  NextBotGroundLocomotion::IsOnGround
+server              FAIL      NextBotGroundLocomotion::NextBotGroundLocomotion
+server              760d3260  NextBotGroundLocomotion::Update
+server              FAIL      NextBotManager::CollectAllBots
+server              760d52d0  NextBotManager::OnWeaponFired
+server              760d5480  NextBotManager::ShouldUpdate
+server              760d56d0  NextBotManager::Update
+server              FAIL      NextBotPlayer<CTFPlayer>::GetEntity
+server              FAIL      NextBotPlayer<CTFPlayer>::IsBot
+server              FAIL      NextBotPlayer<CTFPlayer>::IsFakeClient
+server              FAIL      NextBotPlayer<CTFPlayer>::PhysicsSimulate
+server              FAIL      NextBotPlayer<CTFPlayer>::PressAltFireButton
+server              FAIL      NextBotPlayer<CTFPlayer>::PressBackwardButton
+server              FAIL      NextBotPlayer<CTFPlayer>::PressCrouchButton
+server              FAIL      NextBotPlayer<CTFPlayer>::PressFireButton
+server              FAIL      NextBotPlayer<CTFPlayer>::PressForwardButton
+server              FAIL      NextBotPlayer<CTFPlayer>::PressJumpButton
+server              FAIL      NextBotPlayer<CTFPlayer>::PressLeftButton
+server              FAIL      NextBotPlayer<CTFPlayer>::PressMeleeButton
+server              FAIL      NextBotPlayer<CTFPlayer>::PressReloadButton
+server              FAIL      NextBotPlayer<CTFPlayer>::PressRightButton
+server              FAIL      NextBotPlayer<CTFPlayer>::PressSpecialFireButton
+server              FAIL      NextBotPlayer<CTFPlayer>::PressUseButton
+server              FAIL      NextBotPlayer<CTFPlayer>::PressWalkButton
+server              FAIL      NextBotPlayer<CTFPlayer>::ReleaseAltFireButton
+server              FAIL      NextBotPlayer<CTFPlayer>::ReleaseBackwardButton
+server              FAIL      NextBotPlayer<CTFPlayer>::ReleaseCrouchButton
+server              FAIL      NextBotPlayer<CTFPlayer>::ReleaseFireButton
+server              FAIL      NextBotPlayer<CTFPlayer>::ReleaseForwardButton
+server              FAIL      NextBotPlayer<CTFPlayer>::ReleaseJumpButton
+server              FAIL      NextBotPlayer<CTFPlayer>::ReleaseLeftButton
+server              FAIL      NextBotPlayer<CTFPlayer>::ReleaseMeleeButton
+server              FAIL      NextBotPlayer<CTFPlayer>::ReleaseReloadButton
+server              FAIL      NextBotPlayer<CTFPlayer>::ReleaseRightButton
+server              FAIL      NextBotPlayer<CTFPlayer>::ReleaseSpecialFireButton
+server              FAIL      NextBotPlayer<CTFPlayer>::ReleaseUseButton
+server              FAIL      NextBotPlayer<CTFPlayer>::ReleaseWalkButton
+server              FAIL      NextBotPlayer<CTFPlayer>::SetButtonScale
+server              FAIL      NextBotPlayer<CTFPlayer>::Update
+server              760d31d0  NextBotTraversableTraceFilter::ShouldHitEntity
+server              762adc70  OnBotTeleported
+server              FAIL      PackRatios
+server              762a9b80  ParseDynamicAttributes
+server              FAIL      ParseEvent
+server              FAIL      ParseKeyvalue
+server              FAIL      ParseParticleEffects
+server              FAIL      PassServerEntityFilter
+server              FAIL      PassServerEntityFilter [clone]
+server              FAIL      Path::BuildTrivialPath
+server              76247900  Path::Compute<CTFBotPathCost> [ent]
+server              FAIL      Path::Compute<CTFBotPathCost> [vec]
+server              FAIL      Path::ComputePathDetails
+server              760ea220  Path::IsValid
+server              FAIL      Path::Optimize
+server              760ea510  Path::PostProcess
+server              FAIL      PathFollower::Avoid
+server              FAIL      PathFollower::Climbing
+server              FAIL      PathFollower::Climbing0
+server              FAIL      PathFollower::FindBlocker
+server              760ed920  PathFollower::Invalidate
+server              FAIL      PathFollower::PathFollower [C1]
+server              FAIL      PathFollower::PathFollower [C2]
+server              760ee7f0  PathFollower::SetMinLookAheadDistance
+server              760ee8c0  PathFollower::Update
+server              760eaa30  PathFollower::~PathFollower [D0]
+server              760eaa30  PathFollower::~PathFollower [D1]
+server              760eaa30  PathFollower::~PathFollower [D2]
+server              75f81430  Physics_RunThinkFunctions
+server              FAIL      Physics_SimulateEntity
+server              760e5390  PlayerBody::GetEntity
+server              760efce0  PlayerBody::GetHullWidth
+server              760efd30  PlayerBody::GetMaxHeadAngularVelocity
+server              760eff60  PlayerBody::Upkeep
+server              760f0ab0  PlayerLocomotion::Approach
+server              760f2030  PlayerLocomotion::GetDesiredSpeed
+server              760d1fe0  PlayerLocomotion::IsOnGround
+server              760f2200  PlayerLocomotion::Jump
+server              760f2690  PlayerLocomotion::Update
+server              FAIL      PointInRespawnRoom
+server              FAIL      PrecacheParticleSystem
+server              FAIL      PrecachePointTemplates
+server              FAIL      PropDynamic_CollidesWithGrenades
+server              7605b800  ReadEncryptedKVFile
+server              FAIL      Script_StringToFile
+server              FAIL      SelectWeightedSequence
+server              FAIL      SendProxyArrayLength_PlayerArray
+server              FAIL      SendProxyArrayLength_PlayerObjects
+server              FAIL      SendProxy_Color32ToInt
+server              FAIL      SendProxy_EHandleToInt
+server              FAIL      SendProxy_IntAddOne
+server              75eff1a0  SendProxy_LengthTable
+server              FAIL      SendProxy_PlayerList
+server              FAIL      SendProxy_PlayerObjectList
+server              FAIL      SendProxy_QAngles
+server              FAIL      SendProxy_SendHealersDataTable
+server              FAIL      SendProxy_SendPredictableId
+server              FAIL      SendProxy_ShortAddOne
+server              FAIL      SendProxy_StringT_To_String
+server              FAIL      SendProxy_StringToString
+server              FAIL      SendProxy_UInt8ToInt32
+server              FAIL      SendProxy_VectorXYToVectorXY
+server              FAIL      SetDebugBits
+server              75f57ec0  SpawnHierarchicalList
+server              FAIL      StandardFilterRules
+server              75f6a3d0  StopParticleEffects
+server              75fe3080  StopScriptedScene
+server              FAIL      TE_BeamLaser
+server              FAIL      TE_BeamPoints
+server              FAIL      TE_BeamRingPoint
+server              FAIL      TE_BreakModel
+server              FAIL      TE_DispatchEffect
+server              FAIL      TE_FireBullets
+server              FAIL      TE_MetalSparks
+server              FAIL      TE_PhysicsProp
+server              761cff60  TE_PlayerAnimEvent
+server              FAIL      TE_PlayerDecal
+server              FAIL      TE_TFBlood
+server              FAIL      TE_TFExplosion
+server              FAIL      TE_TFParticleEffect
+server              FAIL      TE_TFParticleEffect [No attachment]
+server              76130a10  TE_TFParticleEffectComplex
+server              FAIL      TFInventoryManager
+server              FAIL      TFMapsWorkshop
+server              76163ae0  TF_IsHolidayActive
+server              7624fc30  TeleportNearVictim
+server              7674abd0  TheNavAreas
+server              FAIL      TheNavMesh
+server              FAIL      TheNextBots
+server              FAIL      ToTFBot
+server              761ff420  TranslateWeaponEntForClass
+server              FAIL      UTIL_EntitiesInSphere
+server              FAIL      UTIL_GetCommandClient
+server              FAIL      UTIL_GetCommandClientIndex
+server              FAIL      UTIL_GetHolidayForString
+server              7602cb40  UTIL_GetListenServerHost
+server              7602cdd0  UTIL_HudMessage
+server              7602d030  UTIL_IsCommandIssuedByServerAdmin
+server              FAIL      UTIL_IsHolidayActive
+server              FAIL      UTIL_ParticleTracer
+server              FAIL      UTIL_PlayerBulletTrace
+server              7602d470  UTIL_PlayerByIndex
+server              FAIL      UTIL_PlayerBySteamID
+server              FAIL      UTIL_PlayerDecalTrace
+server              7602d6f0  UTIL_PrecacheOther
+server              FAIL      UTIL_Remove [CBaseEntity *]
+server              FAIL      UTIL_Remove [IServerNetworkable *]
+server              FAIL      UTIL_ScreenShake
+server              FAIL      UTIL_SetOrigin
+server              FAIL      UTIL_SetSize
+server              FAIL      UTIL_StringToVector
+server              76030670  UTIL_TraceEntity [IHandleEntity]
+server              75f33090  UserMessageBegin
+server              FAIL      VScriptRunScript
+server              7604a700  VScriptServerInit
+server              FAIL      V_snprintf
+server              FAIL      V_vsnprintfRet
+server              FAIL      WeaponID_IsSniperRifle
+server              FAIL      WeaponID_IsSniperRifleOrBow
+server              FAIL      WeaponIdToAlias
+server              70e4df89  [local] NDebugOverlay::Axis
+server              70e4dd3c  [local] NDebugOverlay::Box
+server              70e4dd7a  [local] NDebugOverlay::BoxAngles
+server              70e4dd5b  [local] NDebugOverlay::BoxDirection
+server              70e4dfc7  [local] NDebugOverlay::Circle
+server              70e4dfe6  [local] NDebugOverlay::Circle_ang
+server              70e4e005  [local] NDebugOverlay::Circle_axes
+server              7106ebd0  [local] NDebugOverlay::Clear
+server              70e4deee  [local] NDebugOverlay::Cross3DOriented_ang
+server              70e4df0d  [local] NDebugOverlay::Cross3DOriented_mat
+server              70e4deb0  [local] NDebugOverlay::Cross3D_ext
+server              70e4decf  [local] NDebugOverlay::Cross3D_size
+server              70e4ddb8  [local] NDebugOverlay::EntityBounds
+server              70e4de15  [local] NDebugOverlay::EntityText
+server              70e4de34  [local] NDebugOverlay::EntityTextAtPosition
+server              70e4de53  [local] NDebugOverlay::Grid
+server              70e4df2c  [local] NDebugOverlay::HorzArrow
+server              70e4ddd7  [local] NDebugOverlay::Line
+server              7106ebe5  [local] NDebugOverlay::LineAlpha
+server              70e3b99c  [local] NDebugOverlay::ScreenLine_1color
+server              70e3b99c  [local] NDebugOverlay::ScreenLine_2color
+server              70e3b99c  [local] NDebugOverlay::ScreenRect
+server              70e4de91  [local] NDebugOverlay::ScreenText
+server              70e4dfa8  [local] NDebugOverlay::Sphere
+server              70e4e024  [local] NDebugOverlay::Sphere_ang
+server              70e4dd99  [local] NDebugOverlay::SweptBox
+server              70e4de72  [local] NDebugOverlay::Text
+server              70e4ddf6  [local] NDebugOverlay::Triangle
+server              70e4df6a  [local] NDebugOverlay::VertArrow
+server              70e4df4b  [local] NDebugOverlay::YawArrow
+server              FAIL      clear_debug_overlays
+server              766f2b24  debugoverlay
+server              FAIL      gEntList
+server              766c3fc8  g_CBaseAnimating_ClassReg
+server              7663a058  g_CBaseCombatCharacter_ClassReg
+server              FAIL      g_CBaseCombatWeapon_ClassReg
+server              76662440  g_CBasePlayer_ClassReg
+server              FAIL      g_CCSPlayer_ClassReg
+server              FAIL      g_CTFPlayer_ClassReg
+server              FAIL      g_DeleteList
+server              766c96b4  g_EntityListPool
+server              FAIL      g_EventQueue
+server              766f5508  g_GameStringPool
+server              FAIL      g_LagCompensationManager
+server              FAIL      g_MannVsMachineUpgrades
+server              76693ac0  g_MedigunEffects
+server              FAIL      g_RecipientFilterPredictionSystem
+server              FAIL      g_SentGameRulesMasks
+server              FAIL      g_TETFParticleEffect
+server              FAIL      g_TFClassViewVectors
+server              7667f6c8  g_TeamVisualSections
+server              FAIL      g_WorldEntity
+server              FAIL      g_aClassNames
+server              FAIL      g_aConditionNames
+server              7668dc88  g_aPlayerClassNames
+server              FAIL      g_aPlayerClassNames_NonLocalized
+server              7668dcf0  g_aRawPlayerClassNames
+server              FAIL      g_aRawPlayerClassNamesShort
+server              FAIL      g_aTeamColors
+server              7668dc68  g_aTeamNames
+server              7668d770  g_aWeaponNames
+server              FAIL      g_bDisableEhandleAccess
+server              FAIL      g_hControlPointMasters
+server              FAIL      g_hUpgradeEntity
+server              FAIL      g_pFullFileSystem
+server              766f3c80  g_pGameRules
+server              FAIL      g_pMonsterResource
+server              76734b20  g_pObjectiveResource
+server              FAIL      g_pParticleSystemMgr
+server              FAIL      g_pParticleSystemQuery
+server              76711450  g_pPlayerResource
+server              76855da8  g_pPopulationManager
+server              FAIL      g_pScriptVM
+server              76659410  g_pszMPConcepts
+server              FAIL      g_szBotBossModels
+server              FAIL      g_szBotBossSentryBusterModel
+server              FAIL      g_szBotModels
+server              FAIL      g_szLoadoutStrings
+server              766817b8  g_szLoadoutStringsForDisplay
+server              FAIL      g_szPlayerRobotModels
+server              FAIL      g_szRomePromoItems_Hat
+server              FAIL      g_szRomePromoItems_Misc
+server              FAIL      g_voteController
+server              FAIL      gpGlobals
+server              FAIL      lagcompensation
+server              7668db08  pszWpnEntTranslationList
+server              FAIL      s_RemoveImmediateSemaphore
+server              FAIL      s_SteamGameServerAPIContext
+server              7668e714  s_TFTeamManager
+server              FAIL      s_TankModel
+server              FAIL      s_TankModelRome
+server              FAIL      s_acttableMelee
+server              FAIL      s_lastTeleporter
+server              FAIL      s_pTokenBuf
+server              FAIL      static_attrib_t::BInitFromKV_SingleLine
+server              FAIL      steamgameserverapicontext
+server              FAIL      tf_mvm_popfile
+server              76759674  usermessages
+server              75ee56a0  variant_t::Convert
+server              75ee6f10  variant_t::Set
+server              FAIL      variant_t::SetOther
+server              FAIL      ~CBaseEntity [D2]
+server              FAIL      ~CTFBotMvMEngineerIdle [D0]
+server              FAIL      ~CTFBotMvMEngineerIdle [D1]
+server              FAIL      ~CTFBotMvMEngineerIdle [D2]
+server              76022d60  ~CTriggerCamera [D0]
+server              76022d60  ~CTriggerCamera [D2]
+engine              FAIL      AllocChangeFrameList
+engine              FAIL      Array_CompareDeltas
+engine              FAIL      CBaseClient::ActivatePlayer
+engine              FAIL      CBaseClient::Disconnect
+engine              FAIL      CBaseClient::FillUserInfo
+engine              FAIL      CBaseClient::FireGameEvent
+engine              FAIL      CBaseClient::OnSignonStateFull
+engine              FAIL      CBaseClient::SendNetMsg
+engine              FAIL      CBaseClient::SendSnapshot
+engine              FAIL      CBaseClient::SetName
+engine              FAIL      CBaseClient::ShouldSendMessages
+engine              FAIL      CBaseClient::UpdateAcknowledgedFramecount
+engine              FAIL      CBaseClient::UpdateSendState
+engine              FAIL      CBaseServer::BroadcastMessage1
+engine              FAIL      CBaseServer::BroadcastMessage2
+engine              FAIL      CBaseServer::CheckPassword
+engine              FAIL      CBaseServer::CheckProtocol
+engine              FAIL      CBaseServer::ConnectClient
+engine              FAIL      CBaseServer::CreateFakeClient
+engine              FAIL      CBaseServer::CreateNewClient
+engine              FAIL      CBaseServer::FillServerInfo
+engine              FAIL      CBaseServer::GetCPUUsage
+engine              FAIL      CBaseServer::GetClassBaseline
+engine              FAIL      CBaseServer::GetClient
+engine              FAIL      CBaseServer::GetFreeClient
+engine              FAIL      CBaseServer::RecalculateTags
+engine              FAIL      CBaseServer::RejectConnection
+engine              FAIL      CBaseServer::RunFrame
+engine              FAIL      CBaseServer::UncompressPackedEntity
+engine              FAIL      CBaseServer::UserInfoChanged
+engine              FAIL      CBaseServer::WriteDeltaEntities
+engine              FAIL      CClientFrameManager::CountClientFrames
+engine              FAIL      CClientFrameManager::DeleteClientFrames
+engine              FAIL      CClientFrameManager::RemoveOldestFrame
+engine              FAIL      CCommandBuffer::AddText
+engine              FAIL      CCommandBuffer::Compact
+engine              FAIL      CDatatableStack::Init
+engine              FAIL      CDeltaBitsReader::ReadNextPropIndex
+engine              782ef1a0  CDemoPlayer::ReadPacket
+engine              782ef980  CDemoRecorder::RecordStringTables
+engine              FAIL      CDownloadListGenerator::OnResourcePrecachedFullPath
+engine              FAIL      CEngine::Frame
+engine              FAIL      CEngineSoundServer::PrecacheSound
+engine              FAIL      CFrameSnapshotManager::CreatePackedEntity
+engine              FAIL      CFrameSnapshotManager::GetPackedEntity
+engine              FAIL      CFrameSnapshotManager::GetPreviouslySentPacket
+engine              FAIL      CFrameSnapshotManager::UsePreviouslySentPacket
+engine              FAIL      CGameClient::FileDenied
+engine              FAIL      CGameClient::FileReceived
+engine              FAIL      CGameClient::GetSendFrame
+engine              FAIL      CGameClient::SetupPackInfo
+engine              FAIL      CGameClient::SetupPrevPackInfo
+engine              FAIL      CGameClient::ShouldSendMessages
+engine              FAIL      CGameServer::RemoveClientFromGame
+engine              FAIL      CGameServer::SendClientMessages
+engine              FAIL      CGameServer::SetHibernating
+engine              FAIL      CGameServer::SpawnServer
+engine              FAIL      CHLTVClient::ExecuteStringCommand
+engine              FAIL      CHLTVClient::SendSnapshot
+engine              FAIL      CHLTVClient::SpawnPlayer
+engine              783da830  CHLTVDemoRecorder::RecordStringTables
+engine              FAIL      CHLTVDemoRecorder::StartRecording
+engine              FAIL      CHLTVDemoRecorder::StopRecording
+engine              FAIL      CHLTVDemoRecorder::StopRecording [clone]
+engine              FAIL      CHLTVServer::BroadcastLocalChat
+engine              FAIL      CHLTVServer::ConnectClient
+engine              FAIL      CHLTVServer::IsTVRelay
+engine              FAIL      CHLTVServer::ReadCompeleteDemoFile
+engine              FAIL      CHLTVServer::RestoreTick
+engine              FAIL      CHLTVServer::RunFrame
+engine              FAIL      CHLTVServer::Shutdown
+engine              FAIL      CHLTVServer::StartMaster
+engine              FAIL      CHLTVServer::UpdateTick
+engine              78305d90  CL_TakeSnapshotAndSwap
+engine              FAIL      CM_EntityString
+engine              FAIL      CMapListManager::GetMapCount
+engine              FAIL      CMapListManager::GetMapName
+engine              FAIL      CMapListManager::IsMapValid
+engine              FAIL      CMapListManager::RefreshList
+engine              FAIL      CMapReslistGenerator::RunFrame
+engine              FAIL      CModelInfoServer::RegisterDynamicModel
+engine              FAIL      CModelLoader::FlushDynamicModels
+engine              FAIL      CNetChan::GetMaxRoutablePayloadSize
+engine              FAIL      CNetChan::HandleUpload
+engine              FAIL      CNetChan::IsFileInWaitingList
+engine              FAIL      CNetChan::IsValidFileForTransfer
+engine              FAIL      CNetChan::SendDatagram
+engine              FAIL      CNetChan::SendNetMsg
+engine              FAIL      CNetChan::SetFileTransmissionMode
+engine              FAIL      CNetworkStringTable::AddString
+engine              FAIL      CNetworkStringTable::DeleteAllStrings
+engine              FAIL      CNetworkStringTable::RestoreTick
+engine              FAIL      CNetworkStringTable::UpdateMirrorTable
+engine              FAIL      CNetworkStringTableContainer::CreateStringTable
+engine              FAIL      CNetworkStringTableContainer::DirectUpdate
+engine              FAIL      CNetworkStringTableContainer::EnableRollback
+engine              783bcf80  COM_BufferToBufferCompress_Snappy
+engine              783bd050  COM_BufferToBufferDecompress
+engine              FAIL      COM_CompressBuffer_LZSS
+engine              FAIL      COM_CompressBuffer_Snappy
+engine              783bd910  COM_GetUncompressedSize
+engine              FAIL      CParallelProcessor<CGameClient *>::Run
+engine              FAIL      CParallelProcessor<PackWork_t>::Run
+engine              FAIL      CRC_File
+engine              FAIL      CRConClient::BuildResponse
+engine              FAIL      CRConClient::SendResponse
+engine              78420980  CReplayDemoRecorder::RecordStringTables
+engine              FAIL      CServerDatatableStack::RecurseAndCallProxies
+engine              FAIL      CServerPlugin::ClientSettingsChanged
+engine              FAIL      CServerPlugin::OnQueryCvarValueFinished
+engine              FAIL      CServerRemoteAccess::SendVProfData
+engine              FAIL      CSpatialPartition::CreateHandle
+engine              FAIL      CStaticProp::GetEntityHandle
+engine              FAIL      CStaticProp::GetRefEHandle
+engine              FAIL      CStaticProp::Init
+engine              FAIL      CStaticPropMgr::GetStaticProp
+engine              FAIL      CStaticPropMgr::GetStaticPropIndex
+engine              FAIL      CStaticPropMgr::IsStaticProp
+engine              FAIL      CStaticPropMgr::IsStaticProp (CBaseHandle)
+engine              FAIL      CStaticPropMgr::LevelInit
+engine              FAIL      CStaticPropMgr::LevelShutdown
+engine              FAIL      CSteam3Server::OnLogonSuccess
+engine              FAIL      CSteam3Server::SendUpdatedServerDetails
+engine              FAIL      CTestScriptMgr::CheckPoint
+engine              FAIL      CTriggerMoved::EnumElement
+engine              FAIL      CUtlMemoryPool::Alloc [engine]
+engine              FAIL      CUtlMemoryPool::Free [engine]
+engine              FAIL      CVEngineServer::BuildEntityClusterList
+engine              FAIL      CVEngineServer::CheckAreasConnected
+engine              FAIL      CVEngineServer::FindMap
+engine              FAIL      CVEngineServer::GetChangeAccessor
+engine              FAIL      CVEngineServer::PlaybackTempEntity
+engine              FAIL      CVProfRecorder::Record_WriteTimings_R
+engine              FAIL      CVideoMode_Common::TakeSnapshotTGA
+engine              FAIL      Cbuf_Execute
+engine              FAIL      Con_ColorPrint
+engine              FAIL      Con_DebugLog
+engine              FAIL      Con_NPrintf
+engine              FAIL      DataTable_Warning
+engine              FAIL      Float_CompareDeltas
+engine              FAIL      Host_Changelevel
+engine              FAIL      Host_CheckDumpMemoryStats
+engine              FAIL      Host_NewGame
+engine              FAIL      Host_ShowIPCCallCount
+engine              FAIL      Host_ShowIPCCallCount [clone]
+engine              FAIL      IVEngineServer::Con_NPrintf
+engine              FAIL      IVEngineServer::Con_NXPrintf
+engine              FAIL      Int64_CompareDeltas
+engine              FAIL      Int_CompareDeltas
+engine              FAIL      InvalidateSharedEdictChangeInfo
+engine              FAIL      NET_SendLong
+engine              FAIL      NET_SendPacket
+engine              FAIL      NET_SendTo
+engine              FAIL      PackEntities_Normal
+engine              FAIL      PackWork_t::Process
+engine              FAIL      PackedEntity::GetPropsChangedAfterTick
+engine              78410bf0  SVC_CmdKeyValues::Process
+engine              FAIL      SVC_UserMessage::ReadFromBuffer
+engine              FAIL      SVC_UserMessage::WriteToBuffer
+engine              FAIL      SV_ActivateServer
+engine              FAIL      SV_BroadcastVoiceData
+engine              FAIL      SV_ComputeClientPacks
+engine              FAIL      SV_DetermineUpdateType
+engine              FAIL      SV_EnsureInstanceBaseline
+engine              FAIL      SV_Frame
+engine              FAIL      SV_PackEntity
+engine              FAIL      SV_ReplicateConVarChange
+engine              FAIL      SendCvarValueQueryToClient
+engine              FAIL      SendProxy_AngleToFloat
+engine              FAIL      SendProxy_Empty
+engine              FAIL      SendTable_CalcDelta
+engine              FAIL      SendTable_CullPropsFromProxies
+engine              FAIL      SendTable_Encode
+engine              FAIL      SendTable_WriteAllDeltaProps
+engine              FAIL      SendTable_WritePropList
+engine              FAIL      SetupMaxPlayers
+engine              FAIL      String_CompareDeltas
+engine              FAIL      TGAWriter::WriteToBuffer
+engine              78442280  VProfRecord_Snapshot
+engine              FAIL      VProfRecord_StartOrStop
+engine              FAIL      VTable for CStaticProp
+engine              FAIL      VectorXY_CompareDeltas
+engine              FAIL      Vector_CompareDeltas
+engine              FAIL      WriteRemoteVProfData
+engine              FAIL      [client] CAudioMixerWaveMP3::CAudioMixerWaveMP3
+engine              FAIL      [client] CAudioMixerWaveMP3::~CAudioMixerWaveMP3
+engine              78329580  [client] CDebugOverlay::AddSphereOverlay
+engine              FAIL      [client] CDebugOverlay::DrawAllOverlays
+engine              FAIL      [client] CDebugOverlay::DrawOverlay
+engine              782cdf40  [client] CWaveDataStreamAsync::CWaveDataStreamAsync
+engine              782ce260  [client] CWaveDataStreamAsync::~CWaveDataStreamAsync
+engine              FAIL      [client] GenerateBoxVertices
+engine              7830a010  [client] RCONClient
+engine              784b1d50  [client] RenderBox
+engine              FAIL      [client] RenderBox [material]
+engine              784b1da0  [client] RenderLine
+engine              FAIL      [client] RenderSphere [material]
+engine              784b2850  [client] RenderTriangle
+engine              784b2490  [client] RenderTriangle [material]
+engine              FAIL      [client] RenderWireframeBox
+engine              FAIL      [client] RenderWireframeSweptBox
+engine              FAIL      [client] S_Play
+engine              FAIL      [engine] CUtlBuffer::EnsureCapacity
+engine              FAIL      [engine] bf_read::bf_read
+engine              FAIL      [engine] bf_write::bf_write
+engine              FAIL      _Host_RunFrame
+engine              FAIL      _Host_RunFrame_Server
+engine              FAIL      con_filter_enable
+engine              FAIL      con_filter_text
+engine              FAIL      con_filter_text_out
+engine              FAIL      dtwarning
+engine              FAIL      dtwatchclass
+engine              FAIL      dtwatchent
+engine              FAIL      dtwatchvar
+engine              FAIL      g_BSPData
+engine              FAIL      g_FrameSnapshotManager
+engine              FAIL      g_FreeEdicts
+engine              78899ca4  g_HostState
+engine              FAIL      g_MapListMgr
+engine              FAIL      g_PropTypeFns
+engine              FAIL      g_SharedEdictChangeInfo
+engine              FAIL      g_arFakePorts
+engine              FAIL      g_bUseFakeIP
+engine              FAIL      g_nFakeIP
+engine              FAIL      hltv
+engine              FAIL      modelloader
+engine              FAIL      net_blocksize
+engine              FAIL      net_maxroutable
+engine              FAIL      s_StaticPropMgr
+engine              FAIL      s_Steam3Server
+engine              FAIL      sv_maxroutable
+dedicated           FAIL      CBaseFileSystem::FileExists
+dedicated           FAIL      CBaseFileSystem::LoadKeyValues
+dedicated           FAIL      CPackedStore::OpenFile
+dedicated           FAIL      editline_threadproc
+dedicated           FAIL      findFileInDirCaseInsensitive
+dedicated           FAIL      g_threadid
+tier0               79387a90  CStdMemAlloc::Alloc
+tier0               FAIL      CThreadLocalBase::Get
+tier0               FAIL      CVProfNode::MarkFrame
+tier0               FAIL      ConColorMsg
+tier0               79385e30  Msg
+tier0               FAIL      _SpewMessage [internal]
+client              FAIL      [client] CBuildFactoryHelper::GetFactoryNames
+client              FAIL      [client] CBuildFactoryHelper::InstancePanel
+client              FAIL      [client] CDamageAccountPanel::DisplayDamageFeedback
+client              FAIL      [client] CDamageAccountPanel::FireGameEvent
+client              FAIL      [client] CDebugOverlay::Paint
+client              FAIL      [client] CParticleProperty::Create [int]
+client              FAIL      [client] CTFGameMovement::ProcessMovement
+client              FAIL      [client] CTFModeManager::LevelInit
+client              FAIL      [client] CUserMessages::HookMessage
+client              FAIL      [client] CUserMessages::Register
+client              FAIL      [client] CViewRender::Render
+client              FAIL      [client] C_BaseAnimating::DrawModel
+client              FAIL      [client] C_BaseEntity::EstimateAbsVelocity
+client              FAIL      [client] C_BaseEntity::GetAbsVelocity
+client              FAIL      [client] C_BaseEntity::GetParentToWorldTransform
+client              FAIL      [client] C_BaseEntity::GetVectors
+client              FAIL      [client] C_BaseEntity::VPhysicsUpdate
+client              FAIL      [client] C_SniperDot::ClientThink
+client              FAIL      [client] C_TFFlameThrower::FullCritChargedEffectName
+client              FAIL      [client] C_TFPlayer::AddOverheadEffect
+client              FAIL      [client] C_TFPlayer::OnDataChanged
+client              FAIL      [client] C_TFPlayer::OnPreDataChanged
+client              FAIL      [client] C_TFPlayer::ShouldShowNemesisIcon
+client              FAIL      [client] GetClientModeNormal
+client              FAIL      [client] IGameSystem::UpdateAllSystems
+client              FAIL      [client] RenderWireframeSphere
+client              FAIL      [client] s_pVertexColor
+client              FAIL      [client] s_pVertexColorIgnoreZ
+client              FAIL      [client] usermessages
+client              FAIL      [client] vgui::AnimationController::StartAnimationSequence
+client              FAIL      [client] vgui::AnimationController::StartAnimationSequence [Panel]
+client              FAIL      [client] vgui::Frame::Frame
+client              FAIL      g_pClientMode
+vguimatsurface      FAIL      [client] ApplyGaussianBlurToTexture
+vguimatsurface      FAIL      [client] ApplyOutlineToTexture
+vguimatsurface      FAIL      [client] CFontTextureCache::GetTextureForChars
+vguimatsurface      FAIL      [client] CMatSystemSurface::DrawColoredText [va_list]
+vguimatsurface      FAIL      [client] CWin32Font::Create
+soundemittersystem  FAIL      CSoundEmitterSystemBase::AddSoundsFromFile
+soundemittersystem  FAIL      CSoundEmitterSystemBase::InitSoundInternalParameters
+datacache           FAIL      CMDLCache::BeginLock
+datacache           FAIL      CMDLCache::EndLock
+vstdlib             FAIL      CCvar::FindVar
+sourcemodcore       FAIL      CPlayer::GetEdict
+sourcemodcore       FAIL      CPlayer::GetIClient
+sourcemodcore       FAIL      CPlayer::IsSourceTV
+sourcemodcore       FAIL      PlayerManager::GetPlayerByIndex
+sourcemodcore       FAIL      PlayerManager::OnClientPutInServer
+vscript             FAIL      Msg [vscript]
+vscript             FAIL      SQVM::Call
+

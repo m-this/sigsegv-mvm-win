@@ -342,7 +342,11 @@ public:
 	void NetworkStateChanged();
 	void NetworkStateChanged(void *pVar);
 	
+#if defined _WINDOWS
+	CTFPlayer *GetOuter();
+#else
 	CTFPlayer *GetOuter()          { return this->m_pOuter; }
+#endif
 	int GetState() const           { return this->m_nPlayerState; }
 	void SetState(int nState)      { this->m_nPlayerState = nState; }
 	bool InState(int nState) const { return (this->m_nPlayerState == nState); }
@@ -355,7 +359,13 @@ public:
 	bool IsInvulnerable() const                                                         { return ft_IsInvulnerable            (this); }
 	void StunPlayer(float duration, float amount, int flags, CTFPlayer *stunner)        {        ft_StunPlayer                (this, duration, amount, flags, stunner); }
 	void GetConditionsBits(CBitVec<192>& bitvec)                                        {        ft_GetConditionsBits         (this, bitvec); }
+#if defined _WINDOWS
+	/* No such function in server.dll: MSVC inlined it into its one caller.
+	 * The Linux body is the condition's expire time while it is in effect. */
+	float GetConditionDuration(ETFCond cond)                                            { return this->InCond(cond) ? this->m_ConditionData.Get()[cond].m_flExpireTime : 0.0f; }
+#else
 	float GetConditionDuration(ETFCond cond)                                            { return ft_GetConditionDuration      (this, cond); }
+#endif
 	CBaseEntity *GetConditionProvider(ETFCond cond)                                     { return ft_GetConditionProvider      (this, cond); }
 	int GetDisguiseTeam() const                                                         { return ft_GetDisguiseTeam           (this); }
 	bool IsStealthed() const                                                            { return ft_IsStealthed               (this); }
@@ -368,7 +378,13 @@ public:
 	bool IsCritBoosted() const                                                          { return ft_IsCritBoosted             (this); }
 	void Heal(CBaseEntity *pHealer, float flAmount, float flOverhealBonus, float flOverhealDecayMult, bool bDispenserHeal, CTFPlayer *pHealScorer) { ft_Heal (this, pHealer, flAmount, flOverhealBonus, flOverhealDecayMult, bDispenserHeal, pHealScorer); }
 	float StopHealing(CBaseEntity *pHealer)                                             { return ft_StopHealing               (this, pHealer); }
+#if defined _WINDOWS
+	/* No address for it in server.dll. The Linux body: the index of the
+	 * healer in m_aHealers, or -1. */
+	int FindHealerIndex(CBaseEntity *pHealer);
+#else
 	int FindHealerIndex(CBaseEntity *pHealer)                                           { return ft_FindHealerIndex           (this, pHealer); }
+#endif
 	void RecalculatePlayerBodygroups()                                                  {        ft_RecalculatePlayerBodygroups(this); }
 
 	DECL_SENDPROP(float,       m_flCloakMeter);
@@ -468,10 +484,28 @@ public:
 	CBaseObject *GetObjectOfType(int iType, int iMode)           { return ft_GetObjectOfType                  (this, iType, iMode); }
 	int GetMaxAmmo(int iAmmoIndex, int iClassNumber = -1)        { return ft_GetMaxAmmo                       (this, iAmmoIndex, iClassNumber); }
 	CTFWearable *GetEquippedWearableForLoadoutSlot(int iSlot)    { return ft_GetEquippedWearableForLoadoutSlot(this, iSlot); }
-	CBaseEntity *GetEntityForLoadoutSlot(int iSlot)    { return ft_GetEntityForLoadoutSlot(this, iSlot); }
+	CBaseEntity *GetEntityForLoadoutSlot(int iSlot, bool bForceUseLoadout = false) { return ft_GetEntityForLoadoutSlot(this, iSlot, bForceUseLoadout); }
 	void RemoveInvisibility()                                    {        ft_RemoveInvisibility               (this); }
+	void DropAmmoPack(const CTakeDamageInfo &info, bool bEmpty, bool bDisguisedWeapon) { ft_DropAmmoPack(this, info, bEmpty, bDisguisedWeapon); }
 	void DoAnimationEvent(PlayerAnimEvent_t event, int nData = 0){        ft_DoAnimationEvent                 (this, event, nData); }
+#if defined _WINDOWS
+	/* No such function in server.dll: MSVC inlined it into its callers. The
+	 * Linux body plays the name as an activity, else as a sequence. */
+	void PlaySpecificSequence (const char *sequence)
+	{
+		int activity = this->LookupActivity(sequence);
+		if (activity != -1) {
+			this->DoAnimationEvent(PLAYERANIMEVENT_CUSTOM, activity);
+			return;
+		}
+		int seq = this->LookupSequence(sequence);
+		if (seq != -1) {
+			this->DoAnimationEvent(PLAYERANIMEVENT_CUSTOM_SEQUENCE, seq);
+		}
+	}
+#else
 	void PlaySpecificSequence (const char *sequence)             {        ft_PlaySpecificSequence   (this, sequence); }
+#endif
 	CBaseObject *GetObject(int id)                               { return ft_GetObject                      (this, id); }
 	int GetObjectCount()                                         { return ft_GetObjectCount                 (this); }
 	void StateTransition(int state)                              {        ft_StateTransition                (this, state); }
@@ -492,8 +526,15 @@ public:
 	void RemoveCurrency(int currency)                           { ft_RemoveCurrency  (this, currency);  }
 	bool DoClassSpecialSkill()									{ return ft_DoClassSpecialSkill(this); }
 
+#if defined _WINDOWS
+	/* Inlined in server.dll; MSVC keeps IHasAttributes in its own vtable, and
+	 * the call goes through it, in tfplayer.cpp. */
+	CAttributeList *GetAttributeList();
+	CAttributeManager *GetAttributeManager();
+#else
 	CAttributeList *GetAttributeList()								{ return ft_GetAttributeList  (this); }
 	CAttributeManager *GetAttributeManager()						{ return ft_GetAttributeManager  (this); }
+#endif
 	CBaseEntity *GiveNamedItem(const char *pszName, int iSubType, CEconItemView *pItem, bool bDontTranslateForClass) { return vt_GiveNamedItem(this, pszName, iSubType, pItem, bDontTranslateForClass); }
 
 	void Taunt(taunts_t taunt, int taunt_concept)                                 { ft_Taunt                   (this, taunt, taunt_concept); }
@@ -516,7 +557,7 @@ public:
 	void HolsterOffHandWeapon()                                                      {        ft_HolsterOffHandWeapon   (this); }
 	
 	bool TryToPickupBuilding()                         { return ft_TryToPickupBuilding(this); }
-	void DetonateObjectOfType(int building, int mode)  { ft_DetonateObjectOfType(this, building, mode); }
+	void DetonateObjectOfType(int building, int mode, bool bIgnoreSapperState = false) { ft_DetonateObjectOfType(this, building, mode, bIgnoreSapperState); }
 
 	bool IsReadyToPlay()                               { return ft_IsReadyToPlay(this); }
 	
@@ -528,11 +569,19 @@ public:
 	
 	int GetRuneHealthBonus()       { return ft_GetRuneHealthBonus (this); }
 	void ClearDisguiseWeaponList() { ft_ClearDisguiseWeaponList(this); }
-	CEconItemView *GetLoadoutItem(int classIndex, int slot) { return ft_GetLoadoutItem(this, classIndex, slot); }
+	CEconItemView *GetLoadoutItem(int classIndex, int slot, bool bReportWhitelistFails = false) { return ft_GetLoadoutItem(this, classIndex, slot, bReportWhitelistFails); }
 
+#if defined _WINDOWS
+	/* Each is AttribHookValue<float>(1.0f, "head_scale", this), which MSVC
+	 * inlined into every caller. The same call through SigMod's own. */
+	float GetDesiredHeadScale();
+	float GetDesiredHandScale();
+	float GetDesiredTorsoScale();
+#else
 	float GetDesiredHeadScale() { return ft_GetDesiredHeadScale(this); }
 	float GetDesiredHandScale() { return ft_GetDesiredHandScale(this); }
 	float GetDesiredTorsoScale() { return ft_GetDesiredTorsoScale(this); }
+#endif
 
 	void SetGrapplingHookTarget(CBaseEntity *target, bool bleed) {        ft_SetGrapplingHookTarget   (this, target, bleed); }
 
@@ -605,7 +654,7 @@ private:
 	static MemberFuncThunk<      CTFPlayer *, CBaseObject *, int, int         > ft_GetObjectOfType;
 	static MemberFuncThunk<      CTFPlayer *, int, int, int                   > ft_GetMaxAmmo;
 	static MemberFuncThunk<      CTFPlayer *, CTFWearable *, int              > ft_GetEquippedWearableForLoadoutSlot;
-	static MemberFuncThunk<      CTFPlayer *, CBaseEntity *, int              > ft_GetEntityForLoadoutSlot;
+	static MemberFuncThunk<      CTFPlayer *, CBaseEntity *, int, bool        > ft_GetEntityForLoadoutSlot;
 	static MemberFuncThunk<      CTFPlayer *, void, const char *              > ft_HandleCommand_JoinTeam;
 	static MemberFuncThunk<      CTFPlayer *, void, const char *              > ft_HandleCommand_JoinTeam_NoMenus;
 	static MemberFuncThunk<      CTFPlayer *, void, const char *, bool        > ft_HandleCommand_JoinClass;
@@ -618,6 +667,7 @@ private:
 	static MemberFuncThunk<      CTFPlayer *, CAttributeList *                > ft_GetAttributeList;
 	static MemberFuncThunk<      CTFPlayer *, CAttributeManager *             > ft_GetAttributeManager;
 	static MemberFuncThunk<      CTFPlayer *, void                            > ft_RemoveInvisibility;
+	static MemberFuncThunk<      CTFPlayer *, void, const CTakeDamageInfo &, bool, bool> ft_DropAmmoPack;
 	static MemberFuncThunk<      CTFPlayer *, void, PlayerAnimEvent_t, int    > ft_DoAnimationEvent;
 	static MemberFuncThunk<      CTFPlayer *, void, const char *              > ft_PlaySpecificSequence;
 	static MemberFuncThunk<      CTFPlayer *, void, taunts_t, int             > ft_Taunt;
@@ -636,7 +686,7 @@ private:
 	static MemberFuncThunk<		 CTFPlayer *, void                      	  > ft_GiveDefaultItems;
 	static MemberFuncThunk<		 CTFPlayer *, float, const char *, float, void *, IRecipientFilter *	  > ft_PlayScene;
 	static MemberFuncThunk<		 CTFPlayer *, bool                      	  > ft_TryToPickupBuilding;
-	static MemberFuncThunk<		 CTFPlayer *, void, int, int                  > ft_DetonateObjectOfType;
+	static MemberFuncThunk<		 CTFPlayer *, void, int, int, bool            > ft_DetonateObjectOfType;
 	static MemberFuncThunk<		 CTFPlayer *, void, CUtlVector<CTFWeaponBase *> &> ft_GetPassiveWeapons;
 	static MemberFuncThunk<		 CTFPlayer *, bool                            > ft_IsReadyToPlay;
 	static MemberFuncThunk<      CTFPlayer *, void, const Vector &            > ft_ApplyAbsVelocityImpulse;
@@ -645,7 +695,7 @@ private:
     static MemberFuncThunk<      CTFPlayer *, bool                            > ft_CanMoveDuringTaunt;
     static MemberFuncThunk<      CTFPlayer *, int                             > ft_GetRuneHealthBonus;
     static MemberFuncThunk<      CTFPlayer *, void                            > ft_ClearDisguiseWeaponList;
-    static MemberFuncThunk<      CTFPlayer *, CEconItemView *, int, int       > ft_GetLoadoutItem;
+    static MemberFuncThunk<      CTFPlayer *, CEconItemView *, int, int, bool > ft_GetLoadoutItem;
     static MemberFuncThunk<const CTFPlayer *, int                             > ft_GetMaxHealthForBuffing;
 	static MemberFuncThunk<      CTFPlayer *, bool                            > ft_DoClassSpecialSkill;
 	static MemberFuncThunk<      CTFPlayer *, float                           > ft_GetDesiredHeadScale;
@@ -687,11 +737,17 @@ inline void CTFPlayerClassShared::NetworkStateChanged()           { this->GetOut
 inline void CTFPlayerClassShared::NetworkStateChanged(void *pVar) { this->GetOuter()->NetworkStateChanged(pVar); }
 
 
-//inline CTFPlayer *CTFPlayerShared::GetOuter()
-//{
-//	static int off = Prop::FindOffsetAssert("CTFPlayer", "m_Shared");
-//	return (CTFPlayer *)((uintptr_t)this - off);
-//}
+#if defined _WINDOWS
+/* m_pOuter's extractor reads Linux code and has no Windows pattern, and
+ * without it every GetOuter returned null. CTFPlayerShared lives only as
+ * CTFPlayer::m_Shared, so its outer player is this less m_Shared's offset,
+ * which DT_TFPlayer carries. */
+inline CTFPlayer *CTFPlayerShared::GetOuter()
+{
+	static int off = Prop::FindOffsetAssert("CTFPlayer", "m_Shared");
+	return (CTFPlayer *)((uintptr_t)this - off);
+}
+#endif
 
 inline void CTFPlayerShared::NetworkStateChanged()           { this->GetOuter()->NetworkStateChanged(); }
 inline void CTFPlayerShared::NetworkStateChanged(void *pVar) { this->GetOuter()->NetworkStateChanged(pVar); }

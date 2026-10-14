@@ -121,6 +121,11 @@ public:
 	
 	virtual bool GetVerifyInfo(ByteBuf& buf, ByteBuf& mask) const override
 	{
+		if (m_zFuncSize == 0) {
+			Warning("CFuncReplace: \"%s\": replacement size unknown on this platform\n", this->GetFuncName());
+			return false;
+		}
+		
 		auto data = (uint8_t *) m_pFunc;
 
 		buf.CopyFrom(data);
@@ -141,6 +146,29 @@ private:
 	std::string m_szFuncName;
 	void *m_pFunc;
 };
+#if defined _MSC_VER
+/* A replacement's size comes from the __start_ and __stop_ symbols the GNU
+ * linker gives each named section, and COFF has no such thing. Here the size is
+ * zero, and CFuncReplace refuses a zero-size replacement when its mod loads, so
+ * the mod fails loudly instead of copying an unknown length of code. */
+#define REPLACE_FUNC_STATIC_ATTRIBUTES(attributes, ret, name, ...) \
+	static char __start_##name[1]; \
+	static char *const __stop_##name = __start_##name; \
+	\
+	__declspec(noinline) ret FuncReplace_##name(__VA_ARGS__)
+
+#define REPLACE_FUNC_MEMBER_ATTRIBUTES(attributes, ret, name, ...) \
+	class FuncReplaceClass_##name \
+	{ \
+	public: \
+		__declspec(noinline) ret callback(__VA_ARGS__); \
+	}; \
+	\
+	static char __start_##name[1]; \
+	static char *const __stop_##name = __start_##name; \
+	\
+	ret FuncReplaceClass_##name::callback(__VA_ARGS__)
+#else
 #define REPLACE_FUNC_STATIC_ATTRIBUTES(attributes, ret, name, ...) \
 	extern char __start_##name[]; \
 	extern char __stop_##name[]; \
@@ -158,6 +186,7 @@ private:
 	extern char __stop_##name[]; \
 	\
 	ret FuncReplaceClass_##name::callback(__VA_ARGS__)
+#endif
 
 
 // Replace original function code with provided function. Remember that:

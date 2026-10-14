@@ -22,7 +22,11 @@ namespace Mod::AI::Prevent_Postmortem_Updates
 	public:
 		CMod() : IMod("AI:Prevent_Postmortem_Updates")
 		{
+			/* CTFBotMainAction::OnKilled already changes to CTFBotDead in
+			 * current builds; on Windows the base body is shared and refused. */
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(Action_CTFBot_OnKilled, "Action<CTFBot>::OnKilled");
+#endif
 		}
 	};
 	CMod s_Mod;

@@ -1,0 +1,10 @@
+map           mvm_decoy
+mission asked the map default
+mission run   scripts/population/mvm_decoy.pop
+waves started 1
+server alive  yes
+sigsegv       1 load line(s)
+addresses     OK 1206  FAIL 1563
+mods          OK 10  FAILED 22
+unresolved calls 0
+0

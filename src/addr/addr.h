@@ -17,6 +17,10 @@ public:
 	
 	static void *GetAddr(const char *name);
 	
+	/* The vtable slot the table names for a virtual, or -1: an address MSVC
+	 * folded fills several slots, and only the index says which is this one. */
+	static int GetVTIndex(const char *name);
+	
 	static intptr_t GetAddrOffset(const char *dest, const char *base, intptr_t extraOffset);
 
 	static const char *ReverseLookup(const void *ptr);
@@ -58,6 +62,9 @@ public:
 	State GetState() const { return this->m_State; }
 	void *GetAddr() const  { return (void *)this->m_iAddr; }
 	
+	int GetVTIndex() const    { return this->m_iVTIndex; }
+	void SetVTIndex(int idx)  { this->m_iVTIndex = idx; }
+	
 protected:
 	IAddr() {}
 	
@@ -67,6 +74,7 @@ private:
 	Library m_Library = Library::SERVER;
 	State m_State = State::INITIAL;
 	uintptr_t m_iAddr = 0x00000000;
+	int m_iVTIndex = -1;
 };
 
 extern std::map<IAddr *, int> detourAddresses;

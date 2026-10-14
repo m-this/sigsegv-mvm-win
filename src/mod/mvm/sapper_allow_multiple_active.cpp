@@ -30,7 +30,11 @@ namespace Mod::MvM::Sapper_Allow_Multiple_Active
 	public:
 		CMod() : IMod("MvM:Sapper_Allow_Multiple_Active")
 		{
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_MEMBER(CTFPlayer_CanBuild,      "CTFPlayer::CanBuild");
+#else
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_CanBuild,      "CTFPlayer::CanBuild [clone]");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_GetNumObjects, "CTFPlayer::GetNumObjects");
 		}
 	};

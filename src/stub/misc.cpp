@@ -39,14 +39,49 @@ StaticFuncThunk<const char *, const char *, int> TranslateWeaponEntForClass("Tra
 
 
 static MemberFuncThunk<CTakeDamageInfo *, void, CBaseEntity *, CBaseEntity *, CBaseEntity *, const Vector&, const Vector&, float, int, int, Vector *> ft_CTakeDamageInfo_ctor5("CTakeDamageInfo::CTakeDamageInfo [C1 | overload 5]");
+#if defined _WINDOWS
+/* Inlined into every caller on Windows, and on Linux too by the lack of a
+ * symbol for it. The SDK's Init (takedamageinfo.cpp), which touches nothing
+ * but the object; SigMod defines no other Init. */
+void CTakeDamageInfo::Init( CBaseEntity *pInflictor, CBaseEntity *pAttacker, CBaseEntity *pWeapon, const Vector &damageForce, const Vector &damagePosition, const Vector &reportedPosition, float flDamage, int bitsDamageType, int iCustomDamage )
+{
+	m_hInflictor = pInflictor;
+	m_hAttacker = pAttacker != nullptr ? pAttacker : pInflictor;
+	m_hWeapon = pWeapon;
+	m_flDamage = flDamage;
+	m_flBaseDamage = BASEDAMAGE_NOT_SPECIFIED;
+	m_bitsDamageType = bitsDamageType;
+	m_iDamageCustom = iCustomDamage;
+	m_flMaxDamage = flDamage;
+	m_vecDamageForce = damageForce;
+	m_vecDamagePosition = damagePosition;
+	m_vecReportedPosition = reportedPosition;
+	m_iAmmoType = -1;
+	m_iDamagedOtherPlayers = 0;
+	m_iPlayerPenetrationCount = 0;
+	m_flDamageBonus = 0.f;
+	m_bForceFriendlyFire = false;
+	m_flDamageForForce = 0.f;
+	m_eCritType = CRIT_NONE;
+}
+#endif
+
 CTakeDamageInfo::CTakeDamageInfo(CBaseEntity *pInflictor, CBaseEntity *pAttacker, CBaseEntity *pWeapon, const Vector& damageForce, const Vector& damagePosition, float flDamage, int bitsDamageType, int iKillType, Vector *reportedPosition)
 {
+#if defined _WINDOWS
+	Init(pInflictor, pAttacker, pWeapon, damageForce, damagePosition, reportedPosition != nullptr ? *reportedPosition : vec3_origin, flDamage, bitsDamageType, iKillType);
+#else
 	ft_CTakeDamageInfo_ctor5(this, pInflictor, pAttacker, pWeapon, damageForce, damagePosition, flDamage, bitsDamageType, iKillType, reportedPosition);
+#endif
 }
 
 CTakeDamageInfo::CTakeDamageInfo()
 {
+#if defined _WINDOWS
+	Init(nullptr, nullptr, nullptr, vec3_origin, vec3_origin, vec3_origin, 0, 0, 0);
+#else
 	ft_CTakeDamageInfo_ctor5(this, nullptr, nullptr, nullptr, vec3_origin, vec3_origin, 0, 0, 0, nullptr);
+#endif
 }
 
 static MemberFuncThunk<CTraceFilterSimple *, void, const IHandleEntity *, int, ShouldHitFunc_t> ft_CTraceFilterSimple_ctor("CTraceFilterSimple::CTraceFilterSimple [C1]");
@@ -112,7 +147,30 @@ void variant_t::SetOther(void *data) {
 		return;
 	}
 
+#if defined _WINDOWS
+	/* No Windows address: every caller inlines it. The SDK's body (cbase.cpp),
+	 * which reads nothing but the variant. */
+	switch (this->fieldType) {
+	case FIELD_BOOLEAN:   *((bool *)data)         = bVal != 0; break;
+	case FIELD_CHARACTER: *((char *)data)         = iVal;      break;
+	case FIELD_SHORT:     *((short *)data)        = iVal;      break;
+	case FIELD_INTEGER:   *((int *)data)          = iVal;      break;
+	case FIELD_STRING:    *((string_t *)data)     = iszVal;    break;
+	case FIELD_FLOAT:     *((float *)data)        = flVal;     break;
+	case FIELD_COLOR32:   *((color32 *)data)      = rgbaVal;   break;
+	case FIELD_VECTOR:
+	case FIELD_POSITION_VECTOR:
+		((float *)data)[0] = vecVal[0];
+		((float *)data)[1] = vecVal[1];
+		((float *)data)[2] = vecVal[2];
+		break;
+	case FIELD_EHANDLE:   *((EHANDLE *)data)      = eVal;      break;
+	case FIELD_CLASSPTR:  *((CBaseEntity **)data) = eVal;      break;
+	default: break;
+	}
+#else
 	ft_VariantSetOther(this, data);
+#endif
 }
 
 void variant_t::SetEntity( CBaseEntity *val ) 

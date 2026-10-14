@@ -12,8 +12,19 @@ public:
 		m_ctTimer2.Invalidate();
 		m_ctTimer3.Invalidate();
 		m_chaseType = chaseType;
+#if defined _WINDOWS
+		UseGameVTable();
+#endif
 	}
 	virtual ~ChasePath() {};
+	
+#if defined _WINDOWS
+	/* On Linux the mod's _ZTV9ChasePath is a copy of the game's. On Windows
+	 * nothing replaces it, so a ChasePath the mod builds would keep the mod's
+	 * vtable, whose slots are thunks that look the function up in that same
+	 * vtable and call themselves forever. */
+	void UseGameVTable();
+#endif
 	
 	//virtual void Invalidate() override;
 	

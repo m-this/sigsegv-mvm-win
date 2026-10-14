@@ -222,9 +222,42 @@ void IMod::InvokeLoad()
 	
 	bool ok_patch  = this->LoadPatches();
 	bool ok_detour = this->LoadDetours();
+#if defined _WINDOWS
+	/* a detour refused for a shared body goes on its vtable slot instead,
+	 * loaded with the mod's own virtual hooks just below. Not for the Perf and
+	 * Prof mods: they exist to make the server faster or to measure it, and a
+	 * callback on a slot every entity calls (GetBaseEntity, GetModelIndex) made
+	 * a mission run a thousand times slower. */
+	bool perf = strncmp(this->GetName(), "Perf", 4) == 0 || strncmp(this->GetName(), "Prof", 4) == 0;
+	for (auto& [name, detour] : this->Detours()) {
+		if (perf) break;
+		if (detour->IsLoaded()) continue;
+		if (CVirtualHook *vhook = detour->AsVirtualHookWhenRefused(); vhook != nullptr) {
+			this->AddVirtualHook(vhook);
+		}
+	}
+#endif
 	bool ok_hooks = this->LoadVirtualHooks();
 	
+#if defined _WINDOWS
+	/* The Windows address table is incomplete while the port is brought up,
+	 * and some Linux detour targets do not exist as functions in server.dll at
+	 * all, GCC clones among them. A detour that failed to load is never
+	 * enabled (IDetour::Enable checks), so a mod runs with the rest of its
+	 * detours instead of not at all; every failure was already warned about
+	 * above, and sig_listmods counts them. Patches and virtual hooks stay
+	 * all-or-nothing. */
+	if (!ok_detour) {
+		Warning("IMod::InvokeLoad: \"%s\": loading without its failed detours\n", this->GetName());
+		ok_detour = true;
+	}
+#endif
+	
 	if (!ok_patch || !ok_detour || !ok_hooks) {
+#if defined _WINDOWS
+		Warning("IMod::InvokeLoad: \"%s\": failed:%s%s, OnLoad never runs\n", this->GetName(),
+			ok_patch ? "" : " a patch", ok_hooks ? "" : " a virtual hook");
+#endif
 		this->m_bFailed = true;
 		return;
 	}
@@ -259,6 +292,12 @@ void IMod::Toggle(bool enable)
 	
 	if (this->m_bFailed && enable) {
 		Msg("IMod::Toggle: \"%s\" %s [WARNING: mod is in FAILED state, so patches/detours will NOT be enabled!\n", this->GetName(), (enable ? "ON" : "OFF"));
+#if defined _WINDOWS
+		/* The TODO above, met: a score of mods fail on Windows while the
+		 * address table is incomplete, and one enabled anyway ran its level
+		 * callbacks without ever having run OnLoad. Such a mod stays off. */
+		return;
+#endif
 	} else {
 		DevMsg("IMod::Toggle: \"%s\" %s\n", this->GetName(), (enable ? "ON" : "OFF"));
 	}
@@ -331,6 +370,50 @@ void CModManager::Unload()
 		} \
 	}
 
+#if defined _WINDOWS
+/* For the bed: a wave that ran eight game seconds in ten minutes of wall time
+ * came with the frame callbacks running for the first time. Where each frame
+ * callback's time goes, every thirty seconds, the costliest listeners first. */
+#include <typeinfo>
+#include <map>
+#include <string>
+static bool FrameTiming() { static bool on = getenv("SIGSEGV_SURVEY_UNRESOLVED") != nullptr; return on; }
+static std::map<std::string, double> s_FrameCost;
+static double s_FrameCostSince = 0.0;
+static void FrameCostAdd(const char *callback, const char *type, double seconds)
+{
+	std::string key = std::string(callback) + " " + type;
+	s_FrameCost[key] += seconds;
+}
+static void FrameCostReport()
+{
+	double now = Plat_FloatTime();
+	if (s_FrameCostSince == 0.0) s_FrameCostSince = now;
+	if (now - s_FrameCostSince < 30.0) return;
+	std::vector<std::pair<double, std::string>> costs;
+	for (auto &[key, seconds] : s_FrameCost) costs.emplace_back(seconds, key);
+	std::sort(costs.rbegin(), costs.rend());
+	for (size_t i = 0; i < costs.size() && i < 4; ++i) {
+		Warning("SigMod: frame cost: %.1f%% of %.0fs in %s\n", 100.0 * costs[i].first / (now - s_FrameCostSince), now - s_FrameCostSince, costs[i].second.c_str());
+	}
+	s_FrameCost.clear();
+	s_FrameCostSince = now;
+}
+#define INVOKE_FRAME_CALLBACK_FOR_ALL_ELIGIBLE_MODS(CALLBACK) \
+	VPROF_BUDGET("IModCallbackListener::" #CALLBACK, "ModCallback"); \
+	for (auto listener : AutoList<I##CALLBACK##Listener>::List()) { \
+		if (listener->ShouldReceiveCallbacks()) { \
+			if (FrameTiming()) { \
+				double start = Plat_FloatTime(); \
+				listener->CALLBACK(); \
+				FrameCostAdd(#CALLBACK, typeid(*listener).name(), Plat_FloatTime() - start); \
+			} else { \
+				listener->CALLBACK(); \
+			} \
+		} \
+	} \
+	if (FrameTiming()) FrameCostReport();
+#else
 #define INVOKE_FRAME_CALLBACK_FOR_ALL_ELIGIBLE_MODS(CALLBACK) \
 	VPROF_BUDGET("IModCallbackListener::" #CALLBACK, "ModCallback"); \
 	for (auto listener : AutoList<I##CALLBACK##Listener>::List()) { \
@@ -338,13 +421,19 @@ void CModManager::Unload()
 			listener->CALLBACK(); \
 		} \
 	}
+#endif
 
 void CModManager::LevelInitPreEntity()         { INVOKE_CALLBACK_FOR_ALL_ELIGIBLE_MODS(LevelInitPreEntity);               }
 void CModManager::LevelInitPostEntity()        { INVOKE_CALLBACK_FOR_ALL_ELIGIBLE_MODS(LevelInitPostEntity);              }
 void CModManager::LevelShutdownPreEntity()     { INVOKE_CALLBACK_FOR_ALL_ELIGIBLE_MODS(LevelShutdownPreEntity);           }
 void CModManager::LevelShutdownPostEntity()    { INVOKE_CALLBACK_FOR_ALL_ELIGIBLE_MODS(LevelShutdownPostEntity);          }
 void CModManager::FrameUpdatePreEntityThink()  { INVOKE_FRAME_CALLBACK_FOR_ALL_ELIGIBLE_MODS(FrameUpdatePreEntityThink);  }
+#if defined _WINDOWS
+extern volatile long g_WatchdogFrames;
+void CModManager::FrameUpdatePostEntityThink() { ++g_WatchdogFrames; INVOKE_FRAME_CALLBACK_FOR_ALL_ELIGIBLE_MODS(FrameUpdatePostEntityThink); }
+#else
 void CModManager::FrameUpdatePostEntityThink() { INVOKE_FRAME_CALLBACK_FOR_ALL_ELIGIBLE_MODS(FrameUpdatePostEntityThink); }
+#endif
 void CModManager::PreClientUpdate()            { INVOKE_FRAME_CALLBACK_FOR_ALL_ELIGIBLE_MODS(PreClientUpdate);            }
 
 

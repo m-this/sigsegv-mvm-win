@@ -598,6 +598,9 @@ bool MemoryUtils::GetLibraryInfo(const void *libPtr, DynLibInfo &lib)
 
 void MemoryUtils::ForEachSymbol(void *handle, const std::function<bool(const Symbol&)>& functor)
 {
+#if defined PLATFORM_WINDOWS
+	/* server.dll is stripped: there is no symbol table to walk. */
+#else
 	/* do a bogus symbol lookup to force everything into the symbol table cache */
 	assert(ResolveSymbol(handle, "________________") == nullptr);
 	
@@ -660,6 +663,7 @@ void MemoryUtils::ForEachSymbol(void *handle, const std::function<bool(const Sym
 		
 		if (!functor(Symbol{sym_name, sym_addr})) break;
 	}
+#endif
 }
 
 #if defined PLATFORM_LINUX

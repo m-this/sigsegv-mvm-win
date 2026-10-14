@@ -335,32 +335,39 @@ namespace Mod::Pop::ECAttr_Extensions
 		pending_periodic_tasks.clear();
 	}
 
-	DETOUR_DECL_MEMBER(void, CTFBot_dtor0)
+	DETOUR_DECL_DTOR(CTFBot_dtor0)
 	{
 		auto bot = reinterpret_cast<CTFBot *>(this);
 		
 	//	DevMsg("CTFBot %08x: dtor0, clearing data\n", (uintptr_t)bot);
 		ClearDataForBot(bot, DESTRUCT);
 		
-		DETOUR_MEMBER_CALL();
+		DETOUR_DTOR_CALL();
 	}
 	
-	DETOUR_DECL_MEMBER(void, CTFBot_dtor2)
+#if !defined _WINDOWS
+	DETOUR_DECL_DTOR(CTFBot_dtor2)
 	{
 		auto bot = reinterpret_cast<CTFBot *>(this);
 		
 	//	DevMsg("CTFBot %08x: dtor2, clearing data\n", (uintptr_t)bot);
 		ClearDataForBot(bot, DESTRUCT);
 		
-		DETOUR_MEMBER_CALL();
+		DETOUR_DTOR_CALL();
 	}
+#endif
 	
 	
 	DETOUR_DECL_MEMBER(void, CTFPlayer_StateEnter, int nState)
 	{
 		auto player = reinterpret_cast<CTFPlayer *>(this);
 		
+#if defined _WINDOWS
+		int state_left = player->StateGet();
+		if (nState == TF_STATE_WELCOME || nState == TF_STATE_OBSERVER || state_left == TF_STATE_WELCOME || state_left == TF_STATE_OBSERVER) {
+#else
 		if (nState == TF_STATE_WELCOME || nState == TF_STATE_OBSERVER) {
+#endif
 			CTFBot *bot = ToTFBot(player);
 			if (bot != nullptr) {
 				ClearDataForBot(bot, DIE);
@@ -370,6 +377,7 @@ namespace Mod::Pop::ECAttr_Extensions
 		DETOUR_MEMBER_CALL(nState);
 	}
 	
+#if !defined _WINDOWS
 	DETOUR_DECL_MEMBER(void, CTFPlayer_StateLeave)
 	{
 		auto player = reinterpret_cast<CTFPlayer *>(this);
@@ -384,6 +392,7 @@ namespace Mod::Pop::ECAttr_Extensions
 		
 		DETOUR_MEMBER_CALL();
 	}
+#endif
 
 
 	CTFBotSpawner *current_spawner = nullptr;
@@ -971,7 +980,7 @@ namespace Mod::Pop::ECAttr_Extensions
 			}
 		} else if (FStrEq(name, "PreferTeam")) {
 			data.prefer_team = kv->GetInt();
-			for (size_t i = 0; i < ARRAYSIZE(g_aTeamNames); i++) {
+			for (size_t i = 0; i < std::size(g_aTeamNames.GetRef()); i++) {
 				if (StringStartsWith(g_aTeamNames[i], kv->GetString())) {
 					data.prefer_team = i;
 				}
@@ -2166,10 +2175,31 @@ namespace Mod::Pop::ECAttr_Extensions
 		
 		return DETOUR_MEMBER_CALL(info, pVictim, b1);
 	}
+	void ApplyRocketCustomVisuals(CBaseEntity *proj);
+
 	DETOUR_DECL_MEMBER(CTFProjectile_Rocket *, CTFWeaponBaseGun_FireRocket, CTFPlayer *player, int i1)
 	{
 		auto proj = DETOUR_MEMBER_CALL(player, i1);
-		
+		ApplyRocketCustomVisuals(proj);
+		return proj;
+	}
+
+#if defined _WINDOWS
+	/* MSVC inlined FireRocket into CTFWeaponBaseGun::FireProjectile: its one
+	 * weapon call to CTFProjectile_Rocket::Create is there (0x63bb15). The
+	 * rocket is dressed where it is made instead; a rocket whose owner is no
+	 * bot with RocketCustomModel or RocketCustomParticle is left as it was,
+	 * as FireRocket's detour leaves it. */
+	DETOUR_DECL_STATIC(CBaseEntity *, CTFProjectile_Rocket_Create, CBaseEntity *pLauncher, const Vector &vecOrigin, const QAngle &vecAngles, CBaseEntity *pOwner, CBaseEntity *pScorer)
+	{
+		auto proj = DETOUR_STATIC_CALL(pLauncher, vecOrigin, vecAngles, pOwner, pScorer);
+		ApplyRocketCustomVisuals(proj);
+		return proj;
+	}
+#endif
+
+	void ApplyRocketCustomVisuals(CBaseEntity *proj)
+	{
 		if (proj != nullptr) {
 			auto data = GetDataForBot(proj->GetOwnerEntity());
 			if (data != nullptr) {
@@ -2187,8 +2217,6 @@ namespace Mod::Pop::ECAttr_Extensions
 				}
 			}
 		}
-		
-		return proj;
 	}
 	
 	DETOUR_DECL_MEMBER(void, CTFWeaponBase_ApplyOnHitAttributes, CBaseEntity *ent, CTFPlayer *player, const CTakeDamageInfo& info)
@@ -2909,10 +2937,14 @@ namespace Mod::Pop::ECAttr_Extensions
 		{
 			
 			MOD_ADD_DETOUR_MEMBER(CTFBot_dtor0, "CTFBot::~CTFBot [D0]");
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(CTFBot_dtor2, "CTFBot::~CTFBot [D2]");
+#endif
 			
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_StateEnter, "CTFPlayer::StateEnter");
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_StateLeave, "CTFPlayer::StateLeave");
+#endif
 
 			MOD_ADD_DETOUR_MEMBER(CTFBotSpawner_Parse, "CTFBotSpawner::Parse");
 			
@@ -2946,16 +2978,22 @@ namespace Mod::Pop::ECAttr_Extensions
 
 			MOD_ADD_DETOUR_MEMBER(CTFGameRules_ApplyOnDamageModifyRules, "CTFGameRules::ApplyOnDamageModifyRules");
 			
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_STATIC(CTFProjectile_Rocket_Create, "CTFProjectile_Rocket::Create");
+#else
 			MOD_ADD_DETOUR_MEMBER(CTFWeaponBaseGun_FireRocket, "CTFWeaponBaseGun::FireRocket");
+#endif
 			
 			MOD_ADD_DETOUR_MEMBER(CTFWeaponBase_ApplyOnHitAttributes, "CTFWeaponBase::ApplyOnHitAttributes");
 			
 			MOD_ADD_DETOUR_MEMBER(CTFBotMainAction_Update, "CTFBotMainAction::Update");
 			MOD_ADD_DETOUR_MEMBER(CTFBot_AvoidPlayers, "CTFBot::AvoidPlayers");
 
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_GetHandScaleSpeed, "CTFPlayer::GetHandScaleSpeed");
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_GetHeadScaleSpeed, "CTFPlayer::GetHeadScaleSpeed");
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_GetTorsoScaleSpeed, "CTFPlayer::GetTorsoScaleSpeed");
+#endif
 
 			MOD_ADD_DETOUR_MEMBER(CTFBotLocomotion_Update, "CTFBotLocomotion::Update");
 			MOD_ADD_DETOUR_MEMBER(NextBotPlayer_CTFPlayer_PressCrouchButton, "NextBotPlayer<CTFPlayer>::PressCrouchButton");

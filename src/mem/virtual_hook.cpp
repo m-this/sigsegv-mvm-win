@@ -4,6 +4,14 @@
 #include "util/rtti.h"
 #include "stub/server.h"
 
+#if defined _WINDOWS
+/* A hook that does not load fails its whole mod, and the bed runs without
+ * developer on: say it where the bed reads. */
+#define FailMsg Warning
+#else
+#define FailMsg DevMsg
+#endif
+
 bool CVirtualHook::DoLoad()
 {
     if (this->m_bLoaded) return true;
@@ -14,24 +22,35 @@ bool CVirtualHook::DoLoad()
 
     pVT = RTTI::GetVTable(this->m_pszVTableName);
     if (pVT == nullptr) {
-        DevMsg("CVirtualHook::FAIL \"%s\": can't find vtable\n", this->m_pszFuncName);
+        FailMsg("CVirtualHook::FAIL \"%s\": can't find vtable\n", this->m_pszFuncName);
         return false;
     }
 
     pVTForCalcOffset = RTTI::GetVTable(this->m_pszVTableNameForCalcOffset);
     if (pVTForCalcOffset == nullptr) {
-        DevMsg("CVirtualHook::FAIL \"%s\": can't find vtable\n", this->m_pszFuncName);
+        FailMsg("CVirtualHook::FAIL \"%s\": can't find vtable\n", this->m_pszFuncName);
         return false;
     }
     
     pFunc = AddrManager::GetAddr(this->m_pszFuncName);
     if (pFunc == nullptr) {
-        DevMsg("CVirtualHook::FAIL \"%s\": can't find func addr\n", this->m_pszFuncName);
+        FailMsg("CVirtualHook::FAIL \"%s\": can't find func addr\n", this->m_pszFuncName);
         return false;
     }
     
     bool found = false;
-    for (int i = 0; i < 0x1000; ++i) {
+#if defined _WINDOWS
+    /* The slot the table names, when it holds the address: a folded body
+     * fills several slots, and the index says which one this hook is for. */
+    int idx = AddrManager::GetVTIndex(this->m_pszFuncName);
+    bool named = (idx >= 0 && idx < 0x1000 && pVTForCalcOffset[idx] == pFunc);
+    if (named) {
+        this->m_pFuncPtr = const_cast<void **>(pVT + idx);
+        this->m_iOffset = idx;
+        found = true;
+    }
+#endif
+    for (int i = 0; !found && i < 0x1000; ++i) {
         if (pVTForCalcOffset[i] == pFunc) {
             this->m_pFuncPtr = const_cast<void **>(pVT + i);
             this->m_iOffset = i;
@@ -39,6 +58,28 @@ bool CVirtualHook::DoLoad()
             break;
         }
     }
+#if defined _WINDOWS
+    /* MSVC folds identical bodies, so one address can fill several slots:
+     * IBody::Update, INextBotComponent::Upkeep and IBody::ClearPendingAimReply
+     * are one `ret` in server.dll. The first slot holding it is then only one
+     * of them, and a hook put there runs in place of another virtual with
+     * other arguments. Refused, unless the address fills that one slot or
+     * the table names the slot. */
+    if (found && !named) {
+        size_t slots = 0;
+        for (const auto &[vtname, info] : RTTI::GetAllVTableInfo()) {
+            if ((const void **)info.vtable == pVTForCalcOffset) { slots = info.size / sizeof(void *); break; }
+        }
+        int count = 0;
+        for (size_t i = 0; i < slots; ++i) {
+            if (pVTForCalcOffset[i] == pFunc) ++count;
+        }
+        if (count > 1) {
+            Warning("CVirtualHook: \"%s\": refused, its address fills %d slots of %s\n", this->m_pszFuncName, count, this->m_pszVTableNameForCalcOffset);
+            return false;
+        }
+    }
+#endif
 
     // If another Virtual Hook was already applied to this function 
     if (!found) {
@@ -50,9 +91,16 @@ bool CVirtualHook::DoLoad()
     }
     
     if (!found) {
-        DevMsg("CVirtualHook::FAIL \"%s\": can't find func ptr in vtable\n", this->m_pszFuncName);
+        FailMsg("CVirtualHook::FAIL \"%s\": can't find func ptr in vtable\n", this->m_pszFuncName);
         return false;
     }
+#if defined _WINDOWS
+    /* For the bed: where every hook went, so a fault under a vtable call can
+     * be matched to the hook in that slot. */
+    if (getenv("SIGSEGV_SURVEY_UNRESOLVED") != nullptr) {
+        Warning("CVirtualHook: \"%s\" in %s slot %d (+0x%x)\n", this->m_pszFuncName, this->m_pszVTableName, this->m_iOffset, this->m_iOffset * 4);
+    }
+#endif
     this->m_bLoaded = true;
     this->m_pVTable = pVT;
     return true;
@@ -129,7 +177,7 @@ bool CVirtualHookAll::DoLoad()
     
     pFunc = AddrManager::GetAddr(this->m_pszFuncName);
     if (pFunc == nullptr) {
-        DevMsg("CVirtualHook::FAIL \"%s\": can't find func addr\n", this->m_pszFuncName);
+        FailMsg("CVirtualHook::FAIL \"%s\": can't find func addr\n", this->m_pszFuncName);
         return false;
     }
     
@@ -147,7 +195,7 @@ bool CVirtualHookAll::DoLoad()
     }
 
     if (!found) {
-        DevMsg("CVirtualHook::FAIL \"%s\": can't find func ptr in any vtable\n", this->m_pszFuncName);
+        FailMsg("CVirtualHook::FAIL \"%s\": can't find func ptr in any vtable\n", this->m_pszFuncName);
         return false;
     }
 
@@ -183,15 +231,50 @@ void CVirtualHookAll::DoDisable()
 }
 
 
+/* Whether the class that owns vtable is base's class or derives from it. The
+ * type information sits in the slot before the first virtual function on both
+ * ABIs, and says it differently: libstdc++ answers with __do_upcast, MSVC lists
+ * every base class in the complete object locator's hierarchy. */
+static bool VTableDerivesFrom(const void **vtable, const void **base, void *object)
+{
+#if defined _MSC_VER
+    auto hierarchy = static_cast<const __RTTI_CompleteObjectLocator *>(vtable[-1])->pClassDescriptor;
+    auto wanted    = static_cast<const __RTTI_CompleteObjectLocator *>(base[-1])->pTypeDescriptor;
+    for (unsigned long i = 0; i < hierarchy->numBaseClasses; ++i) {
+        if (hierarchy->pBaseClassArray->arrayOfBaseClassDescriptors[i]->pTypeDescriptor == wanted) {
+            return true;
+        }
+    }
+    return false;
+#else
+    return static_cast<const std::type_info *>(*(vtable-1))->__do_upcast(*((const __cxxabiv1::__class_type_info **)base-1), &object);
+#endif
+}
+
+/* Each vtable holding the function at the slot gets the hook in its own slot.
+ * It used to be the base's slot every time, which hooked no derived class and
+ * put the same hook into the base's chain once per class, so a callback that
+ * called the original called itself. A slot is matched on what it held before
+ * any hook, since another mod's hook may already be on it. */
 void CVirtualHookInherit::DoEnable()
 {
     if (!this->m_bEnabled && this->m_bLoaded) {
-        auto origfunc = *this->m_pFuncPtr;
-        for (auto &[name, vtable] : RTTI::GetAllVTable()) {
-            void *result = *this->m_pFuncPtr;
-            if (vtable[this->m_iOffset] == origfunc && static_cast<const std::type_info *>(*(vtable-1))->__do_upcast(*((const __cxxabiv1::__class_type_info **)this->m_pVTable-1), &result)) {
-                CVirtualHookFunc::Find(this->m_pFuncPtr, (void *) *vtable).AddVirtualHook(this);
+        if (!this->m_bSlotsFound) {
+            auto original = [](void **slot) {
+                CVirtualHookFunc *func = CVirtualHookFunc::FindOptional(slot);
+                return func != nullptr ? func->GetOriginal() : *slot;
+            };
+            void *origfunc = original(this->m_pFuncPtr);
+            for (auto &[name, vtable] : RTTI::GetAllVTable()) {
+                void **slot = const_cast<void **>(vtable + this->m_iOffset);
+                if (original(slot) == origfunc && VTableDerivesFrom(vtable, (const void **)this->m_pVTable, origfunc)) {
+                    this->m_Slots.emplace_back(slot, (void *) vtable);
+                }
             }
+            this->m_bSlotsFound = true;
+        }
+        for (auto &[slot, vtable] : this->m_Slots) {
+            CVirtualHookFunc::Find(slot, vtable).AddVirtualHook(this);
         }
         
         this->m_bEnabled = true;
@@ -201,12 +284,8 @@ void CVirtualHookInherit::DoEnable()
 void CVirtualHookInherit::DoDisable()
 {
     if (this->m_bEnabled) {
-        auto origfunc = *this->m_pFuncPtr;
-        for (auto &[name, vtable] : RTTI::GetAllVTable()) {
-            void *result = *this->m_pFuncPtr;
-            if (vtable[this->m_iOffset] == origfunc && static_cast<const std::type_info *>(*(vtable-1))->__do_upcast(*((const __cxxabiv1::__class_type_info **)this->m_pVTable-1), &result)) {
-                CVirtualHookFunc::Find(this->m_pFuncPtr, (void *) *vtable).RemoveVirtualHook(this);
-            }
+        for (auto &[slot, vtable] : this->m_Slots) {
+            CVirtualHookFunc::Find(slot, vtable).RemoveVirtualHook(this);
         }
         this->m_bEnabled = false;
     }

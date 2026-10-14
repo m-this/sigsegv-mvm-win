@@ -16,6 +16,7 @@
 #include <boost/algorithm/string.hpp>
 #include "tier1/strtools.h"
 #include "stub/extraentitydata.h"
+#include "mod/mvm/extended_upgrades.h"
 
 namespace Mod::MvM::Extended_Upgrades
 {
@@ -1481,11 +1482,11 @@ namespace Mod::MvM::Extended_Upgrades
 		return slot;
 	}
 
-    DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, void, CUpgrades_PlayerPurchasingUpgrade, CTFPlayer *player, int itemslot, int upgradeslot, bool sell, bool free, bool b3)
+    DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, PurchaseResult, CUpgrades_PlayerPurchasingUpgrade, CTFPlayer *player, int itemslot, int upgradeslot, bool sell, bool free, bool b3)
 	{
         SCOPED_INCREMENT(rc_CUpgrades_PlayerPurchasingUpgrade);
         player_is_downgrading = sell;
-		DETOUR_MEMBER_CALL(player, itemslot, upgradeslot, sell, free, b3);
+		return DETOUR_MEMBER_CALL(player, itemslot, upgradeslot, sell, free, b3);
 	}
 
 	DETOUR_DECL_MEMBER(void, CPopulationManager_RestoreCheckpoint)

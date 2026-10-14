@@ -70,7 +70,17 @@ struct dataFragments_s
 	unsigned int	bytes;			// size in bytes
 	unsigned int	bits;			// size in bits
 	unsigned int	transferID;		// only for files
+#if defined _WINDOWS
+	bool			isCompressed;
+	unsigned int	nUncompressedSize;
+	int				numFragments;
+	int				ackedFragments;
+	int				pendingFragments;
+#endif
 };
+#if defined _WINDOWS
+static_assert(sizeof(dataFragments_s) == 0x12c, "CNetChan::CheckReceivingList strides the lists by 0x12c");
+#endif
 
 namespace Mod::Util::Download_Manager
 {
@@ -1350,6 +1360,43 @@ namespace Mod::Util::Download_Manager
 		return DETOUR_STATIC_CALL(data, MessageHandler);
     }
 
+#if defined _WINDOWS
+	/* engine.dll carries HandleUpload inline in CheckReceivingList, which
+	 * calls it once a file has all its fragments, then frees the buffer and
+	 * returns true. The receive lists' offset in CNetChan is read off its
+	 * index: imul esi,[ebp+8],sizeof(dataFragments_s); add esi,offset. */
+	static dataFragments_s *ReceiveList(void *chan, int nList)
+	{
+		static int offset = [] {
+			auto func = reinterpret_cast<const uint8_t *>(AddrManager::GetAddr("CNetChan::CheckReceivingList"));
+			for (int i = 0; func != nullptr && i < 0x30; ++i) {
+				if (func[i] == 0x69 && func[i + 1] == 0x75 && func[i + 2] == 0x08 && *reinterpret_cast<const uint32_t *>(func + i + 3) == sizeof(dataFragments_s)) {
+					for (int j = i + 7; j < i + 0x10; ++j) {
+						if (func[j] == 0x81 && func[j + 1] == 0xc6) return *reinterpret_cast<const int *>(func + j + 2);
+					}
+				}
+			}
+			return -1;
+		}();
+		if (offset < 0) return nullptr;
+		return reinterpret_cast<dataFragments_s *>(reinterpret_cast<uintptr_t>(chan) + offset + nList * sizeof(dataFragments_s));
+	}
+
+	DETOUR_DECL_MEMBER(bool, CNetChan_CheckReceivingList, int nList)
+	{
+		auto data = ReceiveList(this, nList);
+		if (data != nullptr && data->buffer != nullptr && data->numFragments == data->ackedFragments && data->filename[0] != '\0') {
+			auto handler = reinterpret_cast<INetChannel *>(this)->GetMsgHandler();
+			if (OnReceiveFile(data->filename, data->transferID, rtti_cast<IClient *>(handler))) {
+				delete[] data->buffer;
+				data->buffer = nullptr;
+				return true;
+			}
+		}
+		return DETOUR_MEMBER_CALL(nList);
+	}
+#endif
+
 	DETOUR_DECL_MEMBER(void, CServerPlugin_OnQueryCvarValueFinished, QueryCvarCookie_t iCookie, edict_t *pPlayerEntity, EQueryCvarValueStatus eStatus, const char *pCvarName, const char *pCvarValue)
 	{
 		DETOUR_MEMBER_CALL(iCookie, pPlayerEntity, eStatus, pCvarName, pCvarValue);
@@ -1476,7 +1523,11 @@ namespace Mod::Util::Download_Manager
 			MOD_ADD_DETOUR_MEMBER(CTFGameRules_OnPlayerSpawned, "CTFGameRules::OnPlayerSpawned");
 			MOD_ADD_DETOUR_MEMBER(CGameClient_FileDenied, "CGameClient::FileDenied");
 			MOD_ADD_DETOUR_MEMBER(CGameClient_FileReceived, "CGameClient::FileReceived");
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_MEMBER(CNetChan_CheckReceivingList, "CNetChan::CheckReceivingList");
+#else
 			MOD_ADD_DETOUR_STATIC(CNetChan_HandleUpload, "CNetChan::HandleUpload");
+#endif
 
 			// Faster implementation of findFileInDirCaseInsensitive, instead of looking for any matching file with a different case, only look for files with lowercase letters instead
 			//MOD_ADD_DETOUR_STATIC(findFileInDirCaseInsensitive, "findFileInDirCaseInsensitive");

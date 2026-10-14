@@ -24,14 +24,30 @@ public:
 #ifdef SE_IS_TF2
 	void AddGlowEffect()                                                        {        ft_AddGlowEffect     (this); }
 	void RemoveGlowEffect()                                                     {        ft_RemoveGlowEffect  (this); }
+#if defined _WINDOWS
+	/* No Windows address: the Linux body returns this netvar. */
+	bool IsGlowEffectActive()                                                   { return this->m_bGlowEnabled; }
+#else
 	bool IsGlowEffectActive()                                                   { return ft_IsGlowEffectActive(this); }
+#endif
 #endif
 	bool IsAbleToSee(const CBaseEntity *entity, FieldOfViewCheckType checkFOV)  { return ft_IsAbleToSee_ent   (this, entity, checkFOV); }
 	bool IsAbleToSee(CBaseCombatCharacter *pBCC, FieldOfViewCheckType checkFOV) { return ft_IsAbleToSee_bcc   (this, pBCC, checkFOV); }
+#if defined _WINDOWS
+	/* No Windows address matched it, and none is needed: the Linux body
+	 * writes this datamap field and nothing else. */
+	void SetBloodColor(int nBloodColor)                                         { this->m_bloodColor = nBloodColor; }
+#else
 	void SetBloodColor(int nBloodColor)                                         {        ft_SetBloodColor     (this, nBloodColor); }
+#endif
 	bool Weapon_Detach(CBaseCombatWeapon *pWeapon)                              { return ft_Weapon_Detach     (this, pWeapon); }
 	bool SwitchToNextBestWeapon(CBaseCombatWeapon *weapon)                      { return ft_SwitchToNextBestWeapon(this, weapon); }
+#if defined _WINDOWS
+	/* No Windows address: the Linux body is m_iAmmo.Set(ammoIndex, count). */
+	void SetAmmoCount(int count, int ammoIndex)                                 {        this->m_iAmmo.SetIndex(count, ammoIndex); }
+#else
 	void SetAmmoCount(int count, int ammoIndex)                                 {        ft_SetAmmoCount      (this, count, ammoIndex); }
+#endif
 	Vector CalcDamageForceVector(const CTakeDamageInfo &info)                   { return ft_CalcDamageForceVector(this, info); }
 	
 	CBaseCombatWeapon *Weapon_GetSlot(int slot) const                      { return vt_Weapon_GetSlot     (this, slot); }
@@ -58,6 +74,11 @@ public:
 private:
 	DECL_SENDPROP(CHandle<CBaseCombatWeapon>,              m_hActiveWeapon);
 	DECL_SENDPROP(CHandle<CBaseCombatWeapon>[MAX_WEAPONS], m_hMyWeapons);
+#if defined _WINDOWS
+	DECL_DATAMAP(int, m_bloodColor);
+	DECL_SENDPROP(bool,                m_bGlowEnabled);
+	DECL_SENDPROP(int[MAX_AMMO_SLOTS], m_iAmmo);
+#endif
 	
 #ifdef SE_IS_TF2
 	static MemberFuncThunk<CBaseCombatCharacter *, void>                                               ft_AddGlowEffect;
@@ -162,6 +183,7 @@ public:
 	int GetObserverMode() const             { return this->m_iObserverMode; }
 	const char *GetPlayerName()             { return this->m_szNetname; }
 	float MaxSpeed() const                  { return this->m_flMaxspeed; }
+	void SetMaxSpeed(float speed)           { this->m_flMaxspeed = speed; }
 	int GetUserID()                         { return engine->GetPlayerUserId(this->edict()); }
 #ifdef SE_IS_TF2
 	int GetNumWearables() const             { return this->m_hMyWearables->Count(); }
@@ -184,7 +206,14 @@ public:
 	bool GetSteamID(CSteamID *pID)                                                     { return ft_GetSteamID    (this, pID); }
 	CSteamID GetSteamID()                                                              { CSteamID id; this->GetSteamID(&id); return id; }
 	void SetPlayerName(const char *name)                                               {        ft_SetPlayerName (this, name); }
+#if defined _WINDOWS
+	/* No such function in server.dll: MSVC inlined it into its callers, and
+	 * calling the unresolved thunk ended the server as bots spawned. The
+	 * Linux body is the handle lookup, bObserverOK unused on the server. */
+	CBaseViewModel *GetViewModel(int viewmodelindex = 0, bool bObserverOK = true);
+#else
 	CBaseViewModel *GetViewModel(int viewmodelindex = 0, bool bObserverOK = true)      { return ft_GetViewModel  (this, viewmodelindex, bObserverOK); }
+#endif
 	void DisableButtons(int nButtons)                                                  {        ft_DisableButtons(this, nButtons); }
 	void EnableButtons(int nButtons)                                                   {        ft_EnableButtons (this, nButtons); }
 	void ForceButtons(int nButtons)                                                    {        ft_ForceButtons  (this, nButtons); }

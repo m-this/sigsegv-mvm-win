@@ -120,7 +120,13 @@ class CBaseEntityOutput
 public:
 
 	void FireOutput( variant_t Value, CBaseEntity *pActivator, CBaseEntity *pCaller, float fDelay = 0 ) { ft_FireOutput(this, Value, pActivator, pCaller, fDelay); }
+#if defined _WINDOWS
+	/* Inlined into its callers on Windows. What is left is a helper taking the
+	 * output by pointer to pointer, and it pops its own two arguments. */
+	void ParseEventAction( const char *EventData ) { CBaseEntityOutput *self = this; ft_ParseEventAction_Windows(this, &self, EventData); }
+#else
 	void ParseEventAction( const char *EventData ) { ft_ParseEventAction(this, EventData); }
+#endif
 	void DeleteAllElements() { ft_DeleteAllElements(this); }
 
 	variant_t m_Value;
@@ -129,6 +135,9 @@ public:
 private:
 	static MemberFuncThunk<CBaseEntityOutput *, void, variant_t, CBaseEntity *, CBaseEntity *, float> ft_FireOutput;
 	static MemberFuncThunk<CBaseEntityOutput *, void, const char *> ft_ParseEventAction;
+#if defined _WINDOWS
+	static MemberFuncThunk<CBaseEntityOutput *, bool, CBaseEntityOutput **, const char *> ft_ParseEventAction_Windows;
+#endif
 	static MemberFuncThunk<CBaseEntityOutput *, void> ft_DeleteAllElements;
 	
 };
@@ -324,7 +333,13 @@ public:
 	void CalcAbsolutePosition()                                                                                             {        ft_CalcAbsolutePosition          (this); }
 	void CalcAbsoluteVelocity()                                                                                             {        ft_CalcAbsoluteVelocity          (this); }
 	bool NameMatchesComplex(const char *pszNameOrWildcard)                                                                  { return ft_NameMatchesComplex            (this, pszNameOrWildcard); }
+#if defined _WINDOWS
+	/* No body in server.dll: MSVC inlined it. Written in baseentity.cpp from
+	 * the Linux body, the SDK's Matcher_NamesMatch on m_iClassname. */
+	bool ClassMatchesComplex(const char *pszClassOrWildcard);
+#else
 	bool ClassMatchesComplex(const char *pszClassOrWildcard)                                                                { return ft_ClassMatchesComplex           (this, pszClassOrWildcard); }
+#endif
 	void SetAbsOrigin(const Vector& absOrigin)                                                                              {        ft_SetAbsOrigin                  (this, absOrigin); }
 	void SetAbsAngles(const QAngle& absAngles)                                                                              {        ft_SetAbsAngles                  (this, absAngles); }
 	void SetAbsVelocity(const Vector& absVelocity)                                                                          {        ft_SetAbsVelocity                (this, absVelocity); }
@@ -336,15 +351,32 @@ public:
 	void EntityText(int text_offset, const char *text, float duration, int r, int g, int b, int a)                          {        ft_EntityText                    (this, text_offset, text, duration, r, g, b, a); }
 	int TakeDamage(const CTakeDamageInfo& info)                                                                             { return ft_TakeDamage                    (this, info); }
 	void SetMoveType(MoveType_t val, MoveCollide_t moveCollide = MOVECOLLIDE_DEFAULT)                                       {        ft_SetMoveType                   (this, val, moveCollide); }
+#if defined _WINDOWS
+	/* No Windows address, and none needed: the Linux body is the const one above. */
+	model_t *GetModel()                                                                                                     { return const_cast<model_t *>(modelinfo->GetModel(this->GetModelIndex())); }
+#else
 	model_t *GetModel()                                                                                                     { return ft_GetModel                      (this); }
+#endif
 	void SetNextThink(float nextThinkTime, const char *szContext = nullptr)                                                 {        ft_SetNextThink_name             (this, nextThinkTime, szContext); }
 	void SetNextThink(int nContextIndex, float thinkTime)                                                                   {        ft_SetNextThink_index            (this, nContextIndex, thinkTime); }
 	int DispatchUpdateTransmitState()                                                                                       { return ft_DispatchUpdateTransmitState   (this); }
 	void SetEffects(int nEffects)                                                                                           {        ft_SetEffects                    (this, nEffects); }
 	void AddEffects(int nEffects)                                                                                           {        ft_AddEffects                    (this, nEffects); }
+#if defined _WINDOWS
+	/* No body in server.dll: MSVC inlined it into CC_Ent_Dump, its one caller.
+	 * Written in baseentity.cpp from the Linux body. */
+	bool ReadKeyField(const char *name, variant_t *var);
+#else
 	bool ReadKeyField(const char *name, variant_t *var)                                                                     { return ft_ReadKeyField                  (this, name, var); }
+#endif
 	IPhysicsObject *VPhysicsInitStatic()                                                                                    { return ft_VPhysicsInitStatic            (this); }
+#if defined _WINDOWS
+	/* No such function in server.dll: MSVC inlined it everywhere. Written in
+	 * baseentity.cpp from the Linux body. */
+	void *GetDataObject(int type);
+#else
 	void *GetDataObject(int type)                                                                                           { return ft_GetDataObject                 (this, type); }
+#endif
 	int SetTransmitState(int state)                                                                                         { return ft_SetTransmitState              (this, state); }
 	void FireNamedOutput(const char *pszOutput, variant_t variant, CBaseEntity *pActivator, CBaseEntity *pCaller, float flDelay) { return ft_FireNamedOutput          (this, pszOutput, variant, pActivator, pCaller, flDelay); }
 	void ApplyAbsVelocityImpulse(const Vector &impulse)                                                                     {        ft_ApplyAbsVelocityImpulse       (this, impulse); }

@@ -46,6 +46,38 @@ namespace Mod::Etc::Crash_Fixes
 		DETOUR_STATIC_CALL(pl);
 	}	
 
+#if defined _WINDOWS
+	/* ClientData_Update is inline in UpdateAllClientData there, with the same
+	 * copy from a removed camera. */
+	DETOUR_DECL_STATIC(void, UpdateAllClientData)
+	{
+		if (ft_GetCurrentSkyCamera() == nullptr) {
+			ForEachPlayer([](CBasePlayer *pl) {
+				pl->m_Local->m_skybox3darea = 255;
+			});
+			return;
+		}
+		DETOUR_STATIC_CALL();
+	}
+#endif
+
+#if defined _WINDOWS
+	/* CVariantBase as the game passes it: 16 bytes by value, popped by the
+	 * callee with the name (ret 0x14). Only passed through. */
+	struct ScriptVariantBytes { uint32 data[4]; };
+
+	/* A map's VScript can call Convars.SetValue from an entity's destroy
+	 * callback while the level shuts down, after ~CWorld has deleted the game
+	 * rules; SetValue then calls SaveConvar through a null g_pGameRules
+	 * (mvm_skeleclipse_b7a_adv_vicious_delicious, on its way to another map).
+	 * Linux has the same call; nothing there has been seen to reach it. */
+	DETOUR_DECL_MEMBER(void, CScriptConvarAccessor_SetValue, const char *name, ScriptVariantBytes value)
+	{
+		if (g_pGameRules.GetRef() == nullptr) return;
+		DETOUR_MEMBER_CALL(name, value);
+	}
+#endif
+
     class CMod : public IMod
 	{
 	public:
@@ -58,7 +90,16 @@ namespace Mod::Etc::Crash_Fixes
 			MOD_ADD_DETOUR_MEMBER(CTFPipebombLauncher_FireProjectile, "CTFPipebombLauncher::FireProjectile");
 
 			// Fix crash after sky_camera being removed
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_STATIC(UpdateAllClientData, "UpdateAllClientData");
+#else
 			MOD_ADD_DETOUR_STATIC(ClientData_Update, "ClientData_Update");
+#endif
+
+#if defined _WINDOWS
+			// Fix VScript's Convars.SetValue at level shutdown, once the game rules are gone
+			MOD_ADD_DETOUR_MEMBER(CScriptConvarAccessor_SetValue, "CScriptConvarAccessor::SetValue");
+#endif
 		}
 	};
 	CMod s_Mod;

@@ -80,10 +80,15 @@ private:
 	size_t *m_OffsetDest;
 };
 
+#if defined _WINDOWS
+uintptr_t UnresolvedPropAddr(IProp *prop);
+#endif
+
 inline int IProp::GetOffsetAssert()
 {
 	int off = -1;
-	assert(this->GetOffset(off));
+	bool found = this->GetOffset(off);
+	assert(found); (void)found;
 	return off;
 }
 
@@ -342,8 +347,10 @@ public:
 	template<typename A> inline void SetIndex(const A val, int index)
 	{ 
 		if constexpr (NET) {
-			if (memcmp((this->GetPtrRO()+index), &val, sizeof(A)) != 0)
-				PROP->StateChanged(reinterpret_cast<void *>(this->GetInstanceBaseAddr()), this->GetPtrRW()+index);
+			/* the element, not index whole arrays past the start: GetPtrRO is a
+			 * pointer to the array type, and +index read that many arrays on */
+			if (memcmp(&this->GetRO()[index], &val, sizeof(A)) != 0)
+				PROP->StateChanged(reinterpret_cast<void *>(this->GetInstanceBaseAddr()), &this->GetRW()[index]);
 		}
 		this->GetRW()[index] = val;
 	}
@@ -418,7 +425,23 @@ protected:
 	
 private:
 	inline uintptr_t GetInstanceBaseAddr() const { return ( reinterpret_cast<uintptr_t>(this) - *ADJUST); }
+#if defined _WINDOWS
+	/* A prop whose offset was never found leaves OFFSET at 0, the object's
+	 * first bytes: its vtable. A bool written through one turned a vtable
+	 * pointer into its address plus one, and the next virtual call jumped
+	 * into data. On Windows, where more lookups fail, such a prop names
+	 * itself once and reads and writes a zeroed block instead. */
+	inline uintptr_t GetInstanceVarAddr() const
+	{
+		if (PROP->GetState() != IProp::State::OK) {
+			int off;
+			if (!PROP->GetOffset(off)) return UnresolvedPropAddr(PROP);
+		}
+		return ( reinterpret_cast<uintptr_t>(this) + *OFFSET);
+	}
+#else
 	inline uintptr_t GetInstanceVarAddr() const  { return ( reinterpret_cast<uintptr_t>(this) + *OFFSET); }
+#endif
 	
 	inline ptrdiff_t GetCachedVarOffset() const
 	{

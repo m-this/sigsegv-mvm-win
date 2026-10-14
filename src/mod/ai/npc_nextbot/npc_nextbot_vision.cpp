@@ -92,7 +92,7 @@ namespace Mod::AI::NPC_Nextbot
         return VHOOK_CALL(subject, checkFOV, visibleSpot);
     }
 
-    void LoadVisionHooks(void **vtable) {
+    bool LoadVisionHooks(void **vtable) {
         
         CVirtualHook hooks[] = {
             CVirtualHook("7IVision", "5IBody", "IBody::Update", GET_VHOOK_CALLBACK(MyNextbotVision_Update), GET_VHOOK_INNERPTR(MyNextbotVision_Update)),
@@ -100,10 +100,15 @@ namespace Mod::AI::NPC_Nextbot
             CVirtualHook("7IVision", "12CTFBotVision", "CTFBotVision::CollectPotentiallyVisibleEntities", GET_VHOOK_CALLBACK(MyNextbotVision_CollectPotentiallyVisibleEntities), GET_VHOOK_INNERPTR(MyNextbotVision_CollectPotentiallyVisibleEntities)),
             CVirtualHook("7IVision", "IVision::IsAbleToSee2", GET_VHOOK_CALLBACK(MyNextbotVision_IsAbleToSee), GET_VHOOK_INNERPTR(MyNextbotVision_IsAbleToSee)),
         };
+        bool ok = true;
         for (auto &hook : hooks) {
-            hook.DoLoad();
-            hook.AddToVTable(vtable);
+            if (hook.DoLoad()) {
+                hook.AddToVTable(vtable);
+            } else {
+                ok = false;
+            }
         }
+        return ok;
     }
 
     // static MemberFuncThunk<NextBotGroundLocomotion *, void, INextBot *> ft_NextBotGroundLocomotion_ctor("NextBotGroundLocomotion::NextBotGroundLocomotion");

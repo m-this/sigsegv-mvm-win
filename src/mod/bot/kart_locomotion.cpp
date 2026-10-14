@@ -29,6 +29,19 @@ namespace Mod::Bot::Kart_Locomotion
     };
 
 	/* don't do dodge strafing */
+#if defined _WINDOWS
+	/* The whole Dodge there: the action as this and the bot as its argument,
+	 * where the Linux clone takes the bot in this */
+	DETOUR_DECL_MEMBER(void, CTFBotMainAction_Dodge, CTFBot *bot)
+	{
+		auto actor = reinterpret_cast<CTFPlayer *>(bot);
+		if (actor->m_Shared->InCond(TF_COND_HALLOWEEN_KART) || actor->m_Shared->InCond(TF_COND_TAUNTING) || actor->m_hVehicle != nullptr) {
+			return;
+		}
+		
+		DETOUR_MEMBER_CALL(bot);
+	}
+#else
 	DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, void, CTFBotMainAction_Dodge)
 	{
 		auto actor = reinterpret_cast<CTFPlayer *>(this);
@@ -38,6 +51,7 @@ namespace Mod::Bot::Kart_Locomotion
 		
 		DETOUR_MEMBER_CALL();
 	}
+#endif
 	
 	/* don't strafe and jump around when stuck */
 	DETOUR_DECL_MEMBER(EventDesiredResult<CTFBot>, CTFBotMainAction_OnStuck, CTFBot *actor)

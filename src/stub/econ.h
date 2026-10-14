@@ -25,12 +25,22 @@ public:
 	float ApplyAttributeFloat( float flValue, CBaseEntity *pInitiator, string_t iszAttribHook, CUtlVector<CBaseEntity*> *pItemList = NULL ) { return vt_ApplyAttributeFloat(this, flValue, pInitiator, iszAttribHook, pItemList);}
 	string_t ApplyAttributeStringWrapper( string_t strValue, CBaseEntity *pInitiator, string_t iszAttribHook, CUtlVector<CBaseEntity*> *pItemList = NULL ) { return ft_ApplyAttributeStringWrapper(this, strValue, pInitiator, iszAttribHook, pItemList);}
 	string_t ApplyAttributeString( string_t strValue, CBaseEntity *pInitiator, string_t iszAttribHook, CUtlVector<CBaseEntity*> *pItemList = NULL ) { return vt_ApplyAttributeString(this, strValue, pInitiator, iszAttribHook, pItemList);}
+#if defined _WINDOWS
+	/* Inlined in server.dll: the game rules' networked cache version, or 0. In econ.cpp. */
+	int GetGlobalCacheVersion( ) const;
+#else
 	int GetGlobalCacheVersion( ) const                                  { return ft_GetGlobalCacheVersion(this);}
+#endif
 	void ClearCache() { ft_ClearCache(this);}
 
 	void AddProvider(CBaseEntity *provider)    {        ft_AddProvider(this, provider);}
 	void RemoveProvider(CBaseEntity *provider) {        ft_RemoveProvider(this, provider);}
+#if defined _WINDOWS
+	/* Inlined in server.dll. The SDK's body, in econ.cpp. */
+	bool IsProvidingTo(CBaseEntity *receiver);
+#else
 	bool IsProvidingTo(CBaseEntity *receiver)  { return ft_IsProvidingTo(this, receiver);}
+#endif
 
 	float ApplyAttributeFloatWrapperFunc(float flValue, CBaseEntity *pInitiator, string_t iszAttribHook, CUtlVector<CBaseEntity*> *pItemList = nullptr) { return ft_ApplyAttributeFloatWrapper(this, flValue, pInitiator, iszAttribHook, pItemList);}
 
@@ -55,6 +65,7 @@ public:
 	static MemberVFuncThunk<CAttributeManager *, float, float, CBaseEntity *, string_t, CUtlVector<CBaseEntity*> *> vt_ApplyAttributeFloatWrapper;
 	static MemberVFuncThunk<CAttributeManager *, string_t, string_t, CBaseEntity *, string_t, CUtlVector<CBaseEntity*> *> vt_ApplyAttributeString;
 	static MemberVFuncThunk<CAttributeManager *, float, float, CBaseEntity *, string_t, CUtlVector<CBaseEntity*> *> vt_ApplyAttributeFloat;
+	static MemberVFuncThunk<CAttributeManager *, void> vt_OnAttributeValuesChanged;
 
 	static StaticFuncThunk<int, int, const char *, const CBaseEntity *, CUtlVector<CBaseEntity *> *, bool>     ft_AttribHookValue_int;
 	static StaticFuncThunk<float, float, const char *, const CBaseEntity *, CUtlVector<CBaseEntity *> *, bool> ft_AttribHookValue_float;
@@ -241,8 +252,21 @@ extern CAttribute_String *last_parsed_string_attribute_value;
 class CAttributeList
 {
 public:
+#if defined _WINDOWS
+	/* No such function in server.dll: MSVC inlined it into its callers. Defined
+	 * below, once CEconItemAttribute is a complete type, and doing the search
+	 * the Linux body does: the first attribute with this definition index. */
+	CEconItemAttribute *GetAttributeByID(int def_idx) const;
+#else
 	CEconItemAttribute *GetAttributeByID(int def_idx) const            { return ft_GetAttributeByID      (this, def_idx); }
+#endif
+#if defined _WINDOWS
+	/* No such function in server.dll: nothing there calls it. Defined below,
+	 * once the schema is declared: the definition by name, then its index. */
+	CEconItemAttribute *GetAttributeByName(const char *name) const;
+#else
 	CEconItemAttribute *GetAttributeByName(const char *name) const     { return ft_GetAttributeByName    (this, name); }
+#endif
 	void IterateAttributes(IEconItemAttributeIterator *iter) const     {        ft_IterateAttributes     (this, iter); }
 	void AddAttribute(CEconItemAttribute *pAttr)                       {        ft_AddAttribute          (this, pAttr); }
 	void RemoveAttribute(const CEconItemAttributeDefinition *pAttrDef) {        ft_RemoveAttribute       (this, pAttrDef); }
@@ -250,7 +274,12 @@ public:
 	void DestroyAllAttributes()                                        {        ft_DestroyAllAttributes  (this); }
 	void SetRuntimeAttributeValue(CEconItemAttributeDefinition *pAttrDef, float value) {        ft_SetRuntimeAttributeValue  (this, pAttrDef, value); }
 	void SetRuntimeAttributeRefundableCurrency(CEconItemAttributeDefinition *pAttrDef, int value) {        ft_SetRuntimeAttributeRefundableCurrency  (this, pAttrDef, value); }
+#if defined _WINDOWS
+	/* Inlined into every caller in server.dll. The SDK's body, in econ.cpp. */
+	void NotifyManagerOfAttributeValueChanges();
+#else
 	void NotifyManagerOfAttributeValueChanges()                        {        ft_NotifyManagerOfAttributeValueChanges  (this); }
+#endif
 
 	CUtlVector<CEconItemAttribute>& Attributes() { return this->m_Attributes; }
 	void AddStringAttribute(CEconItemAttributeDefinition *pAttrDef, std::string value);
@@ -504,7 +533,7 @@ public:
 		/* using an arbitrary buffer size that's basically guaranteed to always
 		 * be big enough, even if CEconItemAttribute grows in the future */
 		auto ptr = reinterpret_cast<CEconItemAttribute *>(::operator new(0x20));
-		ft_ctor(ptr);
+		Ctor(ptr);
 		ptr->m_iAttributeDefinitionIndex = iDefIndex;
 		return ptr;
 	}
@@ -515,12 +544,12 @@ public:
 	}
 	CEconItemAttribute() 
 	{
-		ft_ctor(this);
+		Ctor(this);
 	}
 
 	CEconItemAttribute( const attrib_definition_index_t iAttributeIndex, float flValue ) 
 	{
-		ft_ctor(this); 
+		Ctor(this); 
 		m_iAttributeDefinitionIndex = iAttributeIndex; 
 		m_iRawValue32 = flValue;
 	}
@@ -528,12 +557,25 @@ public:
 	attribute_data_union_t *GetValuePtr() { return (attribute_data_union_t *) &this->m_iRawValue32; }
 	attribute_data_union_t GetValue() { return *(attribute_data_union_t *) &this->m_iRawValue32; }
 	
+#if defined _WINDOWS
+	/* Inlined into every caller in server.dll. Defined below, once the schema
+	 * is declared: the Linux body. */
+	CEconItemAttributeDefinition *GetStaticData() const;
+#else
 	CEconItemAttributeDefinition *GetStaticData() const { return ft_GetStaticData(this); }
+#endif
 
 	attrib_definition_index_t GetAttributeDefinitionIndex() const { return m_iAttributeDefinitionIndex; }
 
 	friend class CAttributeList;
 private:
+#if defined _WINDOWS
+	/* server.dll has no out-of-line constructor: MSVC inlined it. The SDK's
+	 * body, in econ.cpp. */
+	static void Ctor(CEconItemAttribute *ptr);
+#else
+	static void Ctor(CEconItemAttribute *ptr) { ft_ctor(ptr); }
+#endif
 	static MemberFuncThunk<      CEconItemAttribute *, void>                           ft_ctor;
 	static MemberFuncThunk<const CEconItemAttribute *, CEconItemAttributeDefinition *> ft_GetStaticData;
 	
@@ -542,6 +584,19 @@ private:
 	float m_iRawValue32;
 	int m_nRefundableCurrency;
 };
+
+#if defined _WINDOWS
+inline CEconItemAttribute *CAttributeList::GetAttributeByID(int def_idx) const
+{
+	auto& attributes = const_cast<CAttributeList *>(this)->Attributes();
+	for (int i = 0; i < attributes.Count(); ++i) {
+		if (attributes[i].GetAttributeDefinitionIndex() == def_idx) {
+			return &attributes[i];
+		}
+	}
+	return nullptr;
+}
+#endif
 #ifdef PLATFORM_64BITS
 static_assert(sizeof(CEconItemAttribute) == 0x18);
 #else
@@ -601,6 +656,19 @@ class CTFItemSchema : public CEconItemSchema {};
 extern StaticFuncThunk<CTFItemSchema *> ft_GetItemSchema;
 inline CTFItemSchema *GetItemSchema() { return ft_GetItemSchema(); }
 
+#if defined _WINDOWS
+inline CEconItemAttributeDefinition *CEconItemAttribute::GetStaticData() const
+{
+	return GetItemSchema()->GetAttributeDefinition(this->m_iAttributeDefinitionIndex);
+}
+
+inline CEconItemAttribute *CAttributeList::GetAttributeByName(const char *name) const
+{
+	CEconItemAttributeDefinition *pAttrDef = GetItemSchema()->GetAttributeDefinitionByName(name);
+	return pAttrDef != nullptr ? this->GetAttributeByID(pAttrDef->GetIndex()) : nullptr;
+}
+#endif
+
 class CItemGeneration
 {
 public:
@@ -621,11 +689,22 @@ inline CItemGeneration *ItemGeneration() { return ft_ItemGeneration(); }
 
 extern StaticFuncThunk<void, const CAttribute_String *, const char **> ft_CopyStringAttributeValueToCharPointerOutput;
 
+#if defined _WINDOWS
+/* Inlined into every caller on Windows. value_ is the std::string * at +0x10,
+ * as on Linux (CAttribute_String::Clear reads it there); an MSVC std::string
+ * keeps its characters in place until its capacity, at +0x14, passes 15. */
+inline void CopyStringAttributeValueToCharPointerOutput(const CAttribute_String *attr_str, const char **p_cstr)
+{
+	auto str = *(const char **)((uintptr_t)attr_str + 0x10);
+	*p_cstr = *(const size_t *)(str + 0x14) > 15 ? *(const char **)str : str;
+}
+#else
 inline void CopyStringAttributeValueToCharPointerOutput(const CAttribute_String *attr_str, const char **p_cstr) { ft_CopyStringAttributeValueToCharPointerOutput(attr_str, p_cstr); }
+#endif
 inline const char *GetStringAttributeValue(const CAttribute_String *attr_str) 
 { 
 	const char *p_cstr;
-	ft_CopyStringAttributeValueToCharPointerOutput(attr_str, &p_cstr);
+	CopyStringAttributeValueToCharPointerOutput(attr_str, &p_cstr);
 	return  p_cstr;
 }
 

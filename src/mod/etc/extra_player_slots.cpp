@@ -108,7 +108,7 @@ namespace Mod::Etc::Extra_Player_Slots
             ConColorMsg(Color(0xff,0xff,0x00),"Extra player slots %s, change level\n", ExtraSlotsEnabled() ? "enabled" : "disabled");
             if (g_pPopulationManager != nullptr) {
                 std::filesystem::path filename = g_pPopulationManager->GetPopulationFilename();
-                nextMissionAfterMapChange = filename.stem();
+                nextMissionAfterMapChange = filename.stem().string();
             }
             engine->ChangeLevel(STRING(gpGlobals->mapname), nullptr);
         }
@@ -1246,7 +1246,9 @@ namespace Mod::Etc::Extra_Player_Slots
             MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_IsPlayerDominated, "CTFPlayerShared::IsPlayerDominated");
             MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_IsPlayerDominatingMe, "CTFPlayerShared::IsPlayerDominatingMe");
             MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_SetPlayerDominated, "CTFPlayerShared::SetPlayerDominated");
+#if !defined _WINDOWS
             MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_SetPlayerDominatingMe, "CTFPlayerShared::SetPlayerDominatingMe");
+#endif
             MOD_ADD_DETOUR_MEMBER(CTFPlayerResource_SetPlayerClassWhenKilled, "CTFPlayerResource::SetPlayerClassWhenKilled");
             MOD_ADD_DETOUR_MEMBER(CBasePlayer_UpdatePlayerSound, "CBasePlayer::UpdatePlayerSound");
             MOD_ADD_DETOUR_MEMBER(CSoundEnt_Initialize, "CSoundEnt::Initialize");
@@ -1292,7 +1294,9 @@ namespace Mod::Etc::Extra_Player_Slots
             MOD_ADD_DETOUR_MEMBER(CTFPlayer_CreateFeignDeathRagdoll, "CTFPlayer::CreateFeignDeathRagdoll");
             MOD_ADD_VHOOK(CWeaponMedigun_Deploy, TypeName<CWeaponMedigun>(), "CWeaponMedigun::Deploy");
             MOD_ADD_DETOUR_MEMBER(CTFPlayer_FireBullet, "CTFPlayer::FireBullet");
+#if !defined _WINDOWS
             MOD_ADD_DETOUR_MEMBER(CTFPlayer_MaybeDrawRailgunBeam, "CTFPlayer::MaybeDrawRailgunBeam");
+#endif
             MOD_ADD_DETOUR_MEMBER(CTFPlayer_Spawn, "CTFPlayer::Spawn");
 #endif
             

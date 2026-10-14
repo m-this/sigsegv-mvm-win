@@ -331,12 +331,12 @@ namespace Mod::Etc::Unintended_Class_Weapon_Improvements
 		return result;
 	}
 
-    DETOUR_DECL_MEMBER(bool, CTFWeaponBase_Holster)
+    DETOUR_DECL_MEMBER(bool, CTFWeaponBase_Holster, CBaseCombatWeapon *pSwitchingTo)
 	{
 		auto weapon = reinterpret_cast<CTFWeaponBase *>(this);
         
 		auto mod = weapon->GetEntityModule<UnintendedClassViewmodelOverride>("unintendedclassweapon");
-        auto result = DETOUR_MEMBER_CALL();
+        auto result = DETOUR_MEMBER_CALL(pSwitchingTo);
 		
 		if (result && mod != nullptr && weapon->GetTFPlayerOwner() != nullptr) {
 			OnUnequipUnintendedClassWeapon(weapon->GetTFPlayerOwner(), weapon, mod);

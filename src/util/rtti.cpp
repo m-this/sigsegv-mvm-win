@@ -4,29 +4,80 @@
 #include "util/prof.h"
 #include "util/misc.h"
 
+#include <algorithm>
 #include <regex>
+
+
+#if defined _MSC_VER
+/* The module's absolute-pointer slots, sorted: the RVA of every
+ * IMAGE_REL_BASED_HIGHLOW entry of its base relocation table. The loaded image
+ * is all the scans below see, strings and constants included, and a word that
+ * equals a locator or type descriptor address by chance is no pointer: only a
+ * pointer has a relocation. Empty when the table cannot be read. */
+static std::vector<uint32_t> LoadRelocations(uintptr_t base)
+{
+	std::vector<uint32_t> rvas;
+	
+	auto dos = (const IMAGE_DOS_HEADER *)base;
+	auto nt  = (const IMAGE_NT_HEADERS *)(base + dos->e_lfanew);
+	const IMAGE_DATA_DIRECTORY& dir = nt->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_BASERELOC];
+	if (dir.VirtualAddress == 0 || dir.Size == 0) return rvas;
+	
+	MEMORY_BASIC_INFORMATION mem;
+	for (uintptr_t p = base + dir.VirtualAddress; p < base + dir.VirtualAddress + dir.Size; p += mem.RegionSize) {
+		if (VirtualQuery((const void *)p, &mem, sizeof(mem)) == 0 || mem.State != MEM_COMMIT || (mem.Protect & (PAGE_NOACCESS | PAGE_GUARD)) != 0) {
+			Warning("RTTI::PreLoad: base relocation table at %08zx is not readable\n", p);
+			return rvas;
+		}
+		mem.RegionSize -= p - (uintptr_t)mem.BaseAddress;
+	}
+	
+	auto block = (const uint8_t *)(base + dir.VirtualAddress);
+	auto end   = block + dir.Size;
+	while (end - block >= (ptrdiff_t)sizeof(IMAGE_BASE_RELOCATION)) {
+		auto hdr = (const IMAGE_BASE_RELOCATION *)block;
+		if (hdr->SizeOfBlock < sizeof(IMAGE_BASE_RELOCATION) || hdr->SizeOfBlock > (size_t)(end - block)) break;
+		
+		auto entry = (const uint16_t *)(block + sizeof(IMAGE_BASE_RELOCATION));
+		auto entry_end = (const uint16_t *)(block + hdr->SizeOfBlock);
+		for (; entry < entry_end; ++entry) {
+			if ((*entry >> 12) == IMAGE_REL_BASED_HIGHLOW) {
+				rvas.push_back(hdr->VirtualAddress + (*entry & 0xfff));
+			}
+		}
+		
+		block += hdr->SizeOfBlock;
+	}
+	
+	std::sort(rvas.begin(), rvas.end());
+	return rvas;
+}
+#endif
 
 
 namespace RTTI
 {
+	// Constructed on first use: mods look these up from their constructors,
+	// which run during static initialization in an order the linker picks.
+	//
 	// Windows: str typeinfo(T).raw_name() => _TypeDescriptor*
 	// Linux:   str typeinfo(T).name()     => abi::__class_type_info*
-	static std::unordered_map<std::string, const rtti_t *> s_RTTI;
+	static std::unordered_map<std::string, const rtti_t *>& s_RTTI() { static std::unordered_map<std::string, const rtti_t *> m; return m; }
 	
 	// Windows: str typeinfo(T).raw_name() => void **
 	// Linux:   str typeinfo(T).name()     => void **
-	static std::unordered_map<std::string, const void **> s_VT;
+	static std::unordered_map<std::string, const void **>& s_VT() { static std::unordered_map<std::string, const void **> m; return m; }
 	
 	// Windows: str typeinfo(T).raw_name() => void **
 	// Linux:   str typeinfo(T).name()     => void **
-	static std::unordered_map<std::string, VTableInfo> s_VTInfo;
+	static std::unordered_map<std::string, VTableInfo>& s_VTInfo() { static std::unordered_map<std::string, VTableInfo> m; return m; }
 	
 	
 	void PreLoad()
 	{
 		DevMsg("RTTI::PreLoad BEGIN\n");
-		s_RTTI.clear();
-		s_VT.clear();
+		s_RTTI().clear();
+		s_VT().clear();
 		
 #if defined __GNUC__
 		
@@ -51,20 +102,20 @@ namespace RTTI
 							std::string key(name);
 							auto addr = (const rtti_t *)(sym.addr);
 							
-							if (s_RTTI.find(key) != s_RTTI.end()) {
+							if (s_RTTI().find(key) != s_RTTI().end()) {
 								DevWarning("RTTI::PreLoad: duplicate symbol \"_ZTI%s\"\n", name);
 							} else {
-								s_RTTI[key] = addr;
+								s_RTTI()[key] = addr;
 							//	DevMsg("RTTI: %08x \"%s\"\n", (uintptr_t)addr, name);
 							}
 						} else if (is_vt) {
 							std::string key(name);
 							auto addr = (const void **)((uintptr_t)(sym.addr) + offsetof(vtable, vfptrs));
 							
-							if (s_VT.find(key) != s_VT.end()) {
+							if (s_VT().find(key) != s_VT().end()) {
 								DevWarning("RTTI::PreLoad: duplicate symbol \"_ZTV%s\"\n", name);
 							} else {
-								s_VT[key] = addr;
+								s_VT()[key] = addr;
 							//	DevMsg("VT: %08x \"%s\"\n", (uintptr_t)addr, name);
 							}
 						}
@@ -159,11 +210,11 @@ namespace RTTI
 				++n_add;
 				
 				std::string key(name);
-				if (s_RTTI.find(key) != s_RTTI.end()) {
+				if (s_RTTI().find(key) != s_RTTI().end()) {
 				//	DevWarning("RTTI::PreLoad: duplicate RTTI str \"%s\"\n", name);
 				} else {
-					s_RTTI[key] = addr;
-				//	DevMsg("\"%s\" TD @ %08x\n", name, (uintptr_t)s_RTTI[key]);
+					s_RTTI()[key] = addr;
+				//	DevMsg("\"%s\" TD @ %08x\n", name, (uintptr_t)s_RTTI()[key]);
 				}
 			}
 			DevMsg("RTTI::PreLoad:\n"
@@ -174,10 +225,21 @@ namespace RTTI
 			Prof::End("TD post");
 			
 			
+			const uintptr_t lib_base = LibMgr::GetInfo(lib).BaseAddr();
+			const std::vector<uint32_t> relocs = LoadRelocations(lib_base);
+			if (relocs.empty()) {
+				Warning("RTTI::PreLoad: no relocations for %s, its vtables are taken unchecked\n", LibMgr::Lib_ToString(lib));
+			}
+			auto is_pointer = [&](const void *where) {
+				return relocs.empty() || std::binary_search(relocs.begin(), relocs.end(), (uint32_t)((uintptr_t)where - lib_base));
+			};
+			
 			Prof::Begin();
-			std::unordered_map<COLScanner *, std::string> scannermap_COL;
+			std::unordered_map<const COLScanner *, std::string> scannermap_COL;
 			std::vector<COLScanner> scanners_COL;
-			for (const auto& pair : s_RTTI) {
+			// the map below is keyed by element address, so the vector must never reallocate
+			scanners_COL.reserve(s_RTTI().size());
+			for (const auto& pair : s_RTTI()) {
 				auto name = pair.first;
 				auto p_TD = pair.second;
 				
@@ -198,11 +260,14 @@ namespace RTTI
 				for (auto match : scanner.Matches()) {
 					auto p_COL = (const __RTTI_CompleteObjectLocator *)((uintptr_t)match - offsetof(__RTTI_CompleteObjectLocator, pTypeDescriptor));
 					
-					if (p_COL->signature == 0x00000000 && p_COL->offset == 0x00000000 && p_COL->cdOffset == 0x00000000) {
+					if (p_COL->signature == 0x00000000 && p_COL->offset == 0x00000000 && p_COL->cdOffset == 0x00000000 && is_pointer(match)) {
 						matches.push_back(p_COL);
 					}
 				}
 				
+				if (matches.size() > 1) {
+					Warning("RTTI::PreLoad: %zu locators for \"%s\", it has no vtable\n", matches.size(), name.c_str());
+				}
 				if (matches.size() != 1) {
 				//	DevMsg("RTTI::PreLoad: %u TD refs for \"%s\"\n", scanner.Matches().size(), name.c_str());
 					continue;
@@ -215,8 +280,9 @@ namespace RTTI
 			
 			
 			Prof::Begin();
-			std::unordered_map<VTScanner *, std::string> scannermap_VT;
+			std::unordered_map<const VTScanner *, std::string> scannermap_VT;
 			std::vector<VTScanner> scanners_VT;
+			scanners_VT.reserve(results_COL.size());
 			for (const auto& pair : results_COL) {
 				auto name  = pair.first;
 				auto p_COL = pair.second;
@@ -233,13 +299,20 @@ namespace RTTI
 			for (const auto& scanner : scanners_VT) {
 				auto& name = scannermap_VT[&scanner];
 				
-				if (!scanner.ExactlyOneMatch()) {
+				std::vector<const void *> refs;
+				for (auto match : scanner.Matches()) {
+					if (is_pointer(match)) refs.push_back(match);
+				}
+				if (refs.size() > 1) {
+					Warning("RTTI::PreLoad: %zu vtables point to the locator of \"%s\", it has no vtable\n", refs.size(), name.c_str());
+				}
+				if (refs.size() != 1) {
 				//	DevMsg("RTTI::PreLoad: %u COL refs for \"%s\"\n", scanner.Matches().size(), name.c_str());
 					continue;
 				}
 				
-				s_VT[name] = (const void **)((uintptr_t)scanner.FirstMatch() + 0x4);
-			//	DevMsg("\"%s\" VT @ %08x\n", name.c_str(), (uintptr_t)s_VT[name]);
+				s_VT()[name] = (const void **)((uintptr_t)refs[0] + 0x4);
+			//	DevMsg("\"%s\" VT @ %08x\n", name.c_str(), (uintptr_t)s_VT()[name]);
 			}
 			Prof::End("VT post");
 		}
@@ -247,13 +320,13 @@ namespace RTTI
 		
 #if 0
 		std::multimap<uintptr_t, std::string> addrmap;
-		for (const auto& pair : s_RTTI) {
+		for (const auto& pair : s_RTTI()) {
 			addrmap.emplace((uintptr_t)pair.second, "TD   " + pair.first);
 		}
 		for (const auto& pair : results_COL) {
 			addrmap.emplace((uintptr_t)pair.second, "COL  " + pair.first);
 		}
-		for (const auto& pair : s_VT) {
+		for (const auto& pair : s_VT()) {
 			addrmap.emplace((uintptr_t)pair.second, "VT   " + pair.first);
 		}
 		
@@ -273,18 +346,19 @@ namespace RTTI
 #endif
 		
 		
-		DevMsg("RTTI::PreLoad: found %u RTTI\n", s_RTTI.size());
-		DevMsg("RTTI::PreLoad: found %u VT\n", s_VT.size());
+		DevMsg("RTTI::PreLoad: found %u RTTI\n", s_RTTI().size());
+		DevMsg("RTTI::PreLoad: found %u VT\n", s_VT().size());
+		Msg("RTTI::PreLoad: %s at base %08zx\n", LibMgr::Lib_ToString(Library::SERVER), LibMgr::GetInfo(Library::SERVER).BaseAddr());
 
 		std::map<size_t, std::string> vtSwapped;
-		for (auto &[name, ptr] : s_VT) {
+		for (auto &[name, ptr] : s_VT()) {
 			vtSwapped.emplace((size_t)ptr, name);
 		}
 		std::string prevName = "";
 		size_t prevPtr = 0U;
 		for (auto &[ptr, name] : vtSwapped) {
 			if (!prevName.empty()) {
-				s_VTInfo.emplace(prevName, VTableInfo((void **)prevPtr, Clamp(ptr - prevPtr, (size_t) 0U, sizeof(size_t) * 2048)));
+				s_VTInfo().emplace(prevName, VTableInfo((void **)prevPtr, Clamp(ptr - prevPtr, (size_t) 0U, sizeof(size_t) * 2048)));
 			}
 			prevName = name;
 			prevPtr = ptr;
@@ -300,10 +374,36 @@ namespace RTTI
 	}
 	
 	
+#if defined _MSC_VER
+	/* The tree names some classes the way libstdc++ spells them, "5IBody" for
+	 * IBody. For a plain class name that is the MSVC name with its length in
+	 * front, so translate those; the class/struct choice is not in the Itanium
+	 * name and both are tried. Anything else is returned as it was. */
+	template<typename MAP>
+	static auto FindByName(const MAP& map, const char *name)
+	{
+		auto it = map.find(std::string(name));
+		if (it != map.end() || !isdigit((unsigned char)name[0])) return it;
+		
+		char *end;
+		long len = strtol(name, &end, 10);
+		if (len <= 0 || (long)strlen(end) != len) return it;
+		
+		for (const char *prefix : {".?AV", ".?AU"}) {
+			auto found = map.find(prefix + std::string(end) + "@@");
+			if (found != map.end()) return found;
+		}
+		return it;
+	}
+#else
+	template<typename MAP>
+	static auto FindByName(const MAP& map, const char *name) { return map.find(std::string(name)); }
+#endif
+	
 	const rtti_t *GetRTTI(const char *name)
 	{
-		auto it = s_RTTI.find(std::string(name));
-		if (it == s_RTTI.end()) {
+		auto it = FindByName(s_RTTI(), name);
+		if (it == s_RTTI().end()) {
 			DevMsg("RTTI::GetRTTI FAIL: no RTTI addr for name \"%s\"\n", name);
 			return nullptr;
 		}
@@ -313,8 +413,8 @@ namespace RTTI
 	
 	const void **GetVTable(const char *name)
 	{
-		auto it = s_VT.find(std::string(name));
-		if (it == s_VT.end()) {
+		auto it = FindByName(s_VT(), name);
+		if (it == s_VT().end()) {
 			DevMsg("RTTI::GetVTable FAIL: no VT addr for name \"%s\"\n", name);
 			return nullptr;
 		}
@@ -324,16 +424,16 @@ namespace RTTI
 
 	const std::unordered_map<std::string, const rtti_t *> &GetAllRTTI()
 	{
-		return s_RTTI;
+		return s_RTTI();
 	}
 
 	const std::unordered_map<std::string, const void **> &GetAllVTable()
 	{
-		return s_VT;
+		return s_VT();
 	}
 
 	const std::unordered_map<std::string, VTableInfo> &GetAllVTableInfo()
 	{
-		return s_VTInfo;
+		return s_VTInfo();
 	}
 }

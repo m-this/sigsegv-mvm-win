@@ -62,8 +62,16 @@ private:
 class CTFTeamManager
 {
 public:
+#if defined _WINDOWS
+	/* Neither exists in server.dll: MSVC inlined both into their callers.
+	 * The Linux bodies read g_Teams, which is not resolved either; the team
+	 * entities are the same objects, found by their team number. */
+	bool IsValidTeam(int iTeam) { return this->GetTeam(iTeam) != nullptr; }
+	CTFTeam *GetTeam(int iTeam);
+#else
 	bool IsValidTeam(int iTeam) { return ft_IsValidTeam(this, iTeam); }
 	CTFTeam *GetTeam(int iTeam) { return ft_GetTeam    (this, iTeam); }
+#endif
 	
 private:
 	static MemberFuncThunk<CTFTeamManager *, bool, int>      ft_IsValidTeam;

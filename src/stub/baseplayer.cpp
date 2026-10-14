@@ -44,6 +44,11 @@ using CExtract_CBasePlayer_SetVCollisionState = IExtractStub;
 IMPL_SENDPROP(CHandle<CBaseCombatWeapon>,              CBaseCombatCharacter, m_hActiveWeapon, CBaseCombatCharacter);
 IMPL_SENDPROP(CHandle<CBaseCombatWeapon>[MAX_WEAPONS], CBaseCombatCharacter, m_hMyWeapons,    CBaseCombatCharacter);
 IMPL_SENDPROP(float,                                   CBaseCombatCharacter, m_flNextAttack,  CBaseCombatCharacter);
+#if defined _WINDOWS
+IMPL_DATAMAP(int,                                      CBaseCombatCharacter, m_bloodColor);
+IMPL_SENDPROP(bool,                                    CBaseCombatCharacter, m_bGlowEnabled,  CBaseCombatCharacter);
+IMPL_SENDPROP(int[MAX_AMMO_SLOTS],                     CBaseCombatCharacter, m_iAmmo,         CBasePlayer);
+#endif
 
 #ifdef SE_IS_TF2
 MemberFuncThunk<CBaseCombatCharacter *, void>                                                                     CBaseCombatCharacter::ft_AddGlowEffect     ("CBaseCombatCharacter::AddGlowEffect");
@@ -137,6 +142,12 @@ MemberFuncThunk<CBasePlayer *, void, Vector *, Vector *, Vector *> CBasePlayer::
 MemberFuncThunk<CBasePlayer *, bool, CSteamID *>                   CBasePlayer::ft_GetSteamID    ("CBasePlayer::GetSteamID");
 MemberFuncThunk<CBasePlayer *, void, const char *>                 CBasePlayer::ft_SetPlayerName ("CBasePlayer::SetPlayerName");
 MemberFuncThunk<CBasePlayer *, CBaseViewModel *, int, bool>        CBasePlayer::ft_GetViewModel  ("CBasePlayer::GetViewModel");
+#if defined _WINDOWS
+CBaseViewModel *CBasePlayer::GetViewModel(int viewmodelindex, bool bObserverOK)
+{
+	return reinterpret_cast<CBaseViewModel *>(this->m_hViewModel[viewmodelindex].Get());
+}
+#endif
 MemberFuncThunk<CBasePlayer *, void, int>                          CBasePlayer::ft_DisableButtons("CBasePlayer::DisableButtons");
 MemberFuncThunk<CBasePlayer *, void, int>                          CBasePlayer::ft_EnableButtons ("CBasePlayer::EnableButtons");
 MemberFuncThunk<CBasePlayer *, void, int>                          CBasePlayer::ft_ForceButtons  ("CBasePlayer::ForceButtons");

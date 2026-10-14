@@ -307,6 +307,20 @@ using namespace std::literals;
 #include <Winsock2.h>
 #include <WS2tcpip.h>
 
+/* access() is in io.h under its POSIX name; F_OK is not defined anywhere. */
+#include <io.h>
+#ifndef F_OK
+#define F_OK 0
+#endif
+
+/* The POSIX mkdir takes a mode, which Windows has no use for. */
+#include <direct.h>
+inline int mkdir(const char *path, int mode) { return _mkdir(path); }
+
+/* POSIX sleeps, on Sleep and its millisecond resolution. */
+inline unsigned int sleep(unsigned int seconds) { Sleep(seconds * 1000); return 0; }
+inline int nanosleep(const struct timespec *req, struct timespec *rem) { Sleep((DWORD)(req->tv_sec * 1000 + req->tv_nsec / 1000000)); return 0; }
+
 /* namespace clash between Windows CreateEvent macro and IGameEventManager2::CreateEvent */
 #if defined CreateEvent
 #undef CreateEvent

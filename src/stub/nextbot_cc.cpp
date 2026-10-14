@@ -1,4 +1,5 @@
 #include "stub/nextbot_cc.h"
+#include "mem/extract.h"
 
 
 #if defined _LINUX
@@ -46,7 +47,43 @@ struct CExtract_CTFTankBoss_m_pBodyInterface : public IExtract<uint32_t>
 
 #elif defined _WINDOWS
 
-using CExtract_CTFTankBoss_m_pBodyInterface = IExtractStub;
+static constexpr uint8_t s_Buf_CTFTankBoss_m_hCurrentNode[] = {
+	0x89, 0x86, 0x00, 0x00, 0x00, 0x00,                         // +0x0000 mov [esi+m_hCurrentNode], eax
+	0x5e,                                                       // +0x0006 pop esi
+	0x5d,                                                       // +0x0007 pop ebp
+	0xc2, 0x04, 0x00,                                           // +0x0008 ret 4
+	0xc7, 0x86, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, // +0x000b mov [esi+m_hCurrentNode], -1
+};
+
+/* SetStartingPathTrackNode stores the handle of the node it found, or -1,
+ * in the one member. MSVC has no GetBodyInterface that reads the tank's own
+ * member (the override sits in the INextBot table and adds that subobject's
+ * offset), so the layout is anchored here, and m_pBodyInterface is measured
+ * back from it. */
+struct CExtract_CTFTankBoss_m_hCurrentNode : public IExtract<uint32_t>
+{
+	CExtract_CTFTankBoss_m_hCurrentNode() : IExtract<uint32_t>(sizeof(s_Buf_CTFTankBoss_m_hCurrentNode)) {}
+	
+	virtual bool GetExtractInfo(ByteBuf& buf, ByteBuf& mask) const override
+	{
+		buf.CopyFrom(s_Buf_CTFTankBoss_m_hCurrentNode);
+		
+		mask.SetRange(0x00 + 2, 4, 0x00);
+		mask.SetRange(0x0b + 2, 4, 0x00);
+		
+		return true;
+	}
+	
+	virtual bool Validate(const uint8_t *ptr) const override
+	{
+		return memcmp(ptr + 0x00 + 2, ptr + 0x0b + 2, sizeof(uint32_t)) == 0;
+	}
+	
+	virtual const char *GetFuncName() const override   { return "CTFTankBoss::SetStartingPathTrackNode"; }
+	virtual uint32_t GetFuncOffMin() const override    { return 0x0000; }
+	virtual uint32_t GetFuncOffMax() const override    { return 0x0060; } // @ +0x0041
+	virtual uint32_t GetExtractOffset() const override { return 0x0000 + 2; }
+};
 
 #endif
 
@@ -144,15 +181,48 @@ struct CExtract_CBotNPCArcher_m_pIntentionInterface : public IExtract<uint32_t>
 
 #elif defined _WINDOWS
 
-using CExtract_CBotNPCArcher_m_pIntentionInterface = IExtractStub;
+/* GetIntentionInterface is a getter folded with others on the INextBot part;
+ * the scalar deleting destructor deletes the three interfaces first. */
+static constexpr uint8_t s_Buf_CBotNPCArcher_m_pIntentionInterface[] = {
+	0x55,                               // +0000  push ebp
+	0x8b, 0xec,                         // +0001  mov ebp,esp
+	0x56,                               // +0003  push esi
+	0x8b, 0xf1,                         // +0004  mov esi,ecx
+	0x57,                               // +0006  push edi
+	0x8b, 0x8e, 0x00, 0x00, 0x00, 0x00, // +0007  mov ecx,[esi+m_pIntentionInterface]
+};
+
+struct CExtract_CBotNPCArcher_m_pIntentionInterface : public IExtract<uint32_t>
+{
+	CExtract_CBotNPCArcher_m_pIntentionInterface() : IExtract<uint32_t>(sizeof(s_Buf_CBotNPCArcher_m_pIntentionInterface)) {}
+	
+	virtual bool GetExtractInfo(ByteBuf& buf, ByteBuf& mask) const override
+	{
+		buf.CopyFrom(s_Buf_CBotNPCArcher_m_pIntentionInterface);
+		
+		mask.SetDword(0x07 + 2, 0x00000000);
+		
+		return true;
+	}
+	
+	virtual const char *GetFuncName() const override   { return "~CBotNPCArcher [D0]"; }
+	virtual uint32_t GetFuncOffMin() const override    { return 0x0000; }
+	virtual uint32_t GetFuncOffMax() const override    { return 0x0000; }
+	virtual uint32_t GetExtractOffset() const override { return 0x0007 + 2; }
+};
 
 #endif
 MemberVFuncThunk<CTFBaseBoss *, void> CTFBaseBoss::vt_UpdateCollisionBounds(TypeName<CTFBaseBoss>(), "CTFBaseBoss::UpdateCollisionBounds");
 MemberVFuncThunk<CTFBaseBoss *, int> CTFBaseBoss::vt_GetCurrencyValue(TypeName<CTFBaseBoss>(), "CTFBaseBoss::GetCurrencyValue");
 
 
+#if defined _WINDOWS
+IMPL_EXTRACT   (CHandle<CPathTrack>,CTFTankBoss, m_hCurrentNode,    new CExtract_CTFTankBoss_m_hCurrentNode());
+IMPL_REL_BEFORE(IBody *,            CTFTankBoss, m_pBodyInterface,  m_hCurrentNode, 0, EHANDLE, EHANDLE);
+#else
 IMPL_EXTRACT (IBody *,             CTFTankBoss, m_pBodyInterface,  new CExtract_CTFTankBoss_m_pBodyInterface());
 IMPL_REL_AFTER(CHandle<CPathTrack>,CTFTankBoss, m_hCurrentNode,    m_pBodyInterface, EHANDLE, EHANDLE);
+#endif
 IMPL_REL_AFTER(CUtlVector<float>,  CTFTankBoss, m_NodeDists,       m_hCurrentNode);
 IMPL_REL_AFTER(float,              CTFTankBoss, m_flTotalDistance, m_NodeDists);
 IMPL_REL_AFTER(int,                CTFTankBoss, m_iCurrentNode,    m_flTotalDistance);

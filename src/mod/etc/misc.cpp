@@ -8,6 +8,7 @@
 #include "stub/gamerules.h"
 #include "stub/nav.h"
 #include "stub/misc.h"
+#include <filesystem>
 #include "util/backtrace.h"
 #include "util/clientmsg.h"
 #include "util/misc.h"
@@ -204,15 +205,31 @@ namespace Mod::Etc::Misc
 
 	}
 	
-	DETOUR_DECL_MEMBER(void, CTFPlayerShared_OnRemoveStunned)
+	void ShowWeaponAfterStun(CTFPlayerShared *shared)
 	{
-		auto shared = reinterpret_cast<CTFPlayerShared *>(this);
 		auto weapon = shared->GetOuter()->GetActiveTFWeapon();
 		if (weapon != nullptr) {
 			weapon->RemoveEffects(EF_NODRAW);
 		}
+	}
+
+	DETOUR_DECL_MEMBER(void, CTFPlayerShared_OnRemoveStunned)
+	{
+		ShowWeaponAfterStun(reinterpret_cast<CTFPlayerShared *>(this));
 		DETOUR_MEMBER_CALL();
 	}
+
+#if defined _WINDOWS
+	/* OnRemoveStunned is inline in OnConditionRemoved there, which tail calls
+	 * it for this one condition on Linux */
+	DETOUR_DECL_MEMBER(void, CTFPlayerShared_OnConditionRemoved, ETFCond cond)
+	{
+		if (cond == TF_COND_STUNNED) {
+			ShowWeaponAfterStun(reinterpret_cast<CTFPlayerShared *>(this));
+		}
+		DETOUR_MEMBER_CALL(cond);
+	}
+#endif
 	
 	DETOUR_DECL_MEMBER(void, CTFPlayer_RemoveAllWeapons)
 	{
@@ -293,7 +310,11 @@ namespace Mod::Etc::Misc
 			MOD_ADD_DETOUR_MEMBER(CCaptureFlag_Drop, "CCaptureFlag::Drop");
 
 			// Fix stun disappearing weapons
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_OnConditionRemoved, "CTFPlayerShared::OnConditionRemoved");
+#else
 			MOD_ADD_DETOUR_MEMBER(CTFPlayerShared_OnRemoveStunned, "CTFPlayerShared::OnRemoveStunned");
+#endif
 
 			// Remove inactive disguise weapons on death
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_RemoveAllWeapons, "CTFPlayer::RemoveAllWeapons");
@@ -328,50 +349,31 @@ namespace Mod::Etc::Misc
 	DETOUR_DECL_STATIC(void, Script_StringToFile, const char *filename, const char *string)
 	{
 		// Delete oldest files if over the limit
-		char filepath[512];
-		snprintf(filepath, sizeof(filepath), "%s/scriptdata/%s",g_SMAPI->GetBaseDir(), filename);
-		struct stat stats;
-		std::string oldestFile;
-		time_t oldestFileTime = LONG_MAX;
-		int fileCount = 0;
+		namespace fs = std::filesystem;
+		std::error_code ec;
+		fs::path dir = fs::path(g_SMAPI->GetBaseDir()) / "scriptdata";
 
 		// If a new file is created, do the over the limit check
-		if (stat(filepath, &stats) != 0) {
-			char path[512];
-			snprintf(path, sizeof(path), "%s/scriptdata", g_SMAPI->GetBaseDir());
-			DIR *dir;
-			dirent *ent;
-
-			if ((dir = opendir(path)) != nullptr) {
-
-				// Count the files
-				while ((ent = readdir(dir)) != nullptr) {
-					fileCount++;
+		if (!fs::exists(dir / filename, ec)) {
+			int fileCount = 0;
+			std::vector<std::pair<fs::path, fs::file_time_type>> scriptNameAndModify;
+			for (const auto &entry : fs::directory_iterator(dir, ec)) {
+				fileCount++;
+				if (!entry.is_directory(ec)) {
+					scriptNameAndModify.push_back({entry.path(), entry.last_write_time(ec)});
 				}
-				rewinddir(dir);
-				
-				// Delete 10% of the files if getting over the limit
-				if (fileCount > sig_etc_max_total_script_files_count.GetInt()) {
-					std::vector<std::pair<std::string, time_t>> scriptNameAndModify;
-					
-					while ((ent = readdir(dir)) != nullptr) {
-						if (ent->d_type != DT_DIR) {
-							snprintf(filepath, sizeof(filepath), "%s/%s", path, ent->d_name);
-							stat(filepath, &stats);
-							time_t time = stats.st_mtim.tv_sec;
-							scriptNameAndModify.push_back({filepath, time});
-						}
-					}
-					std::sort(scriptNameAndModify.begin(), scriptNameAndModify.end(), [](std::pair<std::string, time_t> &pair1, std::pair<std::string, time_t> &pair2){
-						return pair1.second < pair2.second;
-					});
-					scriptNameAndModify.resize(sig_etc_max_total_script_files_count.GetInt() / 10 + 1);
-					for (auto &pair : scriptNameAndModify) {
-						unlink(pair.first.c_str());
-					}
-					
+			}
+
+			// Delete 10% of the files if getting over the limit
+			if (fileCount > sig_etc_max_total_script_files_count.GetInt()) {
+				std::sort(scriptNameAndModify.begin(), scriptNameAndModify.end(), [](const auto &pair1, const auto &pair2){
+					return pair1.second < pair2.second;
+				});
+				size_t toDelete = sig_etc_max_total_script_files_count.GetInt() / 10 + 1;
+				scriptNameAndModify.resize(std::min(scriptNameAndModify.size(), toDelete));
+				for (auto &pair : scriptNameAndModify) {
+					fs::remove(pair.first, ec);
 				}
-				closedir(dir);
 			}
 		}
 		DETOUR_STATIC_CALL(filename, string);
@@ -459,14 +461,14 @@ namespace Mod::Etc::Misc
 		DETOUR_MEMBER_CALL();
 	}
 
-	DETOUR_DECL_MEMBER(void, CHeadlessHatman_D2)
+	DETOUR_DECL_DTOR(CHeadlessHatman_D2)
 	{
 		auto npc = reinterpret_cast<CHeadlessHatman *>(this);
 		if (g_pMonsterResource.GetRef() != nullptr && g_pMonsterResource)
 		{
 			g_pMonsterResource->m_iBossHealthPercentageByte = 0;
 		}
-		DETOUR_MEMBER_CALL();
+		DETOUR_DTOR_CALL();
 	}
 
 	class CMod_HHHHealthBar : public IMod

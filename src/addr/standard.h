@@ -9,6 +9,12 @@ class IAddr_Sym : public IAddr
 {
 public:
 	virtual bool FindAddrLinux(uintptr_t& addr) const override;
+	/* Windows strips server.dll and engine.dll, which is the whole reason
+	 * gamedata/sigsegv/windows.txt exists, so almost nothing resolves this
+	 * way. Almost: a DLL still exports what it was built to export, and
+	 * GetProcAddress finds those by name. Without this a symbol Windows does
+	 * publish, tier0's Msg among them, failed without the lookup being tried. */
+	virtual bool FindAddrWin(uintptr_t& addr) const override;
 	
 protected:
 	virtual const char *GetSymbol() const = 0;
@@ -62,6 +68,21 @@ class IAddr_FixedAddr : public IAddr_Sym
 {
 public:
 	virtual bool FindAddrWin(uintptr_t& addr) const override;
+	
+	/* How many fixed addresses the gamedata keys to each ServerVersion. The
+	 * Windows table is one build; a few older files carry a handful of
+	 * entries for builds long gone, so the table's build is the most common. */
+	static inline std::map<int, int> s_Builds;
+	
+	/* The ServerVersion the Windows table was made for, or 0 with no table. */
+	static int TableBuild()
+	{
+		int build = 0, most = 0;
+		for (const auto& [b, n] : s_Builds) {
+			if (n > most) { build = b; most = n; }
+		}
+		return build;
+	}
 	
 protected:
 	virtual int GetAddress() const = 0;
@@ -459,6 +480,24 @@ private:
 	std::string m_strMask;
 };
 
+
+/* A send table, found by its network name in the server class list. The tables
+ * are built by static constructors, so on Windows no static pointer leads to
+ * them the way server_srv.so's symbol does on Linux. */
+class CAddr_SendTable : public IAddr
+{
+public:
+	CAddr_SendTable(const std::string& name, const std::string& table) :
+		m_strName(name), m_strTable(table) {}
+	
+	virtual const char *GetName() const override { return this->m_strName.c_str(); }
+	virtual bool FindAddrLinux(uintptr_t& addr) const override;
+	virtual bool FindAddrWin(uintptr_t& addr) const override { return this->FindAddrLinux(addr); }
+	
+private:
+	std::string m_strName;
+	std::string m_strTable;
+};
 
 class IAddr_ConCommandBase : public IAddr
 {

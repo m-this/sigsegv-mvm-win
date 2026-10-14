@@ -114,7 +114,9 @@ namespace Prop
 	int FindOffsetAssert(const char *obj, const char *var)
 	{
 		int off = -1;
-		assert(FindOffset(off, obj, var));
+		/* The lookup outside assert(), so NDEBUG cannot compile it out. */
+		bool found = FindOffset(off, obj, var);
+		assert(found); (void)found;
 		return off;
 	}
 	
@@ -347,13 +349,13 @@ CProp_Extract::~CProp_Extract()
 
 bool CProp_Extract::CalcOffset(int& off) const
 {
-	if (strnicmp(this->m_Extractor->GetFuncName(), "[client]", strlen("[client]")) == 0 && !IsClient()) {
-		off = 0;
-		return true;
-	}
 	if (this->m_Extractor == nullptr) {
 		Warning("CProp_Extract: %s::%s FAIL: no extractor provided (nullptr)\n", this->GetObjectName(), this->GetMemberName());
 		return false;
+	}
+	if (strnicmp(this->m_Extractor->GetFuncName(), "[client]", strlen("[client]")) == 0 && !IsClient()) {
+		off = 0;
+		return true;
 	}
 	
 	if (!this->m_Extractor->Init()) {
@@ -428,3 +430,18 @@ bool CProp_Relative::CalcOffset(int& off) const
 	
 	return true;
 }
+
+
+#if defined _WINDOWS
+uintptr_t UnresolvedPropAddr(IProp *prop)
+{
+	alignas(16) static uint8_t scratch[0x10000];
+	static std::unordered_set<IProp *> named;
+	if (named.insert(prop).second) {
+		Warning("SigMod: unresolved prop %s::%s (%s) reads and writes a scratch block\n",
+			prop->GetObjectName(), prop->GetMemberName(), prop->GetKind());
+	}
+	memset(scratch, 0, 64);
+	return reinterpret_cast<uintptr_t>(scratch);
+}
+#endif

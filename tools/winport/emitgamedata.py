@@ -1,0 +1,240 @@
+#!/usr/bin/env python3
+"""Write gamedata/sigsegv/windows.txt from matchfuncs.py's matches.
+
+Every `sym` entry in gamedata/sigsegv whose symbol was matched in server.dll
+becomes a `fixed` entry at the matched address, under the same name, once. The
+extension loads this file before the others on Windows and skips every later
+block under a name this one holds (CSigsegvGameConf::NameTaken), so these stand
+in for the Linux symbol lookups one for one. dupes.py counts what that leaves.
+
+`fixed` is tied to a server version, which is what it should be: the matches
+are only true for the build they were made against.
+
+    emitgamedata.py matches.json SERVER_VERSION [datamaps.json [knownvtidx.generated.txt win-vtables/]] > gamedata/sigsegv/windows.txt
+
+tools/winport/overrides.json holds addresses checked by hand, keyed by Linux
+symbol, and wins over matches.json. Each names the build it holds for; one
+from another build is left out, and rebase.py carries them to a new one.
+
+knownvtidx.generated.txt gives a vtable and a slot per name. The address is
+read from that slot in dumpvtables.py's dump of this build, win-vtables/; the
+address in the file's comments is the build it was made from.
+"""
+
+import glob
+import os
+import re
+import json
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent))
+import classify  # noqa: E402
+
+root = Path(__file__).resolve().parents[2]
+matches = json.load(open(sys.argv[1]))
+version = sys.argv[2]
+
+# Addresses resolved by hand take precedence over anything matched, and say why.
+# An override with its own "name" is an address the Linux gamedata does not
+# have, usually because Windows needs a different function; "lib" defaults to
+# server.
+overrides = json.load(open(Path(__file__).parent / "overrides.json"))
+bad = {sym for sym, entry in overrides.items() if entry.get("bad")}
+stale = sorted(sym for sym, entry in overrides.items() if "rva" in entry and entry.get("build") != version)
+if stale:
+    print(f"{len(stale)} overrides hold for another build than {version}, left out: run rebase.py", file=sys.stderr)
+for sym, entry in overrides.items():
+    # "bad" marks a match that was checked and is wrong: leave the name out, so
+    # it fails to resolve out loud rather than running the wrong function.
+    if entry.get("bad") or sym in stale:
+        matches.pop(sym, None)
+        bad.add(sym)
+        continue
+    matches[sym] = {"rva": int(entry["rva"], 16), "via": "verified: " + entry["why"]}
+    # A body MSVC folded, like an empty virtual, is one address in many slots;
+    # the override names the slot, read off the vtable by hand.
+    if "vtidx" in entry:
+        matches[sym]["vtidx"] = int(entry["vtidx"])
+extra = [(e["name"], {"type": "sym", "sym": s, "lib": e.get("lib", "server")}) for s, e in overrides.items() if "name" in e and not e.get("bad")]
+
+found = []
+for path in sorted(glob.glob(str(root / "gamedata/sigsegv/*.txt"))):
+    if path.endswith("windows.txt"):
+        continue
+    classify.walk_addrs(classify.parse(open(path).read()), found)
+
+# classify.py's parser loses entries in some addrs_group blocks. Read those
+# blocks directly as well: a [common] block with type and lib, then one
+# "name" "symbol" line per address, up to the block's closing brace.
+#
+# It loses them two ways. Some it never sees, and those are added below. For
+# the rest it reads a `"name" "symbol"` pair as two entries and gives both an
+# empty symbol, so the name is known, matches nothing, and the address fails
+# with a candidate sitting right there: 131 entries, CEyeballBossIdle::Update
+# and CGameMovement::PlayerMove among them. A known entry with no symbol is
+# therefore repaired rather than skipped, and the bogus entry whose name is a
+# mangled symbol is dropped.
+#
+# The unterminated symbol on misc.txt:3399 shifts the pairing for the rest of
+# that block, so 108 further entries come out with no name at all and the
+# symbol in the name's place. Those are dropped too: the re-read below finds
+# each one under its real name, and a nameless entry is an address SourceMod
+# can never look up. Eleven of them matched and were written into the table.
+found = [(name, entry) for name, entry in found
+         if name != "" and not (name.startswith("_Z") and not entry.get("sym"))]
+by_name = {name: entry for name, entry in found}
+known = {name for name, _ in found}
+for path in sorted(glob.glob(str(root / "gamedata/sigsegv/*.txt"))):
+    if path.endswith("windows.txt"):
+        continue
+    lines = open(path).read().split("\n")
+    i = 0
+    while i < len(lines):
+        if lines[i].strip() != '"addrs_group"':
+            i += 1
+            continue
+        depth, common, i = 0, {}, i + 1
+        while i < len(lines):
+            line = lines[i].split("//")[0].strip()
+            depth += line.count("{") - line.count("}")
+            kv = re.match(r'^(type|lib)\s+"([^"]*)"$', line)
+            if kv:
+                common[kv.group(1)] = kv.group(2)
+            pair = re.match(r'^"([^"]+)"\s+"([^"]+)"$', line)
+            if pair and depth == 1:
+                name, symbol = pair.group(1), pair.group(2)
+                entry = {"type": common.get("type"), "lib": common.get("lib", "server"), "sym": symbol}
+                if name not in known:
+                    found.append((name, entry))
+                    by_name[name] = entry
+                    known.add(name)
+                elif not by_name.get(name, {}).get("sym"):
+                    by_name[name].update(entry)
+            if depth == 0 and "}" in line:
+                break
+            i += 1
+
+out = [
+    "// Generated by tools/winport/emitgamedata.py. Do not hand-edit.",
+    f"// Addresses in server.dll for ServerVersion {version}, matched from server_srv.so.",
+    "",
+    '"Games"', "{", '\t"#default"', "\t{", '\t\t"#supported"', "\t\t{", '\t\t\tengine "tf2"', "\t\t}", "",
+    '\t\t"sigsegv"', "\t\t{", '\t\t\t"addrs"', "\t\t\t{",
+]
+count = 0
+emitted = {}
+# datamaps.py resolves each class's datamap statically; the runtime scan that
+# finds them on Linux comes back empty on Windows.
+if len(sys.argv) > 3:
+    for class_name, entry in json.load(open(sys.argv[3])).items():
+        matches[entry["sym"]] = {"rva": entry["rva"], "via": "datamaps.py: the datamap whose +8 names the class and that a GetDataDescMap returns"}
+        found.append((class_name + "::m_DataMap", {"type": "sym", "sym": entry["sym"], "lib": "server"}))
+
+# matchvtables.py wrote a Windows address for each virtual function it could
+# align. The gamedata's own "func knownvtidx" entries carry Linux indices,
+# which are not the Windows ones, so those names are taken from here instead.
+#
+# The index goes in the table as well. MSVC folds identical functions, so one
+# address can fill several slots of a vtable, and a thunk that looked for the
+# first slot holding it called whichever virtual came first: IsPlayer shares
+# its body with others that return false, and read as false for every player.
+by_name = {}
+vtidx = {}
+
+
+def primary_table(path):
+    """The slots of a class's offset-0 vtable in a dumpvtables.py dump."""
+    slots, inside = [], False
+    for row in open(path):
+        if row.startswith("// vtable"):
+            if inside:
+                break
+            inside = row.rstrip().endswith("offset 0x0000")
+        elif inside and row.startswith("+0x"):
+            slots.append(int(row.split()[1], 16))
+    return slots
+
+
+if len(sys.argv) > 4:
+    text = open(sys.argv[4]).read()
+    dumps = Path(sys.argv[5])
+    for m in re.finditer(r'"([^"]+)"\n\{\n(?:[^}]*?)vtable +"([^"]+)"\n(?:[^}]*?)idx +"(\d+)"\n', text):
+        name, table, index = m.group(1), m.group(2), int(m.group(3))
+        dump = dumps / f"{table}.txt"
+        slots = primary_table(dump) if dump.exists() else []
+        if index >= len(slots):
+            print(f"knownvtidx {name}: no slot {index} in {table}'s dump, left out", file=sys.stderr)
+            continue
+        by_name[name] = slots[index] - 0x10000000
+        vtidx[name] = (index, by_name[name])
+
+# A named override takes the place of the Linux entry of that name: a function
+# Linux finds by signature ("func ebpprologue vprof") has no symbol to match.
+named = dict(extra)
+found = [(name, named.pop(name, entry)) for name, entry in found]
+for name, entry in found + [x for x in extra if x[0] in named]:
+    lib = entry.get("lib", "server")
+    if entry.get("type") != "sym" or (lib != "server" and "verified" not in matches.get(entry.get("sym"), {}).get("via", "")):
+        continue
+    match = matches.get(entry.get("sym"))
+    # a "bad" override turns away the vtable match of that name as well
+    if match is None and name in by_name and entry.get("sym") not in bad:
+        match = {"rva": by_name[name], "via": "vtable index"}
+    if match is None and name.startswith("DT_") and name.endswith("::g_SendTable"):
+        if name in emitted:
+            continue
+        emitted[name] = None
+        out += [
+            f'\t\t\t\t"{name}"', "\t\t\t\t{",
+            '\t\t\t\t\ttype  "sendtable"',
+            f'\t\t\t\t\ttable "{name[:-len("::g_SendTable")]}"',
+            "\t\t\t\t}",
+        ]
+        count += 1
+        continue
+    if match is None:
+        continue
+    # Structural matches go in only with field-offset evidence behind them. A
+    # missing address is named out loud when something calls it; a wrong one
+    # corrupts quietly, and the two runs with every structural match in both
+    # ended in a silent crash that took a bisection to find. FIELDS_MIN=0
+    # includes them all. argsize.py is the other way in: a member whose Linux
+    # symbol says how many argument bytes it pops, and whose candidate pops
+    # exactly that, at least 8. A shuffled pair passes at 4 more often than not;
+    # at 8 one in six does, and at 20 or more none did.
+    via = match["via"]
+    if via in ("call", "consensus", "table") and (match.get("fields") or 0) < float(os.environ.get("FIELDS_MIN", 0.3)):
+        if (match.get("expect") or 0) < 8 or match.get("pop") != match["expect"]:
+            continue
+        via += f', ret {match["pop"]} as its arguments say'
+    # The Linux gamedata names some functions in two files, and classify.py's
+    # reading of misc.txt past line 3399 adds phantoms of its own, so the same
+    # name arrives more than once. A second block under a name is a duplicate
+    # the extension prints and cannot choose between: the same address is
+    # dropped, a different one is a finding and fails the run.
+    if name in emitted:
+        if emitted[name] != match["rva"]:
+            sys.exit(f'"{name}" is matched to 0x{emitted[name]:x} and to 0x{match["rva"]:x} from two entries; one has to go')
+        continue
+    emitted[name] = match["rva"]
+    out += [
+        f'\t\t\t\t"{name}"', "\t\t\t\t{",
+        '\t\t\t\t\ttype  "fixed"',
+        f'\t\t\t\t\tsym   "{entry["sym"]}"',
+        f'\t\t\t\t\taddr  "0x{match["rva"]:x}"',
+        f'\t\t\t\t\tbuild "{version}"',
+        f'\t\t\t\t\tlib   "{lib}"',
+    ]
+    if "vtidx" in match:
+        out += [f'\t\t\t\t\tvtidx "{match["vtidx"]}"']
+    elif name in vtidx and vtidx[name][1] == match["rva"]:
+        out += [f'\t\t\t\t\tvtidx "{vtidx[name][0]}"']
+    out += [
+        f'\t\t\t\t\t// {via}',
+        "\t\t\t\t}",
+    ]
+    count += 1
+out += ["\t\t\t}", "\t\t}", "\t}", "}", ""]
+sys.stdout.write("\n".join(out))
+print(f"{count} addresses", file=sys.stderr)

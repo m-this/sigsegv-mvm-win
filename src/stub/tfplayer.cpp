@@ -7,6 +7,7 @@
 #include "util/misc.h"
 #include "mem/extract.h"
 #include "util/iterate.h"
+#include "util/rtti.h"
 
 #if defined _LINUX
 
@@ -184,9 +185,62 @@ struct CExtract_CTFPlayerShared_m_ConditionData : public IExtract<uint8_t>
 
 #elif defined _WINDOWS
 
-using CExtract_CTFPlayerShared_m_pOuter   = IExtractStub;
+/* RadiusSpyScan starts with its outer player's team. */
+static constexpr uint8_t s_Buf_CTFPlayerShared_m_pOuter[] = {
+	0x8b, 0xf1,                         // +0000  mov esi,ecx
+	0x89, 0x75, 0x00,                   // +0002  mov [ebp-N],esi
+	0x8b, 0x8e, 0x00, 0x00, 0x00, 0x00, // +0005  mov ecx,[esi+m_pOuter]
+	0xe8,                               // +000B  call CBaseEntity::GetTeamNumber
+};
+
+struct CExtract_CTFPlayerShared_m_pOuter : public IExtract<uint32_t>
+{
+	CExtract_CTFPlayerShared_m_pOuter() : IExtract<uint32_t>(sizeof(s_Buf_CTFPlayerShared_m_pOuter)) {}
+	
+	virtual bool GetExtractInfo(ByteBuf& buf, ByteBuf& mask) const override
+	{
+		buf.CopyFrom(s_Buf_CTFPlayerShared_m_pOuter);
+		
+		mask[0x02 + 2] = 0x00;
+		mask.SetRange(0x05 + 2, 4, 0x00);
+		
+		return true;
+	}
+	
+	virtual const char *GetFuncName() const override   { return "CTFPlayerShared::RadiusSpyScan"; }
+	virtual uint32_t GetFuncOffMin() const override    { return 0x0000; }
+	virtual uint32_t GetFuncOffMax() const override    { return 0x0010; }
+	virtual uint32_t GetExtractOffset() const override { return 0x0005 + 2; }
+};
+
 using CExtract_CTFPlayer_m_bFeigningDeath = IExtractStub;
-using CExtract_CTFPlayerShared_m_ConditionData = IExtractStub;
+
+/* GetConditionDuration is inlined into its one caller on Windows; its
+ * neighbour GetConditionProvider indexes the same vector. */
+static constexpr uint8_t s_Buf_CTFPlayerShared_m_ConditionData[] = {
+	0x8b, 0x47, 0x00,       // +0000  mov eax,[edi+m_ConditionData]
+	0x8d, 0x0c, 0xb6,       // +0003  lea ecx,[esi+esi*4]
+	0x8b, 0x4c, 0x88, 0x0c, // +0006  mov ecx,[eax+ecx*4+m_pProvider]
+};
+
+struct CExtract_CTFPlayerShared_m_ConditionData : public IExtract<uint8_t>
+{
+	CExtract_CTFPlayerShared_m_ConditionData() : IExtract<uint8_t>(sizeof(s_Buf_CTFPlayerShared_m_ConditionData)) {}
+	
+	virtual bool GetExtractInfo(ByteBuf& buf, ByteBuf& mask) const override
+	{
+		buf.CopyFrom(s_Buf_CTFPlayerShared_m_ConditionData);
+		
+		mask.SetRange(0x00 + 2, 1, 0x00);
+		
+		return true;
+	}
+	
+	virtual const char *GetFuncName() const override   { return "CTFPlayerShared::GetConditionProvider"; }
+	virtual uint32_t GetFuncOffMin() const override    { return 0x0000; }
+	virtual uint32_t GetFuncOffMax() const override    { return 0x0040; }
+	virtual uint32_t GetExtractOffset() const override { return 0x0000 + 2; }
+};
 
 #endif
 
@@ -340,8 +394,13 @@ MemberFuncThunk<      CTFPlayer *, void                            > CTFPlayer::
 MemberFuncThunk<      CTFPlayer *, void                            > CTFPlayer::ft_UseActionSlotItemReleased            ("CTFPlayer::UseActionSlotItemReleased");
 MemberFuncThunk<      CTFPlayer *, CAttributeManager *             > CTFPlayer::ft_GetAttributeManager              ("CTFPlayer::GetAttributeManager");
 MemberFuncThunk<      CTFPlayer *, CAttributeList*                 > CTFPlayer::ft_GetAttributeList                    ("CTFPlayer::GetAttributeList");
-MemberFuncThunk<      CTFPlayer *, CBaseEntity *, int              > CTFPlayer::ft_GetEntityForLoadoutSlot            ("CTFPlayer::GetEntityForLoadoutSlot");
+#if defined _WINDOWS
+CAttributeList *CTFPlayer::GetAttributeList()       { return rtti_cast<IHasAttributes *>(this)->GetAttributeList(); }
+CAttributeManager *CTFPlayer::GetAttributeManager() { return rtti_cast<IHasAttributes *>(this)->GetAttributeManager(); }
+#endif
+MemberFuncThunk<      CTFPlayer *, CBaseEntity *, int, bool        > CTFPlayer::ft_GetEntityForLoadoutSlot            ("CTFPlayer::GetEntityForLoadoutSlot");
 MemberFuncThunk<      CTFPlayer *, void                            > CTFPlayer::ft_RemoveInvisibility               ("CTFPlayer::RemoveInvisibility");
+MemberFuncThunk<      CTFPlayer *, void, const CTakeDamageInfo &, bool, bool> CTFPlayer::ft_DropAmmoPack            ("CTFPlayer::DropAmmoPack");
 MemberFuncThunk<      CTFPlayer *, void, PlayerAnimEvent_t, int    > CTFPlayer::ft_DoAnimationEvent            ("CTFPlayer::DoAnimationEvent");
 MemberFuncThunk<      CTFPlayer *, void, const char *              > CTFPlayer::ft_PlaySpecificSequence        ("CTFPlayer::PlaySpecificSequence");
 MemberFuncThunk<      CTFPlayer *, void, taunts_t, int             > CTFPlayer::ft_Taunt                       ("CTFPlayer::Taunt");
@@ -359,7 +418,7 @@ MemberFuncThunk<      CTFPlayer *, void, TFPlayerClassData_t *	   > CTFPlayer::f
 MemberFuncThunk<      CTFPlayer *, void, TFPlayerClassData_t *	   > CTFPlayer::ft_ManageBuilderWeapons        ("CTFPlayer::ManageBuilderWeapons");
 MemberFuncThunk<	  CTFPlayer *, void                      	   > CTFPlayer::ft_GiveDefaultItems            ("CTFPlayer::GiveDefaultItems");
 MemberFuncThunk<	  CTFPlayer *, bool                      	   > CTFPlayer::ft_TryToPickupBuilding         ("CTFPlayer::TryToPickupBuilding");
-MemberFuncThunk<	  CTFPlayer *, void, int, int                  > CTFPlayer::ft_DetonateObjectOfType        ("CTFPlayer::DetonateObjectOfType");
+MemberFuncThunk<	  CTFPlayer *, void, int, int, bool            > CTFPlayer::ft_DetonateObjectOfType        ("CTFPlayer::DetonateObjectOfType");
 MemberFuncThunk<	  CTFPlayer *, void, CUtlVector<CTFWeaponBase *> &> CTFPlayer::ft_GetPassiveWeapons        ("CTFPlayer::GetPassiveWeapons");
 MemberFuncThunk<	  CTFPlayer *, bool                            > CTFPlayer::ft_IsReadyToPlay               ("CTFPlayer::IsReadyToPlay");
 MemberFuncThunk<      CTFPlayer *, void, const Vector &            > CTFPlayer::ft_ApplyAbsVelocityImpulse     ("CTFPlayer::ApplyAbsVelocityImpulse");
@@ -368,12 +427,17 @@ MemberFuncThunk<      CTFPlayer *, void                            > CTFPlayer::
 MemberFuncThunk<      CTFPlayer *, bool                            > CTFPlayer::ft_CanMoveDuringTaunt          ("CTFPlayer::CanMoveDuringTaunt");
 MemberFuncThunk<      CTFPlayer *, int                             > CTFPlayer::ft_GetRuneHealthBonus          ("CTFPlayer::GetRuneHealthBonus");
 MemberFuncThunk<      CTFPlayer *, void                            > CTFPlayer::ft_ClearDisguiseWeaponList     ("CTFPlayer::ClearDisguiseWeaponList");
-MemberFuncThunk<      CTFPlayer *, CEconItemView *, int, int       > CTFPlayer::ft_GetLoadoutItem              ("CTFPlayer::GetLoadoutItem");
+MemberFuncThunk<      CTFPlayer *, CEconItemView *, int, int, bool > CTFPlayer::ft_GetLoadoutItem              ("CTFPlayer::GetLoadoutItem");
 MemberFuncThunk<const CTFPlayer *, int                             > CTFPlayer::ft_GetMaxHealthForBuffing      ("CTFPlayer::GetMaxHealthForBuffing");
 MemberFuncThunk<      CTFPlayer *, bool                            > CTFPlayer::ft_DoClassSpecialSkill         ("CTFPlayer::DoClassSpecialSkill");
 MemberFuncThunk<      CTFPlayer *, float                           > CTFPlayer::ft_GetDesiredHeadScale         ("CTFPlayer::GetDesiredHeadScale");
 MemberFuncThunk<      CTFPlayer *, float                           > CTFPlayer::ft_GetDesiredHandScale         ("CTFPlayer::GetDesiredHandScale");
 MemberFuncThunk<      CTFPlayer *, float                           > CTFPlayer::ft_GetDesiredTorsoScale        ("CTFPlayer::GetDesiredTorsoScale");
+#if defined _WINDOWS
+float CTFPlayer::GetDesiredHeadScale()  { return CAttributeManager::AttribHookValue<float>(1.0f, "head_scale",  this); }
+float CTFPlayer::GetDesiredHandScale()  { return CAttributeManager::AttribHookValue<float>(1.0f, "hand_scale",  this); }
+float CTFPlayer::GetDesiredTorsoScale() { return CAttributeManager::AttribHookValue<float>(1.0f, "torso_scale", this); }
+#endif
 MemberFuncThunk<      CTFPlayer *, void, CBaseEntity *, bool       > CTFPlayer::ft_SetGrapplingHookTarget      ("CTFPlayer::SetGrapplingHookTarget");
 
 
@@ -707,3 +771,14 @@ void CTFPlayer::AddCustomAttribute(const char *s1, const std::string &val, float
 }
 
 GlobalThunk<Vector[TF_CLASS_COUNT]> g_TFClassViewVectors("g_TFClassViewVectors");
+
+#if defined _WINDOWS
+int CTFPlayerShared::FindHealerIndex(CBaseEntity *pHealer)
+{
+	auto &healers = this->m_aHealers.Get();
+	for (int i = 0; i < healers.Count(); ++i) {
+		if (healers[i].pHealer == pHealer) return i;
+	}
+	return -1;
+}
+#endif

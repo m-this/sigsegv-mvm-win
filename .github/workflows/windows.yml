@@ -1,0 +1,392 @@
+name: Windows package
+
+# package-windows.zip, built from a tag rather than a laptop, the way
+# tools/winport/build.sh builds it: clang-cl and lld-link against an xwin SDK.
+# A pushed date tag (20260924) publishes a release with the zip; any other run
+# leaves the zip as an artifact, so a branch can be checked before tagging.
+# Every run also plays the SigMod missions on Windows runners: see the bed jobs.
+
+on:
+  push:
+    tags:
+      - '2*'
+    branches:
+      - 'sigmod-windows-bed'
+    # The address-table job's own inputs: a Windows server has nothing new
+    # to play when only these change.
+    paths-ignore:
+      - '.github/workflows/addrs.yml'
+      - 'tools/winport/bed/disasm.txt'
+      - 'tools/winport/bed/inspect.sh'
+      - 'tools/winport/*.py'
+      - 'tools/winport/overrides.json'
+      - 'tools/winport/wanted.txt'
+      - 'tools/winport/pluginsigs.txt'
+  workflow_dispatch:
+    inputs:
+      archipelago_ref:
+        description: tf2-archipelago ref the bed tools are built from
+        default: main
+      probe_args:
+        description: extra waveprobe arguments
+        default: ''
+      bots:
+        description: fill RED with defender bots, which buy upgrades (needs a tf2-archipelago ref with winbed -bots)
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+# A newer push supersedes a bed run still playing an older build.
+concurrency:
+  group: windows-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        shell: bash
+    env:
+      XWIN: /home/runner/winport/xwin-sdk
+      BOOST: /home/runner/winport/winport-deps/boost/usr/include
+      ALLIEDMODDERS: /home/runner/winport/alliedmodders
+      OUT: /home/runner/winport/winport-build
+      # The hl2sdk tf2 commit the extension is built against; see the cache key.
+      HL2SDK_TF2: 9c2efb1deeffd5e895d2b43dabb639409c78c6d6
+      # A .pdb beside the DLL, for the bed's debugger. The package does not ship it.
+      DEBUGINFO: '1'
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        # The whole history, so the object cache can say what changed since it was built.
+        fetch-depth: 0
+
+    # A member detour declared with the wrong parameters is silent under
+    # Linux cdecl and unbalances the stack under __thiscall.
+    - name: Detour parameters against the game's symbols
+      run: python3 tools/winport/detourargs.py
+
+    # The build this package is for, and the one thing a release cannot get
+    # wrong: the extension refuses to load on any other ServerVersion, so a
+    # table that disagrees with table.json ships a package that either never
+    # loads or carries the next update from the wrong binaries.
+    - name: The address table holds for one build
+      id: table
+      run: |
+        python3 tools/winport/checktable.py
+        python3 -c "import json; print('build=' + json.load(open('tools/winport/table.json'))['build'])" >> "$GITHUB_OUTPUT"
+
+    - name: Toolchain
+      run: |
+        # The MSVC STL xwin fetches refuses a clang older than 19 (STL1000).
+        curl -sSfL https://apt.llvm.org/llvm.sh -o llvm.sh
+        sudo bash llvm.sh 20
+        for t in clang-cl lld-link; do sudo ln -sf "/usr/bin/$t-20" "/usr/local/bin/$t"; done
+        clang-cl --version
+
+    # The SDK comes from Microsoft's CDN, which drops a download now and then:
+    # kept between runs, and fetched with retries when it is not.
+    - uses: actions/cache@v4
+      id: xwin
+      with:
+        path: /home/runner/winport/xwin-sdk
+        key: xwin-0.6.5-x86
+
+    - name: Windows SDK
+      if: steps.xwin.outputs.cache-hit != 'true'
+      run: |
+        curl -sSfL --retry 3 https://github.com/Jake-Shadle/xwin/releases/download/0.6.5/xwin-0.6.5-x86_64-unknown-linux-musl.tar.gz | tar -xz
+        for attempt in 1 2 3; do
+          ./xwin-0.6.5-x86_64-unknown-linux-musl/xwin --accept-license --arch x86 splat --output "$XWIN" && exit 0
+          echo "xwin failed (attempt $attempt)"; sleep 10
+        done
+        exit 1
+
+    - name: Boost headers
+      run: |
+        mkdir -p "$(dirname "$(dirname "$(dirname "$BOOST")")")"
+        cd "$(dirname "$(dirname "$(dirname "$BOOST")")")"
+        apt-get download libboost1.83-dev
+        dpkg -x libboost1.83-dev_*.deb boost
+        test -d "$BOOST/boost"
+
+    # The objects of the last build, and the commit they were built from. Kept
+    # with the SDK and headers they were compiled against, so a header's date
+    # only moves when it changes.
+    - name: Compiler version
+      id: cc
+      run: echo "version=$(clang-cl --version | head -n1 | tr -cd '[:alnum:].')" >> "$GITHUB_OUTPUT"
+
+    # hl2sdk is pinned: a commit on its tf2 branch changes what SigMod reads
+    # from the game, and on 2026-10-02 one (631a7b6c) stalled nine community
+    # waves that the commit before it (9c2efb1d) plays to the end. Moving the
+    # pin is a change to test with the bed. The key follows the pin and the
+    # other two branch heads.
+    - name: AlliedModders heads
+      id: heads
+      run: |
+        head() { git ls-remote "https://github.com/alliedmodders/$1" "refs/heads/$2" | cut -c1-12; }
+        echo "key=$(head sourcemod 1.11-dev)-${HL2SDK_TF2:0:12}-$(head metamod-source 1.11-dev)" >> "$GITHUB_OUTPUT"
+
+    - uses: actions/cache@v4
+      id: am
+      with:
+        path: /home/runner/winport/alliedmodders
+        key: alliedmodders-${{ steps.heads.outputs.key }}
+
+    - uses: actions/cache@v4
+      with:
+        path: /home/runner/winport/winport-build
+        key: winport-obj-${{ steps.cc.outputs.version }}-${{ github.sha }}
+        restore-keys: winport-obj-${{ steps.cc.outputs.version }}-
+
+    - name: AlliedModders
+      if: steps.am.outputs.cache-hit != 'true'
+      run: |
+        mkdir -p "$ALLIEDMODDERS" && cd "$ALLIEDMODDERS"
+        git clone --recursive --depth 1 -b 1.11-dev https://github.com/alliedmodders/sourcemod
+        git clone -b tf2 https://github.com/alliedmodders/hl2sdk hl2sdk-tf2
+        git -C hl2sdk-tf2 checkout --detach "$HL2SDK_TF2"
+        git clone --depth 1 -b 1.11-dev https://github.com/alliedmodders/metamod-source
+        cp -r "$GITHUB_WORKSPACE/hl2sdk-manifests" hl2sdk-manifests
+
+    - name: Lua
+      run: |
+        cd libs
+        curl -sSfL https://www.lua.org/ftp/lua-5.4.4.tar.gz | tar -xz
+        mv lua-5.4.4 lua
+
+    # build.sh rebuilds an object older than its source or any header it
+    # read. A checkout dates every file now, which would rebuild everything:
+    # instead every input is dated in the past, and only what changed since
+    # the cached objects' commit is dated now.
+    - name: Date the sources for the object cache
+      run: |
+        old=200001010000
+        for d in "$ALLIEDMODDERS" "$XWIN" "$(dirname "$(dirname "$(dirname "$BOOST")")")" libs/lua; do
+          [ -d "$d" ] && find "$d" -exec touch -h -t $old {} + 2>/dev/null || true
+        done
+        git ls-files -z | xargs -0 touch -h -t $old
+        git submodule foreach --quiet --recursive 'git ls-files -z | xargs -0 touch -h -t 200001010000'
+        prev=$(cat "$OUT/built-from" 2>/dev/null || true)
+        if [ -n "$prev" ] && git cat-file -e "$prev^{commit}" 2>/dev/null; then
+          changed=$(git diff --name-only "$prev" HEAD)
+          echo "objects from $prev; $(echo "$changed" | grep -c .) files changed since"
+          for f in $changed; do
+            if [ -d "$f" ]; then find "$f" -type f -exec touch {} +; elif [ -e "$f" ]; then touch "$f"; fi
+          done
+        else
+          echo "no usable object cache: full build"
+          rm -rf "$OUT/obj" "$OUT/pch"* "$OUT/pch.obj"
+        fi
+
+    - name: Build
+      run: |
+        JOBS=$(nproc) tools/winport/build.sh || { cat "$OUT"/errors/*.log 2>/dev/null | head -200; cat "$OUT/link.log" 2>/dev/null | head -100; exit 1; }
+        git rev-parse HEAD > "$OUT/built-from"
+
+    - name: Package
+      run: |
+        pkg="$OUT/package"
+        rm -rf "$pkg"
+        mkdir -p "$pkg/addons/sourcemod/extensions" "$pkg/addons/sourcemod/gamedata" "$pkg/cfg"
+        cp "$OUT/sigsegv.ext.2.tf2.dll" "$pkg/addons/sourcemod/extensions/"
+        cp sigsegv.autoload "$pkg/addons/sourcemod/extensions/"
+        cp -r gamedata/sigsegv "$pkg/addons/sourcemod/gamedata/"
+        cp cfg/sigsegv_convars.cfg "$pkg/cfg/"
+        # SourceMod reads these for every menu SigMod draws; without them the
+        # log opens with "Fatal error encountered parsing sigsegv.phrases.txt".
+        cp -r translations "$pkg/addons/sourcemod/translations"
+        (cd "$pkg" && zip -qr "$GITHUB_WORKSPACE/package-windows.zip" .)
+        sha256sum package-windows.zip | tee package-windows.zip.sha256
+        cp "$OUT/sigsegv.ext.2.tf2.pdb" .
+        # Which TF2 build this zip is for, beside the zip rather than inside
+        # it: a consumer pinning the release can read this without fetching
+        # 10 MB and grepping 7,000 lines of gamedata, and before it starts a
+        # server the extension would then refuse to load into.
+        python3 -c "import json,os,sys; t=json.load(open('tools/winport/table.json')); t['release']=os.environ['RELEASE']; json.dump(t, sys.stdout, indent=1)" \
+          > package-windows.build.json
+        cat package-windows.build.json
+      env:
+        RELEASE: ${{ github.ref_name }}
+
+    # A bed report names SigMod's frames as sigsegv.ext.2.tf2.dll+0xRVA. The
+    # build that has the .pdb is the one place that can name them.
+    - name: Name the SigMod frames in symbolize.txt
+      if: always()
+      run: |
+        { grep -o '0x[0-9a-fA-F]*' tools/winport/bed/symbolize.txt || true; } | while read -r rva; do
+          printf '%s ' "$rva"
+          llvm-symbolizer-20 --obj="$OUT/sigsegv.ext.2.tf2.dll" --relative-address --inlines --pretty-print "$rva" | tr '\n' ' '
+          echo
+        done
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: symbols
+        path: sigsegv.ext.2.tf2.pdb
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: package-windows
+        path: |
+          package-windows.zip
+          package-windows.zip.sha256
+          package-windows.build.json
+
+    - name: Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v2
+      with:
+        name: ${{ github.ref_name }} Windows build for TF2 ServerVersion ${{ steps.table.outputs.build }}
+        files: |
+          package-windows.zip
+          package-windows.zip.sha256
+          package-windows.build.json
+
+  # The bed's tools come from tf2-archipelago: the launcher's own installer
+  # (winbed), Kelly's wave probe and its plugin. Built on Linux, where spcomp is.
+  bed-tools:
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        repository: m-this/tf2-archipelago
+        ref: ${{ inputs.archipelago_ref || 'main' }}
+    - uses: actions/setup-go@v5
+      with:
+        go-version-file: go.mod
+    - run: make winbed
+    - uses: actions/upload-artifact@v4
+      with:
+        name: winbed
+        path: dist/winbed
+
+  # Boot once under full page heap, the check Wine's heap does not make: a
+  # write out of bounds faults at the instruction, and WER keeps the dump.
+  heapcheck:
+    needs: [build, bed-tools]
+    runs-on: windows-2022
+    timeout-minutes: 120
+    env:
+      WAVEPROBE_RCONPW: bed-${{ github.run_id }}
+      BED: C:\bed
+    steps:
+    # Only the scripts: mvm-reversed has paths longer than Windows allows.
+    - uses: actions/checkout@v4
+      with:
+        sparse-checkout: tools/winport/bed
+    - uses: actions/download-artifact@v4
+      with: { name: package-windows, path: pkg }
+    - uses: actions/download-artifact@v4
+      with: { name: winbed, path: bedbin }
+    - uses: actions/download-artifact@v4
+      with: { name: symbols, path: pkg }
+    - name: Install
+      shell: pwsh
+      run: tools/winport/bed/install.ps1
+    - name: Disassemble the queries in disasm.txt
+      shell: pwsh
+      run: |
+        python -m pip install --quiet capstone pefile
+        New-Item -ItemType Directory -Force "$env:BED\bedout" | Out-Null
+        python tools/winport/bed/disasm.py "$env:BED\tf-dedicated" tools/winport/bed/disasm.txt > "$env:BED\bedout\disasm.txt" 2>&1
+    - name: Page heap on SigMod's allocations
+      shell: pwsh
+      run: |
+        # Full page heap on every allocation leaves a 32-bit srcds with no
+        # address space ("Out of memory or address space"). The extension links
+        # the CRT statically, so its allocations are its own and can be the
+        # only ones checked.
+        $gflags = Get-ChildItem 'C:\Program Files (x86)\Windows Kits\10\Debuggers\x64' -Filter gflags.exe -ErrorAction SilentlyContinue | Select-Object -First 1
+        if ($gflags) {
+          & $gflags.FullName /p /enable srcds.exe /full /dlls sigsegv.ext.2.tf2.dll
+        } else {
+          Write-Host 'no gflags.exe: standard page heap on the whole process'
+          $ifeo = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\srcds.exe'
+          New-Item -Force $ifeo | Out-Null
+          Set-ItemProperty $ifeo GlobalFlag 0x02000000 -Type DWord
+          Set-ItemProperty $ifeo PageHeapFlags 0x0 -Type DWord
+        }
+    - name: Boot and list
+      shell: pwsh
+      run: tools/winport/bed/boot.ps1 -Commands 'sig_list_mods','sig_list_addrs','sig_list_linkage','sm exts list','meta list'
+    - if: always()
+      shell: pwsh
+      run: tools/winport/bed/collect.ps1 -Out heapcheck
+    - if: always()
+      uses: actions/upload-artifact@v4
+      with: { name: heapcheck, path: heapcheck }
+
+  # Every SigMod wave the catalog has, on Windows, with Kelly's probe. Only
+  # once the server has booted and loaded a map under heapcheck: eight runners
+  # finding the same crash eight times tells nothing heapcheck did not.
+  bed:
+    # Beside heapcheck, not after it: each installs the game on its own runner,
+    # and waiting doubled the time to a result.
+    needs: [build, bed-tools]
+    runs-on: windows-2022
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7]
+    env:
+      WAVEPROBE_RCONPW: bed-${{ github.run_id }}
+      BED: C:\bed
+      # Without cdb: attached, it stops the server a second into a mission.
+      BED_DEBUGGER: none
+      # A call SigMod has no Windows address for names itself and returns zero
+      # instead of ending the server, so one sweep lists every one a mission
+      # reaches. link.h, UnresolvedCall.
+      SIGSEGV_SURVEY_UNRESOLVED: 1
+    steps:
+    # Only the scripts: mvm-reversed has paths longer than Windows allows.
+    - uses: actions/checkout@v4
+      with:
+        sparse-checkout: tools/winport/bed
+    # focus.txt naming missions makes shard 0 the whole run: the other shards
+    # stop before installing the game, which is most of a shard's time.
+    - name: Focus
+      id: focus
+      shell: pwsh
+      run: |
+        $focus = @(Get-Content tools/winport/bed/focus.txt -ErrorAction SilentlyContinue | ForEach-Object { ($_ -split '#')[0].Trim() } | Where-Object { $_ })
+        $idle = ($focus.Count -gt 0) -and (${{ matrix.shard }} -ne 0)
+        "idle=$($idle.ToString().ToLower())" >> $env:GITHUB_OUTPUT
+        if ($idle) { Write-Host "focus run on shard 0: $($focus -join ', ')" }
+    - if: steps.focus.outputs.idle != 'true'
+      uses: actions/download-artifact@v4
+      with: { name: package-windows, path: pkg }
+    - if: steps.focus.outputs.idle != 'true'
+      uses: actions/download-artifact@v4
+      with: { name: winbed, path: bedbin }
+    - if: steps.focus.outputs.idle != 'true'
+      uses: actions/download-artifact@v4
+      with: { name: symbols, path: pkg }
+    - name: Install
+      if: steps.focus.outputs.idle != 'true'
+      shell: pwsh
+      run: tools/winport/bed/install.ps1
+    - name: Probe
+      if: steps.focus.outputs.idle != 'true'
+      shell: pwsh
+      env:
+        WINBED_BOTS: ${{ inputs.bots && '1' || '' }}
+      # Bots alone never wake a hibernating server, and MvM:Robot_Limit fills
+      # the spectator team only once it wakes: a wave that opens on a Squad
+      # then waits forever. A player joining is what wakes a real server.
+      run: tools/winport/bed/boot.ps1 -Commands 'tf_allow_server_hibernation 0','sig_pop_wave_stall_dump 600','sig_list_mods' -Probe "-only-sigmod -mode normal -shards 8 -shard ${{ matrix.shard }} -timeout 900s ${{ inputs.probe_args }}"
+    - if: always() && steps.focus.outputs.idle != 'true'
+      shell: pwsh
+      run: tools/winport/bed/collect.ps1 -Out bed-${{ matrix.shard }}
+    - if: always() && steps.focus.outputs.idle != 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: bed-${{ matrix.shard }}
+        path: bed-${{ matrix.shard }}

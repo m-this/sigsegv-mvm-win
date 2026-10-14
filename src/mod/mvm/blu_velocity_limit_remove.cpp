@@ -4,7 +4,7 @@ namespace Mod::MvM::Blu_Velocity_Limit_Remove
 {
     
 	constexpr uint8_t s_Buf_PostThink[] = {
-#ifdef PLATFORM_64BITS
+#if defined PLATFORM_64BITS || defined _WINDOWS
 		0xe8, 0x32, 0x41, 0xb7, 0xff,        // +0x0000 call    _ZNK11CBaseEntity13GetTeamNumberEv; CBaseEntity::GetTeamNumber(void)
 		0x83, 0xf8, 0x03,                    // +0x0005 cmp     eax, 3
 		0x0f, 0x85, 0xd0, 0xfe, 0xff, 0xff,  // +0x0008 jnz     loc_11DF4A7
@@ -28,7 +28,7 @@ namespace Mod::MvM::Blu_Velocity_Limit_Remove
 		{
 			buf.CopyFrom(s_Buf_PostThink);
 			
-#ifdef PLATFORM_64BITS
+#if defined PLATFORM_64BITS || defined _WINDOWS
 			mask.SetDword(0x00 + 1, 0x00000000);
 			mask.SetDword(0x08 + 2, 0x00000000);
 #else
@@ -44,7 +44,7 @@ namespace Mod::MvM::Blu_Velocity_Limit_Remove
 		virtual bool GetPatchInfo(ByteBuf& buf, ByteBuf& mask) const override
 		{
 			/* replace 'TF_TEAM_BLUE'*/
-#ifdef PLATFORM_64BITS
+#if defined PLATFORM_64BITS || defined _WINDOWS
 			buf[0x05 + 0] = 0x83;
 			buf[0x05 + 1] = 0xF8;
 			buf[0x05 + 2] = 0xFF;

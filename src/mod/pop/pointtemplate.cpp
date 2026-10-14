@@ -634,18 +634,21 @@ namespace Mod::Pop::PointTemplate
 		}
 	}
 	/* */
-	DETOUR_DECL_MEMBER(void, CUpgrades_D2)
+	// MSVC keeps one destructor body, the [D0] below
+#if !defined _WINDOWS
+	DETOUR_DECL_DTOR(CUpgrades_D2)
 	{
 		OnDestroyUpgrades(reinterpret_cast<CUpgrades *>(this));
 
-		DETOUR_MEMBER_CALL();
+		DETOUR_DTOR_CALL();
 	}
+#endif
 
-	DETOUR_DECL_MEMBER(void, CUpgrades_D0)
+	DETOUR_DECL_DTOR(CUpgrades_D0)
 	{
 		OnDestroyUpgrades(reinterpret_cast<CUpgrades *>(this));
 
-		DETOUR_MEMBER_CALL();
+		DETOUR_DTOR_CALL();
 	}
 
 	
@@ -937,7 +940,9 @@ namespace Mod::Pop::PointTemplate
 		{
 			MOD_ADD_DETOUR_MEMBER(CUpgrades_Spawn, "CUpgrades::Spawn");
 			MOD_ADD_DETOUR_MEMBER(CUpgrades_D0, "CUpgrades::~CUpgrades [D0]");
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(CUpgrades_D2, "CUpgrades::~CUpgrades [D2]");
+#endif
 			
 			MOD_ADD_DETOUR_MEMBER(CBaseEntity_UpdateOnRemove, "CBaseEntity::UpdateOnRemove");
 			MOD_ADD_DETOUR_MEMBER(CEnvEntityMaker_SpawnEntity,                   "CEnvEntityMaker::SpawnEntity");

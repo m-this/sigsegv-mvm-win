@@ -3,6 +3,9 @@
 #include "stub/strings.h"
 #include "util/misc.h"
 #include "mem/extract.h"
+#include "util/rtti.h"
+#include "stub/baseentity.h"
+#include "stub/gamerules.h"
 
 #include <boost/algorithm/string.hpp>
 
@@ -216,10 +219,37 @@ MemberFuncThunk<CAttributeManager *, void, CBaseEntity *> CAttributeManager::ft_
 MemberFuncThunk<CAttributeManager *, void, CBaseEntity *> CAttributeManager::ft_RemoveProvider("CAttributeManager::RemoveProvider");
 MemberFuncThunk<CAttributeManager *, bool, CBaseEntity *> CAttributeManager::ft_IsProvidingTo("CAttributeManager::IsProvidingTo");
 
+#if defined _WINDOWS
+int CAttributeManager::GetGlobalCacheVersion() const
+{
+	return TFGameRules() != nullptr ? TFGameRules()->GetGlobalAttributeCacheVersion() : 0;
+}
+
+bool CAttributeManager::IsProvidingTo(CBaseEntity *receiver)
+{
+	IHasAttributes *attributes = receiver != nullptr ? (IHasAttributes *)receiver->m_pAttributes : nullptr;
+	if (attributes == nullptr) return false;
+	
+	auto &providers = attributes->GetAttributeManager()->m_Providers.Get();
+	CHandle<CBaseEntity> outer = this->m_hOuter;
+	return providers.Find(outer) != providers.InvalidIndex();
+}
+#endif
+
 MemberVFuncThunk<CAttributeManager *, float, float, CBaseEntity *, string_t, CUtlVector<CBaseEntity*> *> CAttributeManager::vt_ApplyAttributeFloatWrapper(TypeName<CAttributeManager>(), "CAttributeManager::ApplyAttributeFloatWrapper");
 MemberVFuncThunk<CAttributeManager *, string_t, string_t, CBaseEntity *, string_t, CUtlVector<CBaseEntity*> *> CAttributeManager::vt_ApplyAttributeStringWrapper(TypeName<CAttributeManager>(), "CAttributeManager::ApplyAttributeStringWrapper");
 MemberVFuncThunk<CAttributeManager *, float, float, CBaseEntity *, string_t, CUtlVector<CBaseEntity*> *> CAttributeManager::vt_ApplyAttributeFloat(TypeName<CAttributeManager>(), "CAttributeManager::ApplyAttributeFloat");
+MemberVFuncThunk<CAttributeManager *, void> CAttributeManager::vt_OnAttributeValuesChanged(TypeName<CAttributeManager>(), "CAttributeManager::OnAttributeValuesChanged");
 MemberVFuncThunk<CAttributeManager *, string_t, string_t, CBaseEntity *, string_t, CUtlVector<CBaseEntity*> *> CAttributeManager::vt_ApplyAttributeString(TypeName<CAttributeManager>(), "CAttributeManager::ApplyAttributeString");
+
+#if defined _WINDOWS
+void CAttributeList::NotifyManagerOfAttributeValueChanges()
+{
+	if (this->m_pManager != nullptr) {
+		CAttributeManager::vt_OnAttributeValuesChanged(this->m_pManager);
+	}
+}
+#endif
 
 StaticFuncThunk<int, int, const char *, const CBaseEntity *, CUtlVector<CBaseEntity *> *, bool>     CAttributeManager::ft_AttribHookValue_int  ("CAttributeManager::AttribHookValue<int>");
 StaticFuncThunk<float, float, const char *, const CBaseEntity *, CUtlVector<CBaseEntity *> *, bool> CAttributeManager::ft_AttribHookValue_float("CAttributeManager::AttribHookValue<float>");
@@ -302,6 +332,18 @@ void CEconItemAttributeDefinition::ConvertValueToString(const attribute_data_uni
 
 
 MemberFuncThunk<      CEconItemAttribute *, void>                           CEconItemAttribute::ft_ctor         ("CEconItemAttribute::CEconItemAttribute [C1]");
+
+#if defined _WINDOWS
+void CEconItemAttribute::Ctor(CEconItemAttribute *ptr)
+{
+	/* The embedded network var's vtable, then Init(). */
+	ptr->__pad00                     = (void *)RTTI::GetVTable<CEconItemAttribute>();
+	ptr->m_iAttributeDefinitionIndex = INVALID_ATTRIB_DEF_INDEX;
+	ptr->m_iRawValue32               = 0.0f;
+	ptr->m_nRefundableCurrency       = 0;
+}
+#endif
+
 MemberFuncThunk<const CEconItemAttribute *, CEconItemAttributeDefinition *> CEconItemAttribute::ft_GetStaticData("CEconItemAttribute::GetStaticData");
 
 

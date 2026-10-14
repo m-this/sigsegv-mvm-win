@@ -5,21 +5,17 @@
 #include "abi.h"
 #include "util/demangle.h"
 
-#if defined __clang__
-typedef abi::__class_type_info rtti_t;
-#elif defined __GNUC__
-typedef abi::__class_type_info rtti_t;
-#elif defined _MSC_VER
+#if defined _MSC_VER
 typedef _TypeDescriptor rtti_t;
+#else
+typedef abi::__class_type_info rtti_t;
 #endif
 
 
-#if defined __clang__
-#define TYPEID_RAW_NAME(typeinfo) typeinfo.name()
-#elif defined __GNUC__
-#define TYPEID_RAW_NAME(typeinfo) typeinfo.name()
-#elif defined _MSC_VER
+#if defined _MSC_VER
 #define TYPEID_RAW_NAME(typeinfo) typeinfo.raw_name()
+#else
+#define TYPEID_RAW_NAME(typeinfo) typeinfo.name()
 #endif
 
 template<typename T>
@@ -106,7 +102,13 @@ inline TO rtti_cast(const FROM ptr)
 		assert(rtti_to   != nullptr);
 	}
 
-#if defined __GNUC__ || defined __clang__
+/* Each of the branches below is about the ABI, not the compiler: the Itanium
+ * one walks __class_type_info with __do_upcast and abi::__dynamic_cast, the
+ * MSVC one hands both directions to __RTDynamicCast. They used to ask for
+ * __GNUC__ || __clang__, and clang-cl defines __clang__ too, so a Windows build
+ * took the Itanium branch against a std::type_info that has no __do_upcast.
+ * _MSC_VER is what says which ABI this is. */
+#if !defined _MSC_VER
 	void *result = (void *)ptr;
 	static std::vector<std::pair<void *, uintptr_t>> dynamic_cast_cache;
 	void *vtable = *((void**)result);
@@ -145,7 +147,7 @@ inline TO rtti_scast(const FROM ptr)
 	static bool initialized = false;
 	static const rtti_t *rtti_from;
 	static const rtti_t *rtti_to;
-#if defined __GNUC__ || defined __clang__
+#if !defined _MSC_VER
 	static uintptr_t upcast_offset = 0;
 #endif
 
@@ -157,7 +159,7 @@ inline TO rtti_scast(const FROM ptr)
 		assert(rtti_from != nullptr);
 		assert(rtti_to   != nullptr);
 	
-#if defined __GNUC__ || defined __clang__
+#if !defined _MSC_VER
 	/* GCC's __dynamic_cast is grumpy and won't do up-casts at runtime, so we
 	 * have to manually take care of up-casting ourselves */
 	 	
@@ -172,7 +174,7 @@ inline TO rtti_scast(const FROM ptr)
 #endif
 	}
 
-#if defined __GNUC__ || defined __clang__
+#if !defined _MSC_VER
 	void *result = (void *)ptr;
 	result = (void *) ((uintptr_t)result + upcast_offset);
 

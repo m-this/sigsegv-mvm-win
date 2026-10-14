@@ -1,0 +1,5 @@
+# Linux engine_srv.so symbols to find in engine.dll. The address job pairs the two
+# binaries (matchfuncs.py) and ranks candidates for each name here; confirm by
+# reading the body, then record it in overrides.json with "lib": "engine".
+# Empty (comments only) skips the pairing, which takes minutes.
+_ZN11CBaseServer13GetFreeClientER8netadr_s

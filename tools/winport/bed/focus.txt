@@ -1,0 +1,2 @@
+# Missions the bed plays instead of all of them, one per line: shard 0 plays
+# these and the other shards stop at once. Empty is the full sweep.
