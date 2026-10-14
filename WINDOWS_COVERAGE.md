@@ -19,7 +19,7 @@ Measured on 2026-10-14 against TF2 ServerVersion 11117211 (depot 232255), main `
 | Compiled out on both platforms | 23 |
 | All SigMod mods (`IMod`/`CModule` names) | 309 |
 
-The mission-facing mods have no unresolved detour. What is left is 17 `Debug:` and 5 `Visualize:` tools, `Etc:Workshop_Map_Fix` (Steam UGC callbacks folded into one function, Linux-only inotify code), `Util:Vehicle_Fix` (no MvM mission uses vehicles; the vtables differ by 24 slots), `Util:Overlay_Send` (debug overlay to clients), and `Perf:` mods whose hooks are mostly engine.dll (SendProp_Optimize, HLTV_Optimize) or CS:S (CSS_Bot_Vision_Optimize).
+The mission-facing mods have no unresolved detour. What is left is 17 `Debug:` and 5 `Visualize:` tools, `Etc:Workshop_Map_Fix` (Linux only: it watches the workshop directory with inotify and links maps with symlinks, and its Steam UGC callbacks are folded into one function on Windows, so it is not ported), `Util:Vehicle_Fix` (no MvM mission uses vehicles; the vtables differ by 24 slots), `Util:Overlay_Send` (debug overlay to clients), and `Perf:` mods whose hooks are mostly engine.dll (SendProp_Optimize, HLTV_Optimize) or CS:S (CSS_Bot_Vision_Optimize).
 
 Address names: 2,860 are defined in the Linux gamedata, 2,158 of them are named in `src/`. Of those 2,158: 1,457 have a `windows.txt` entry, 214 resolve at run time, 9 are recorded `bad` (inlined, no body of its own), 43 are client-side, and **435 have no Windows entry**.
 
@@ -277,3 +277,11 @@ Recorded `bad` (9): `CAttributeList::AddAttribute`, `CBaseCombatWeapon::SetIdeal
 | `CTFProjectile_BallOfFire::Burn` | 0x534bd0 (0 matches because the body changed): called from `RocketTouch` (0x5349c0), strings `Weapon_DragonsFury.BonusDamage`, `BonusDamageHit`, `BonusDamagePain`, `ret 4` |
 
 The three library entries were byte-identical, so `carry.py`'s `unmoved` check should have kept them; the old binaries for 11087207 are no longer served, so they were re-read by hand. All four are in the table now (1,627 to 1,631 entries).
+
+## Notes on stand-ins
+
+- `max_aoe_targets`: the Windows throttle sits in Custom_Attributes' `OnCollide` detour, in front of the inline `BCanBurnEntityThisFrame`. Its counter moves whenever a collision passes the throttle; Linux moves it only when the game would burn. A collision the game rejects for its own per-entity interval therefore also uses up the slot, and the flamethrower can burn slightly less often than on Linux.
+- `MaybeDrawRailgunBeam` is inline in `FireBullet` (0x51fe50), whose only call to `TE_TFParticleEffectComplex` (0x52082f) is the beam. Weapon_Shoot detours that call while `FireBullet` runs and, for the `dxhr_sniper_rail*` particles, dispatches the custom tracer and swaps in a broadcast filter as its Linux `MaybeDrawRailgunBeam` detour does. It has not been run on the bed.
+- `Util:Overlay_Send`: its `[local]` entries are the mod's own functions, and the only addresses it needs from the game are the two `NDebugOverlay::Cross3DOriented` overloads, which have no body in server.dll and which nothing calls on Linux either.
+- `Perf:HLTV_Optimize`: `CHLTVDemoRecorder::StopRecording [clone]` is a GCC `.part` clone; the Windows function has no clone and the plain `StopRecording` detour covers it.
+- `Perf:SendProp_Optimize` has its engine.dll addresses for the pack path (`SendTable_CullPropsFromProxies`, `CHLTVClient::SendSnapshot`, `CGameClient::SetupPackInfo`, `CVEngineServer::CheckAreasConnected`, `InvalidateSharedEdictChangeInfos`, `AllocChangeFrameList`, `CBaseEdict::GetChangeAccessor`). The two `CParallelProcessor<>::Run` template instances, `RemoveObject`, the animation overlay functions and `CServerNetworkProperty::GetClassName` are still open, so the mod is off by default and should stay off on Windows.
