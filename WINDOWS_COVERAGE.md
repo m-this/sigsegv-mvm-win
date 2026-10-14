@@ -13,15 +13,15 @@ Measured on 2026-10-14 against TF2 ServerVersion 11117211 (depot 232255), main `
 
 | Status | Mods |
 | --- | ---: |
-| Enabled, every detour and virtual hook has an address | 237 |
-| Enabled, server-side detours or hooks without an address | 36 |
+| Enabled, every detour and virtual hook has an address | 244 |
+| Enabled, server-side detours or hooks without an address | 29 |
 | Enabled, only client-side addresses missing (nothing to hook on a dedicated server) | 13 |
 | Compiled out on both platforms | 23 |
 | All SigMod mods (`IMod`/`CModule` names) | 309 |
 
-Of the 36 with gaps (30 after the second batch), the mission-facing mods are at zero unresolved detours: every remaining gap is under `#if !defined _WINDOWS` with the feature it loses listed below. What is left is `Debug:`, `Visualize:` and `Prof:` tools, `Etc:Workshop_Map_Fix`, `Util:Vehicle_Fix`, `Util:Overlay_Send` and four `Perf:` mods.
+The mission-facing mods have no unresolved detour. What is left is 17 `Debug:` and 5 `Visualize:` tools, `Etc:Workshop_Map_Fix` (Steam UGC callbacks folded into one function, Linux-only inotify code), `Util:Vehicle_Fix` (no MvM mission uses vehicles; the vtables differ by 24 slots), `Util:Overlay_Send` (debug overlay to clients), and `Perf:` mods whose hooks are mostly engine.dll (SendProp_Optimize, HLTV_Optimize) or CS:S (CSS_Bot_Vision_Optimize).
 
-Address names: 2,860 are defined in the Linux gamedata, 2,163 of them are named in `src/`. Of those 2,163: 1,450 have a `windows.txt` entry, 214 resolve at run time, 14 are recorded `bad` (inlined, no body of their own), 43 are client-side, and **442 have no Windows entry**.
+Address names: 2,860 are defined in the Linux gamedata, 2,158 of them are named in `src/`. Of those 2,158: 1,457 have a `windows.txt` entry, 214 resolve at run time, 9 are recorded `bad` (inlined, no body of its own), 43 are client-side, and **435 have no Windows entry**.
 
 ## Enabled mods with unresolved addresses
 
@@ -40,7 +40,6 @@ Address names: 2,860 are defined in the Linux gamedata, 2,163 of them are named 
 - `Debug:Sticky_Detonation_Delay` (4 of 8): `CTFGrenadeLauncher::SecondaryAttack` (missing), `CTFPipebombLauncher::SecondaryAttack` (missing), `CTFPlayer::CanAttack` (missing), `CTFWeaponBase::CanPerformSecondaryAttack` (missing)
 - `Debug:Suicide_Bomber` (1 of 6): `Path::Compute_vec<CTFBotPathCost>` (missing)
 - `Debug:Tele_Sapper` (2 of 4): `CBaseObject::HasSapper` (missing), `CBaseObject::SetPlasmaDisabled` (missing)
-- `Debug:UseItem_Broken` (1 of 6): `CTFBot::PushRequiredWeapon` (missing)
 - `Debug:UserMsg_Overflow` (2 of 7): `SVC_UserMessage::WriteToBuffer` (missing), `SVC_UserMessage::ReadFromBuffer` (missing)
 - `Debug:UserMsg_Overflow_v2` (1 of 2): `CNetChan::SendNetMsg` (missing)
 - `Debug:VProf_Record` (2 of 2): `VProfRecord_Snapshot` (missing), `VProfRecord_StartOrStop` (missing)
@@ -64,14 +63,15 @@ Each was checked to have no standalone body on 11117211: the only Linux caller h
 
 | Function | Inline in | Feature lost on Windows |
 | --- | --- | --- |
-| `CTFFlameManager::BCanBurnEntityThisFrame` | `OnCollide` 0x46eba0 (0x46ed22) | `Custom_Attributes` max_aoe_targets throttle on flamethrowers |
-| `CTFPlayer::IsAllowedToInitiateTauntWithPartner` | `PlayTauntSceneFromItem` 0x506230 | `Custom_Attributes` always_allow_taunt |
-| `CTFPlayer::MaybeDrawRailgunBeam` | `FireBullet` 0x51fe50 | `Weapon_Shoot` custom tracer particle and broadcast beam |
-| `CTFBot::IsExplosiveProjectileWeapon` | `FireWeaponAtEnemy` 0x56a3c0 (as four `IsWeapon` calls) | `Improved_Targeting` close explosive attack cvar |
+| `CTFFlameManager::BCanBurnEntityThisFrame` | `OnCollide` 0x46eba0 (0x46ed22) | `max_aoe_targets` restored by a throttle in an `OnCollide` detour; the counter moves when a collision passes rather than when the game would burn |
+| `CTFPlayer::IsAllowedToInitiateTauntWithPartner` | `PlayTauntSceneFromItem` 0x506230 | `Custom_Attributes` always_allow_taunt; no stand-in: the checks sit mid-function and the attribute is per player, so a byte patch would allow partner taunts for everyone |
+| `CTFPlayer::MaybeDrawRailgunBeam` | `FireBullet` 0x51fe50 | `Weapon_Shoot` custom tracer particle and broadcast beam; a scoped `TE_TFParticleEffectComplex` detour could swap the filter, not done untested |
 | `CTFPlayer::SpyDeadRingerDeath` | `OnTakeDamage` 0x500c70 | none: `Custom_Attributes` and `Human_Death_Yells` hook `FeignDeath` (0x4f0750) called with deathnotice true |
 | `CTFWeaponBase::Energy_Recharge` | `IncrementAmmo` 0x636170 | none: `reload_full_clip_at_once` hooks `IncrementAmmo` |
 | `CTFPlayer::ShouldDropAmmoPack` | `Event_Killed` 0x4ec3b0 | none: `Drop_Weapons` and `TFBot_Extensions` drop in an `Event_Killed` detour |
 | `CTFBotMainAction::SelectCloserThreat` | `SelectMoreDangerousThreatInternal` | none: native body in `stub/tfbot_behavior.cpp` |
+
+`CTFBot::IsExplosiveProjectileWeapon` is not inlined: it is 0x556fa0, a jump-table switch on the weapon id (ids 0x16, 0x17, 0x18, 0x3c, 0x41), called once from `FireWeaponAtEnemy`. My first batch recorded it as inlined from the wrong evidence.
 
 `CTFPlayer::UpdateExpression` is not inlined everywhere: 0x4f1dd0 is a standalone copy (stored as a function pointer at 0x4f6b75); `TFPlayerThink` (0x50faa0) also carries one inline, which the `Entity_Limit_Manager` detour does not reach.
 
@@ -135,12 +135,12 @@ These hook the game client and have no meaning in a dedicated server: `Anim:Esti
 
 ## Address names used by the code with no Windows entry
 
-Names defined in `gamedata/sigsegv` and named in `src/`, with no entry in `windows.txt`, not resolved at run time, not `bad`: 442. Some are never reached on a dedicated server; the bed logs the ones a mission reaches (`unresolved functions called`). Grouped by class.
+Names defined in `gamedata/sigsegv` and named in `src/`, with no entry in `windows.txt`, not resolved at run time, not `bad`: 435. Some are never reached on a dedicated server; the bed logs the ones a mission reaches (`unresolved functions called`). Grouped by class.
 
 - `Action<CTFBot>` (5): `ApplyResult`, `BuildDecoratedName [clone]`, `InvokeOnEnd`, `InvokeOnResume`, `PrintStateToConsole`
 - `Action<CZombie>` (5): `ApplyResult`, `BuildDecoratedName [clone]`, `InvokeOnEnd`, `InvokeOnResume`, `PrintStateToConsole`
 - `Behavior<CTFBot>` (1): `FirstContainedResponder`
-- `CAI_BaseNPC` (2): `GetActivityID`, `GetActivityName`
+- `CAI_BaseNPC` (1): `GetActivityName`
 - `CAnimationLayer` (1): `StudioFrameAdvance`
 - `CAttributeList` (4): `GetAttributeByID`, `GetAttributeByName`, `NotifyManagerOfAttributeValueChanges`, `SetRuntimeAttributeRefundableCurrency`
 - `CAttributeManager` (4): `AddProvider`, `GetGlobalCacheVersion`, `IsProvidingTo`, `RemoveProvider`
@@ -161,7 +161,7 @@ Names defined in `gamedata/sigsegv` and named in `src/`, with no entry in `windo
 - `CCSBot` (3): `FindMostDangerousThreat`, `GetPartPosition`, `IsVisible`
 - `CClientFrameManager` (2): `CountClientFrames`, `RemoveOldestFrame`
 - `CCollisionProperty` (2): `MarkPartitionHandleDirty`, `SetSurroundingBoundsType`
-- `CCurrencyPack` (2): `AffectedByRadiusCollection`, `DistributedBy`
+- `CCurrencyPack` (1): `DistributedBy`
 - `CDownloadListGenerator` (1): `OnResourcePrecachedFullPath`
 - `CEconEntity` (5): `DebugDescribe`, `GetAttributeContainer`, `GetAttributeManager`, `ReapplyProvision`, `UpdateBodygroups`
 - `CEconItem` (1): `AddDynamicAttributeInternal`
@@ -208,7 +208,7 @@ Names defined in `gamedata/sigsegv` and named in `src/`, with no entry in `windo
 - `CSteamID` (1): `Render [static]`
 - `CTFBall_Ornament` (1): `Create`
 - `CTFBaseProjectile` (2): `GetDamage`, `SetDamage`
-- `CTFBot` (19): `DelayedThreatNotice`, `ForgetSpy`, `GetBodyInterface`, `GetIntentionInterface`, `GetLocomotionInterface`, `GetTimeLeftToCapture`, `GetVisionInterface`, `IsExplosiveProjectileWeapon`, `IsKnownSpy`, `IsLineOfFireClear_ent`, `IsLineOfFireClear_vec`, `IsLineOfFireClear_vec_ent`, `IsSuspectedSpy`, `PushRequiredWeapon`, `RealizeSpy`, `StopSuspectingSpy`, `SuspectedSpyInfo_t::IsCurrentlySuspected`, `SuspectedSpyInfo_t::Suspect`, `SuspectedSpyInfo_t::TestForRealizing`
+- `CTFBot` (17): `DelayedThreatNotice`, `ForgetSpy`, `GetBodyInterface`, `GetIntentionInterface`, `GetLocomotionInterface`, `GetTimeLeftToCapture`, `GetVisionInterface`, `IsKnownSpy`, `IsLineOfFireClear_ent`, `IsLineOfFireClear_vec`, `IsLineOfFireClear_vec_ent`, `IsSuspectedSpy`, `RealizeSpy`, `StopSuspectingSpy`, `SuspectedSpyInfo_t::IsCurrentlySuspected`, `SuspectedSpyInfo_t::Suspect`, `SuspectedSpyInfo_t::TestForRealizing`
 - `CTFBotFetchFlag` (1): `OnStart`
 - `CTFBotMainAction` (4): `OnInjured`, `OnStart`, `ShouldAttack`, `ShouldHurry`
 - `CTFBotMedicHeal` (1): `SelectPatient`
@@ -229,7 +229,7 @@ Names defined in `gamedata/sigsegv` and named in `src/`, with no entry in `windo
 - `CTFNavMesh` (1): `RecomputeInternalData`
 - `CTFPipebombLauncher` (1): `SecondaryAttack`
 - `CTFPlayer` (25): `AddObject [clone]`, `CanAttack`, `CanMoveDuringTaunt`, `DropFlag`, `ForceRegenerateAndRespawn`, `GetAttributeList`, `GetAttributeManager`, `GetDesiredHandScale`, `GetDesiredHeadScale`, `GetDesiredTorsoScale`, `GetHandScaleSpeed`, `GetHeadScaleSpeed`, `GetPassiveWeapons`, `GetTorsoScaleSpeed`, `HandleCommand_JoinTeam_NoMenus`, `HolsterOffHandWeapon`, `IsMiniBoss`, `MedicGetChargeLevel`, `PlaySpecificSequence`, `ReapplyPlayerUpgrades`, `RemoveAllCustomAttributes`, `RemoveInvisibility`, `RemoveObject`, `SetOffHandWeapon`, `StateTransition`
-- `CTFPlayerShared` (7): `FindHealerIndex`, `GetConditionDuration`, `GetConditionsBits`, `GetPercentInvisible`, `IsLoserStateStunned`, `RecalculatePlayerBodygroups`, `SetDefaultItemChargeMeters`
+- `CTFPlayerShared` (6): `FindHealerIndex`, `GetConditionDuration`, `GetConditionsBits`, `GetPercentInvisible`, `RecalculatePlayerBodygroups`, `SetDefaultItemChargeMeters`
 - `CTFPointWeaponMimic` (1): `GetFiringAngles`
 - `CTFPowerup` (1): `GetLifeTime`
 - `CTFProjectile_Cleaver` (1): `Create`
@@ -244,7 +244,7 @@ Names defined in `gamedata/sigsegv` and named in `src/`, with no entry in `windo
 - `CTFStunBall` (1): `Create`
 - `CTFTeam` (1): `GetObject`
 - `CTFTeamManager` (1): `IsValidTeam`
-- `CTFWeaponBase` (13): `CanPerformSecondaryAttack`, `Energy_GetMaxEnergy`, `Energy_Recharge`, `GetEffectBarProgress`, `GetMaxHealthMod`, `GetProjectileFireSetup`, `GetSkin`, `GetTFPlayerOwner`, `GetTFWpnData`, `InternalGetEffectBarRechargeTime`, `Misfire`, `ShouldRemoveInvisibilityOnPrimaryAttack`, `WeaponReset`
+- `CTFWeaponBase` (12): `CanPerformSecondaryAttack`, `Energy_GetMaxEnergy`, `GetEffectBarProgress`, `GetMaxHealthMod`, `GetProjectileFireSetup`, `GetSkin`, `GetTFPlayerOwner`, `GetTFWpnData`, `InternalGetEffectBarRechargeTime`, `Misfire`, `ShouldRemoveInvisibilityOnPrimaryAttack`, `WeaponReset`
 - `CTFWeaponBaseGun` (2): `GetAmmoPerShot`, `UpdatePunchAngles`
 - `CTFWearable` (1): `CanEquip`
 - `CTFWorkshopMap` (1): `OnUGCItemInstalled`
@@ -261,9 +261,9 @@ Names defined in `gamedata/sigsegv` and named in `src/`, with no entry in `windo
 - `Path` (3): `BuildTrivialPath`, `ComputePathDetails`, `Optimize`
 - `SVC_UserMessage` (2): `ReadFromBuffer`, `WriteToBuffer`
 - `variant_t` (1): `SetOther`
-- `(free functions)` (94): `AllocChangeFrameList`, `COM_CompressBuffer_LZSS`, `CRC_File`, `CalcDistanceToLineSegment`, `CheckMedicResist`, `CopyStringAttributeValueToCharPointerOutput`, `DispatchParticleEffect [overload 1]`, `DispatchParticleEffect [overload 4]`, `DispatchParticleEffect [overload 5]`, `ENTINDEX`, `EconItemInterface_OnOwnerKillEaterEvent_Batched`, `FindHullIntersection`, `FireEvent`, `GEconItemSchema`, `GameStringSystem`, `GetLoadoutPositionByName`, `GetParticleSystemNameFromIndex`, `GetPlayerClassData`, `InvalidateSharedEdictChangeInfo`, `InventoryManager`, `LookupWeaponInfoSlot`, `MapEntity_ParseToken`, `NET_SendLong`, `NET_SendPacket`, `NET_SendTo`, `NavAreaTravelDistance<CTFBotPathCost>`, `NextBotCreatePlayerBot<CTFBot>`, `PointInRespawnRoom`, `PrecachePointTemplates`, `SV_EnsureInstanceBaseline`, `SV_PackEntity`, `SV_ReplicateConVarChange`, `SendCvarValueQueryToClient`, `SendProxy_AngleToFloat`, `SendProxy_Color32ToInt`, `SendProxy_EHandleToInt`, `SendProxy_Empty`, `SendProxy_IntAddOne`, `SendProxy_LengthTable`, `SendProxy_QAngles`, `SendProxy_ShortAddOne`, `SendProxy_StringT_To_String`, `SendProxy_StringToString`, `SendProxy_UInt8ToInt32`, `SendProxy_VectorXYToVectorXY`, `SendTable_CullPropsFromProxies`, `SendTable_Encode`, `TE_BeamPoints`, `TE_BeamRingPoint`, `TE_BreakModel`, `TE_PhysicsProp`, `TE_PlayerDecal`, `TFInventoryManager`, `TheNextBots`, `ToTFBot`, `UTIL_GetCommandClient`, `UTIL_GetCommandClientIndex`, `UTIL_ParticleTracer`, `UTIL_PlayerDecalTrace`, `VProfRecord_Snapshot`, `VProfRecord_StartOrStop`, `V_vsnprintfRet`, `WeaponID_IsSniperRifleOrBow`, `WeaponIdToAlias`, `WriteRemoteVProfData`, `addrs`, `addrs_group`, `attribute_class`, `attribute_type`, `description_format`, `description_string`, `effect_type`, `g_BSPData`, `g_FrameSnapshotManager`, `g_MapListMgr`, `g_PropTypeFns`, `g_aClassNames`, `g_aTeamColors`, `g_arFakePorts`, `g_bUseFakeIP`, `g_nFakeIP`, `g_szPlayerRobotModels`, `lib`, `modelloader`, `name`, `net_blocksize`, `net_maxroutable`, `regex`, `s_StaticPropMgr`, `s_pTokenBuf`, `server`, `sigsegv`, `sv_maxroutable`, `sym`
+- `(free functions)` (93): `AllocChangeFrameList`, `COM_CompressBuffer_LZSS`, `CRC_File`, `CalcDistanceToLineSegment`, `CheckMedicResist`, `CopyStringAttributeValueToCharPointerOutput`, `DispatchParticleEffect [overload 1]`, `DispatchParticleEffect [overload 4]`, `DispatchParticleEffect [overload 5]`, `ENTINDEX`, `FindHullIntersection`, `FireEvent`, `GEconItemSchema`, `GameStringSystem`, `GetLoadoutPositionByName`, `GetParticleSystemNameFromIndex`, `GetPlayerClassData`, `InvalidateSharedEdictChangeInfo`, `InventoryManager`, `LookupWeaponInfoSlot`, `MapEntity_ParseToken`, `NET_SendLong`, `NET_SendPacket`, `NET_SendTo`, `NavAreaTravelDistance<CTFBotPathCost>`, `NextBotCreatePlayerBot<CTFBot>`, `PointInRespawnRoom`, `PrecachePointTemplates`, `SV_EnsureInstanceBaseline`, `SV_PackEntity`, `SV_ReplicateConVarChange`, `SendCvarValueQueryToClient`, `SendProxy_AngleToFloat`, `SendProxy_Color32ToInt`, `SendProxy_EHandleToInt`, `SendProxy_Empty`, `SendProxy_IntAddOne`, `SendProxy_LengthTable`, `SendProxy_QAngles`, `SendProxy_ShortAddOne`, `SendProxy_StringT_To_String`, `SendProxy_StringToString`, `SendProxy_UInt8ToInt32`, `SendProxy_VectorXYToVectorXY`, `SendTable_CullPropsFromProxies`, `SendTable_Encode`, `TE_BeamPoints`, `TE_BeamRingPoint`, `TE_BreakModel`, `TE_PhysicsProp`, `TE_PlayerDecal`, `TFInventoryManager`, `TheNextBots`, `ToTFBot`, `UTIL_GetCommandClient`, `UTIL_GetCommandClientIndex`, `UTIL_ParticleTracer`, `UTIL_PlayerDecalTrace`, `VProfRecord_Snapshot`, `VProfRecord_StartOrStop`, `V_vsnprintfRet`, `WeaponID_IsSniperRifleOrBow`, `WeaponIdToAlias`, `WriteRemoteVProfData`, `addrs`, `addrs_group`, `attribute_class`, `attribute_type`, `description_format`, `description_string`, `effect_type`, `g_BSPData`, `g_FrameSnapshotManager`, `g_MapListMgr`, `g_PropTypeFns`, `g_aClassNames`, `g_aTeamColors`, `g_arFakePorts`, `g_bUseFakeIP`, `g_nFakeIP`, `g_szPlayerRobotModels`, `lib`, `modelloader`, `name`, `net_blocksize`, `net_maxroutable`, `regex`, `s_StaticPropMgr`, `s_pTokenBuf`, `server`, `sigsegv`, `sv_maxroutable`, `sym`
 
-Recorded `bad` (inlined, 14): `CAttributeList::AddAttribute`, `CBaseCombatWeapon::SetIdealActivity`, `CNetworkStringTable::UpdateMirrorTable`, `CTFFlameManager::BCanBurnEntityThisFrame`, `CTFPlayer::IsAllowedToInitiateTauntWithPartner`, `CTFPlayer::MaybeDrawRailgunBeam`, `CTFPlayer::ShouldDropAmmoPack`, `CTFPlayer::SpyDeadRingerDeath`, `CTFPlayer::UpdateExpression`, `CTFPointWeaponMimic::Fire`, `CWave::IsDoneWithNonSupportWaves`, `NDebugOverlay::Cross3DOriented_ang`, `NDebugOverlay::Cross3DOriented_mat`, `NextBotManager::CollectAllBots`.
+Recorded `bad` (9): `CAttributeList::AddAttribute`, `CBaseCombatWeapon::SetIdealActivity`, `CNetworkStringTable::UpdateMirrorTable`, `CTFPlayer::ShouldDropAmmoPack`, `CTFPointWeaponMimic::Fire`, `CWave::IsDoneWithNonSupportWaves`, `NDebugOverlay::Cross3DOriented_ang`, `NDebugOverlay::Cross3DOriented_mat`, `NextBotManager::CollectAllBots`.
 
 ## The four entries carry.py could not carry to 11117211
 

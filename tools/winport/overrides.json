@@ -130,6 +130,12 @@
   "carried": "from 11087207 0x61f750 by tools/winport/carry.py: server.dll, 836 bytes",
   "why": "corroborated by tools/winport/corroborate.py: shares the string 'FX_RicochetSound.Ricochet', 'Halloween.HeadlessBossAxeHitWorld', 'attack_projectiles' with the Linux function, and 9 of its 9 matched callees"
  },
+ "_ZN11CAI_BaseNPC13GetActivityIDEPKc": {
+  "rva": "0x138a70",
+  "build": "11117211",
+  "carried": "read by hand on 11117211",
+  "why": "the Linux body: the activity registry global (0x109fdbb8) null test returning -1, else CStringRegistry::GetStringID (0x336880, matched to Linux's 0x8f5650) on the name. cdecl, one argument, plain ret"
+ },
  "_ZN11CBaseEntity12SetAbsAnglesERK6QAngle": {
   "rva": "0x1fad40",
   "build": "11117211",
@@ -906,6 +912,13 @@
   "carried": "from 11087207 0x2e3b30 by tools/winport/carry.py: server.dll, 12 bytes",
   "why": "IsBot and IsFakeClient are the same folded function on Linux (both 0x7a6160), and the CBasePlayer vtable slot the dumps align holds this address on Windows"
  },
+ "_ZNK13CCurrencyPack26AffectedByRadiusCollectionEv": {
+  "rva": "0x5b7c0",
+  "build": "11117211",
+  "vtidx": 238,
+  "carried": "read by hand on 11117211",
+  "why": "mov al,1; ret, slot 238 (+0x3b8) of CCurrencyPack's table, 3 below Linux's 241 as the matched ComeToRest (win 231, Linux 234) is; the body is shared with other slots of the table"
+ },
  "_ZNK13CEconItemView13GetStaticDataEv": {
   "rva": "0x3c3da0",
   "build": "11117211",
@@ -948,9 +961,10 @@
   "why": "read by hand, 11117211: no body of its own. Its only Linux caller is CTFFlameManager::OnCollide (0x46eba0), and here OnCollide carries it inline at 0x46ed22 to 0x46ed5e: the burned-entity tree's Find (0x46d610, also called at 0x46ec97) and the time-since-burned compare against +0x4d8"
  },
  "_ZNK6CTFBot27IsExplosiveProjectileWeaponEP13CTFWeaponBase": {
-  "bad": true,
+  "rva": "0x556fa0",
   "build": "11117211",
-  "why": "read by hand, 11117211: no body of its own. Its only Linux caller is CTFBotMainAction::FireWeaponAtEnemy, and here FireWeaponAtEnemy (0x56a3c0, called once, from Update 0x56d180) carries it inline at 0x56a65e to 0x56a68f as IsWeapon(0x16), IsWeapon(0x17), IsWeapon(0x41), IsWeapon(0x18); IsWeapon (0x6363d0) is a plain virtual-call wrapper with 19 callers and no table name"
+  "carried": "read by hand on 11117211",
+  "why": "thiscall, one argument, ret 4, called once, by FireWeaponAtEnemy (0x56a3c0, at 0x56aad8). Falls back to the active weapon at +0x1ae8 (GetActiveTFWeapon 0x520ca0) when the argument is null, then switches on GetWeaponID (vcall +0x5f8; Linux +0x610): the jump table at 0x10556fe8 sends weapon ids 0x16, 0x17, 0x18, 0x3c and 0x41 to true and the rest to false, the Linux body's set"
  },
  "_ZNK9CTFPlayer12GetMaxHealthEv": {
   "rva": "0x4f30d0",

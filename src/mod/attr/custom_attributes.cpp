@@ -4235,6 +4235,30 @@ namespace Mod::Attr::Custom_Attributes
 		int penetrationCount = 0;
 	};
 	
+#if defined _WINDOWS
+	/* BCanBurnEntityThisFrame is inline in OnCollide there, so the throttle goes in front of it. The
+	 * counter moves when a collision passes, where Linux moves it when the game would burn: a
+	 * collision the game turns away for its own per-entity interval also uses up the slot */
+	DETOUR_DECL_MEMBER(void, CTFFlameManager_OnCollide, CBaseEntity *entity, int idx)
+	{
+		auto flamemgr = reinterpret_cast<CBaseEntity *>(this);
+
+		int iMaxAoe = GetFastAttributeInt(flamemgr->GetOwnerEntity(), 0, MAX_AOE_TARGETS);
+		if (iMaxAoe != 0) {
+			int &counter = flamemgr->GetOrCreateEntityModule<PenetrationNumberModule>("penetrationnumber")->penetrationCount;
+			int min_delay;
+			switch(iMaxAoe) {
+				case 1: min_delay = 5; break;
+				case 2: min_delay = 3; break;
+				case 3: min_delay = 2; break;
+				default: min_delay = 1;
+			}
+			if (gpGlobals->tickcount - counter < min_delay) return;
+			counter = gpGlobals->tickcount;
+		}
+		DETOUR_MEMBER_CALL(entity, idx);
+	}
+#else
 	DETOUR_DECL_MEMBER(bool, CTFFlameManager_BCanBurnEntityThisFrame, CBaseEntity* entity)
 	{
 		auto flamemgr = reinterpret_cast<CBaseEntity *>(this);
@@ -4259,6 +4283,7 @@ namespace Mod::Attr::Custom_Attributes
 		}
 		return ret;
 	}
+#endif
 
 	DETOUR_DECL_MEMBER(void, CTFProjectile_BallOfFire_RocketTouch, CBaseEntity *pOther)
 	{
@@ -10329,8 +10354,9 @@ namespace Mod::Attr::Custom_Attributes
 #endif
 			MOD_ADD_DETOUR_MEMBER(CTFProjectile_Arrow_ArrowTouch, "CTFProjectile_Arrow::ArrowTouch");
 			MOD_ADD_DETOUR_MEMBER(CTFRadiusDamageInfo_ApplyToEntity, "CTFRadiusDamageInfo::ApplyToEntity [clone]");
-#if !defined _WINDOWS
-			/* inline in CTFFlameManager::OnCollide on Windows: the flamethrower's max_aoe_targets has no effect there */
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_MEMBER(CTFFlameManager_OnCollide,                      "CTFFlameManager::OnCollide");
+#else
 			MOD_ADD_DETOUR_MEMBER(CTFFlameManager_BCanBurnEntityThisFrame,        "CTFFlameManager::BCanBurnEntityThisFrame");
 #endif
 			MOD_ADD_DETOUR_MEMBER(CTFProjectile_BallOfFire_RocketTouch, "CTFProjectile_BallOfFire::RocketTouch");

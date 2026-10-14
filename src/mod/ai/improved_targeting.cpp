@@ -259,10 +259,7 @@ namespace Mod::AI::Improved_Targeting
 			MOD_ADD_DETOUR_MEMBER(CTFBotMainAction_OnContact,                 "CTFBotMainAction::OnContact");
 			MOD_ADD_DETOUR_MEMBER(CTFBot_Touch,                               "CTFBot::Touch");
 			MOD_ADD_DETOUR_MEMBER(CTFBot_SuspectSpy,                          "CTFBot::SuspectSpy");
-#if !defined _WINDOWS
-			/* inline in FireWeaponAtEnemy on Windows: the close explosive attack cvar has no effect there */
 			MOD_ADD_DETOUR_MEMBER(CTFBot_IsExplosiveProjectileWeapon,         "CTFBot::IsExplosiveProjectileWeapon");
-#endif
 			MOD_ADD_DETOUR_MEMBER(CTFBotMedicHeal_Update,                     "CTFBotMedicHeal::Update");
 		}
 		

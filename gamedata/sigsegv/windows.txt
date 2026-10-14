@@ -2463,6 +2463,15 @@
 					lib   "server"
 					// vtable
 				}
+				"CAI_BaseNPC::GetActivityID"
+				{
+					type  "fixed"
+					sym   "_ZN11CAI_BaseNPC13GetActivityIDEPKc"
+					addr  "0x138a70"
+					build "11117211"
+					lib   "server"
+					// verified: the Linux body: the activity registry global (0x109fdbb8) null test returning -1, else CStringRegistry::GetStringID (0x336880, matched to Linux's 0x8f5650) on the name. cdecl, one argument, plain ret
+				}
 				"CTFTeam::GetNumObjects"
 				{
 					type  "fixed"
@@ -4297,6 +4306,16 @@
 					lib   "server"
 					vtidx "212"
 					// vtable
+				}
+				"CCurrencyPack::AffectedByRadiusCollection"
+				{
+					type  "fixed"
+					sym   "_ZNK13CCurrencyPack26AffectedByRadiusCollectionEv"
+					addr  "0x5b7c0"
+					build "11117211"
+					lib   "server"
+					vtidx "238"
+					// verified: mov al,1; ret, slot 238 (+0x3b8) of CCurrencyPack's table, 3 below Linux's 241 as the matched ComeToRest (win 231, Linux 234) is; the body is shared with other slots of the table
 				}
 				"CCurrencyPack::MyTouch"
 				{
@@ -12325,6 +12344,15 @@
 					build "11117211"
 					lib   "server"
 					// consensus
+				}
+				"CTFBot::IsExplosiveProjectileWeapon"
+				{
+					type  "fixed"
+					sym   "_ZNK6CTFBot27IsExplosiveProjectileWeaponEP13CTFWeaponBase"
+					addr  "0x556fa0"
+					build "11117211"
+					lib   "server"
+					// verified: thiscall, one argument, ret 4, called once, by FireWeaponAtEnemy (0x56a3c0, at 0x56aad8). Falls back to the active weapon at +0x1ae8 (GetActiveTFWeapon 0x520ca0) when the argument is null, then switches on GetWeaponID (vcall +0x5f8; Linux +0x610): the jump table at 0x10556fe8 sends weapon ids 0x16, 0x17, 0x18, 0x3c and 0x41 to true and the rest to false, the Linux body's set
 				}
 				"CTFBot::UpdateOnRemove"
 				{
