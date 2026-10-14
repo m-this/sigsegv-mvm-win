@@ -10622,6 +10622,15 @@
 					lib   "engine"
 					// verified: read by hand, engine.dll: calls a virtual +0x7c on the global at 0x10658b74 with the bool when it is set, returns unless the server state (0x105ec2a4) is past 1 and Host_ShouldRun (0x183690) agrees, compares the state with 3, locks the string tables and runs CBaseServer::RunFrame on sv (0x105ec2a0), Linux's order with the HLTV test inline. cdecl, plain ret
 				}
+				"CBaseServer::RunFrame"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseServer8RunFrameEv"
+					addr  "0x140840"
+					build "11117211"
+					lib   "engine"
+					// verified: engine.dll: opens with the vprof scopes of source lines 0x78c (push at 0x140877) and 0x78d (0x1408f7), as the Linux body does. Called from two places, 0x1304e7 (SV_Frame, on sv) and 0x17ec66 (CHLTVServer::RunFrame, on its CBaseServer part). Thiscall, no arguments
+				}
 				"CGlobalEntityList::FindEntityByClassname"
 				{
 					type  "fixed"

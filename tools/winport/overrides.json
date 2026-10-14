@@ -178,6 +178,13 @@
   "carried": "from 11087207 0x2dd950 by tools/winport/carry.py: server.dll, 315 bytes",
   "why": "turned away (string overlap 0.43, the other overload shares the strings); warns 'invalid team index' when GetGlobalTeam(iTeam) is null and ends ret 0x10, the four-argument overload"
  },
+ "_ZN11CBaseServer8RunFrameEv": {
+  "lib": "engine",
+  "rva": "0x140840",
+  "build": "11117211",
+  "carried": "read by hand on 11117211",
+  "why": "engine.dll: opens with the vprof scopes of source lines 0x78c (push at 0x140877) and 0x78d (0x1408f7), as the Linux body does. Called from two places, 0x1304e7 (SV_Frame, on sv) and 0x17ec66 (CHLTVServer::RunFrame, on its CBaseServer part). Thiscall, no arguments"
+ },
  "_ZN11CEconEntity18UpdateModelToClassEv": {
   "rva": "0x39fe20",
   "build": "11117211",
