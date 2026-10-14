@@ -26,7 +26,7 @@ on:
     inputs:
       archipelago_ref:
         description: tf2-archipelago ref the bed tools are built from
-        default: sigmod-windows-bed
+        default: main
       probe_args:
         description: extra waveprobe arguments
         default: ''
@@ -257,7 +257,7 @@ jobs:
     - uses: actions/checkout@v4
       with:
         repository: m-this/tf2-archipelago
-        ref: ${{ inputs.archipelago_ref || 'sigmod-windows-bed' }}
+        ref: ${{ inputs.archipelago_ref || 'main' }}
     - uses: actions/setup-go@v5
       with:
         go-version-file: go.mod
