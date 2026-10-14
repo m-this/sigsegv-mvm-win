@@ -214,13 +214,16 @@ jobs:
         fi
     # The job used to pass on a server that crash-looped 38 times under a
     # SigMod from 2025: the probe gives up quietly and nothing else looked.
-    # More than one start is a crash, and no SigMod build line is no SigMod.
+    # More than one start is a crash, no SigMod build line is no SigMod, and a
+    # run where SourceMod never came up or no wave was played proves nothing.
     - name: Verdict
       env:
         WINBED_NO_SIGMOD: ${{ inputs.no_sigmod && '1' || '' }}
       run: |
         starts=$(grep -a -c "server_srv.so loaded" out/winbed.out || true)
         echo "server starts: $starts"
+        grep -a -q "TF2 MvM wave probe" out/sm_plugins_list.txt || { echo "SourceMod or the waveprobe plugin did not load"; exit 1; }
+        grep -a -q '"wave"' out/results.jsonl || { echo "the waveprobe produced no wave row"; exit 1; }
         [ -n "$WINBED_NO_SIGMOD" ] || grep -a -q "CExtSigsegv: compiled @" out/winbed.out out/console.log || { echo "SigMod did not load"; exit 1; }
         [ "${starts:-0}" -le 1 ] || { echo "the server started $starts times: it crashed"; exit 1; }
         # A crash late in the job restarts the server after the count above
