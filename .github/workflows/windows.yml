@@ -34,6 +34,9 @@ on:
         description: fill RED with defender bots, which buy upgrades (needs a tf2-archipelago ref with winbed -bots)
         type: boolean
         default: false
+      sourcemod_ref:
+        description: alliedmodders/sourcemod branch, tag or commit to build against (1.11-dev for a 1.12 server)
+        default: ce7dccfffbabe02f872f5ac3f4eb3f310e68f9f3
 
 permissions:
   contents: write
@@ -58,6 +61,9 @@ jobs:
       HL2SDK_TF2: 9c2efb1deeffd5e895d2b43dabb639409c78c6d6
       # A .pdb beside the DLL, for the bed's debugger. The package does not ship it.
       DEBUGINFO: '1'
+      # 1.13.0-git7477. SourceMod 1.13 raised the extension API to 9 and refuses
+      # an extension built for 8, so a DLL built against 1.11-dev loads only on 1.12.
+      SOURCEMOD_REF: ${{ inputs.sourcemod_ref || 'ce7dccfffbabe02f872f5ac3f4eb3f310e68f9f3' }}
 
     steps:
     - uses: actions/checkout@v4
@@ -131,7 +137,9 @@ jobs:
       id: heads
       run: |
         head() { git ls-remote "https://github.com/alliedmodders/$1" "refs/heads/$2" | cut -c1-12; }
-        echo "key=$(head sourcemod 1.11-dev)-${HL2SDK_TF2:0:12}-$(head metamod-source 1.11-dev)" >> "$GITHUB_OUTPUT"
+        sm=${SOURCEMOD_REF:0:12}
+        [[ "$SOURCEMOD_REF" =~ ^[0-9a-f]{40}$ ]] || sm=$(head sourcemod "$SOURCEMOD_REF")
+        echo "key=$sm-${HL2SDK_TF2:0:12}-$(head metamod-source 1.11-dev)" >> "$GITHUB_OUTPUT"
 
     - uses: actions/cache@v4
       id: am
@@ -149,7 +157,11 @@ jobs:
       if: steps.am.outputs.cache-hit != 'true'
       run: |
         mkdir -p "$ALLIEDMODDERS" && cd "$ALLIEDMODDERS"
-        git clone --recursive --depth 1 -b 1.11-dev https://github.com/alliedmodders/sourcemod
+        git init --quiet sourcemod
+        git -C sourcemod remote add origin https://github.com/alliedmodders/sourcemod
+        git -C sourcemod fetch --quiet --depth 1 origin "$SOURCEMOD_REF"
+        git -C sourcemod checkout --quiet --detach FETCH_HEAD
+        git -C sourcemod submodule update --quiet --init --recursive --depth 1
         git clone -b tf2 https://github.com/alliedmodders/hl2sdk hl2sdk-tf2
         git -C hl2sdk-tf2 checkout --detach "$HL2SDK_TF2"
         git clone --depth 1 -b 1.11-dev https://github.com/alliedmodders/metamod-source
