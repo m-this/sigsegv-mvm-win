@@ -153,8 +153,10 @@ jobs:
     - uses: actions/cache@v4
       with:
         path: /home/runner/winport/winport-build
-        key: winport-obj-${{ steps.cc.outputs.version }}-${{ github.sha }}
-        restore-keys: winport-obj-${{ steps.cc.outputs.version }}-
+        # The headers are part of the key: objects and the precompiled header built
+        # against another SourceMod are rejected when they are read.
+        key: winport-obj-${{ steps.cc.outputs.version }}-${{ steps.heads.outputs.key }}-${{ github.sha }}
+        restore-keys: winport-obj-${{ steps.cc.outputs.version }}-${{ steps.heads.outputs.key }}-
 
     - name: AlliedModders
       if: steps.am.outputs.cache-hit != 'true'
