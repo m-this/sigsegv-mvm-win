@@ -67,6 +67,9 @@ for path in glob.glob(str(root / "src/addr/*.cpp")):
     text = open(path).read()
     for m in re.finditer(r'GetName\(\) const override\s*\{\s*return "([^"]+)"', text):
         linux.setdefault(m.group(1), {"type": "code"})
+    # A CAddr_Pointer is the address of a function this extension links in.
+    for m in re.finditer(r'CAddr_Pointer\s+\w+\s*\(\s*"([^"]+)"', text):
+        linux.setdefault(m.group(1), {"type": "code"})
     # An interface's virtual, read off the interface pointer at run time.
     for m in re.finditer(r'CAddr_InterfaceVFunc\(&\w+, "(\w+)"', text):
         cls = re.search(r"class (CAddr_\w+) : public CAddr_InterfaceVFunc[^{]*\{[^}]*" + re.escape(m.group(0)), text)
@@ -152,7 +155,7 @@ def status(name, kind):
         # RTTI names (whose index still wants checking against this build),
         # a prologue near a unique string, or code in src/addr.
         if e.get("type") == "code" or (e.get("type") == "func knownvtidx" and e.get("vtable", "").startswith(".?AV")) \
-                or (e.get("type") or "").startswith("func ebpprologue"):
+                or (e.get("type") or "").startswith(("func ebpprologue", "func datamap")):
             return "runtime"
         return "missing"
     sym = re.search(r'sym\s+"([^"]+)"', entry)

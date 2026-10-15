@@ -244,6 +244,34 @@ static bool FillsSeveralSlotIndices(const void *func)
 	return it != index_of.end() && it->second == -1;
 }
 
+/* A detour overwrites the first jump-size bytes of a function. When a branch
+ * inside the function lands in that range, it lands in the middle of the jump:
+ * CTFPlayer::PrecacheMvM opens with `push esi; xor esi, esi` and loops back to
+ * the instruction after them, and the second pass ran the jump's own bytes.
+ * Reads the function up to its int3 padding. */
+static bool BranchesIntoPrologue(const uint8_t *func)
+{
+	ud_t ud;
+	ud_init(&ud);
+	ud_set_mode(&ud, 32);
+	ud_set_pc(&ud, (uint64_t)func);
+	ud_set_input_buffer(&ud, func, 0x4000);
+	
+	const uint8_t *prologue_end = func + 5;
+	for (const uint8_t *at = func; ud_decode(&ud) != 0; ) {
+		enum ud_mnemonic_code mnemonic = ud_insn_mnemonic(&ud);
+		if (mnemonic == UD_Iint3 || mnemonic == UD_Iinvalid) break;
+		
+		const ud_operand_t *op = ud_insn_opr(&ud, 0);
+		if (op != nullptr && op->type == UD_OP_JIMM) {
+			const uint8_t *target = at + ud_insn_len(&ud) + (op->size == 8 ? op->lval.sbyte : op->lval.sdword);
+			if (target > func && target < prologue_end) return true;
+		}
+		at += ud_insn_len(&ud);
+	}
+	return false;
+}
+
 /* How many argument bytes a function pops, read from its returns: every `ret`
  * up to the int3 padding after it must agree, or the answer is unknown. A
  * jump at the entry, an ILT thunk or someone else's hook, is followed once. */
@@ -303,6 +331,12 @@ bool IDetour_SymNormal::DoLoad()
 	if (IsFoldableTrivialFunction(reinterpret_cast<const uint8_t *>(this->m_pFunc))) {
 		this->m_bRefusedShared = true;
 		Warning("IDetour_SymNormal::DoLoad: \"%s\": refused, a trivial function MSVC may have merged with others (%s)\n",
+			this->GetName(), this->m_bFuncByName ? this->m_strFuncName.c_str() : "by pointer");
+		return false;
+	}
+	if (BranchesIntoPrologue(reinterpret_cast<const uint8_t *>(this->m_pFunc))) {
+		this->m_bRefusedShared = true;
+		Warning("IDetour_SymNormal::DoLoad: \"%s\": refused, a branch inside the function lands in the bytes a detour overwrites (%s)\n",
 			this->GetName(), this->m_bFuncByName ? this->m_strFuncName.c_str() : "by pointer");
 		return false;
 	}
