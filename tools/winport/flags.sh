@@ -59,7 +59,7 @@ WIN_CXXFLAGS=(
 	/I"$SDK/public" /I"$SDK/public/engine" /I"$SDK/public/mathlib" /I"$SDK/public/vstdlib"
 	/I"$SDK/public/tier0" /I"$SDK/public/tier1" /I"$SDK/public/toolframework"
 	/I"$SDK/public/game/server" /I"$SDK/game/shared" /I"$SDK/common"
-	/I"$AM/sourcemod/public" /I"$AM/sourcemod/public/extensions"
+	/I"$ROOT/src/sdk" /I"$AM/sourcemod/public" /I"$AM/sourcemod/public/extensions"
 	/I"$AM/sourcemod/public/amtl" /I"$AM/sourcemod/public/amtl/amtl"
 	/I"$AM/sourcemod/sourcepawn/include"
 	/I"$SOURCEHOOK" /I"$(dirname "$SOURCEHOOK")" /I"$AM/metamod-source/core"

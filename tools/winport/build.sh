@@ -153,6 +153,10 @@ fi
 # was built with them.
 [ -f "$OUT/gen/itab.c" ] || python3 libs/udis86/scripts/ud_itab.py \
 	libs/udis86/docs/x86/optable.xml "$OUT/gen" > /dev/null
+# SourceMod 1.13 no longer ships public/libudis86, so <udis86.h> is the copy in
+# libs/, which includes libudis86/itab.h where its own build would have put it.
+mkdir -p "$OUT/gen/libudis86"
+cp "$OUT/gen/itab.h" "$OUT/gen/libudis86/itab.h"
 
 {
 	python3 - <<'PY'

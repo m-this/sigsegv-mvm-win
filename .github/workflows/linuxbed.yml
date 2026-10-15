@@ -32,6 +32,9 @@ on:
       missions:
         description: missions to play instead of linuxbed.txt, separated by commas
         default: ''
+      extensions_run:
+        description: id of a tf2-archipelago Extensions run whose bundle (CBaseNPC, Actions, REST in Pawn built for SourceMod 1.13) the bed installs; empty takes the latest successful run on archipelago_ref
+        default: ''
       sigmod_run:
         description: id of a Build and Release run whose package-linux to install instead of the pinned release
         default: ''
@@ -67,8 +70,31 @@ jobs:
     - uses: actions/setup-go@v5
       with:
         go-version-file: ap/go.mod
+    # The extensions the bots need are built by tf2-archipelago's Extensions
+    # workflow against the SourceMod commit its versions.env pins. SourceMod 1.13
+    # refuses the upstream releases.
+    - name: Extensions
+      id: extensions
+      env:
+        GH_TOKEN: ${{ github.token }}
+        EXTENSIONS_RUN: ${{ inputs.extensions_run }}
+        REF: ${{ inputs.archipelago_ref || 'main' }}
+      run: |
+        run=$EXTENSIONS_RUN
+        [ -n "$run" ] || run=$(gh run list -R m-this/tf2-archipelago -w extensions.yml -b "$REF" -s success -L 1 --json databaseId -q '.[0].databaseId')
+        [ -n "$run" ] || { echo "no successful Extensions run on $REF"; exit 1; }
+        echo "run=$run" >> "$GITHUB_OUTPUT"
+    - uses: actions/download-artifact@v4
+      with:
+        name: extensions
+        path: ${{ runner.temp }}/extensions
+        repository: m-this/tf2-archipelago
+        run-id: ${{ steps.extensions.outputs.run }}
+        github-token: ${{ github.token }}
     - name: Build
       working-directory: ap
+      env:
+        BOTS_EXTENSIONS_DIR: ${{ runner.temp }}/extensions
       run: |
         make launcher-assets-linux
         mkdir -p dist/linuxbed
@@ -226,6 +252,11 @@ jobs:
         # A crash late in the job restarts the server after the count above
         # was taken, so the fault itself is the other half of the check.
         ! grep -a -q "Segmentation fault" out/winbed.out out/console.log || { echo "the server segfaulted"; exit 1; }
+        # SourceMod drops an extension it cannot load and keeps going: "Extension
+        # version is too old to load" left the bed green with no bots at all.
+        ! grep -a -q "<FAILED>" out/sm_exts_list.txt || { echo "an extension failed to load:"; grep -a "<FAILED>" out/sm_exts_list.txt; exit 1; }
+        grep -a -q "TF2 MvM wave probe" out/sm_plugins_list.txt || { echo "the wave probe plugin is not loaded"; exit 1; }
+        grep -q '"state":"passed"' out/results.jsonl || { echo "the probe passed no wave"; exit 1; }
     - if: always()
       uses: actions/upload-artifact@v4
       with:

@@ -34,6 +34,12 @@ on:
         description: fill RED with defender bots, which buy upgrades (needs a tf2-archipelago ref with winbed -bots)
         type: boolean
         default: false
+      sourcemod_ref:
+        description: alliedmodders/sourcemod branch, tag or commit to build against (1.11-dev for a 1.12 server)
+        default: ce7dccfffbabe02f872f5ac3f4eb3f310e68f9f3
+      extensions_run:
+        description: id of a tf2-archipelago Extensions run whose bundle (CBaseNPC, Actions, REST in Pawn built for SourceMod 1.13) the bed installs; empty takes the latest successful run on archipelago_ref
+        default: ''
 
 permissions:
   contents: write
@@ -58,6 +64,9 @@ jobs:
       HL2SDK_TF2: 9c2efb1deeffd5e895d2b43dabb639409c78c6d6
       # A .pdb beside the DLL, for the bed's debugger. The package does not ship it.
       DEBUGINFO: '1'
+      # 1.13.0-git7477. SourceMod 1.13 raised the extension API to 9 and refuses
+      # an extension built for 8, so a DLL built against 1.11-dev loads only on 1.12.
+      SOURCEMOD_REF: ${{ inputs.sourcemod_ref || 'ce7dccfffbabe02f872f5ac3f4eb3f310e68f9f3' }}
 
     steps:
     - uses: actions/checkout@v4
@@ -131,7 +140,9 @@ jobs:
       id: heads
       run: |
         head() { git ls-remote "https://github.com/alliedmodders/$1" "refs/heads/$2" | cut -c1-12; }
-        echo "key=$(head sourcemod 1.11-dev)-${HL2SDK_TF2:0:12}-$(head metamod-source 1.11-dev)" >> "$GITHUB_OUTPUT"
+        sm=${SOURCEMOD_REF:0:12}
+        [[ "$SOURCEMOD_REF" =~ ^[0-9a-f]{40}$ ]] || sm=$(head sourcemod "$SOURCEMOD_REF")
+        echo "key=$sm-${HL2SDK_TF2:0:12}-$(head metamod-source 1.11-dev)" >> "$GITHUB_OUTPUT"
 
     - uses: actions/cache@v4
       id: am
@@ -142,14 +153,20 @@ jobs:
     - uses: actions/cache@v4
       with:
         path: /home/runner/winport/winport-build
-        key: winport-obj-${{ steps.cc.outputs.version }}-${{ github.sha }}
-        restore-keys: winport-obj-${{ steps.cc.outputs.version }}-
+        # The headers are part of the key: objects and the precompiled header built
+        # against another SourceMod are rejected when they are read.
+        key: winport-obj-${{ steps.cc.outputs.version }}-${{ steps.heads.outputs.key }}-${{ github.sha }}
+        restore-keys: winport-obj-${{ steps.cc.outputs.version }}-${{ steps.heads.outputs.key }}-
 
     - name: AlliedModders
       if: steps.am.outputs.cache-hit != 'true'
       run: |
         mkdir -p "$ALLIEDMODDERS" && cd "$ALLIEDMODDERS"
-        git clone --recursive --depth 1 -b 1.11-dev https://github.com/alliedmodders/sourcemod
+        git init --quiet sourcemod
+        git -C sourcemod remote add origin https://github.com/alliedmodders/sourcemod
+        git -C sourcemod fetch --quiet --depth 1 origin "$SOURCEMOD_REF"
+        git -C sourcemod checkout --quiet --detach FETCH_HEAD
+        git -C sourcemod submodule update --quiet --init --recursive --depth 1
         git clone -b tf2 https://github.com/alliedmodders/hl2sdk hl2sdk-tf2
         git -C hl2sdk-tf2 checkout --detach "$HL2SDK_TF2"
         git clone --depth 1 -b 1.11-dev https://github.com/alliedmodders/metamod-source
@@ -261,7 +278,30 @@ jobs:
     - uses: actions/setup-go@v5
       with:
         go-version-file: go.mod
+    # The extensions the bots need are built by tf2-archipelago's Extensions
+    # workflow, on a Windows runner and against the SourceMod commit its
+    # versions.env pins. SourceMod 1.13 refuses the upstream releases.
+    - name: Extensions
+      id: extensions
+      env:
+        GH_TOKEN: ${{ github.token }}
+        EXTENSIONS_RUN: ${{ inputs.extensions_run }}
+        REF: ${{ inputs.archipelago_ref || 'sigmod-windows-bed' }}
+      run: |
+        run=$EXTENSIONS_RUN
+        [ -n "$run" ] || run=$(gh run list -R m-this/tf2-archipelago -w extensions.yml -b "$REF" -s success -L 1 --json databaseId -q '.[0].databaseId')
+        [ -n "$run" ] || { echo "no successful Extensions run on $REF"; exit 1; }
+        echo "run=$run" >> "$GITHUB_OUTPUT"
+    - uses: actions/download-artifact@v4
+      with:
+        name: extensions
+        path: ${{ runner.temp }}/extensions
+        repository: m-this/tf2-archipelago
+        run-id: ${{ steps.extensions.outputs.run }}
+        github-token: ${{ github.token }}
     - run: make winbed
+      env:
+        BOTS_EXTENSIONS_DIR: ${{ runner.temp }}/extensions
     - uses: actions/upload-artifact@v4
       with:
         name: winbed
