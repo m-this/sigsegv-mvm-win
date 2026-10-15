@@ -5647,5 +5647,225 @@
   "rva": "0x50e230",
   "build": "11117211",
   "why": "read by hand: slot 0x764 of CTFPlayer's table (Linux 0x768), between CBaseMultiplayerPlayer::SpeakIfAllowed (0x20ba30, Linux 0x764) and CanBeAutobalanced (0x4e32d0, Linux 0x76c). The only reference to 'disguiseclass:%s' (0x50e45e) is inside it, after the CTFPlayerShared::InCond call (0x50e3de) as in the Linux body. Thiscall, five arguments, ret 0x14"
+ },
+ "_ZN6CTFBot14IsSuspectedSpyEP9CTFPlayer": {
+  "rva": "0x557490",
+  "build": "11117211",
+  "why": "read by hand: walks the suspected-spy vector (+0x27e8, count +0x27f4; Linux the same) comparing each entry's entindex to RequiredEdictIndex of the argument and returns the matching SuspectedSpyInfo_t or null. Thiscall, ret 4. Called by RealizeSpy (0x560a30) and SuspectSpy (0x562c70) as Linux does"
+ },
+ "_ZNK6CTFBot10IsKnownSpyEP9CTFPlayer": {
+  "rva": "0x5570e0",
+  "build": "11117211",
+  "why": "read by hand: the same walk over the known-spy vector (+0x27fc, count +0x2808; Linux the same), returns a bool. Thiscall, ret 4. First call in RealizeSpy (0x560a30) and in CTFBotVision::IsVisibleEntityNoticed (0x566ff0), as in Linux"
+ },
+ "_ZN6CTFBot10RealizeSpyEP9CTFPlayer": {
+  "rva": "0x560a30",
+  "build": "11117211",
+  "why": "read by hand: returns early when IsKnownSpy (0x5570e0) holds, otherwise appends the entindex to the known-spy vector, fires the virtual at +0x764 (Linux +0x768) with 0x14, reads IsSuspectedSpy (0x557490), collects the team's players and, for each one in range that is not yet known, calls SuspectSpy (0x562c70) and then itself, the Linux body. SuspectSpy ends with a call to it. Thiscall, ret 4"
+ },
+ "_ZN6CTFBot18SuspectedSpyInfo_t7SuspectEv": {
+  "rva": "0x562c20",
+  "build": "11117211",
+  "why": "read by hand: floor(gpGlobals->curtime) then an insert of that second into the info's time vector (+4, count +0x10), the Linux body. Called first by SuspectSpy (0x562c70). Thiscall, no arguments, plain ret"
+ },
+ "_ZN6CTFBot18SuspectedSpyInfo_t16TestForRealizingEv": {
+  "rva": "0x562d00",
+  "build": "11117211",
+  "why": "read by hand: floor(curtime), drops entries older than the window, builds the bitset of recent seconds and scans it for a gap, returns a bool, as the Linux body. Called right after Suspect in SuspectSpy (0x562c70), whose result decides the RealizeSpy call. Thiscall, no arguments"
+ },
+ "_ZN6CTFBot9ForgetSpyEP9CTFPlayer": {
+  "rva": "0x551770",
+  "build": "11117211",
+  "why": "read by hand: removes the argument from the suspected-spy vector (+0x27e8) and then from the known-spy vector (+0x27fc), swapping with the last element, the two halves of Linux ForgetSpy. StopSuspectingSpy is inlined as its first half. Voted for by all four matched callers (OnOtherKilled, IsVisibleEntityNoticed twice, CTFBotVision::Update). Thiscall, ret 4"
+ },
+ "_ZN6CTFBot17StopSuspectingSpyEP9CTFPlayer": {
+  "bad": true,
+  "build": "11117211",
+  "why": "read by hand, 11117211: no body of its own. Its only Linux caller is ForgetSpy, and ForgetSpy (0x551770) carries the suspected-vector removal as its first half"
+ },
+ "_ZN6CTFBot18SuspectedSpyInfo_t20IsCurrentlySuspectedEv": {
+  "bad": true,
+  "build": "11117211",
+  "why": "read by hand, 11117211: no body of its own. Its only Linux caller is CTFBotVision::IsVisibleEntityNoticed (0x566ff0), which compares the time vector inline"
+ },
+ "_ZN6CTFBot19DelayedThreatNoticeE7CHandleI11CBaseEntityEf": {
+  "rva": "0x550430",
+  "build": "11117211",
+  "why": "read by hand: adds curtime to the delay, scans the delayed-notice vector (+0x28cc, count +0x28d8; Linux the same) for the handle, lowers its time or appends a (handle, time) pair. The only function with that vector and shape; called three times by OnInjured (0x56b350) and from CheckBlockBackstab (0x4e3d40), as Linux. Thiscall, ret 8"
+ },
+ "_ZN16CTFBotMainAction9OnInjuredEP6CTFBotRK15CTakeDamageInfo": {
+  "rva": "0x56b350",
+  "build": "11117211",
+  "vtidx": 63,
+  "why": "read by hand: slot 63 of CTFBotMainAction's table, between slots 57 and 65 that the matched OnStuck (0x56bbf0) and OnOtherKilled (0x56b840) pin at Linux slot minus 1. Calls CalcAbsolutePosition and DelayedThreatNotice (0x550430) three times, as Linux does"
+ },
+ "_ZN15CTFBotFetchFlag7OnStartEP6CTFBotP6ActionIS0_E": {
+  "rva": "0x571f50",
+  "build": "11117211",
+  "vtidx": 45,
+  "why": "read by hand: slot 45 of CTFBotFetchFlag's table, with matched slots 44 and 46 on either side at Linux slot minus 1. GetDesiredPathLookAheadRange of the actor, stored into the action's path (+0x38, a PathFollower here) through its virtual at +0x70; returns Continue. Sret thiscall, ret 0xc"
+ },
+ "_ZNK8INextBot16DisplayDebugTextEPKc": {
+  "rva": "0x4200e0",
+  "build": "11117211",
+  "why": "read by hand: GetEntity through the virtual at +0xb8 (Linux +0xbc), then CBaseEntity::EntityText(line, text, duration, 255 four times) where the line is a counter at +0x1c that is post-incremented, the Linux body. Thiscall, ret 4"
+ },
+ "_Z25CalcDistanceToLineSegmentRK6VectorS1_S1_Pf": {
+  "rva": "0x6da2c0",
+  "build": "11117211",
+  "why": "read by hand: projects the point on the segment, clamps t to 0..1 (maxss/minss), stores t when the out pointer is non-null and returns the point-to-closest distance through fsqrt in st0, with CalcClosestPointOnLineSegment inlined. cdecl, plain ret; the matched consensus candidate for this name, now checked"
+ },
+ "_ZN11CBaseEntity15PhysicsRunThinkENS_14thinkmethods_tE": {
+  "rva": "0x2c58b0",
+  "build": "11117211",
+  "why": "read by hand: returns true when EFL bit 0x400000 (m_iEFlags) is set, runs PhysicsRunSpecificThink (0x2c5780) for the base think (-1) and then for every think context (+0xa4, count +0xb0) per the thinkmethods_t argument 2/1, as the Linux body. Thiscall, ret 4. The earlier consensus candidate 0x2c4930 is the water-current update"
+ },
+ "_ZN11CBaseEntity13PhysicsNoclipEv": {
+  "rva": "0x2bfc70",
+  "build": "11117211",
+  "why": "read by hand: PhysicsRunThink(0) (0x2c58b0), then the angle step taking frametime (0x2c72a0; SimulateAngles in Linux) and SetLocalOrigin (0x1fb890) with origin += velocity * frametime, the Linux body without the VProf scope. The only function calling both PhysicsRunThink and SetLocalOrigin. Thiscall, no arguments, plain ret"
+ },
+ "_ZN15CTFFlameThrower17GetFlameOriginPosEv": {
+  "rva": "0x60a300",
+  "build": "11117211",
+  "why": "read by hand: a four-instruction forwarder to GetMuzzlePosHelper (0x60a320) with the bool false and the sret pointer, returning the sret, as Linux. Thiscall, ret 4"
+ },
+ "_ZN11CTFWearable8CanEquipEP11CBaseEntity": {
+  "rva": "0x3d07a0",
+  "build": "11117211",
+  "vtidx": 232,
+  "why": "read by hand: slot 232 of CTFWearable's table (Linux 238; anchors 236 and 239 sit at -6 in that region). Reads the item's static data, UTIL_GetHolidayForString of its holiday restriction and returns IsHolidayActive of it through the game rules' virtual, true when there is none, the Linux body. Thiscall, ret 4"
+ },
+ "_ZN16CObjectDispenser13DispenseThinkEv": {
+  "rva": "0x4c67c0",
+  "build": "11117211",
+  "vtidx": 407,
+  "why": "read by hand: slot 407 of CObjectDispenser's table (Linux 421, anchors 418/419 and 429/431 all at -14). Positions the touch trigger with SetAbsOrigin and UTIL_SetSize from the build range and holds the only 'DispenseContext' ThinkSet in this vtable. Thiscall, plain ret"
+ },
+ "_ZN18CTFGrenadeLauncher15SecondaryAttackEv": {
+  "rva": "0x611240",
+  "build": "11117211",
+  "vtidx": 288,
+  "why": "read by hand: slot 288 of CTFGrenadeLauncher's table (Linux 294, anchors 291 and 309 at -6): calls the can-attack virtual, GetOwner, then tail-jumps to the player-shared helper only for a live owner, the Linux body. Thiscall, plain ret"
+ },
+ "_ZN19CTFPipebombLauncher15SecondaryAttackEv": {
+  "rva": "0x6238c0",
+  "build": "11117211",
+  "vtidx": 288,
+  "why": "read by hand: slot 288 of CTFPipebombLauncher's table (Linux 294, anchors 291 and 309 at -6). The can-attack virtual, the pipebomb count (+0x808) and the detonate step with DetonateRemotePipebombs inlined ('demoman_det_stickies'). Thiscall, plain ret"
+ },
+ "_ZNK13CTFWeaponBase25CanPerformSecondaryAttackEv": {
+  "rva": "0x6327e0",
+  "build": "11117211",
+  "vtidx": 278,
+  "why": "read by hand: slot 278 of CTFWeaponBase's table (Linux 284, anchors 281 and 290 at -6): the owner, its m_Shared (+0x1ae8) HasDemoShieldEquipped (0x522af0) returns true, otherwise tail-jumps to CBaseCombatWeapon::CanPerformSecondaryAttack, the Linux body. Thiscall, plain ret"
+ },
+ "_ZN9CTFPlayer9CanAttackEi": {
+  "rva": "0x51a520",
+  "build": "11117211",
+  "why": "read by hand: the only reference to 'no_attack' is inside it. two flag bytes (+0x25c0 and +0x200c; Linux +0x25c8 and +0x2018), the next-attack time against curtime, InCond 4, 7, 0xe and 0x52 and the 'no_attack' attribute hook, in the Linux order. Thiscall, ret 4"
+ },
+ "_ZN11CBaseObject17SetPlasmaDisabledEf": {
+  "rva": "0x4c4040",
+  "build": "11117211",
+  "why": "read by hand: sets the plasma-disabled bool (+0xa38, Linux +0xa50) with a state-changed call, the time (+0xa34) to curtime + the argument and calls the virtual at +0x5dc (Linux +0x5e4), the Linux body. Thiscall, ret 4"
+ },
+ "_ZN18CEntitySphereQueryC1ERK6Vectorfi": {
+  "rva": "0x369950",
+  "build": "11117211",
+  "why": "read by hand: sets up the 0x200-flag element list on the stack (count at +4, list at +8 of this), then enumerates the sphere through the spatial partition's virtual at +0x38 (Linux +0x3c) with mask 0x10 and the three arguments, and returns this. Thiscall, ret 0xc"
+ },
+ "_ZNK22CServerNetworkProperty12GetClassNameEv": {
+  "rva": "0x328ed0",
+  "build": "11117211",
+  "vtidx": 3,
+  "why": "read by hand: slot 3 of CServerNetworkProperty's table (Linux 3, nothing between shifts it): m_pOuter->m_iClassname (+0x5c, Linux +0x64) or the empty string when null. Thiscall, plain ret"
+ },
+ "_ZN15CTFReviveMarker15AddMarkerHealthEf": {
+  "name": "CTFReviveMarker::AddMarkerHealth",
+  "rva": "0x538760",
+  "build": "11117211",
+  "why": "read by hand: adds twice the argument as rage through HandleRageGain (0x4f54e0, flag 0x10), accumulates it into the marker health (+0x4b8), and when the health reaches the target calls ReviveOwner (0x538b00) and awards 0x32 bonus points through CTFGameStats::Event_PlayerAwardBonusPoints (0x4a7960), the Linux body. Called from CWeaponMedigun::HealTargetThink and SecondaryAttack. Thiscall, ret 4"
+ },
+ "_ZN15CTFReviveMarker11ReviveThinkEv": {
+  "name": "CTFReviveMarker::ReviveThink",
+  "rva": "0x538f00",
+  "build": "11117211",
+  "why": "read by hand: the function holding 'Medic.AutoCallerAnnounce', 'revive_player_stopped' and the three speech_revivecall strings, with InSameTeam, FindPlayerStats, SetMoveType, IsPointInBox, DispatchParticleEffect, EmitSound, SetNextThink and UTIL_Remove in the Linux order. The earlier consensus candidate 0x538b00 is ReviveOwner ('MVM.PlayerRevived', 'revive_player_complete'), which AddMarkerHealth calls. Thiscall, plain ret"
+ },
+ "_ZN15SVC_UserMessage13WriteToBufferER8bf_write": {
+  "lib": "engine",
+  "name": "SVC_UserMessage::WriteToBuffer",
+  "rva": "0x1b9c30",
+  "build": "11117211",
+  "why": "read by hand, engine.dll: slot 5 of SVC_UserMessage's table (Linux 6; the table has one destructor slot fewer). Refuses at m_nLength (+0x40) >= 0x800, stores it at +0x18, writes the 6-bit message type from GetType() (the virtual at +0x1c, Linux +0x20), as Linux. Thiscall, ret 4"
+ },
+ "_ZN15SVC_UserMessage14ReadFromBufferER7bf_read": {
+  "lib": "engine",
+  "name": "SVC_UserMessage::ReadFromBuffer",
+  "rva": "0x1b50e0",
+  "build": "11117211",
+  "why": "read by hand, engine.dll: slot 4 of SVC_UserMessage's table (Linux 5), the neighbour of WriteToBuffer above; checks that 8 bits remain and reads them as the message type. Thiscall, ret 4"
+ },
+ "_ZN8CNetChan10SendNetMsgER11INetMessagebb": {
+  "lib": "engine",
+  "rva": "0x1aa5e0",
+  "build": "11117211",
+  "why": "read by hand, engine.dll: slot 37 of CNetChan's table (Linux 38; both tables are 69 and 68 slots long, the one difference the second destructor before it). Checks the remote address type, picks the unreliable (+0x44) or reliable (+0x20) stream or the voice stream (+0x68) and writes the message through its virtual, the Linux body. Thiscall, ret 0xc"
+ },
+ "_ZN16CTFMechanicalArm11ShockAttackEv": {
+  "bad": true,
+  "build": "11117211",
+  "why": "read by hand, 11117211: no body of its own. Its only Linux caller is SecondaryAttack, and SecondaryAttack (0x61a020, the earlier consensus candidate) carries it from its offset 0x116. IsPlayer, the 'tf_projectile_mechanicalarmorb' spawn and the stealth check all sit in that one body"
+ },
+ "_ZN14CTFFlameEntity11RemoveFlameEv": {
+  "bad": true,
+  "build": "11117211",
+  "why": "read by hand, 11117211: no body of its own. UpdateFlameThrowerHitRatio (0x60c4d0) has two callers, FlameThink (0x609b60) and OnCollide (0x60ac10), and each follows it with UTIL_Remove, which is the whole of Linux RemoveFlame. The earlier consensus candidate 0x609b60 is FlameThink"
+ },
+ "_ZNK9CTFPlayer19GetDesiredHandScaleEv": {
+  "bad": true,
+  "build": "11117211",
+  "why": "read by hand, 11117211: no body of its own. Its only Linux user is TFPlayerThink, and the 'hand_scale' attribute hook is read inline in TFPlayerThink (0x50faa0)"
+ },
+ "_ZNK9CTFPlayer19GetDesiredHeadScaleEv": {
+  "bad": true,
+  "build": "11117211",
+  "why": "read by hand, 11117211: no body of its own. The 'head_scale' attribute hook is read inline in TFPlayerThink (0x50faa0), twice, for this and GetHeadScaleSpeed"
+ },
+ "_ZNK9CTFPlayer20GetDesiredTorsoScaleEv": {
+  "bad": true,
+  "build": "11117211",
+  "why": "read by hand, 11117211: no body of its own. The 'torso_scale' attribute hook is read inline in TFPlayerThink (0x50faa0)"
+ },
+ "_ZNK9CTFPlayer17GetHandScaleSpeedEv": {
+  "bad": true,
+  "build": "11117211",
+  "why": "read by hand, 11117211: no body of its own. Its InCond 0x55 test and 'hand_scale' hook sit inline in TFPlayerThink (0x50faa0), the only string references to 'hand_scale'"
+ },
+ "_ZNK9CTFPlayer17GetHeadScaleSpeedEv": {
+  "bad": true,
+  "build": "11117211",
+  "why": "read by hand, 11117211: no body of its own. Its InCond tests and 'head_scale' hook sit inline in TFPlayerThink (0x50faa0)"
+ },
+ "_ZNK9CTFPlayer18GetTorsoScaleSpeedEv": {
+  "bad": true,
+  "build": "11117211",
+  "why": "read by hand, 11117211: no body of its own. A nine-byte function returning gpGlobals->frametime, which MSVC reads inline where it is used"
+ },
+ "_ZN11CTFBotProxyC1Ev": {
+  "bad": true,
+  "build": "11117211",
+  "why": "read by hand, 11117211: no body of its own. Its only Linux caller is CEntityFactory<CTFBotProxy>::Create, and the factory's Create (0x594180) allocates 0x4d0 bytes and runs the whole constructor inline"
+ },
+ "_ZN16CTFWeaponBaseGun17UpdatePunchAnglesEP9CTFPlayer": {
+  "bad": true,
+  "build": "11117211",
+  "why": "read by hand, 11117211: no body of its own. Its only Linux caller is FireProjectile, and FireProjectile (0x63b430) holds GetPunchAngle (0x2e1e60), the 'ShotgunPunchAngle' SharedRandomInt and SetPunchAngle (0x2e8800) inline"
+ },
+ "_ZN20CBaseCombatCharacter28CalculatePhysicsStressDamageEP23vphysics_objectstress_tP14IPhysicsObject": {
+  "bad": true,
+  "build": "11117211",
+  "why": "read by hand, 11117211: no body of its own. Its only Linux caller is ApplyStressDamage, and ApplyStressDamage (0x1d4010) calls CalculateObjectStress (0x2bd150) itself"
  }
 }
