@@ -67,6 +67,12 @@ jobs:
     - uses: actions/setup-go@v5
       with:
         go-version-file: ap/go.mod
+    # The launcher's assets include the extensions, which are built from source
+    # against SourceMod 1.13's headers and need a 32-bit toolchain.
+    - name: Extension toolchain
+      run: |
+        sudo apt-get update -q
+        sudo apt-get install -y -q clang gcc-multilib g++-multilib > /dev/null
     - name: Build
       working-directory: ap
       run: |
@@ -226,6 +232,11 @@ jobs:
         # A crash late in the job restarts the server after the count above
         # was taken, so the fault itself is the other half of the check.
         ! grep -a -q "Segmentation fault" out/winbed.out out/console.log || { echo "the server segfaulted"; exit 1; }
+        # SourceMod drops an extension it cannot load and keeps going: "Extension
+        # version is too old to load" left the bed green with no bots at all.
+        ! grep -a -q "<FAILED>" out/sm_exts_list.txt || { echo "an extension failed to load:"; grep -a "<FAILED>" out/sm_exts_list.txt; exit 1; }
+        grep -a -q "TF2 MvM wave probe" out/sm_plugins_list.txt || { echo "the wave probe plugin is not loaded"; exit 1; }
+        grep -q '"wave"' out/results.jsonl || { echo "the probe saw no wave"; exit 1; }
     - if: always()
       uses: actions/upload-artifact@v4
       with:
