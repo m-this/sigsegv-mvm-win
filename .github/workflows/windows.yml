@@ -249,9 +249,69 @@ jobs:
           package-windows.zip.sha256
           package-windows.build.json
 
+  # The released CBaseNPC for Windows keeps the previous map's navigation areas
+  # after a changelevel, and the defender bots then loop in a nav walk at the
+  # next wave start: the main thread stalls in cbasenpc.ext with nothing logged.
+  # tf2-archipelago patches that and builds the DLL with this job's toolchain;
+  # the bed installs that DLL where the launcher would install the release.
+  cbasenpc:
+    runs-on: ubuntu-24.04
+    env:
+      XWIN: /home/runner/winport/xwin-sdk
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        repository: m-this/tf2-archipelago
+        ref: ${{ inputs.archipelago_ref || 'main' }}
+    - name: Toolchain
+      run: |
+        curl -sSfL https://apt.llvm.org/llvm.sh -o llvm.sh
+        sudo bash llvm.sh 20
+        for t in clang-cl lld-link; do sudo ln -sf "/usr/bin/$t-20" "/usr/local/bin/$t"; done
+    - uses: actions/cache@v4
+      id: xwin
+      with:
+        path: /home/runner/winport/xwin-sdk
+        key: xwin-0.6.5-x86
+    - name: Windows SDK
+      if: steps.xwin.outputs.cache-hit != 'true'
+      run: |
+        curl -sSfL --retry 3 https://github.com/Jake-Shadle/xwin/releases/download/0.6.5/xwin-0.6.5-x86_64-unknown-linux-musl.tar.gz | tar -xz
+        for attempt in 1 2 3; do
+          ./xwin-0.6.5-x86_64-unknown-linux-musl/xwin --accept-license --arch x86 splat --output "$XWIN" && exit 0
+          echo "xwin failed (attempt $attempt)"; sleep 10
+        done
+        exit 1
+    - name: Sources
+      run: |
+        . deploy/env/versions.env
+        # The SDK is 633 MB whole and the build reads four directories of it.
+        sdk=/home/runner/alliedmodders/hl2sdk-tf2
+        git init --quiet "$sdk"
+        git -C "$sdk" remote add origin https://github.com/alliedmodders/hl2sdk
+        git -C "$sdk" sparse-checkout set --cone public game common lib/public/x86
+        git -C "$sdk" fetch --quiet --depth 1 --filter=blob:none origin "$HL2SDK_COMMIT"
+        git -C "$sdk" checkout --quiet --detach FETCH_HEAD
+        npc=deploy/bots/build/src/cbasenpc
+        git init --quiet "$npc"
+        git -C "$npc" remote add origin https://github.com/TF2-DMB/CBaseNPC
+        git -C "$npc" fetch --quiet --depth 1 origin "$CBASENPC_COMMIT"
+        git -C "$npc" checkout --quiet --detach FETCH_HEAD
+        git -C "$npc" -c url."https://github.com/".insteadOf=git@github.com: \
+          submodule update --quiet --init --recursive --depth 1
+    - name: CBaseNPC with the nav-cache patch
+      env:
+        ALLIEDMODDERS: /home/runner/alliedmodders
+      run: deploy/bots/build-cbasenpc-windows.sh
+    - uses: actions/upload-artifact@v4
+      with:
+        name: cbasenpc-windows
+        path: deploy/bots/build/windows/cbasenpc.ext.2.tf2.dll
+
   # The bed's tools come from tf2-archipelago: the launcher's own installer
   # (winbed), Kelly's wave probe and its plugin. Built on Linux, where spcomp is.
   bed-tools:
+    needs: cbasenpc
     runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v4
@@ -261,7 +321,11 @@ jobs:
     - uses: actions/setup-go@v5
       with:
         go-version-file: go.mod
+    - uses: actions/download-artifact@v4
+      with: { name: cbasenpc-windows, path: cbasenpc-windows }
     - run: make winbed
+      env:
+        CBASENPC_WINDOWS_DLL: ${{ github.workspace }}/cbasenpc-windows/cbasenpc.ext.2.tf2.dll
     - uses: actions/upload-artifact@v4
       with:
         name: winbed
