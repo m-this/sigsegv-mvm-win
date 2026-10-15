@@ -3632,6 +3632,12 @@
   "why": "read by hand: the whole function, where Linux detours the .part clone GCC split after the wrapper's null target and AttribHookValueInt checks, which this body makes first (0x616c1e, then 0x101dec80 on the string at 0x108d6cd0). Then the MvM flag at gamerules +0xc6d with the owner's checks, InCond 0x79 and 0x78 on the owner, IsBehindAndFacingTarget (0x617100), and the MvM spy branch with InCond 0x47 and 0x32, as the clone does. Called from 0x616acb and 0x617514, two callers as the Linux clone has (PrimaryAttack, BackstabVMThink). thiscall, ret 4",
   "carried": "from 11087207 0x616c10 by tools/winport/carry.py: server.dll, 421 bytes"
  },
+ "_ZN8CTFKnife13PrimaryAttackEv": {
+  "name": "CTFKnife::PrimaryAttack",
+  "rva": "0x617430",
+  "build": "11117211",
+  "why": "read by hand: slot 287 of CTFKnife's table (0x47c), Linux slot 293 (0x494) less 6 destructor and reversed-overload slots, as SecondaryAttack 0x617a10 is Linux 294. Calls CanPerformBackstabAgainstTarget (0x616c10) at 0x617514, as the Linux PrimaryAttack does; the vcall at slot 0x71c (Linux 0x720) is followed by the MvM flag test at gamerules +0xc72 and CTFPlayer::RemoveDisguise (0x529f50), the branch YER_Unnerf patches (Linux +0x5cd). Thiscall, plain ret"
+ },
  "_ZN19CTFProjectile_Arrow11CreateTrailEv": {
   "rva": "0x5fa6d0",
   "build": "11117211",
@@ -5629,5 +5635,17 @@
   "rva": "0x524010",
   "build": "11117211",
   "why": "read by hand: the condition slot test through +0x404, +0x4d4 and +0x4e0, InCond of 15 (stunned), then bit 6 of the flags at +0x400, Linux's body. Eleven callers as on Linux, among them the three CTFBot Press*FireButton functions (0x56044c, 0x56053c, 0x5606fc). Thiscall, plain ret"
+ },
+ "_ZN6CTFBot7AddItemEPKc": {
+  "name": "CTFBot::AddItem",
+  "rva": "0x54ec00",
+  "build": "11117211",
+  "why": "read by hand: the only reference to 'CTFBotSpawner::AddItemToBot: Invalid item %s.' (0x54eeb8) is inside it. Same calls in the Linux order: ItemGeneration (0x3a01f0), CItemGeneration::GenerateRandomItem (0x3a01a0) through the vcall at 0x270 (Linux 0x274) with a CItemSelectionCriteria built on the stack, CEconItemView::GetStaticData, CTFItemDefinition::GetLoadoutSlot, CTFPlayer::GetEntityForLoadoutSlot, CBaseCombatCharacter::Weapon_Detach, DispatchSpawn. Thiscall, one argument, ret 4"
+ },
+ "_ZN9CTFPlayer21SpeakConceptIfAllowedEiPKcPcjP16IRecipientFilter": {
+  "name": "CTFPlayer::SpeakConceptIfAllowed",
+  "rva": "0x50e230",
+  "build": "11117211",
+  "why": "read by hand: slot 0x764 of CTFPlayer's table (Linux 0x768), between CBaseMultiplayerPlayer::SpeakIfAllowed (0x20ba30, Linux 0x764) and CanBeAutobalanced (0x4e32d0, Linux 0x76c). The only reference to 'disguiseclass:%s' (0x50e45e) is inside it, after the CTFPlayerShared::InCond call (0x50e3de) as in the Linux body. Thiscall, five arguments, ret 0x14"
  }
 }
