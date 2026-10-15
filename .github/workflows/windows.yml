@@ -37,6 +37,9 @@ on:
       sourcemod_ref:
         description: alliedmodders/sourcemod branch, tag or commit to build against (1.11-dev for a 1.12 server)
         default: ce7dccfffbabe02f872f5ac3f4eb3f310e68f9f3
+      extensions_run:
+        description: id of a tf2-archipelago Extensions run whose bundle (CBaseNPC, Actions, REST in Pawn built for SourceMod 1.13) the bed installs; empty takes the latest successful run on archipelago_ref
+        default: ''
 
 permissions:
   contents: write
@@ -273,7 +276,30 @@ jobs:
     - uses: actions/setup-go@v5
       with:
         go-version-file: go.mod
+    # The extensions the bots need are built by tf2-archipelago's Extensions
+    # workflow, on a Windows runner and against the SourceMod commit its
+    # versions.env pins. SourceMod 1.13 refuses the upstream releases.
+    - name: Extensions
+      id: extensions
+      env:
+        GH_TOKEN: ${{ github.token }}
+        EXTENSIONS_RUN: ${{ inputs.extensions_run }}
+        REF: ${{ inputs.archipelago_ref || 'sigmod-windows-bed' }}
+      run: |
+        run=$EXTENSIONS_RUN
+        [ -n "$run" ] || run=$(gh run list -R m-this/tf2-archipelago -w extensions.yml -b "$REF" -s success -L 1 --json databaseId -q '.[0].databaseId')
+        [ -n "$run" ] || { echo "no successful Extensions run on $REF"; exit 1; }
+        echo "run=$run" >> "$GITHUB_OUTPUT"
+    - uses: actions/download-artifact@v4
+      with:
+        name: extensions
+        path: ${{ runner.temp }}/extensions
+        repository: m-this/tf2-archipelago
+        run-id: ${{ steps.extensions.outputs.run }}
+        github-token: ${{ github.token }}
     - run: make winbed
+      env:
+        BOTS_EXTENSIONS_DIR: ${{ runner.temp }}/extensions
     - uses: actions/upload-artifact@v4
       with:
         name: winbed
