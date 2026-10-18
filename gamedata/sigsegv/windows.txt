@@ -4474,6 +4474,42 @@
 					lib   "server"
 					// string
 				}
+				"CEconItemSchema::GetAttributeDefinition"
+				{
+					type  "fixed"
+					sym   "_ZNK15CEconItemSchema22GetAttributeDefinitionEi"
+					addr  "0x3b98d0"
+					build "11138802"
+					lib   "server"
+					// verified: called by 7 of its 8 matched callers; a map lookup on this+0x1bc. The Linux const overload is a jmp to the same body
+				}
+				"CEconItemSchema::GetAttributeDefinitionByName [non-const]"
+				{
+					type  "fixed"
+					sym   "_ZN15CEconItemSchema28GetAttributeDefinitionByNameEPKc"
+					addr  "0x3b9900"
+					build "11138802"
+					lib   "server"
+					// verified: found by hand on 11087207, where the update rewrote it and the 'CEconItemSchema::GetAttributeDefinitionByName' profiler string is gone
+				}
+				"CEconItemSchema::GetAttributeDefinitionByName"
+				{
+					type  "fixed"
+					sym   "_ZN15CEconItemSchema28GetAttributeDefinitionByNameEPKc"
+					addr  "0x3b9900"
+					build "11138802"
+					lib   "server"
+					// verified: found by hand on 11087207, where the update rewrote it and the 'CEconItemSchema::GetAttributeDefinitionByName' profiler string is gone
+				}
+				"CEconItemSchema::GetItemDefinition"
+				{
+					type  "fixed"
+					sym   "_ZNK15CEconItemSchema17GetItemDefinitionEi"
+					addr  "0x3b9cf0"
+					build "11138802"
+					lib   "server"
+					// verified: called by 12 of its 14 matched callers; a map lookup on this+0xc4. The Linux const overload is a jmp to the same body
+				}
 				"CEconItemSchema::GetItemDefinitionByName"
 				{
 					type  "fixed"
@@ -6202,6 +6238,15 @@
 					lib   "server"
 					// verified: string lead, agreed by strings+callees: 1 shared string(s), 9/10 matched callees, windows/linux size 1872/2054
 				}
+				"CTFProjectile_BallOfFire::Burn"
+				{
+					type  "fixed"
+					sym   "_ZN24CTFProjectile_BallOfFire4BurnEP11CBaseEntity"
+					addr  "0x5363d0"
+					build "11138802"
+					lib   "server"
+					// verified: string lead, agreed by strings: 4 shared string(s), 16/16 matched callees; read by hand on 11117211 (carry.py found no body): CTFProjectile_BallOfFire::RocketTouch (0x5349c0) calls it with the other entity, thiscall ret 4, and its strings are Weapon_DragonsFury.BonusDamage, BonusDamageHit, BonusDamagePain
+				}
 				"CTFProjectile_BallOfFire::RocketTouch"
 				{
 					type  "fixed"
@@ -6718,6 +6763,15 @@
 					build "11138802"
 					lib   "server"
 					// string
+				}
+				"CTFTankBoss::TankBossThink"
+				{
+					type  "fixed"
+					sym   "_ZN11CTFTankBoss13TankBossThinkEv"
+					addr  "0x5f5060"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: the tank's think: 'Announcer.MVM_Tank_Alert_Halfway', 'Announcer.MVM_Tank_Alert_Near_Hatch', the 'movement' sequence, TakeDamage, StopSound, EmitSound and StopParticleEffects, the Linux body's calls; ret. CTFTankBoss' datamap, built at run time, writes 'TankBossThink' and then this address (0x4dd4b)
 				}
 				"CTFTankBoss::UpdateOnRemove"
 				{
@@ -7417,6 +7471,15 @@
 					build "11138802"
 					lib   "server"
 					// data
+				}
+				"g_szLoadoutStrings"
+				{
+					type  "fixed"
+					sym   "g_szLoadoutStrings"
+					addr  "0x9c28b0"
+					build "11138802"
+					lib   "server"
+					// verified: the 19 pointers there name primary, secondary, melee, utility, building, pda, pda2, head, misc, action, an empty string, taunt and seven empty strings, the Linux table entry for entry
 				}
 				"g_szLoadoutStringsForDisplay"
 				{
@@ -9067,6 +9130,24 @@
 					lib   "server"
 					// call
 				}
+				"ApplyUpgrade_Default"
+				{
+					type  "fixed"
+					sym   "_ZL20ApplyUpgrade_DefaultRK22CMannVsMachineUpgradesP9CTFPlayerP13CEconItemViewib"
+					addr  "0x5f6e30"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: a cdecl function with its five arguments on the stack where Linux passes three in registers. The attribute by name, the player's list (+0x1284) for UI group 1 else the item's (+0x58), IterateAttributes for the current value, AlmostEqual (0x6dff60, tolerance 10) and Approach (0x6d97e0) against the cap, then RemoveAttribute for a downgrade or SetRuntimeAttributeValue (0x3c4860) and SetRuntimeAttributeRefundableCurrency (0x3c4810) plus the cost; returns the attribute's index, 0xffff when the item is missing. Its only caller is CUpgrades::ApplyUpgradeToItem (0x5f535f)
+				}
+				"GetUpgradeStepData"
+				{
+					type  "fixed"
+					sym   "_Z18GetUpgradeStepDataP9CTFPlayeriiRiRb"
+					addr  "0x5f7a70"
+					build "11138802"
+					lib   "server"
+					// verified: turned away (consensus); returns on a null player, looks up the loadout slot's entity, indexes the upgrade table by upgrade * 0x19c and reads its attribute definition from the item schema, as the Linux body does; cdecl
+				}
 				"CItemGeneration::SpawnItem [defIndex]"
 				{
 					type  "fixed"
@@ -9102,6 +9183,15 @@
 					build "11138802"
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: shares the string 'MVMLocalPlayerWaveSpendingValue' with the Linux function, and 6 of its 6 matched callees
+				}
+				"static_attrib_t::BInitFromKV_SingleLine"
+				{
+					type  "fixed"
+					sym   "_ZN15static_attrib_t22BInitFromKV_SingleLineEPKcP9KeyValuesP10CUtlVectorI10CUtlString10CUtlMemoryIS5_iEEb"
+					addr  "0x3b1a00"
+					build "11138802"
+					lib   "server"
+					// verified: of the two functions holding the set bonus attribute error strings (the Linux MultiLine and SingleLine each hold them), the one popping 0x10 bytes for the four arguments of SingleLine; MultiLine (three arguments, ret 0xc) is the one before it, as the name order has them
 				}
 				"CTraceFilterObject::ShouldHitEntity"
 				{
@@ -9899,6 +9989,24 @@
 					lib   "server"
 					// string
 				}
+				"CAttributeManager::ProvideTo"
+				{
+					type  "fixed"
+					sym   "_ZN17CAttributeManager9ProvideToEP11CBaseEntity"
+					addr  "0x39e3f0"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: the target's attribute interface (+0xe4), its manager's AddProvider (0x39d630) with m_hOuter (+0x38), then the parity at +0x34 stepped modulo 64 with NetworkStateChanged, then OnAttributeValuesChanged; the Linux body. Called from CEconEntity::ReapplyProvision (0x39fde0) and CTFPowerupBottle::ReapplyProvision (0x4b1e10) as on Linux. Pops 4
+				}
+				"CAttributeManager::StopProvidingTo"
+				{
+					type  "fixed"
+					sym   "_ZN17CAttributeManager15StopProvidingToEP11CBaseEntity"
+					addr  "0x39e580"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: the ProvideTo body with RemoveProvider (0x39e930, finds the provider in the list at +0xc and swaps the last one in) in place of AddProvider; the Linux body. Its three callers are the ReapplyProvision of CEconEntity, CTFPowerupBottle and CTFWeaponBase, as on Linux. Pops 4
+				}
 				"CServerGameClients::GetPlayerLimits"
 				{
 					type  "fixed"
@@ -10008,6 +10116,15 @@
 					build "11138802"
 					lib   "server"
 					// verified: read by hand: IsCompetitiveMode (0x491cc0) and the state test against 4 as Linux, then adds the value to six rows of the player's 0x794 byte block at the offsets Linux adds to (0x0, 0xb4, 0x21c, 0x224, 0x168, 0x22c past the 0x94 header; Linux 0x94, 0x148, 0x2b0, 0x2b8, 0x1fc, 0x2c0). Pops 0xc: player, stat type, value
+				}
+				"CTFGameStats::SendStatsToPlayer"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameStats17SendStatsToPlayerEP9CTFPlayerb"
+					addr  "0x4ad8d0"
+					build "11138802"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'MapStatsUpdate', 'PlayerStatsUpdate' with the Linux function, and 6 of its 6 matched callees
 				}
 				"CTFGameStats::AccumulateAndResetPerLifeStats"
 				{
@@ -11342,6 +11459,15 @@
 					build "11138802"
 					lib   "server"
 					// consensus
+				}
+				"Path::Compute<CTFBotPathCost> [vec]"
+				{
+					type  "fixed"
+					sym   "_ZN4Path7ComputeI14CTFBotPathCostEEbP8INextBotRK6VectorRT_fbb"
+					addr  "0x568f60"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: seven functions reference 'Path::Compute(goal)', one per cost functor; this one has 46 callers, all in the TFBot behaviours (0x56a284 to 0x57xxxx), where each of the other six has one
 				}
 				"CPopulationManager::AllocateBots"
 				{
@@ -13704,6 +13830,15 @@
 					lib   "server"
 					// verified: unique string, 17 of 19 matched callees, and read by hand from its override: CTFBot::ChangeTeam (0x5505f0) first calls it with its four arguments pushed through unchanged, then the MvM block, the Linux CTFBot body. thiscall, ret 0x10. Once turned away because its detour faulted in CheckPlayerClassLimit with a this that was no player, on a build from before the detour fixes since
 				}
+				"CTFPlayer::ItemIsAllowed"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer13ItemIsAllowedEP13CEconItemView"
+					addr  "0x4fe050"
+					build "11138802"
+					lib   "server"
+					// verified: the matcher lost it on 11087207, where GCC split the Linux body into a .part.0 clone: 'allowed in medieval mode' and 'passtime', the Linux callees
+				}
 				"CTFPlayer::IsAllowedToPickUpFlag"
 				{
 					type  "fixed"
@@ -14048,6 +14183,15 @@
 					lib   "server"
 					// verified: read by hand: the first call of CTFPlayer::Taunt (0x5118de) and of PlayTauntSceneFromItem (0x50625e), as on Linux, and called from the HandleTauntCommand wrapper (0x4f5739) and CTFFlameThrower::UseRage (0x60be2c), Linux's other two callers. Tests conditions 0x11, 0x75, 0x52, 0x78, 0x13 and 0xe through InCond as Linux does, with the rest inline. Thiscall, plain ret
 				}
+				"CTFPlayer::ModifyOrAppendCriteria"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer22ModifyOrAppendCriteriaER14AI_CriteriaSet"
+					addr  "0x5000b0"
+					build "11138802"
+					lib   "server"
+					// verified: string lead, agreed by strings: 43 shared string(s), 28/29 matched callees, windows/linux size 4976/5797
+				}
 				"SendProxy_PlayerObjectList"
 				{
 					type  "fixed"
@@ -14102,6 +14246,16 @@
 					lib   "server"
 					// verified: read by hand: m_nCurrency (+0x2448, the offset its send prop pushes) less the amount, floored at 0, stored with NetworkStateChanged when it changes; then if g_pGameRules is in MvM (+0xc72, as Linux) calls 0x5e2dc0 on g_pPopulationManager with (player, amount), Linux's AddPlayerCurrencySpent, the Linux body. Its three callers are Linux's: ClientCommand, Event_Killed and the upgrade purchase (0x5f6220). thiscall, ret 4 for the int
 				}
+				"CTFPlayer::ShouldTransmit"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer14ShouldTransmitEPK18CCheckTransmitInfo"
+					addr  "0x50e740"
+					build "11138802"
+					lib   "server"
+					vtidx "20"
+					// verified: read by hand: slot 20 of CTFPlayer's table (Linux 21). Both resolve the two observer handles (0x2038/0x2034 and 0x202c/0x2028 against the entity list), test the game rules state against 7, return 8 (FL_EDICT_ALWAYS) or tail into CBasePlayer::ShouldTransmit (0x2e9030). The string match that had put CTFPlayer::Spawn here is overridden by the Spawn entry
+				}
 				"CTFPlayer::UpdateOnRemove"
 				{
 					type  "fixed"
@@ -14111,6 +14265,15 @@
 					lib   "server"
 					vtidx "111"
 					// verified: read by hand: CBasePlayer::UpdateOnRemove (0x2ea6c0, matched) first, then CPlayerInventory::RemoveListener (0x3a5530: the same walk of the listener list at +0x6c, count +0x78, and RemoveSOCacheListener, ret 4) with the inventory at +0x1308 and the listener at +0x1288 as the Linux body does at +0x131c and +0x12a0; thiscall, plain ret. Slot 111 of CTFPlayer, where CBasePlayer has 0x2ea6c0 (Linux 112, after the second destructor)
+				}
+				"CTFPlayer::PlayTauntSceneFromItem"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer22PlayTauntSceneFromItemEPK13CEconItemView"
+					addr  "0x507ba0"
+					build "11138802"
+					lib   "server"
+					// verified: string lead, agreed by strings: 13 shared string(s), 19/22 matched callees, windows/linux size 2912/5299
 				}
 				"CTFPlayer::RegenThink"
 				{
@@ -14738,6 +14901,15 @@
 					build "11138802"
 					lib   "server"
 					// verified: the team index test (1 to 4), the per-team visuals block at +0xa8 and the loop over its 0x1c-byte entries comparing the activity with -2 and mapping the name through ActivityList_IndexForName, as the Linux body; the function after GeneratePrecacheSoundStrings (0x3b82b0) in the name-ordered run
+				}
+				"CEconItemDefinition::IterateAttributes"
+				{
+					type  "fixed"
+					sym   "_ZNK19CEconItemDefinition17IterateAttributesEP26IEconItemAttributeIterator"
+					addr  "0x3bc3c0"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: CEconItemView::IterateAttributes (0x3c4ba0) calls it on GetStaticData() with its filtering iterator. Walks the static attributes (+0x1c, count +0x28, 8 bytes each), looks each index up in the schema's attribute map, and calls the attribute type's OnIterateAttributeValue(iterator, def, &value) (+0x24 here, +0x28 on Linux with two destructors), stopping on false; the Linux body. One argument, ret 4
 				}
 				"CCollisionEvent::PostCollision"
 				{
