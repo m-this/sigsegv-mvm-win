@@ -286,7 +286,7 @@ jobs:
       env:
         GH_TOKEN: ${{ github.token }}
         EXTENSIONS_RUN: ${{ inputs.extensions_run }}
-        REF: ${{ inputs.archipelago_ref || 'sigmod-windows-bed' }}
+        REF: ${{ inputs.archipelago_ref || 'main' }}
       run: |
         run=$EXTENSIONS_RUN
         [ -n "$run" ] || run=$(gh run list -R m-this/tf2-archipelago -w extensions.yml -b "$REF" -s success -L 1 --json databaseId -q '.[0].databaseId')
