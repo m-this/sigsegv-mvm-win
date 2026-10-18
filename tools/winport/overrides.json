@@ -276,9 +276,9 @@
   "why": "corroborated by tools/winport/corroborate.py: shares the string 'halloween_souls_pack' with the Linux function, and 2 of its 2 matched callees"
  },
  "_ZN12CTFGameStats17SendStatsToPlayerEP9CTFPlayerb": {
-  "rva": "0x4ac510",
-  "build": "11117211",
-  "carried": "from 11087207 0x4ac510 by tools/winport/carry.py: server.dll, 673 bytes",
+  "rva": "0x4ad8d0",
+  "build": "11138802",
+  "carried": "from 11117211 0x4ac510 by hand: the same body to its ret with every operand masked; carry.py missed it because field offsets inside it moved, and the matcher's consensus agrees",
   "why": "corroborated by tools/winport/corroborate.py: shares the string 'MapStatsUpdate', 'PlayerStatsUpdate' with the Linux function, and 6 of its 6 matched callees"
  },
  "_ZN12CTFStickBomb5SmackEv": {
@@ -445,15 +445,15 @@
   "carried": "from 11117211 0xfeb0 by tools/winport/carry.py: dedicated.dll, 33 bytes"
  },
  "_ZN15CEconItemSchema17GetItemDefinitionEi": {
-  "rva": "0x3b8960",
-  "build": "11117211",
-  "carried": "from 11087207 0x3b8960 by tools/winport/carry.py: server.dll, 246 bytes",
+  "rva": "0x3b9cf0",
+  "build": "11138802",
+  "carried": "from 11117211 0x3b8960 by hand: the same body to its ret with every operand masked; carry.py missed it because field offsets inside it moved; 10 call sites in carried functions agree",
   "why": "called by 12 of its 14 matched callers; a map lookup on this+0xc4. The Linux const overload is a jmp to the same body"
  },
  "_ZN15CEconItemSchema22GetAttributeDefinitionEi": {
-  "rva": "0x3b85c0",
-  "build": "11117211",
-  "carried": "from 11087207 0x3b85c0 by tools/winport/carry.py: server.dll, 106 bytes",
+  "rva": "0x3b98d0",
+  "build": "11138802",
+  "carried": "from 11117211 0x3b85c0 by hand: rewritten: the attribute CUtlMap at +0x1bc became a vector, data +0x220 and count +0x22c, so the body is a bounds check and an index. 4 call sites in carried functions, the matcher's consensus and tf2attributes' new signature (eb4006a8) agree",
   "why": "called by 7 of its 8 matched callers; a map lookup on this+0x1bc. The Linux const overload is a jmp to the same body"
  },
  "_ZN15CHeadlessHatman5SpawnEv": {
@@ -768,9 +768,9 @@
   "why": "corroborated by tools/winport/corroborate.py: shares the string 'mod_charge_time' with the Linux function, and 2 of its 2 matched callees"
  },
  "_ZN24CTFProjectile_BallOfFire4BurnEP11CBaseEntity": {
-  "rva": "0x534bd0",
-  "build": "11117211",
-  "carried": "re-matched on 11117211 by hand; was 0x534bd0 on 11087207, still the same address",
+  "rva": "0x5363d0",
+  "build": "11138802",
+  "carried": "from 11117211 0x534bd0 by hand: the same body to its ret with every operand masked; carry.py missed it because field offsets inside it moved; the call site in RocketTouch agrees",
   "why": "string lead, agreed by strings: 4 shared string(s), 16/16 matched callees; read by hand on 11117211 (carry.py found no body): CTFProjectile_BallOfFire::RocketTouch (0x5349c0) calls it with the other entity, thiscall ret 4, and its strings are Weapon_DragonsFury.BonusDamage, BonusDamageHit, BonusDamagePain"
  },
  "_ZN24CTeamplayRoundBasedRules11State_EnterE22gamerules_roundstate_t": {
@@ -924,15 +924,15 @@
   "why": "corroborated by tools/winport/corroborate.py: calls all 13 of the Linux function's matched callees, and no string disagrees"
  },
  "_ZN9CTFPlayer22ModifyOrAppendCriteriaER14AI_CriteriaSet": {
-  "rva": "0x4fe840",
-  "build": "11117211",
-  "carried": "from 11087207 0x4fe840 by tools/winport/carry.py: server.dll, 4096 bytes",
+  "rva": "0x5000b0",
+  "build": "11138802",
+  "carried": "from 11117211 0x4fe840 by hand: 62 of the old body's 67 strings are referenced from this function and no other holds more than 9; normalised instructions 0.94 alike",
   "why": "string lead, agreed by strings: 43 shared string(s), 28/29 matched callees, windows/linux size 4976/5797"
  },
  "_ZN9CTFPlayer22PlayTauntSceneFromItemEPK13CEconItemView": {
-  "rva": "0x506230",
-  "build": "11117211",
-  "carried": "from 11087207 0x506230 by tools/winport/carry.py: server.dll, 3063 bytes",
+  "rva": "0x507ba0",
+  "build": "11138802",
+  "carried": "from 11117211 0x506230 by hand: all 15 of the old body's strings are referenced from this function, no other holds more than 2; normalised instructions 0.89 alike",
   "why": "string lead, agreed by strings: 13 shared string(s), 19/22 matched callees, windows/linux size 2912/5299"
  },
  "_ZN9CTFPlayer24CreateDisguiseWeaponListEPS_": {
@@ -1008,15 +1008,15 @@
   "why": "string lead, agreed by strings+callees: 1 shared string(s), 4/5 matched callees, windows/linux size 336/359"
  },
  "_ZNK15CEconItemSchema17GetItemDefinitionEi": {
-  "rva": "0x3b8960",
-  "build": "11117211",
-  "carried": "from 11087207 0x3b8960 by tools/winport/carry.py: server.dll, 246 bytes",
+  "rva": "0x3b9cf0",
+  "build": "11138802",
+  "carried": "from 11117211 0x3b8960 by hand: the non-const body, as before; 10 call sites in carried functions agree",
   "why": "called by 12 of its 14 matched callers; a map lookup on this+0xc4. The Linux const overload is a jmp to the same body"
  },
  "_ZNK15CEconItemSchema22GetAttributeDefinitionEi": {
-  "rva": "0x3b85c0",
-  "build": "11117211",
-  "carried": "from 11087207 0x3b85c0 by tools/winport/carry.py: server.dll, 106 bytes",
+  "rva": "0x3b98d0",
+  "build": "11138802",
+  "carried": "from 11117211 0x3b85c0 by hand: the non-const body, as before; see the non-const entry",
   "why": "called by 7 of its 8 matched callers; a map lookup on this+0x1bc. The Linux const overload is a jmp to the same body"
  },
  "_ZNK15CTFFlameManager23BCanBurnEntityThisFrameEP11CBaseEntity": {
@@ -1157,9 +1157,9 @@
   "why": "turned away (consensus, no evidence); returns 0 without g_pMVMStats, else GetWaveStats(wave) into a local and returns acquired, plus bonus when the bool is set: the Linux body line for line, cdecl"
  },
  "_Z18GetUpgradeStepDataP9CTFPlayeriiRiRb": {
-  "rva": "0x5f60a0",
-  "build": "11117211",
-  "carried": "from 11087207 0x5f60a0 by tools/winport/carry.py: server.dll, 643 bytes",
+  "rva": "0x5f7a70",
+  "build": "11138802",
+  "carried": "from 11117211 0x5f60a0 by hand: the same prologue, the slot lookup, upgrade * 0x19c and GetAttributeDefinitionByName (0x3b9900); the body grew a profiler zone. The call site in a carried function and the matcher's consensus agree",
   "why": "turned away (consensus); returns on a null player, looks up the loadout slot's entity, indexes the upgrade table by upgrade * 0x19c and reads its attribute definition from the item schema, as the Linux body does; cdecl"
  },
  "_Z19UTIL_StringToVectorPfPKc": {
@@ -1532,9 +1532,9 @@
   "why": "read by hand: thiscall, ret 4; walks m_Attributes (+4, count at +0x10, 0x10 a record), looks up each record's definition by index through the item schema and compares it with the argument; on a match shifts the tail down, decrements the count and calls the manager at +0x18 through slot 0x34, as the Linux body removes and notifies"
  },
  "_ZN4Path7ComputeI14CTFBotPathCostEEbP8INextBotRK6VectorRT_fbb": {
-  "rva": "0x567720",
-  "build": "11117211",
-  "carried": "from 11087207 0x567720 by tools/winport/carry.py: server.dll, not unique in the old build, but unmoved: the same 811 bytes at the same address",
+  "rva": "0x568f60",
+  "build": "11138802",
+  "carried": "from 11117211 0x567720 by hand: the same body to its ret with every operand masked; carry.py missed it because field offsets inside it moved; 10 call sites in the TFBot behaviours agree",
   "why": "read by hand: seven functions reference 'Path::Compute(goal)', one per cost functor; this one has 46 callers, all in the TFBot behaviours (0x56a284 to 0x57xxxx), where each of the other six has one"
  },
  "_ZN6CTFBot10LeaveSquadEv": {
@@ -1875,9 +1875,9 @@
   "why": "the 13 pointers there name undefined, scout, sniper, soldier, demo, medic, heavy, pyro, spy, engineer, civilian, an empty string and random, the Linux short table, right after g_aPlayerClassNames_NonLocalized (0x9cdcbc)"
  },
  "g_szLoadoutStrings": {
-  "rva": "0x9c0838",
-  "build": "11117211",
-  "carried": "from 11087207 0x9c0838 by tools/winport/carry.py: server.dll, 1 reference sites agree",
+  "rva": "0x9c28b0",
+  "build": "11138802",
+  "carried": "from 11117211 0x9c0838 by hand: the only run of 19 pointers naming primary, secondary, melee, utility, building, pda, pda2, head, misc, action, an empty string, taunt and seven empty strings; the Linux table is unchanged",
   "why": "the 19 pointers there name primary, secondary, melee, utility, building, pda, pda2, head, misc, action, an empty string, taunt and seven empty strings, the Linux table entry for entry"
  },
  "_ZL24g_LagCompensationManager": {
@@ -2417,9 +2417,9 @@
   "why": "read by hand: the one call ClientCommand makes for -use_action_slot_item_server when m_bUsingActionSlot (+0x25b4) is set. Clears that flag with its state change, then with the grappling hook in use and the active weapon's id 0x65 switches to the last weapon if Weapon_CanSwitchTo allows, else SwitchToNextBestWeapon(last); the Linux body. No argument, plain ret"
  },
  "_ZNK19CEconItemDefinition17IterateAttributesEP26IEconItemAttributeIterator": {
-  "rva": "0x3bb040",
-  "build": "11117211",
-  "carried": "from 11087207 0x3bb040 by tools/winport/carry.py: server.dll, 213 bytes",
+  "rva": "0x3bc3c0",
+  "build": "11138802",
+  "carried": "from 11117211 0x3bb040 by hand: rewritten for the attribute vector: walks +0x1c for +0x28 entries, indexes the schema's +0x220 under its +0x22c count, calls OnIterateAttributeValue (+0x24) and stops on false, ret 4. The call site in CEconItemView::IterateAttributes agrees",
   "why": "read by hand: CEconItemView::IterateAttributes (0x3c4ba0) calls it on GetStaticData() with its filtering iterator. Walks the static attributes (+0x1c, count +0x28, 8 bytes each), looks each index up in the schema's attribute map, and calls the attribute type's OnIterateAttributeValue(iterator, def, &value) (+0x24 here, +0x28 on Linux with two destructors), stopping on false; the Linux body. One argument, ret 4"
  },
  "win_g_DataObjectAccessSystem_m_Accessors": {
@@ -2607,9 +2607,9 @@
   "why": "read by hand: every named call it makes is one the Linux body makes (TeamFortress_SetSpeed, LookupAttachment('flag'), SetLocalOrigin, SetLocalAngles, HasTheFlag, InCond), and it plays 'CaptureFlag.EnemyStolen', 'AttackDefend.EnemyStolen' and 'MVM.AttackDefend.EnemyStolen'; ret 8 for (player, bool)"
  },
  "_ZN11CTFTankBoss13TankBossThinkEv": {
-  "rva": "0x5f3840",
-  "build": "11117211",
-  "carried": "from 11087207 0x5f3840 by tools/winport/carry.py: server.dll, 4096 bytes",
+  "rva": "0x5f5060",
+  "build": "11138802",
+  "carried": "from 11117211 0x5f3840 by hand: the same body to its ret with every operand masked; carry.py missed it because field offsets inside it moved; 1256 instructions",
   "why": "read by hand: the tank's think: 'Announcer.MVM_Tank_Alert_Halfway', 'Announcer.MVM_Tank_Alert_Near_Hatch', the 'movement' sequence, TakeDamage, StopSound, EmitSound and StopParticleEffects, the Linux body's calls; ret. CTFTankBoss' datamap, built at run time, writes 'TankBossThink' and then this address (0x4dd4b)"
  },
  "_ZN11CTFTankBoss24SetStartingPathTrackNodeEPc": {
@@ -2965,14 +2965,14 @@
  },
  "_ZN17CAttributeManager9ProvideToEP11CBaseEntity": {
   "rva": "0x39e3f0",
-  "build": "11117211",
-  "carried": "from 11087207 0x39e3f0 by tools/winport/carry.py: server.dll, 913 bytes",
+  "build": "11138802",
+  "carried": "from 11117211 0x39e3f0 by hand: the same body to its ret with every operand masked; carry.py missed it because field offsets inside it moved; unmoved",
   "why": "read by hand: the target's attribute interface (+0xe4), its manager's AddProvider (0x39d630) with m_hOuter (+0x38), then the parity at +0x34 stepped modulo 64 with NetworkStateChanged, then OnAttributeValuesChanged; the Linux body. Called from CEconEntity::ReapplyProvision (0x39fde0) and CTFPowerupBottle::ReapplyProvision (0x4b1e10) as on Linux. Pops 4"
  },
  "_ZN17CAttributeManager15StopProvidingToEP11CBaseEntity": {
   "rva": "0x39e580",
-  "build": "11117211",
-  "carried": "from 11087207 0x39e580 by tools/winport/carry.py: server.dll, 513 bytes",
+  "build": "11138802",
+  "carried": "from 11117211 0x39e580 by hand: the same body to its ret with every operand masked; carry.py missed it because field offsets inside it moved; unmoved",
   "why": "read by hand: the ProvideTo body with RemoveProvider (0x39e930, finds the provider in the list at +0xc and swaps the last one in) in place of AddProvider; the Linux body. Its three callers are the ReapplyProvision of CEconEntity, CTFPowerupBottle and CTFWeaponBase, as on Linux. Pops 4"
  },
  "_ZN12CTFGameRules20FPlayerCanTakeDamageEP11CBasePlayerP11CBaseEntityRK15CTakeDamageInfo": {
@@ -3371,15 +3371,15 @@
  },
  "_ZN15CEconItemSchema28GetAttributeDefinitionByNameEPKc": {
   "why": "found by hand on 11087207, where the update rewrote it and the 'CEconItemSchema::GetAttributeDefinitionByName' profiler string is gone",
-  "rva": "0x3b8630",
-  "build": "11117211",
-  "carried": "from 11087207 0x3b8630 by tools/winport/carry.py: server.dll, 117 bytes"
+  "rva": "0x3b9900",
+  "build": "11138802",
+  "carried": "from 11117211 0x3b8630 by hand: the same body to its ret with every operand masked; carry.py missed it because field offsets inside it moved; 21 call sites in carried functions and tf2attributes' signature agree"
  },
  "_ZN9CTFPlayer13ItemIsAllowedEP13CEconItemView": {
   "why": "the matcher lost it on 11087207, where GCC split the Linux body into a .part.0 clone: 'allowed in medieval mode' and 'passtime', the Linux callees",
-  "rva": "0x4fc8e0",
-  "build": "11117211",
-  "carried": "from 11087207 0x4fc8e0 by tools/winport/carry.py: server.dll, 405 bytes"
+  "rva": "0x4fe050",
+  "build": "11138802",
+  "carried": "from 11117211 0x4fc8e0 by hand: both strings of the old body ('allowed in medieval mode', 'passtime') are referenced here and nowhere else, and two call sites in carried functions agree; the body grew"
  },
  "_ZN9CTFPlayer15ValidateWeaponsEP19TFPlayerClassData_tb": {
   "why": "the matcher lost it on 11087207: the AttribHookValue profiler strings and the Linux callees, called from the one place the old body was",
@@ -3407,10 +3407,10 @@
   "carried": "from 11117211 0x5f5180 by tools/winport/carry.py: server.dll, 510 bytes"
  },
  "_ZL20ApplyUpgrade_DefaultRK22CMannVsMachineUpgradesP9CTFPlayerP13CEconItemViewib": {
-  "rva": "0x5f5530",
-  "build": "11117211",
+  "rva": "0x5f6e30",
+  "build": "11138802",
   "why": "read by hand: a cdecl function with its five arguments on the stack where Linux passes three in registers. The attribute by name, the player's list (+0x1284) for UI group 1 else the item's (+0x58), IterateAttributes for the current value, AlmostEqual (0x6dff60, tolerance 10) and Approach (0x6d97e0) against the cap, then RemoveAttribute for a downgrade or SetRuntimeAttributeValue (0x3c4860) and SetRuntimeAttributeRefundableCurrency (0x3c4810) plus the cost; returns the attribute's index, 0xffff when the item is missing. Its only caller is CUpgrades::ApplyUpgradeToItem (0x5f535f)",
-  "carried": "from 11087207 0x5f5530 by tools/winport/carry.py: server.dll, 865 bytes"
+  "carried": "from 11117211 0x5f5530 by hand: the same cdecl prologue, GetAttributeDefinitionByName (0x3b9900), the +0x190 UI group test and the +0x1284/+0x58 lists; IterateAttributes is inlined now. Its one caller, CUpgrades::ApplyUpgradeToItem (0x5f6b7f), agrees"
  },
  "_ZN9CTFPlayer10RemoveAmmoEii": {
   "rva": "0x50b4f0",
@@ -3434,11 +3434,11 @@
   "carried": "from 11117211 0x563b80 by tools/winport/carry.py: server.dll, 93 bytes"
  },
  "_ZN9CTFPlayer14ShouldTransmitEPK18CCheckTransmitInfo": {
-  "rva": "0x50cec0",
-  "build": "11117211",
+  "rva": "0x50e740",
+  "build": "11138802",
   "vtidx": 20,
   "why": "read by hand: slot 20 of CTFPlayer's table (Linux 21). Both resolve the two observer handles (0x2038/0x2034 and 0x202c/0x2028 against the entity list), test the game rules state against 7, return 8 (FL_EDICT_ALWAYS) or tail into CBasePlayer::ShouldTransmit (0x2e9030). The string match that had put CTFPlayer::Spawn here is overridden by the Spawn entry",
-  "carried": "from 11087207 0x50cec0 by tools/winport/carry.py: server.dll, 4096 bytes"
+  "carried": "from 11117211 0x50cec0 by hand: slot 20 of CTFPlayer's table, as before; the same body to its ret with every operand masked; carry.py missed it because field offsets inside it moved"
  },
  "_ZNK11CBasePlayer8IsPlayerEv": {
   "rva": "0x5b7c0",
@@ -4085,10 +4085,10 @@
   "carried": "from 11117211 0x5248d0 by tools/winport/carry.py: server.dll, 372 bytes"
  },
  "_ZN15static_attrib_t22BInitFromKV_SingleLineEPKcP9KeyValuesP10CUtlVectorI10CUtlString10CUtlMemoryIS5_iEEb": {
-  "rva": "0x3b0790",
-  "build": "11117211",
+  "rva": "0x3b1a00",
+  "build": "11138802",
   "why": "of the two functions holding the set bonus attribute error strings (the Linux MultiLine and SingleLine each hold them), the one popping 0x10 bytes for the four arguments of SingleLine; MultiLine (three arguments, ret 0xc) is the one before it, as the name order has them",
-  "carried": "from 11087207 0x3b0790 by tools/winport/carry.py: server.dll, 390 bytes"
+  "carried": "from 11117211 0x3b0790 by hand: the second of the two functions holding the set bonus attribute error strings, as before; the same body to its ret with every operand masked; carry.py missed it because field offsets inside it moved"
  },
  "_ZNK13CEconItemView16GetAnimationSlotEv": {
   "rva": "0x3c4390",
