@@ -14,7 +14,12 @@ fails the whole mod, so the two are listed apart.
     modgaps.py "Pop:TFBot_Extensions" ...    those mods only, with a count of
                                              how many of them need each target
     modgaps.py --bed LOG ...            also what a bed's log says it refused
-                                        or could not hook at load
+                                        (and did not hook at its vtable slot
+                                        instead) or could not hook at load
+    modgaps.py --shipped ...            only the sources the Windows package
+                                        compiles (shipped.py)
+
+Without mod names it ends with a count of the mods by what their gaps are.
 """
 
 import collections
@@ -26,6 +31,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 import classify  # noqa: E402
+import shipped  # noqa: E402
 
 root = Path(__file__).resolve().parents[2]
 
@@ -34,11 +40,17 @@ for m in re.finditer(r'^\t\t\t\t"([^"]+)"\n\t\t\t\t\{\n(.*?)\n\t\t\t\t\}', (root
     windows[m.group(1)] = m.group(2)
 
 args = sys.argv[1:]
-refused, hookfail = set(), set()
+only_shipped = "--shipped" in args
+args = [a for a in args if a != "--shipped"]
+refused, hookfail, lookupfail = set(), set(), set()
 if args[:1] == ["--bed"]:
     log = open(args[1], errors="replace").read()
     refused = set(re.findall(r'refused detour: [^"\n]*"([^"]+)"', log))
-    hookfail = set(re.findall(r'CVirtualHook::FAIL "([^"]+)"', log))
+    refused |= set(re.findall(r'DoLoad: \\?"([^"\\]+)\\?": refused', log))
+    lookupfail = set(re.findall(r'DoLoad: \\?"([^"\\]+)\\?": addr lookup failed', log))
+    # A refused detour on a virtual is hooked at its vtable slot instead.
+    refused -= set(re.findall(r'CDetour: \\?"([^"\\]+)\\?": hooked at slot', log))
+    hookfail = set(re.findall(r'CVirtualHook::FAIL \\?"([^"\\]+)\\?"', log))
     args = args[2:]
 
 bad = {sym for sym, e in json.load(open(Path(__file__).parent / "overrides.json")).items() if e.get("bad")}
@@ -78,55 +90,16 @@ for path in glob.glob(str(root / "src/addr/*.cpp")):
                 linux.setdefault(f"{m.group(1)}::{f.group(1)}", {"type": "code"})
 
 
-def preprocess(text):
-    """The text with comments and code Windows never compiles blanked out."""
-    text = re.sub(r"/\*.*?\*/", lambda m: re.sub(r"[^\n]", " ", m.group(0)), text, flags=re.S)
-    text = re.sub(r"//[^\n]*", "", text)
-    out, stack = [], []
-    for line in text.split("\n"):
-        s = line.strip()
-        d = re.match(r"#\s*(if|ifdef|ifndef|elif|else|endif)\b(.*)", s)
-        if d:
-            kind, cond = d.group(1), d.group(2).strip()
-            if kind in ("if", "ifdef", "ifndef"):
-                if kind == "ifdef":
-                    cond = f"defined {cond}"
-                elif kind == "ifndef":
-                    cond = f"!defined {cond}"
-                stack.append(evaluate(cond))
-            elif kind == "elif":
-                stack[-1] = evaluate(cond) if stack[-1] is False else False
-            elif kind == "else":
-                stack[-1] = None if stack[-1] is None else not stack[-1]
-            elif kind == "endif":
-                stack.pop()
-            out.append("")
-            continue
-        out.append(line if all(x is not False for x in stack) else "")
-    return "\n".join(out)
-
-
-def evaluate(cond):
-    """True or False for the conditions that decide Windows, None (kept) otherwise."""
-    cond = cond.replace("(", " ").replace(")", " ").split("//")[0].strip()
-    if cond == "0":
-        return False
-    if cond == "1":
-        return True
-    m = re.fullmatch(r"(!?)\s*defined\s+(_WINDOWS|_MSC_VER|_LINUX|__GNUC__|PLATFORM_64BITS)", cond)
-    if m:
-        on = m.group(2) in ("_WINDOWS", "_MSC_VER")
-        return on != bool(m.group(1))
-    return None
-
-
 # The address name is the last string argument: a virtual hook may name its
 # vtable with a string too.
 ADD = re.compile(r'MOD_ADD_(DETOUR_MEMBER|DETOUR_STATIC|VHOOK|VHOOK2|VHOOK_INHERIT)(?:_PRIORITY)?\s*\(\s*(\w+)\s*,[^;]*"([^"]+)"[^";]*\)\s*;')
 
 mods = collections.OrderedDict()
+compiled = {str(root / f) for f in shipped.sources(root)} if only_shipped else None
 for path in sorted(glob.glob(str(root / "src/**/*.cpp"), recursive=True)):
-    text = preprocess(open(path).read())
+    if compiled is not None and path not in compiled:
+        continue
+    text = shipped.preprocess(open(path).read())
     starts = [(m.start(), m.group(1)) for m in re.finditer(r'IMod\("([^"]+)"\)', text)]
     if not starts:
         continue
@@ -145,6 +118,8 @@ def status(name, kind):
     if kind == "detour" and name in refused:
         return "refused"
     if kind == "vhook" and name in hookfail:
+        return "failed"
+    if kind == "detour" and name in lookupfail:
         return "failed"
     entry = windows.get(name)
     if entry is None:
@@ -174,11 +149,14 @@ def describe(name):
 
 wanted = args or list(mods)
 need = collections.defaultdict(set)
+verdict = collections.Counter()
 for mod in wanted:
     if mod not in mods:
         print(f"{mod}: no registrations found", file=sys.stderr)
         continue
     gaps = [(kind, name, where, line, status(name, kind)) for kind, name, where, line in mods[mod] if status(name, kind)]
+    open_gaps = [g for g in gaps if g[4] != "runtime"]
+    verdict["resolved" if not open_gaps else "client" if all(g[1].startswith("[client]") for g in open_gaps) else "server"] += 1
     if not gaps and not args:
         continue
     total = collections.Counter(kind for kind, *_ in mods[mod])
@@ -193,3 +171,7 @@ if args:
     print(f"\n== targets by how many of the {len(wanted)} mods need them")
     for (kind, name), who in sorted(need.items(), key=lambda kv: (-len(kv[1]), kv[0][0] != "vhook", kv[0][1])):
         print(f"  {len(who)}  {kind:6} {name:60} {', '.join(sorted(who))}")
+
+if not args:
+    print(f"\n{sum(verdict.values())} mods register detours or virtual hooks: {verdict['resolved']} resolve every one, "
+          f"{verdict['server']} have a server-side gap, {verdict['client']} only [client] gaps")

@@ -4136,8 +4136,9 @@
  "_ZN13NextBotPlayerI9CTFPlayerE19ReleaseCrouchButtonEv": {
   "rva": "0x562440",
   "build": "11138802",
-  "why": "read by hand: slot 0x5c of the INextBotPlayerInput table at offset 0x26c8 of CTFBot, 27 slots on both platforms in the same order. Same body as Linux: and ~IN_DUCK into the button word at +4, the timer at +0x8c set to -1.0; this is the interface, so this-0x26c8 is the bot; plain ret",
-  "carried": "from 11117211 0x560c00 by tools/winport/carry.py: server.dll, 15 bytes"
+  "why": "read by hand: slot 0x5c of the INextBotPlayerInput table at offset 0x26c8 of CTFBot, 27 slots on both platforms in the same order. Same body as Linux: and ~IN_DUCK into the button word at +4, the timer at +0x8c set to -1.0; this is the interface, so this-0x26c8 is the bot; plain ret. Unshared: the only references to 0x562440 in server.dll are slot 0x5c of the INextBotPlayerInput tables of CTFBot and NextBotPlayer<CTFPlayer> (.rdata 0x89338c and 0x893e34), and no call or jmp in .text lands on it, so no other function was folded into it",
+  "carried": "from 11117211 0x560c00 by tools/winport/carry.py: server.dll, 15 bytes",
+  "unshared": true
  },
  "_ZN23CLagCompensationManager21FinishLagCompensationEP11CBasePlayer": {
   "rva": "0x2eca40",
@@ -5902,5 +5903,147 @@
   "bad": true,
   "build": "11117211",
   "why": "read by hand, 11117211: no body of its own. Its only Linux caller is ApplyStressDamage, and ApplyStressDamage (0x1d4010) calls CalculateObjectStress (0x2bd150) itself"
+ },
+ "_ZN9CTFPlayer18CanBeForcedToLaughEv": {
+  "name": "CTFPlayer::CanBeForcedToLaugh",
+  "rva": "0x4e4980",
+  "build": "11138802",
+  "why": "read by hand: g_pGameRules (0x10a35090), its m_bPlayingMannVsMachine byte at +0xc72, the IsBot virtual at +0x71c, GetTeamNumber (0x1f1450, mov eax,[ecx+0x22c]) against 3, setne: Linux's body, thiscall, no argument. The only Linux caller, CTFWeaponBaseMelee::DoMeleeDamage, is matched to 0x63ea70, the only caller here. The 2017 scan in src/addr/misc.cpp wanted a jnz/xor tail this build no longer has"
+ },
+ "_ZN12CTFGameRules8PrecacheEv": {
+  "name": "CTFGameRules::Precache",
+  "rva": "0x499ca0",
+  "build": "11138802",
+  "why": "Matched by consensus on 11138802 (calls CTeamplayRules::Precache at 0x348c60 first, then on a map whose clean name starts with mvm_ calls CTFPlayer::PrecacheMvM at 0x5095a0, its only caller). Func_Optimize detours it on Windows because PrecacheMvM loops back into its first five bytes."
+ },
+ "_ZNK14CStaticPropMgr12IsStaticPropEP13IHandleEntity": {
+  "lib": "engine",
+  "rva": "0x1d4290",
+  "build": "11138802",
+  "why": "read by hand in engine.dll: slot 11 of CStaticPropMgr's primary table, and the target of the sub ecx,4 thunk at slot 3 of its IStaticPropMgrServer table, where Linux has IsStaticProp(IHandleEntity*) at slot 10 and MSVC puts the two overloads the other way round. Null returns true; otherwise GetRefEHandle (vcall +8) masked with 0xffff0000 against 0x80000000, the static prop serial. thiscall, ret 4"
+ },
+ "_ZNK14CStaticPropMgr12IsStaticPropE11CBaseHandle": {
+  "lib": "engine",
+  "rva": "0x1d42c0",
+  "build": "11138802",
+  "why": "read by hand in engine.dll: slot 10 of CStaticPropMgr's primary table, the target of the thunk at slot 2 of its IStaticPropMgrServer table: the handle, passed by value, masked with 0xffff0000 against 0x80000000. thiscall, ret 4"
+ },
+ "_ZN14CStaticPropMgr13GetStaticPropEP13IHandleEntity": {
+  "lib": "engine",
+  "rva": "0x1d3bf0",
+  "build": "11138802",
+  "why": "read by hand in engine.dll: slot 8 of CStaticPropMgr's primary table, as on Linux. Null returns null; the static prop serial test, then the index (0x1fff for an invalid handle) checked against m_StaticProps' count at +0x2c and m_StaticProps[i] (0xb0 bytes each, base at +0x20) returned at +8, its ICollideable. thiscall, ret 4"
+ },
+ "_ZN21CPropVehicleDriveable12DriveVehicleEfP8CUserCmdii": {
+  "rva": "0x371d20",
+  "build": "11138802",
+  "vtidx": 233,
+  "why": "read by hand: slot 233 of CPropVehicleDriveable's table (Linux 235), between VehicleAngleVectors and IsOverturned. UpdateDriverControls (0x2615b0) on m_VehiclePhysics at +0x4b0 with the command and frame time, the networked speed/RPM/throttle fields, the two pressed-attack COutputEvent::FireOutput calls and the attack axis variant_t::Set + FireOutput pairs, as the source orders them. thiscall, ret 0x10"
+ },
+ "_ZN20CBaseCombatCharacter17ApplyStressDamageEP14IPhysicsObjectb": {
+  "name": "CBaseCombatCharacter::ApplyStressDamage",
+  "rva": "0x1d4010",
+  "build": "11138802",
+  "why": "read by hand: matched through its call from CBasePlayer::VPhysicsShadowUpdate (0x2ea8c0), its only caller. The IPhysicsObject vcall +0x74 for the game data, CalculateObjectStress (0x2bd150) where Linux calls CalculatePhysicsStressDamage, then GetWorldEntity twice, the CTakeDamageInfo constructor (0x339d20), GetCurrentGravity (0x29e7a0) and TakeDamage (0x1fcc30). thiscall, ret 8"
+ },
+ "_ZN18CBaseServerVehicle28PassengerShouldReceiveDamageER15CTakeDamageInfo": {
+  "name": "CBaseServerVehicle::PassengerShouldReceiveDamage",
+  "rva": "0x377400",
+  "build": "11138802",
+  "vtidx": 12,
+  "why": "read by hand: slot 12 of CBaseServerVehicle's table, as on Linux. Null m_pDrivableVehicle (+0x30) returns true, otherwise a tail jump to its IDrivableVehicle slot +0x3c. thiscall, ret 4"
+ },
+ "_ZN4Path18ComputePathDetailsEP8INextBotRK6Vector": {
+  "rva": "0x429020",
+  "build": "11138802",
+  "why": "read by hand: the only function that pushes the VPROF name 'Path::ComputePathDetails' (0x42906a); called by Path::AssemblePrecomputedPath (0x428940) and Path::Compute<CTFBotPathCost>(INextBot *, CBaseCombatCharacter *, ...) (0x588e7f, after NavAreaBuildPath as on Linux); thiscall, ret 8"
+ },
+ "_ZN4Path16BuildTrivialPathEP8INextBotRK6Vector": {
+  "rva": "0x428b20",
+  "build": "11138802",
+  "why": "read by hand: Linux's callees in the same order, CNavMesh::GetNearestNavArea (0x409a60) twice then CNavArea::GetZ (0x3e4090) twice, then a virtual call; called by the same Path::Compute<CTFBotPathCost> and AssemblePrecomputedPath as ComputePathDetails; thiscall, ret 8"
+ },
+ "_ZN4Path8OptimizeEP8INextBot": {
+  "rva": "0x130600",
+  "build": "11138802",
+  "why": "read by hand: empty on Linux (one ret). Path::Compute<CTFBotPathCost> (0x588be0) calls 0x130600 right after ComputePathDetails and before PostProcess (0x588e9e), where Linux calls Optimize: MSVC folded the empty body into the shared ret 4 stub, so a call through it does nothing, as on Linux. Not to be detoured"
+ },
+ "_Z13TE_BeamPointsR16IRecipientFilterfPK6VectorS3_iiiifffifiiiii": {
+  "rva": "0x43bc80",
+  "build": "11138802",
+  "why": "read by hand: CTempEntsSystem's table is Linux's less one destructor slot, and each of its TE methods tests SuppressTE then calls its TE_ function with every argument; BeamPoints (slot 0x14, 0x439a60, ret 0x48 for 18 arguments) calls this, which ends in CBaseTempEntity::Create (0x4358c0); cdecl"
+ },
+ "_Z16TE_BeamRingPointR16IRecipientFilterfRK6Vectorffiiiiffifiiiiii": {
+  "rva": "0x43c460",
+  "build": "11138802",
+  "why": "read by hand: CTempEntsSystem's table is Linux's less one destructor slot, and each of its TE methods tests SuppressTE then calls its TE_ function with every argument; BeamRingPoint (slot 0x20, 0x439c40, ret 0x4c for 19 arguments) calls this, which ends in CBaseTempEntity::Create (0x4358c0); cdecl"
+ },
+ "_Z13TE_BreakModelR16IRecipientFilterfRK6VectorRK6QAngleS3_S3_iiifi": {
+  "rva": "0x43d460",
+  "build": "11138802",
+  "why": "read by hand: CTempEntsSystem's table is Linux's less one destructor slot, and each of its TE methods tests SuppressTE then calls its TE_ function with every argument; BreakModel (slot 0x30, 0x439e30, ret 0x2c for 11 arguments) calls this, which ends in CBaseTempEntity::Create (0x4358c0); cdecl"
+ },
+ "_Z14TE_PhysicsPropR16IRecipientFilterfiiRK6VectorRK6QAngleS3_ii": {
+  "rva": "0x440fe0",
+  "build": "11138802",
+  "why": "read by hand: CTempEntsSystem's table is Linux's less one destructor slot, and each of its TE methods tests SuppressTE then calls its TE_ function with every argument; PhysicsProp (slot 0x9c, 0x43a970, ret 0x24 for 9 arguments) calls this, which ends in CBaseTempEntity::Create (0x4358c0); cdecl"
+ },
+ "_ZNK8INextBot15IsRangeLessThanEP11CBaseEntityf": {
+  "rva": "0x421820",
+  "build": "11138802",
+  "why": "read by hand: slot 69 (0x114) of INextBot's table in CTFBot, where the pair rule of GetRangeSquaredTo puts the entity overload (one destructor less, overload pairs reversed). Calls CCollisionProperty::CalcDistanceFromPoint (0x22a1c0) on the subject as Linux does, and its neighbour at 0x110 (0x4217c0) is the Vector overload with the same range-squared > distance-squared test; thiscall, ret 8"
+ },
+ "_ZNK8INextBot18IsRangeGreaterThanERK6Vectorf": {
+  "rva": "0x4216f0",
+  "build": "11138802",
+  "why": "read by hand: slot 70 (0x118) of INextBot's table in CTFBot, the Vector half of the IsRangeGreaterThan pair (the entity overload follows at 0x11c, 0x421750). Gets GetPosition through slot 0xd4, squares the distance to the vector and returns distance-squared > range-squared, Linux's seta; thiscall, ret 8"
+ },
+ "_ZN6ActionI6CTFBotE11ApplyResultEPS0_P8BehaviorIS0_E12ActionResultIS0_E": {
+  "name": "Action<CTFBot>::ApplyResult",
+  "rva": "0x550880",
+  "build": "11138802",
+  "why": "read by hand: one of the ten ApplyResult instances, each with the CHANGE_TO, SUSPEND_FOR and DONE, RESUME debug strings; this one is called from CTFBot::CTFBotIntention's Update (slot 0xac of its table, 0x564a20), where Behavior<CTFBot>::Update is inlined, and from CTFBot's InvokeOnResume (0x557960); thiscall, ret 0x14 for the actor, the behavior and the 12-byte ActionResult"
+ },
+ "_ZN6ActionI6CTFBotE11InvokeOnEndEPS0_P8BehaviorIS0_EPS1_": {
+  "name": "Action<CTFBot>::InvokeOnEnd",
+  "rva": "0x557820",
+  "build": "11138802",
+  "why": "read by hand: one of the two bodies with the ' ENDING ' debug string (the other, 0x417d20, belongs to CSimpleBot's ApplyResult at 0x417580); called by Action<CTFBot>::ApplyResult (0x550880) and by itself for the child action, as on Linux; thiscall, ret 0xc"
+ },
+ "_ZN6ActionI6CTFBotE14InvokeOnResumeEPS0_P8BehaviorIS0_EPS1_": {
+  "rva": "0x557960",
+  "build": "11138802",
+  "why": "read by hand: the ' RESUMING ' body next to CTFBot's InvokeOnEnd; it calls itself for the child, then Action<CTFBot>::ApplyResult (0x550880) on the result, Linux's two calls in the same order; thiscall returning ActionResult through a hidden pointer, ret 0x10"
+ },
+ "_ZN6ActionI7CZombieE11ApplyResultEPS0_P8BehaviorIS0_E12ActionResultIS0_E": {
+  "name": "Action<CZombie>::ApplyResult",
+  "rva": "0x5bf4e0",
+  "build": "11138802",
+  "why": "read by hand: the ApplyResult instance (CHANGE_TO, SUSPEND_FOR and DONE, RESUME debug strings) that CZombieBehavior::Update (0x5c0f00) calls; thiscall, ret 0x14"
+ },
+ "_Z11TheNextBotsv": {
+  "rva": "0x416230",
+  "build": "11138802",
+  "why": "read by hand: returns the manager pointer at 0x10a90848, and when it is null builds the function-local static at 0x10a90a80 with NextBotManager's vtable (0x10837600, by RTTI), registers its destructor with atexit and stores it: Linux's body. CServerGameDLL::GameFrame (0x26fafb) calls it where Linux does, among 34 callers; cdecl"
+ },
+ "_ZN14CAttributeList37SetRuntimeAttributeRefundableCurrencyEPK28CEconItemAttributeDefinitioni": {
+  "rva": "0x3c5a30",
+  "build": "11138802",
+  "why": "read by hand: Linux's body: walks m_Attributes (+4, count +0x10, 16-byte elements) for the definition index (word at +4), and when the refundable currency at +0xc differs calls the element's NetworkStateChanged(void *) through slot 0 (MSVC's order of the overload pair) with its address, then stores it; thiscall, ret 8. ApplyUpgrade_Default (0x5f6e30) calls it after 0x3c4e10, the getter of the same field"
+ },
+ "_Z22PrecachePointTemplatesv": {
+  "rva": "0x2f6cc0",
+  "build": "11138802",
+  "why": "Called from CServerGameDLL::LevelInit (0x26f620). Same body as Linux: walks the g_PointTemplates handles, calls slot 0x31c on each live one (0x320 on Linux, one destructor fewer), then zeroes the count."
+ },
+ "_ZN6ActionI7CZombieE14InvokeOnResumeEPS0_P8BehaviorIS0_EPS1_": {
+  "rva": "0x5bfe60",
+  "build": "11138802",
+  "why": "read by hand: the RESUMING body that Action<CZombie>::ApplyResult (0x5bf4e0) calls and that calls it back; same shape as Action<CTFBot>::InvokeOnResume (0x557960); thiscall with the ActionResult return pointer, ret 0x10"
+ },
+ "_ZN6ActionI7CZombieE11InvokeOnEndEPS0_P8BehaviorIS0_EPS1_": {
+  "rva": "0x417d60",
+  "build": "11138802",
+  "why": "read by hand: the ENDING body Action<CZombie>::ApplyResult (0x5bf4e0) calls. MSVC folded the identical InvokeOnEnd of several Action<T> into this one body, which is fine for the call thunk nextbot1.cpp makes of it; thiscall, ret 0xc"
  }
 }

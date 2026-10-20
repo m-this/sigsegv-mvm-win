@@ -421,7 +421,6 @@ namespace Mod::Etc::Weapon_Mimic_Teamnum
 	public:
 		CMod() : IMod("Etc:Weapon_Mimic_Teamnum")
 		{
-			bulletDamageHook.DoLoad();
 #if !defined _WINDOWS
 			/* inline in the two inputs there, which are hooked below */
 			MOD_ADD_DETOUR_MEMBER(CTFPointWeaponMimic_Fire, "CTFPointWeaponMimic::Fire");
@@ -439,6 +438,11 @@ namespace Mod::Etc::Weapon_Mimic_Teamnum
 			
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_Event_Killed,  "CTFPlayer::Event_Killed");
 			
+		}
+
+		virtual bool OnLoad() override
+		{
+			return bulletDamageHook.DoLoad();
 		}
 
 		virtual std::vector<std::string> GetRequiredMods() { return {"Common:Weapon_Shoot"};}

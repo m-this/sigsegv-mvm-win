@@ -184,6 +184,16 @@ namespace Mod::Perf::Virtual_Call_Optimize
 
 
 
+#if defined _WINDOWS
+    constexpr const char *s_Name_CStaticProp = ".?AVCStaticProp@@";
+    constexpr size_t s_Off_IsStaticProp_VTable  = 0xd + 2;
+    constexpr size_t s_Off_GetStaticProp_VTable = 0xa + 2;
+#else
+    constexpr const char *s_Name_CStaticProp = "11CStaticProp";
+    constexpr size_t s_Off_IsStaticProp_VTable  = 0xe + 2;
+    constexpr size_t s_Off_GetStaticProp_VTable = 0xb + 2;
+#endif
+
     constexpr uint8_t s_Buf_CStaticPropMgr_IsStaticProp[] = {
         // return !pHandleEntity || (size_t)(*pHandleEntity) == 0x44444444(44444444);
 #ifdef PLATFORM_64BITS
@@ -200,6 +210,16 @@ namespace Mod::Perf::Virtual_Call_Optimize
         0x74, 0x10, 0x48, 0xb8, 0x44, 0x44, 0x44, 0x44, 
         0x44, 0x44, 0x44, 0x44, 0x48, 0x39, 0x06, 0x0f, 
         0x94, 0xc0, 0xc3, 
+#elif defined _WINDOWS
+        // thiscall: the argument at [esp+4], popped on return
+        0x8b, 0x54, 0x24, 0x04,             // mov    edx,DWORD PTR [esp+0x4]
+        0xb8, 0x01, 0x00, 0x00, 0x00,       // mov    eax,0x1
+        0x85, 0xd2,                         // test   edx,edx
+        0x74, 0x09,                         // je     L1
+        0x81, 0x3a, 0x00, 0x00, 0x00, 0x00, // cmp    DWORD PTR [edx],vtable
+        0x0f, 0x94, 0xc0,                   // sete   al
+        // L1:
+        0xc2, 0x04, 0x00,                   // ret    4
 #else
         0x52,
         0x8b, 0x54, 0x24, 0x0c,             //mov    edx,DWORD PTR [esp+0x8 + 0x04] 1
@@ -236,7 +256,7 @@ namespace Mod::Perf::Virtual_Call_Optimize
 #ifdef PLATFORM_64BITS
             buf.SetQword(0xc, (uintptr_t)RTTI::GetVTable("11CStaticProp"));
 #else
-            buf.SetDword(0xe + 2, (uintptr_t)RTTI::GetVTable("11CStaticProp"));
+            buf.SetDword(s_Off_IsStaticProp_VTable, (uintptr_t)RTTI::GetVTable(s_Name_CStaticProp));
 #endif
 			mask.SetAll(0xFF);
 			
@@ -248,7 +268,7 @@ namespace Mod::Perf::Virtual_Call_Optimize
 #ifdef PLATFORM_64BITS
             buf.SetQword(0xc, (uintptr_t)RTTI::GetVTable("11CStaticProp"));
 #else
-            buf.SetDword(0xe + 2, (uintptr_t)RTTI::GetVTable("11CStaticProp"));
+            buf.SetDword(s_Off_IsStaticProp_VTable, (uintptr_t)RTTI::GetVTable(s_Name_CStaticProp));
 #endif
 			return true;
 		}
@@ -274,6 +294,17 @@ namespace Mod::Perf::Virtual_Call_Optimize
         0xba, 0x44, 0x44, 0x44, 0x44, 0x44, 0x44, 0x44, 
         0x44, 0x48, 0x39, 0x16, 0x75, 0x05, 0x48, 0x8d, 
         0x46, 0x10, 0xc3, 0xc3, 
+#elif defined _WINDOWS
+        0x8b, 0x44, 0x24, 0x04,             // mov    eax,DWORD PTR [esp+0x4]
+        0x31, 0xd2,                         // xor    edx,edx
+        0x85, 0xc0,                         // test   eax,eax
+        0x74, 0x0b,                         // je     L7
+        0x81, 0x38, 0x00, 0x00, 0x00, 0x00, // cmp    DWORD PTR [eax],vtable
+        0x75, 0x03,                         // jne    L7
+        0x8d, 0x50, 0x08,                   // lea    edx,[eax+0x08]
+        // L7:
+        0x89, 0xd0,                         // mov    eax,edx
+        0xc2, 0x04, 0x00,                   // ret    4
 #else
         0x52,
         0x8b, 0x44, 0x24, 0x0c,       //      mov    eax,DWORD PTR [esp+0x8 + 0x4]
@@ -318,7 +349,7 @@ namespace Mod::Perf::Virtual_Call_Optimize
 #ifdef PLATFORM_64BITS
             buf.SetQword(0x9, (uintptr_t)RTTI::GetVTable("11CStaticProp"));
 #else
-            buf.SetDword(0xb + 2, (uintptr_t)RTTI::GetVTable("11CStaticProp"));
+            buf.SetDword(s_Off_GetStaticProp_VTable, (uintptr_t)RTTI::GetVTable(s_Name_CStaticProp));
 #endif
 			mask.SetAll(0xFF);
 			
@@ -330,7 +361,7 @@ namespace Mod::Perf::Virtual_Call_Optimize
 #ifdef PLATFORM_64BITS
             buf.SetQword(0x9, (uintptr_t)RTTI::GetVTable("11CStaticProp"));
 #else
-            buf.SetDword(0xb + 2, (uintptr_t)RTTI::GetVTable("11CStaticProp"));
+            buf.SetDword(s_Off_GetStaticProp_VTable, (uintptr_t)RTTI::GetVTable(s_Name_CStaticProp));
 #endif
 			return true;
 		}
@@ -877,7 +908,8 @@ namespace Mod::Perf::Virtual_Call_Optimize
             this->AddPatch(new CPatch_CBasePlayer_IsPlayer());
 #endif
             //this->AddPatch(new CPatch_CBaseEntity_GetBaseEntity());
-#ifndef PLATFORM_64BITS
+            // MSVC's GetTeamNumber is already one load and a ret, with this in ecx.
+#if !defined PLATFORM_64BITS && !defined _WINDOWS
             this->AddPatch(new CPatch_CBaseEntity_GetTeamNumber());
 #endif
             
@@ -892,6 +924,9 @@ namespace Mod::Perf::Virtual_Call_Optimize
 	CMod s_Mod;
 	
     
+	/* Not on Windows: the detours read the GCC call site at their return address
+	 * (call [reg+slot*4] with Itanium slot numbers) and rewrite it. */
+#if !defined _WINDOWS
 	class CModInlineVirtuals : public IMod
 	{
 	public:
@@ -918,6 +953,7 @@ namespace Mod::Perf::Virtual_Call_Optimize
         }
 	};
 	CModInlineVirtuals s_ModInlineVirtuals;
+#endif
 
 	ConVar cvar_enable("sig_perf_virtual_call_optimize", "0", FCVAR_NOTIFY,
 		"Mod: Optimize common virtual calls",
@@ -925,11 +961,13 @@ namespace Mod::Perf::Virtual_Call_Optimize
 			s_Mod.Toggle(static_cast<ConVar *>(pConVar)->GetBool());
 		});
 
+#if !defined _WINDOWS
     ConVar cvar_enable_inline("sig_perf_virtual_call_optimize_inline_virtuals", "0", FCVAR_NOTIFY,
 		"Mod: Optimize common virtual calls with experimental function inline",
 		[](IConVar *pConVar, const char *pOldValue, float flOldValue){
 			s_ModInlineVirtuals.Toggle(static_cast<ConVar *>(pConVar)->GetBool());
 		});
+#endif
     // ConVar cvar_enable_virtuals("sig_perf_virtual_call_optimize_virtuals", "0", FCVAR_NOTIFY,
 	// 	"Mod: Optimize common virtual calls",
 	// 	[](IConVar *pConVar, const char *pOldValue, float flOldValue){

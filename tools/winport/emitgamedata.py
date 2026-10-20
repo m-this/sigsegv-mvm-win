@@ -56,6 +56,10 @@ for sym, entry in overrides.items():
     # the override names the slot, read off the vtable by hand.
     if "vtidx" in entry:
         matches[sym]["vtidx"] = int(entry["vtidx"])
+    # A short body read by hand and found nowhere else, which the detour guard
+    # would otherwise take for one MSVC folded.
+    if entry.get("unshared"):
+        matches[sym]["unshared"] = True
 extra = [(e["name"], {"type": "sym", "sym": s, "lib": e.get("lib", "server")}) for s, e in overrides.items() if "name" in e and not e.get("bad")]
 
 found = []
@@ -230,6 +234,8 @@ for name, entry in found + [x for x in extra if x[0] in named]:
         out += [f'\t\t\t\t\tvtidx "{match["vtidx"]}"']
     elif name in vtidx and vtidx[name][1] == match["rva"]:
         out += [f'\t\t\t\t\tvtidx "{vtidx[name][0]}"']
+    if match.get("unshared"):
+        out += ['\t\t\t\t\tunshared "1"']
     out += [
         f'\t\t\t\t\t// {via}',
         "\t\t\t\t}",

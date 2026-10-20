@@ -523,6 +523,9 @@ SMCResult CSigsegvGameConf::AddrEntry_Load_Fixed()
 	if (kv.find("vtidx") != kv.end()) {
 		a->SetVTIndex(stoi(kv.at("vtidx"), nullptr, 0));
 	}
+	if (kv.find("unshared") != kv.end() && kv.at("unshared") == "1") {
+		a->SetUnshared();
+	}
 	this->AddrEntry_Load_Common(a);
 	this->m_AddrPtrs.push_back(std::unique_ptr<IAddr>(a));
 	return SMCResult_Continue;

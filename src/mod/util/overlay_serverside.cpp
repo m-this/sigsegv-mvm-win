@@ -613,6 +613,19 @@ namespace Mod::Util::Overlay_Serverside
 		return DETOUR_MEMBER_CALL();
 	}
 	
+#if defined _WINDOWS
+	/* engine.dll's IsDedicatedServer is a two-byte body nothing can detour;
+	 * the server calls it through the engine interface, so hook that. */
+	SH_DECL_HOOK0(IVEngineServer, IsDedicatedServer, SH_NOATTRIB, 0, bool);
+	int is_dedicated_server_hook = 0;
+	bool IVEngineServer_IsDedicatedServer_Pre()
+	{
+		if (rc_DrawAllDebugOverlays > 0 && filter.GetRecipientCount() != 0) {
+			RETURN_META_VALUE(MRES_SUPERCEDE, false);
+		}
+		RETURN_META_VALUE(MRES_IGNORED, false);
+	}
+#endif
 
 	DETOUR_DECL_MEMBER(void, CServerGameClients_ClientPutInServer, edict_t *edict, const char *playername)
 	{
@@ -702,8 +715,11 @@ namespace Mod::Util::Overlay_Serverside
 			MOD_ADD_DETOUR_STATIC(NDebugOverlay_ScreenText,           "NDebugOverlay::ScreenText");
 			MOD_ADD_DETOUR_STATIC(NDebugOverlay_Cross3D_ext,          "NDebugOverlay::Cross3D_ext");
 			MOD_ADD_DETOUR_STATIC(NDebugOverlay_Cross3D_size,         "NDebugOverlay::Cross3D_size");
+#if !defined _WINDOWS
+			// Nothing calls these two in server.dll, so the linker left them out.
 			MOD_ADD_DETOUR_STATIC(NDebugOverlay_Cross3DOriented_ang,  "NDebugOverlay::Cross3DOriented_ang");
 			MOD_ADD_DETOUR_STATIC(NDebugOverlay_Cross3DOriented_mat,  "NDebugOverlay::Cross3DOriented_mat");
+#endif
 			MOD_ADD_DETOUR_STATIC(NDebugOverlay_HorzArrow,            "NDebugOverlay::HorzArrow");
 			MOD_ADD_DETOUR_STATIC(NDebugOverlay_YawArrow,             "NDebugOverlay::YawArrow");
 			MOD_ADD_DETOUR_STATIC(NDebugOverlay_VertArrow,            "NDebugOverlay::VertArrow");
@@ -717,7 +733,9 @@ namespace Mod::Util::Overlay_Serverside
 			// MOD_ADD_DETOUR_STATIC(clear_debug_overlays, "clear_debug_overlays");
 			
 			MOD_ADD_DETOUR_STATIC(DrawAllDebugOverlays,             "DrawAllDebugOverlays");
+#if !defined _WINDOWS
 			MOD_ADD_DETOUR_MEMBER(IVEngineServer_IsDedicatedServer, "IVEngineServer::IsDedicatedServer");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_UpdateOnRemove, "CTFPlayer::UpdateOnRemove");
 			MOD_ADD_DETOUR_MEMBER(CServerGameClients_ClientPutInServer, "CServerGameClients::ClientPutInServer");
 			MOD_ADD_DETOUR_STATIC(UTIL_GetListenServerHost, "UTIL_GetListenServerHost");
@@ -768,7 +786,16 @@ namespace Mod::Util::Overlay_Serverside
 		virtual void OnEnable() override {
 			spriteLine = CBaseEntity::PrecacheModel("materials/cable/pure_white.vmt");
 			spriteLineIgnoreZ = CBaseEntity::PrecacheModel("materials/vgui/white.vmt");
+#if defined _WINDOWS
+			is_dedicated_server_hook = SH_ADD_HOOK(IVEngineServer, IsDedicatedServer, engine, SH_STATIC(&IVEngineServer_IsDedicatedServer_Pre), false);
+#endif
 		}
+#if defined _WINDOWS
+		virtual void OnDisable() override {
+			SH_REMOVE_HOOK_ID(is_dedicated_server_hook);
+			is_dedicated_server_hook = 0;
+		}
+#endif
 		virtual void LevelInitPreEntity() override {
 			screenTexts.clear();
 			worldTexts.clear();

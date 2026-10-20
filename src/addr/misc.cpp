@@ -139,6 +139,9 @@ public:
 static CAddr_pszWpnEntTranslationList addr_pszWpnEntTranslationList;
 
 
+/* Not on Windows: the scan below is the 2017 build's body, and a static address
+ * here would take the name before gamedata/sigsegv/windows.txt could give it. */
+#if !defined _WINDOWS
 class CAddr_CTFPlayer_CanBeForcedToLaugh : public IAddr_Sym
 {
 public:
@@ -207,6 +210,7 @@ public:
 	}
 };
 static CAddr_CTFPlayer_CanBeForcedToLaugh addr_CTFPlayer_CanBeForcedToLaugh;
+#endif
 
 
 // TODO: finder for CBasePlayer::IsBot
