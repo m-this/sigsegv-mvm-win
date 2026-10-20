@@ -14,6 +14,42 @@
 		{
 			"addrs"
 			{
+				"Action<CTFBot>::ApplyResult"
+				{
+					type  "fixed"
+					sym   "_ZN6ActionI6CTFBotE11ApplyResultEPS0_P8BehaviorIS0_E12ActionResultIS0_E"
+					addr  "0x550880"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: one of the ten ApplyResult instances, each with the CHANGE_TO, SUSPEND_FOR and DONE, RESUME debug strings; this one is called from CTFBot::CTFBotIntention's Update (slot 0xac of its table, 0x564a20), where Behavior<CTFBot>::Update is inlined, and from CTFBot's InvokeOnResume (0x557960); thiscall, ret 0x14 for the actor, the behavior and the 12-byte ActionResult
+				}
+				"Action<CTFBot>::InvokeOnEnd"
+				{
+					type  "fixed"
+					sym   "_ZN6ActionI6CTFBotE11InvokeOnEndEPS0_P8BehaviorIS0_EPS1_"
+					addr  "0x557820"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: one of the two bodies with the ' ENDING ' debug string (the other, 0x417d20, belongs to CSimpleBot's ApplyResult at 0x417580); called by Action<CTFBot>::ApplyResult (0x550880) and by itself for the child action, as on Linux; thiscall, ret 0xc
+				}
+				"Action<CTFBot>::InvokeOnResume"
+				{
+					type  "fixed"
+					sym   "_ZN6ActionI6CTFBotE14InvokeOnResumeEPS0_P8BehaviorIS0_EPS1_"
+					addr  "0x557960"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: the ' RESUMING ' body next to CTFBot's InvokeOnEnd; it calls itself for the child, then Action<CTFBot>::ApplyResult (0x550880) on the result, Linux's two calls in the same order; thiscall returning ActionResult through a hidden pointer, ret 0x10
+				}
+				"Action<CZombie>::ApplyResult"
+				{
+					type  "fixed"
+					sym   "_ZN6ActionI7CZombieE11ApplyResultEPS0_P8BehaviorIS0_E12ActionResultIS0_E"
+					addr  "0x5bf4e0"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: the ApplyResult instance (CHANGE_TO, SUSPEND_FOR and DONE, RESUME debug strings) that CZombieBehavior::Update (0x5c0f00) calls; thiscall, ret 0x14
+				}
 				"CZombieIntention::Reset"
 				{
 					type  "fixed"
@@ -350,6 +386,24 @@
 					build "11138802"
 					lib   "server"
 					// verified: read by hand: slot 44 of the INextBot table of NextBotCombatCharacter's classes (Linux 45), the only code with the 'INextBot::Upkeep' profiler scope. Thiscall, plain ret
+				}
+				"INextBot::IsRangeLessThan"
+				{
+					type  "fixed"
+					sym   "_ZNK8INextBot15IsRangeLessThanEP11CBaseEntityf"
+					addr  "0x421820"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: slot 69 (0x114) of INextBot's table in CTFBot, where the pair rule of GetRangeSquaredTo puts the entity overload (one destructor less, overload pairs reversed). Calls CCollisionProperty::CalcDistanceFromPoint (0x22a1c0) on the subject as Linux does, and its neighbour at 0x110 (0x4217c0) is the Vector overload with the same range-squared > distance-squared test; thiscall, ret 8
+				}
+				"INextBot::IsRangeGreaterThan"
+				{
+					type  "fixed"
+					sym   "_ZNK8INextBot18IsRangeGreaterThanERK6Vectorf"
+					addr  "0x4216f0"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: slot 70 (0x118) of INextBot's table in CTFBot, the Vector half of the IsRangeGreaterThan pair (the entity overload follows at 0x11c, 0x421750). Gets GetPosition through slot 0xd4, squares the distance to the vector and returns distance-squared > range-squared, Linux's seta; thiscall, ret 8
 				}
 				"INextBot::GetRangeSquaredTo"
 				{
