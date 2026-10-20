@@ -702,8 +702,11 @@ namespace Mod::Util::Overlay_Serverside
 			MOD_ADD_DETOUR_STATIC(NDebugOverlay_ScreenText,           "NDebugOverlay::ScreenText");
 			MOD_ADD_DETOUR_STATIC(NDebugOverlay_Cross3D_ext,          "NDebugOverlay::Cross3D_ext");
 			MOD_ADD_DETOUR_STATIC(NDebugOverlay_Cross3D_size,         "NDebugOverlay::Cross3D_size");
+#if !defined _WINDOWS
+			// Nothing calls these two in server.dll, so the linker left them out.
 			MOD_ADD_DETOUR_STATIC(NDebugOverlay_Cross3DOriented_ang,  "NDebugOverlay::Cross3DOriented_ang");
 			MOD_ADD_DETOUR_STATIC(NDebugOverlay_Cross3DOriented_mat,  "NDebugOverlay::Cross3DOriented_mat");
+#endif
 			MOD_ADD_DETOUR_STATIC(NDebugOverlay_HorzArrow,            "NDebugOverlay::HorzArrow");
 			MOD_ADD_DETOUR_STATIC(NDebugOverlay_YawArrow,             "NDebugOverlay::YawArrow");
 			MOD_ADD_DETOUR_STATIC(NDebugOverlay_VertArrow,            "NDebugOverlay::VertArrow");
