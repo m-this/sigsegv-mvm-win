@@ -87,9 +87,8 @@ namespace Mod::MvM::MedigunShield_Damage
 		}
 	};
 	
-	DETOUR_DECL_STATIC(CTFMedigunShield *, CTFMedigunShield_Create, CTFPlayer *player)
+	void ColorShield(CTFMedigunShield *shield, CTFPlayer *player)
 	{
-		CTFMedigunShield *shield = DETOUR_STATIC_CALL(player);
 		float damage = 1.0f;
 		CALL_ATTRIB_HOOK_FLOAT_ON_OTHER(player, damage, mult_dmg_vs_players);
 		if (damage > 0.0f) {
@@ -97,15 +96,38 @@ namespace Mod::MvM::MedigunShield_Damage
 			shield->SetRenderColorG(0);
 			shield->SetRenderColorB(255);
 		}
+	}
+
+#if defined _WINDOWS
+	// MSVC inlines Create into CWeaponMedigun::CreateMedigunShield, which sets
+	// the new shield's owner once, right after creating it.
+	VHOOK_DECL(void, CTFMedigunShield_SetOwnerEntity, CBaseEntity *owner)
+	{
+		VHOOK_CALL(owner);
+		auto player = ToTFPlayer(owner);
+		if (player != nullptr) {
+			ColorShield(reinterpret_cast<CTFMedigunShield *>(this), player);
+		}
+	}
+#else
+	DETOUR_DECL_STATIC(CTFMedigunShield *, CTFMedigunShield_Create, CTFPlayer *player)
+	{
+		CTFMedigunShield *shield = DETOUR_STATIC_CALL(player);
+		ColorShield(shield, player);
 		return shield;
 	}
+#endif
 	
 	class CMod : public IMod
 	{
 	public:
 		CMod() : IMod("MvM:MedigunShield_Damage")
 		{
+#if defined _WINDOWS
+			MOD_ADD_VHOOK(CTFMedigunShield_SetOwnerEntity, TypeName<CTFMedigunShield>(), "CBaseEntity::SetOwnerEntity");
+#else
 			MOD_ADD_DETOUR_STATIC(CTFMedigunShield_Create,              "CTFMedigunShield::Create");
+#endif
 			this->AddPatch(new CPatch_CTFMedigunShield_ShieldTouch());
 		}
 	};
