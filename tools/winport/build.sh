@@ -159,24 +159,7 @@ mkdir -p "$OUT/gen/libudis86"
 cp "$OUT/gen/itab.h" "$OUT/gen/libudis86/itab.h"
 
 {
-	python3 - <<'PY'
-import types
-text = open("AMBuilder").read()
-# The groups configure.py can already leave out, left out: they are tools for
-# working on the mod rather than for running missions, and debug and visualize
-# carry code that was only ever built for Linux, and in one case for a 2017
-# Windows client.
-ext = types.SimpleNamespace(name="sigsegv", exclude=["mods_debug", "mods_visualize", "mods_vgui"], optimize_mods_only=False)
-scope = {"Extension": ext}
-exec(text[:text.index("project = builder.LibraryProject")], scope)
-# Sources that are Linux by design rather than by accident, each with why.
-linux_only = {
-    # Watches the workshop map folder with inotify.
-    "src/mod/etc/workshop_map_fix.cpp",
-}
-for f in sorted(set(scope["sourceFiles"]) - linux_only):
-    print("ext", f)
-PY
+	python3 tools/winport/shipped.py . | sed 's/^/ext /'
 	# AMBuilder takes src/sdk/smsdk_ext.cpp over SourceMod's when it exists.
 	if [ -f src/sdk/smsdk_ext.cpp ]; then echo "ext src/sdk/smsdk_ext.cpp"
 	else echo "ext $AM/sourcemod/public/smsdk_ext.cpp"; fi

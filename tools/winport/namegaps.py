@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Which address names the code uses have no Windows entry.
 
-    namegaps.py [REPO] [--list]
+    namegaps.py [REPO] [--list] [--shipped]
 
 Reads every name defined in gamedata/sigsegv (not windows.txt) and keeps those
 that src/ spells as a string outside a comment. Each one lands in one bucket:
@@ -12,6 +12,10 @@ that src/ spells as a string outside a comment. Each one lands in one bucket:
     bad       tools/winport/overrides.json marks its symbol `bad`
     client    a "[client]" name, for a game client a dedicated server never runs
     missing   none of the above
+
+--shipped reads only what the Windows package compiles: the sources
+shipped.py lists and every header, each without the code under a condition
+that is false on Windows.
 
 --list prints the missing names grouped by class, then the `bad` ones, in the
 form WINDOWS_COVERAGE.md uses.
@@ -26,6 +30,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 import classify  # noqa: E402
+import shipped  # noqa: E402
 
 args = [a for a in sys.argv[1:] if not a.startswith("--")]
 root = Path(args[0] if args else Path(__file__).resolve().parents[2])
@@ -52,9 +57,15 @@ for path in sorted(glob.glob(str(root / "gamedata/sigsegv/*.txt"))):
         if pair and not pair.group(1).startswith("_Z") and not defined.get(pair.group(1), {}).get("sym"):
             defined[pair.group(1)] = {"type": common.get("type"), "sym": pair.group(2)}
 
+only_shipped = "--shipped" in sys.argv
+compiled = {str(root / f) for f in shipped.sources(root)} if only_shipped else None
 source = []
 for path in glob.glob(str(root / "src/**/*.cpp"), recursive=True) + glob.glob(str(root / "src/**/*.h"), recursive=True):
+    if compiled is not None and path.endswith(".cpp") and path not in compiled:
+        continue
     text = open(path, errors="replace").read()
+    if only_shipped:
+        text = shipped.preprocess(text)
     text = re.sub(r"/\*.*?\*/", "", text, flags=re.S)
     source.append(re.sub(r"(?m)^\s*//.*$", "", text))
 quoted = set(re.findall(r'"([^"\n]+)"', "\n".join(source)))
