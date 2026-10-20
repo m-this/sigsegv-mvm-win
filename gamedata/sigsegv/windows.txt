@@ -10589,6 +10589,24 @@
 					lib   "server"
 					// verified: read by hand from CBaseCombatWeapon::GetViewModel (0x1e1950): the handle m_hWeaponFileInfo, a word at +0x642, pushed alone (cdecl, add esp 4), and 0xa6 added to the result for szViewModel, as the Linux body does. CTFWeaponBase::GetTFWpnData is inlined on Windows and is this call
 				}
+				"CStaticPropMgr::IsStaticProp"
+				{
+					type  "fixed"
+					sym   "_ZNK14CStaticPropMgr12IsStaticPropEP13IHandleEntity"
+					addr  "0x1d4290"
+					build "11138802"
+					lib   "engine"
+					// verified: read by hand in engine.dll: slot 11 of CStaticPropMgr's primary table, and the target of the sub ecx,4 thunk at slot 3 of its IStaticPropMgrServer table, where Linux has IsStaticProp(IHandleEntity*) at slot 10 and MSVC puts the two overloads the other way round. Null returns true; otherwise GetRefEHandle (vcall +8) masked with 0xffff0000 against 0x80000000, the static prop serial. thiscall, ret 4
+				}
+				"CStaticPropMgr::GetStaticProp"
+				{
+					type  "fixed"
+					sym   "_ZN14CStaticPropMgr13GetStaticPropEP13IHandleEntity"
+					addr  "0x1d3bf0"
+					build "11138802"
+					lib   "engine"
+					// verified: read by hand in engine.dll: slot 8 of CStaticPropMgr's primary table, as on Linux. Null returns null; the static prop serial test, then the index (0x1fff for an invalid handle) checked against m_StaticProps' count at +0x2c and m_StaticProps[i] (0xb0 bytes each, base at +0x20) returned at +8, its ICollideable. thiscall, ret 4
+				}
 				"UTIL_PlayerByIndex"
 				{
 					type  "fixed"
@@ -10679,6 +10697,15 @@
 					build "11138802"
 					lib   "server"
 					// string
+				}
+				"CStaticPropMgr::IsStaticProp (CBaseHandle)"
+				{
+					type  "fixed"
+					sym   "_ZNK14CStaticPropMgr12IsStaticPropE11CBaseHandle"
+					addr  "0x1d42c0"
+					build "11138802"
+					lib   "engine"
+					// verified: read by hand in engine.dll: slot 10 of CStaticPropMgr's primary table, the target of the thunk at slot 2 of its IStaticPropMgrServer table: the handle, passed by value, masked with 0xffff0000 against 0x80000000. thiscall, ret 4
 				}
 				"CSchemaAttributeType_String::BConvertStringToEconAttributeValue"
 				{
