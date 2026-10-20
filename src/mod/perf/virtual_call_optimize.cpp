@@ -961,11 +961,13 @@ namespace Mod::Perf::Virtual_Call_Optimize
 			s_Mod.Toggle(static_cast<ConVar *>(pConVar)->GetBool());
 		});
 
+#if !defined _WINDOWS
     ConVar cvar_enable_inline("sig_perf_virtual_call_optimize_inline_virtuals", "0", FCVAR_NOTIFY,
 		"Mod: Optimize common virtual calls with experimental function inline",
 		[](IConVar *pConVar, const char *pOldValue, float flOldValue){
 			s_ModInlineVirtuals.Toggle(static_cast<ConVar *>(pConVar)->GetBool());
 		});
+#endif
     // ConVar cvar_enable_virtuals("sig_perf_virtual_call_optimize_virtuals", "0", FCVAR_NOTIFY,
 	// 	"Mod: Optimize common virtual calls",
 	// 	[](IConVar *pConVar, const char *pOldValue, float flOldValue){
