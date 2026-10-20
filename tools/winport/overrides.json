@@ -5902,5 +5902,17 @@
   "bad": true,
   "build": "11117211",
   "why": "read by hand, 11117211: no body of its own. Its only Linux caller is ApplyStressDamage, and ApplyStressDamage (0x1d4010) calls CalculateObjectStress (0x2bd150) itself"
+ },
+ "_ZN9CTFPlayer18CanBeForcedToLaughEv": {
+  "name": "CTFPlayer::CanBeForcedToLaugh",
+  "rva": "0x4e4980",
+  "build": "11138802",
+  "why": "read by hand: g_pGameRules (0x10a35090), its m_bPlayingMannVsMachine byte at +0xc72, the IsBot virtual at +0x71c, GetTeamNumber (0x1f1450, mov eax,[ecx+0x22c]) against 3, setne: Linux's body, thiscall, no argument. The only Linux caller, CTFWeaponBaseMelee::DoMeleeDamage, is matched to 0x63ea70, the only caller here. The 2017 scan in src/addr/misc.cpp wanted a jnz/xor tail this build no longer has"
+ },
+ "_ZN12CTFGameRules8PrecacheEv": {
+  "name": "CTFGameRules::Precache",
+  "rva": "0x499ca0",
+  "build": "11138802",
+  "why": "Matched by consensus on 11138802 (calls CTeamplayRules::Precache at 0x348c60 first, then on a map whose clean name starts with mvm_ calls CTFPlayer::PrecacheMvM at 0x5095a0, its only caller). Func_Optimize detours it on Windows because PrecacheMvM loops back into its first five bytes."
  }
 }

@@ -15711,6 +15711,24 @@
 					lib   "engine"
 					// verified: read by hand, engine.dll: the receive list at this+0x128+n*0x12c (Linux +0x120), the fragment counts at +0x120/+0x124 of it, decompression, then HandleUpload inline for a file ('FileReceived: %s, %i bytes (ID %i)', 'ignored. File uploads are disabled!') and the buffer freed (0x1a1510) before returning true. Thiscall, ret 4
 				}
+				"CTFPlayer::CanBeForcedToLaugh"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer18CanBeForcedToLaughEv"
+					addr  "0x4e4980"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: g_pGameRules (0x10a35090), its m_bPlayingMannVsMachine byte at +0xc72, the IsBot virtual at +0x71c, GetTeamNumber (0x1f1450, mov eax,[ecx+0x22c]) against 3, setne: Linux's body, thiscall, no argument. The only Linux caller, CTFWeaponBaseMelee::DoMeleeDamage, is matched to 0x63ea70, the only caller here. The 2017 scan in src/addr/misc.cpp wanted a jnz/xor tail this build no longer has
+				}
+				"CTFGameRules::Precache"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules8PrecacheEv"
+					addr  "0x499ca0"
+					build "11138802"
+					lib   "server"
+					// verified: Matched by consensus on 11138802 (calls CTeamplayRules::Precache at 0x348c60 first, then on a map whose clean name starts with mvm_ calls CTFPlayer::PrecacheMvM at 0x5095a0, its only caller). Func_Optimize detours it on Windows because PrecacheMvM loops back into its first five bytes.
+				}
 			}
 		}
 	}
