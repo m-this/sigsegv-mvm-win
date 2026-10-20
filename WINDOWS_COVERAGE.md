@@ -25,7 +25,7 @@ Measured on 2026-10-20 against TF2 ServerVersion 11138802, `mfe/feat/winport-par
 
 The four server-side gaps on main were `MvM:MedigunShield_Damage`, `Util:Overlay_Send`, `Util:Vehicle_Fix` and `Perf:SendProp_Optimize`. The first three are ported; `SendProp_Optimize` and `Perf::Virtual_Call_Optimize_Inline_Virtuals` join `Etc:Workshop_Map_Fix` and `Perf::CSS_Bot_Vision_Optimize` outside the package. Every one of the 13 Debug and Visualize tools with a gap has at least one detour that is inlined on Windows, only exists as a GCC clone, has no symbol on Linux either, or has not been located; the section below says which.
 
-Address names, from `tools/winport/namegaps.py`. In the Windows package: 1,343 named in the compiled sources, 1,066 with a `windows.txt` entry, 183 resolved at run time, 4 recorded `bad`, 24 client-side and **66** with no Windows entry (main: 1,351, 1,066, 183, 7, 24, 71, counted with the same `shipped.py`). Over all of `src/`: 2,213 named, 1,517 table, 195 run time, 45 bad, 38 client, 418 missing (main: 2,212, 1,513, 195, 45, 38, 421). A missing name only matters when its thunk is called: several of the 66 sit in patch classes or thunks no mod registers on Windows.
+Address names, from `tools/winport/namegaps.py`. In the Windows package: 1,343 named in the compiled sources, 1,084 with a `windows.txt` entry, 183 resolved at run time, 4 recorded `bad`, 24 client-side and **48** with no Windows entry (main: 1,351, 1,066, 183, 7, 24, 71, counted with the same `shipped.py`). Over all of `src/`: 2,213 named, 1,535 table, 195 run time, 45 bad, 38 client, 400 missing (main: 2,212, 1,513, 195, 45, 38, 421). A missing name only matters when its thunk is called: several of the 48 sit in patch classes or thunks no mod registers on Windows, and 15 of them are gamedata keywords.
 
 ## Debug and Visualize tools with unresolved addresses
 
@@ -147,12 +147,12 @@ Debug, Visualize and VGUI tools, outside the package (74):
 
 ## Address names used by the code with no Windows entry
 
-Names defined in `gamedata/sigsegv` and named in the sources the Windows package compiles, outside a comment and outside code Windows does not compile, with no entry in `windows.txt`, not resolved at run time, not `bad` and not `[client]`: 66, from `tools/winport/namegaps.py --list --shipped`. Some are never reached on a dedicated server; the bed logs the ones a mission reaches (`unresolved functions called`). The free-function group also holds gamedata keywords (`addrs`, `sym`, `{`) that `namegaps.py` picks up from strings in `src/`. Grouped by class.
+Names defined in `gamedata/sigsegv` and named in the sources the Windows package compiles, outside a comment and outside code Windows does not compile, with no entry in `windows.txt`, not resolved at run time, not `bad` and not `[client]`: 48, from `tools/winport/namegaps.py --list --shipped`. Some are never reached on a dedicated server; the bed logs the ones a mission reaches (`unresolved functions called`). The free-function group also holds gamedata keywords (`addrs`, `sym`, `{`) that `namegaps.py` picks up from strings in `src/`. Grouped by class.
 
-- `Action<CTFBot>` (5): `ApplyResult`, `BuildDecoratedName [clone]`, `InvokeOnEnd`, `InvokeOnResume`, `PrintStateToConsole`
-- `Action<CZombie>` (5): `ApplyResult`, `BuildDecoratedName [clone]`, `InvokeOnEnd`, `InvokeOnResume`, `PrintStateToConsole`
+- `Action<CTFBot>` (2): `BuildDecoratedName [clone]`, `PrintStateToConsole`
+- `Action<CZombie>` (2): `BuildDecoratedName [clone]`, `PrintStateToConsole`
 - `Behavior<CTFBot>` (1): `FirstContainedResponder`
-- `CAttributeList` (4): `GetAttributeByID`, `GetAttributeByName`, `NotifyManagerOfAttributeValueChanges`, `SetRuntimeAttributeRefundableCurrency`
+- `CAttributeList` (3): `GetAttributeByID`, `GetAttributeByName`, `NotifyManagerOfAttributeValueChanges`
 - `CBaseEntity` (1): `GetTeamNumber`
 - `CModelLoader` (1): `FlushDynamicModels`
 - `CPlayer` (1): `GetEdict`
@@ -160,10 +160,8 @@ Names defined in `gamedata/sigsegv` and named in the sources the Windows package
 - `CStaticPropMgr` (3): `GetStaticPropIndex`, `LevelInit`, `LevelShutdown`
 - `CTFBotUseItem` (1): `CTFBotUseItem [C1]`
 - `CThreadLocalBase` (1): `Get`
-- `INextBot` (2): `IsRangeGreaterThan`, `IsRangeLessThan`
 - `NextBotPlayer<CTFPlayer>` (1): `GetEntity`
-- `Path` (3): `BuildTrivialPath`, `ComputePathDetails`, `Optimize`
-- `(free functions)` (35): `COM_CompressBuffer_LZSS`, `ENTINDEX`, `FireEvent`, `GEconItemSchema`, `GetParticleSystemNameFromIndex`, `MapEntity_ParseToken`, `PrecachePointTemplates`, `SendCvarValueQueryToClient`, `SendProxy_LengthTable`, `SendProxy_StringToString`, `TE_BeamPoints`, `TE_BeamRingPoint`, `TE_BreakModel`, `TE_PhysicsProp`, `TheNextBots`, `addrs`, `addrs_group`, `attribute_class`, `attribute_type`, `description_format`, `description_string`, `effect_type`, `g_arFakePorts`, `g_bUseFakeIP`, `g_nFakeIP`, `lib`, `modelloader`, `name`, `regex`, `s_StaticPropMgr`, `server`, `sigsegv`, `sym`, `{`, `}`
+- `(free functions)` (29): `COM_CompressBuffer_LZSS`, `ENTINDEX`, `FireEvent`, `GEconItemSchema`, `GetParticleSystemNameFromIndex`, `MapEntity_ParseToken`, `SendCvarValueQueryToClient`, `SendProxy_LengthTable`, `SendProxy_StringToString`, `addrs`, `addrs_group`, `attribute_class`, `attribute_type`, `description_format`, `description_string`, `effect_type`, `g_arFakePorts`, `g_bUseFakeIP`, `g_nFakeIP`, `lib`, `modelloader`, `name`, `regex`, `s_StaticPropMgr`, `server`, `sigsegv`, `sym`, `{`, `}`
 
 Recorded `bad` (4): `CAttributeList::AddAttribute`, `NDebugOverlay::Cross3DOriented_ang`, `NDebugOverlay::Cross3DOriented_mat`, `NextBotManager::CollectAllBots`.
 
@@ -190,4 +188,8 @@ The three library entries were byte-identical, so `carry.py`'s `unmoved` check s
 - `Util:Vehicle_Fix`: `CBasePlayer::GetInVehicle` has no `.part` clone on Windows and the detour sits on the function. `UpdatePunchAngles` is inline in `FireProjectile`, so a `FireProjectile` detour saves `m_vecPunchAngle` for a player in a vehicle and restores it after. `CalculatePhysicsStressDamage` is inline in `ApplyStressDamage(IPhysicsObject *, bool)` (0x1d4010), whose detour returns early for a player. `DriveVehicle` is slot 233 of `CPropVehicleDriveable`'s primary table (0x371d20) and `PassengerShouldReceiveDamage` slot 12 of `CBaseServerVehicle`'s (0x377400). Not run on the bed, to check there.
 - `MvM:MedigunShield_Damage`: `CTFMedigunShield::Create` is inline in `CWeaponMedigun::CreateMedigunShield` on Windows, so the mod colours the shield in a virtual hook on `CBaseEntity::SetOwnerEntity` (slot 18 of `CTFMedigunShield`'s table), which that code calls once on the new shield.
 - `Perf:Func_Optimize`: `CTFPlayer::PrecacheMvM` is inline in `CTFGameRules::Precache` (0x499ca0), so on Windows the Rome promo items are precached in a `Precache` detour when the map name, without a `workshop/` prefix, starts with `mvm_`.
+- `NextBotPlayer<CTFPlayer>::ReleaseCrouchButton` (ECAttr_Extensions) is a short body the trivial-body guard refused. Its only references are the `INextBotPlayerInput` slot 0x5c of `CTFBot` and `NextBotPlayer<CTFPlayer>` (.rdata 0x89338c and 0x893e34) and nothing calls or jumps to it, so its override carries `unshared` and the guard lets that one name through.
+- `Util:Overlay_Send`: the `IVEngineServer::IsDedicatedServer` detour sits on a two-byte engine.dll body the trivial-body guard refuses; the server calls it through the engine interface, so on Windows the mod hooks the interface's virtual with SourceHook and returns false while overlays are being sent.
+- `Etc:Weapon_Mimic_Teamnum` loaded its `ModifyFireBulletsDamage` hook from its constructor, before gamedata exists, so the hook pointed at slot 0 on both platforms; it now loads in `OnLoad`.
+- `Action<CZombie>::InvokeOnEnd` is 0x417d60, a body MSVC folded for several `Action<T>`; `nextbot1.cpp` only calls it, so sharing is harmless.
 - `Perf::Virtual_Call_Optimize`: the `CStaticPropMgr::IsStaticProp` (two overloads) and `GetStaticProp` replacements have MSVC `thiscall` byte forms and read `CStaticProp`'s table by its RTTI name `.?AVCStaticProp@@`; engine.dll 0x1d4290, 0x1d42c0 and 0x1d3bf0.
