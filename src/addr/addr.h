@@ -21,6 +21,10 @@ public:
 	 * folded fills several slots, and only the index says which is this one. */
 	static int GetVTIndex(const char *name);
 	
+	/* Whether the table says a short body was read and is no other function's,
+	 * so a detour on it hooks this function only. */
+	static bool IsUnshared(const char *name);
+	
 	static intptr_t GetAddrOffset(const char *dest, const char *base, intptr_t extraOffset);
 
 	static const char *ReverseLookup(const void *ptr);
@@ -65,6 +69,9 @@ public:
 	int GetVTIndex() const    { return this->m_iVTIndex; }
 	void SetVTIndex(int idx)  { this->m_iVTIndex = idx; }
 	
+	bool IsUnshared() const   { return this->m_bUnshared; }
+	void SetUnshared()        { this->m_bUnshared = true; }
+	
 protected:
 	IAddr() {}
 	
@@ -75,6 +82,7 @@ private:
 	State m_State = State::INITIAL;
 	uintptr_t m_iAddr = 0x00000000;
 	int m_iVTIndex = -1;
+	bool m_bUnshared = false;
 };
 
 extern std::map<IAddr *, int> detourAddresses;

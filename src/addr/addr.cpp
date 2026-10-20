@@ -74,6 +74,12 @@ int AddrManager::GetVTIndex(const char *name)
 	return (it == s_Addrs.end() ? -1 : (*it).second->GetVTIndex());
 }
 
+bool AddrManager::IsUnshared(const char *name)
+{
+	auto it = s_Addrs.find(std::string(name));
+	return (it != s_Addrs.end() && (*it).second->IsUnshared());
+}
+
 void *AddrManager::GetAddr(const char *name)
 {
 	auto it = s_Addrs.find(std::string(name));

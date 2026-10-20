@@ -4136,8 +4136,9 @@
  "_ZN13NextBotPlayerI9CTFPlayerE19ReleaseCrouchButtonEv": {
   "rva": "0x562440",
   "build": "11138802",
-  "why": "read by hand: slot 0x5c of the INextBotPlayerInput table at offset 0x26c8 of CTFBot, 27 slots on both platforms in the same order. Same body as Linux: and ~IN_DUCK into the button word at +4, the timer at +0x8c set to -1.0; this is the interface, so this-0x26c8 is the bot; plain ret",
-  "carried": "from 11117211 0x560c00 by tools/winport/carry.py: server.dll, 15 bytes"
+  "why": "read by hand: slot 0x5c of the INextBotPlayerInput table at offset 0x26c8 of CTFBot, 27 slots on both platforms in the same order. Same body as Linux: and ~IN_DUCK into the button word at +4, the timer at +0x8c set to -1.0; this is the interface, so this-0x26c8 is the bot; plain ret. Unshared: the only references to 0x562440 in server.dll are slot 0x5c of the INextBotPlayerInput tables of CTFBot and NextBotPlayer<CTFPlayer> (.rdata 0x89338c and 0x893e34), and no call or jmp in .text lands on it, so no other function was folded into it",
+  "carried": "from 11117211 0x560c00 by tools/winport/carry.py: server.dll, 15 bytes",
+  "unshared": true
  },
  "_ZN23CLagCompensationManager21FinishLagCompensationEP11CBasePlayer": {
   "rva": "0x2eca40",
