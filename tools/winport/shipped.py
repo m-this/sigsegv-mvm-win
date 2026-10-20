@@ -40,6 +40,25 @@ def sources(root):
     return sorted(set(scope["sourceFiles"]) - LINUX_ONLY)
 
 
+def units(root):
+    """sources() and every .cpp of this tree they #include on Windows, such as
+    stub/__merge.cpp's. An SDK source such as collisionutils.cpp is not followed."""
+    root = Path(root)
+    found, pending = set(), list(sources(root))
+    while pending:
+        path = pending.pop()
+        if path in found:
+            continue
+        found.add(path)
+        text = preprocess((root / path).read_text(errors="replace"))
+        for name in re.findall(r'^\s*#\s*include\s+"([^"]+\.cpp)"', text, re.M):
+            for candidate in (str(Path(path).parent / name), f"src/{name}"):
+                if (root / candidate).is_file():
+                    pending.append(candidate)
+                    break
+    return sorted(found)
+
+
 def preprocess(text):
     """The text with comments and code Windows never compiles blanked out."""
     text = re.sub(r"/\*.*?\*/", lambda m: re.sub(r"[^\n]", " ", m.group(0)), text, flags=re.S)

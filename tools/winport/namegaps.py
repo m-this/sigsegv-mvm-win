@@ -14,7 +14,7 @@ that src/ spells as a string outside a comment. Each one lands in one bucket:
     missing   none of the above
 
 --shipped reads only what the Windows package compiles: the sources
-shipped.py lists and every header, each without the code under a condition
+shipped.py lists, the .cpp files they include, and every header, each without the code under a condition
 that is false on Windows.
 
 --list prints the missing names grouped by class, then the `bad` ones, in the
@@ -54,7 +54,7 @@ def main():
 
     defined = defined_names(root)
     only_shipped = "--shipped" in sys.argv
-    compiled = {str(root / f) for f in shipped.sources(root)} if only_shipped else None
+    compiled = {str(root / f) for f in shipped.units(root)} if only_shipped else None
     source = []
     for path in glob.glob(str(root / "src/**/*.cpp"), recursive=True) + glob.glob(str(root / "src/**/*.h"), recursive=True):
         if compiled is not None and path.endswith(".cpp") and path not in compiled:

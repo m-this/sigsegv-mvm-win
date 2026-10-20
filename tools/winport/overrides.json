@@ -6245,5 +6245,59 @@
   "bad": true,
   "build": "11138802",
   "why": "read by hand: no body in server.dll. Nothing in server_srv.so calls it (0x68fff0); here the sorted insert, a walk of the +0x30 next links then the +0x30/+0x34 link stores, is inline in AddEvent [CBaseEntity] 0x224bd0, AddEvent 0x224cf0 and Restore 0x225cb0"
+ },
+ "_ZN11CBaseEntity5SpawnEv": {
+  "vtidx": 24,
+  "rva": "0x1305b0",
+  "build": "11138802",
+  "why": "read by hand: a lone ret on Linux (folded with DrawRBoxOverlay), so on Windows it is the shared empty body and the slot says which virtual it is: slot 24 of CBaseEntity's table, Linux 25 less the one MSVC destructor, between the matched SetTransmit (Linux 23, Windows 22), SetModel (27, 26) and ParseMapData (31, 30)"
+ },
+ "_ZNK11CBaseEntity13GetDamageTypeEv": {
+  "vtidx": 134,
+  "rva": "0x1573d0",
+  "build": "11138802",
+  "why": "read by hand: return 0 on Linux (folded with YouForgotToImplementOrDeclareServerClass), xor eax,eax; ret here, the shared body, so the slot says which virtual it is: slot 134 of CBaseEntity's table, Linux 135 less one, after RunVScripts (Linux 134, Windows 133) and before EyePosition (Windows 137) and EyeAngles (138) as the table has them"
+ },
+ "_ZN17CTFBaseProjectile9GetDamageEv": {
+  "vtidx": 135,
+  "rva": "0x208940",
+  "build": "11138802",
+  "why": "read by hand: fld [ecx+0x4fc]; ret, the float Linux reads at +0x514 (the 0x18 shift CBaseProjectile's fields show), slot 135 of CTFBaseProjectile's table, Linux 136 less one, next to GetDamageType (134) and SetDamage (136)"
+ },
+ "_ZN17CTFBaseProjectile9SetDamageEf": {
+  "vtidx": 136,
+  "rva": "0x535ae0",
+  "build": "11138802",
+  "why": "read by hand: movss [ecx+0x4fc],xmm0; ret 4, the store Linux makes at +0x514, slot 136 of CTFBaseProjectile's table, Linux 137 less one, after GetDamage (135)"
+ },
+ "_ZN11CTFStunBall6CreateERK6VectorRK6QAngleP11CBaseEntity": {
+  "bad": true,
+  "build": "11138802",
+  "why": "read by hand: no body in server.dll. Nothing in server_srv.so calls it; here CreateNoSpawn('tf_projectile_stun_ball') and DispatchSpawn are inline in CTFBat_Wood's projectile virtual 0x602be0 (0x602c3a, 0x602c50). projectiles.h builds it from those two on Windows"
+ },
+ "_ZN16CTFBall_Ornament6CreateERK6VectorRK6QAngleP11CBaseEntity": {
+  "bad": true,
+  "build": "11138802",
+  "why": "read by hand: no body in server.dll. Nothing in server_srv.so calls it; here CreateNoSpawn('tf_projectile_ball_ornament') and DispatchSpawn are inline in CTFBat_Giftwrap's projectile virtual 0x601b50. projectiles.h builds it from those two on Windows"
+ },
+ "_ZN17CTFProjectile_Jar6CreateERK6VectorRK6QAngleS2_S2_P20CBaseCombatCharacterRK13CTFWeaponInfo": {
+  "bad": true,
+  "build": "11138802",
+  "why": "read by hand: no body in server.dll. On Linux the weapon's CreateJarProjectile tail-jumps to it; here the body is inline in CTFJar::CreateJarProjectile 0x615e40 (slot 0x7d0), a thiscall virtual (ret 0x18) that a static thunk cannot stand in for"
+ },
+ "_ZN21CTFProjectile_JarMilk6CreateERK6VectorRK6QAngleS2_S2_P20CBaseCombatCharacterRK13CTFWeaponInfo": {
+  "bad": true,
+  "build": "11138802",
+  "why": "read by hand: no body in server.dll. On Linux the weapon's CreateJarProjectile tail-jumps to it; here the body is inline in CTFJarMilk::CreateJarProjectile 0x6153d0, a thiscall virtual (ret 0x18) that a static thunk cannot stand in for"
+ },
+ "_ZN21CTFProjectile_Cleaver6CreateERK6VectorRK6QAngleS2_S2_P20CBaseCombatCharacterRK13CTFWeaponInfoi": {
+  "bad": true,
+  "build": "11138802",
+  "why": "read by hand: no body in server.dll. On Linux the weapon's CreateJarProjectile tail-jumps to it; here the body is inline in CTFCleaver::CreateJarProjectile 0x615580, a thiscall virtual (ret 0x18) that a static thunk cannot stand in for"
+ },
+ "_ZN20CTFProjectile_JarGas6CreateERK6VectorRK6QAngleS2_S2_P20CBaseCombatCharacterRK13CTFWeaponInfo": {
+  "bad": true,
+  "build": "11138802",
+  "why": "read by hand: no body in server.dll. On Linux the weapon's CreateJarProjectile tail-jumps to it; here the body is inline in CTFJarGas::CreateJarProjectile 0x617580, a thiscall virtual (ret 0x18) that a static thunk cannot stand in for"
  }
 }

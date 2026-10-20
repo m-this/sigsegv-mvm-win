@@ -1596,6 +1596,16 @@
 					lib   "server"
 					// verified: read by hand: the Linux body at offsets 0x18 lower; thiscall, ret 4. Returns when the argument equals m_vecAbsVelocity (+0x250, Linux +0x268), else InvalidatePhysicsRecursive(4) (0x201520), clears EFL_DIRTY_ABSVELOCITY in m_iEFlags (+0x13c), stores it, and with a move parent (+0x178) subtracts the parent's abs velocity (CalcAbsoluteVelocity 0x1ec810 when dirty), VectorIRotate through its coordinate frame (+0x268, CalcAbsolutePosition when dirty) and writes m_vecVelocity (+0x2c4) through the NetworkStateChanged slot (+0x2f8, Linux +0x300); without one it writes the argument there. CBaseEntity::ApplyAbsVelocityImpulse (0x1ff4b0) calls it with GetAbsVelocity plus the impulse, as on Linux
 				}
+				"CBaseEntity::Spawn"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity5SpawnEv"
+					addr  "0x1305b0"
+					build "11138802"
+					lib   "server"
+					vtidx "24"
+					// verified: read by hand: a lone ret on Linux (folded with DrawRBoxOverlay), so on Windows it is the shared empty body and the slot says which virtual it is: slot 24 of CBaseEntity's table, Linux 25 less the one MSVC destructor, between the matched SetTransmit (Linux 23, Windows 22), SetModel (27, 26) and ParseMapData (31, 30)
+				}
 				"CBaseEntity::Remove"
 				{
 					type  "fixed"
@@ -2194,6 +2204,16 @@
 					build "11138802"
 					lib   "server"
 					// verified: read by hand: mov eax,[ecx+0x22c]; ret, m_iTeamNum. The VScript GetTeam/GetTeamNumber binding stores it at 0x1f3667, where Linux's binding stores 0x632800; non-virtual, 1359 direct calls
+				}
+				"CBaseEntity::GetDamageType"
+				{
+					type  "fixed"
+					sym   "_ZNK11CBaseEntity13GetDamageTypeEv"
+					addr  "0x1573d0"
+					build "11138802"
+					lib   "server"
+					vtidx "134"
+					// verified: read by hand: return 0 on Linux (folded with YouForgotToImplementOrDeclareServerClass), xor eax,eax; ret here, the shared body, so the slot says which virtual it is: slot 134 of CBaseEntity's table, Linux 135 less one, after RunVScripts (Linux 134, Windows 133) and before EyePosition (Windows 137) and EyeAngles (138) as the table has them
 				}
 				"CBaseEntity::StartTouch"
 				{
@@ -5537,6 +5557,16 @@
 					vtidx "336"
 					// verified: read by hand: empty on Linux (a lone ret), so on Windows it is the shared empty body, and only the slot says which virtual it is: slot 336 of CTFBaseBoss, the one before GetCurrencyValue (337, 0x5de290), where CTFTankBoss has its own bounds code (0x5f5010); Linux has two INextBot virtuals between them that MSVC keeps in the INextBot vtable
 				}
+				"CTFBaseProjectile::GetDamage"
+				{
+					type  "fixed"
+					sym   "_ZN17CTFBaseProjectile9GetDamageEv"
+					addr  "0x208940"
+					build "11138802"
+					lib   "server"
+					vtidx "135"
+					// verified: read by hand: fld [ecx+0x4fc]; ret, the float Linux reads at +0x514 (the 0x18 shift CBaseProjectile's fields show), slot 135 of CTFBaseProjectile's table, Linux 136 less one, next to GetDamageType (134) and SetDamage (136)
+				}
 				"CTFBaseProjectile::GetDamageType"
 				{
 					type  "fixed"
@@ -5546,6 +5576,16 @@
 					lib   "server"
 					vtidx "243"
 					// verified: read by hand: slot 243 of CTFBaseProjectile, the last of its table (Linux 246, after GetProjectileType and GetDamageForce, also the last two here). GetWeaponID through +0x3b0 (Linux +0x3b4), the damage type table, and DMG_CRITICAL or'd in for the crit flag (+0x4ec, Linux +0x504), Linux's body. Thiscall, plain ret
+				}
+				"CTFBaseProjectile::SetDamage"
+				{
+					type  "fixed"
+					sym   "_ZN17CTFBaseProjectile9SetDamageEf"
+					addr  "0x535ae0"
+					build "11138802"
+					lib   "server"
+					vtidx "136"
+					// verified: read by hand: movss [ecx+0x4fc],xmm0; ret 4, the store Linux makes at +0x514, slot 136 of CTFBaseProjectile's table, Linux 137 less one, after GetDamage (135)
 				}
 				"CTFBaseProjectile::SetScorer"
 				{
