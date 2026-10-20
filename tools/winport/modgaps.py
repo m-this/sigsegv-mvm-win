@@ -14,7 +14,8 @@ fails the whole mod, so the two are listed apart.
     modgaps.py "Pop:TFBot_Extensions" ...    those mods only, with a count of
                                              how many of them need each target
     modgaps.py --bed LOG ...            also what a bed's log says it refused
-                                        or could not hook at load
+                                        (and did not hook at its vtable slot
+                                        instead) or could not hook at load
     modgaps.py --shipped ...            only the sources the Windows package
                                         compiles (shipped.py)
 
@@ -47,6 +48,8 @@ if args[:1] == ["--bed"]:
     refused = set(re.findall(r'refused detour: [^"\n]*"([^"]+)"', log))
     refused |= set(re.findall(r'DoLoad: \\?"([^"\\]+)\\?": refused', log))
     lookupfail = set(re.findall(r'DoLoad: \\?"([^"\\]+)\\?": addr lookup failed', log))
+    # A refused detour on a virtual is hooked at its vtable slot instead.
+    refused -= set(re.findall(r'CDetour: \\?"([^"\\]+)\\?": hooked at slot', log))
     hookfail = set(re.findall(r'CVirtualHook::FAIL \\?"([^"\\]+)\\?"', log))
     args = args[2:]
 
