@@ -22,7 +22,11 @@ VTABLES = REPO / "mvm-reversed" / "Useful" / "vtable"
 #     type "sym"
 #     sym  "_ZN15CTFFlameThrower14SetWeaponStateEi"
 # so a tokeniser that sees only quoted strings pairs the wrong halves together.
-TOKEN = re.compile(r'//[^\n]*|"((?:[^"\\]|\\.)*)"|(\{)|(\})|([^\s{}"]+)')
+# A quoted string ends at the end of its line even without its closing quote,
+# as SourceMod's SMC parser ends it (TextParsers.cpp clears in_quote on '\n'):
+# misc.txt:3399 leaves one open, and read across the line break it shifts every
+# key and value after it in that file.
+TOKEN = re.compile(r'//[^\n]*|"((?:[^"\\\n]|\\.)*)"?|(\{)|(\})|([^\s{}"]+)')
 
 
 def tokens(text):
@@ -35,10 +39,6 @@ def tokens(text):
         elif closed:
             yield ("close", None)
         elif quoted is not None:
-            # One symbol in the tree is written across a line break, which puts a
-            # newline and four tabs inside the value. Left in, it makes c++filt
-            # emit one line more than it was given and every name after it is
-            # attributed to the wrong address.
             yield ("str", quoted.strip())
         elif bare is not None:
             yield ("str", bare.strip())

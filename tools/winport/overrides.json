@@ -6045,5 +6045,259 @@
   "rva": "0x417d60",
   "build": "11138802",
   "why": "read by hand: the ENDING body Action<CZombie>::ApplyResult (0x5bf4e0) calls. MSVC folded the identical InvokeOnEnd of several Action<T> into this one body, which is fine for the call thunk nextbot1.cpp makes of it; thiscall, ret 0xc"
+ },
+ "_ZNK6ActionI6CTFBotE19PrintStateToConsoleEv": {
+  "rva": "0x562000",
+  "build": "11138802",
+  "why": "read by hand: the three calls of Action<CTFBot>::ApplyResult (0x550880) after CHANGE_TO, SUSPEND_FOR and DONE land here. It clears DebugString's static buffer (0x10b8e340), walks m_parent (+0xc) to the root, calls BuildDecoratedName (0x417ac0) and prints the result split at '(', ')' and '<' through ConColorMsg, as Linux 0xea0cc0 does. thiscall, no arguments, plain ret"
+ },
+ "_ZNK6ActionI7CZombieE19PrintStateToConsoleEv": {
+  "rva": "0x5c0a10",
+  "build": "11138802",
+  "why": "read by hand: the three calls of Action<CZombie>::ApplyResult (0x5bf4e0) after CHANGE_TO, SUSPEND_FOR and DONE land here; the same body as Action<CTFBot>'s (0x562000) on CZombie's own DebugString buffer (0x10b94d48). thiscall, no arguments, plain ret"
+ },
+ "_ZNK6ActionI6CTFBotE18BuildDecoratedNameEPcPKS1_": {
+  "name": "Action<CTFBot>::BuildDecoratedName [clone]",
+  "rva": "0x417ac0",
+  "build": "11138802",
+  "why": "read by hand: MSVC folded every Action<T>::BuildDecoratedName into this one body, called by each PrintStateToConsole and DebugString (22 calls). GetName (vcall +0xa8, Linux +0xac) appended with V_strncat (0x6e66f0), then '( ' and the child (+0x10) recursively and ' )', then '<<' and the action we suspended (+0x14) recursively, as Linux's .isra clone does. Unlike that clone it keeps this: thiscall (buf, action), ret 8, which is what the thunk passes"
+ },
+ "_ZNK6ActionI7CZombieE18BuildDecoratedNameEPcPKS1_": {
+  "name": "Action<CZombie>::BuildDecoratedName [clone]",
+  "rva": "0x417ac0",
+  "build": "11138802",
+  "why": "read by hand: MSVC folded every Action<T>::BuildDecoratedName into this one body, called by each PrintStateToConsole and DebugString (22 calls). GetName (vcall +0xa8, Linux +0xac) appended with V_strncat (0x6e66f0), then '( ' and the child (+0x10) recursively and ' )', then '<<' and the action we suspended (+0x14) recursively, as Linux's .isra clone does. Unlike that clone it keeps this: thiscall (buf, action), ret 8, which is what the thunk passes"
+ },
+ "_ZNK8BehaviorI6CTFBotE23FirstContainedResponderEv": {
+  "rva": "0x297d20",
+  "build": "11138802",
+  "why": "read by hand: slot 1 of Behavior<CTFBot>'s vtable (0x10893e54), after the scalar deleting destructor; Linux has it at slot 2 after its two destructors. mov eax,[ecx+8]; ret, Linux's body. MSVC folds other getters of +8 into it, which a call does not mind"
+ },
+ "_ZNK14CAttributeList16GetAttributeByIDEi": {
+  "rva": "0x3c4400",
+  "build": "11138802",
+  "why": "read by hand: the loop of Linux 0x9f0a40. For each attribute (16 bytes, data at +4, count at +0x10) GetItemSchema (0x3b92b0) and GetAttributeDefinition (0x3b98d0) of its index at +4, compare the definition's index with the argument, return the element or null. thiscall, ret 4"
+ },
+ "_ZNK11CBaseEntity13GetTeamNumberEv": {
+  "rva": "0x1f1450",
+  "build": "11138802",
+  "why": "read by hand: mov eax,[ecx+0x22c]; ret, m_iTeamNum. The VScript GetTeam/GetTeamNumber binding stores it at 0x1f3667, where Linux's binding stores 0x632800; non-virtual, 1359 direct calls"
+ },
+ "_ZN13CTFBotUseItemC1EP13CTFWeaponBase": {
+  "rva": "0x5781e0",
+  "build": "11138802",
+  "why": "read by hand: writes CTFBotUseItem's vtables (0x1089a8a0, 0x1089aa10), zeroes the Action fields, sets the weapon handle (+0x34) from the weapon's GetRefEHandle, as Linux 0xe50a00 does. thiscall, ret 4. Its one caller is CTFBot::OpportunisticallyUseWeaponAbilities (0x561200) right after operator new; Linux calls it twice from there"
+ },
+ "_ZL9FireEventP9EventInfoPKc": {
+  "name": "FireEvent",
+  "rva": "0x5eea20",
+  "build": "11138802",
+  "why": "read by hand: the only reference to 'WaveSpawnPopulator: Can't find target entity '%s' for %s'. The whole function, null info check included, where Linux keeps the .part.0 clone GCC split after that check: FindEntityByName on the target (+5), then g_EventQueue.AddEvent with the action (+0x111) and the variant and delay (+0x218 to +0x22c). cdecl (info, name), plain ret; 7 callers, as Linux has"
+ },
+ "_Z15GEconItemSchemav": {
+  "rva": "0x3b92b0",
+  "build": "11138802",
+  "why": "read by hand: call ItemSystem (0x3c1410); add eax,4; ret. GetItemSchema has the same source body and MSVC folded the two into this address, which the table already gives GetItemSchema"
+ },
+ "_Z20MapEntity_ParseTokenPKcPc": {
+  "rva": "0x2982d0",
+  "build": "11138802",
+  "why": "read by hand: Linux 0x74a5f0's body: clear the token, null data returns null, build the break-character table once (flag 0x10998588, table 0x10a37e78), skip whitespace and // comments, copy a quoted string up to 0x800 bytes, else a break character or a word. cdecl (data, token), plain ret; 13 callers, among them MapEntity_ParseAllEntities (0x297100) right before its '{' check"
+ },
+ "_Z21SendProxy_LengthTablePK8SendPropPKvS3_P20CSendProxyRecipientsi": {
+  "name": "SendProxy_LengthTable",
+  "rva": "0x23eb60",
+  "build": "11138802",
+  "why": "the misc.txt pattern for this name, 558bec8b45088b404cff7014ff70108b4008ff750cffd08b451083c40c5dc3, matches server.dll here and nowhere else. Its one reference pushes it as the proxy of the 'lengthproxy' data table prop (0x23e9e7), as Linux's array props do"
+ },
+ "_Z24SendProxy_StringToStringPK8SendPropPKvS3_P8DVariantii": {
+  "rva": "0x23e740",
+  "build": "11138802",
+  "why": "read by hand: mov eax,[ebp+0x14]; mov ecx,[ebp+0x10]; mov [eax],ecx, out->m_pString = pData, Linux 0x8eeaa0's body. All 24 references push it as the proxy argument of SendPropString (0x23e4f0), m_netlookupFilename's among them, which is the address sendprop_optimize compares against"
+ },
+ "_Z26SendCvarValueQueryToClientP7IClientPKcb": {
+  "lib": "engine",
+  "rva": "0x134a00",
+  "build": "11138802",
+  "why": "read by hand, engine.dll: the cookie counter, neg on the bool, SVC_GetCvarValue sent through the client's SendNetMsg (+0x74, Linux +0x78), then its destructor, as Linux does. cdecl; its one caller is CVEngineServer::StartQueryCvarValue (0x13c6f0)"
+ },
+ "g_nFakeIP": {
+  "lib": "engine",
+  "rva": "0x618768",
+  "build": "11138802",
+  "why": "read by hand, engine.dll: CSteam3Server's OnFakeIPResult (0x139dc0) stores the result's IP (+0x8c) here, and Shutdown (0x13a9e0) clears it before g_arFakePorts, in Linux's order"
+ },
+ "g_arFakePorts": {
+  "lib": "engine",
+  "rva": "0x61876c",
+  "build": "11138802",
+  "why": "read by hand, engine.dll: OnFakeIPResult (0x139dc0) fills it with a loop of 16-bit stores right after g_nFakeIP (0x618768); Shutdown (0x13a9e0) clears it next, as Linux does"
+ },
+ "g_bUseFakeIP": {
+  "lib": "engine",
+  "rva": "0x618760",
+  "build": "11138802",
+  "why": "read by hand, engine.dll: CSteam3Server::Activate (0x1392e0) stores the ShouldUseSteamFakeIP answer in this byte and compares it before Net_CheckOpenFakeUDPPorts(0) (0x1b0000), as Linux does"
+ },
+ "modelloader": {
+  "lib": "engine",
+  "rva": "0x3c8100",
+  "build": "11138802",
+  "why": "read by hand, engine.dll: the pointer 11 matched referrers of the Linux global read, CGameServer::GetModel among them. It holds 0x103c8348, whose vtable is CModelLoader's (0x1030d87c)"
+ },
+ "_ZN12CModelLoader18FlushDynamicModelsEv": {
+  "lib": "engine",
+  "rva": "0xfc6a0",
+  "build": "11138802",
+  "why": "read by hand, engine.dll: slot 0x6c of CModelLoader's vtable, the slot Linux's table of the same length holds it at; push 1; call InternalUpdateDynamicModels (0xff570); ret, the Linux body"
+ },
+ "_ZNK14CStaticPropMgr18GetStaticPropIndexEP13IHandleEntity": {
+  "lib": "engine",
+  "rva": "0x1d3ca0",
+  "build": "11138802",
+  "why": "read by hand, engine.dll: slot 0x30 of CStaticPropMgr's vtable (0x1032dba8); the handle's index with the -1 and 0x1fff case of the Linux body, thiscall, ret 4"
+ },
+ "_ZN14CStaticPropMgr9LevelInitEv": {
+  "lib": "engine",
+  "rva": "0x1d43a0",
+  "build": "11138802",
+  "why": "read by hand, engine.dll: slot 2 of CStaticPropMgr's vtable; tests and sets the level flag at +0x5c, with UnserializeStaticProps inlined, as Linux's LevelInit does"
+ },
+ "_ZN14CStaticPropMgr13LevelShutdownEv": {
+  "lib": "engine",
+  "rva": "0x1d46c0",
+  "build": "11138802",
+  "why": "read by hand, engine.dll: slot 5 of CStaticPropMgr's vtable, the Linux body"
+ },
+ "_ZL15s_StaticPropMgr": {
+  "lib": "engine",
+  "rva": "0x3cf950",
+  "build": "11138802",
+  "why": "read by hand, engine.dll: the atexit stub at 0x2e6420 runs mov ecx,0x103cf950; jmp 0x1d1680, the destructor writing CStaticPropMgr's vtable (0x1032dba8); the accessor at 0x1d4ac0 returns this address"
+ },
+ "_ZNK11CStaticProp13GetRefEHandleEv": {
+  "lib": "engine",
+  "rva": "0x1d3b20",
+  "build": "11138802",
+  "why": "read by hand, engine.dll: slot 2 of CStaticProp's primary vtable, lea eax,[ecx+0x34]; ret. MSVC folds another slot into it, which a call does not mind"
+ },
+ "_ZNK16CThreadLocalBase3GetEv": {
+  "lib": "tier0",
+  "rva": "0xdff0",
+  "build": "11138802",
+  "why": "tier0.dll exports it as ?Get@CThreadLocalBase@@QBEPAXXZ, CThreadLocalBase::Get() const, at this address. thiscall, plain ret"
+ },
+ "_ZN11CStaticProp15GetEntityHandleEv": {
+  "lib": "engine",
+  "bad": true,
+  "build": "11138802",
+  "why": "read by hand, engine.dll: the only body is 0x1d3ab0, lea eax,[ecx-4]; ret, in the ICollideable sub-table at +4 of CStaticProp. It expects this to be the ICollideable part, not the object as the Linux one and the thunk pass, so it would return a pointer 4 bytes off. virtual_call_optimize's patch that would use it is commented out"
+ },
+ "_ZNK14CAttributeList18GetAttributeByNameEPKc": {
+  "bad": true,
+  "build": "11138802",
+  "why": "read by hand: no body in server.dll. Nothing in server_srv.so calls it either; MSVC dropped it. The three functions here calling both GetAttributeDefinitionByName (0x3b9900) and GetAttributeDefinition (0x3b98d0) are 0x3a1460, 0x55bbf0 and 0x5f72a0, each hundreds of instructions. econ.h defines it on Windows from those two"
+ },
+ "_ZN14CAttributeList36NotifyManagerOfAttributeValueChangesEv": {
+  "bad": true,
+  "build": "11138802",
+  "why": "read by hand: no body in server.dll. Nothing in server_srv.so calls it, and no function here is the null check on m_pManager (+0x18) and tail call of OnAttributeValuesChanged; callers such as 0x39f220 inline it (call [edx+0x34] on the manager). econ.cpp defines it on Windows"
+ },
+ "_Z8ENTINDEXP11CBaseEntity": {
+  "bad": true,
+  "build": "11138802",
+  "why": "read by hand: no body in server.dll. Nothing in server_srv.so calls it; here every copy is inline, e.g. 0x30ed90+0x6 to +0x15: the edict at +0x18 and movsx of its index at +6. Only client_cmds' ENTINDEX_NATIVE benchmark asks for it; the inline ENTINDEX does the work"
+ },
+ "_Z30GetParticleSystemNameFromIndexi": {
+  "bad": true,
+  "build": "11138802",
+  "why": "read by hand: no body in server.dll. Nothing in server_srv.so calls it, and the ParticleEffectNames table pointer (0x10a33ea0) has four references, its creation (0x26fc34), the AddString of 'error' (0x26fd36), GetParticleSystemIndex (0x27187d) and PrecacheParticleSystem (0x2722c5). particles.h does the Linux body on Windows through networkstringtable"
+ },
+ "_Z23COM_CompressBuffer_LZSSPKvjPjj": {
+  "lib": "engine",
+  "bad": true,
+  "build": "11138802",
+  "why": "read by hand: no body in engine.dll. Nothing in engine_srv.so calls it; here CLZSS::Compress (0x24b510) has one caller, 0x1c5a80, which uses a 0x800 window where this one sets 0x1000, and CompressNoAlloc (0x24b560) is called only by Compress and COM_BufferToBufferCompress_LZSS (0x15d8a0). item_common's wrapper of it has no caller"
+ },
+ "_ZNK13NextBotPlayerI9CTFPlayerE9GetEntityEv": {
+  "bad": true,
+  "build": "11138802",
+  "why": "read by hand: 0x5533c0, lea eax,[ecx-0x2668]; ret, is only in the INextBot sub-table at +0x2668 of NextBotPlayer<CTFPlayer> (slot 0xb8), taking the INextBot part as this. MSVC does not repeat it in the primary table, which is where the vfunc thunk looks, so it cannot link. nextbot1.cpp's INextBot::GetEntity is the body of a pure virtual nothing calls by name; Windows leaves it out"
+ },
+ "_ZN15CBaseProjectile25CollideWithTeammatesThinkEv": {
+  "unshared": true,
+  "rva": "0x20f020",
+  "build": "11138802",
+  "why": "read by hand: c6 81 b4 04 00 00 01 c3, the byte at +0x4b4 set to 1 (+0x4cc on Linux), the think SetLauncher (push at 0x20f3d5) and Spawn (0x20f73f) hand to SetThink, as ResetCollideWithTeammates and Spawn do on Linux. Unshared: those two pushes are its only references, no call or jmp lands on it, and the 8 bytes occur once in server.dll, as the body does once in server_srv.so"
+ },
+ "_ZN11CBaseObject9HasSapperEv": {
+  "unshared": true,
+  "rva": "0x4c2d50",
+  "build": "11138802",
+  "why": "read by hand: mov al,[ecx+0xa4c]; ret, the byte Linux reads at +0xa64 (the same 0x18 shift as CBaseProjectile's +0x4cc/+0x4b4). 29 calls from 22 functions; 10 of the 13 the matcher paired are Linux callers (CObjectSapper and CObjectSentrygun::OnTakeDamage, DetonateObjectOfType, CanPickupBuilding, SelectMoreDangerousThreatInternal, CTFBotEngineerBuilding Update and UpgradeAndMaintainBuildings, DoTeleporterOverride, BuildingHealingArrow, DoSwingTraceInternal); the other three are weak pairings, e.g. 0x4fd3c0, paired with CTFBotSpySap's constructor, is a CTFPlayer method testing it on a building after GetType. 0x4c18c0 was another build's. Unshared: the 7 bytes occur once in server.dll and the body once in server_srv.so, so no other function was folded into it"
+ },
+ "_ZN14CTFFlameEntity6CreateERK6VectorRK6QAngleP11CBaseEntityfifbb": {
+  "bad": true,
+  "build": "11138802",
+  "why": "read by hand: no body in server.dll. Nothing in server_srv.so calls it; its body calls CBaseEntity::Create on 'tf_flame', and the one 'tf_flame' string here (0x8cf8a0) is pushed only by the factory registration at 0x50cb5. Its mult_flame_size and mult_flame_life hooks are only in Spawn (0x60dfc0, slot 0x60, Linux slot 0x64) and HookAttributes (0x46f22c)"
+ },
+ "_ZN11CEventQueue8AddEventEP28EventQueuePrioritizedEvent_t": {
+  "bad": true,
+  "build": "11138802",
+  "why": "read by hand: no body in server.dll. Nothing in server_srv.so calls it (0x68fff0); here the sorted insert, a walk of the +0x30 next links then the +0x30/+0x34 link stores, is inline in AddEvent [CBaseEntity] 0x224bd0, AddEvent 0x224cf0 and Restore 0x225cb0"
+ },
+ "_ZN11CBaseEntity5SpawnEv": {
+  "vtidx": 24,
+  "rva": "0x1305b0",
+  "build": "11138802",
+  "why": "read by hand: a lone ret on Linux (folded with DrawRBoxOverlay), so on Windows it is the shared empty body and the slot says which virtual it is: slot 24 of CBaseEntity's table, Linux 25 less the one MSVC destructor, between the matched SetTransmit (Linux 23, Windows 22), SetModel (27, 26) and ParseMapData (31, 30)"
+ },
+ "_ZNK11CBaseEntity13GetDamageTypeEv": {
+  "vtidx": 134,
+  "rva": "0x1573d0",
+  "build": "11138802",
+  "why": "read by hand: return 0 on Linux (folded with YouForgotToImplementOrDeclareServerClass), xor eax,eax; ret here, the shared body, so the slot says which virtual it is: slot 134 of CBaseEntity's table, Linux 135 less one, after RunVScripts (Linux 134, Windows 133) and before EyePosition (Windows 137) and EyeAngles (138) as the table has them"
+ },
+ "_ZN17CTFBaseProjectile9GetDamageEv": {
+  "vtidx": 135,
+  "rva": "0x208940",
+  "build": "11138802",
+  "why": "read by hand: fld [ecx+0x4fc]; ret, the float Linux reads at +0x514 (the 0x18 shift CBaseProjectile's fields show), slot 135 of CTFBaseProjectile's table, Linux 136 less one, next to GetDamageType (134) and SetDamage (136)"
+ },
+ "_ZN17CTFBaseProjectile9SetDamageEf": {
+  "vtidx": 136,
+  "rva": "0x535ae0",
+  "build": "11138802",
+  "why": "read by hand: movss [ecx+0x4fc],xmm0; ret 4, the store Linux makes at +0x514, slot 136 of CTFBaseProjectile's table, Linux 137 less one, after GetDamage (135)"
+ },
+ "_ZN11CTFStunBall6CreateERK6VectorRK6QAngleP11CBaseEntity": {
+  "bad": true,
+  "build": "11138802",
+  "why": "read by hand: no body in server.dll. Nothing in server_srv.so calls it; here CreateNoSpawn('tf_projectile_stun_ball') and DispatchSpawn are inline in CTFBat_Wood's projectile virtual 0x602be0 (0x602c3a, 0x602c50). projectiles.h builds it from those two on Windows"
+ },
+ "_ZN16CTFBall_Ornament6CreateERK6VectorRK6QAngleP11CBaseEntity": {
+  "bad": true,
+  "build": "11138802",
+  "why": "read by hand: no body in server.dll. Nothing in server_srv.so calls it; here CreateNoSpawn('tf_projectile_ball_ornament') and DispatchSpawn are inline in CTFBat_Giftwrap's projectile virtual 0x601b50. projectiles.h builds it from those two on Windows"
+ },
+ "_ZN17CTFProjectile_Jar6CreateERK6VectorRK6QAngleS2_S2_P20CBaseCombatCharacterRK13CTFWeaponInfo": {
+  "bad": true,
+  "build": "11138802",
+  "why": "read by hand: no body in server.dll. On Linux the weapon's CreateJarProjectile tail-jumps to it; here the body is inline in CTFJar::CreateJarProjectile 0x615e40 (slot 0x7d0), a thiscall virtual (ret 0x18) that a static thunk cannot stand in for"
+ },
+ "_ZN21CTFProjectile_JarMilk6CreateERK6VectorRK6QAngleS2_S2_P20CBaseCombatCharacterRK13CTFWeaponInfo": {
+  "bad": true,
+  "build": "11138802",
+  "why": "read by hand: no body in server.dll. On Linux the weapon's CreateJarProjectile tail-jumps to it; here the body is inline in CTFJarMilk::CreateJarProjectile 0x6153d0, a thiscall virtual (ret 0x18) that a static thunk cannot stand in for"
+ },
+ "_ZN21CTFProjectile_Cleaver6CreateERK6VectorRK6QAngleS2_S2_P20CBaseCombatCharacterRK13CTFWeaponInfoi": {
+  "bad": true,
+  "build": "11138802",
+  "why": "read by hand: no body in server.dll. On Linux the weapon's CreateJarProjectile tail-jumps to it; here the body is inline in CTFCleaver::CreateJarProjectile 0x615580, a thiscall virtual (ret 0x18) that a static thunk cannot stand in for"
+ },
+ "_ZN20CTFProjectile_JarGas6CreateERK6VectorRK6QAngleS2_S2_P20CBaseCombatCharacterRK13CTFWeaponInfo": {
+  "bad": true,
+  "build": "11138802",
+  "why": "read by hand: no body in server.dll. On Linux the weapon's CreateJarProjectile tail-jumps to it; here the body is inline in CTFJarGas::CreateJarProjectile 0x617580, a thiscall virtual (ret 0x18) that a static thunk cannot stand in for"
  }
 }

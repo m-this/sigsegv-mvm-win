@@ -64,17 +64,6 @@ for path in sorted(glob.glob(str(root / "gamedata/sigsegv/*.txt"))):
         for name, entry in found:
             if entry.get("sym") or name not in linux:
                 linux[name] = entry
-        # classify.py loses some addrs_group pairs; emitgamedata.py reads
-        # them the same way.
-        common = {}
-        for line in open(path).read().split("\n"):
-            line = line.split("//")[0].strip()
-            kv = re.match(r'^(type|lib)\s+"([^"]*)"$', line)
-            if kv:
-                common[kv.group(1)] = kv.group(2)
-            pair = re.match(r'^"([^"]+)"\s+"([^"]+)"$', line)
-            if pair and not pair.group(1).startswith("_Z") and not linux.get(pair.group(1), {}).get("sym"):
-                linux[pair.group(1)] = {"type": common.get("type"), "sym": pair.group(2)}
 for path in glob.glob(str(root / "src/addr/*.cpp")):
     text = open(path).read()
     for m in re.finditer(r'GetName\(\) const override\s*\{\s*return "([^"]+)"', text):

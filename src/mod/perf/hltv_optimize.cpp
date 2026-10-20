@@ -218,6 +218,7 @@ namespace Mod::Perf::HLTV_Optimize
         return result;
     }
 
+#if !defined _WINDOWS
     MemberFuncThunk<CPlayer *, edict_t *> ft_CPlayer_GetEdict("CPlayer::GetEdict");
     DETOUR_DECL_MEMBER(bool, CPlayer_IsSourceTV)
     {
@@ -227,6 +228,7 @@ namespace Mod::Perf::HLTV_Optimize
         auto result = DETOUR_MEMBER_CALL();
         return result || (cbaseplayer != nullptr && (create_hltv_bot == edict->m_EdictIndex || cbaseplayer->IsHLTV()));
     }
+#endif
 
 #if defined _WINDOWS
     /* SourceMod's Windows build has no symbols for CPlayer, but IsSourceTV is

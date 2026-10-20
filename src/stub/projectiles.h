@@ -278,14 +278,32 @@ class CTFProjectile_ThrowableRepel : public CTFProjectile_Throwable {};
 class CTFStunBall : public CTFGrenadePipebombProjectile 
 {
 public:
+#if defined _WINDOWS
+	static CTFStunBall *Create(const Vector &vecOrigin, const QAngle &vecAngles,  CBaseEntity *pOwner)
+	{
+		auto pBall = static_cast<CTFStunBall *>(CBaseEntity::CreateNoSpawn("tf_projectile_stun_ball", vecOrigin, vecAngles, pOwner));
+		if (pBall != nullptr) DispatchSpawn(pBall);
+		return pBall;
+	}
+#else
 	static CTFStunBall *Create(const Vector &vecOrigin, const QAngle &vecAngles,  CBaseEntity *pOwner) {return ft_Create(vecOrigin, vecAngles, pOwner); }
+#endif
 private:
 	static StaticFuncThunk<CTFStunBall *,const Vector &, const QAngle &, CBaseEntity *> ft_Create;
 };
 class CTFBall_Ornament : public CTFStunBall
 {
 public:
+#if defined _WINDOWS
+	static CTFBall_Ornament *Create(const Vector &vecOrigin, const QAngle &vecAngles,  CBaseEntity *pOwner)
+	{
+		auto pBall = static_cast<CTFBall_Ornament *>(CBaseEntity::CreateNoSpawn("tf_projectile_ball_ornament", vecOrigin, vecAngles, pOwner));
+		if (pBall != nullptr) DispatchSpawn(pBall);
+		return pBall;
+	}
+#else
 	static CTFBall_Ornament *Create(const Vector &vecOrigin, const QAngle &vecAngles,  CBaseEntity *pOwner) {return ft_Create(vecOrigin, vecAngles, pOwner); }
+#endif
 private:
 	static StaticFuncThunk<CTFBall_Ornament *,const Vector &, const QAngle &, CBaseEntity *> ft_Create;
 };
