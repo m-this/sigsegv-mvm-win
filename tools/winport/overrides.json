@@ -5952,5 +5952,40 @@
   "build": "11138802",
   "vtidx": 12,
   "why": "read by hand: slot 12 of CBaseServerVehicle's table, as on Linux. Null m_pDrivableVehicle (+0x30) returns true, otherwise a tail jump to its IDrivableVehicle slot +0x3c. thiscall, ret 4"
+ },
+ "_ZN4Path18ComputePathDetailsEP8INextBotRK6Vector": {
+  "rva": "0x429020",
+  "build": "11138802",
+  "why": "read by hand: the only function that pushes the VPROF name 'Path::ComputePathDetails' (0x42906a); called by Path::AssemblePrecomputedPath (0x428940) and Path::Compute<CTFBotPathCost>(INextBot *, CBaseCombatCharacter *, ...) (0x588e7f, after NavAreaBuildPath as on Linux); thiscall, ret 8"
+ },
+ "_ZN4Path16BuildTrivialPathEP8INextBotRK6Vector": {
+  "rva": "0x428b20",
+  "build": "11138802",
+  "why": "read by hand: Linux's callees in the same order, CNavMesh::GetNearestNavArea (0x409a60) twice then CNavArea::GetZ (0x3e4090) twice, then a virtual call; called by the same Path::Compute<CTFBotPathCost> and AssemblePrecomputedPath as ComputePathDetails; thiscall, ret 8"
+ },
+ "_ZN4Path8OptimizeEP8INextBot": {
+  "rva": "0x130600",
+  "build": "11138802",
+  "why": "read by hand: empty on Linux (one ret). Path::Compute<CTFBotPathCost> (0x588be0) calls 0x130600 right after ComputePathDetails and before PostProcess (0x588e9e), where Linux calls Optimize: MSVC folded the empty body into the shared ret 4 stub, so a call through it does nothing, as on Linux. Not to be detoured"
+ },
+ "_Z13TE_BeamPointsR16IRecipientFilterfPK6VectorS3_iiiifffifiiiii": {
+  "rva": "0x43bc80",
+  "build": "11138802",
+  "why": "read by hand: CTempEntsSystem's table is Linux's less one destructor slot, and each of its TE methods tests SuppressTE then calls its TE_ function with every argument; BeamPoints (slot 0x14, 0x439a60, ret 0x48 for 18 arguments) calls this, which ends in CBaseTempEntity::Create (0x4358c0); cdecl"
+ },
+ "_Z16TE_BeamRingPointR16IRecipientFilterfRK6Vectorffiiiiffifiiiiii": {
+  "rva": "0x43c460",
+  "build": "11138802",
+  "why": "read by hand: CTempEntsSystem's table is Linux's less one destructor slot, and each of its TE methods tests SuppressTE then calls its TE_ function with every argument; BeamRingPoint (slot 0x20, 0x439c40, ret 0x4c for 19 arguments) calls this, which ends in CBaseTempEntity::Create (0x4358c0); cdecl"
+ },
+ "_Z13TE_BreakModelR16IRecipientFilterfRK6VectorRK6QAngleS3_S3_iiifi": {
+  "rva": "0x43d460",
+  "build": "11138802",
+  "why": "read by hand: CTempEntsSystem's table is Linux's less one destructor slot, and each of its TE methods tests SuppressTE then calls its TE_ function with every argument; BreakModel (slot 0x30, 0x439e30, ret 0x2c for 11 arguments) calls this, which ends in CBaseTempEntity::Create (0x4358c0); cdecl"
+ },
+ "_Z14TE_PhysicsPropR16IRecipientFilterfiiRK6VectorRK6QAngleS3_ii": {
+  "rva": "0x440fe0",
+  "build": "11138802",
+  "why": "read by hand: CTempEntsSystem's table is Linux's less one destructor slot, and each of its TE methods tests SuppressTE then calls its TE_ function with every argument; PhysicsProp (slot 0x9c, 0x43a970, ret 0x24 for 9 arguments) calls this, which ends in CBaseTempEntity::Create (0x4358c0); cdecl"
  }
 }
