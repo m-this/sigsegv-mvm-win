@@ -6035,5 +6035,15 @@
   "rva": "0x2f6cc0",
   "build": "11138802",
   "why": "Called from CServerGameDLL::LevelInit (0x26f620). Same body as Linux: walks the g_PointTemplates handles, calls slot 0x31c on each live one (0x320 on Linux, one destructor fewer), then zeroes the count."
+ },
+ "_ZN6ActionI7CZombieE14InvokeOnResumeEPS0_P8BehaviorIS0_EPS1_": {
+  "rva": "0x5bfe60",
+  "build": "11138802",
+  "why": "read by hand: the RESUMING body that Action<CZombie>::ApplyResult (0x5bf4e0) calls and that calls it back; same shape as Action<CTFBot>::InvokeOnResume (0x557960); thiscall with the ActionResult return pointer, ret 0x10"
+ },
+ "_ZN6ActionI7CZombieE11InvokeOnEndEPS0_P8BehaviorIS0_EPS1_": {
+  "rva": "0x417d60",
+  "build": "11138802",
+  "why": "read by hand: the ENDING body Action<CZombie>::ApplyResult (0x5bf4e0) calls. MSVC folded the identical InvokeOnEnd of several Action<T> into this one body, which is fine for the call thunk nextbot1.cpp makes of it; thiscall, ret 0xc"
  }
 }

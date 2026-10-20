@@ -50,6 +50,24 @@
 					lib   "server"
 					// verified: read by hand: the ApplyResult instance (CHANGE_TO, SUSPEND_FOR and DONE, RESUME debug strings) that CZombieBehavior::Update (0x5c0f00) calls; thiscall, ret 0x14
 				}
+				"Action<CZombie>::InvokeOnEnd"
+				{
+					type  "fixed"
+					sym   "_ZN6ActionI7CZombieE11InvokeOnEndEPS0_P8BehaviorIS0_EPS1_"
+					addr  "0x417d60"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: the ENDING body Action<CZombie>::ApplyResult (0x5bf4e0) calls. MSVC folded the identical InvokeOnEnd of several Action<T> into this one body, which is fine for the call thunk nextbot1.cpp makes of it; thiscall, ret 0xc
+				}
+				"Action<CZombie>::InvokeOnResume"
+				{
+					type  "fixed"
+					sym   "_ZN6ActionI7CZombieE14InvokeOnResumeEPS0_P8BehaviorIS0_EPS1_"
+					addr  "0x5bfe60"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: the RESUMING body that Action<CZombie>::ApplyResult (0x5bf4e0) calls and that calls it back; same shape as Action<CTFBot>::InvokeOnResume (0x557960); thiscall with the ActionResult return pointer, ret 0x10
+				}
 				"CZombieIntention::Reset"
 				{
 					type  "fixed"
