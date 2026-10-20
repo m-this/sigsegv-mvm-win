@@ -23,6 +23,11 @@ LINUX_ONLY = {
     "src/mod/etc/workshop_map_fix.cpp",
 }
 
+# What a TF2 server.dll build defines (AMBuildScript, src/common.h) and what it
+# does not.
+DEFINED = {"_WINDOWS", "_MSC_VER", "SE_IS_TF2", "SE_IS_SDK2013_BASED"}
+UNDEFINED = {"_LINUX", "__GNUC__", "PLATFORM_64BITS", "SE_IS_CSS", "SE_IS_HL2DM", "SE_IS_SDK2013"}
+
 
 def sources(root):
     text = (Path(root) / "AMBuilder").read_text()
@@ -61,7 +66,7 @@ def preprocess(text):
 
 
 def evaluate(cond):
-    """True or False for the conditions that decide Windows, None (kept) otherwise."""
+    """True or False for the conditions that decide a TF2 Windows build, None (kept) otherwise."""
     cond = cond.replace("(", " ").replace(")", " ").split("//")[0].strip()
     if "&&" in cond and "||" not in cond:
         terms = [evaluate(t) for t in cond.split("&&")]
@@ -73,10 +78,9 @@ def evaluate(cond):
         return False
     if cond == "1":
         return True
-    m = re.fullmatch(r"(!?)\s*defined\s+(_WINDOWS|_MSC_VER|_LINUX|__GNUC__|PLATFORM_64BITS)", cond)
-    if m:
-        on = m.group(2) in ("_WINDOWS", "_MSC_VER")
-        return on != bool(m.group(1))
+    m = re.fullmatch(r"(!?)\s*defined\s+(\w+)", cond)
+    if m and m.group(2) in DEFINED | UNDEFINED:
+        return (m.group(2) in DEFINED) != bool(m.group(1))
     return None
 
 
