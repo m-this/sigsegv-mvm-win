@@ -75,11 +75,21 @@ inline int GetParticleSystemIndex( const char * name)
 	return ft_GetParticleSystemIndex(name);
 }
 
+#if defined _WINDOWS
+/* No such function in server.dll: nothing there calls it. The Linux body, on
+ * the string table it reads. */
+inline const char * GetParticleSystemNameFromIndex(int index)
+{
+	INetworkStringTable *table = networkstringtable->FindTable("ParticleEffectNames");
+	return table != nullptr && index < table->GetNumStrings() ? table->GetString(index) : "error";
+}
+#else
 static StaticFuncThunk<const char *, int> ft_GetParticleSystemNameFromIndex("GetParticleSystemNameFromIndex");
 inline const char * GetParticleSystemNameFromIndex(int index)
 {
 	return ft_GetParticleSystemNameFromIndex(index);
 }
+#endif
 
 static StaticFuncThunk<void, IRecipientFilter&, float, const Vector &, const char *, const CEffectData &> ft_TE_DispatchEffect("TE_DispatchEffect");
 inline void TE_DispatchEffect( IRecipientFilter &filter, float delay, const Vector &pos, const char *pName, const CEffectData &data )

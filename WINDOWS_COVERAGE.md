@@ -25,7 +25,7 @@ Measured on 2026-10-20 against TF2 ServerVersion 11138802, `mfe/feat/winport-par
 
 The four server-side gaps on main were `MvM:MedigunShield_Damage`, `Util:Overlay_Send`, `Util:Vehicle_Fix` and `Perf:SendProp_Optimize`. The first three are ported; `SendProp_Optimize` and `Perf::Virtual_Call_Optimize_Inline_Virtuals` join `Etc:Workshop_Map_Fix` and `Perf::CSS_Bot_Vision_Optimize` outside the package. Every one of the 13 Debug and Visualize tools with a gap has at least one detour that is inlined on Windows, only exists as a GCC clone, has no symbol on Linux either, or has not been located; the section below says which.
 
-Address names, from `tools/winport/namegaps.py`. In the Windows package: 1,328 named in the compiled sources, 1,084 with a `windows.txt` entry, 183 resolved at run time, 4 recorded `bad`, 24 client-side and **33** with no Windows entry (main at ffa92ace: 1,343, 1,084, 183, 4, 24, 48). Over all of `src/`: 2,197 named, 1,535 table, 195 run time, 45 bad, 38 client, 384 missing (main at ffa92ace: 2,213, 1,535, 195, 45, 38, 400). The 15 names main counted that are not addresses were gamedata keywords (`addrs`, `sym`, `{` ...) and `custom_attributes.txt` keys (`name`, `attribute_class` ...): `classify.py` read the unterminated quote on `misc.txt:3399` across the line break, which shifted every key and value after it, and `namegaps.py` read quoted pairs from every file as addresses. The tokenizer now ends a quote at the end of its line, as SourceMod's SMC parser does (`tools/winport/test_namegaps.py`). The regenerated table loses the phantom `"[clone]"` block and gains `CVoteController::TryCastVote` (0x37cf50, the address its `[clone]` already had).
+Address names, from `tools/winport/namegaps.py`. In the Windows package: 1,325 named in the compiled sources, 1,109 with a `windows.txt` entry, 183 resolved at run time, 9 recorded `bad`, 24 client-side and **0** with no Windows entry (main at ffa92ace: 1,343, 1,084, 183, 4, 24, 48). Over all of `src/`: 2,197 named, 1,560 table, 195 run time, 52 bad, 38 client, 352 missing (main at ffa92ace: 2,213, 1,535, 195, 45, 38, 400). The section on names below says where each of the package's last 33 went. The 15 names main counted that are not addresses were gamedata keywords (`addrs`, `sym`, `{` ...) and `custom_attributes.txt` keys (`name`, `attribute_class` ...): `classify.py` read the unterminated quote on `misc.txt:3399` across the line break, which shifted every key and value after it, and `namegaps.py` read quoted pairs from every file as addresses. The tokenizer now ends a quote at the end of its line, as SourceMod's SMC parser does (`tools/winport/test_namegaps.py`). The regenerated table loses the phantom `"[clone]"` block and gains `CVoteController::TryCastVote` (0x37cf50, the address its `[clone]` already had).
 
 ## Debug and Visualize tools with unresolved addresses
 
@@ -147,23 +147,17 @@ Debug, Visualize and VGUI tools, outside the package (74):
 
 ## Address names used by the code with no Windows entry
 
-Names defined in `gamedata/sigsegv` and named in the sources the Windows package compiles, outside a comment and outside code Windows does not compile, with no entry in `windows.txt`, not resolved at run time, not `bad` and not `[client]`: 33, from `tools/winport/namegaps.py --list --shipped`. Some are never reached on a dedicated server; the bed logs the ones a mission reaches (`unresolved functions called`). Grouped by class.
+Names defined in `gamedata/sigsegv` and named in the sources the Windows package compiles, outside a comment and outside code Windows does not compile, with no entry in `windows.txt`, not resolved at run time, not `bad` and not `[client]`: none, from `tools/winport/namegaps.py --list --shipped`. Each `why` in `overrides.json` holds the reading behind its line here.
 
-- `Action<CTFBot>` (2): `BuildDecoratedName [clone]`, `PrintStateToConsole`
-- `Action<CZombie>` (2): `BuildDecoratedName [clone]`, `PrintStateToConsole`
-- `Behavior<CTFBot>` (1): `FirstContainedResponder`
-- `CAttributeList` (3): `GetAttributeByID`, `GetAttributeByName`, `NotifyManagerOfAttributeValueChanges`
-- `CBaseEntity` (1): `GetTeamNumber`
-- `CModelLoader` (1): `FlushDynamicModels`
-- `CPlayer` (1): `GetEdict`
-- `CStaticProp` (2): `GetEntityHandle`, `GetRefEHandle`
-- `CStaticPropMgr` (3): `GetStaticPropIndex`, `LevelInit`, `LevelShutdown`
-- `CTFBotUseItem` (1): `CTFBotUseItem [C1]`
-- `CThreadLocalBase` (1): `Get`
-- `NextBotPlayer<CTFPlayer>` (1): `GetEntity`
-- `(free functions)` (14): `COM_CompressBuffer_LZSS`, `ENTINDEX`, `FireEvent`, `GEconItemSchema`, `GetParticleSystemNameFromIndex`, `MapEntity_ParseToken`, `SendCvarValueQueryToClient`, `SendProxy_LengthTable`, `SendProxy_StringToString`, `g_arFakePorts`, `g_bUseFakeIP`, `g_nFakeIP`, `modelloader`, `s_StaticPropMgr`
+Located and added to the table (25):
 
-Recorded `bad` (4): `CAttributeList::AddAttribute`, `NDebugOverlay::Cross3DOriented_ang`, `NDebugOverlay::Cross3DOriented_mat`, `NextBotManager::CollectAllBots`.
+- server.dll: `Action<CTFBot>::PrintStateToConsole` (0x562000) and `Action<CZombie>::PrintStateToConsole` (0x5c0a10), the three calls of each `ApplyResult`; both `BuildDecoratedName [clone]` (0x417ac0, one body MSVC folded for every `Action<T>`, a thiscall that keeps `this` where Linux's `.isra` clone drops it); `Behavior<CTFBot>::FirstContainedResponder` (0x297d20, slot 1); `CAttributeList::GetAttributeByID` (0x3c4400; `econ.h` had its own copy on Windows on the belief it was inlined, and now calls it); `CBaseEntity::GetTeamNumber` (0x1f1450); `CTFBotUseItem::CTFBotUseItem [C1]` (0x5781e0); `FireEvent` (0x5eea20, the whole function where Linux has a `.part` clone); `GEconItemSchema` (0x3b92b0, folded with `GetItemSchema`); `MapEntity_ParseToken` (0x2982d0); `SendProxy_LengthTable` (0x23eb60, misc.txt's own byte pattern); `SendProxy_StringToString` (0x23e740, the proxy of all 24 `SendPropString`s).
+- engine.dll: `SendCvarValueQueryToClient` (0x134a00), `g_bUseFakeIP` (0x618760), `g_nFakeIP` (0x618768), `g_arFakePorts` (0x61876c), `modelloader` (0x3c8100), `CModelLoader::FlushDynamicModels` (0xfc6a0), `CStaticPropMgr::GetStaticPropIndex` (0x1d3ca0), `LevelInit` (0x1d43a0), `LevelShutdown` (0x1d46c0), `s_StaticPropMgr` (0x3cf950), `CStaticProp::GetRefEHandle` (0x1d3b20).
+- tier0.dll: `CThreadLocalBase::Get` (0xdff0, exported).
+
+Recorded `bad` (5 new): `CAttributeList::GetAttributeByName` and `NotifyManagerOfAttributeValueChanges`, `ENTINDEX` and `COM_CompressBuffer_LZSS` have no body: nothing in the Linux binaries calls them, MSVC dropped or inlined them, and `econ.h`/`econ.cpp` already define the first two on Windows. `CStaticProp::GetEntityHandle` exists only in the `ICollideable` sub-table (0x1d3ab0) and expects that part as `this`. With the four from main: `CAttributeList::AddAttribute`, `NDebugOverlay::Cross3DOriented_ang`, `NDebugOverlay::Cross3DOriented_mat`, `NextBotManager::CollectAllBots`.
+
+Out of the Windows build (3): `GetParticleSystemNameFromIndex` has no body in server.dll either (recorded `bad`), so `particles.h` does the Linux body on the `ParticleEffectNames` table. `NextBotPlayer<CTFPlayer>::GetEntity` (recorded `bad`) is only in the `INextBot` sub-table (0x5533c0), not in the primary table the vfunc thunk searches, and `INextBot::GetEntity` is the body of a pure virtual nothing calls by name, so `nextbot1.cpp` leaves both out on Windows. `CPlayer::GetEdict` served only `Perf:HLTV_Optimize`'s Linux `CPlayer::IsSourceTV` detour (Windows uses an `IGamePlayer` hook), and is now under the same guard.
 
 ## The four entries carry.py could not carry to 11117211
 

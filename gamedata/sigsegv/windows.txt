@@ -14,6 +14,15 @@
 		{
 			"addrs"
 			{
+				"Behavior<CTFBot>::FirstContainedResponder"
+				{
+					type  "fixed"
+					sym   "_ZNK8BehaviorI6CTFBotE23FirstContainedResponderEv"
+					addr  "0x297d20"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: slot 1 of Behavior<CTFBot>'s vtable (0x10893e54), after the scalar deleting destructor; Linux has it at slot 2 after its two destructors. mov eax,[ecx+8]; ret, Linux's body. MSVC folds other getters of +8 into it, which a call does not mind
+				}
 				"Action<CTFBot>::ApplyResult"
 				{
 					type  "fixed"
@@ -41,6 +50,24 @@
 					lib   "server"
 					// verified: read by hand: the ' RESUMING ' body next to CTFBot's InvokeOnEnd; it calls itself for the child, then Action<CTFBot>::ApplyResult (0x550880) on the result, Linux's two calls in the same order; thiscall returning ActionResult through a hidden pointer, ret 0x10
 				}
+				"Action<CTFBot>::BuildDecoratedName [clone]"
+				{
+					type  "fixed"
+					sym   "_ZNK6ActionI6CTFBotE18BuildDecoratedNameEPcPKS1_"
+					addr  "0x417ac0"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: MSVC folded every Action<T>::BuildDecoratedName into this one body, called by each PrintStateToConsole and DebugString (22 calls). GetName (vcall +0xa8, Linux +0xac) appended with V_strncat (0x6e66f0), then '( ' and the child (+0x10) recursively and ' )', then '<<' and the action we suspended (+0x14) recursively, as Linux's .isra clone does. Unlike that clone it keeps this: thiscall (buf, action), ret 8, which is what the thunk passes
+				}
+				"Action<CTFBot>::PrintStateToConsole"
+				{
+					type  "fixed"
+					sym   "_ZNK6ActionI6CTFBotE19PrintStateToConsoleEv"
+					addr  "0x562000"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: the three calls of Action<CTFBot>::ApplyResult (0x550880) after CHANGE_TO, SUSPEND_FOR and DONE land here. It clears DebugString's static buffer (0x10b8e340), walks m_parent (+0xc) to the root, calls BuildDecoratedName (0x417ac0) and prints the result split at '(', ')' and '<' through ConColorMsg, as Linux 0xea0cc0 does. thiscall, no arguments, plain ret
+				}
 				"Action<CZombie>::ApplyResult"
 				{
 					type  "fixed"
@@ -67,6 +94,24 @@
 					build "11138802"
 					lib   "server"
 					// verified: read by hand: the RESUMING body that Action<CZombie>::ApplyResult (0x5bf4e0) calls and that calls it back; same shape as Action<CTFBot>::InvokeOnResume (0x557960); thiscall with the ActionResult return pointer, ret 0x10
+				}
+				"Action<CZombie>::BuildDecoratedName [clone]"
+				{
+					type  "fixed"
+					sym   "_ZNK6ActionI7CZombieE18BuildDecoratedNameEPcPKS1_"
+					addr  "0x417ac0"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: MSVC folded every Action<T>::BuildDecoratedName into this one body, called by each PrintStateToConsole and DebugString (22 calls). GetName (vcall +0xa8, Linux +0xac) appended with V_strncat (0x6e66f0), then '( ' and the child (+0x10) recursively and ' )', then '<<' and the action we suspended (+0x14) recursively, as Linux's .isra clone does. Unlike that clone it keeps this: thiscall (buf, action), ret 8, which is what the thunk passes
+				}
+				"Action<CZombie>::PrintStateToConsole"
+				{
+					type  "fixed"
+					sym   "_ZNK6ActionI7CZombieE19PrintStateToConsoleEv"
+					addr  "0x5c0a10"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: the three calls of Action<CZombie>::ApplyResult (0x5bf4e0) after CHANGE_TO, SUSPEND_FOR and DONE land here; the same body as Action<CTFBot>'s (0x562000) on CZombie's own DebugString buffer (0x10b94d48). thiscall, no arguments, plain ret
 				}
 				"CZombieIntention::Reset"
 				{
@@ -2140,6 +2185,15 @@
 					lib   "server"
 					vtidx "20"
 					// vtable
+				}
+				"CBaseEntity::GetTeamNumber"
+				{
+					type  "fixed"
+					sym   "_ZNK11CBaseEntity13GetTeamNumberEv"
+					addr  "0x1f1450"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: mov eax,[ecx+0x22c]; ret, m_iTeamNum. The VScript GetTeam/GetTeamNumber binding stores it at 0x1f3667, where Linux's binding stores 0x632800; non-virtual, 1359 direct calls
 				}
 				"CBaseEntity::StartTouch"
 				{
@@ -8012,6 +8066,24 @@
 					lib   "engine"
 					// verified: read by hand, engine.dll: SendUpdatedServerDetails (0x13a5f0) loads it, calls CHLTVServer::IsTVRelay (0x17deb0) on it and reads the server part at +8 for the HLTV name, as Linux does with [0x33cd1c] and IsTVRelay; SV_DetermineUpdateType (0x128050) adds 0x658c to it for the delta cache lookup, Linux 0x6570
 				}
+				"s_StaticPropMgr"
+				{
+					type  "fixed"
+					sym   "_ZL15s_StaticPropMgr"
+					addr  "0x3cf950"
+					build "11138802"
+					lib   "engine"
+					// verified: read by hand, engine.dll: the atexit stub at 0x2e6420 runs mov ecx,0x103cf950; jmp 0x1d1680, the destructor writing CStaticPropMgr's vtable (0x1032dba8); the accessor at 0x1d4ac0 returns this address
+				}
+				"modelloader"
+				{
+					type  "fixed"
+					sym   "modelloader"
+					addr  "0x3c8100"
+					build "11138802"
+					lib   "engine"
+					// verified: read by hand, engine.dll: the pointer 11 matched referrers of the Linux global read, CGameServer::GetModel among them. It holds 0x103c8348, whose vtable is CModelLoader's (0x1030d87c)
+				}
 				"g_HostState"
 				{
 					type  "fixed"
@@ -8020,6 +8092,33 @@
 					build "11138802"
 					lib   "engine"
 					// verified: the CHostState::State_NewGame function assigns 3 to it, and m_currentState is the first member; one of the addresses the matched referrers of the Linux global use
+				}
+				"g_bUseFakeIP"
+				{
+					type  "fixed"
+					sym   "g_bUseFakeIP"
+					addr  "0x618760"
+					build "11138802"
+					lib   "engine"
+					// verified: read by hand, engine.dll: CSteam3Server::Activate (0x1392e0) stores the ShouldUseSteamFakeIP answer in this byte and compares it before Net_CheckOpenFakeUDPPorts(0) (0x1b0000), as Linux does
+				}
+				"g_nFakeIP"
+				{
+					type  "fixed"
+					sym   "g_nFakeIP"
+					addr  "0x618768"
+					build "11138802"
+					lib   "engine"
+					// verified: read by hand, engine.dll: CSteam3Server's OnFakeIPResult (0x139dc0) stores the result's IP (+0x8c) here, and Shutdown (0x13a9e0) clears it before g_arFakePorts, in Linux's order
+				}
+				"g_arFakePorts"
+				{
+					type  "fixed"
+					sym   "g_arFakePorts"
+					addr  "0x61876c"
+					build "11138802"
+					lib   "engine"
+					// verified: read by hand, engine.dll: OnFakeIPResult (0x139dc0) fills it with a loop of 16-bit stores right after g_nFakeIP (0x618768); Shutdown (0x13a9e0) clears it next, as Linux does
 				}
 				"CalcDistanceToLineSegment"
 				{
@@ -8647,6 +8746,15 @@
 					lib   "server"
 					// string
 				}
+				"MapEntity_ParseToken"
+				{
+					type  "fixed"
+					sym   "_Z20MapEntity_ParseTokenPKcPc"
+					addr  "0x2982d0"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: Linux 0x74a5f0's body: clear the token, null data returns null, build the break-character table once (flag 0x10998588, table 0x10a37e78), skip whitespace and // comments, copy a quoted string up to 0x800 bytes, else a break character or a word. cdecl (data, token), plain ret; 13 callers, among them MapEntity_ParseAllEntities (0x297100) right before its '{' check
+				}
 				"CTFGameRules::DropHalloweenSoulPack"
 				{
 					type  "fixed"
@@ -8664,6 +8772,15 @@
 					build "11138802"
 					lib   "server"
 					// consensus
+				}
+				"SendProxy_LengthTable"
+				{
+					type  "fixed"
+					sym   "_Z21SendProxy_LengthTablePK8SendPropPKvS3_P20CSendProxyRecipientsi"
+					addr  "0x23eb60"
+					build "11138802"
+					lib   "server"
+					// verified: the misc.txt pattern for this name, 558bec8b45088b404cff7014ff70108b4008ff750cffd08b451083c40c5dc3, matches server.dll here and nowhere else. Its one reference pushes it as the proxy of the 'lengthproxy' data table prop (0x23e9e7), as Linux's array props do
 				}
 				"AllocPooledString"
 				{
@@ -10504,6 +10621,15 @@
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: calls all 9 of the Linux function's matched callees, and no string disagrees
 				}
+				"SendProxy_StringToString"
+				{
+					type  "fixed"
+					sym   "_Z24SendProxy_StringToStringPK8SendPropPKvS3_P8DVariantii"
+					addr  "0x23e740"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: mov eax,[ebp+0x14]; mov ecx,[ebp+0x10]; mov [eax],ecx, out->m_pString = pData, Linux 0x8eeaa0's body. All 24 references push it as the proxy argument of SendPropString (0x23e4f0), m_netlookupFilename's among them, which is the address sendprop_optimize compares against
+				}
 				"CTraceFilterEntity::ShouldHitEntity"
 				{
 					type  "fixed"
@@ -10717,6 +10843,15 @@
 					lib   "server"
 					// vtable
 				}
+				"GEconItemSchema"
+				{
+					type  "fixed"
+					sym   "_Z15GEconItemSchemav"
+					addr  "0x3b92b0"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: call ItemSystem (0x3c1410); add eax,4; ret. GetItemSchema has the same source body and MSVC folded the two into this address, which the table already gives GetItemSchema
+				}
 				"GetFileWeaponInfoFromHandle"
 				{
 					type  "fixed"
@@ -10735,6 +10870,15 @@
 					lib   "engine"
 					// verified: read by hand in engine.dll: slot 11 of CStaticPropMgr's primary table, and the target of the sub ecx,4 thunk at slot 3 of its IStaticPropMgrServer table, where Linux has IsStaticProp(IHandleEntity*) at slot 10 and MSVC puts the two overloads the other way round. Null returns true; otherwise GetRefEHandle (vcall +8) masked with 0xffff0000 against 0x80000000, the static prop serial. thiscall, ret 4
 				}
+				"CStaticProp::GetRefEHandle"
+				{
+					type  "fixed"
+					sym   "_ZNK11CStaticProp13GetRefEHandleEv"
+					addr  "0x1d3b20"
+					build "11138802"
+					lib   "engine"
+					// verified: read by hand, engine.dll: slot 2 of CStaticProp's primary vtable, lea eax,[ecx+0x34]; ret. MSVC folds another slot into it, which a call does not mind
+				}
 				"CStaticPropMgr::GetStaticProp"
 				{
 					type  "fixed"
@@ -10743,6 +10887,33 @@
 					build "11138802"
 					lib   "engine"
 					// verified: read by hand in engine.dll: slot 8 of CStaticPropMgr's primary table, as on Linux. Null returns null; the static prop serial test, then the index (0x1fff for an invalid handle) checked against m_StaticProps' count at +0x2c and m_StaticProps[i] (0xb0 bytes each, base at +0x20) returned at +8, its ICollideable. thiscall, ret 4
+				}
+				"CStaticPropMgr::GetStaticPropIndex"
+				{
+					type  "fixed"
+					sym   "_ZNK14CStaticPropMgr18GetStaticPropIndexEP13IHandleEntity"
+					addr  "0x1d3ca0"
+					build "11138802"
+					lib   "engine"
+					// verified: read by hand, engine.dll: slot 0x30 of CStaticPropMgr's vtable (0x1032dba8); the handle's index with the -1 and 0x1fff case of the Linux body, thiscall, ret 4
+				}
+				"CStaticPropMgr::LevelShutdown"
+				{
+					type  "fixed"
+					sym   "_ZN14CStaticPropMgr13LevelShutdownEv"
+					addr  "0x1d46c0"
+					build "11138802"
+					lib   "engine"
+					// verified: read by hand, engine.dll: slot 5 of CStaticPropMgr's vtable, the Linux body
+				}
+				"CStaticPropMgr::LevelInit"
+				{
+					type  "fixed"
+					sym   "_ZN14CStaticPropMgr9LevelInitEv"
+					addr  "0x1d43a0"
+					build "11138802"
+					lib   "engine"
+					// verified: read by hand, engine.dll: slot 2 of CStaticPropMgr's vtable; tests and sets the level flag at +0x5c, with UnserializeStaticProps inlined, as Linux's LevelInit does
 				}
 				"UTIL_PlayerByIndex"
 				{
@@ -10761,6 +10932,24 @@
 					build "11138802"
 					lib   "engine"
 					// verified: read by hand, engine.dll: slot 52 of CModelInfoServer's table (Linux 53), between GetModelClientSideIndex and IsDynamicModelLoading as on Linux; copies the name into 0x100 bytes, V_RemoveDotSlashes with '/', then the model lookups through the string table, Linux's body. Thiscall, ret 8
+				}
+				"CModelLoader::FlushDynamicModels"
+				{
+					type  "fixed"
+					sym   "_ZN12CModelLoader18FlushDynamicModelsEv"
+					addr  "0xfc6a0"
+					build "11138802"
+					lib   "engine"
+					// verified: read by hand, engine.dll: slot 0x6c of CModelLoader's vtable, the slot Linux's table of the same length holds it at; push 1; call InternalUpdateDynamicModels (0xff570); ret, the Linux body
+				}
+				"CThreadLocalBase::Get"
+				{
+					type  "fixed"
+					sym   "_ZNK16CThreadLocalBase3GetEv"
+					addr  "0xdff0"
+					build "11138802"
+					lib   "tier0"
+					// verified: tier0.dll exports it as ?Get@CThreadLocalBase@@QBEPAXXZ, CThreadLocalBase::Get() const, at this address. thiscall, plain ret
 				}
 				"CAttributeManager::ApplyAttributeStringWrapper"
 				{
@@ -10862,6 +11051,15 @@
 					build "11138802"
 					lib   "engine"
 					// verified: read by hand, engine.dll: slot 15 of CServerPlugin's table, as on Linux; for each enabled plugin with interface version 2 or later (+0x88) calls its OnQueryCvarValueFinished (+0x44), Linux's body. Thiscall, ret 0x14
+				}
+				"SendCvarValueQueryToClient"
+				{
+					type  "fixed"
+					sym   "_Z26SendCvarValueQueryToClientP7IClientPKcb"
+					addr  "0x134a00"
+					build "11138802"
+					lib   "engine"
+					// verified: read by hand, engine.dll: the cookie counter, neg on the bool, SVC_GetCvarValue sent through the client's SendNetMsg (+0x74, Linux +0x78), then its destructor, as Linux does. cdecl; its one caller is CVEngineServer::StartQueryCvarValue (0x13c6f0)
 				}
 				"CBaseServer::CheckProtocol"
 				{
@@ -11184,6 +11382,15 @@
 					build "11138802"
 					lib   "server"
 					// consensus
+				}
+				"CAttributeList::GetAttributeByID"
+				{
+					type  "fixed"
+					sym   "_ZNK14CAttributeList16GetAttributeByIDEi"
+					addr  "0x3c4400"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: the loop of Linux 0x9f0a40. For each attribute (16 bytes, data at +4, count at +0x10) GetItemSchema (0x3b92b0) and GetAttributeDefinition (0x3b98d0) of its index at +4, compare the definition's index with the argument, return the element or null. thiscall, ret 4
 				}
 				"CAttributeList::IterateAttributes"
 				{
@@ -12029,6 +12236,15 @@
 					build "11138802"
 					lib   "server"
 					// verified: read by hand: seven functions reference 'Path::Compute(goal)', one per cost functor; this one has 46 callers, all in the TFBot behaviours (0x56a284 to 0x57xxxx), where each of the other six has one
+				}
+				"FireEvent"
+				{
+					type  "fixed"
+					sym   "_ZL9FireEventP9EventInfoPKc"
+					addr  "0x5eea20"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: the only reference to 'WaveSpawnPopulator: Can't find target entity '%s' for %s'. The whole function, null info check included, where Linux keeps the .part.0 clone GCC split after that check: FindEntityByName on the target (+5), then g_EventQueue.AddEvent with the action (+0x111) and the variant and delay (+0x218 to +0x22c). cdecl (info, name), plain ret; 7 callers, as Linux has
 				}
 				"CPopulationManager::AllocateBots"
 				{
@@ -13658,6 +13874,15 @@
 					lib   "server"
 					vtidx "45"
 					// vtable
+				}
+				"CTFBotUseItem::CTFBotUseItem [C1]"
+				{
+					type  "fixed"
+					sym   "_ZN13CTFBotUseItemC1EP13CTFWeaponBase"
+					addr  "0x5781e0"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: writes CTFBotUseItem's vtables (0x1089a8a0, 0x1089aa10), zeroes the Action fields, sets the weapon handle (+0x34) from the weapon's GetRefEHandle, as Linux 0xe50a00 does. thiscall, ret 4. Its one caller is CTFBot::OpportunisticallyUseWeaponAbilities (0x561200) right after operator new; Linux calls it twice from there
 				}
 				"CTFBotUseItem::~CTFBotUseItem [D2]"
 				{

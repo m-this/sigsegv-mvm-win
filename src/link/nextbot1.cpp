@@ -13,7 +13,9 @@
 static MemberFuncThunk<const INextBot *, bool, CBaseEntity *, float> ft_INextBot_IsRangeLessThan(                 "INextBot::IsRangeLessThan");
 static MemberFuncThunk<const INextBot *, bool, CBaseEntity *, float> ft_INextBot_IsRangeGreaterThan(              "INextBot::IsRangeGreaterThan");
 
+#if !defined _WINDOWS
 static MemberVFuncThunk<const INextBot *, CBaseCombatCharacter *> vt_INextBot_GetEntity(TypeName<NextBotPlayer<CTFPlayer>>(), "NextBotPlayer<CTFPlayer>::GetEntity");
+#endif
 
 /* INextBotComponent */
 static MemberFuncThunk<const INextBotComponent *, INextBot *> vt_INextBotComponent_GetBot( "INextBotComponent::GetBot");
@@ -340,7 +342,9 @@ static StaticFuncThunk<NextBotManager&> ft_TheNextBots("TheNextBots");
 
 bool INextBot::IsRangeLessThan(CBaseEntity *ent, float radius) const    { return ft_INextBot_IsRangeLessThan(this, ent, radius);          }
 bool INextBot::IsRangeGreaterThan(CBaseEntity *ent, float radius) const { return ft_INextBot_IsRangeGreaterThan(this, ent, radius);       }
+#if !defined _WINDOWS
 CBaseCombatCharacter *INextBot::GetEntity() const                       { return vt_INextBot_GetEntity(this);          }
+#endif
 
 INextBot *INextBotComponent::GetBot() const { return vt_INextBotComponent_GetBot(this);       }
 
