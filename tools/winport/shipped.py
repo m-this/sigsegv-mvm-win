@@ -17,10 +17,13 @@ import sys
 import types
 from pathlib import Path
 
-# Sources that are Linux by design rather than by accident, each with why.
+# Sources the Windows package leaves out, each with why (WINDOWS_COVERAGE.md).
 LINUX_ONLY = {
     # Watches the workshop map folder with inotify.
     "src/mod/etc/workshop_map_fix.cpp",
+    # Replaces two functions whole, which CFuncReplace cannot size under MSVC,
+    # and nine of its detours have no Windows address. Off by default.
+    "src/mod/perf/sendprop_optimize.cpp",
 }
 
 # What a TF2 server.dll build defines (AMBuildScript, src/common.h) and what it
