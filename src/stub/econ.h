@@ -273,11 +273,12 @@ public:
 	void RemoveAttributeByIndex(int index)                             {        ft_RemoveAttributeByIndex(this, index); }
 	void DestroyAllAttributes()                                        {        ft_DestroyAllAttributes  (this); }
 	void SetRuntimeAttributeValue(CEconItemAttributeDefinition *pAttrDef, float value) {        ft_SetRuntimeAttributeValue  (this, pAttrDef, value); }
-	void SetRuntimeAttributeRefundableCurrency(CEconItemAttributeDefinition *pAttrDef, int value) {        ft_SetRuntimeAttributeRefundableCurrency  (this, pAttrDef, value); }
 #if defined _WINDOWS
-	/* Inlined into every caller in server.dll. The SDK's body, in econ.cpp. */
+	/* Inlined into every caller in server.dll. The SDK's bodies, in econ.cpp. */
+	void SetRuntimeAttributeRefundableCurrency(CEconItemAttributeDefinition *pAttrDef, int value);
 	void NotifyManagerOfAttributeValueChanges();
 #else
+	void SetRuntimeAttributeRefundableCurrency(CEconItemAttributeDefinition *pAttrDef, int value) {        ft_SetRuntimeAttributeRefundableCurrency  (this, pAttrDef, value); }
 	void NotifyManagerOfAttributeValueChanges()                        {        ft_NotifyManagerOfAttributeValueChanges  (this); }
 #endif
 
