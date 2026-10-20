@@ -243,19 +243,6 @@ MemberVFuncThunk<CAttributeManager *, void> CAttributeManager::vt_OnAttributeVal
 MemberVFuncThunk<CAttributeManager *, string_t, string_t, CBaseEntity *, string_t, CUtlVector<CBaseEntity*> *> CAttributeManager::vt_ApplyAttributeString(TypeName<CAttributeManager>(), "CAttributeManager::ApplyAttributeString");
 
 #if defined _WINDOWS
-/* CEconItemAttribute's NetworkStateChanged is empty on both platforms (the
- * shared ret stubs 0x130600 and 0x1305b0 in its table), so the value is set
- * without the call Linux makes when a subclass overrides it. */
-void CAttributeList::SetRuntimeAttributeRefundableCurrency(CEconItemAttributeDefinition *pAttrDef, int value)
-{
-	for (int i = 0; i < this->m_Attributes.Count(); ++i) {
-		if (this->m_Attributes[i].GetAttributeDefinitionIndex() == pAttrDef->GetIndex()) {
-			this->m_Attributes[i].m_nRefundableCurrency = value;
-			return;
-		}
-	}
-}
-
 void CAttributeList::NotifyManagerOfAttributeValueChanges()
 {
 	if (this->m_pManager != nullptr) {
