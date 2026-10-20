@@ -11,39 +11,39 @@ Measured on 2026-10-20 against TF2 ServerVersion 11138802, `mfe/feat/winport-par
 
 ## Totals
 
-| Status | Mods | main before (d7e6eea2) |
+| Status | Mods | main at ffa92ace |
 | --- | ---: | ---: |
-| In the Windows package, every detour and virtual hook has an address | 182 | 180 |
-| In the Windows package, server-side detours or hooks without an address | 0 | 4 |
+| In the Windows package, every detour and virtual hook has an address | 182 | 182 |
+| In the Windows package, server-side detours or hooks without an address | 0 | 0 |
 | In the Windows package, only client-side addresses missing (nothing to hook on a dedicated server) | 11 | 11 |
-| Left out of the Windows package on purpose, argued below | 4 | 2 |
-| Debug, Visualize and VGUI tools (in no package), every address resolved | 74 | 74 |
-| Debug and Visualize tools with server-side gaps | 13 | 13 |
+| Left out of the Windows package on purpose, argued below | 4 | 4 |
+| Debug, Visualize and VGUI tools (in no package), every address resolved | 75 | 74 |
+| Debug and Visualize tools with server-side gaps | 12 | 13 |
 | Debug tools with only client-side gaps | 2 | 2 |
 | Compiled out on both platforms | 23 | 23 |
 | All SigMod mods (`IMod`/`CModule` names) | 309 | 309 |
 
-The four server-side gaps on main were `MvM:MedigunShield_Damage`, `Util:Overlay_Send`, `Util:Vehicle_Fix` and `Perf:SendProp_Optimize`. The first three are ported; `SendProp_Optimize` and `Perf::Virtual_Call_Optimize_Inline_Virtuals` join `Etc:Workshop_Map_Fix` and `Perf::CSS_Bot_Vision_Optimize` outside the package. Every one of the 13 Debug and Visualize tools with a gap has at least one detour that is inlined on Windows, only exists as a GCC clone, has no symbol on Linux either, or has not been located; the section below says which.
+Before ffa92ace the package had four server-side gaps, `MvM:MedigunShield_Damage`, `Util:Overlay_Send`, `Util:Vehicle_Fix` and `Perf:SendProp_Optimize`. The first three are ported; `SendProp_Optimize` and `Perf::Virtual_Call_Optimize_Inline_Virtuals` join `Etc:Workshop_Map_Fix` and `Perf::CSS_Bot_Vision_Optimize` outside the package. `Debug:Tele_Sapper` now resolves (`CBaseObject::HasSapper`, below). Every one of the 12 Debug and Visualize tools with a gap has at least one detour that is inlined on Windows, only exists as a GCC clone, has no symbol on Linux either, or has not been located; the section below says which.
 
-Address names, from `tools/winport/namegaps.py`. In the Windows package: 1,325 named in the compiled sources, 1,109 with a `windows.txt` entry, 183 resolved at run time, 9 recorded `bad`, 24 client-side and **0** with no Windows entry (main at ffa92ace: 1,343, 1,084, 183, 4, 24, 48). Over all of `src/`: 2,197 named, 1,560 table, 195 run time, 52 bad, 38 client, 352 missing (main at ffa92ace: 2,213, 1,535, 195, 45, 38, 400). The section on names below says where each of the package's last 33 went. The 15 names main counted that are not addresses were gamedata keywords (`addrs`, `sym`, `{` ...) and `custom_attributes.txt` keys (`name`, `attribute_class` ...): `classify.py` read the unterminated quote on `misc.txt:3399` across the line break, which shifted every key and value after it, and `namegaps.py` read quoted pairs from every file as addresses. The tokenizer now ends a quote at the end of its line, as SourceMod's SMC parser does (`tools/winport/test_namegaps.py`). The regenerated table loses the phantom `"[clone]"` block and gains `CVoteController::TryCastVote` (0x37cf50, the address its `[clone]` already had).
+Address names, from `tools/winport/namegaps.py`. In the Windows package: 1,325 named in the compiled sources, 1,109 with a `windows.txt` entry, 183 resolved at run time, 9 recorded `bad`, 24 client-side and **0** with no Windows entry (main at ffa92ace: 1,343, 1,084, 183, 4, 24, 48). Over all of `src/`: 2,197 named, 1,562 table, 195 run time, 54 bad, 38 client, 348 missing (main at ffa92ace: 2,213, 1,535, 195, 45, 38, 400). The section on names below says where each of the package's last 33 went. The 15 names main counted that are not addresses were gamedata keywords (`addrs`, `sym`, `{` ...) and `custom_attributes.txt` keys (`name`, `attribute_class` ...): `classify.py` read the unterminated quote on `misc.txt:3399` across the line break, which shifted every key and value after it, and `namegaps.py` read quoted pairs from every file as addresses. The tokenizer now ends a quote at the end of its line, as SourceMod's SMC parser does (`tools/winport/test_namegaps.py`). The regenerated table loses the phantom `"[clone]"` block and gains `CVoteController::TryCastVote` (0x37cf50, the address its `[clone]` already had).
 
 ## Debug and Visualize tools with unresolved addresses
 
-`bad`: read by hand, no body of its own on 11117211 (the table below says where it went). `refused`: located, but the detour guard refuses it. `clone`: a GCC `.part` or `.isra` clone, whose arguments travel in registers (`__gcc_regcall`) and which MSVC has no counterpart of. `open`: not located.
+`bad`: read by hand, no body of its own on 11117211 or 11138802 (the table below says where it went). `clone`: a GCC `.part` or `.isra` clone, whose arguments travel in registers (`__gcc_regcall`) and which MSVC has no counterpart of. `open`: not located.
 
-- `Debug:CTFBotProxy` (2 of 4): `CTFBotProxy::CTFBotProxy [C1]` (bad: inline in the entity factory's `Create`), `CEventQueue::AddEvent [EventQueuePrioritizedEvent_t *]` (open: a sorted insert with no direct caller on Linux either, so nothing to anchor it by)
+- `Debug:CTFBotProxy` (2 of 4): `CTFBotProxy::CTFBotProxy [C1]` (bad: inline in the entity factory's `Create`), `CEventQueue::AddEvent [EventQueuePrioritizedEvent_t *]` (bad)
 - `Debug:ChangeLevel` (4 of 4): `CChangeLevelIssue::ExecuteCommand` (0x5432c0, slot 11 of its table) and `CVEngineServer::ChangeLevel` (engine.dll 0x13ad90, slot 0 of a 125-slot table that matches Linux's) are located and left out of the table: the mod builds all four addresses itself as static `CAddr_Sym`s (`changelevel.cpp:15`), and a table block under the same name would be a duplicate of them. `CanCallVote` is no symbol of server_srv.so on 11117211 (the virtual is `RequestCallVote`) and `Host_Changelevel_f` none of engine_srv.so, so both fail on Linux as well
-- `Debug:Flamethrower_Mojo` (3 of 16): `CTFFlameEntity::Create` (open: the only reference to the `tf_flame` class string is the factory registration at 0x50cb6, so it has no body of a shape I could find), `CTFFlameEntity::RemoveFlame` (bad), `CBaseProjectile::CollideWithTeammatesThink` (refused: 0x20f020 is `mov byte [ecx+0x4b4], 1; ret`, the think `SetLauncher` and `Spawn` store, and a detour on a body that short is turned away)
+- `Debug:Flamethrower_Mojo` (2 of 16): `CTFFlameEntity::Create` and `CTFFlameEntity::RemoveFlame` (both bad). `CBaseProjectile::CollideWithTeammatesThink` is 0x20f020, `mov byte [ecx+0x4b4], 1; ret`, the think `SetLauncher` and `Spawn` hand to `SetThink`; its 8 bytes occur once in server.dll, so the override marks it unshared and the detour guard lets it through
 - `Debug:Known_Entities` (2 of 17): `CTFBot::StopSuspectingSpy` and `CTFBot::SuspectedSpyInfo_t::IsCurrentlySuspected` (both bad)
 - `Debug:MedigunShield_Obstruction` (1 of 3): `ILocomotion::TraceHull` (clone: the `.isra.0` copy takes its vectors in eax, edx and ecx)
 - `Debug:Robot_Pose_Parameters` (1 of 2): `CTFPlayer::ShouldDropAmmoPack` (bad)
 - `Debug:Scale_Rate` (6 of 6): `CTFPlayer::GetDesiredHandScale`, `GetDesiredHeadScale`, `GetDesiredTorsoScale`, `GetHandScaleSpeed`, `GetHeadScaleSpeed`, `GetTorsoScaleSpeed` (all bad: inline in `TFPlayerThink`)
 - `Debug:ShortCircuit_RubberBand` (1 of 3): `CTFMechanicalArm::ShockAttack` (bad)
 - `Debug:Suicide_Bomber` (1 of 6): `Path::Compute_vec<CTFBotPathCost>` (no entry in any gamedata file, so it fails on Linux too)
-- `Debug:Tele_Sapper` (1 of 4): `CBaseObject::HasSapper` (refused: 0x4c18c0 is `mov al, [ecx+0xa4c]; ret`)
+- `Debug:Tele_Sapper` now resolves: `CBaseObject::HasSapper` is 0x4c2d50, `mov al, [ecx+0xa4c]; ret` (0x4c18c0 was another build's). Its 7 bytes occur once in server.dll and the body once in server_srv.so, and 10 of the 13 calling functions the matcher paired are Linux callers of `HasSapper` (the other three are weak pairings: 0x4fd3c0, paired with `CTFBotSpySap`'s constructor, is a `CTFPlayer` method that tests it on a building after `GetType`), so it is marked unshared
 - `Debug:VProf_Record` (2 of 2): `VProfRecord_Snapshot`, `VProfRecord_StartOrStop` (no such symbols in engine_srv.so on 11117211; the Linux entries are byte patterns, not symbols)
 - `Debug:Vaccinator` (1 of 1): `CheckMedicResist` (clone: `.part.0` with `__gcc_regcall`, and the mod body is a TODO that calls through)
-- `Visualize:Flamethrower` (2 of 4): `CTFFlameEntity::Create`, `CTFFlameEntity::RemoveFlame` (as for Flamethrower_Mojo)
+- `Visualize:Flamethrower` (2 of 4): `CTFFlameEntity::Create`, `CTFFlameEntity::RemoveFlame` (both bad, as for Flamethrower_Mojo)
 
 ## Left out of the Windows package
 
@@ -71,6 +71,8 @@ Each was checked to have no standalone body on 11117211: the only Linux caller h
 | `CTFBotProxy::CTFBotProxy` | `CEntityFactory<CTFBotProxy>::Create` 0x594180 | `Debug:CTFBotProxy` has no detour on the constructor |
 | `CTFMechanicalArm::ShockAttack` | `SecondaryAttack` 0x61a020 (from 0x116) | `Debug:ShortCircuit_RubberBand` has no detour on the shock |
 | `CTFFlameEntity::RemoveFlame` | `FlameThink` 0x609b60 and `OnCollide` 0x60ac10 | `Debug:Flamethrower_Mojo` and `Visualize:Flamethrower` have no detour on a flame's removal |
+| `CTFFlameEntity::Create` | nowhere: nothing calls it on Linux, and the one `tf_flame` string (0x8cf8a0) is pushed only by the factory registration at 0x50cb5; its `mult_flame_size` and `mult_flame_life` hooks are in `Spawn` 0x60dfc0 | `Debug:Flamethrower_Mojo` and `Visualize:Flamethrower` have no detour on the creation |
+| `CEventQueue::AddEvent [EventQueuePrioritizedEvent_t *]` | `AddEvent [CBaseEntity]` 0x224bd0, `AddEvent` 0x224cf0, `Restore` 0x225cb0 | `Debug:CTFBotProxy` has no detour on the sorted insert |
 | `CTFPlayer::GetDesiredHandScale`, `GetDesiredHeadScale`, `GetDesiredTorsoScale`, `GetHandScaleSpeed`, `GetHeadScaleSpeed`, `GetTorsoScaleSpeed` | `TFPlayerThink` 0x50faa0 | `Debug:Scale_Rate` has no detour on any of the six, so it changes nothing on Windows |
 | `CTFWeaponBaseGun::UpdatePunchAngles` | `FireProjectile` 0x63b430 | none: `Util:Vehicle_Fix` saves the punch angle around a `FireProjectile` detour for a player in a vehicle |
 | `CBaseCombatCharacter::CalculatePhysicsStressDamage` | `ApplyStressDamage` 0x1d4010 | none: `Util:Vehicle_Fix` detours `ApplyStressDamage` and returns early for players |

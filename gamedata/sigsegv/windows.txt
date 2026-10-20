@@ -4204,6 +4204,16 @@
 					lib   "server"
 					// string
 				}
+				"CBaseObject::HasSapper"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseObject9HasSapperEv"
+					addr  "0x4c2d50"
+					build "11138802"
+					lib   "server"
+					unshared "1"
+					// verified: read by hand: mov al,[ecx+0xa4c]; ret, the byte Linux reads at +0xa64 (the same 0x18 shift as CBaseProjectile's +0x4cc/+0x4b4). 29 calls from 22 functions; 10 of the 13 the matcher paired are Linux callers (CObjectSapper and CObjectSentrygun::OnTakeDamage, DetonateObjectOfType, CanPickupBuilding, SelectMoreDangerousThreatInternal, CTFBotEngineerBuilding Update and UpgradeAndMaintainBuildings, DoTeleporterOverride, BuildingHealingArrow, DoSwingTraceInternal); the other three are weak pairings, e.g. 0x4fd3c0, paired with CTFBotSpySap's constructor, is a CTFPlayer method testing it on a building after GetType. 0x4c18c0 was another build's. Unshared: the 7 bytes occur once in server.dll and the body once in server_srv.so, so no other function was folded into it
+				}
 				"CBaseObject::InitializeMapPlacedObject"
 				{
 					type  "fixed"
@@ -4287,6 +4297,16 @@
 					lib   "server"
 					vtidx "0"
 					// vtable index
+				}
+				"CBaseProjectile::CollideWithTeammatesThink"
+				{
+					type  "fixed"
+					sym   "_ZN15CBaseProjectile25CollideWithTeammatesThinkEv"
+					addr  "0x20f020"
+					build "11138802"
+					lib   "server"
+					unshared "1"
+					// verified: read by hand: c6 81 b4 04 00 00 01 c3, the byte at +0x4b4 set to 1 (+0x4cc on Linux), the think SetLauncher (push at 0x20f3d5) and Spawn (0x20f73f) hand to SetThink, as ResetCollideWithTeammates and Spawn do on Linux. Unshared: those two pushes are its only references, no call or jmp lands on it, and the 8 bytes occur once in server.dll, as the body does once in server_srv.so
 				}
 				"CBaseProjectile::Destroy"
 				{

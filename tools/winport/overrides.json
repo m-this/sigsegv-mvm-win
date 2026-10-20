@@ -6223,5 +6223,27 @@
   "bad": true,
   "build": "11138802",
   "why": "read by hand: 0x5533c0, lea eax,[ecx-0x2668]; ret, is only in the INextBot sub-table at +0x2668 of NextBotPlayer<CTFPlayer> (slot 0xb8), taking the INextBot part as this. MSVC does not repeat it in the primary table, which is where the vfunc thunk looks, so it cannot link. nextbot1.cpp's INextBot::GetEntity is the body of a pure virtual nothing calls by name; Windows leaves it out"
+ },
+ "_ZN15CBaseProjectile25CollideWithTeammatesThinkEv": {
+  "unshared": true,
+  "rva": "0x20f020",
+  "build": "11138802",
+  "why": "read by hand: c6 81 b4 04 00 00 01 c3, the byte at +0x4b4 set to 1 (+0x4cc on Linux), the think SetLauncher (push at 0x20f3d5) and Spawn (0x20f73f) hand to SetThink, as ResetCollideWithTeammates and Spawn do on Linux. Unshared: those two pushes are its only references, no call or jmp lands on it, and the 8 bytes occur once in server.dll, as the body does once in server_srv.so"
+ },
+ "_ZN11CBaseObject9HasSapperEv": {
+  "unshared": true,
+  "rva": "0x4c2d50",
+  "build": "11138802",
+  "why": "read by hand: mov al,[ecx+0xa4c]; ret, the byte Linux reads at +0xa64 (the same 0x18 shift as CBaseProjectile's +0x4cc/+0x4b4). 29 calls from 22 functions; 10 of the 13 the matcher paired are Linux callers (CObjectSapper and CObjectSentrygun::OnTakeDamage, DetonateObjectOfType, CanPickupBuilding, SelectMoreDangerousThreatInternal, CTFBotEngineerBuilding Update and UpgradeAndMaintainBuildings, DoTeleporterOverride, BuildingHealingArrow, DoSwingTraceInternal); the other three are weak pairings, e.g. 0x4fd3c0, paired with CTFBotSpySap's constructor, is a CTFPlayer method testing it on a building after GetType. 0x4c18c0 was another build's. Unshared: the 7 bytes occur once in server.dll and the body once in server_srv.so, so no other function was folded into it"
+ },
+ "_ZN14CTFFlameEntity6CreateERK6VectorRK6QAngleP11CBaseEntityfifbb": {
+  "bad": true,
+  "build": "11138802",
+  "why": "read by hand: no body in server.dll. Nothing in server_srv.so calls it; its body calls CBaseEntity::Create on 'tf_flame', and the one 'tf_flame' string here (0x8cf8a0) is pushed only by the factory registration at 0x50cb5. Its mult_flame_size and mult_flame_life hooks are only in Spawn (0x60dfc0, slot 0x60, Linux slot 0x64) and HookAttributes (0x46f22c)"
+ },
+ "_ZN11CEventQueue8AddEventEP28EventQueuePrioritizedEvent_t": {
+  "bad": true,
+  "build": "11138802",
+  "why": "read by hand: no body in server.dll. Nothing in server_srv.so calls it (0x68fff0); here the sorted insert, a walk of the +0x30 next links then the +0x30/+0x34 link stores, is inline in AddEvent [CBaseEntity] 0x224bd0, AddEvent 0x224cf0 and Restore 0x225cb0"
  }
 }
