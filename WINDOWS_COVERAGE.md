@@ -1,29 +1,33 @@
 # Windows coverage of SigMod mods and addresses
 
-Measured on 2026-10-15 against TF2 ServerVersion 11117211 (depot 232255), `mfe/feat/winport-gaps` on top of #33 and #34. Static: it reads the code and `gamedata/sigsegv/windows.txt`, not a bed run. `tools/winport/modgaps.py` is the base of the mod count (detours and virtual hooks only) and `tools/winport/namegaps.py` that of the address-name count; the bed's `sig_list_mods` remains the truth for what actually loads, and the 20 FAILED mods in `status/20261009-sweep-after-mod-batch/` are failures of patches and virtual hooks that this file cannot see.
+Measured on 2026-10-20 against TF2 ServerVersion 11138802, `mfe/feat/winport-parity`. Static: it reads the code and `gamedata/sigsegv/windows.txt`, not a bed run. `tools/winport/modgaps.py` is the base of the mod count (detours and virtual hooks only) and `tools/winport/namegaps.py` that of the address-name count, both with `--shipped` for what the Windows package compiles (`tools/winport/shipped.py`). The bed's `sig_list_mods` remains the truth for what actually loads: on main's last bed run (2026-10-18) the only FAILED mods were `Perf:SendProp_Optimize` and `Perf::Virtual_Call_Optimize`, of the 20 in `status/20261009-sweep-after-mod-batch/`; the first is now left out of the package and the second is ported.
 
 ## How it works
 
 - Linux resolves each name by symbol from `server_srv.so`. Windows `server.dll` is stripped, so `windows.txt` is loaded first and holds a `fixed` RVA per name (`CSigsegvGameConf::NameTaken` drops later blocks under the same name). It is derived: `matchfuncs.py`/`matchvtables.py` pair Linux and Windows functions, `tools/winport/overrides.json` (hand entries keyed by Linux symbol, each with `build`, `why`, or `bad`) wins over the matches, `emitgamedata.py` writes the table, `carry.py`/`rebase.py` move overrides to a new build, `checktable.py` and `dupes.py` guard it. Entries for another build are ignored, and `SDK_OnLoad` refuses to load on a build the table is not for.
 - Some names need no table entry: `func knownvtidx` and `.?AV` vtable slots, `func ebpprologue`, `datamap`, `convar` and `src/addr/*.cpp` classes resolve at run time on Windows (`FindAddrWin`). This file counts them as resolved; whether each does on a given build only a bed run says.
-- No mod is compiled out for Windows by an `#ifdef`. `_WINDOWS` guards inside mods swap individual detours for Windows equivalents. A mod is out only when its source is commented out of `AMBuilder` or its body is under `#if 0`, which is true on Linux too. Mods the bed lists as DISABLED (71 of 195) are loaded but off until a convar or popfile key turns them on.
 - `IMod::InvokeLoad` on Windows loads a mod without its failed detours; a failed patch or virtual hook fails the whole mod, and `Toggle` then keeps it off.
+- The Windows package compiles AMBuilder's list without the `mods_debug`, `mods_visualize` and `mods_vgui` groups, as upstream's Linux packages do (`autoconfig.sh`), and without the sources in `shipped.py`'s `LINUX_ONLY`, each argued below. `_WINDOWS` guards inside mods swap individual detours for Windows equivalents or leave out one that has nothing to hook on Windows. Mods the bed lists as DISABLED are loaded but off until a convar or popfile key turns them on.
 
 ## Totals
 
-| Status | Mods |
-| --- | ---: |
-| Enabled, every detour and virtual hook has an address | 254 |
-| Enabled, server-side detours or hooks without an address | 19 |
-| Enabled, only client-side addresses missing (nothing to hook on a dedicated server) | 13 |
-| Compiled out on both platforms | 23 |
-| All SigMod mods (`IMod`/`CModule` names) | 309 |
+| Status | Mods | main before (d7e6eea2) |
+| --- | ---: | ---: |
+| In the Windows package, every detour and virtual hook has an address | 182 | 180 |
+| In the Windows package, server-side detours or hooks without an address | 0 | 4 |
+| In the Windows package, only client-side addresses missing (nothing to hook on a dedicated server) | 11 | 11 |
+| Left out of the Windows package on purpose, argued below | 4 | 2 |
+| Debug, Visualize and VGUI tools (in no package), every address resolved | 74 | 74 |
+| Debug and Visualize tools with server-side gaps | 13 | 13 |
+| Debug tools with only client-side gaps | 2 | 2 |
+| Compiled out on both platforms | 23 | 23 |
+| All SigMod mods (`IMod`/`CModule` names) | 309 | 309 |
 
-The mission-facing mods have no unresolved detour. What is left is 12 `Debug:` tools and `Visualize:Flamethrower`, `Util:Overlay_Send` (two inlined overlay helpers), `Util:Vehicle_Fix`, `Etc:Workshop_Map_Fix` (Linux only: it watches the workshop directory with inotify and links maps with symlinks, and its Steam UGC callbacks are folded into one function on Windows, so it is not ported), and three `Perf:` mods: `SendProp_Optimize` (engine.dll internals and GCC clones), `HLTV_Optimize` (one GCC clone) and `CSS_Bot_Vision_Optimize` (Counter-Strike: Source bot classes the TF2 server does not have). Every one of the 19 has at least one detour that is inlined on Windows, only exists as a GCC clone, has no symbol on Linux either, or has not been located; the section below says which.
+The four server-side gaps on main were `MvM:MedigunShield_Damage`, `Util:Overlay_Send`, `Util:Vehicle_Fix` and `Perf:SendProp_Optimize`. The first three are ported; `SendProp_Optimize` and `Perf::Virtual_Call_Optimize_Inline_Virtuals` join `Etc:Workshop_Map_Fix` and `Perf::CSS_Bot_Vision_Optimize` outside the package. Every one of the 13 Debug and Visualize tools with a gap has at least one detour that is inlined on Windows, only exists as a GCC clone, has no symbol on Linux either, or has not been located; the section below says which.
 
-Address names, from `tools/winport/namegaps.py`: 2,768 are defined in the Linux gamedata, 2,212 of them are named in `src/`. Of those 2,212: 1,512 have a `windows.txt` entry, 195 resolve at run time, 45 are recorded `bad` (inlined, no body of its own), 38 are client-side, and **422** have no Windows entry.
+Address names, from `tools/winport/namegaps.py`. In the Windows package: 1,343 named in the compiled sources, 1,066 with a `windows.txt` entry, 183 resolved at run time, 4 recorded `bad`, 24 client-side and **66** with no Windows entry (main: 1,351, 1,066, 183, 7, 24, 71, counted with the same `shipped.py`). Over all of `src/`: 2,213 named, 1,517 table, 195 run time, 45 bad, 38 client, 418 missing (main: 2,212, 1,513, 195, 45, 38, 421). A missing name only matters when its thunk is called: several of the 66 sit in patch classes or thunks no mod registers on Windows.
 
-## Enabled mods with unresolved addresses
+## Debug and Visualize tools with unresolved addresses
 
 `bad`: read by hand, no body of its own on 11117211 (the table below says where it went). `refused`: located, but the detour guard refuses it. `clone`: a GCC `.part` or `.isra` clone, whose arguments travel in registers (`__gcc_regcall`) and which MSVC has no counterpart of. `open`: not located.
 
@@ -39,13 +43,15 @@ Address names, from `tools/winport/namegaps.py`: 2,768 are defined in the Linux 
 - `Debug:Tele_Sapper` (1 of 4): `CBaseObject::HasSapper` (refused: 0x4c18c0 is `mov al, [ecx+0xa4c]; ret`)
 - `Debug:VProf_Record` (2 of 2): `VProfRecord_Snapshot`, `VProfRecord_StartOrStop` (no such symbols in engine_srv.so on 11117211; the Linux entries are byte patterns, not symbols)
 - `Debug:Vaccinator` (1 of 1): `CheckMedicResist` (clone: `.part.0` with `__gcc_regcall`, and the mod body is a TODO that calls through)
-- `Etc:Workshop_Map_Fix` (5 of 8): `CTFWorkshopMap::OnUGCItemInstalled`, `CTFMapsWorkshop::Steam_OnUGCItemInstalled`, `CTFMapsWorkshop::AddMap`, `CDownloadListGenerator::OnResourcePrecachedFullPath`, `CVEngineServer::FindMap` (Linux only, as above)
-- `Perf::CSS_Bot_Vision_Optimize` (3 of 3): `CCSBot::IsVisible`, `GetPartPosition`, `FindMostDangerousThreat` (Counter-Strike: Source classes; the TF2 server has no `CCSBot`)
-- `Perf:HLTV_Optimize` (1 of 12): `CHLTVDemoRecorder::StopRecording [clone]` (clone)
-- `Perf:SendProp_Optimize` (10 of 27): `CBaseAnimatingOverlay::FastRemoveLayer [clone]`, `CMultiPlayerAnimState::RestartGesture [clone]` and `CTFPlayer::AddObject [clone]` (clone); `CAnimationLayer::StudioFrameAdvance`, `CBaseAnimatingOverlay::FastRemoveLayer` and `SetLayerCycle`, `CTFPlayer::RemoveObject` and both `CParallelProcessor<>::Run` instances (open); `CBaseCombatWeapon::OnActiveStateChanged` (located, left out: it is the 16-byte `ret 4` stub at 0x130600, slot 268 of the class's table and shared by every class that does not override it, and the mod is off by default and cannot run without the rest)
-- `Util:Overlay_Send` (2 of 90): `NDebugOverlay::Cross3DOriented_ang` and `_mat` (both bad). The 30 `[local]` entries are `CAddr_Pointer`s to this extension's own overlay functions and count as resolved at run time
-- `Util:Vehicle_Fix` (5 of 21): `CTFWeaponBaseGun::UpdatePunchAngles` and `CBaseCombatCharacter::CalculatePhysicsStressDamage` (both bad), `CBasePlayer::GetInVehicle [clone]` (clone), `CPropVehicleDriveable::DriveVehicle` and `PassengerShouldReceiveDamage` (open: the class has four vtables on Windows, 0, 0x4ac, 0x604 and 0x608, and the primary one holds 237 slots against Linux's 261, with the five `CPropVehicle` virtuals at 228 to 232 not on the same bodies, so a slot taken by index would be a guess; `PassengerShouldReceiveDamage` is a six-byte stub). The four virtual hooks of the mod resolve, so it loads without these five
 - `Visualize:Flamethrower` (2 of 4): `CTFFlameEntity::Create`, `CTFFlameEntity::RemoveFlame` (as for Flamethrower_Mojo)
+
+## Left out of the Windows package
+
+- `Etc:Workshop_Map_Fix`: watches the workshop directory with inotify and links maps with symlinks, and its Steam UGC callbacks are folded into one function on Windows. `shipped.py` leaves its source out.
+- `Perf:SendProp_Optimize`: replaces `CBaseEntity::SetTransmit` and `CBaseEdict::GetChangeAccessor` whole with `MOD_ADD_REPLACE_FUNC_MEMBER`, and `CFuncReplace` has no function size to check under MSVC (`mem/patch.h`), so the mod would fail to load. Nine of its 26 detours have no Windows address either: the two `CParallelProcessor<>::Run` engine template instances, `CAnimationLayer::StudioFrameAdvance`, `CBaseAnimatingOverlay::SetLayerCycle`, `CTFPlayer::RemoveObject`, `CBaseCombatWeapon::OnActiveStateChanged` (the 16-byte `ret 4` stub at 0x130600, shared by every class that does not override it) and three GCC `.part` clones. It is off by default on Linux too. `shipped.py` leaves its source out.
+- `Perf::Virtual_Call_Optimize_Inline_Virtuals`: rewrites GCC call sites of virtuals into direct loads; MSVC's call sites have another shape. `#if !defined _WINDOWS` in `virtual_call_optimize.cpp`, with its convar. The rest of `Perf::Virtual_Call_Optimize` is ported; its `CBaseEntity::GetTeamNumber` patch rewrites the GCC body and is left out too.
+- `Perf::CSS_Bot_Vision_Optimize`: Counter-Strike: Source bot classes, under `SE_IS_CSS`; the TF2 server has no `CCSBot`.
+- Within shipped mods: `CTFPlayer::CanBeForcedToLaugh`'s `CAddr` in `addr/misc.cpp` (the table has the function), and `Util:Overlay_Send`'s detours on the two `NDebugOverlay::Cross3DOriented` overloads, which have no body in server.dll since nothing calls them.
 
 ## Inlined functions and what the Windows build loses
 
@@ -66,8 +72,8 @@ Each was checked to have no standalone body on 11117211: the only Linux caller h
 | `CTFMechanicalArm::ShockAttack` | `SecondaryAttack` 0x61a020 (from 0x116) | `Debug:ShortCircuit_RubberBand` has no detour on the shock |
 | `CTFFlameEntity::RemoveFlame` | `FlameThink` 0x609b60 and `OnCollide` 0x60ac10 | `Debug:Flamethrower_Mojo` and `Visualize:Flamethrower` have no detour on a flame's removal |
 | `CTFPlayer::GetDesiredHandScale`, `GetDesiredHeadScale`, `GetDesiredTorsoScale`, `GetHandScaleSpeed`, `GetHeadScaleSpeed`, `GetTorsoScaleSpeed` | `TFPlayerThink` 0x50faa0 | `Debug:Scale_Rate` has no detour on any of the six, so it changes nothing on Windows |
-| `CTFWeaponBaseGun::UpdatePunchAngles` | `FireProjectile` 0x63b430 | `Util:Vehicle_Fix` has no detour on it |
-| `CBaseCombatCharacter::CalculatePhysicsStressDamage` | `ApplyStressDamage` 0x1d4010 | `Util:Vehicle_Fix` has no detour on it |
+| `CTFWeaponBaseGun::UpdatePunchAngles` | `FireProjectile` 0x63b430 | none: `Util:Vehicle_Fix` saves the punch angle around a `FireProjectile` detour for a player in a vehicle |
+| `CBaseCombatCharacter::CalculatePhysicsStressDamage` | `ApplyStressDamage` 0x1d4010 | none: `Util:Vehicle_Fix` detours `ApplyStressDamage` and returns early for players |
 
 `CTFBot::IsExplosiveProjectileWeapon` is not inlined: it is 0x556fa0, a jump-table switch on the weapon id (ids 0x16, 0x17, 0x18, 0x3c, 0x41), called once from `FireWeaponAtEnemy`. My first batch recorded it as inlined from the wrong evidence.
 
@@ -79,7 +85,7 @@ Each was checked to have no standalone body on 11117211: the only Linux caller h
 
 These hook the game client and have no meaning in a dedicated server: `Anim:EstimateAbsVelocity_MoveParent_Fix`, `Debug:Client_Desync`, `Debug:Sound_Leak`, `Etc:LaserDot_Fix`, `Etc:Override_Move_Speed`, `Prof:Debug_Overlay`, `Prof:Tier2_RenderUtils`, `Util:DebugOverlay_Font`, `Util:DebugOverlay_Font_v2`, `Util:DebugOverlay_Font_v3`, `Util:Notify_Recv`, `Util:Overlay_Enhancements`, `Util:Overlay_Recv`.
 
-Checked against `gamedata/sigsegv/client.txt`, where every missing name of the 13 is a `[client]` entry: `C_BaseEntity`, `C_TFPlayer`, `C_SniperDot` and `CTFGameMovement` in `client.dll`; `CMatSystemSurface::DrawColoredText`, `CFontTextureCache` and the texture filters in `vguimatsurface.dll`; `CDebugOverlay::DrawAllOverlays` and `DrawOverlay`, the `Render*` helpers and `S_Play` in the engine's render and sound code. A dedicated server loads no `client.dll` or `vguimatsurface.dll` and never enters the engine's renderer or sound system, so nothing runs those functions and the missing addresses cost nothing. `Etc:Override_Move_Speed` also has a server-side `CTFGameMovement` detour, which resolves.
+Checked against `gamedata/sigsegv/client.txt`, where every missing name of the 13 (11 in the package, `Debug:Client_Desync` and `Debug:Sound_Leak` outside it) is a `[client]` entry: `C_BaseEntity`, `C_TFPlayer`, `C_SniperDot` and `CTFGameMovement` in `client.dll`; `CMatSystemSurface::DrawColoredText`, `CFontTextureCache` and the texture filters in `vguimatsurface.dll`; `CDebugOverlay::DrawAllOverlays` and `DrawOverlay`, the `Render*` helpers and `S_Play` in the engine's render and sound code. A dedicated server loads no `client.dll` or `vguimatsurface.dll` and never enters the engine's renderer or sound system, so nothing runs those functions and the missing addresses cost nothing. `Etc:Override_Move_Speed` also has a server-side `CTFGameMovement` detour, which resolves.
 
 ## Compiled out on both platforms
 
@@ -109,159 +115,57 @@ Checked against `gamedata/sigsegv/client.txt`, where every missing name of the 1
 
 ## Enabled and fully resolved
 
-- AI (14): `EngieBot_Dispensers`, `EngieBot_NoPush`, `EngieBot_Wrangler`, `Focus_One_Player`, `Giant_Pyro`, `Improved_UseItem`, `My_Nextbot`, `My_Nextbot_Unlag`, `My_Nextbot_UnlagNPCGlobal`, `NextBotEventResponder_Hooks`, `Prevent_Postmortem_Updates`, `Puppet`, `RocketJump`, `WrapAssassin_AltFire`
+In the Windows package (182):
+
+- AI (15): `EngieBot_Dispensers`, `EngieBot_NoPush`, `EngieBot_Wrangler`, `Focus_One_Player`, `Giant_Pyro`, `Improved_Targeting`, `Improved_UseItem`, `My_Nextbot`, `My_Nextbot_Unlag`, `My_Nextbot_UnlagNPCGlobal`, `NextBotEventResponder_Hooks`, `Prevent_Postmortem_Updates`, `Puppet`, `RocketJump`, `WrapAssassin_AltFire`
 - Anim (1): `Player_UpdateModel_AnimState_Fix`
-- Attr (4): `BlockBackstab_OldStyle`, `CustomProjectileModel_Precache`, `HealOnKill_Overheal_Melee`, `Undocumented`
+- Attr (5): `BlockBackstab_OldStyle`, `CustomProjectileModel_Precache`, `Custom_Attributes`, `HealOnKill_Overheal_Melee`, `Undocumented`
 - Bot (9): `Bot_Player_Slot_Reorder`, `IsSpaceToSpawnHere_Scale`, `Kart_Locomotion`, `Kill_Before_ForceSpec`, `Medieval_NonMelee`, `MultiClass_Weapon`, `RunFast`, `Spy_MedicHeal`, `Spy_SelectRandomReachableEnemy`
 - Canteen (1): `Share_Recall_Canteen`
-- Common (4): `Commands`, `ExtraEntityData`, `Interrupt_Action`, `Text_Hud`
+- Common (5): `Commands`, `ExtraEntityData`, `Interrupt_Action`, `Text_Hud`, `Weapon_Shoot`
 - Cond (2): `Enhanced_Cmds`, `Reprogrammed`
 - Credits (2): `Better_Radius_Collection`, `Spawn_AutoCollect`
-- Debug (54): `AirblastVuln`, `Backtrace`, `Better_Ent_Text`, `Bottle_Break`, `Building_Status`, `Client_Player_Track`, `Cond_Stunned`, `Conds`, `Console_Scramble_v1`, `Console_Scramble_v2`, `Console_Scramble_v2_PartA`, `Console_Scramble_v2_PartB`, `Credit_Magnet`, `Damage_Overlay`, `Deflect_Angle`, `Deflect_Angle_v2`, `Draw_CPhysCollide`, `EnergyRing_Knockback`, `FeignDeath_Ragdoll`, `Flamethrower_Impulse_101`, `Flamethrower_Misc`, `GetPlayerMaxSpeed`, `Grenade_Logger`, `Grenade_VPhysics`, `Heal_Debuff`, `IsPotentiallyTraversable_Trace`, `Max_Clients`, `Medigun_Speed`, `Melee_Trace`, `Minigun_State`, `MvM_Shield_FPS`, `Nav_Mesh`, `NextBot`, `NextBot_Input`, `NoKnockback`, `OnKilled_Before_MainAction_Start`, `Owners`, `Parachute_Warp`, `Penetration`, `Proj_Energy_Ball`, `Projectile_Motion`, `Quantum_Duck`, `Rage`, `Revive_Exploit`, `Revive_Fast`, `SentryBuster_Mannhattan`, `Sticky_Detonation_Delay`, `Sticky_Detonation_Order`, `TF_Nav_Mesh_Trace`, `Tank_Destroy_Animation`, `Tele_AutoDetonate`, `TeleportWhere`, `UserMsg_Overflow`, `UserMsg_Overflow_v2`
+- Debug (1): `UserMsg_Overflow`
 - Demo (1): `StringTable_Limit`
-- Etc (33): `Allow_Civilian_Class`, `Crash_Fixes`, `CrayAirblast_ConVar_NoCheat`, `Deflect_Rocket_Spew`, `Detector`, `Entity_Limit_Manager_Convert_Serverside`, `Heat_Seeking_Rockets`, `Holiday_Items_Allow`, `Huntsman_Damage_Fix`, `Instant_Scaling`, `Limp_Projectiles`, `Loose_Cannon_Damage_Fix`, `MM_Spoof`, `Mapentity_Additions`, `Medicgun_Beam_Machinery`, `Melee_Ignore_Teammates`, `Misc`, `Misc:AllowVoteMidWave`, `Misc:HHHHealthBar`, `Misc:ScriptSaveLimit`, `Misc:SentryBusterParticleChange`, `Misc:SpectatorVoteFix`, `Nav_UpdateBlocked`, `Nav_UpdateBlocked_Visualize`, `Player_Bullet_Bounding_Fix`, `RateLimit_Exclude`, `SendProp_Override`, `SendProp_Override_Extension`, `Suppress_NB_Event_Messages`, `Target_ChangeGravity_Improved`, `Trigger_Filter_Fix`, `Unintended_Class_Weapon_Improvements`, `Weapon_Mimic_Teamnum`
+- Etc (34): `Allow_Civilian_Class`, `Crash_Fixes`, `CrayAirblast_ConVar_NoCheat`, `Deflect_Rocket_Spew`, `Detector`, `Entity_Limit_Manager`, `Entity_Limit_Manager_Convert_Serverside`, `Heat_Seeking_Rockets`, `Holiday_Items_Allow`, `Huntsman_Damage_Fix`, `Instant_Scaling`, `Limp_Projectiles`, `Loose_Cannon_Damage_Fix`, `MM_Spoof`, `Mapentity_Additions`, `Medicgun_Beam_Machinery`, `Melee_Ignore_Teammates`, `Misc`, `Misc:AllowVoteMidWave`, `Misc:HHHHealthBar`, `Misc:ScriptSaveLimit`, `Misc:SentryBusterParticleChange`, `Misc:SpectatorVoteFix`, `Nav_UpdateBlocked`, `Nav_UpdateBlocked_Visualize`, `Player_Bullet_Bounding_Fix`, `RateLimit_Exclude`, `SendProp_Override`, `SendProp_Override_Extension`, `Suppress_NB_Event_Messages`, `Target_ChangeGravity_Improved`, `Trigger_Filter_Fix`, `Unintended_Class_Weapon_Improvements`, `Weapon_Mimic_Teamnum`
 - Item (1): `Item_Common`
-- MvM (32): `Blu_Velocity_Limit_Remove`, `ChangeBotAttributes_Crash_Fix`, `ChangeClass_AnyTime`, `Chat_Unrestrict`, `Disposable_Dispenser`, `Disposable_Sentry_Health_Upgrades`, `Dominations`, `Explosive_Headshot_On_Everything`, `Extended_Upgrades`, `FriendlyFire`, `Gamemode_Converter`, `Gib_Improvements`, `JoinTeam_Blue_Allow`, `MedigunShield_Damage`, `No_Halloween_Souls`, `Player_Limit`, `Red_Robot_Eye_Glow`, `Refund_Exploit_Fix`, `RoboSapper_Override`, `Robot_Limit`, `Robot_Multiplier`, `Sapper_Allow_Multiple_Active`, `SentryBuster_Enhancements`, `Set_Credit_Team`, `Sub_Wave_Spawn_At_Once`, `Teleporter_Aggro`, `UpgradeStation_Regen_Improved`, `Upgrade_Disallow`, `Wave_Spawn_At_Once`, `Weapon_AntiGrief`, `Weapon_Balancing`, `YER_Unnerf`
-- Perf (18): `:Func_Optimize`, `:Idle_Optimize`, `:Input_Optimize`, `:Virtual_Call_Optimize`, `:Virtual_Call_Optimize_Inline_Virtuals`, `Attributes_Optimize`, `Extra_Player_Slots`, `Extra_Player_Slots_Bots`, `Extra_Player_Slots_Players`, `Filesystem_Optimize`, `Flame_Breakable_Collision`, `HLTV_Client_Interact`, `Medigun_Shield_Damage_Events`, `Medigun_Shield_Damage_Interval`, `Medigun_Shield_Pathfinding`, `MvM_Load_Popfile`, `SmokeStack_FS_Thrash`, `Squad_Escort_Optimize`
+- MvM (34): `Blu_Velocity_Limit_Remove`, `ChangeBotAttributes_Crash_Fix`, `ChangeClass_AnyTime`, `Chat_Unrestrict`, `Disposable_Dispenser`, `Disposable_Sentry_Health_Upgrades`, `Dominations`, `Drop_Weapons`, `Explosive_Headshot_On_Everything`, `Extended_Upgrades`, `FriendlyFire`, `Gamemode_Converter`, `Gib_Improvements`, `Human_Death_Yells`, `JoinTeam_Blue_Allow`, `MedigunShield_Damage`, `No_Halloween_Souls`, `Player_Limit`, `Red_Robot_Eye_Glow`, `Refund_Exploit_Fix`, `RoboSapper_Override`, `Robot_Limit`, `Robot_Multiplier`, `Sapper_Allow_Multiple_Active`, `SentryBuster_Enhancements`, `Set_Credit_Team`, `Sub_Wave_Spawn_At_Once`, `Teleporter_Aggro`, `UpgradeStation_Regen_Improved`, `Upgrade_Disallow`, `Wave_Spawn_At_Once`, `Weapon_AntiGrief`, `Weapon_Balancing`, `YER_Unnerf`
+- Perf (18): `:Func_Optimize`, `:Idle_Optimize`, `:Input_Optimize`, `:Virtual_Call_Optimize`, `Attributes_Optimize`, `Extra_Player_Slots`, `Extra_Player_Slots_Bots`, `Extra_Player_Slots_Players`, `Filesystem_Optimize`, `Flame_Breakable_Collision`, `HLTV_Client_Interact`, `HLTV_Optimize`, `Medigun_Shield_Damage_Events`, `Medigun_Shield_Damage_Interval`, `Medigun_Shield_Pathfinding`, `MvM_Load_Popfile`, `SmokeStack_FS_Thrash`, `Squad_Escort_Optimize`
 - Pop (15): `ECAttr_Extensions`, `EventPopfile_Improvements`, `ExtAttr:AlwaysFireWeaponAlt`, `ExtAttr:IgnoreTargets`, `ExtAttr:Parse`, `ExtAttr:TargetStickies`, `KV_Conditional`, `Mission_Extensions`, `Nested_Complex_Spawners`, `PointTemplates`, `PopMgr_Extensions`, `TFBot_Extensions`, `Tank_Extensions`, `WaveSpawn_Extensions`, `Wave_Extensions`
 - Prof (4): `Flame_Breakable_Collision`, `Frame_Prof`, `MvM_Shield_Events`, `Popfile_Load`
 - Robot (7): `Building_Stomp`, `No_Canteens`, `Spawn_Protection_Fix`, `Spawn_SetName`, `Standable_Heads`, `Ticklish`, `Underground_Check_Override`
 - Sniper (2): `Charge_Uncap`, `Head_Uncap`
 - Sound (5): `Suppress_Giant_SentryBuster`, `Suppress_MedicBot_Shield`, `Tele_Activate`, `Unused_Credits`, `Unused_Sapper`
 - Tank (1): `Gunslinger_Combo`
-- Util (17): `Client_Cmds`, `ConFilter`, `Console_Recv`, `Console_Send`, `DTWarning_Use_CVar`, `Download_Manager`, `Entity_Overlays`, `ListenServerHost`, `Lua`, `Make_Item`, `Notify_Send`, `Pooled_String`, `Pooled_String_Fix`, `VProf_Recv`, `VProf_Send`, `VScript_Load_Init_Scripts`, `VScript_Send_Output_To_Admins`
+- Util (19): `Client_Cmds`, `ConFilter`, `Console_Recv`, `Console_Send`, `DTWarning_Use_CVar`, `Download_Manager`, `Entity_Overlays`, `ListenServerHost`, `Lua`, `Make_Item`, `Notify_Send`, `Overlay_Send`, `Pooled_String`, `Pooled_String_Fix`, `VProf_Recv`, `VProf_Send`, `VScript_Load_Init_Scripts`, `VScript_Send_Output_To_Admins`, `Vehicle_Fix`
+
+Debug, Visualize and VGUI tools, outside the package (74):
+
+- Debug (54): `AirblastVuln`, `Backtrace`, `Better_Ent_Text`, `Bottle_Break`, `Building_Status`, `Client_Player_Track`, `Cond_Stunned`, `Conds`, `Console_Scramble_v1`, `Console_Scramble_v2`, `Console_Scramble_v2_PartA`, `Console_Scramble_v2_PartB`, `Credit_Magnet`, `Damage_Overlay`, `Deflect_Angle`, `Deflect_Angle_v2`, `Draw_CPhysCollide`, `EnergyRing_Knockback`, `FeignDeath_Ragdoll`, `Flamethrower_Impulse_101`, `Flamethrower_Misc`, `GetPlayerMaxSpeed`, `Grenade_Logger`, `Grenade_VPhysics`, `Heal_Debuff`, `IsPotentiallyTraversable_Trace`, `Max_Clients`, `Medigun_Speed`, `Melee_Trace`, `Minigun_State`, `MvM_Shield_FPS`, `Nav_Mesh`, `NextBot`, `NextBot_Input`, `NoKnockback`, `OnKilled_Before_MainAction_Start`, `Owners`, `Parachute_Warp`, `Penetration`, `Proj_Energy_Ball`, `Projectile_Motion`, `Quantum_Duck`, `Rage`, `Revive_Exploit`, `Revive_Fast`, `SentryBuster_Mannhattan`, `Sticky_Detonation_Delay`, `Sticky_Detonation_Order`, `TF_Nav_Mesh_Trace`, `Tank_Destroy_Animation`, `Tele_AutoDetonate`, `TeleportWhere`, `UseItem_Broken`, `UserMsg_Overflow_v2`
 - VGUI (1): `Test`
 - Visualize (19): `Airblast_Box`, `Ammo_Counts`, `Backstab`, `Blast_Radius`, `Conds`, `Conds_Client`, `Damage_Force`, `Dispenser_Radius`, `Engie_Nests`, `Explosive_Headshot`, `Hitboxes`, `Huntsman`, `Jar_Radius`, `Melee_Range`, `Minigun_Deflect`, `Projectile_Speed`, `Projectile_Trail`, `Sapper_Range`, `Taunt_Attacks`
 
 ## Address names used by the code with no Windows entry
 
-Names defined in `gamedata/sigsegv` and named in `src/` outside a comment, with no entry in `windows.txt`, not resolved at run time, not `bad` and not `[client]`: 422, from `tools/winport/namegaps.py --list`. Some are never reached on a dedicated server; the bed logs the ones a mission reaches (`unresolved functions called`). Grouped by class.
+Names defined in `gamedata/sigsegv` and named in the sources the Windows package compiles, outside a comment and outside code Windows does not compile, with no entry in `windows.txt`, not resolved at run time, not `bad` and not `[client]`: 66, from `tools/winport/namegaps.py --list --shipped`. Some are never reached on a dedicated server; the bed logs the ones a mission reaches (`unresolved functions called`). The free-function group also holds gamedata keywords (`addrs`, `sym`, `{`) that `namegaps.py` picks up from strings in `src/`. Grouped by class.
 
 - `Action<CTFBot>` (5): `ApplyResult`, `BuildDecoratedName [clone]`, `InvokeOnEnd`, `InvokeOnResume`, `PrintStateToConsole`
 - `Action<CZombie>` (5): `ApplyResult`, `BuildDecoratedName [clone]`, `InvokeOnEnd`, `InvokeOnResume`, `PrintStateToConsole`
 - `Behavior<CTFBot>` (1): `FirstContainedResponder`
-- `CAI_BaseNPC` (1): `GetActivityName`
-- `CAnimationLayer` (1): `StudioFrameAdvance`
 - `CAttributeList` (4): `GetAttributeByID`, `GetAttributeByName`, `NotifyManagerOfAttributeValueChanges`, `SetRuntimeAttributeRefundableCurrency`
-- `CAttributeManager` (4): `AddProvider`, `GetGlobalCacheVersion`, `IsProvidingTo`, `RemoveProvider`
-- `CBaseAnimating` (15): `DrawServerHitboxes`, `FindBodygroupByName`, `GetAttachmentBone`, `GetBodygroup`, `GetBodygroupCount`, `GetBodygroupName`, `GetBoneTransform`, `GetModelPtr`, `GetNumBodyGroups`, `GetNumBones`, `GetPoseParameter [int]`, `GetPoseParameter [str]`, `InvalidateBoneCache`, `ResetSequenceInfo`, `SequenceDuration`
-- `CBaseAnimatingOverlay` (9): `AddGesture`, `AddGestureSequence`, `FastRemoveLayer`, `FastRemoveLayer [clone]`, `GetLayerDuration`, `RemoveAllGestures`, `RemoveGesture`, `RestartGesture`, `SetLayerCycle`
-- `CBaseClient` (3): `SendSnapshot`, `UpdateAcknowledgedFramecount`, `UpdateSendState`
-- `CBaseCombatCharacter` (8): `CalcDamageForceVector`, `IsAbleToSee [CBaseCombatCharacter *]`, `IsAbleToSee [CBaseEntity *]`, `IsGlowEffectActive`, `RemoveGlowEffect`, `SetAmmoCount`, `SetBloodColor`, `SwitchToNextBestWeapon`
-- `CBaseCombatWeapon` (9): `ActivityOverride`, `CanPerformSecondaryAttack`, `Drop`, `GetMaxClip2`, `GetPrimaryAmmoType`, `GetShootSound`, `GetWpnData`, `Lower`, `OnActiveStateChanged`
-- `CBaseEntity` (20): `CalcAbsoluteVelocity`, `ClassMatchesComplex`, `EmitSound [member: normal + handle]`, `EmitSound [static: normal + handle]`, `GetDamageType`, `GetDataObject`, `GetModel`, `GetNextThink`, `GetTeamNumber`, `GetTouchTrace`, `IsBSPModel`, `PostClientActive`, `PrecacheSound`, `ReadKeyField`, `SetNextThink [index]`, `SetTransmitState`, `Spawn`, `TransformStepData_ParentToParent`, `TransformStepData_WorldToParent`, `VPhysicsInitStatic`
-- `CBaseEntityOutput` (1): `ParseEventAction`
-- `CBaseFileSystem` (1): `FileExists`
-- `CBaseObject` (7): `FindBuildPointOnPlayer`, `FindBuildPointOnPlayer [clone]`, `FinishedBuilding`, `GetMiniBuildingStartingHealth`, `HasSapper`, `IsHostileUpgrade`, `MustBeBuiltOnAttachmentPoint`
-- `CBasePlayer` (7): `DisableButtons`, `EnableButtons`, `ForceButtons`, `GetInVehicle [clone]`, `GetViewModel`, `SnapEyeAngles`, `UnforceButtons`
-- `CBaseProjectile` (1): `CollideWithTeammatesThink`
-- `CBaseServer` (4): `GetCPUUsage`, `GetClient`, `RejectConnection`, `UserInfoChanged`
-- `CBaseViewModel` (4): `DestroyControlPanels`, `SetControlPanelsActive`, `SetWeaponModel`, `SpawnControlPanels`
-- `CBeam` (2): `BeamCreate`, `EntsInit`
-- `CBotNPCArcher` (1): `GetIntentionInterface`
-- `CCSBot` (3): `FindMostDangerousThreat`, `GetPartPosition`, `IsVisible`
-- `CClientFrameManager` (2): `CountClientFrames`, `RemoveOldestFrame`
-- `CCollisionProperty` (2): `MarkPartitionHandleDirty`, `SetSurroundingBoundsType`
-- `CCurrencyPack` (1): `DistributedBy`
-- `CDownloadListGenerator` (1): `OnResourcePrecachedFullPath`
-- `CEconEntity` (5): `DebugDescribe`, `GetAttributeContainer`, `GetAttributeManager`, `ReapplyProvision`, `UpdateBodygroups`
-- `CEconItem` (1): `AddDynamicAttributeInternal`
-- `CEconItemAttribute` (2): `CEconItemAttribute [C1]`, `GetStaticData`
-- `CEconItemSchema` (1): `ItemTesting_CreateTestDefinition`
-- `CEconItemView` (1): `GetSOCData`
-- `CEconWearable` (3): `GetSkin`, `RemoveFrom`, `UnEquip`
-- `CEventQueue` (1): `AddEvent [EventQueuePrioritizedEvent_t *]`
-- `CFrameSnapshotManager` (4): `CreatePackedEntity`, `GetPackedEntity`, `GetPreviouslySentPacket`, `UsePreviouslySentPacket`
-- `CFuncNavCost` (1): `HasTag`
-- `CFuncRotating` (1): `SetTargetSpeed`
-- `CGameClient` (2): `GetSendFrame`, `SetupPrevPackInfo`
-- `CGameRules` (1): `IsConnectedUserInfoChangeAllowed`
-- `CHLTVDemoRecorder` (1): `StopRecording [clone]`
-- `CItemGeneration` (1): `GenerateItemFromScriptData`
-- `CMDLCache` (2): `BeginLock`, `EndLock`
-- `CMannVsMachineStats` (3): `GetBottleSpending`, `GetBuyBackSpending`, `GetUpgradeSpending`
-- `CMapListManager` (4): `GetMapCount`, `GetMapName`, `IsMapValid`, `RefreshList`
+- `CBaseEntity` (1): `GetTeamNumber`
 - `CModelLoader` (1): `FlushDynamicModels`
-- `CMultiPlayerAnimState` (2): `OnNewModel`, `RestartGesture [clone]`
-- `CNavArea` (5): `ClearAllNavCostEntities`, `CollectAdjacentAreas`, `Contains`, `ResetPotentiallyVisibleAreas`, `Shift`
-- `CNavMesh` (2): `GetNavArea [ent]`, `GetNearestNavArea [ent]`
-- `CNetChan` (4): `GetMaxRoutablePayloadSize`, `IsFileInWaitingList`, `IsValidFileForTransfer`, `SetFileTransmissionMode`
-- `CNetworkStringTable` (1): `DeleteAllStrings`
-- `CObjectSapper` (3): `ApplyRoboSapperEffects [clone]`, `GetSapperSoundName`, `Spawn`
-- `CObjectSentrygun` (2): `GetTurretAngles`, `SentryRotate`
-- `CParallelProcessor<CGameClient *>` (1): `Run`
-- `CParallelProcessor<PackWork_t>` (1): `Run`
-- `CPathTrack` (1): `GetNext`
-- `CPlayer` (2): `GetEdict`, `IsSourceTV`
-- `CPlayerInventory` (1): `GetItemByPosition`
-- `CPopulationManager` (11): `AddRespecToPlayer`, `FindCheckpointSnapshot [CTFPlayer *]`, `FindOrAddPlayerUpgradeHistory`, `FindOrAddPlayerUpgradeHistory [CTFPlayer *]`, `GetPlayerUpgradeHistory`, `IsInEndlessWaves`, `LoadMvMMission`, `RemovePlayerAndItemUpgradesFromHistory`, `RemoveRespecFromPlayer`, `ResetRespecPoints`, `~CPopulationManager [D2]`
-- `CPropVehicleDriveable` (2): `DriveVehicle`, `PassengerShouldReceiveDamage`
-- `CRConClient` (2): `BuildResponse`, `SendResponse`
-- `CRecipientFilter` (1): `RemoveRecipientsByPVS`
-- `CServerNetworkProperty` (1): `IsInPVS`
-- `CServerRemoteAccess` (1): `SendVProfData`
-- `CSoundEmitterSystemBase` (1): `InitSoundInternalParameters`
+- `CPlayer` (1): `GetEdict`
 - `CStaticProp` (2): `GetEntityHandle`, `GetRefEHandle`
-- `CStaticPropMgr` (5): `GetStaticProp`, `GetStaticPropIndex`, `IsStaticProp`, `LevelInit`, `LevelShutdown`
-- `CSteamID` (1): `Render [static]`
-- `CTFBall_Ornament` (1): `Create`
-- `CTFBaseProjectile` (2): `GetDamage`, `SetDamage`
-- `CTFBot` (10): `ClearTags`, `GetBodyInterface`, `GetIntentionInterface`, `GetLocomotionInterface`, `GetTimeLeftToCapture`, `GetVisionInterface`, `IsLineOfFireClear_ent`, `IsLineOfFireClear_vec`, `IsLineOfFireClear_vec_ent`, `SetMission`
-- `CTFBotMainAction` (2): `ShouldAttack`, `ShouldHurry`
-- `CTFBotMedicHeal` (1): `SelectPatient`
-- `CTFBotSniperLurk` (2): `SelectMoreDangerousThreat`, `ShouldAttack`
-- `CTFBotTacticalMonitor` (1): `ShouldOpportunisticallyTeleport`
+- `CStaticPropMgr` (3): `GetStaticPropIndex`, `LevelInit`, `LevelShutdown`
 - `CTFBotUseItem` (1): `CTFBotUseItem [C1]`
-- `CTFCompoundBow` (1): `GetCurrentCharge`
-- `CTFFlameEntity` (1): `Create`
-- `CTFGameMovement` (2): `PreventBunnyJumping`, `ToggleParachute [clone]`
-- `CTFGameRules` (5): `CanPlayerUseRespec`, `FlagsMayBeCapped`, `GetUpgradeTier`, `IsUpgradeTierEnabled`, `SetNextMvMPopfile`
-- `CTFInventoryManager` (1): `GetInventoryForPlayer`
-- `CTFItem` (1): `GetItemID`
-- `CTFKnife` (1): `IsBehindAndFacingTarget`
-- `CTFMapsWorkshop` (2): `AddMap`, `Steam_OnUGCItemInstalled`
-- `CTFMinigun` (1): `WindUp`
-- `CTFNavArea` (3): `AddPotentiallyVisibleActor`, `GetNextIncursionArea`, `IsValidForWanderingPopulation`
-- `CTFNavMesh` (1): `RecomputeInternalData`
-- `CTFPlayer` (18): `AddObject [clone]`, `CanBuild [clone]`, `CanMoveDuringTaunt`, `DropFlag`, `ForceRegenerateAndRespawn`, `GetAttributeList`, `GetAttributeManager`, `GetPassiveWeapons`, `HandleCommand_JoinTeam_NoMenus`, `HolsterOffHandWeapon`, `MedicGetChargeLevel`, `PlaySpecificSequence`, `ReapplyPlayerUpgrades`, `RemoveAllCustomAttributes`, `RemoveInvisibility`, `RemoveObject`, `SetOffHandWeapon`, `StateTransition`
-- `CTFPlayerShared` (9): `CTFPlayerShared`, `FindHealerIndex`, `GetConditionDuration`, `GetConditionsBits`, `GetPercentInvisible`, `RecalculatePlayerBodygroups`, `SetDefaultItemChargeMeters`, `SetItemChargeMeter [clone]`, `SetPlayerDominatingMe`
-- `CTFPointWeaponMimic` (1): `GetFiringAngles`
-- `CTFPowerup` (1): `GetLifeTime`
-- `CTFProjectile_Cleaver` (1): `Create`
-- `CTFProjectile_EnergyBall` (1): `SetScorer`
-- `CTFProjectile_EnergyRing` (1): `GetInitialVelocity`
-- `CTFProjectile_Jar` (1): `Create`
-- `CTFProjectile_JarGas` (1): `Create`
-- `CTFProjectile_JarMilk` (1): `Create`
-- `CTFSniperRifle` (2): `GetPenetrateType`, `SniperRifleChargeRateMod`
-- `CTFSniperRifleDecap` (1): `GetCount`
-- `CTFStunBall` (1): `Create`
-- `CTFTankBoss` (2): `GetBodyInterface`, `UpdatePingSound`
-- `CTFTeam` (1): `GetObject`
-- `CTFTeamManager` (1): `IsValidTeam`
-- `CTFWeaponBase` (11): `Energy_GetMaxEnergy`, `GetEffectBarProgress`, `GetMaxHealthMod`, `GetProjectileFireSetup`, `GetSkin`, `GetTFPlayerOwner`, `GetTFWpnData`, `InternalGetEffectBarRechargeTime`, `Misfire`, `ShouldRemoveInvisibilityOnPrimaryAttack`, `WeaponReset`
-- `CTFWeaponBaseGun` (2): `FireRocket`, `GetAmmoPerShot`
-- `CTFWearableDemoShield` (1): `DoCharge`
-- `CTFWorkshopMap` (1): `OnUGCItemInstalled`
-- `CTakeDamageInfo` (1): `CTakeDamageInfo [C1 | overload 5]`
-- `CTeamControlPointMaster` (1): `PointLastContestedAt`
-- `CTeamplayRoundBasedRules` (2): `GetNextRespawnWave`, `SetForceMapReset`
 - `CThreadLocalBase` (1): `Get`
-- `CUpgrades` (1): `~CUpgrades [D2]`
-- `CUtlConstStringBase<char>` (1): `Set`
-- `CVEngineServer` (2): `FindMap`, `GetChangeAccessor`
-- `CVoteController` (1): `IsValidVoter [clone]`
-- `CZombie` (1): `GetIntentionInterface`
-- `ILocomotion` (1): `TraceHull`
 - `INextBot` (2): `IsRangeGreaterThan`, `IsRangeLessThan`
-- `NextBotGroundLocomotion` (1): `NextBotGroundLocomotion`
 - `NextBotPlayer<CTFPlayer>` (1): `GetEntity`
-- `PackWork_t` (1): `Process`
 - `Path` (3): `BuildTrivialPath`, `ComputePathDetails`, `Optimize`
-- `variant_t` (1): `SetOther`
-- `(free functions)` (95): `//`, `COM_CompressBuffer_LZSS`, `COM_CompressBuffer_Snappy`, `CRC_File`, `CheckMedicResist`, `CopyStringAttributeValueToCharPointerOutput`, `DispatchParticleEffect [overload 1]`, `DispatchParticleEffect [overload 4]`, `DispatchParticleEffect [overload 5]`, `ENTINDEX`, `FindHullIntersection`, `FireEvent`, `GEconItemSchema`, `GameStringSystem`, `GetLoadoutPositionByName`, `GetParticleSystemNameFromIndex`, `InventoryManager`, `LookupWeaponInfoSlot`, `MapEntity_ParseToken`, `NET_SendLong`, `NET_SendPacket`, `NET_SendTo`, `NavAreaTravelDistance<CTFBotPathCost>`, `NextBotCreatePlayerBot<CTFBot>`, `PointInRespawnRoom`, `PrecachePointTemplates`, `SV_EnsureInstanceBaseline`, `SV_PackEntity`, `SV_ReplicateConVarChange`, `SendCvarValueQueryToClient`, `SendProxy_AngleToFloat`, `SendProxy_Color32ToInt`, `SendProxy_EHandleToInt`, `SendProxy_Empty`, `SendProxy_IntAddOne`, `SendProxy_LengthTable`, `SendProxy_QAngles`, `SendProxy_ShortAddOne`, `SendProxy_StringT_To_String`, `SendProxy_StringToString`, `SendProxy_UInt8ToInt32`, `SendProxy_VectorXYToVectorXY`, `SendTable_Encode`, `TE_BeamPoints`, `TE_BeamRingPoint`, `TE_BreakModel`, `TE_PhysicsProp`, `TE_PlayerDecal`, `TheNextBots`, `ToTFBot`, `UTIL_GetCommandClient`, `UTIL_GetCommandClientIndex`, `UTIL_ParticleTracer`, `UTIL_PlayerDecalTrace`, `VProfRecord_Snapshot`, `VProfRecord_StartOrStop`, `V_vsnprintfRet`, `WeaponID_IsSniperRifleOrBow`, `WeaponIdToAlias`, `WriteRemoteVProfData`, `addrs`, `addrs_group`, `attribute_class`, `attribute_type`, `description_format`, `description_string`, `effect_type`, `findFileInDirCaseInsensitive`, `g_BSPData`, `g_FrameSnapshotManager`, `g_MapListMgr`, `g_PropTypeFns`, `g_aClassNames`, `g_aRawPlayerClassNames`, `g_aTeamColors`, `g_arFakePorts`, `g_bUseFakeIP`, `g_nFakeIP`, `g_szPlayerRobotModels`, `gpGlobals`, `lib`, `modelloader`, `name`, `net_blocksize`, `net_maxroutable`, `regex`, `s_StaticPropMgr`, `s_pTokenBuf`, `server`, `sigsegv`, `sv_maxroutable`, `sym`, `{`, `}`, `~CBaseEntity [D2]`
+- `(free functions)` (35): `COM_CompressBuffer_LZSS`, `ENTINDEX`, `FireEvent`, `GEconItemSchema`, `GetParticleSystemNameFromIndex`, `MapEntity_ParseToken`, `PrecachePointTemplates`, `SendCvarValueQueryToClient`, `SendProxy_LengthTable`, `SendProxy_StringToString`, `TE_BeamPoints`, `TE_BeamRingPoint`, `TE_BreakModel`, `TE_PhysicsProp`, `TheNextBots`, `addrs`, `addrs_group`, `attribute_class`, `attribute_type`, `description_format`, `description_string`, `effect_type`, `g_arFakePorts`, `g_bUseFakeIP`, `g_nFakeIP`, `lib`, `modelloader`, `name`, `regex`, `s_StaticPropMgr`, `server`, `sigsegv`, `sym`, `{`, `}`
 
-Recorded `bad` (45): `CAttributeList::AddAttribute`, `CBaseCombatCharacter::CalculatePhysicsStressDamage`, `CBaseCombatWeapon::SetIdealActivity`, `CBaseEntity::DrawTimedOverlays`, `CBotNPCArcher::CBotNPCArcher`, `CBotNPCArcherIntention::CBotNPCArcherIntention`, `CFlagDetectionZone::EntityIsFlagCarrier`, `CHLTVServer::RestoreTick`, `CLaserDot::Create`, `CNetChan::HandleUpload`, `CNetworkStringTable::UpdateMirrorTable`, `CObjectSentrygun::ValidTargetPlayer`, `CTFBot::StopSuspectingSpy`, `CTFBot::SuspectedSpyInfo_t::IsCurrentlySuspected`, `CTFBotMainAction::GetHealerOfThreat`, `CTFBotMainAction::SelectCloserThreat`, `CTFBotProxy::CTFBotProxy [C1]`, `CTFFlameEntity::RemoveFlame`, `CTFFlameManager::BCanBurnEntityThisFrame`, `CTFMechanicalArm::ShockAttack`, `CTFMedigunShield::Create`, `CTFPlayer::GetDesiredHandScale`, `CTFPlayer::GetDesiredHeadScale`, `CTFPlayer::GetDesiredTorsoScale`, `CTFPlayer::GetHandScaleSpeed`, `CTFPlayer::GetHeadScaleSpeed`, `CTFPlayer::GetTorsoScaleSpeed`, `CTFPlayer::IsAllowedToInitiateTauntWithPartner`, `CTFPlayer::MaybeDrawRailgunBeam`, `CTFPlayer::ShouldDropAmmoPack`, `CTFPlayer::SpyDeadRingerDeath`, `CTFPlayerShared::OnAddHalloweenTiny`, `CTFPlayerShared::OnRemovePhase`, `CTFPlayerShared::OnRemoveStunned`, `CTFPointWeaponMimic::Fire`, `CTFWeaponBase::Energy_Recharge`, `CTFWeaponBaseGun::UpdatePunchAngles`, `CWave::IsDoneWithNonSupportWaves`, `ClientData_Update`, `Host_CheckDumpMemoryStats`, `NDebugOverlay::Cross3DOriented_ang`, `NDebugOverlay::Cross3DOriented_mat`, `NextBotManager::CollectAllBots`, `~CTFBotMvMEngineerIdle [D1]`, `~CTFBotMvMEngineerIdle [D2]`.
+Recorded `bad` (4): `CAttributeList::AddAttribute`, `NDebugOverlay::Cross3DOriented_ang`, `NDebugOverlay::Cross3DOriented_mat`, `NextBotManager::CollectAllBots`.
 
 ## The four entries carry.py could not carry to 11117211
 
@@ -280,6 +184,10 @@ The three library entries were byte-identical, so `carry.py`'s `unmoved` check s
 
 - `max_aoe_targets`: the Windows throttle sits in Custom_Attributes' `OnCollide` detour, in front of the inline `BCanBurnEntityThisFrame`. Its counter moves whenever a collision passes the throttle; Linux moves it only when the game would burn. A collision the game rejects for its own per-entity interval therefore also uses up the slot, and the flamethrower can burn slightly less often than on Linux.
 - `MaybeDrawRailgunBeam` is inline in `FireBullet` (0x51fe50), whose only call to `TE_TFParticleEffectComplex` (0x52082f) is the beam. Weapon_Shoot detours that call while `FireBullet` runs and, for the `dxhr_sniper_rail*` particles, dispatches the custom tracer and swaps in a broadcast filter as its Linux `MaybeDrawRailgunBeam` detour does. It has not been run on the bed.
-- `Util:Overlay_Send`: its 30 `[local]` entries are `CAddr_Pointer`s to the mod's own functions and need no table entry. The only addresses it needs from the game are the two `NDebugOverlay::Cross3DOriented` overloads, which have no body in server.dll and which nothing calls on Linux either.
+- `Util:Overlay_Send`: its 30 `[local]` entries are `CAddr_Pointer`s to the mod's own functions and need no table entry. Its detours on the two `NDebugOverlay::Cross3DOriented` overloads are not registered on Windows: server.dll has no body for either, since nothing calls them.
 - `Perf:HLTV_Optimize`: `CHLTVDemoRecorder::StopRecording [clone]` is a GCC `.part` clone; the Windows function has no clone and the plain `StopRecording` detour covers it.
-- `Perf:SendProp_Optimize` has its engine.dll addresses for the pack path (`SendTable_CullPropsFromProxies`, `CHLTVClient::SendSnapshot`, `CGameClient::SetupPackInfo`, `CVEngineServer::CheckAreasConnected`, `InvalidateSharedEdictChangeInfos`, `AllocChangeFrameList`, `CBaseEdict::GetChangeAccessor`). The two `CParallelProcessor<>::Run` template instances, `RemoveObject`, the animation overlay functions and the three GCC clones are still open, so the mod is off by default and should stay off on Windows.
+- `Perf:SendProp_Optimize` is left out of the package (above). If it is ever ported: server.dll's `CBaseEdict::GetChangeAccessor` is 0x271800 (`engine->GetChangeAccessor(this)` through slot 0x5d of the engine interface, called by `NetworkStateChanged` 0x14f3c0 and about a hundred other sites), not the engine.dll body the table names today, and `CFuncReplace` needs a Windows form, such as a `jmp rel32` to the replacement over the first five bytes.
+- `Util:Vehicle_Fix`: `CBasePlayer::GetInVehicle` has no `.part` clone on Windows and the detour sits on the function. `UpdatePunchAngles` is inline in `FireProjectile`, so a `FireProjectile` detour saves `m_vecPunchAngle` for a player in a vehicle and restores it after. `CalculatePhysicsStressDamage` is inline in `ApplyStressDamage(IPhysicsObject *, bool)` (0x1d4010), whose detour returns early for a player. `DriveVehicle` is slot 233 of `CPropVehicleDriveable`'s primary table (0x371d20) and `PassengerShouldReceiveDamage` slot 12 of `CBaseServerVehicle`'s (0x377400). Not run on the bed, to check there.
+- `MvM:MedigunShield_Damage`: `CTFMedigunShield::Create` is inline in `CWeaponMedigun::CreateMedigunShield` on Windows, so the mod colours the shield in a virtual hook on `CBaseEntity::SetOwnerEntity` (slot 18 of `CTFMedigunShield`'s table), which that code calls once on the new shield.
+- `Perf:Func_Optimize`: `CTFPlayer::PrecacheMvM` is inline in `CTFGameRules::Precache` (0x499ca0), so on Windows the Rome promo items are precached in a `Precache` detour when the map name, without a `workshop/` prefix, starts with `mvm_`.
+- `Perf::Virtual_Call_Optimize`: the `CStaticPropMgr::IsStaticProp` (two overloads) and `GetStaticProp` replacements have MSVC `thiscall` byte forms and read `CStaticProp`'s table by its RTTI name `.?AVCStaticProp@@`; engine.dll 0x1d4290, 0x1d42c0 and 0x1d3bf0.
