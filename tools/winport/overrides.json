@@ -6025,5 +6025,10 @@
   "rva": "0x416230",
   "build": "11138802",
   "why": "read by hand: returns the manager pointer at 0x10a90848, and when it is null builds the function-local static at 0x10a90a80 with NextBotManager's vtable (0x10837600, by RTTI), registers its destructor with atexit and stores it: Linux's body. CServerGameDLL::GameFrame (0x26fafb) calls it where Linux does, among 34 callers; cdecl"
+ },
+ "_ZN14CAttributeList37SetRuntimeAttributeRefundableCurrencyEPK28CEconItemAttributeDefinitioni": {
+  "rva": "0x3c5a30",
+  "build": "11138802",
+  "why": "read by hand: Linux's body: walks m_Attributes (+4, count +0x10, 16-byte elements) for the definition index (word at +4), and when the refundable currency at +0xc differs calls the element's NetworkStateChanged(void *) through slot 0 (MSVC's order of the overload pair) with its address, then stores it; thiscall, ret 8. ApplyUpgrade_Default (0x5f6e30) calls it after 0x3c4e10, the getter of the same field"
  }
 }
