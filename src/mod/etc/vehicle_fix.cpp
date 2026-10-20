@@ -278,11 +278,25 @@ namespace Mod::Util::Vehicle_Fix
 		return vehicle->GetVehicleEnt()->GetCustomVariableFloat<"allowweapons">();
     }
 
+#if defined _WINDOWS
+	// MSVC inlines UpdatePunchAngles into FireProjectile: undo the punch there.
+	DETOUR_DECL_MEMBER(CBaseAnimating *, CTFWeaponBaseGun_FireProjectile, CTFPlayer *player)
+	{
+		if (player == nullptr || player->m_hVehicle == nullptr) {
+			return DETOUR_MEMBER_CALL(player);
+		}
+		QAngle punch = player->m_Local->m_vecPunchAngle;
+		auto projectile = DETOUR_MEMBER_CALL(player);
+		player->m_Local->m_vecPunchAngle = punch;
+		return projectile;
+	}
+#else
 	DETOUR_DECL_MEMBER(void, CTFWeaponBaseGun_UpdatePunchAngles, CTFPlayer *player)
 	{
 		if (player->m_hVehicle == nullptr)
 			DETOUR_MEMBER_CALL(player);
 	}
+#endif
 
 	// Prevent driver's rockets from colliding with the vehicle 
 	void SetOwnerToVehicle(CBaseProjectile *projectile)
@@ -406,11 +420,24 @@ namespace Mod::Util::Vehicle_Fix
 		}
 	}
 
+#if defined _WINDOWS
+	// MSVC keeps the vehicle's override in its IDrivableVehicle table only, a
+	// folded `return true`: ask the server vehicle that calls it instead.
+	DETOUR_DECL_MEMBER(bool, CBaseServerVehicle_PassengerShouldReceiveDamage, const CTakeDamageInfo &inputInfo)
+	{
+		auto vehicle = reinterpret_cast<CBaseServerVehicle *>(this)->GetVehicleEnt();
+		if (vehicle != nullptr && !vehicle->GetCustomVariableFloat<"allowpassengerdamage">(1.0f)) {
+			return false;
+		}
+		return DETOUR_MEMBER_CALL(inputInfo);
+	}
+#else
 	DETOUR_DECL_MEMBER(bool, CPropVehicleDriveable_PassengerShouldReceiveDamage, const CTakeDamageInfo &inputInfo)
 	{
 		auto vehicle = reinterpret_cast<CPropVehicleDriveable *>(this);
 		return vehicle->GetCustomVariableFloat<"allowpassengerdamage">(1.0f);
 	}
+#endif
 	
 	struct gamevcollisionevent_t : public vcollisionevent_t
 	{
@@ -432,6 +459,16 @@ namespace Mod::Util::Vehicle_Fix
 		return damage;
 	}
 
+#if defined _WINDOWS
+	// MSVC inlines CalculatePhysicsStressDamage into its only caller.
+	DETOUR_DECL_MEMBER(void, CBaseCombatCharacter_ApplyStressDamage, IPhysicsObject *obj, bool requireLargeObject)
+	{
+		if (reinterpret_cast<CBaseCombatCharacter *>(this)->IsPlayer()) {
+			return;
+		}
+		DETOUR_MEMBER_CALL(obj, requireLargeObject);
+	}
+#else
 	DETOUR_DECL_MEMBER(float, CBaseCombatCharacter_CalculatePhysicsStressDamage, void *stress, IPhysicsObject *obj)
 	{
 		auto character = reinterpret_cast<CBaseCombatCharacter *>(this);
@@ -441,6 +478,7 @@ namespace Mod::Util::Vehicle_Fix
 		}
 		return DETOUR_MEMBER_CALL(stress, obj);
 	}
+#endif
 
 	THINK_FUNC_DECL(ApplyImmobile)
 	{
@@ -513,7 +551,12 @@ namespace Mod::Util::Vehicle_Fix
 			MOD_ADD_DETOUR_MEMBER(CBaseServerVehicle_GetExitAnimToUse, "CBaseServerVehicle::GetExitAnimToUse");
 			MOD_ADD_DETOUR_MEMBER(CPropVehicleDriveable_Use, "CPropVehicleDriveable::Use");
 			MOD_ADD_DETOUR_MEMBER(CMultiplayRules_VoiceCommand, "CMultiplayRules::VoiceCommand");
+#if defined _WINDOWS
+			// MSVC inlines CanEnterVehicle and keeps no clone of the rest.
+			MOD_ADD_DETOUR_MEMBER(CBasePlayer_GetInVehicle, "CBasePlayer::GetInVehicle");
+#else
 			MOD_ADD_DETOUR_MEMBER(CBasePlayer_GetInVehicle, "CBasePlayer::GetInVehicle [clone]");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CBasePlayer_LeaveVehicle, "CBasePlayer::LeaveVehicle");
 			MOD_ADD_VHOOK(CPropVehicleDriveable_PhysicsSolidMaskForEntity, TypeName<CPropVehicleDriveable>(), "CBaseEntity::PhysicsSolidMaskForEntity");
 			MOD_ADD_VHOOK(CPropVehicleDriveable_OnTakeDamage, TypeName<CPropVehicleDriveable>(), "CBaseEntity::OnTakeDamage");
@@ -521,16 +564,28 @@ namespace Mod::Util::Vehicle_Fix
 			MOD_ADD_DETOUR_MEMBER(CTFPlayer_ForceRespawn, "CTFPlayer::ForceRespawn");
 			MOD_ADD_DETOUR_MEMBER(CBaseServerVehicle_IsPassengerVisible, "CBaseServerVehicle::IsPassengerVisible");
 			MOD_ADD_DETOUR_MEMBER(CBaseServerVehicle_IsPassengerUsingStandardWeapons, "CBaseServerVehicle::IsPassengerUsingStandardWeapons");
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_MEMBER(CTFWeaponBaseGun_FireProjectile, "CTFWeaponBaseGun::FireProjectile");
+#else
 			MOD_ADD_DETOUR_MEMBER(CTFWeaponBaseGun_UpdatePunchAngles, "CTFWeaponBaseGun::UpdatePunchAngles");
+#endif
 			//MOD_ADD_DETOUR_MEMBER(CTFBaseProjectile_Spawn, "CTFBaseProjectile::Spawn");
 			//MOD_ADD_DETOUR_MEMBER(CTFProjectile_Arrow_Spawn, "CTFProjectile_Arrow::Spawn");
 			MOD_ADD_DETOUR_MEMBER(CBasePlayer_EyeAngles, "CBasePlayer::EyeAngles");
 			MOD_ADD_DETOUR_MEMBER(CTFWeaponBase_PrimaryAttack, "CTFWeaponBaseGun::PrimaryAttack");
 			MOD_ADD_DETOUR_MEMBER(CPropVehicleDriveable_TraceAttack, "CPropVehicleDriveable::TraceAttack");
 			MOD_ADD_DETOUR_MEMBER(CPropVehicleDriveable_DriveVehicle, "CPropVehicleDriveable::DriveVehicle");
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_MEMBER(CBaseServerVehicle_PassengerShouldReceiveDamage, "CBaseServerVehicle::PassengerShouldReceiveDamage");
+#else
 			MOD_ADD_DETOUR_MEMBER(CPropVehicleDriveable_PassengerShouldReceiveDamage, "CPropVehicleDriveable::PassengerShouldReceiveDamage");
+#endif
 			MOD_ADD_DETOUR_STATIC(CalculatePhysicsImpactDamage, "CalculatePhysicsImpactDamage");
+#if defined _WINDOWS
+			MOD_ADD_DETOUR_MEMBER(CBaseCombatCharacter_ApplyStressDamage, "CBaseCombatCharacter::ApplyStressDamage");
+#else
 			MOD_ADD_DETOUR_MEMBER(CBaseCombatCharacter_CalculatePhysicsStressDamage, "CBaseCombatCharacter::CalculatePhysicsStressDamage");
+#endif
 			MOD_ADD_DETOUR_MEMBER(CTFGameRules_OnPlayerSpawned, "CTFGameRules::OnPlayerSpawned");
 			MOD_ADD_DETOUR_STATIC(SV_ComputeClientPacks, "SV_ComputeClientPacks");
 			MOD_ADD_DETOUR_MEMBER(CBaseCombatWeapon_WeaponSound, "CBaseCombatWeapon::WeaponSound");

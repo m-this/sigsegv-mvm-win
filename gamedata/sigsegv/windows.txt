@@ -5193,6 +5193,16 @@
 					lib   "server"
 					// string
 				}
+				"CPropVehicleDriveable::DriveVehicle"
+				{
+					type  "fixed"
+					sym   "_ZN21CPropVehicleDriveable12DriveVehicleEfP8CUserCmdii"
+					addr  "0x371d20"
+					build "11138802"
+					lib   "server"
+					vtidx "233"
+					// verified: read by hand: slot 233 of CPropVehicleDriveable's table (Linux 235), between VehicleAngleVectors and IsOverturned. UpdateDriverControls (0x2615b0) on m_VehiclePhysics at +0x4b0 with the command and frame time, the networked speed/RPM/throttle fields, the two pressed-attack COutputEvent::FireOutput calls and the attack axis variant_t::Set + FireOutput pairs, as the source orders them. thiscall, ret 0x10
+				}
 				"CPropVehicleDriveable::Spawn"
 				{
 					type  "fixed"
@@ -15755,6 +15765,25 @@
 					build "11138802"
 					lib   "server"
 					// verified: Matched by consensus on 11138802 (calls CTeamplayRules::Precache at 0x348c60 first, then on a map whose clean name starts with mvm_ calls CTFPlayer::PrecacheMvM at 0x5095a0, its only caller). Func_Optimize detours it on Windows because PrecacheMvM loops back into its first five bytes.
+				}
+				"CBaseCombatCharacter::ApplyStressDamage"
+				{
+					type  "fixed"
+					sym   "_ZN20CBaseCombatCharacter17ApplyStressDamageEP14IPhysicsObjectb"
+					addr  "0x1d4010"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: matched through its call from CBasePlayer::VPhysicsShadowUpdate (0x2ea8c0), its only caller. The IPhysicsObject vcall +0x74 for the game data, CalculateObjectStress (0x2bd150) where Linux calls CalculatePhysicsStressDamage, then GetWorldEntity twice, the CTakeDamageInfo constructor (0x339d20), GetCurrentGravity (0x29e7a0) and TakeDamage (0x1fcc30). thiscall, ret 8
+				}
+				"CBaseServerVehicle::PassengerShouldReceiveDamage"
+				{
+					type  "fixed"
+					sym   "_ZN18CBaseServerVehicle28PassengerShouldReceiveDamageER15CTakeDamageInfo"
+					addr  "0x377400"
+					build "11138802"
+					lib   "server"
+					vtidx "12"
+					// verified: read by hand: slot 12 of CBaseServerVehicle's table, as on Linux. Null m_pDrivableVehicle (+0x30) returns true, otherwise a tail jump to its IDrivableVehicle slot +0x3c. thiscall, ret 4
 				}
 			}
 		}

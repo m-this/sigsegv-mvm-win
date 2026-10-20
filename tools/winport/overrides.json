@@ -5932,5 +5932,24 @@
   "rva": "0x1d3bf0",
   "build": "11138802",
   "why": "read by hand in engine.dll: slot 8 of CStaticPropMgr's primary table, as on Linux. Null returns null; the static prop serial test, then the index (0x1fff for an invalid handle) checked against m_StaticProps' count at +0x2c and m_StaticProps[i] (0xb0 bytes each, base at +0x20) returned at +8, its ICollideable. thiscall, ret 4"
+ },
+ "_ZN21CPropVehicleDriveable12DriveVehicleEfP8CUserCmdii": {
+  "rva": "0x371d20",
+  "build": "11138802",
+  "vtidx": 233,
+  "why": "read by hand: slot 233 of CPropVehicleDriveable's table (Linux 235), between VehicleAngleVectors and IsOverturned. UpdateDriverControls (0x2615b0) on m_VehiclePhysics at +0x4b0 with the command and frame time, the networked speed/RPM/throttle fields, the two pressed-attack COutputEvent::FireOutput calls and the attack axis variant_t::Set + FireOutput pairs, as the source orders them. thiscall, ret 0x10"
+ },
+ "_ZN20CBaseCombatCharacter17ApplyStressDamageEP14IPhysicsObjectb": {
+  "name": "CBaseCombatCharacter::ApplyStressDamage",
+  "rva": "0x1d4010",
+  "build": "11138802",
+  "why": "read by hand: matched through its call from CBasePlayer::VPhysicsShadowUpdate (0x2ea8c0), its only caller. The IPhysicsObject vcall +0x74 for the game data, CalculateObjectStress (0x2bd150) where Linux calls CalculatePhysicsStressDamage, then GetWorldEntity twice, the CTakeDamageInfo constructor (0x339d20), GetCurrentGravity (0x29e7a0) and TakeDamage (0x1fcc30). thiscall, ret 8"
+ },
+ "_ZN18CBaseServerVehicle28PassengerShouldReceiveDamageER15CTakeDamageInfo": {
+  "name": "CBaseServerVehicle::PassengerShouldReceiveDamage",
+  "rva": "0x377400",
+  "build": "11138802",
+  "vtidx": 12,
+  "why": "read by hand: slot 12 of CBaseServerVehicle's table, as on Linux. Null m_pDrivableVehicle (+0x30) returns true, otherwise a tail jump to its IDrivableVehicle slot +0x3c. thiscall, ret 4"
  }
 }
