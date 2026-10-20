@@ -6030,5 +6030,10 @@
   "rva": "0x3c5a30",
   "build": "11138802",
   "why": "read by hand: Linux's body: walks m_Attributes (+4, count +0x10, 16-byte elements) for the definition index (word at +4), and when the refundable currency at +0xc differs calls the element's NetworkStateChanged(void *) through slot 0 (MSVC's order of the overload pair) with its address, then stores it; thiscall, ret 8. ApplyUpgrade_Default (0x5f6e30) calls it after 0x3c4e10, the getter of the same field"
+ },
+ "_Z22PrecachePointTemplatesv": {
+  "rva": "0x2f6cc0",
+  "build": "11138802",
+  "why": "Called from CServerGameDLL::LevelInit (0x26f620). Same body as Linux: walks the g_PointTemplates handles, calls slot 0x31c on each live one (0x320 on Linux, one destructor fewer), then zeroes the count."
  }
 }

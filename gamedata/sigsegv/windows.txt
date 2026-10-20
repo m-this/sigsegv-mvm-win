@@ -8946,6 +8946,15 @@
 					vtidx "4"
 					// vtable
 				}
+				"PrecachePointTemplates"
+				{
+					type  "fixed"
+					sym   "_Z22PrecachePointTemplatesv"
+					addr  "0x2f6cc0"
+					build "11138802"
+					lib   "server"
+					// verified: Called from CServerGameDLL::LevelInit (0x26f620). Same body as Linux: walks the g_PointTemplates handles, calls slot 0x31c on each live one (0x320 on Linux, one destructor fewer), then zeroes the count.
+				}
 				"CEventQueue::AddEvent"
 				{
 					type  "fixed"
