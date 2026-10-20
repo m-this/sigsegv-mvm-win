@@ -1,6 +1,6 @@
 # Windows coverage of SigMod mods and addresses
 
-Measured on 2026-10-20 against TF2 ServerVersion 11138802, `mfe/feat/winport-parity`. Static: it reads the code and `gamedata/sigsegv/windows.txt`, not a bed run. `tools/winport/modgaps.py` is the base of the mod count (detours and virtual hooks only) and `tools/winport/namegaps.py` that of the address-name count, both with `--shipped` for what the Windows package compiles (`tools/winport/shipped.py`). The bed's `sig_list_mods` remains the truth for what actually loads: on main's last bed run (2026-10-18) the only FAILED mods were `Perf:SendProp_Optimize` and `Perf::Virtual_Call_Optimize`, of the 20 in `status/20261009-sweep-after-mod-batch/`; the first is now left out of the package and the second is ported.
+Measured on 2026-10-20 against TF2 ServerVersion 11138802, `mfe/feat/winport-parity-2`. Static: it reads the code and `gamedata/sigsegv/windows.txt`, not a bed run. `tools/winport/modgaps.py` is the base of the mod count (detours and virtual hooks only) and `tools/winport/namegaps.py` that of the address-name count, both with `--shipped` for what the Windows package compiles (`tools/winport/shipped.py`). The bed's `sig_list_mods` remains the truth for what actually loads: on main's last bed run (2026-10-18) the only FAILED mods were `Perf:SendProp_Optimize` and `Perf::Virtual_Call_Optimize`, of the 20 in `status/20261009-sweep-after-mod-batch/`; the first is now left out of the package and the second is ported.
 
 ## How it works
 
@@ -25,7 +25,7 @@ Measured on 2026-10-20 against TF2 ServerVersion 11138802, `mfe/feat/winport-par
 
 The four server-side gaps on main were `MvM:MedigunShield_Damage`, `Util:Overlay_Send`, `Util:Vehicle_Fix` and `Perf:SendProp_Optimize`. The first three are ported; `SendProp_Optimize` and `Perf::Virtual_Call_Optimize_Inline_Virtuals` join `Etc:Workshop_Map_Fix` and `Perf::CSS_Bot_Vision_Optimize` outside the package. Every one of the 13 Debug and Visualize tools with a gap has at least one detour that is inlined on Windows, only exists as a GCC clone, has no symbol on Linux either, or has not been located; the section below says which.
 
-Address names, from `tools/winport/namegaps.py`. In the Windows package: 1,343 named in the compiled sources, 1,084 with a `windows.txt` entry, 183 resolved at run time, 4 recorded `bad`, 24 client-side and **48** with no Windows entry (main: 1,351, 1,066, 183, 7, 24, 71, counted with the same `shipped.py`). Over all of `src/`: 2,213 named, 1,535 table, 195 run time, 45 bad, 38 client, 400 missing (main: 2,212, 1,513, 195, 45, 38, 421). A missing name only matters when its thunk is called: several of the 48 sit in patch classes or thunks no mod registers on Windows, and 15 of them are gamedata keywords.
+Address names, from `tools/winport/namegaps.py`. In the Windows package: 1,328 named in the compiled sources, 1,084 with a `windows.txt` entry, 183 resolved at run time, 4 recorded `bad`, 24 client-side and **33** with no Windows entry (main at ffa92ace: 1,343, 1,084, 183, 4, 24, 48). Over all of `src/`: 2,197 named, 1,535 table, 195 run time, 45 bad, 38 client, 384 missing (main at ffa92ace: 2,213, 1,535, 195, 45, 38, 400). The 15 names main counted that are not addresses were gamedata keywords (`addrs`, `sym`, `{` ...) and `custom_attributes.txt` keys (`name`, `attribute_class` ...): `classify.py` read the unterminated quote on `misc.txt:3399` across the line break, which shifted every key and value after it, and `namegaps.py` read quoted pairs from every file as addresses. The tokenizer now ends a quote at the end of its line, as SourceMod's SMC parser does (`tools/winport/test_namegaps.py`). The regenerated table loses the phantom `"[clone]"` block and gains `CVoteController::TryCastVote` (0x37cf50, the address its `[clone]` already had).
 
 ## Debug and Visualize tools with unresolved addresses
 
@@ -147,7 +147,7 @@ Debug, Visualize and VGUI tools, outside the package (74):
 
 ## Address names used by the code with no Windows entry
 
-Names defined in `gamedata/sigsegv` and named in the sources the Windows package compiles, outside a comment and outside code Windows does not compile, with no entry in `windows.txt`, not resolved at run time, not `bad` and not `[client]`: 48, from `tools/winport/namegaps.py --list --shipped`. Some are never reached on a dedicated server; the bed logs the ones a mission reaches (`unresolved functions called`). The free-function group also holds gamedata keywords (`addrs`, `sym`, `{`) that `namegaps.py` picks up from strings in `src/`. Grouped by class.
+Names defined in `gamedata/sigsegv` and named in the sources the Windows package compiles, outside a comment and outside code Windows does not compile, with no entry in `windows.txt`, not resolved at run time, not `bad` and not `[client]`: 33, from `tools/winport/namegaps.py --list --shipped`. Some are never reached on a dedicated server; the bed logs the ones a mission reaches (`unresolved functions called`). Grouped by class.
 
 - `Action<CTFBot>` (2): `BuildDecoratedName [clone]`, `PrintStateToConsole`
 - `Action<CZombie>` (2): `BuildDecoratedName [clone]`, `PrintStateToConsole`
@@ -161,7 +161,7 @@ Names defined in `gamedata/sigsegv` and named in the sources the Windows package
 - `CTFBotUseItem` (1): `CTFBotUseItem [C1]`
 - `CThreadLocalBase` (1): `Get`
 - `NextBotPlayer<CTFPlayer>` (1): `GetEntity`
-- `(free functions)` (29): `COM_CompressBuffer_LZSS`, `ENTINDEX`, `FireEvent`, `GEconItemSchema`, `GetParticleSystemNameFromIndex`, `MapEntity_ParseToken`, `SendCvarValueQueryToClient`, `SendProxy_LengthTable`, `SendProxy_StringToString`, `addrs`, `addrs_group`, `attribute_class`, `attribute_type`, `description_format`, `description_string`, `effect_type`, `g_arFakePorts`, `g_bUseFakeIP`, `g_nFakeIP`, `lib`, `modelloader`, `name`, `regex`, `s_StaticPropMgr`, `server`, `sigsegv`, `sym`, `{`, `}`
+- `(free functions)` (14): `COM_CompressBuffer_LZSS`, `ENTINDEX`, `FireEvent`, `GEconItemSchema`, `GetParticleSystemNameFromIndex`, `MapEntity_ParseToken`, `SendCvarValueQueryToClient`, `SendProxy_LengthTable`, `SendProxy_StringToString`, `g_arFakePorts`, `g_bUseFakeIP`, `g_nFakeIP`, `modelloader`, `s_StaticPropMgr`
 
 Recorded `bad` (4): `CAttributeList::AddAttribute`, `NDebugOverlay::Cross3DOriented_ang`, `NDebugOverlay::Cross3DOriented_mat`, `NextBotManager::CollectAllBots`.
 

@@ -11356,7 +11356,116 @@
 					lib   "server"
 					// verified: read by hand: SetLocalOrigin (0x1fb890) then PhysicsTouchTriggers(0) (0x1f7ea0) when the bool is set, Linux's body. RestorePlayerTo (0x2ee720), which FinishLagCompensation calls, uses it after its UTIL_TraceEntity as Linux's inline copy does. cdecl, plain ret
 				}
-				"[clone]"
+				"UTIL_TraceEntity [IHandleEntity]"
+				{
+					type  "fixed"
+					sym   "_Z16UTIL_TraceEntityP11CBaseEntityRK6VectorS3_jPK13IHandleEntityiP10CGameTrace"
+					addr  "0x3701b0"
+					build "11138802"
+					lib   "server"
+					// consensus
+				}
+				"CEconItemView::GetAnimationSlot"
+				{
+					type  "fixed"
+					sym   "_ZNK13CEconItemView16GetAnimationSlotEv"
+					addr  "0x3c4390"
+					build "11138802"
+					lib   "server"
+					// verified: GetItemSchema, GetItemDefinition(item def index word at +4), a dynamic_cast to the TF item definition returning -1 when it fails, then the same again and the field at +0x194, as the Linux body; first of the GetXxx functions in the name-ordered run (before GetCustomDesc 0x3c31a0)
+				}
+				"CEconItemView::GetSkin"
+				{
+					type  "fixed"
+					sym   "_ZNK13CEconItemView7GetSkinEib"
+					addr  "0x3c4e80"
+					build "11138802"
+					lib   "server"
+					// verified: checks the team index against 4 and the viewmodel flag, ret 8 for its two arguments, and calls GetItemSchema then GetItemDefinition, in CEconItemView's code
+				}
+				"CEconItemView::GetPlayerDisplayModel"
+				{
+					type  "fixed"
+					sym   "_ZNK13CEconItemView21GetPlayerDisplayModelEii"
+					addr  "0x3c4c90"
+					build "11138802"
+					lib   "server"
+					// consensus
+				}
+				"CEconItemDefinition::GetActivityOverride"
+				{
+					type  "fixed"
+					sym   "_ZNK19CEconItemDefinition19GetActivityOverrideEi8Activity"
+					addr  "0x3b96a0"
+					build "11138802"
+					lib   "server"
+					// verified: the team index test (1 to 4), the per-team visuals block at +0xa8 and the loop over its 0x1c-byte entries comparing the activity with -2 and mapping the name through ActivityList_IndexForName, as the Linux body; the function after GeneratePrecacheSoundStrings (0x3b82b0) in the name-ordered run
+				}
+				"CEconItemDefinition::IterateAttributes"
+				{
+					type  "fixed"
+					sym   "_ZNK19CEconItemDefinition17IterateAttributesEP26IEconItemAttributeIterator"
+					addr  "0x3bc3c0"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: CEconItemView::IterateAttributes (0x3c4ba0) calls it on GetStaticData() with its filtering iterator. Walks the static attributes (+0x1c, count +0x28, 8 bytes each), looks each index up in the schema's attribute map, and calls the attribute type's OnIterateAttributeValue(iterator, def, &value) (+0x24 here, +0x28 on Linux with two destructors), stopping on false; the Linux body. One argument, ret 4
+				}
+				"CVoteController::TryCastVote"
+				{
+					type  "fixed"
+					sym   "_ZN15CVoteController11TryCastVoteEiPKc"
+					addr  "0x37cf50"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: the whole TryCastVote, opening with the sv_allow_votes test (+0x30 of the convar) that Linux's wrapper makes before the .part.0 clone, then the active issue and the cast; thiscall with the index and the issue, ret 8. A spectator's vote with no vote running now gets SpectatorVoteFix's code rather than the no-issue one
+				}
+				"CCollisionEvent::PostCollision"
+				{
+					type  "fixed"
+					sym   "_ZN15CCollisionEvent13PostCollisionEP17vcollisionevent_t"
+					addr  "0x2b7840"
+					build "11138802"
+					lib   "server"
+					vtidx "1"
+					// verified: read by hand: slot 1 of CCollisionEvent's table at offset 0, after PreCollision, as on Linux. Same body with every virtual call 4 lower than Linux's (+0x44, +0x5c, +0xcc, +0x2a0 and +0x298 for Linux +0x48, +0x60, +0xd0, +0x2a4 and +0x29c): one destructor slot less. Thiscall, ret 4
+				}
+				"TE_FireBullets"
+				{
+					type  "fixed"
+					sym   "_Z14TE_FireBulletsiRK6VectorRK6QAngleiiifb"
+					addr  "0x471300"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: what FX_FireBullets calls first (0x470824), as Linux's calls TE_FireBullets at 0xc26552. Builds a CRecipientFilter (0x30e970), AddRecipientsByPAS (0x30ee10), UsePredictionRules (0x30f540), then fills the temp entity, Linux's body. cdecl, plain ret
+				}
+				"CServerGameDLL::Shutdown"
+				{
+					type  "fixed"
+					sym   "_ZN14CServerGameDLL11DLLShutdownEv"
+					addr  "0x26f3f0"
+					build "11138802"
+					lib   "server"
+					// string
+				}
+				"GetCurrentSkyCamera"
+				{
+					type  "fixed"
+					sym   "_Z19GetCurrentSkyCamerav"
+					addr  "0x329bc0"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: mov eax,[0x10a72054]; ret, Linux's body. The inlined ClientData_Update in UpdateAllClientData calls it per player (0x2f0a19)
+				}
+				"VScriptServerInit"
+				{
+					type  "fixed"
+					sym   "_Z17VScriptServerInitv"
+					addr  "0x38a2e0"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: the function holding both references to "VSCRIPT: Started VScript virtual machine using script language '%s'" (0x38a860, 0x38a87c); it checks scriptmanager, reads a command line parameter and compares it, creates the VM when there is none and prints the message, the Linux head in order. The old 0x38a700 just before it is a CUtlLinkedList unlink, ret 4
+				}
+				"VScriptRunScript"
 				{
 					type  "fixed"
 					sym   "_Z16VScriptRunScriptPKcP9HSCRIPT__b"
@@ -11364,6 +11473,258 @@
 					build "11138802"
 					lib   "server"
 					// verified: read by hand: g_pScriptVM test, 'IncludeScript stack overflow', 'Error running script named %s' and 'Cannot run script: NULL script name': Linux's wrapper and its [clone .part.0] in one. Called by RunScriptFile, DoIncludeScript and VScriptServerInit. cdecl, plain ret
+				}
+				"CServerGameDLL::GetServerBrowserMapOverride"
+				{
+					type  "fixed"
+					sym   "_ZN14CServerGameDLL27GetServerBrowserMapOverrideEv"
+					addr  "0x270510"
+					build "11138802"
+					lib   "server"
+					// vtable
+				}
+				"CTeam::GetName"
+				{
+					type  "fixed"
+					sym   "_ZNK5CTeam7GetNameEv"
+					addr  "0x33cd80"
+					build "11138802"
+					lib   "server"
+					// vtable
+				}
+				"CTeam::GetNumPlayers"
+				{
+					type  "fixed"
+					sym   "_ZNK5CTeam13GetNumPlayersEv"
+					addr  "0x1cb390"
+					build "11138802"
+					lib   "server"
+					// vtable
+				}
+				"CTeam::GetPlayer"
+				{
+					type  "fixed"
+					sym   "_ZNK5CTeam9GetPlayerEi"
+					addr  "0x33cda0"
+					build "11138802"
+					lib   "server"
+					// vtable
+				}
+				"CTeam::GetTeamNumber"
+				{
+					type  "fixed"
+					sym   "_ZNK5CTeam13GetTeamNumberEv"
+					addr  "0x33cde0"
+					build "11138802"
+					lib   "server"
+					// vtable
+				}
+				"PassServerEntityFilter [clone]"
+				{
+					type  "fixed"
+					sym   "_Z22PassServerEntityFilterPK13IHandleEntityS1_"
+					addr  "0x36e930"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: true with no pass entity, false when touch is pass, each handle to an entity unless a static prop, true unless both are entities, false when either owns the other; the Linux body with its .part clone folded in. CTraceFilterSimple::ShouldHitEntity (slot 0, 0x36f2e0) calls it with the touched handle and m_pPassEnt and pops 8 itself: cdecl, plain ret
+				}
+				"CObjectTeleporter::PlayerCanBeTeleported [clone]"
+				{
+					type  "fixed"
+					sym   "_ZN17CObjectTeleporter21PlayerCanBeTeleportedEP9CTFPlayer"
+					addr  "0x4d1850"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: the whole function, where Linux detours the .part.0 clone GCC split after the null-player return, which this body makes first. HasTheFlag(0, 0) then GetRobotDestructionLogic and its virtual (+0x31c) == 1, the builder virtual (+0x59c), IsPlayerClass(8), team compare, the MvM check (game rules +0xa40 == 7 and player +0x200c), as the clone does. thiscall, ret 4; called from TeleporterTouch
+				}
+				"CGameMovement::CheckFalling [clone]"
+				{
+					type  "fixed"
+					sym   "_ZN13CGameMovement12CheckFallingEv"
+					addr  "0x273930"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: the whole CGameMovement::CheckFalling, slot 44 (Linux 45), where Linux detours the .part.0 clone GCC split after its ground entity and fall velocity test. Its only callers are the vtable and CTFGameMovement::CheckFalling's tail jump (0x471c98); Linux's FullWalkMove calls the clone directly, this build reaches it through the virtual. SigMod's detour makes the same test itself before it does anything. Thiscall, plain ret
+				}
+				"CTFPlayerShared::PulseMedicRadiusHeal [clone]"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFPlayerShared20PulseMedicRadiusHealEv"
+					addr  "0x529df0"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: the whole PulseMedicRadiusHeal, opening with the +0x1f1 test Linux's ConditionThink makes before its clone (0xd2feff), and holding 'weapon_blocks_healing' (0x5287d5) as the clone does. ConditionThink calls it at 0x51def5. Thiscall, plain ret
+				}
+				"CTriggerIgnite::BurnEntities [clone]"
+				{
+					type  "fixed"
+					sym   "_ZN14CTriggerIgnite9BurnThinkEv"
+					addr  "0x543aa0"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: server.dll has no BurnEntities, MSVC inlined it into its only caller. BurnThink is 0x542230, which StartTouch (0x542720) passes to the think setter, and it is Linux's BurnThink with BurnEntities in it: the time of the last burn at +0x4b8, the walk over the touching handles (+0x494, count +0x4a0), IsPlayer twice, a vcall at slot 0x1ec, CTakeDamageInfo (0x339e80), IsInvulnerable, InCond 0x16, IgniteEntity (0x5423f0) and TakeDamage (0x1fcc30), then the next think when something burned. A detour on it counts the TakeDamage calls made while burning, which is the scope BurnEntities has on Linux. No arguments, plain ret, no return value
+				}
+				"CVoteController::TryCastVote [clone]"
+				{
+					type  "fixed"
+					sym   "_ZN15CVoteController11TryCastVoteEiPKc"
+					addr  "0x37cf50"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: the whole TryCastVote, opening with the sv_allow_votes test (+0x30 of the convar) that Linux's wrapper makes before the .part.0 clone, then the active issue and the cast; thiscall with the index and the issue, ret 8. A spectator's vote with no vote running now gets SpectatorVoteFix's code rather than the no-issue one
+				}
+				"CWeaponMedigun::CycleResistType [clone]"
+				{
+					type  "fixed"
+					sym   "_ZN14CWeaponMedigun15CycleResistTypeEv"
+					addr  "0x61ced0"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: the whole CycleResistType, opening with the medigun type attribute test of Linux's wrapper; then GetChargeType (0x61c280), GetConditionProvider and RemoveCond twice, RecalculateChargeEffects twice (0x529550) and AddCond twice, the clone's body. Callers are CWeaponMedigun::ItemPostFrame (0x61c9e6) and CTFBotMedicHeal::Update (0x582600), Linux's two. Thiscall, plain ret
+				}
+				"CUpgrades::ApplyUpgradeToItem [clone]"
+				{
+					type  "fixed"
+					sym   "_ZN9CUpgrades18ApplyUpgradeToItemEP9CTFPlayerP13CEconItemViewiibb"
+					addr  "0x5f69a0"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: the whole function, where Linux detours the .part clone after the wrapper's null player and currency test (+0x2468 here, +0x2470 on Linux, both must be above 0), which this body makes first. Then the 0x19c byte upgrade out of g_MannVsMachineUpgrades, its attribute by name, the UI group (+0x190) test against 2 (the powerup bottle path, 0x5f5380), else ApplyUpgrade_Default (0x5f5530) as the Linux clone's tail jump does. Called from CUpgrades::PlayerPurchasingUpgrade (0x5f5f03), as Linux's clone is, and by two others, where Linux's wrapper has three. ret 0x18, so 6 arguments
+				}
+				"CTFGameRules::CalcDominationAndRevenge [clone]"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules24CalcDominationAndRevengeEP9CTFPlayerP11CBaseEntityS1_bPi"
+					addr  "0x484640"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: the whole function, where Linux detours the .part clone after the wrapper's early returns. FindPlayerStats (0x4a9650), SetPlayerDominated (0x52b160), Event_PlayerDominatedOther (0x4a8340), Event_PlayerRevenge (0x4a8d00), the 'player_domination' event with dominator, dominated and dominations. Pops 0x14: this and five arguments
+				}
+				"CTriggerHurt::HurtEntity [clone]"
+				{
+					type  "fixed"
+					sym   "_ZN12CTriggerHurt10HurtEntityEP11CBaseEntityf"
+					addr  "0x367420"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: the whole function, where Linux detours the .part clone after the wrapper's checks, which this body makes first: the target's m_takedamage (+0xf9 here, +0x10d on Linux) and the PassesTriggerFilters vcall (slot 0x340 here, 0x344 there). Then IsPlayer and the state 2 test (+0xe74 here, +0xe8c there), TakeHealth for a negative damage, otherwise TakeDamage (0x1fcc30), and the add to the touched-entities vector, as the clone does. EndTouch (0x360da0) calls it with the damage scaled as Linux's EndTouch does, and a second caller at 0x367372 stands for HurtAllTouchers. thiscall with the target and a float, ret 8, bool in al
+				}
+				"CUpgrades::PlayerPurchasingUpgrade [clone]"
+				{
+					type  "fixed"
+					sym   "_ZN9CUpgrades23PlayerPurchasingUpgradeEP9CTFPlayeriibbb"
+					addr  "0x5f76e0"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: the whole function, where Linux detours the .part clone after the wrapper's null player and upgrade index checks (against the count at 0xb96aec), which this body makes first; the detour repeats them under _WINDOWS. Then the 0x19c byte upgrade copied out of g_MannVsMachineUpgrades, GetAttributeDefinitionByName on its attribute, and on purchase RemoveCurrency, RememberUpgrade and Regenerate, as the clone does. Called from CUpgrades::GrantOrRemoveAllUpgrades (0x5f5de0), the Linux clone's caller, and 0x485ed0. Pops 24
+				}
+				"CTFKnife::CanPerformBackstabAgainstTarget [clone]"
+				{
+					type  "fixed"
+					sym   "_ZN8CTFKnife31CanPerformBackstabAgainstTargetEP9CTFPlayer"
+					addr  "0x618b10"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: the whole function, where Linux detours the .part clone GCC split after the wrapper's null target and AttribHookValueInt checks, which this body makes first (0x616c1e, then 0x101dec80 on the string at 0x108d6cd0). Then the MvM flag at gamerules +0xc6d with the owner's checks, InCond 0x79 and 0x78 on the owner, IsBehindAndFacingTarget (0x617100), and the MvM spy branch with InCond 0x47 and 0x32, as the clone does. Called from 0x616acb and 0x617514, two callers as the Linux clone has (PrimaryAttack, BackstabVMThink). thiscall, ret 4
+				}
+				"CTFBotMainAction::Dodge [clone]"
+				{
+					type  "fixed"
+					sym   "_ZN16CTFBotMainAction5DodgeEP6CTFBot"
+					addr  "0x56b890"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: the whole Dodge with the wrapper's bot skill test (+0x27bc) first, then IsInvulnerable and InCond 1 and 7, the Linux clone's body. Its one caller is CTFBotMainAction::Update (0x56d180), which carries Linux's wrapper inline. Takes the action as this and the bot as its argument, ret 4, where the Linux clone takes the bot in eax
+				}
+				"CTFPlayerShared::UpdateCloakMeter [clone]"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFPlayerShared16UpdateCloakMeterEv"
+					addr  "0x52f480"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: the whole UpdateCloakMeter, which opens with the IsPlayerClass(8) test that Linux's wrapper makes before its .part.0 clone. CTFPlayerShared::ConditionThink calls it first (0x51dc7b), then UpdateRageBuffsAndRage (0x52eb40, 'set_buff_type'), UpdateEnergyDrinkMeter and UpdateChargeMeter (0x52da80, 'charge_recharge_rate'), Linux's order. Thiscall, plain ret
+				}
+				"CTFPlayerShared::UpdateEnergyDrinkMeter [clone]"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFPlayerShared22UpdateEnergyDrinkMeterEv"
+					addr  "0x52f9d0"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: the whole UpdateEnergyDrinkMeter, opening with the IsPlayerClass(1) test of Linux's wrapper; the third of the four meter updates ConditionThink makes (0x51dc89), as on Linux. Thiscall, plain ret
+				}
+				"CGameMovement::GetPointContentsCached [clone]"
+				{
+					type  "fixed"
+					sym   "_ZN13CGameMovement22GetPointContentsCachedERK6Vectori"
+					addr  "0x2781c0"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: the whole function, where Linux detours the .part clone GCC split after the convar test (cmp byte at 0x99143c). It tests the convar, takes the player's entindex - 1 and calls enginetrace->GetPointContents(point, 0) when it is above 100 (cmp 0x65), else reads the per-slot cache (sentinel -10000 = 0xffffd8f1, squared distance against a constant) and refills it, as the clone does. Pops 8: this, a Vector reference, the slot
+				}
+				"CPopulationManager::Initialize [clone]"
+				{
+					type  "fixed"
+					sym   "_ZN18CPopulationManager10InitializeEv"
+					addr  "0x5e5f00"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: the whole function, where Linux detours the .part clone GCC split after the wrapper's nav mesh check. This body makes that check first (TheNavMesh at 0xa8ced0, its +0x30 at zero reaches the 'No Nav Mesh CPopulationManager::Initialize' string at 0x8bcb48), and the detour repeats it under _WINDOWS. Then the Parse call (0x5e5730) after a vcall, ClearCheckpoint or RestoreCheckpoint on gamerules +0x3cc == 1, UpdateObjectiveResource (0x5e73b0, already in the table) and the ConVar SetValue at the end, as the clone does. No arguments, plain ret, bool in al
+				}
+				"CTFPlayer::ItemsMatch [clone]"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer10ItemsMatchEP19TFPlayerClassData_tP13CEconItemViewS3_P13CTFWeaponBase"
+					addr  "0x4fea20"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: the whole ItemsMatch with all four arguments (ret 0x10), opening with the null and +0x54 test of Linux's wrapper on the current item, then the item ID compare and GetStaticData. Called by ManageBuilderWeapons (0x4fd40c), ManageRegularWeapons (0x4fd95b) and ValidateWeapons (0x514470); ValidateWearables carries it inline. Takes the class data the Linux clone drops, so SigMod's Windows detour declares it
+				}
+				"CTFRadiusDamageInfo::ApplyToEntity [clone]"
+				{
+					type  "fixed"
+					sym   "_ZN19CTFRadiusDamageInfo13ApplyToEntityEP11CBaseEntity"
+					addr  "0x4817b0"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: the whole function, where Linux detours the .part clone GCC split after the wrapper's two early returns (entity == m_pEntityIgnore at +0x14, m_takedamage 0 at +0xf9 here, +0x10d on Linux), which this body makes first; the detour repeats them under _WINDOWS. Then the trace filters, the explosive force, DispatchTraceAttack (0x1ffb50) with the multi damage pair or TakeDamage, TraceAttackToTriggers and RecordEnemyPlayerHit, as the clone does. Called only from CTFGameRules::RadiusDamage (0x499230). Pops 4
+				}
+				"CFuncNavCost::IsApplicableTo [clone]"
+				{
+					type  "fixed"
+					sym   "_ZNK12CFuncNavCost14IsApplicableToEP20CBaseCombatCharacter"
+					addr  "0x3f37d0"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: the whole function, where Linux detours the .part clone GCC split after the null who and team (+0x39c Linux, +0x384 here) checks, which this body makes first. Called by exactly CFuncNavAvoid::GetCostMultiplier and CFuncNavPrefer::GetCostMultiplier (the last slot of each table, 0x3f1480 and 0x3f14f0), as the clone's two direct callers are on Linux. Same body: IsPlayer then the 0x539 check, HasTheFlag, the class switch on +0x289c for 2, 3, 4, 6 and 0, and the 0x10c byte tag strings; ret 4
+				}
+				"CEconItemSchema::GetItemDefinitionByName [clone]"
+				{
+					type  "fixed"
+					sym   "_ZN15CEconItemSchema23GetItemDefinitionByNameEPKc"
+					addr  "0x3b9d60"
+					build "11138802"
+					lib   "server"
+					// verified: turned away for field disagreement, pop as expected (ret 4); returns null on a null name, then walks the definition map at +0xe8 comparing each definition's name at +0xdc with the argument, the body Linux jumps to; the whole function, where Linux detours the .part clone GCC split after the null name check, which this body makes first (ECAttr_Extensions' detour maps a custom weapon name and is null safe)
+				}
+				"CBaseClient::SetName"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseClient7SetNameEPKc"
+					addr  "0x84510"
+					build "11138802"
+					lib   "engine"
+					// verified: read by hand, engine.dll: slot 17 of CGameClient's primary table (CBaseClient's own virtuals after the destructor and FireGameEvent, UpdateAcknowledgedFramecount at slot 4 as Linux has it first); copies the name with 'unnamed' for an empty one, Linux's body. Thiscall, ret 4
+				}
+				"CGameClient::SetupPackInfo"
+				{
+					type  "fixed"
+					sym   "_ZN11CGameClient13SetupPackInfoEP14CFrameSnapshot"
+					addr  "0x126e80"
+					build "11138802"
+					lib   "engine"
+					// verified: opens with the virtual at +0x20 and AllocateFrame, calls CClientFrame::Init, then CClientFrameManager::AddClientFrame (0xb8f40, matched to Linux's), as the Linux body does; thiscall, one argument, ret 4; sits next to CGameClient::SendSnapshot (0x1265e0)
 				}
 				"CBaseServer::FillServerInfo"
 				{
@@ -15056,367 +15417,6 @@
 					build "11138802"
 					lib   "server"
 					// string
-				}
-				"UTIL_TraceEntity [IHandleEntity]"
-				{
-					type  "fixed"
-					sym   "_Z16UTIL_TraceEntityP11CBaseEntityRK6VectorS3_jPK13IHandleEntityiP10CGameTrace"
-					addr  "0x3701b0"
-					build "11138802"
-					lib   "server"
-					// consensus
-				}
-				"CEconItemView::GetAnimationSlot"
-				{
-					type  "fixed"
-					sym   "_ZNK13CEconItemView16GetAnimationSlotEv"
-					addr  "0x3c4390"
-					build "11138802"
-					lib   "server"
-					// verified: GetItemSchema, GetItemDefinition(item def index word at +4), a dynamic_cast to the TF item definition returning -1 when it fails, then the same again and the field at +0x194, as the Linux body; first of the GetXxx functions in the name-ordered run (before GetCustomDesc 0x3c31a0)
-				}
-				"CEconItemView::GetSkin"
-				{
-					type  "fixed"
-					sym   "_ZNK13CEconItemView7GetSkinEib"
-					addr  "0x3c4e80"
-					build "11138802"
-					lib   "server"
-					// verified: checks the team index against 4 and the viewmodel flag, ret 8 for its two arguments, and calls GetItemSchema then GetItemDefinition, in CEconItemView's code
-				}
-				"CEconItemView::GetPlayerDisplayModel"
-				{
-					type  "fixed"
-					sym   "_ZNK13CEconItemView21GetPlayerDisplayModelEii"
-					addr  "0x3c4c90"
-					build "11138802"
-					lib   "server"
-					// consensus
-				}
-				"CEconItemDefinition::GetActivityOverride"
-				{
-					type  "fixed"
-					sym   "_ZNK19CEconItemDefinition19GetActivityOverrideEi8Activity"
-					addr  "0x3b96a0"
-					build "11138802"
-					lib   "server"
-					// verified: the team index test (1 to 4), the per-team visuals block at +0xa8 and the loop over its 0x1c-byte entries comparing the activity with -2 and mapping the name through ActivityList_IndexForName, as the Linux body; the function after GeneratePrecacheSoundStrings (0x3b82b0) in the name-ordered run
-				}
-				"CEconItemDefinition::IterateAttributes"
-				{
-					type  "fixed"
-					sym   "_ZNK19CEconItemDefinition17IterateAttributesEP26IEconItemAttributeIterator"
-					addr  "0x3bc3c0"
-					build "11138802"
-					lib   "server"
-					// verified: read by hand: CEconItemView::IterateAttributes (0x3c4ba0) calls it on GetStaticData() with its filtering iterator. Walks the static attributes (+0x1c, count +0x28, 8 bytes each), looks each index up in the schema's attribute map, and calls the attribute type's OnIterateAttributeValue(iterator, def, &value) (+0x24 here, +0x28 on Linux with two destructors), stopping on false; the Linux body. One argument, ret 4
-				}
-				"CCollisionEvent::PostCollision"
-				{
-					type  "fixed"
-					sym   "_ZN15CCollisionEvent13PostCollisionEP17vcollisionevent_t"
-					addr  "0x2b7840"
-					build "11138802"
-					lib   "server"
-					vtidx "1"
-					// verified: read by hand: slot 1 of CCollisionEvent's table at offset 0, after PreCollision, as on Linux. Same body with every virtual call 4 lower than Linux's (+0x44, +0x5c, +0xcc, +0x2a0 and +0x298 for Linux +0x48, +0x60, +0xd0, +0x2a4 and +0x29c): one destructor slot less. Thiscall, ret 4
-				}
-				"TE_FireBullets"
-				{
-					type  "fixed"
-					sym   "_Z14TE_FireBulletsiRK6VectorRK6QAngleiiifb"
-					addr  "0x471300"
-					build "11138802"
-					lib   "server"
-					// verified: read by hand: what FX_FireBullets calls first (0x470824), as Linux's calls TE_FireBullets at 0xc26552. Builds a CRecipientFilter (0x30e970), AddRecipientsByPAS (0x30ee10), UsePredictionRules (0x30f540), then fills the temp entity, Linux's body. cdecl, plain ret
-				}
-				"CServerGameDLL::Shutdown"
-				{
-					type  "fixed"
-					sym   "_ZN14CServerGameDLL11DLLShutdownEv"
-					addr  "0x26f3f0"
-					build "11138802"
-					lib   "server"
-					// string
-				}
-				"GetCurrentSkyCamera"
-				{
-					type  "fixed"
-					sym   "_Z19GetCurrentSkyCamerav"
-					addr  "0x329bc0"
-					build "11138802"
-					lib   "server"
-					// verified: read by hand: mov eax,[0x10a72054]; ret, Linux's body. The inlined ClientData_Update in UpdateAllClientData calls it per player (0x2f0a19)
-				}
-				"VScriptServerInit"
-				{
-					type  "fixed"
-					sym   "_Z17VScriptServerInitv"
-					addr  "0x38a2e0"
-					build "11138802"
-					lib   "server"
-					// verified: read by hand: the function holding both references to "VSCRIPT: Started VScript virtual machine using script language '%s'" (0x38a860, 0x38a87c); it checks scriptmanager, reads a command line parameter and compares it, creates the VM when there is none and prints the message, the Linux head in order. The old 0x38a700 just before it is a CUtlLinkedList unlink, ret 4
-				}
-				"VScriptRunScript"
-				{
-					type  "fixed"
-					sym   "_Z16VScriptRunScriptPKcP9HSCRIPT__b"
-					addr  "0x398d40"
-					build "11138802"
-					lib   "server"
-					// verified: read by hand: g_pScriptVM test, 'IncludeScript stack overflow', 'Error running script named %s' and 'Cannot run script: NULL script name': Linux's wrapper and its [clone .part.0] in one. Called by RunScriptFile, DoIncludeScript and VScriptServerInit. cdecl, plain ret
-				}
-				"CServerGameDLL::GetServerBrowserMapOverride"
-				{
-					type  "fixed"
-					sym   "_ZN14CServerGameDLL27GetServerBrowserMapOverrideEv"
-					addr  "0x270510"
-					build "11138802"
-					lib   "server"
-					// vtable
-				}
-				"CTeam::GetName"
-				{
-					type  "fixed"
-					sym   "_ZNK5CTeam7GetNameEv"
-					addr  "0x33cd80"
-					build "11138802"
-					lib   "server"
-					// vtable
-				}
-				"CTeam::GetNumPlayers"
-				{
-					type  "fixed"
-					sym   "_ZNK5CTeam13GetNumPlayersEv"
-					addr  "0x1cb390"
-					build "11138802"
-					lib   "server"
-					// vtable
-				}
-				"CTeam::GetPlayer"
-				{
-					type  "fixed"
-					sym   "_ZNK5CTeam9GetPlayerEi"
-					addr  "0x33cda0"
-					build "11138802"
-					lib   "server"
-					// vtable
-				}
-				"CTeam::GetTeamNumber"
-				{
-					type  "fixed"
-					sym   "_ZNK5CTeam13GetTeamNumberEv"
-					addr  "0x33cde0"
-					build "11138802"
-					lib   "server"
-					// vtable
-				}
-				"PassServerEntityFilter [clone]"
-				{
-					type  "fixed"
-					sym   "_Z22PassServerEntityFilterPK13IHandleEntityS1_"
-					addr  "0x36e930"
-					build "11138802"
-					lib   "server"
-					// verified: read by hand: true with no pass entity, false when touch is pass, each handle to an entity unless a static prop, true unless both are entities, false when either owns the other; the Linux body with its .part clone folded in. CTraceFilterSimple::ShouldHitEntity (slot 0, 0x36f2e0) calls it with the touched handle and m_pPassEnt and pops 8 itself: cdecl, plain ret
-				}
-				"CObjectTeleporter::PlayerCanBeTeleported [clone]"
-				{
-					type  "fixed"
-					sym   "_ZN17CObjectTeleporter21PlayerCanBeTeleportedEP9CTFPlayer"
-					addr  "0x4d1850"
-					build "11138802"
-					lib   "server"
-					// verified: read by hand: the whole function, where Linux detours the .part.0 clone GCC split after the null-player return, which this body makes first. HasTheFlag(0, 0) then GetRobotDestructionLogic and its virtual (+0x31c) == 1, the builder virtual (+0x59c), IsPlayerClass(8), team compare, the MvM check (game rules +0xa40 == 7 and player +0x200c), as the clone does. thiscall, ret 4; called from TeleporterTouch
-				}
-				"CGameMovement::CheckFalling [clone]"
-				{
-					type  "fixed"
-					sym   "_ZN13CGameMovement12CheckFallingEv"
-					addr  "0x273930"
-					build "11138802"
-					lib   "server"
-					// verified: read by hand: the whole CGameMovement::CheckFalling, slot 44 (Linux 45), where Linux detours the .part.0 clone GCC split after its ground entity and fall velocity test. Its only callers are the vtable and CTFGameMovement::CheckFalling's tail jump (0x471c98); Linux's FullWalkMove calls the clone directly, this build reaches it through the virtual. SigMod's detour makes the same test itself before it does anything. Thiscall, plain ret
-				}
-				"CTFPlayerShared::PulseMedicRadiusHeal [clone]"
-				{
-					type  "fixed"
-					sym   "_ZN15CTFPlayerShared20PulseMedicRadiusHealEv"
-					addr  "0x529df0"
-					build "11138802"
-					lib   "server"
-					// verified: read by hand: the whole PulseMedicRadiusHeal, opening with the +0x1f1 test Linux's ConditionThink makes before its clone (0xd2feff), and holding 'weapon_blocks_healing' (0x5287d5) as the clone does. ConditionThink calls it at 0x51def5. Thiscall, plain ret
-				}
-				"CTriggerIgnite::BurnEntities [clone]"
-				{
-					type  "fixed"
-					sym   "_ZN14CTriggerIgnite9BurnThinkEv"
-					addr  "0x543aa0"
-					build "11138802"
-					lib   "server"
-					// verified: read by hand: server.dll has no BurnEntities, MSVC inlined it into its only caller. BurnThink is 0x542230, which StartTouch (0x542720) passes to the think setter, and it is Linux's BurnThink with BurnEntities in it: the time of the last burn at +0x4b8, the walk over the touching handles (+0x494, count +0x4a0), IsPlayer twice, a vcall at slot 0x1ec, CTakeDamageInfo (0x339e80), IsInvulnerable, InCond 0x16, IgniteEntity (0x5423f0) and TakeDamage (0x1fcc30), then the next think when something burned. A detour on it counts the TakeDamage calls made while burning, which is the scope BurnEntities has on Linux. No arguments, plain ret, no return value
-				}
-				"CVoteController::TryCastVote [clone]"
-				{
-					type  "fixed"
-					sym   "_ZN15CVoteController11TryCastVoteEiPKc"
-					addr  "0x37cf50"
-					build "11138802"
-					lib   "server"
-					// verified: read by hand: the whole TryCastVote, opening with the sv_allow_votes test (+0x30 of the convar) that Linux's wrapper makes before the .part.0 clone, then the active issue and the cast; thiscall with the index and the issue, ret 8. A spectator's vote with no vote running now gets SpectatorVoteFix's code rather than the no-issue one
-				}
-				"CWeaponMedigun::CycleResistType [clone]"
-				{
-					type  "fixed"
-					sym   "_ZN14CWeaponMedigun15CycleResistTypeEv"
-					addr  "0x61ced0"
-					build "11138802"
-					lib   "server"
-					// verified: read by hand: the whole CycleResistType, opening with the medigun type attribute test of Linux's wrapper; then GetChargeType (0x61c280), GetConditionProvider and RemoveCond twice, RecalculateChargeEffects twice (0x529550) and AddCond twice, the clone's body. Callers are CWeaponMedigun::ItemPostFrame (0x61c9e6) and CTFBotMedicHeal::Update (0x582600), Linux's two. Thiscall, plain ret
-				}
-				"CUpgrades::ApplyUpgradeToItem [clone]"
-				{
-					type  "fixed"
-					sym   "_ZN9CUpgrades18ApplyUpgradeToItemEP9CTFPlayerP13CEconItemViewiibb"
-					addr  "0x5f69a0"
-					build "11138802"
-					lib   "server"
-					// verified: read by hand: the whole function, where Linux detours the .part clone after the wrapper's null player and currency test (+0x2468 here, +0x2470 on Linux, both must be above 0), which this body makes first. Then the 0x19c byte upgrade out of g_MannVsMachineUpgrades, its attribute by name, the UI group (+0x190) test against 2 (the powerup bottle path, 0x5f5380), else ApplyUpgrade_Default (0x5f5530) as the Linux clone's tail jump does. Called from CUpgrades::PlayerPurchasingUpgrade (0x5f5f03), as Linux's clone is, and by two others, where Linux's wrapper has three. ret 0x18, so 6 arguments
-				}
-				"CTFGameRules::CalcDominationAndRevenge [clone]"
-				{
-					type  "fixed"
-					sym   "_ZN12CTFGameRules24CalcDominationAndRevengeEP9CTFPlayerP11CBaseEntityS1_bPi"
-					addr  "0x484640"
-					build "11138802"
-					lib   "server"
-					// verified: read by hand: the whole function, where Linux detours the .part clone after the wrapper's early returns. FindPlayerStats (0x4a9650), SetPlayerDominated (0x52b160), Event_PlayerDominatedOther (0x4a8340), Event_PlayerRevenge (0x4a8d00), the 'player_domination' event with dominator, dominated and dominations. Pops 0x14: this and five arguments
-				}
-				"CTriggerHurt::HurtEntity [clone]"
-				{
-					type  "fixed"
-					sym   "_ZN12CTriggerHurt10HurtEntityEP11CBaseEntityf"
-					addr  "0x367420"
-					build "11138802"
-					lib   "server"
-					// verified: read by hand: the whole function, where Linux detours the .part clone after the wrapper's checks, which this body makes first: the target's m_takedamage (+0xf9 here, +0x10d on Linux) and the PassesTriggerFilters vcall (slot 0x340 here, 0x344 there). Then IsPlayer and the state 2 test (+0xe74 here, +0xe8c there), TakeHealth for a negative damage, otherwise TakeDamage (0x1fcc30), and the add to the touched-entities vector, as the clone does. EndTouch (0x360da0) calls it with the damage scaled as Linux's EndTouch does, and a second caller at 0x367372 stands for HurtAllTouchers. thiscall with the target and a float, ret 8, bool in al
-				}
-				"CUpgrades::PlayerPurchasingUpgrade [clone]"
-				{
-					type  "fixed"
-					sym   "_ZN9CUpgrades23PlayerPurchasingUpgradeEP9CTFPlayeriibbb"
-					addr  "0x5f76e0"
-					build "11138802"
-					lib   "server"
-					// verified: read by hand: the whole function, where Linux detours the .part clone after the wrapper's null player and upgrade index checks (against the count at 0xb96aec), which this body makes first; the detour repeats them under _WINDOWS. Then the 0x19c byte upgrade copied out of g_MannVsMachineUpgrades, GetAttributeDefinitionByName on its attribute, and on purchase RemoveCurrency, RememberUpgrade and Regenerate, as the clone does. Called from CUpgrades::GrantOrRemoveAllUpgrades (0x5f5de0), the Linux clone's caller, and 0x485ed0. Pops 24
-				}
-				"CTFKnife::CanPerformBackstabAgainstTarget [clone]"
-				{
-					type  "fixed"
-					sym   "_ZN8CTFKnife31CanPerformBackstabAgainstTargetEP9CTFPlayer"
-					addr  "0x618b10"
-					build "11138802"
-					lib   "server"
-					// verified: read by hand: the whole function, where Linux detours the .part clone GCC split after the wrapper's null target and AttribHookValueInt checks, which this body makes first (0x616c1e, then 0x101dec80 on the string at 0x108d6cd0). Then the MvM flag at gamerules +0xc6d with the owner's checks, InCond 0x79 and 0x78 on the owner, IsBehindAndFacingTarget (0x617100), and the MvM spy branch with InCond 0x47 and 0x32, as the clone does. Called from 0x616acb and 0x617514, two callers as the Linux clone has (PrimaryAttack, BackstabVMThink). thiscall, ret 4
-				}
-				"CTFBotMainAction::Dodge [clone]"
-				{
-					type  "fixed"
-					sym   "_ZN16CTFBotMainAction5DodgeEP6CTFBot"
-					addr  "0x56b890"
-					build "11138802"
-					lib   "server"
-					// verified: read by hand: the whole Dodge with the wrapper's bot skill test (+0x27bc) first, then IsInvulnerable and InCond 1 and 7, the Linux clone's body. Its one caller is CTFBotMainAction::Update (0x56d180), which carries Linux's wrapper inline. Takes the action as this and the bot as its argument, ret 4, where the Linux clone takes the bot in eax
-				}
-				"CTFPlayerShared::UpdateCloakMeter [clone]"
-				{
-					type  "fixed"
-					sym   "_ZN15CTFPlayerShared16UpdateCloakMeterEv"
-					addr  "0x52f480"
-					build "11138802"
-					lib   "server"
-					// verified: read by hand: the whole UpdateCloakMeter, which opens with the IsPlayerClass(8) test that Linux's wrapper makes before its .part.0 clone. CTFPlayerShared::ConditionThink calls it first (0x51dc7b), then UpdateRageBuffsAndRage (0x52eb40, 'set_buff_type'), UpdateEnergyDrinkMeter and UpdateChargeMeter (0x52da80, 'charge_recharge_rate'), Linux's order. Thiscall, plain ret
-				}
-				"CTFPlayerShared::UpdateEnergyDrinkMeter [clone]"
-				{
-					type  "fixed"
-					sym   "_ZN15CTFPlayerShared22UpdateEnergyDrinkMeterEv"
-					addr  "0x52f9d0"
-					build "11138802"
-					lib   "server"
-					// verified: read by hand: the whole UpdateEnergyDrinkMeter, opening with the IsPlayerClass(1) test of Linux's wrapper; the third of the four meter updates ConditionThink makes (0x51dc89), as on Linux. Thiscall, plain ret
-				}
-				"CGameMovement::GetPointContentsCached [clone]"
-				{
-					type  "fixed"
-					sym   "_ZN13CGameMovement22GetPointContentsCachedERK6Vectori"
-					addr  "0x2781c0"
-					build "11138802"
-					lib   "server"
-					// verified: read by hand: the whole function, where Linux detours the .part clone GCC split after the convar test (cmp byte at 0x99143c). It tests the convar, takes the player's entindex - 1 and calls enginetrace->GetPointContents(point, 0) when it is above 100 (cmp 0x65), else reads the per-slot cache (sentinel -10000 = 0xffffd8f1, squared distance against a constant) and refills it, as the clone does. Pops 8: this, a Vector reference, the slot
-				}
-				"CPopulationManager::Initialize [clone]"
-				{
-					type  "fixed"
-					sym   "_ZN18CPopulationManager10InitializeEv"
-					addr  "0x5e5f00"
-					build "11138802"
-					lib   "server"
-					// verified: read by hand: the whole function, where Linux detours the .part clone GCC split after the wrapper's nav mesh check. This body makes that check first (TheNavMesh at 0xa8ced0, its +0x30 at zero reaches the 'No Nav Mesh CPopulationManager::Initialize' string at 0x8bcb48), and the detour repeats it under _WINDOWS. Then the Parse call (0x5e5730) after a vcall, ClearCheckpoint or RestoreCheckpoint on gamerules +0x3cc == 1, UpdateObjectiveResource (0x5e73b0, already in the table) and the ConVar SetValue at the end, as the clone does. No arguments, plain ret, bool in al
-				}
-				"CTFPlayer::ItemsMatch [clone]"
-				{
-					type  "fixed"
-					sym   "_ZN9CTFPlayer10ItemsMatchEP19TFPlayerClassData_tP13CEconItemViewS3_P13CTFWeaponBase"
-					addr  "0x4fea20"
-					build "11138802"
-					lib   "server"
-					// verified: read by hand: the whole ItemsMatch with all four arguments (ret 0x10), opening with the null and +0x54 test of Linux's wrapper on the current item, then the item ID compare and GetStaticData. Called by ManageBuilderWeapons (0x4fd40c), ManageRegularWeapons (0x4fd95b) and ValidateWeapons (0x514470); ValidateWearables carries it inline. Takes the class data the Linux clone drops, so SigMod's Windows detour declares it
-				}
-				"CTFRadiusDamageInfo::ApplyToEntity [clone]"
-				{
-					type  "fixed"
-					sym   "_ZN19CTFRadiusDamageInfo13ApplyToEntityEP11CBaseEntity"
-					addr  "0x4817b0"
-					build "11138802"
-					lib   "server"
-					// verified: read by hand: the whole function, where Linux detours the .part clone GCC split after the wrapper's two early returns (entity == m_pEntityIgnore at +0x14, m_takedamage 0 at +0xf9 here, +0x10d on Linux), which this body makes first; the detour repeats them under _WINDOWS. Then the trace filters, the explosive force, DispatchTraceAttack (0x1ffb50) with the multi damage pair or TakeDamage, TraceAttackToTriggers and RecordEnemyPlayerHit, as the clone does. Called only from CTFGameRules::RadiusDamage (0x499230). Pops 4
-				}
-				"CFuncNavCost::IsApplicableTo [clone]"
-				{
-					type  "fixed"
-					sym   "_ZNK12CFuncNavCost14IsApplicableToEP20CBaseCombatCharacter"
-					addr  "0x3f37d0"
-					build "11138802"
-					lib   "server"
-					// verified: read by hand: the whole function, where Linux detours the .part clone GCC split after the null who and team (+0x39c Linux, +0x384 here) checks, which this body makes first. Called by exactly CFuncNavAvoid::GetCostMultiplier and CFuncNavPrefer::GetCostMultiplier (the last slot of each table, 0x3f1480 and 0x3f14f0), as the clone's two direct callers are on Linux. Same body: IsPlayer then the 0x539 check, HasTheFlag, the class switch on +0x289c for 2, 3, 4, 6 and 0, and the 0x10c byte tag strings; ret 4
-				}
-				"CEconItemSchema::GetItemDefinitionByName [clone]"
-				{
-					type  "fixed"
-					sym   "_ZN15CEconItemSchema23GetItemDefinitionByNameEPKc"
-					addr  "0x3b9d60"
-					build "11138802"
-					lib   "server"
-					// verified: turned away for field disagreement, pop as expected (ret 4); returns null on a null name, then walks the definition map at +0xe8 comparing each definition's name at +0xdc with the argument, the body Linux jumps to; the whole function, where Linux detours the .part clone GCC split after the null name check, which this body makes first (ECAttr_Extensions' detour maps a custom weapon name and is null safe)
-				}
-				"CBaseClient::SetName"
-				{
-					type  "fixed"
-					sym   "_ZN11CBaseClient7SetNameEPKc"
-					addr  "0x84510"
-					build "11138802"
-					lib   "engine"
-					// verified: read by hand, engine.dll: slot 17 of CGameClient's primary table (CBaseClient's own virtuals after the destructor and FireGameEvent, UpdateAcknowledgedFramecount at slot 4 as Linux has it first); copies the name with 'unnamed' for an empty one, Linux's body. Thiscall, ret 4
-				}
-				"CGameClient::SetupPackInfo"
-				{
-					type  "fixed"
-					sym   "_ZN11CGameClient13SetupPackInfoEP14CFrameSnapshot"
-					addr  "0x126e80"
-					build "11138802"
-					lib   "engine"
-					// verified: opens with the virtual at +0x20 and AllocateFrame, calls CClientFrame::Init, then CClientFrameManager::AddClientFrame (0xb8f40, matched to Linux's), as the Linux body does; thiscall, one argument, ret 4; sits next to CGameClient::SendSnapshot (0x1265e0)
 				}
 				"CAmbientGeneric::m_DataMap"
 				{
