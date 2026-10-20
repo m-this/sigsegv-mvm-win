@@ -6020,5 +6020,10 @@
   "rva": "0x5bf4e0",
   "build": "11138802",
   "why": "read by hand: the ApplyResult instance (CHANGE_TO, SUSPEND_FOR and DONE, RESUME debug strings) that CZombieBehavior::Update (0x5c0f00) calls; thiscall, ret 0x14"
+ },
+ "_Z11TheNextBotsv": {
+  "rva": "0x416230",
+  "build": "11138802",
+  "why": "read by hand: returns the manager pointer at 0x10a90848, and when it is null builds the function-local static at 0x10a90a80 with NextBotManager's vtable (0x10837600, by RTTI), registers its destructor with atexit and stores it: Linux's body. CServerGameDLL::GameFrame (0x26fafb) calls it where Linux does, among 34 callers; cdecl"
  }
 }

@@ -643,6 +643,15 @@
 					vtidx "0"
 					// vtable
 				}
+				"TheNextBots"
+				{
+					type  "fixed"
+					sym   "_Z11TheNextBotsv"
+					addr  "0x416230"
+					build "11138802"
+					lib   "server"
+					// verified: read by hand: returns the manager pointer at 0x10a90848, and when it is null builds the function-local static at 0x10a90a80 with NextBotManager's vtable (0x10837600, by RTTI), registers its destructor with atexit and stores it: Linux's body. CServerGameDLL::GameFrame (0x26fafb) calls it where Linux does, among 34 callers; cdecl
+				}
 				"NextBotManager::Update"
 				{
 					type  "fixed"
