@@ -359,6 +359,15 @@ jobs:
     - name: Boot and list
       shell: pwsh
       run: tools/winport/bed/boot.ps1 -Commands 'sig_list_mods','sig_list_addrs','sig_list_linkage','sm exts list','meta list'
+    # The load check itself: a table made for another ServerVersion loads when
+    # the binaries are the same, one whose server.dll differs or has no
+    # identity is refused by name. Steam serves only the current build, so
+    # this is the one place the other two answers are played.
+    - name: The load check on changed tables
+      shell: pwsh
+      env:
+        BED_DEBUGGER: none
+      run: tools/winport/bed/identity.ps1
     - if: always()
       shell: pwsh
       run: tools/winport/bed/collect.ps1 -Out heapcheck
