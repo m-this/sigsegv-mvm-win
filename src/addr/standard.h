@@ -73,6 +73,8 @@ public:
 	 * Windows table is one build; a few older files carry a handful of
 	 * entries for builds long gone, so the table's build is the most common. */
 	static inline std::map<int, int> s_Builds;
+	/* The libraries each build's fixed addresses are RVAs into. */
+	static inline std::map<int, std::set<Library>> s_Libs;
 	
 	/* The ServerVersion the Windows table was made for, or 0 with no table. */
 	static int TableBuild()

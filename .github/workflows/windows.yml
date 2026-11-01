@@ -81,9 +81,10 @@ jobs:
       run: python3 tools/winport/detourargs.py
 
     # The build this package is for, and the one thing a release cannot get
-    # wrong: the extension refuses to load on any other ServerVersion, so a
-    # table that disagrees with table.json ships a package that either never
-    # loads or carries the next update from the wrong binaries.
+    # wrong: the extension refuses to load unless the binaries table.json
+    # names are the ones in memory, so a table that disagrees with table.json
+    # ships a package that either never loads or carries the next update from
+    # the wrong binaries.
     - name: The address table holds for one build
       id: table
       run: |
@@ -222,10 +223,12 @@ jobs:
         (cd "$pkg" && zip -qr "$GITHUB_WORKSPACE/package-windows.zip" .)
         sha256sum package-windows.zip | tee package-windows.zip.sha256
         cp "$OUT/sigsegv.ext.2.tf2.pdb" .
-        # Which TF2 build this zip is for, beside the zip rather than inside
-        # it: a consumer pinning the release can read this without fetching
-        # 10 MB and grepping 7,000 lines of gamedata, and before it starts a
-        # server the extension would then refuse to load into.
+        # Which TF2 build this zip is for, and the identity of each binary its
+        # addresses are in, beside the zip rather than inside it: a consumer
+        # pinning the release can read this without fetching 10 MB and
+        # grepping 7,000 lines of gamedata, and before it starts a server the
+        # extension would then refuse to load into. Another ServerVersion
+        # whose binaries are the same is one the extension loads into.
         python3 -c "import json,os,sys; t=json.load(open('tools/winport/table.json')); t['release']=os.environ['RELEASE']; json.dump(t, sys.stdout, indent=1)" \
           > package-windows.build.json
         cat package-windows.build.json

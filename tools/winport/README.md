@@ -8,30 +8,35 @@ nothing and the extension would load having hooked nothing at all.
 That is the whole reason there is no Windows build, and `src/addr/TODO-win.txt`
 is the note left when the attempt stopped.
 
-## Every address is keyed to one TF2 build
+## Every address is keyed to one build of the binaries
 
-A `fixed` entry carries the ServerVersion it was read from and
-`IAddr_FixedAddr::FindAddrWin` refuses it on any other, so a Valve update turns
-all 1,323 of them off at once. SigMod then loads having hooked nothing, calls
+A `fixed` entry is an RVA into one of the binaries `binaries.py` names, read
+from one build of it. On any other build of those binaries every address
+points into something else. Refused one by one, as they were keyed to the
+ServerVersion, they left SigMod loaded having hooked nothing, calling
 `GetItemSchema` and `CEconItemView::Init` as functions that do nothing, and the
-server faults: at extension load, on an upgrade purchase, or on a weapon
+server faulted: at extension load, on an upgrade purchase, or on a weapon
 inspect. Build 11076587 against the 11068238 table did all three on 2026-10-02,
 and players found it, not CI.
 
 Three things stand between an update and that:
 
-- `CExtSigsegv::SDK_OnLoad` compares `engine->GetServerVersion()` against the
-  table's build and refuses to load, naming both numbers, instead of running
-  with nothing resolved;
+- `CExtSigsegv::SDK_OnLoad` reads the TimeDateStamp and SizeOfImage of each
+  of those binaries from the PE headers the loader mapped, compares them with
+  the table's `Keys`, and refuses to load, naming the binary and both
+  identities, instead of running with nothing resolved. ServerVersion is not
+  the test: 11185272 and 11191711 moved only the content depot, left every
+  address right, and each still cost a release when it was;
 - the Address table job watches Steam for a new build, carries the overrides
   onto it with `carry.py` and commits the derived table to
   `winport-auto-<build>` for the bed to play. `ANALYSIS.md`'s "The instrument"
-  section has the procedure and its inputs; `table.json` records the build and
-  the depot 232255 manifest the committed table was made for. A cron runs only
+  section has the procedure and its inputs; `table.json` records the build,
+  the depot 232255 manifest and the identity of each binary the committed
+  table was made from. A cron runs only
   from the repository's default branch, so this watches nothing while the
   default branch is one `addrs.yml` is not on;
 - `checktable.py` reads `windows.txt`, `table.json` and `overrides.json` and
-  refuses any disagreement between them about the build. It needs no game, no
+  refuses any disagreement between them about the build or the binaries. It needs no game, no
   network and no compiler, so a push that moves one of the three without the
   others fails in a second rather than after the Address table job's seven
   minutes or the bed's hour.
