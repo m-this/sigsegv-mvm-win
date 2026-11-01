@@ -1,4 +1,36 @@
 {
  "build": "11191711",
- "manifest": "256991621203216237"
+ "manifest": "256991621203216237",
+ "binaries": {
+  "server": {
+   "path": "tf/bin/server.dll",
+   "TimeDateStamp": "0x6ad26f14",
+   "SizeOfImage": "0xcb6000"
+  },
+  "engine": {
+   "path": "bin/engine.dll",
+   "TimeDateStamp": "0x6ac4151e",
+   "SizeOfImage": "0x6d1000"
+  },
+  "dedicated": {
+   "path": "bin/dedicated.dll",
+   "TimeDateStamp": "0x6ac41359",
+   "SizeOfImage": "0x148000"
+  },
+  "soundemittersystem": {
+   "path": "bin/SoundEmitterSystem.dll",
+   "TimeDateStamp": "0x6abc94b9",
+   "SizeOfImage": "0x37000"
+  },
+  "tier0": {
+   "path": "bin/tier0.dll",
+   "TimeDateStamp": "0x6abc83a1",
+   "SizeOfImage": "0x57000"
+  },
+  "vscript": {
+   "path": "bin/vscript.dll",
+   "TimeDateStamp": "0x6abc9475",
+   "SizeOfImage": "0x76000"
+  }
+ }
 }

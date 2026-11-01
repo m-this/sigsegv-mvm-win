@@ -10,6 +10,17 @@
 			engine "tf2"
 		}
 
+		"Keys"
+		{
+			// TimeDateStamp and SizeOfImage of each binary, from tools/winport/binaries.py
+			"sigsegv binary dedicated" "0x6ac41359 0x148000"
+			"sigsegv binary engine" "0x6ac4151e 0x6d1000"
+			"sigsegv binary server" "0x6ad26f14 0xcb6000"
+			"sigsegv binary soundemittersystem" "0x6abc94b9 0x37000"
+			"sigsegv binary tier0" "0x6abc83a1 0x57000"
+			"sigsegv binary vscript" "0x6abc9475 0x76000"
+		}
+
 		"sigsegv"
 		{
 			"addrs"
