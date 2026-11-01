@@ -75,7 +75,7 @@ def main():
         bad.append(f"windows.txt: the header is for ServerVersion {header}, table.json for {build}")
 
     recorded = table.get("binaries", {})
-    if recorded and set(recorded) != set(binaries.LIBS):
+    if set(recorded) != set(binaries.LIBS):
         bad.append(f"table.json: binaries names {sorted(recorded)}, binaries.py {sorted(binaries.LIBS)}")
     for lib, ident in recorded.items():
         if ident.get("path") != binaries.LIBS.get(lib):
@@ -99,7 +99,7 @@ def main():
                 bad.append(f"{where}: fixed, without {', '.join(missing)}")
             elif int(kv["build"]) != build:
                 bad.append(f"{where}: keyed to ServerVersion {kv['build']}, table.json says {build}")
-            elif recorded and kv["lib"] not in recorded:
+            elif kv["lib"] not in recorded:
                 bad.append(f"{where}: an address in {kv['lib']}, a binary the table has no identity for")
             # The first entry under a name wins, so a name carrying two
             # addresses means one of them is dead and nothing says which.
