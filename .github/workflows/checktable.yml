@@ -1,8 +1,8 @@
 name: Address table keying
 
 # gamedata/sigsegv/windows.txt, tools/winport/table.json and the overrides
-# have to name the same TF2 build, because the extension refuses to load on
-# any other one. Nothing else in CI says so on a push: the Address table job
+# have to name the same TF2 build and binaries, because the extension refuses
+# to load on any other ones. Nothing else in CI says so on a push: the Address table job
 # downloads the game and takes seven minutes, and runs on four branches; the
 # Windows package job builds and plays, and runs on a tag. This takes a
 # second, needs neither the game nor a compiler, and runs wherever the three
@@ -17,6 +17,7 @@ on:
       - 'tools/winport/table.json'
       - 'tools/winport/overrides.json'
       - 'tools/winport/checktable.py'
+      - 'tools/winport/binaries.py'
       - 'tools/winport/dupes.py'
       - 'src/gameconf.cpp'
       - 'gamedata/sigsegv/*.txt'
@@ -28,6 +29,7 @@ on:
       - 'tools/winport/table.json'
       - 'tools/winport/overrides.json'
       - 'tools/winport/checktable.py'
+      - 'tools/winport/binaries.py'
       - 'tools/winport/dupes.py'
       - 'src/gameconf.cpp'
       - 'gamedata/sigsegv/*.txt'

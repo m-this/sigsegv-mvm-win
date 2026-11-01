@@ -19,15 +19,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 import rebase  # noqa: E402
-
-LIBS = {
-    "server": "tf/bin/server.dll",
-    "engine": "bin/engine.dll",
-    "dedicated": "bin/dedicated.dll",
-    "soundemittersystem": "bin/SoundEmitterSystem.dll",
-    "tier0": "bin/tier0.dll",
-    "vscript": "bin/vscript.dll",
-}
+from binaries import LIBS  # noqa: E402
 
 
 def unmoved(old_path, new_path, rva, reason):

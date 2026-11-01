@@ -86,6 +86,14 @@ bool CSigsegvGameConf::LoadAll(char *error, size_t maxlen)
 	return true;
 }
 
+const char *CSigsegvGameConf::GetKeyValue(const char *key) const
+{
+	for (auto conf : this->m_GameConfs) {
+		if (const char *value = conf->GetKeyValue(key); value != nullptr) return value;
+	}
+	return nullptr;
+}
+
 void CSigsegvGameConf::UnloadAll()
 {
 	for (auto conf : this->m_GameConfs) {
@@ -527,6 +535,7 @@ SMCResult CSigsegvGameConf::AddrEntry_Load_Fixed()
 		a->SetUnshared();
 	}
 	this->AddrEntry_Load_Common(a);
+	IAddr_FixedAddr::s_Libs[build].insert(a->GetLibrary());
 	this->m_AddrPtrs.push_back(std::unique_ptr<IAddr>(a));
 	return SMCResult_Continue;
 }

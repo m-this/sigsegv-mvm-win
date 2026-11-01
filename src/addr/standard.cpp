@@ -52,8 +52,11 @@ bool CAddr_Sym_Regex::FindAddrLinux(uintptr_t& addr) const
 
 bool IAddr_FixedAddr::FindAddrWin(uintptr_t& addr) const
 {
-	if (engine->GetServerVersion() != this->GetServerVersion()) {
-		DevMsg("IAddr_FixedAddr: \"%s\": version mismatch (%d vs %d)\n", this->GetName(), engine->GetServerVersion(), this->GetServerVersion());
+	/* SDK_OnLoad refuses to load unless the table's binaries are the ones in
+	 * memory, whatever ServerVersion the server reports. An entry keyed to
+	 * any other build is from a table long gone. */
+	if (this->GetServerVersion() != TableBuild()) {
+		DevMsg("IAddr_FixedAddr: \"%s\": keyed to build %d, the table is %d\n", this->GetName(), this->GetServerVersion(), TableBuild());
 		return false;
 	}
 	

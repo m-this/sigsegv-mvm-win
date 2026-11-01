@@ -648,6 +648,78 @@ namespace ExitTrace
 }
 #endif
 
+#if defined _WINDOWS
+/* Whether the PE headers of one library in memory, which the loader maps with
+ * the image, are the TimeDateStamp and SizeOfImage the table records. */
+static bool BinaryMatches(Library lib, const char *recorded, int build, char *error, size_t maxlength)
+{
+	const char *name = LibMgr::Lib_ToString(lib);
+	unsigned long stamp_table, size_table;
+	char tail;
+	if (sscanf(recorded, "%lx %lx %c", &stamp_table, &size_table, &tail) != 2) {
+		snprintf(error, maxlength, "the address table's identity of %s.dll is \"%s\", not TimeDateStamp and SizeOfImage", name, recorded);
+		return false;
+	}
+	if (!LibMgr::HaveLib(lib)) {
+		snprintf(error, maxlength, "the address table has addresses in %s.dll, which is not loaded", name);
+		return false;
+	}
+	auto base = reinterpret_cast<const uint8_t *>(LibMgr::GetInfo(lib).BaseAddr());
+	auto dos  = reinterpret_cast<const IMAGE_DOS_HEADER *>(base);
+	if (base == nullptr || dos->e_magic != IMAGE_DOS_SIGNATURE) {
+		snprintf(error, maxlength, "%s.dll at %p has no MZ header", name, base);
+		return false;
+	}
+	auto nt = reinterpret_cast<const IMAGE_NT_HEADERS32 *>(base + dos->e_lfanew);
+	if (nt->Signature != IMAGE_NT_SIGNATURE || nt->OptionalHeader.Magic != IMAGE_NT_OPTIONAL_HDR32_MAGIC) {
+		snprintf(error, maxlength, "%s.dll at %p has no PE32 header", name, base);
+		return false;
+	}
+	unsigned long stamp = nt->FileHeader.TimeDateStamp, size = nt->OptionalHeader.SizeOfImage;
+	if (stamp != stamp_table || size != size_table) {
+		snprintf(error, maxlength, "%s.dll is TimeDateStamp %#lx SizeOfImage %#lx, the address table for ServerVersion %d was made from %#lx %#lx, and the server is %d",
+			name, stamp, size, build, stamp_table, size_table, engine->GetServerVersion());
+		return false;
+	}
+	return true;
+}
+
+/* A fixed address on any binary but the one it was read from calls into the
+ * middle of something else and crashes the server; SigMod without them calls
+ * functions that do nothing, and crashes it too. So the extension loads only
+ * when every library the table has addresses in is, by its PE headers, the one
+ * the table was made from. ServerVersion moves with content-only updates as
+ * well, and those leave every address right. A table that records no
+ * identity holds for its own ServerVersion alone. */
+static bool TableHoldsForBinaries(char *error, size_t maxlength)
+{
+	int build = IAddr_FixedAddr::TableBuild();
+	if (build == 0) return true;
+	int version = engine->GetServerVersion();
+	
+	std::map<Library, const char *> recorded;
+	for (Library lib : IAddr_FixedAddr::s_Libs[build]) {
+		recorded[lib] = g_GCHook.GetKeyValue((std::string("sigsegv binary ") + LibMgr::Lib_ToString(lib)).c_str());
+	}
+	if (std::all_of(recorded.begin(), recorded.end(), [](const auto& r){ return r.second == nullptr; })) {
+		if (version == build) return true;
+		snprintf(error, maxlength, "this SigMod build is for TF2 ServerVersion %d, and the server is %d", build, version);
+		return false;
+	}
+	
+	for (const auto& [lib, value] : recorded) {
+		if (value == nullptr) {
+			snprintf(error, maxlength, "the address table has addresses in %s.dll and no identity for it", LibMgr::Lib_ToString(lib));
+			return false;
+		}
+		if (!BinaryMatches(lib, value, build, error, maxlength)) return false;
+	}
+	Msg("SigMod: address table made for ServerVersion %d, the server is %d; the %zu binaries it reads are the same\n",
+		build, version, recorded.size());
+	return true;
+}
+#endif
+
 bool CExtSigsegv::SDK_OnLoad(char *error, size_t maxlength, bool late)
 {
 #if defined _WINDOWS
@@ -670,18 +742,11 @@ bool CExtSigsegv::SDK_OnLoad(char *error, size_t maxlength, bool late)
 	PreScan::DoScans();
 	if (!g_GCHook.LoadAll(error, maxlength)) goto fail;
 	
-#if defined _WINDOWS
-	/* A fixed address is refused on any other build, and SigMod without them
-	 * calls functions that do nothing and crashes the server. Not loading
-	 * costs the missions that need SigMod; loading costs the server. */
-	if (int build = IAddr_FixedAddr::TableBuild(); build != 0 && engine->GetServerVersion() != build) {
-		snprintf(error, maxlength, "this SigMod build is for TF2 ServerVersion %d, and the server is %d",
-			build, engine->GetServerVersion());
-		goto fail;
-	}
-#endif
-	
 	LibMgr::Load();
+	
+#if defined _WINDOWS
+	if (!TableHoldsForBinaries(error, maxlength)) goto fail;
+#endif
 //	g_Disasm.Load();
 	
 	RTTI::PreLoad();

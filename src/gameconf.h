@@ -10,6 +10,8 @@ class CSigsegvGameConf : public ITextListener_SMC
 public:
 	bool LoadAll(char *error, size_t maxlen);
 	void UnloadAll();
+	/* A key of a "Keys" section in any of the files, or null. */
+	const char *GetKeyValue(const char *key) const;
 	
 private:
 	std::vector<IGameConfig *> m_GameConfs;

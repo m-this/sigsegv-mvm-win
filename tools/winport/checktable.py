@@ -12,6 +12,9 @@ overrides from the wrong binaries.
 
 Nothing here needs the game, a network or a compiler, so it runs in a second
 on every push rather than in the seven minutes the Address table job takes.
+The extension also loads on another ServerVersion when every binary the
+table has addresses in is the one it was made from: table.json and the
+table's Keys have to name the same identity for each, from binaries.py.
 A name registered twice (dupes.py) is a disagreement too. Exits non-zero and
 names every one.
 """
@@ -21,9 +24,11 @@ import re
 import sys
 from pathlib import Path
 
+import binaries
 import dupes
 
 HEADER = re.compile(r"// Addresses in server\.dll for ServerVersion (\d+),")
+KEY = re.compile(r'^\t\t\t"sigsegv binary (\w+)" "(0x[0-9a-f]+) (0x[0-9a-f]+)"$', re.M)
 
 
 def read_table(path):
@@ -69,6 +74,17 @@ def main():
     if header != build:
         bad.append(f"windows.txt: the header is for ServerVersion {header}, table.json for {build}")
 
+    recorded = table.get("binaries", {})
+    if set(recorded) != set(binaries.LIBS):
+        bad.append(f"table.json: binaries names {sorted(recorded)}, binaries.py {sorted(binaries.LIBS)}")
+    for lib, ident in recorded.items():
+        if ident.get("path") != binaries.LIBS.get(lib):
+            bad.append(f"table.json: binaries.{lib} is {ident.get('path')!r}, binaries.py says {binaries.LIBS.get(lib)!r}")
+    keys = {m.group(1): {"TimeDateStamp": m.group(2), "SizeOfImage": m.group(3)}
+            for m in KEY.finditer((root / "gamedata/sigsegv/windows.txt").read_text())}
+    if keys != {lib: {k: v for k, v in ident.items() if k != "path"} for lib, ident in recorded.items()}:
+        bad.append(f"windows.txt: Keys {keys}, table.json binaries {recorded}")
+
     addrs = {}
     for name, kv in entries:
         where = f"windows.txt: {name!r}"
@@ -83,6 +99,8 @@ def main():
                 bad.append(f"{where}: fixed, without {', '.join(missing)}")
             elif int(kv["build"]) != build:
                 bad.append(f"{where}: keyed to ServerVersion {kv['build']}, table.json says {build}")
+            elif kv["lib"] not in recorded:
+                bad.append(f"{where}: an address in {kv['lib']}, a binary the table has no identity for")
             # The first entry under a name wins, so a name carrying two
             # addresses means one of them is dead and nothing says which.
             elif addrs.setdefault(name, kv["addr"]) != kv["addr"]:
@@ -114,6 +132,7 @@ def main():
     if bad:
         sys.exit("\n".join(bad[:50] + ([f"... and {len(bad) - 50} more"] if len(bad) > 50 else [])))
     print(f"windows.txt: {len(entries)} entries, all for ServerVersion {build} (depot 232255 manifest {table['manifest']})")
+    print("binaries: " + ", ".join(f"{lib} {i['TimeDateStamp']} {i['SizeOfImage']}" for lib, i in sorted(recorded.items())))
     print("\n".join(summary))
     print(f"overrides.json: {sum(1 for e in overrides.values() if not e.get('bad'))} addresses, "
           f"{stale} left at an older build for carry.py to read by hand")

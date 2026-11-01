@@ -10,7 +10,7 @@ in for the Linux symbol lookups one for one. dupes.py counts what that leaves.
 `fixed` is tied to a server version, which is what it should be: the matches
 are only true for the build they were made against.
 
-    emitgamedata.py matches.json SERVER_VERSION [datamaps.json [knownvtidx.generated.txt win-vtables/]] > gamedata/sigsegv/windows.txt
+    emitgamedata.py matches.json SERVER_VERSION [datamaps.json [knownvtidx.generated.txt win-vtables/ [binaries.json]]] > gamedata/sigsegv/windows.txt
 
 tools/winport/overrides.json holds addresses checked by hand, keyed by Linux
 symbol, and wins over matches.json. Each names the build it holds for; one
@@ -19,6 +19,10 @@ from another build is left out, and rebase.py carries them to a new one.
 knownvtidx.generated.txt gives a vtable and a slot per name. The address is
 read from that slot in dumpvtables.py's dump of this build, win-vtables/; the
 address in the file's comments is the build it was made from.
+
+binaries.json is binaries.py's identity of each binary the RVAs are into. It
+goes in the table's Keys, and the extension loads on another ServerVersion
+only when every one of them is the binary in memory.
 """
 
 import glob
@@ -32,6 +36,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 import classify  # noqa: E402
 
 root = Path(__file__).resolve().parents[2]
+KEY_PREFIX = "sigsegv binary "
 matches = json.load(open(sys.argv[1]))
 version = sys.argv[2]
 
@@ -73,6 +78,13 @@ out = [
     f"// Addresses in server.dll for ServerVersion {version}, matched from server_srv.so.",
     "",
     '"Games"', "{", '\t"#default"', "\t{", '\t\t"#supported"', "\t\t{", '\t\t\tengine "tf2"', "\t\t}", "",
+]
+if len(sys.argv) > 6:
+    out += ['\t\t"Keys"', "\t\t{", "\t\t\t// TimeDateStamp and SizeOfImage of each binary, from tools/winport/binaries.py"]
+    for lib, ident in sorted(json.load(open(sys.argv[6])).items()):
+        out += [f'\t\t\t"{KEY_PREFIX}{lib}" "{ident["TimeDateStamp"]} {ident["SizeOfImage"]}"']
+    out += ["\t\t}", ""]
+out += [
     '\t\t"sigsegv"', "\t\t{", '\t\t\t"addrs"', "\t\t\t{",
 ]
 count = 0
