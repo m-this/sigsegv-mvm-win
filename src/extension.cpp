@@ -349,6 +349,59 @@ namespace ExitTrace
 		return false;
 	}
 	
+	void Say(FILE *f, const char *line)
+	{
+		if (f != nullptr) fputs(line, f);
+		Warning("%s", line);
+	}
+
+	void SayRegistration(FILE *f, const char *label, uintptr_t address)
+	{
+		char line[MAX_PATH + 128], handler[MAX_PATH + 16];
+		auto words = reinterpret_cast<const uintptr_t *>(address);
+		if (!Readable(words, 8)) {
+			snprintf(line, sizeof(line), "  %s 0x%08x unreadable\n", label, (unsigned)address);
+			Say(f, line);
+			return;
+		}
+		Name(handler, sizeof(handler), reinterpret_cast<const void *>(words[1]));
+		snprintf(line, sizeof(line), "  %s 0x%08x next 0x%08x handler %s\n", label, (unsigned)address, (unsigned)words[0], handler);
+		Say(f, line);
+	}
+
+	/* 0xC0000029 comes out of RtlUnwind, whose frame is the context's EBP: its
+	 * target, the SEH chain it was walking, and the frames those records sit in. */
+	void RecordUnwindTarget(const CONTEXT *ctx)
+	{
+		FILE *f = fopen("sigsegv_exit.txt", "a");
+		char line[MAX_PATH + 128], name[MAX_PATH + 16];
+		auto ebp = reinterpret_cast<const uintptr_t *>(ctx->Ebp);
+		snprintf(line, sizeof(line), "SigMod: unwind ebp 0x%08x esp 0x%08x stack 0x%08x-0x%08x\n",
+			(unsigned)ctx->Ebp, (unsigned)ctx->Esp, (unsigned)__readfsdword(8), (unsigned)__readfsdword(4));
+		Say(f, line);
+		if (Readable(ebp, 16)) {
+			Name(name, sizeof(name), reinterpret_cast<const void *>(ebp[3]));
+			snprintf(line, sizeof(line), "  target ip %s\n", name);
+			Say(f, line);
+			SayRegistration(f, "target", ebp[2]);
+		}
+		uintptr_t address = __readfsdword(0);
+		for (int i = 0; i < 32 && address != (uintptr_t)-1; ++i) {
+			SayRegistration(f, "chain", address);
+			if (!Readable(reinterpret_cast<const void *>(address), 8)) break;
+			address = *reinterpret_cast<const uintptr_t *>(address);
+		}
+		for (int i = 0; i < 40 && ebp != nullptr && Readable(ebp, 8); ++i) {
+			Name(name, sizeof(name), reinterpret_cast<const void *>(ebp[1]));
+			snprintf(line, sizeof(line), "  frame 0x%08x returns to %s\n", (unsigned)(uintptr_t)ebp, name);
+			Say(f, line);
+			auto next = reinterpret_cast<const uintptr_t *>(ebp[0]);
+			if (next <= ebp) break;
+			ebp = next;
+		}
+		if (f != nullptr) fclose(f);
+	}
+
 	void RecordException(EXCEPTION_POINTERS *info)
 	{
 		const EXCEPTION_RECORD *record = info->ExceptionRecord;
@@ -360,6 +413,7 @@ namespace ExitTrace
 		snprintf(header, sizeof(header), "SigMod: exception 0x%08lx flags 0x%08lx type %s at %s, EBP chain:\n",
 			record->ExceptionCode, record->ExceptionFlags, type, name);
 		Write(header, frames, n);
+		if (record->ExceptionCode == 0xC0000029) RecordUnwindTarget(info->ContextRecord);
 	}
 	
 	/* A stack overflow leaves the faulting thread too little stack for fopen. */
