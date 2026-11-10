@@ -96,6 +96,8 @@ extern int laserSprite;
 #include <psapi.h>
 #include <intrin.h>
 #include <algorithm>
+#include <csignal>
+#include <exception>
 
 /* Who ends the server. The engine's Error() leaves through tier0's
  * Plat_ExitProcess, TerminateProcess on itself with status 100, and on
@@ -216,6 +218,10 @@ namespace ExitTrace
 	using ExitProcess_t      = void (WINAPI *)(UINT);
 	TerminateProcess_t RealTerminateProcess = nullptr;
 	ExitProcess_t      RealExitProcess      = nullptr;
+	using RaiseFailFastException_t   = void (WINAPI *)(PEXCEPTION_RECORD, PCONTEXT, DWORD);
+	using UnhandledExceptionFilter_t = LONG (WINAPI *)(EXCEPTION_POINTERS *);
+	RaiseFailFastException_t   RealRaiseFailFastException   = nullptr;
+	UnhandledExceptionFilter_t RealUnhandledExceptionFilter = nullptr;
 	
 	/* An address as module+offset, the way the bed report names frames. */
 	void Name(char *out, size_t size, const void *addr)
@@ -263,29 +269,128 @@ namespace ExitTrace
 		return (uintptr_t)p + len <= (uintptr_t)mbi.BaseAddress + mbi.RegionSize;
 	}
 	
-	/* The faults that end a server: an access violation, or a jump into data.
-	 * The handler sees them first-chance, before whatever catches them, so it
-	 * records the first few and passes every one on untouched. The frames are
-	 * the EBP chain, which is what the game's own code keeps. */
-	LONG CALLBACK OnFault(EXCEPTION_POINTERS *info)
+	/* The frames are the EBP chain, which is what the game's own code keeps. */
+	int EbpChain(const CONTEXT *ctx, void **frames, int capacity)
 	{
-		static LONG recorded = 0;
-		DWORD code = info->ExceptionRecord->ExceptionCode;
-		if (code != EXCEPTION_ACCESS_VIOLATION && code != EXCEPTION_PRIV_INSTRUCTION && code != EXCEPTION_ILLEGAL_INSTRUCTION) return EXCEPTION_CONTINUE_SEARCH;
-		if (InterlockedIncrement(&recorded) > 8) return EXCEPTION_CONTINUE_SEARCH;
-		
-		const CONTEXT *ctx = info->ContextRecord;
-		void *frames[40];
 		int n = 0;
 		frames[n++] = reinterpret_cast<void *>(ctx->Eip);
 		auto ebp = reinterpret_cast<const uintptr_t *>(ctx->Ebp);
-		while (n < 40 && ebp != nullptr && Readable(ebp, 8)) {
+		while (n < capacity && ebp != nullptr && Readable(ebp, 8)) {
 			if (ebp[1] == 0) break;
 			frames[n++] = reinterpret_cast<void *>(ebp[1]);
 			auto next = reinterpret_cast<const uintptr_t *>(ebp[0]);
 			if (next <= ebp) break;
 			ebp = next;
 		}
+		return n;
+	}
+	
+	/* A minidump, written by a thread of its own so the one asking stays parked
+	 * and shows in the dump. Four per process, ten seconds each: a dump that
+	 * cannot finish must not hold up the exit it records. */
+	struct DumpRequest { EXCEPTION_POINTERS *info; DWORD thread; char path[MAX_PATH]; };
+	DumpRequest dump_requests[4];
+	
+	DWORD WINAPI DumpThread(void *arg)
+	{
+		auto request = static_cast<DumpRequest *>(arg);
+		HANDLE file = CreateFileA(request->path, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+		if (file == INVALID_HANDLE_VALUE) return 1;
+		MINIDUMP_EXCEPTION_INFORMATION exception = { request->thread, request->info, FALSE };
+		BOOL written = MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), file, MiniDumpWithThreadInfo,
+			request->info != nullptr ? &exception : nullptr, nullptr, nullptr);
+		CloseHandle(file);
+		return written ? 0 : 2;
+	}
+	
+	void Dump(const char *what, EXCEPTION_POINTERS *info)
+	{
+		static volatile LONG dumps = 0;
+		LONG number = InterlockedIncrement(&dumps);
+		if (number > 4) return;
+		DumpRequest &request = dump_requests[number - 1];
+		request.info = info;
+		request.thread = GetCurrentThreadId();
+		snprintf(request.path, sizeof(request.path), "sigsegv_exit_%s_%lu_%ld.dmp", what, GetCurrentProcessId(), number);
+		HANDLE thread = CreateThread(nullptr, 0, &DumpThread, &request, 0, nullptr);
+		if (thread == nullptr) return;
+		WaitForSingleObject(thread, 10000);
+		CloseHandle(thread);
+	}
+	
+	/* The thrown type of a C++ exception, decorated, from the 32-bit ThrowInfo
+	 * the exception record points at: its first catchable type's descriptor. */
+	void CxxType(char *out, size_t size, const EXCEPTION_RECORD *record)
+	{
+		snprintf(out, size, "?");
+		if (record->NumberParameters < 3) return;
+		auto throw_info = reinterpret_cast<const uint8_t *>(record->ExceptionInformation[2]);
+		if (throw_info == nullptr || !Readable(throw_info + 0xc, sizeof(void *))) return;
+		auto types = *reinterpret_cast<const uint8_t *const *>(throw_info + 0xc);
+		if (types == nullptr || !Readable(types + 4, sizeof(void *))) return;
+		auto type = *reinterpret_cast<const uint8_t *const *>(types + 4);
+		if (type == nullptr || !Readable(type + 4, sizeof(void *))) return;
+		auto descriptor = *reinterpret_cast<const uint8_t *const *>(type + 4);
+		if (descriptor == nullptr || !Readable(descriptor + 8, 64)) return;
+		snprintf(out, size, "%.63s", reinterpret_cast<const char *>(descriptor + 8));
+	}
+	
+	/* An exception that is not one of the faults below: its code and where it
+	 * came from, the first eight of each of up to 32 codes. */
+	struct SeenCode { volatile LONG code; volatile LONG count; };
+	SeenCode seen_codes[32];
+	
+	bool FirstOfCode(DWORD code)
+	{
+		for (auto &seen : seen_codes) {
+			LONG found = InterlockedCompareExchange(&seen.code, (LONG)code, 0);
+			if (found == 0 || found == (LONG)code) return InterlockedIncrement(&seen.count) <= 8;
+		}
+		return false;
+	}
+	
+	void RecordException(EXCEPTION_POINTERS *info)
+	{
+		const EXCEPTION_RECORD *record = info->ExceptionRecord;
+		void *frames[40];
+		int n = EbpChain(info->ContextRecord, frames, 40);
+		char name[MAX_PATH + 16], type[64] = "-", header[MAX_PATH + 160];
+		Name(name, sizeof(name), record->ExceptionAddress);
+		if (record->ExceptionCode == 0xE06D7363) CxxType(type, sizeof(type), record);
+		snprintf(header, sizeof(header), "SigMod: exception 0x%08lx flags 0x%08lx type %s at %s, EBP chain:\n",
+			record->ExceptionCode, record->ExceptionFlags, type, name);
+		Write(header, frames, n);
+	}
+	
+	/* A stack overflow leaves the faulting thread too little stack for fopen. */
+	DWORD WINAPI RecordOnOwnStack(void *arg)
+	{
+		RecordException(static_cast<EXCEPTION_POINTERS *>(arg));
+		return 0;
+	}
+	
+	void RecordStackOverflow(EXCEPTION_POINTERS *info)
+	{
+		HANDLE thread = CreateThread(nullptr, 0, &RecordOnOwnStack, info, 0, nullptr);
+		if (thread != nullptr) {
+			WaitForSingleObject(thread, 5000);
+			CloseHandle(thread);
+		}
+		Dump("stackoverflow", info);
+	}
+	
+	/* The faults that end a server: an access violation, or a jump into data.
+	 * The handler sees them first-chance, before whatever catches them, so it
+	 * records the first few and passes every one on untouched. */
+	void RecordFault(EXCEPTION_POINTERS *info)
+	{
+		static LONG recorded = 0;
+		DWORD code = info->ExceptionRecord->ExceptionCode;
+		if (InterlockedIncrement(&recorded) > 8) return;
+		
+		const CONTEXT *ctx = info->ContextRecord;
+		void *frames[40];
+		int n = EbpChain(ctx, frames, 40);
 		char name[MAX_PATH + 16], header[MAX_PATH + 160];
 		Name(name, sizeof(name), reinterpret_cast<void *>(ctx->Eip));
 		ULONG_PTR target = info->ExceptionRecord->NumberParameters >= 2 ? info->ExceptionRecord->ExceptionInformation[1] : 0;
@@ -346,19 +451,69 @@ namespace ExitTrace
 			}
 		}
 		if (f != nullptr) fclose(f);
+	}
+	
+	/* Every exception a thread raises, first-chance and passed on untouched. A
+	 * __fastfail never comes through here: it goes straight to the kernel, and
+	 * only WER or the bed's process-exit monitoring sees it. */
+	LONG CALLBACK OnFault(EXCEPTION_POINTERS *info)
+	{
+		static thread_local bool inside = false;
+		if (inside) return EXCEPTION_CONTINUE_SEARCH;
+		inside = true;
+		DWORD code = info->ExceptionRecord->ExceptionCode;
+		if (code == EXCEPTION_ACCESS_VIOLATION || code == EXCEPTION_PRIV_INSTRUCTION || code == EXCEPTION_ILLEGAL_INSTRUCTION) {
+			RecordFault(info);
+		} else if (FirstOfCode(code)) {
+			if (code == EXCEPTION_STACK_OVERFLOW) RecordStackOverflow(info);
+			else RecordException(info);
+		}
+		inside = false;
 		return EXCEPTION_CONTINUE_SEARCH;
 	}
 	
 	BOOL WINAPI HookTerminateProcess(HANDLE process, UINT code)
 	{
-		if (process == GetCurrentProcess() || GetProcessId(process) == GetCurrentProcessId()) Write("TerminateProcess", code);
+		if (process == GetCurrentProcess() || GetProcessId(process) == GetCurrentProcessId()) {
+			Write("TerminateProcess", code);
+			Dump("terminate", nullptr);
+		}
 		return RealTerminateProcess(process, code);
 	}
 	
 	void WINAPI HookExitProcess(UINT code)
 	{
 		Write("ExitProcess", code);
+		Dump("exit", nullptr);
 		RealExitProcess(code);
+	}
+	
+	void WINAPI HookRaiseFailFastException(PEXCEPTION_RECORD record, PCONTEXT context, DWORD flags)
+	{
+		Write("RaiseFailFastException", record != nullptr ? record->ExceptionCode : 0);
+		Dump("failfast", nullptr);
+		RealRaiseFailFastException(record, context, flags);
+	}
+	
+	LONG WINAPI HookUnhandledExceptionFilter(EXCEPTION_POINTERS *info)
+	{
+		Write("UnhandledExceptionFilter", info != nullptr && info->ExceptionRecord != nullptr ? info->ExceptionRecord->ExceptionCode : 0);
+		Dump("unhandled", info);
+		return RealUnhandledExceptionFilter(info);
+	}
+	
+	/* What this DLL's own static CRT does before it fails fast. Each one ends
+	 * the way the CRT would have without it. */
+	void InstallCrtHandlers()
+	{
+		signal(SIGABRT, [](int) { Write("abort", 0); Dump("abort", nullptr); });
+		std::set_terminate([] { Write("std::terminate", 0); Dump("stdterminate", nullptr); abort(); });
+		_set_purecall_handler([] { Write("purecall", 0); Dump("purecall", nullptr); abort(); });
+		_set_invalid_parameter_handler([](const wchar_t *expression, const wchar_t *function, const wchar_t *file, unsigned int line, uintptr_t reserved) {
+			Write("invalid parameter", 0);
+			Dump("invalidparam", nullptr);
+			_invoke_watson(expression, function, file, line, reserved);
+		});
 	}
 	
 	/* Point one module's import of target at hook, wherever it imports it from. */
@@ -615,6 +770,7 @@ namespace ExitTrace
 	void Install()
 	{
 		AddVectoredExceptionHandler(1, &OnFault);
+		InstallCrtHandlers();
 		if (getenv("SIGSEGV_SURVEY_UNRESOLVED") != nullptr) { MemCount::Install(); HeapCount::Patch(); }
 		if (getenv("SIGSEGV_SURVEY_UNRESOLVED") != nullptr
 			&& DuplicateHandle(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), &MainThread, 0, FALSE, DUPLICATE_SAME_ACCESS)) {
@@ -626,11 +782,17 @@ namespace ExitTrace
 		RealTerminateProcess = reinterpret_cast<TerminateProcess_t>(GetProcAddress(k32, "TerminateProcess"));
 		RealExitProcess      = reinterpret_cast<ExitProcess_t>(GetProcAddress(k32, "ExitProcess"));
 		if (RealTerminateProcess == nullptr || RealExitProcess == nullptr) return;
-		void *targets[4][2] = {
+		RealRaiseFailFastException   = reinterpret_cast<RaiseFailFastException_t>(GetProcAddress(k32, "RaiseFailFastException"));
+		RealUnhandledExceptionFilter = reinterpret_cast<UnhandledExceptionFilter_t>(GetProcAddress(k32, "UnhandledExceptionFilter"));
+		void *targets[8][2] = {
 			{ reinterpret_cast<void *>(RealTerminateProcess), reinterpret_cast<void *>(&HookTerminateProcess) },
 			{ reinterpret_cast<void *>(RealExitProcess),      reinterpret_cast<void *>(&HookExitProcess) },
 			{ kb != nullptr ? reinterpret_cast<void *>(GetProcAddress(kb, "TerminateProcess")) : nullptr, reinterpret_cast<void *>(&HookTerminateProcess) },
 			{ kb != nullptr ? reinterpret_cast<void *>(GetProcAddress(kb, "ExitProcess")) : nullptr,      reinterpret_cast<void *>(&HookExitProcess) },
+			{ reinterpret_cast<void *>(RealRaiseFailFastException),   reinterpret_cast<void *>(&HookRaiseFailFastException) },
+			{ reinterpret_cast<void *>(RealUnhandledExceptionFilter), reinterpret_cast<void *>(&HookUnhandledExceptionFilter) },
+			{ kb != nullptr ? reinterpret_cast<void *>(GetProcAddress(kb, "RaiseFailFastException")) : nullptr,   reinterpret_cast<void *>(&HookRaiseFailFastException) },
+			{ kb != nullptr ? reinterpret_cast<void *>(GetProcAddress(kb, "UnhandledExceptionFilter")) : nullptr, reinterpret_cast<void *>(&HookUnhandledExceptionFilter) },
 		};
 		HMODULE mods[1024];
 		DWORD needed = 0;
