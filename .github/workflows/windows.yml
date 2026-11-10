@@ -60,6 +60,14 @@ jobs:
       BOOST: /home/runner/winport/winport-deps/boost/usr/include
       ALLIEDMODDERS: /home/runner/winport/alliedmodders
       OUT: /home/runner/winport/winport-build
+      # What xwin fetches, pinned: unpinned it takes the newest SDK and CRT in the
+      # VS 17 catalog, so a catalog update changes the build. The 2026-11 catalog
+      # writes payload paths with '/', which xwin before 0.10.0 cannot match
+      # ("unable to find SDK libs for 'x86'"). The cache key follows all four.
+      XWIN_VERSION: 0.10.0
+      XWIN_MANIFEST: '17'
+      XWIN_SDK: 10.0.26100
+      XWIN_CRT: 14.44.17.14
       # The hl2sdk tf2 commit the extension is built against; see the cache key.
       HL2SDK_TF2: 9c2efb1deeffd5e895d2b43dabb639409c78c6d6
       # A .pdb beside the DLL, for the bed's debugger. The package does not ship it.
@@ -105,14 +113,16 @@ jobs:
       id: xwin
       with:
         path: /home/runner/winport/xwin-sdk
-        key: xwin-0.6.5-x86
+        key: xwin-${{ env.XWIN_VERSION }}-vs${{ env.XWIN_MANIFEST }}-sdk${{ env.XWIN_SDK }}-crt${{ env.XWIN_CRT }}-x86
 
     - name: Windows SDK
       if: steps.xwin.outputs.cache-hit != 'true'
       run: |
-        curl -sSfL --retry 3 https://github.com/Jake-Shadle/xwin/releases/download/0.6.5/xwin-0.6.5-x86_64-unknown-linux-musl.tar.gz | tar -xz
+        curl -sSfL --retry 3 "https://github.com/Jake-Shadle/xwin/releases/download/$XWIN_VERSION/xwin-$XWIN_VERSION-x86_64-unknown-linux-musl.tar.gz" | tar -xz
         for attempt in 1 2 3; do
-          ./xwin-0.6.5-x86_64-unknown-linux-musl/xwin --accept-license --arch x86 splat --output "$XWIN" && exit 0
+          "./xwin-$XWIN_VERSION-x86_64-unknown-linux-musl/xwin" --accept-license --arch x86 \
+            --manifest-version "$XWIN_MANIFEST" --sdk-version "$XWIN_SDK" --crt-version "$XWIN_CRT" \
+            splat --output "$XWIN" && exit 0
           echo "xwin failed (attempt $attempt)"; sleep 10
         done
         exit 1
