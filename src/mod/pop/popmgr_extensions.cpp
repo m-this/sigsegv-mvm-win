@@ -5361,10 +5361,10 @@ namespace Mod::Pop::PopMgr_Extensions
 		set_mission_filename_forward->Execute(&result);
     }
 
-	DETOUR_DECL_MEMBER(void, CTFGCServerSystem_PreClientUpdate)
+	// Spectators allowed? Increase reported max players for each connecting player so that players may still join without console command
+	[[gnu::noinline]] int CountConnectingPlayers()
 	{
 		static ConVarRef mp_allowspectators("mp_allowspectators");
-		// Spectators allowed? Increase reported max players for each connecting player so that players may still join without console command
 		int connectingPlayers = 0;
 		if (mp_allowspectators.GetBool()) {
 			int clCount = sv->GetClientCount();
@@ -5375,7 +5375,17 @@ namespace Mod::Pop::PopMgr_Extensions
 				}
 			}
 		}
+		return connectingPlayers;
+	}
 
+	// The GC client resumes its jobs (Valve coroutines) under this call. On 32-bit
+	// Windows they switch stacks with longjmp, which checks the SEH head against
+	// the one saved at the switch: a job that ran elsewhere finds an extra record
+	// here and the switch fails with 0xC0000029. The guarded init of a static
+	// ConVarRef gives a function that record, so it stays in the helper above.
+	DETOUR_DECL_MEMBER(void, CTFGCServerSystem_PreClientUpdate)
+	{
+		int connectingPlayers = CountConnectingPlayers();
 		static CValueOverride_ConVar<int> tf_mvm_defenders_team_size("tf_mvm_defenders_team_size");
 		tf_mvm_defenders_team_size.Set(tf_mvm_defenders_team_size.Get() + connectingPlayers);
 		DETOUR_MEMBER_CALL();
