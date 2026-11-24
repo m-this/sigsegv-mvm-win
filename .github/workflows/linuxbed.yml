@@ -165,6 +165,9 @@ jobs:
       run: |
         mkdir -p out
         tf="$BED/tf-dedicated/tf"
+        sudo mkdir -p -m 1777 /tmp/cores
+        sudo sysctl -q -w kernel.core_pattern=/tmp/cores/core.%e
+        ulimit -c unlimited
         bedbin/winbed -serve -root "$BED" > out/winbed.out 2> out/winbed.err &
         # srcds on a LAN reach binds rcon to the address its hostname
         # resolves to, so try loopback and every IPv4 the runner has.
@@ -201,6 +204,18 @@ jobs:
           >> out/results.jsonl 2>> out/waveprobe.err || true
         cp "$tf/console.log" out/ 2>/dev/null || true
         cp -r "$tf/addons/sourcemod/logs" out/smlogs 2>/dev/null || true
+    # A segfault leaves a core (the last one: a crash loop overwrites it); its
+    # backtrace says which module faulted.
+    - name: Backtrace
+      if: always()
+      run: |
+        set -- /tmp/cores/core.*
+        [ -e "$1" ] || { echo "no core"; exit 0; }
+        ls -la /tmp/cores
+        sudo apt-get install -y -q gdb > /dev/null
+        cd "$BED/tf-dedicated"
+        gdb -q -batch -ex "set solib-search-path bin:tf/bin" -ex "info sharedlibrary" -ex "bt 40" ./srcds_linux "$1" 2>&1 \
+          | grep -v -E "^(warning|\[New LWP)" | tee "$GITHUB_WORKSPACE/out/backtrace.txt" | tail -80
     - name: Report
       if: always()
       run: |
