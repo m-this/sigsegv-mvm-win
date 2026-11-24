@@ -511,18 +511,11 @@ bool CAddr_SendTable::FindAddrLinux(uintptr_t& addr) const
 
 bool IAddr_ConCommandBase::FindAddrLinux(uintptr_t& addr) const
 {
-	const char *name = this->GetConName();
-	bool is_command  = this->IsCommand();
-	
-#if defined __GNUC__
-	#warning FINISH THIS!
-	#warning FINISH THIS!
-	#warning FINISH THIS!
-	#warning FINISH THIS!
-	#warning FINISH THIS!
-	#warning FINISH THIS!
-#endif
-	return false;
+	if (icvar == nullptr) return false;
+	ConCommandBase *base = icvar->FindCommandBase(this->GetConName());
+	if (base == nullptr || base->IsCommand() != this->IsCommand()) return false;
+	addr = reinterpret_cast<uintptr_t>(base);
+	return true;
 }
 
 // Debug command for detecting detoured functions that have clone variants
