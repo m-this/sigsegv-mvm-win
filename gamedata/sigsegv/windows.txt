@@ -79,6 +79,15 @@
 					lib   "server"
 					// verified: read by hand: the three calls of Action<CTFBot>::ApplyResult (0x550880) after CHANGE_TO, SUSPEND_FOR and DONE land here. It clears DebugString's static buffer (0x10b8e340), walks m_parent (+0xc) to the root, calls BuildDecoratedName (0x417ac0) and prints the result split at '(', ')' and '<' through ConColorMsg, as Linux 0xea0cc0 does. thiscall, no arguments, plain ret
 				}
+				"Action<CZombie>::ApplyResult"
+				{
+					type  "fixed"
+					sym   "_ZN6ActionI7CZombieE11ApplyResultEPS0_P8BehaviorIS0_E12ActionResultIS0_E"
+					addr  "0x5be300"
+					build "11267535"
+					lib   "server"
+					// verified: read by hand: the ApplyResult instance (CHANGE_TO, SUSPEND_FOR and DONE, RESUME debug strings) that CZombieBehavior::Update (0x5c0f00) calls; thiscall, ret 0x14
+				}
 				"Action<CZombie>::InvokeOnEnd"
 				{
 					type  "fixed"
@@ -88,6 +97,15 @@
 					lib   "server"
 					// verified: read by hand: the ENDING body Action<CZombie>::ApplyResult (0x5bf4e0) calls. MSVC folded the identical InvokeOnEnd of several Action<T> into this one body, which is fine for the call thunk nextbot1.cpp makes of it; thiscall, ret 0xc
 				}
+				"Action<CZombie>::InvokeOnResume"
+				{
+					type  "fixed"
+					sym   "_ZN6ActionI7CZombieE14InvokeOnResumeEPS0_P8BehaviorIS0_EPS1_"
+					addr  "0x5bec80"
+					build "11267535"
+					lib   "server"
+					// verified: read by hand: the RESUMING body that Action<CZombie>::ApplyResult (0x5bf4e0) calls and that calls it back; same shape as Action<CTFBot>::InvokeOnResume (0x557960); thiscall with the ActionResult return pointer, ret 0x10
+				}
 				"Action<CZombie>::BuildDecoratedName [clone]"
 				{
 					type  "fixed"
@@ -96,6 +114,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: MSVC folded every Action<T>::BuildDecoratedName into this one body, called by each PrintStateToConsole and DebugString (22 calls). GetName (vcall +0xa8, Linux +0xac) appended with V_strncat (0x6e66f0), then '( ' and the child (+0x10) recursively and ' )', then '<<' and the action we suspended (+0x14) recursively, as Linux's .isra clone does. Unlike that clone it keeps this: thiscall (buf, action), ret 8, which is what the thunk passes
+				}
+				"Action<CZombie>::PrintStateToConsole"
+				{
+					type  "fixed"
+					sym   "_ZNK6ActionI7CZombieE19PrintStateToConsoleEv"
+					addr  "0x5bf830"
+					build "11267535"
+					lib   "server"
+					// verified: read by hand: the three calls of Action<CZombie>::ApplyResult (0x5bf4e0) after CHANGE_TO, SUSPEND_FOR and DONE land here; the same body as Action<CTFBot>'s (0x562000) on CZombie's own DebugString buffer (0x10b94d48). thiscall, no arguments, plain ret
 				}
 				"CZombieIntention::Reset"
 				{
@@ -736,6 +763,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: the only function that pushes the VPROF name 'Path::ComputePathDetails' (0x42906a); called by Path::AssemblePrecomputedPath (0x428940) and Path::Compute<CTFBotPathCost>(INextBot *, CBaseCombatCharacter *, ...) (0x588e7f, after NavAreaBuildPath as on Linux); thiscall, ret 8
+				}
+				"Path::Optimize"
+				{
+					type  "fixed"
+					sym   "_ZN4Path8OptimizeEP8INextBot"
+					addr  "0x130a00"
+					build "11267535"
+					lib   "server"
+					// verified: read by hand: empty on Linux (one ret). Path::Compute<CTFBotPathCost> (0x588be0) calls 0x130600 right after ComputePathDetails and before PostProcess (0x588e9e), where Linux calls Optimize: MSVC folded the empty body into the shared ret 4 stub, so a call through it does nothing, as on Linux. Not to be detoured
 				}
 				"PathFollower::PathFollower [C1]"
 				{
@@ -3148,6 +3184,15 @@
 					vtidx "274"
 					// verified: read by hand: slot 274 of CTFWeaponBase (Linux 280; ItemPostFrame at 273). The base ItemBusyFrame, the owner, button 0x800 with the flag at +0x6dd (+0x6e9 on Linux) calling DoClassSpecialSkill, then IN_ATTACK with GetMaxClip1 and the reload singly flag (+0x62c); the Linux body. No argument
 				}
+				"CTFWeaponBase::CalcIsAttackCritical"
+				{
+					type  "fixed"
+					sym   "_ZN13CTFWeaponBase20CalcIsAttackCriticalEv"
+					addr  "0x632650"
+					build "11267535"
+					lib   "server"
+					// verified: read by hand: the owner cast to CTFPlayer, TheTFBots and IsAllBotTeam on the team, IsPVEModeActive (0x4924c0) and IsPVEModeControlled (0x4924d0, its neighbour as on Linux), the Linux body; ret
+				}
 				"CTFWeaponBase::GetDamageType"
 				{
 					type  "fixed"
@@ -3392,6 +3437,16 @@
 					lib   "server"
 					vtidx "472"
 					// verified: read by hand from the vtables: CTFWeaponBaseGun's own run of slots sits 7 below Linux (GetWeaponProjectileType 479/472, whose body indexes the weapon info at +0x6d8 by the mode at +0x6cc and returns the entry's projectile type; FireFlameRocket's two overloads 486-487/479-480 both return null); slot 472
+				}
+				"CTFWeaponBaseGun::ModifyProjectile"
+				{
+					type  "fixed"
+					sym   "_ZN16CTFWeaponBaseGun16ModifyProjectileEP11CBaseEntity"
+					addr  "0x130a00"
+					build "11267535"
+					lib   "server"
+					vtidx "475"
+					// verified: read by hand from the vtables: CTFWeaponBaseGun's own run of slots sits 7 below Linux (GetWeaponProjectileType 479/472, whose body indexes the weapon info at +0x6d8 by the mode at +0x6cc and returns the entry's projectile type; FireFlameRocket's two overloads 486-487/479-480 both return null); Linux 482, the shared empty body popping one argument
 				}
 				"CTFWeaponBaseGun::FireEnergyBall"
 				{
@@ -3679,6 +3734,15 @@
 					vtidx "262"
 					// verified: read by hand from the vtables: Linux slot 268 less 6, as CanHolster (265, 259) is; CTFCompoundBow inherits it there, CTFWeaponBuilder has its own Deploy in the same slot, and CanDeploy and Holster beside it differ between the two as on Linux
 				}
+				"CItem::ItemTouch"
+				{
+					type  "fixed"
+					sym   "_ZN5CItem9ItemTouchEP11CBaseEntity"
+					addr  "0x28e8c0"
+					build "11267535"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'plague_healthkit_pickup' with the Linux function, and 6 of its 6 matched callees
+				}
 				"CTFBaseBoss::GetCurrencyValue"
 				{
 					type  "fixed"
@@ -3902,6 +3966,25 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: Linux's body test for test: no game rules or a type (+0x598) of 3 (sapper) is false, IsQuickBuildTime (0x4920c0), MvM (+0xc72) with a team other than 3, the flag at +0xa31 (Linux +0xa49) or a game type of 10 at +0x3cc, else the byte at +0xac4 (Linux +0xadc). Thiscall, plain ret
+				}
+				"CBaseObject::StartPlacement"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseObject14StartPlacementEP9CTFPlayer"
+					addr  "0x4c59c0"
+					build "11267535"
+					lib   "server"
+					vtidx "339"
+					// verified: read by hand: slot 339 of CObjectTeleporter and CObjectSapper, which share it as Linux's 340 does (both hold 0xc84ac0 there), while CObjectSentrygun (0x4ce5b0) and CObjectDispenser (0x4c7e60) override it as on Linux. The slots around agree: 335 is the one all four override (Linux 336), 336 to 338 are shared by all four (Linux 337 to 339). Same body: SetSolidFlags with 4 or'd in first (0x4c53ac), then the placement fields. Thiscall, ret 4
+				}
+				"CBaseObject::StartUpgrading"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseObject14StartUpgradingEv"
+					addr  "0x4c59c0"
+					build "11267535"
+					lib   "server"
+					// verified: the CBaseObject function between StartBuilding (0x4c4b80) and TraceAttack (0x4c5910) in server.dll's name-ordered run, with the Linux calls in the Linux order: ShouldQuickBuild virtual, the sapper's GetReversesBuildingConstructionSpeed, GetObjectInfo twice, EmitSound, SetHealth, the object virtuals
 				}
 				"CBaseProjectile::~CBaseProjectile [D2]"
 				{
@@ -4141,6 +4224,15 @@
 					lib   "server"
 					// verified: read by hand: two GetRobotDestructionLogic calls and the float scaling of the return time field, the Linux body; ret
 				}
+				"CCaptureFlag::PickUp"
+				{
+					type  "fixed"
+					sym   "_ZN12CCaptureFlag6PickUpEP9CTFPlayerb"
+					addr  "0x448940"
+					build "11267535"
+					lib   "server"
+					// verified: read by hand: every named call it makes is one the Linux body makes (TeamFortress_SetSpeed, LookupAttachment('flag'), SetLocalOrigin, SetLocalAngles, HasTheFlag, InCond), and it plays 'CaptureFlag.EnemyStolen', 'AttackDefend.EnemyStolen' and 'MVM.AttackDefend.EnemyStolen'; ret 8 for (player, bool)
+				}
 				"CCaptureZone::ShimTouch"
 				{
 					type  "fixed"
@@ -4160,6 +4252,16 @@
 					lib   "server"
 					vtidx "238"
 					// verified: mov al,1; ret, slot 238 (+0x3b8) of CCurrencyPack's table, 3 below Linux's 241 as the matched ComeToRest (win 231, Linux 234) is; the body is shared with other slots of the table
+				}
+				"CEconEntity::GiveTo"
+				{
+					type  "fixed"
+					sym   "_ZN11CEconEntity6GiveToEP11CBaseEntity"
+					addr  "0x130a00"
+					build "11267535"
+					lib   "server"
+					vtidx "227"
+					// verified: read by hand: empty on Linux, so on Windows it is the shared empty `ret 4`, and only the slot says which virtual it is: slot 227 of CEconEntity, where CTFWearable has its own code (0x3c73b0, CEconWearable::GiveTo), just before CalculateVisibleClassFor; the IHasAttributes virtuals Linux has after it are in their own vtable on Windows
 				}
 				"CEconEntity::UpdateModelToClass"
 				{
@@ -4381,6 +4483,16 @@
 					vtidx "0"
 					// verified: read by hand: slot 0 of the vtable RTTI names CEntityFactory<CPathTrack>; allocates the object, calls CBaseEntity::CBaseEntity(false) (0x1e8ea0), sets the CPathTrack vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4
 				}
+				"CEntityFactory<CPointClientCommand>::Create"
+				{
+					type  "fixed"
+					sym   "_ZN14CEntityFactoryI19CPointClientCommandE6CreateEPKc"
+					addr  "0x226e60"
+					build "11267535"
+					lib   "server"
+					vtidx "0"
+					// verified: read by hand: slot 0 of the vtable RTTI names CEntityFactory<CPointClientCommand>; allocates the object, calls CBaseEntity::CBaseEntity(false) (0x1e8ea0), sets the CPointClientCommand vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4
+				}
 				"CEntityFactory<CPointEntity>::Create"
 				{
 					type  "fixed"
@@ -4420,6 +4532,16 @@
 					lib   "server"
 					vtidx "0"
 					// verified: read by hand: slot 0 of the vtable RTTI names CEntityFactory<CPointPopulatorInterface>; allocates the object, calls CBaseEntity::CBaseEntity(false) (0x1e8ea0), sets the CPointPopulatorInterface vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4
+				}
+				"CEntityFactory<CPointServerCommand>::Create"
+				{
+					type  "fixed"
+					sym   "_ZN14CEntityFactoryI19CPointServerCommandE6CreateEPKc"
+					addr  "0x226ec0"
+					build "11267535"
+					lib   "server"
+					vtidx "0"
+					// verified: read by hand: slot 0 of the vtable RTTI names CEntityFactory<CPointServerCommand>; allocates the object, calls CBaseEntity::CBaseEntity(false) (0x1e8ea0), sets the CPointServerCommand vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4
 				}
 				"CEntityFactory<CRagdollMagnet>::Create"
 				{
@@ -4518,6 +4640,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: the 'ForceSpawnAtEntityOrigin' input of CEnvEntityMaker's datamap (0xdc4a writes the name, 0xdc77 this address); FindEntityByName on the input's string, that entity's abs origin and angles, then SpawnEntity (0x24cd90), the Linux body; ret 4 for the inputdata
+				}
+				"CEnvEntityMaker::SpawnEntity"
+				{
+					type  "fixed"
+					sym   "_ZN15CEnvEntityMaker11SpawnEntityE6Vector6QAngle"
+					addr  "0x24c8f0"
+					build "11267535"
+					lib   "server"
+					// verified: read by hand: FindTemplate first, the entity's abs origin and angles, then the arguments compared with vec3_invalid (FLT_MAX at 0x109d62d8), the Linux body; pops the Vector and QAngle it takes by value (ret 24); eight direct callers as Linux has eight
 				}
 				"CFuncIllusionary::Spawn"
 				{
@@ -5370,6 +5501,16 @@
 					vtidx "260"
 					// vtable
 				}
+				"CTFGrenadePipebombProjectile::StickybombTouch"
+				{
+					type  "fixed"
+					sym   "_ZN28CTFGrenadePipebombProjectile15StickybombTouchEP11CBaseEntity"
+					addr  "0x130a00"
+					build "11267535"
+					lib   "server"
+					vtidx "262"
+					// verified: read by hand: empty on Linux too (a lone ret at 0xda9ad0, slot 263). Here slot 262 of CTFGrenadePipebombProjectile holds the shared 'ret 4' at 0x130600: counting back from the end of the table, PreArmThink (slot 263, 0x6108e0, calls slot 257 through +0x404 as Linux's calls GetLiveTime) and ArmThink (264) follow it, and slot 257 is GetLiveTime (0x60fa80). The vtidx makes SigMod hook the slot in this class's table and the ones inheriting it, never the shared body, which is what went wrong with the knownvtidx match before
+				}
 				"CTFGrenadePipebombProjectile::DetonateStickies"
 				{
 					type  "fixed"
@@ -5597,6 +5738,15 @@
 					lib   "server"
 					// verified: read by hand: the call right before CBasePlayer::Event_Killed (0x2e05b0) in CTFPlayer::Event_Killed (0x4eea72), made with the entity index and the player's class as Linux calls it before CBasePlayer::Event_Killed; sets the array cell at this + 0x3704 + 4 * index when it differs and runs the change notifier (0x14f3c0). Pops 8
 				}
+				"CTFPlayerResource::UpdateConnectedPlayer"
+				{
+					type  "fixed"
+					sym   "_ZN17CTFPlayerResource21UpdateConnectedPlayerEiP11CBasePlayer"
+					addr  "0x5165d0"
+					build "11267535"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: calls all 10 of the Linux function's matched callees, and no string disagrees
+				}
 				"CTFPlayerShared::OnAddBalloonHead"
 				{
 					type  "fixed"
@@ -5755,6 +5905,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: string lead, agreed by strings+callees: 1 shared string(s), 9/10 matched callees, windows/linux size 1872/2054
+				}
+				"CTFProjectile_BallOfFire::Burn"
+				{
+					type  "fixed"
+					sym   "_ZN24CTFProjectile_BallOfFire4BurnEP11CBaseEntity"
+					addr  "0x5351e0"
+					build "11267535"
+					lib   "server"
+					// verified: string lead, agreed by strings: 4 shared string(s), 16/16 matched callees; read by hand on 11117211 (carry.py found no body): CTFProjectile_BallOfFire::RocketTouch (0x5349c0) calls it with the other entity, thiscall ret 4, and its strings are Weapon_DragonsFury.BonusDamage, BonusDamageHit, BonusDamagePain
 				}
 				"CTFProjectile_BallOfFire::RocketTouch"
 				{
@@ -6210,6 +6369,15 @@
 					vtidx "487"
 					// verified: read by hand: CTFSword's slot +0x79c (Linux +0x7bc, the same seven-slot shift as CanDecapitate +0x790 against +0x7ac): returns 1.0 while the holster flag (+0x828, Linux +0x831, the byte CTFDecapitationMeleeWeaponBase::Holster sets) is set, 0 without an owner that IsPlayer (vtable +0x14c, Linux +0x150), 1.0 when CanDecapitate (vtable +0x790) is false, else min(m_iDecapitations (+0x1f10), 4) times a constant plus a constant, the Linux body (0.08 and 1.0); thiscall, plain ret
 				}
+				"CTFTankBoss::TankBossThink"
+				{
+					type  "fixed"
+					sym   "_ZN11CTFTankBoss13TankBossThinkEv"
+					addr  "0x5f3ec0"
+					build "11267535"
+					lib   "server"
+					// verified: read by hand: the tank's think: 'Announcer.MVM_Tank_Alert_Halfway', 'Announcer.MVM_Tank_Alert_Near_Hatch', the 'movement' sequence, TakeDamage, StopSound, EmitSound and StopParticleEffects, the Linux body's calls; ret. CTFTankBoss' datamap, built at run time, writes 'TankBossThink' and then this address (0x4dd4b)
+				}
 				"CTFTankBoss::UpdateOnRemove"
 				{
 					type  "fixed"
@@ -6365,6 +6533,16 @@
 					lib   "server"
 					vtidx "322"
 					// verified: the team number, CEconItemView::GetPlayerDisplayModel twice and the tail jump to CTFWeaponBase::GetViewModel as the Linux body; slot 322 is Linux 328 less 6 (GetWorldModel 329 to 323 matched)
+				}
+				"CTFWearable::CanEquip"
+				{
+					type  "fixed"
+					sym   "_ZN11CTFWearable8CanEquipEP11CBaseEntity"
+					addr  "0x3d0e10"
+					build "11267535"
+					lib   "server"
+					vtidx "232"
+					// verified: read by hand: slot 232 of CTFWearable's table (Linux 238; anchors 236 and 239 sit at -6 in that region). Reads the item's static data, UTIL_GetHolidayForString of its holiday restriction and returns IsHolidayActive of it through the game rules' virtual, true when there is none, the Linux body. Thiscall, ret 4
 				}
 				"CTFWearable::Equip"
 				{
@@ -7293,6 +7471,15 @@
 					lib   "server"
 					// call
 				}
+				"KeyValues::RecursiveMergeKeyValues"
+				{
+					type  "fixed"
+					sym   "_ZN9KeyValues23RecursiveMergeKeyValuesEPS_"
+					addr  "0x6e9f90"
+					build "11267535"
+					lib   "server"
+					// verified: reads the argument's +0x18 first as Linux does; called by the matched caller and calls the matched callee
+				}
 				"CUserMessages::LookupUserMessage"
 				{
 					type  "fixed"
@@ -7438,6 +7625,15 @@
 					lib   "server"
 					// verified: called by 62 of its 68 matched callers; body is call GEconItemSchema, add eax 4, ret, the Linux shape
 				}
+				"CTFGameRules::CanUpgradeWithAttrib"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules20CanUpgradeWithAttribEP9CTFPlayeritP22CMannVsMachineUpgrades"
+					addr  "0x484800"
+					build "11267535"
+					lib   "server"
+					// verified: read by hand: called from CUpgrades::PlayerPurchasingUpgrade (0x5f5d10) and GrantOrRemoveAllUpgrades (0x5f58d0) with the player, slot, attribute index and a pointer to the upgrade. Null player returns 0; upgrade+0x190 (Linux +0x150) == 1 with attribute 0x71 returns IsPlayerClass(9), else true; otherwise the inner check, inlined here (GetEconItemViewByLoadoutSlot on the slot). thiscall, ret 0x10
+				}
 				"CTFGameRules::GetCostForUpgrade"
 				{
 					type  "fixed"
@@ -7530,6 +7726,15 @@
 					lib   "server"
 					// verified: called twice by Physics_RunThinkFunctions (0x2c0f80), as on Linux. Same body as Linux's: the vprof scope virtual (+0x64), GetTimeBase, UnsetPlayerSimulated, the entity's PhysicsSimulate virtual (+0x1b8) and the scope's exit as a tail jump (+0x68). cdecl, one argument, plain ret
 				}
+				"CTFGameRules::CalcDominationAndRevenge"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules24CalcDominationAndRevengeEP9CTFPlayerP11CBaseEntityS1_bPi"
+					addr  "0x4838d0"
+					build "11267535"
+					lib   "server"
+					// verified: read by hand: the whole function, where Linux detours the .part clone after the wrapper's early returns. FindPlayerStats (0x4a9650), SetPlayerDominated (0x52b160), Event_PlayerDominatedOther (0x4a8340), Event_PlayerRevenge (0x4a8d00), the 'player_domination' event with dominator, dominated and dominations. Pops 0x14: this and five arguments
+				}
 				"CNetChan::SendNetMsg"
 				{
 					type  "fixed"
@@ -7584,6 +7789,15 @@
 					lib   "server"
 					vtidx "39"
 					// vtable
+				}
+				"SetDebugBits"
+				{
+					type  "fixed"
+					sym   "_Z12SetDebugBitsP11CBasePlayerPKci"
+					addr  "0x228c50"
+					build "11267535"
+					lib   "server"
+					// verified: read by hand: the ent_text and ent_bbox command callbacks (0x1eba50, 0x1ea620) call it with UTIL_GetCommandClient (0x272770), the name and the bit (1, 4); GetNextCommandEntity inline, NameMatchesComplex, then the picker entity fallback, Linux's body. cdecl, plain ret
 				}
 				"GetNextCommandEntity"
 				{
@@ -7685,6 +7899,24 @@
 					lib   "server"
 					// verified: read by hand: the table had 0x226320, the ServiceEventQueue wrapper that loads g_EventQueue into ecx and jumps here. This body holds 'unhandled input: (%s) -> (%s), from (%s,%s); target entity not found'
 				}
+				"tf_mvm_popfile"
+				{
+					type  "fixed"
+					sym   "_ZL14tf_mvm_popfileRK8CCommand"
+					addr  "0x4a6750"
+					build "11267535"
+					lib   "server"
+					// verified: read by hand: the callback pushed with the 'tf_mvm_popfile' name (0x3c49f) when the ConCommand is built; holds 'Missing Popfile name' and 'Could not find a valid population file matching: %s.', the Linux strings of the command
+				}
+				"CTeamplayRoundBasedRules::State_Enter"
+				{
+					type  "fixed"
+					sym   "_ZN24CTeamplayRoundBasedRules11State_EnterE22gamerules_roundstate_t"
+					addr  "0x3509f0"
+					build "11267535"
+					lib   "server"
+					// verified: references both 'Gamerules: entering state' strings and compares this+0x3cc against the argument first, as Linux does; the other referrer is an inlined copy
+				}
 				"GetWeaponId"
 				{
 					type  "fixed"
@@ -7702,6 +7934,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: stores its three arguments at +4, +8 and +0xc and CTraceFilterSimple's vtable (0x10813e78, the table whose slot 0 is the known ShouldHitEntity) at +0, then ret 0xc; the Linux C1 does the same. One of the two code references to that vtable; 290 calls, from UTIL_TraceLine, FireBullets, IVision::IsLineOfSightClear...
+				}
+				"CTeamplayRoundBasedRules::GetMinTimeWhenPlayerMaySpawn"
+				{
+					type  "fixed"
+					sym   "_ZN24CTeamplayRoundBasedRules28GetMinTimeWhenPlayerMaySpawnEP11CBasePlayer"
+					addr  "0x34ee70"
+					build "11267535"
+					lib   "server"
+					// verified: read by hand: called by CTFGameRules::HasPassedMinRespawnTime (0x48f460, the Linux body: a player virtual, the +0x22d0 test, this call, compared with curtime). Body: two convar floats (+0x2c) and the 2.0 constant, a virtual with the player (+0x2c8, Linux +0x2cc); if true adds m_flDeathTime, else a second virtual (+0x2c4) with (team, 0) added first. thiscall, ret 4
 				}
 				"CMultiPlayerAnimState::OnNewModel"
 				{
@@ -7731,6 +7972,15 @@
 					lib   "server"
 					// call
 				}
+				"Con_NPrintf"
+				{
+					type  "fixed"
+					sym   "_Z11Con_NPrintfiPKcz"
+					addr  "0xc4ea0"
+					build "11267535"
+					lib   "engine"
+					// verified: read by hand, engine.dll: CVEngineServer::Con_NPrintf calls it (0x13c142) with the position, '%s' and its formatted text. Formats into 0x1000 bytes and, for a position below 0x80, stores the line in the notify area (0x214 bytes each); the dedicated Linux engine keeps only the formatting. cdecl varargs, plain ret
+				}
 				"IVEngineServer::Con_NPrintf"
 				{
 					type  "fixed"
@@ -7739,6 +7989,15 @@
 					build "11267535"
 					lib   "engine"
 					// verified: read by hand, engine.dll: slot 46 of CVEngineServer's table, as on Linux. Returns when IsDedicatedServer (+0x8) holds, else formats and calls Con_NPrintf (0xc4cb0); the Linux one is an empty ret. A varargs member: cdecl with this on the stack, plain ret
+				}
+				"IVEngineServer::Con_NXPrintf"
+				{
+					type  "fixed"
+					sym   "_ZN14CVEngineServer12Con_NXPrintfEPK12con_nprint_sPKcz"
+					addr  "0x13c800"
+					build "11267535"
+					lib   "engine"
+					// verified: read by hand, engine.dll: slot 47 of CVEngineServer's table, as on Linux. Returns when IsDedicatedServer (+0x8) holds, else formats and calls Con_NXPrintf; the Linux one is an empty ret. A varargs member: cdecl with this on the stack, plain ret
 				}
 				"UTIL_GetHolidayForString"
 				{
@@ -7766,6 +8025,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: string lead (scored), agreed by strings: 2 shared string(s), 2/2 matched callees, windows/linux size 112/129
+				}
+				"CTFGameRules::FireGameEvent"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules13FireGameEventEP10IGameEvent"
+					addr  "0x48b830"
+					build "11267535"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'eventtype', 'full_round', 'player_disconnect' with the Linux function, and 15 of its 16 matched callees
 				}
 				"CTFItemDefinition::GetLoadoutSlot"
 				{
@@ -7858,6 +8126,15 @@
 					lib   "server"
 					// verified: read by hand: GetNearestNavArea and GetClosestPointOnArea as in the Linux body; cdecl, plain ret; one direct caller as on Linux, next to CSpawnLocation::FindSpawnLocation (0x5ed4e0)
 				}
+				"CTFGameRules::OnPlayerSpawned"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules15OnPlayerSpawnedEP9CTFPlayer"
+					addr  "0x494170"
+					build "11267535"
+					lib   "server"
+					// verified: string lead (scored), agreed by strings+callees: 2 shared string(s), 9/10 matched callees, windows/linux size 1936/3382
+				}
 				"CTraceFilterIgnoreFriendlyCombatItems::ShouldHitEntity"
 				{
 					type  "fixed"
@@ -7885,6 +8162,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: turned away (call match); calls the particle effect string table's AddString(true, name, -1, 0) through its vtable at +0x20 (Linux +0x24, one destructor fewer), the Linux body; cdecl
+				}
+				"ReadEncryptedKVFile"
+				{
+					type  "fixed"
+					sym   "_Z19ReadEncryptedKVFileP11IFileSystemPKcPKhb"
+					addr  "0x39b7b0"
+					build "11267535"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string '%s.ctx', 'WeaponDatafile' with the Linux function, and 5 of its 5 matched callees
 				}
 				"CTFGameMovement::CheckJumpButton"
 				{
@@ -8034,6 +8320,24 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: walks m_Attributes (base +4, count +0x10, 0x10 an attribute) for the definition's index (+4) and sets its value, else builds a CEconItemAttribute (vtable 0x10828138) and adds it, the Linux body at the same offsets; thiscall, (const CEconItemAttributeDefinition *, float)
+				}
+				"ApplyUpgrade_Default"
+				{
+					type  "fixed"
+					sym   "_ZL20ApplyUpgrade_DefaultRK22CMannVsMachineUpgradesP9CTFPlayerP13CEconItemViewib"
+					addr  "0x5f5bb0"
+					build "11267535"
+					lib   "server"
+					// verified: read by hand: a cdecl function with its five arguments on the stack where Linux passes three in registers. The attribute by name, the player's list (+0x1284) for UI group 1 else the item's (+0x58), IterateAttributes for the current value, AlmostEqual (0x6dff60, tolerance 10) and Approach (0x6d97e0) against the cap, then RemoveAttribute for a downgrade or SetRuntimeAttributeValue (0x3c4860) and SetRuntimeAttributeRefundableCurrency (0x3c4810) plus the cost; returns the attribute's index, 0xffff when the item is missing. Its only caller is CUpgrades::ApplyUpgradeToItem (0x5f535f)
+				}
+				"GetUpgradeStepData"
+				{
+					type  "fixed"
+					sym   "_Z18GetUpgradeStepDataP9CTFPlayeriiRiRb"
+					addr  "0x5f6720"
+					build "11267535"
+					lib   "server"
+					// verified: turned away (consensus); returns on a null player, looks up the loadout slot's entity, indexes the upgrade table by upgrade * 0x19c and reads its attribute definition from the item schema, as the Linux body does; cdecl
 				}
 				"CItemGeneration::SpawnItem [defIndex]"
 				{
@@ -8471,6 +8775,16 @@
 					lib   "engine"
 					// verified: read by hand, engine.dll: stops the demo recorder, prints 'SourceTV stop.' on the client or 'HLTV server shutting down' on the net channel, removes the game event listener and tail-jumps to CBaseServer::Shutdown (0x141260), as Linux 0x136fc0 does. Takes the CBaseServer part as this (the listener is at this - 8). Plain ret
 				}
+				"CTFGameRules::BetweenRounds_Think"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules19BetweenRounds_ThinkEv"
+					addr  "0x483480"
+					build "11267535"
+					lib   "server"
+					vtidx "207"
+					// verified: read by hand: slot 207 of CTFGameRules' table (Linux 209, the two-slot shift of RoundCleanupShouldIgnore at 190 and BroadcastSound at 219); the ready-status countdown check, IsCompetitiveMode (which Linux inlines as GTFGCClientSystem and GetMatchGroupDescription), PlayerReadyStatus_HaveMinPlayersToEnable, then CheckReadyRestart (0x34dda0), the Linux body's order; ret. The matcher's 0x49e310 is slot 230, RoundRespawn
+				}
 				"CSchemaAttributeType_Default::ConvertStringToEconAttributeValue"
 				{
 					type  "fixed"
@@ -8507,6 +8821,15 @@
 					build "11267535"
 					lib   "server"
 					// call, ret 24 as its arguments say
+				}
+				"CHeadlessHatmanAttack::RecomputeHomePosition"
+				{
+					type  "fixed"
+					sym   "_ZN21CHeadlessHatmanAttack21RecomputeHomePositionEv"
+					addr  "0x59e7e0"
+					build "11267535"
+					lib   "server"
+					// verified: read by hand: called from CHeadlessHatmanAttack::Update (0x59e780) in the Linux order. The interval timer at +0x4818 compared with the stored time at +0x4820 and rearmed with +0x481c, then each control point of the master whose index is the loop counter (+0x5a4, Linux +0x5bc), IsInRound, GetOwningTeam != 3, the game rules virtual (+0x27c, Linux +0x280), and the point's abs origin copied to +0x480c..+0x4814. The matcher gave this address to SelectVictim by consensus (fields 0.382); SelectVictim is 0x59e310, called just before it
 				}
 				"TE_TFBlood"
 				{
@@ -8721,6 +9044,15 @@
 					lib   "server"
 					// verified: read by hand: walks the handle vector at +4 (count +0x10), looks each entity up and skips it on its disabled byte, the Linux loop; one argument (ret 4) and four direct callers, as Linux has four (the mission and wave spawn populators); the candidate every matched caller pointed at
 				}
+				"CSoundEmitterSystemBase::AddSoundsFromFile"
+				{
+					type  "fixed"
+					sym   "_ZN23CSoundEmitterSystemBase17AddSoundsFromFileEPKcbbb"
+					addr  "0x3af0"
+					build "11267535"
+					lib   "soundemittersystem"
+					// verified: read by hand in SoundEmitterSystem.dll: the function holding the 'CSoundEmitterSystem::AddSoundsFromFile:  No such file' message; asks the filesystem for the name's handle through its vtable +0x8c and appends it to the vector at +0x78 (count +0x84), as the Linux body does at the same offsets; thiscall, ret 0x10
+				}
 				"CEventAction::CEventAction [C2]"
 				{
 					type  "fixed"
@@ -8757,6 +9089,24 @@
 					build "11267535"
 					lib   "server"
 					// vtable
+				}
+				"CAttributeManager::ProvideTo"
+				{
+					type  "fixed"
+					sym   "_ZN17CAttributeManager9ProvideToEP11CBaseEntity"
+					addr  "0x39e860"
+					build "11267535"
+					lib   "server"
+					// verified: read by hand: the target's attribute interface (+0xe4), its manager's AddProvider (0x39d630) with m_hOuter (+0x38), then the parity at +0x34 stepped modulo 64 with NetworkStateChanged, then OnAttributeValuesChanged; the Linux body. Called from CEconEntity::ReapplyProvision (0x39fde0) and CTFPowerupBottle::ReapplyProvision (0x4b1e10) as on Linux. Pops 4
+				}
+				"CAttributeManager::StopProvidingTo"
+				{
+					type  "fixed"
+					sym   "_ZN17CAttributeManager15StopProvidingToEP11CBaseEntity"
+					addr  "0x39e9f0"
+					build "11267535"
+					lib   "server"
+					// verified: read by hand: the ProvideTo body with RemoveProvider (0x39e930, finds the provider in the list at +0xc and swaps the last one in) in place of AddProvider; the Linux body. Its three callers are the ReapplyProvision of CEconEntity, CTFPowerupBottle and CTFWeaponBase, as on Linux. Pops 4
 				}
 				"CServerGameClients::GetPlayerLimits"
 				{
@@ -8812,6 +9162,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: the whole function, where Linux detours the .part clone GCC split after the convar test (cmp byte at 0x99143c). It tests the convar, takes the player's entindex - 1 and calls enginetrace->GetPointContents(point, 0) when it is above 100 (cmp 0x65), else reads the per-slot cache (sentinel -10000 = 0xffffd8f1, squared distance against a constant) and refills it, as the clone does. Pops 8: this, a Vector reference, the slot
+				}
+				"CTFGameRules::GetTaggedConVarList"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules19GetTaggedConVarListEP9KeyValues"
+					addr  "0x48e9c0"
+					build "11267535"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'convar' with the Linux function, and 2 of its 2 matched callees
 				}
 				"CGameMovement::CheckStuck"
 				{
@@ -8950,6 +9309,24 @@
 					lib   "server"
 					vtidx "1"
 					// vtable
+				}
+				"CTeamplayRoundBasedRules::State_Enter_PREROUND"
+				{
+					type  "fixed"
+					sym   "_ZN24CTeamplayRoundBasedRules20State_Enter_PREROUNDEv"
+					addr  "0x350ad0"
+					build "11267535"
+					lib   "server"
+					// verified: read by hand: the only function holding 'full_reset' (0x350755); references 'teamplay_round_start', 'full_reset', 'team_round_timer', 'show_in_hud', 'SetTime', 'Resume', 'Enable' and 'teamplay_update_timer' in the order Linux 0xb971e8 to 0xb9734c does. 1258 bytes against 1169, plain ret
+				}
+				"CBaseClient::FireGameEvent"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseClient13FireGameEventEP10IGameEvent"
+					addr  "0x82450"
+					build "11267535"
+					lib   "engine"
+					// verified: read by hand, engine.dll: VPROF scope 'CBaseClient::FireGameEvent' at baseclient.cpp line 0x2af (Linux pushes the same 0x2af), serializes the event into a 0x400 byte bf_write through the game event manager and sends it on the net channel, printing the two GameEventManager failure messages of Linux. Pops 4
 				}
 				"ConCommandBase::GetName"
 				{
@@ -9350,6 +9727,15 @@
 					vtidx "6"
 					// vtable
 				}
+				"Script_StringToFile"
+				{
+					type  "fixed"
+					sym   "_ZL19Script_StringToFilePKcS0_"
+					addr  "0x389bb0"
+					build "11267535"
+					lib   "server"
+					// verified: read by hand: holds 'StringToFile() file name cannot contain '..'' and 'Script_StringToFile: NULL/empty file name', the two strings of Linux's body, and is registered as a script function at 0x38c611. cdecl
+				}
 				"CHLTVClient::SendSnapshot"
 				{
 					type  "fixed"
@@ -9558,6 +9944,16 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand; the byte pattern in misc.txt matches nothing in this build. The Linux body step for step: the start entity's handle index (GetRefEHandle at slot 2, the world slot when null), a walk along m_pNext, the 'NULL entity in global entity list!' warning for an empty entry (string xref 0x247827), a hit when the entity's classname pointer (+0x5c here, +0x64 on Linux) equals the argument or the complex class match (0x1ed6d0) accepts it, then the filter's ShouldFindEntity at slot 0. thiscall with three arguments, ret 0xc, 194 direct callers; FindEntityByName (0x247cd0) is the next function of the family
+				}
+				"CTeamplayRoundBasedRules::BroadcastSound"
+				{
+					type  "fixed"
+					sym   "_ZN24CTeamplayRoundBasedRules14BroadcastSoundEiPKciP11CBasePlayer"
+					addr  "0x34d9b0"
+					build "11267535"
+					lib   "server"
+					vtidx "219"
+					// verified: read by hand: slot 219 of CTeamplayRoundBasedRules' table; creates 'teamplay_broadcast_audio', sets team, sound and additional_flags and fires it, the Linux body with no player key; ret 16. The string lead that had it at 0x4836e0 took CTFGameRules' override, which shares those strings
 				}
 				"CBaseProjectile::IsDestroyable"
 				{
@@ -10077,6 +10473,15 @@
 					lib   "server"
 					// verified: read by hand: the whole function, where Linux detours the .part clone after the wrapper's null player and currency test (+0x2468 here, +0x2470 on Linux, both must be above 0), which this body makes first. Then the 0x19c byte upgrade out of g_MannVsMachineUpgrades, its attribute by name, the UI group (+0x190) test against 2 (the powerup bottle path, 0x5f5380), else ApplyUpgrade_Default (0x5f5530) as the Linux clone's tail jump does. Called from CUpgrades::PlayerPurchasingUpgrade (0x5f5f03), as Linux's clone is, and by two others, where Linux's wrapper has three. ret 0x18, so 6 arguments
 				}
+				"CTFGameRules::CalcDominationAndRevenge [clone]"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules24CalcDominationAndRevengeEP9CTFPlayerP11CBaseEntityS1_bPi"
+					addr  "0x4838d0"
+					build "11267535"
+					lib   "server"
+					// verified: read by hand: the whole function, where Linux detours the .part clone after the wrapper's early returns. FindPlayerStats (0x4a9650), SetPlayerDominated (0x52b160), Event_PlayerDominatedOther (0x4a8340), Event_PlayerRevenge (0x4a8d00), the 'player_domination' event with dominator, dominated and dominations. Pops 0x14: this and five arguments
+				}
 				"CTriggerHurt::HurtEntity [clone]"
 				{
 					type  "fixed"
@@ -10184,6 +10589,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: turned away for field disagreement, pop as expected (ret 4); returns null on a null name, then walks the definition map at +0xe8 comparing each definition's name at +0xdc with the argument, the body Linux jumps to; the whole function, where Linux detours the .part clone GCC split after the null name check, which this body makes first (ECAttr_Extensions' detour maps a custom weapon name and is null safe)
+				}
+				"CBaseClient::SetName"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseClient7SetNameEPKc"
+					addr  "0x84650"
+					build "11267535"
+					lib   "engine"
+					// verified: read by hand, engine.dll: slot 17 of CGameClient's primary table (CBaseClient's own virtuals after the destructor and FireGameEvent, UpdateAcknowledgedFramecount at slot 4 as Linux has it first); copies the name with 'unnamed' for an empty one, Linux's body. Thiscall, ret 4
 				}
 				"CGameClient::SetupPackInfo"
 				{
@@ -10408,6 +10822,15 @@
 					vtidx "3"
 					// vtable
 				}
+				"Path::Compute<CTFBotPathCost> [vec]"
+				{
+					type  "fixed"
+					sym   "_ZN4Path7ComputeI14CTFBotPathCostEEbP8INextBotRK6VectorRT_fbb"
+					addr  "0x567d70"
+					build "11267535"
+					lib   "server"
+					// verified: read by hand: seven functions reference 'Path::Compute(goal)', one per cost functor; this one has 46 callers, all in the TFBot behaviours (0x56a284 to 0x57xxxx), where each of the other six has one
+				}
 				"FireEvent"
 				{
 					type  "fixed"
@@ -10498,6 +10921,15 @@
 					lib   "server"
 					// verified: read by hand: loops the players through UTIL_PlayerByIndex, checks the team and calls the player virtual at +0x704 (Linux +0x708), then ClearCheckpoint, the Linux body; two direct callers as on Linux; ret
 				}
+				"CPopulationManager::RestoreCheckpoint"
+				{
+					type  "fixed"
+					sym   "_ZN18CPopulationManager17RestoreCheckpointEv"
+					addr  "0x5e6ca0"
+					build "11267535"
+					lib   "server"
+					// verified: references Announcer.MVM_Get_To_Upgrade and the upgrade-history message, as on Linux; called by the matched caller
+				}
 				"CPopulationManager::RestorePlayerCurrency"
 				{
 					type  "fixed"
@@ -10533,6 +10965,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: writes the objective resource's fields with a state change each; five direct callers as Linux has five, and StartCurrentWave (0x5e7520) calls it first as on Linux; ret
+				}
+				"CPopulationManager::WaveEnd"
+				{
+					type  "fixed"
+					sym   "_ZN18CPopulationManager7WaveEndEb"
+					addr  "0x5e7c60"
+					build "11267535"
+					lib   "server"
+					// verified: read by hand: RoundEvent_WaveEnd, SetCheckpoint, State_Transition and the 'scorestats_accumulated_update' event, the Linux body; ret 4 for its bool; two direct callers, CWave::WaveCompleteUpdate among them, as on Linux
 				}
 				"CPopulationManager::AdjustMinPlayerSpawnTime"
 				{
@@ -10715,6 +11156,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: tests the byte at +0x4cc and the state at +0x4d4 against 3 and reads +0x4bc, the Linux body at the same offsets; no arguments
+				}
+				"CWaveSpawnPopulator::m_reservedPlayerSlotCount"
+				{
+					type  "fixed"
+					sym   "_ZN19CWaveSpawnPopulator25m_reservedPlayerSlotCountE"
+					addr  "0xb96ddc"
+					build "11267535"
+					lib   "server"
+					// verified: read by hand: CWaveSpawnPopulator::Update clears it when the wave spawn starts, adds it to the live count before comparing with tf_mvm_max_invaders and stores the sum, and subtracts the spawned count later, the three places the Linux body writes 0x196dee0
 				}
 				"IPopulationSpawner::GetClassIcon"
 				{
@@ -10985,6 +11435,15 @@
 					vtidx "7"
 					// vtable
 				}
+				"ParseEvent"
+				{
+					type  "fixed"
+					sym   "_ZL10ParseEventP9KeyValues"
+					addr  "0x5ea300"
+					build "11267535"
+					lib   "server"
+					// verified: string lead, agreed by strings+callees: 1 shared string(s), 7/7 matched callees, windows/linux size 448/499
+				}
 				"MannVsMachineStats_GetAcquiredCredits"
 				{
 					type  "fixed"
@@ -11048,6 +11507,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: the last handle of the required weapon stack (+0x28ac, count +0x28b8, the Linux offsets) switched to, the body EquipBestWeaponForThreat (0x550d40) has inlined; no arguments
+				}
+				"CTFBot::ShouldFireCompressionBlast"
+				{
+					type  "fixed"
+					sym   "_ZN6CTFBot26ShouldFireCompressionBlastEv"
+					addr  "0x5628f0"
+					build "11267535"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'tf_projectile_energy_ball', 'tf_projectile_rocket' with the Linux function, and 4 of its 4 matched callees
 				}
 				"CTFBot::AddEventChangeAttributes"
 				{
@@ -11901,6 +12369,25 @@
 					lib   "server"
 					// call, ret 12 as its arguments say
 				}
+				"CTFPlayer::IsReadyToPlay"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer13IsReadyToPlayEv"
+					addr  "0x4fc6a0"
+					build "11267535"
+					lib   "server"
+					vtidx "445"
+					// verified: read by hand: slot 445 of CTFPlayer's table (Linux 446). Team 1 with the flag at +0x243c (+0x2444), MvM and the game rules vcall +0x2e8 (+0x2ec), team > 1, the count at +0x1d54 (+0x1d60), rules vcall +0x2e0 (+0x2e4); the same branches in the same order
+				}
+				"CTFPlayer::GetAutoTeam"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer11GetAutoTeamEi"
+					addr  "0x4f2dc0"
+					build "11267535"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string 'FCVAR_NEVER_AS_STRING' with the Linux function, and 10 of its 10 matched callees
+				}
 				"CTFPlayer::TeleportEffect"
 				{
 					type  "fixed"
@@ -11993,6 +12480,15 @@
 					lib   "server"
 					// consensus, ret 8 as its arguments say
 				}
+				"CTFPlayer::StateLeave"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer10StateLeaveEv"
+					addr  "0x50f6d0"
+					build "11267535"
+					lib   "server"
+					// verified: read by hand: m_pStateInfo at +0x22b8, the field StateEnter (0x50e860) stores, a null check, then the leave member pointer at +0x18 with its adjustor at +0x1c, added to this and jumped to. Linux reads +0x10 and +0x14 of its state info: its enter and leave pointers take 8 bytes each, MSVC's 16, and the state table's stride here is 0x38. 27 bytes, one direct caller (0x50f40c), no arguments, plain ret. The same sequence is inlined ahead of the StateEnter call in StateTransition (0x50f520)
+				}
 				"CTFPlayer::GiveNamedItem"
 				{
 					type  "fixed"
@@ -12056,6 +12552,16 @@
 					lib   "server"
 					// verified: read by hand: walks m_hMyWearables (+0xef0, count +0xefc; Linux +0xf08, +0xf14), dynamic_casts each, and returns the one whose item definition's GetLoadoutSlot for the player's class (+0x22d0, Linux +0x22d8) is the argument, the Linux body; thiscall
 				}
+				"CTFPlayer::CanHearAndReadChatFrom"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer22CanHearAndReadChatFromEP11CBasePlayer"
+					addr  "0x4e39a0"
+					build "11267535"
+					lib   "server"
+					vtidx "433"
+					// verified: read by hand: slot 433 of CTFPlayer's table (Linux 434). Both resolve the two observer handles, compare against the other player, branch on the team, the game rules vcall +0x1b0 (+0x1b4) and the constants 2 and 5; first half read statement by statement, the rest by constants and the vcall
+				}
 				"CTFPlayer::DeathSound"
 				{
 					type  "fixed"
@@ -12082,6 +12588,33 @@
 					build "11267535"
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: calls all 6 of the Linux function's matched callees, and no string disagrees
+				}
+				"CTFPlayer::CanAttack"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer9CanAttackEi"
+					addr  "0x51ab30"
+					build "11267535"
+					lib   "server"
+					// verified: read by hand: the only reference to 'no_attack' is inside it. two flag bytes (+0x25c0 and +0x200c; Linux +0x25c8 and +0x2018), the next-attack time against curtime, InCond 4, 7, 0xe and 0x52 and the 'no_attack' attribute hook, in the Linux order. Thiscall, ret 4
+				}
+				"CTFPlayer::ChangeTeam"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer10ChangeTeamEibbb"
+					addr  "0x4e3e30"
+					build "11267535"
+					lib   "server"
+					// verified: unique string, 17 of 19 matched callees, and read by hand from its override: CTFBot::ChangeTeam (0x5505f0) first calls it with its four arguments pushed through unchanged, then the MvM block, the Linux CTFBot body. thiscall, ret 0x10. Once turned away because its detour faulted in CheckPlayerClassLimit with a this that was no player, on a build from before the detour fixes since
+				}
+				"CTFPlayer::ItemIsAllowed"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer13ItemIsAllowedEP13CEconItemView"
+					addr  "0x4fcef0"
+					build "11267535"
+					lib   "server"
+					// verified: the matcher lost it on 11087207, where GCC split the Linux body into a .part.0 clone: 'allowed in medieval mode' and 'passtime', the Linux callees
 				}
 				"CTFPlayer::ModifyOrAppendCriteria::kSlotCriteriaName"
 				{
@@ -12373,6 +12906,15 @@
 					lib   "server"
 					// verified: read by hand: the first call of CTFPlayer::Taunt (0x5118de) and of PlayTauntSceneFromItem (0x50625e), as on Linux, and called from the HandleTauntCommand wrapper (0x4f5739) and CTFFlameThrower::UseRage (0x60be2c), Linux's other two callers. Tests conditions 0x11, 0x75, 0x52, 0x78, 0x13 and 0xe through InCond as Linux does, with the rest inline. Thiscall, plain ret
 				}
+				"CTFPlayer::ModifyOrAppendCriteria"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer22ModifyOrAppendCriteriaER14AI_CriteriaSet"
+					addr  "0x4fee50"
+					build "11267535"
+					lib   "server"
+					// verified: string lead, agreed by strings: 43 shared string(s), 28/29 matched callees, windows/linux size 4976/5797
+				}
 				"SendProxy_PlayerObjectList"
 				{
 					type  "fixed"
@@ -12438,6 +12980,15 @@
 					vtidx "111"
 					// verified: read by hand: CBasePlayer::UpdateOnRemove (0x2ea6c0, matched) first, then CPlayerInventory::RemoveListener (0x3a5530: the same walk of the listener list at +0x6c, count +0x78, and RemoveSOCacheListener, ret 4) with the inventory at +0x1308 and the listener at +0x1288 as the Linux body does at +0x131c and +0x12a0; thiscall, plain ret. Slot 111 of CTFPlayer, where CBasePlayer has 0x2ea6c0 (Linux 112, after the second destructor)
 				}
+				"CTFPlayer::PlayTauntSceneFromItem"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer22PlayTauntSceneFromItemEPK13CEconItemView"
+					addr  "0x506850"
+					build "11267535"
+					lib   "server"
+					// verified: string lead, agreed by strings: 13 shared string(s), 19/22 matched callees, windows/linux size 2912/5299
+				}
 				"CTFPlayer::RegenThink"
 				{
 					type  "fixed"
@@ -12456,6 +13007,15 @@
 					lib   "server"
 					// verified: read by hand: calls IgnitePlayer and pops the inputdata (ret 4), as the Linux body jumps to IgnitePlayer; the matcher took it from CTFPlayer's input table
 				}
+				"CTFPlayer::Spawn"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer5SpawnEv"
+					addr  "0x50d670"
+					build "11267535"
+					lib   "server"
+					// verified: virtual, CTFPlayer's vtable slot +0x60 (Linux +0x64, one destructor fewer on Windows; the slots around it, ShouldTransmit, UpdateTransmitState, SetTransmit, GetTracerType and Precache, line up one for one). The string match had given 0x50d380, which is ShouldTransmit(CCheckTransmitInfo const*): every Spawn detour then sat on a function the engine calls per entity per client per tick and popped 4 bytes too few, the eip=1 fault after map load. 0x50d510 reads no argument in its first 400 instructions and opens with the VPROF scope
+				}
 				"CTFPlayer::InspectButtonPressed"
 				{
 					type  "fixed"
@@ -12464,6 +13024,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: what ClientCommandKeyValues calls for '+inspect_server' (0x48685b; '-inspect_server' calls 0x4fb9d0), as Linux's tail jumps to it at 0xc4e189. Sets the inspect time (+0x25b8, Linux +0x25c0) to curtime when it differs. Thiscall, plain ret
+				}
+				"CTFPlayer::CheckInstantLoadoutRespawn"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer26CheckInstantLoadoutRespawnEv"
+					addr  "0x4e47c0"
+					build "11267535"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: calls all 6 of the Linux function's matched callees, and no string disagrees
 				}
 				"CTFPlayer::GiveAmmo"
 				{
@@ -12501,6 +13070,16 @@
 					lib   "server"
 					vtidx "446"
 					// verified: read by hand: slot 446 of CTFPlayer's table (Linux 447, after IsReadyToPlay); the byte at +0x2354 and the revive marker handle at +0x259c (Linux +0x235c and +0x25a4, the shift the rest of CTFPlayer has), the Linux body; ret
+				}
+				"CTFPlayer::ShouldGainInstantSpawn"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer22ShouldGainInstantSpawnEv"
+					addr  "0x50d230"
+					build "11267535"
+					lib   "server"
+					vtidx "447"
+					// verified: read by hand: slot 447 of CTFPlayer's table (Linux 448); the class index at +0x22d0, the byte at +0x2354, then the game rules' virtual, the Linux body (+0x22d8, +0x235c there); ret
 				}
 				"CTFPlayer::PickupWeaponFromOther"
 				{
@@ -12702,6 +13281,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: shares the string 'set_cannot_disguise' with the Linux function, and 3 of its 3 matched callees
+				}
+				"CTFPlayer::CanGoInvisible"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer14CanGoInvisibleEb"
+					addr  "0x51b0b0"
+					build "11267535"
+					lib   "server"
+					// verified: read by hand: takes the bool (ret 4), calls HasTheFlag (0x522b50) and, when it says no, the hint system with hint 7, as Linux's body does at 0xd1c192 and 0xd1c226; the cloak blocking checks follow. Callers are CTFPlayer::OnTakeDamage (0x503250, the inlined SpyDeadRingerDeath) and CTFWeaponInvis::ActivateInvisibilityWatch (0x61278b), Linux's two callers
 				}
 				"CTFPlayer::ClearDisguiseWeaponList"
 				{
@@ -13064,6 +13652,15 @@
 					lib   "server"
 					// verified: the one function that calls the shared ammo virtuals (+0x428, +0x514, +0x424) as the Linux IncrementAmmo does, with Energy_Recharge inlined: the energy weapon branch adds a recharge step to m_flEnergy (+0x7a0, Linux +0x7ac). 4 callers (0x6253f0, 0x6259f0, 0x636b50, 0x637250), as Linux has. Thiscall, no arguments
 				}
+				"CTFPlayer::FeignDeath"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer10FeignDeathERK15CTakeDamageInfob"
+					addr  "0x4f0d70"
+					build "11267535"
+					lib   "server"
+					// verified: thiscall ret 8 (info, bool deathnotice); CTFPlayer::OnTakeDamage's inlined SpyDeadRingerDeath calls it with true (0x5032aa), Event_Killed with false (0x4ec81a), the two Linux callers
+				}
 				"g_pGameRules"
 				{
 					type  "fixed"
@@ -13136,6 +13733,15 @@
 					lib   "server"
 					// verified: read by hand: the function slot 0 of Action<CZombie>'s table (0x5bddc0, the scalar deleting destructor: flags test, frees 0x34 bytes, ret 4) calls before freeing, as Action<CTFBot>'s slot 0 calls 0x54e3f0; no argument, ret
 				}
+				"CBaseAnimating::LookupActivity"
+				{
+					type  "fixed"
+					sym   "_ZN14CBaseAnimating14LookupActivityEPKc"
+					addr  "0x1ce9b0"
+					build "11267535"
+					lib   "server"
+					// verified: read by hand: the twin of LookupSequence (0x1cefb0) calling the global LookupActivity(hdr, name) instead, as on Linux; thiscall, ret 4. CTFPlayer::ClientCommand's inlined PlaySpecificSequence calls it first and plays the result as PLAYERANIMEVENT_CUSTOM (0x13), the Linux shape. Only Windows needs it: its PlaySpecificSequence is written in SigMod
+				}
 				"~CBaseEntity [D2 windows]"
 				{
 					type  "fixed"
@@ -13207,6 +13813,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: FindEntityByName on the global entity list with the name argument, a dynamic cast of the result to CPathTrack, then the node's handle stored in the tank, or -1 when either step gives null; ret 4, as the Linux body. The extractor for CTFTankBoss::m_hCurrentNode reads the store's offset (0xa00 on this build) from it, and the Spawn and TankBossThink bodies use the same offset where Linux's use m_hCurrentNode, 0x18 lower than Linux's 0xa18
+				}
+				"CScriptConvarAccessor::SetValue"
+				{
+					type  "fixed"
+					sym   "_ZN21CScriptConvarAccessor8SetValueEPKc12CVariantBaseI24CVariantDefaultAllocatorE"
+					addr  "0x38a230"
+					build "11267535"
+					lib   "server"
+					// verified: read by hand: VScript's Convars.SetValue, the Linux body (0x89a850) in order: returns on a null or empty name, looks the name up in the allow list (+0xc) and warns when absent, ConVarRef and IsValid, the 0x20000020 flags test, a switch on the variant's type, then g_pGameRules->SaveConvar; thiscall, ret 0x14 for the name and the 16-byte variant; CMemberScriptBinding's Call thunk 0x380400 reaches it
 				}
 				"CBasePlayer::SetPunchAngle"
 				{
@@ -13304,6 +13919,15 @@
 					lib   "server"
 					vtidx "14"
 					// verified: read by hand: slot 14 of the issue tables (CKickIssue's +0x38, Linux 15). Walks players 1 to 101 through UTIL_PlayerByIndex with IsValidVoter inline (connection state +0xe74, team, sv_vote_allow_spectators, sv_vote_bots_allowed with the two bot virtuals, the bytes at +0xba8/+0xba9, team 2 in MvM) and the issue's team restriction, counting the valid ones. Thiscall, plain ret
+				}
+				"CNetChan::CheckReceivingList"
+				{
+					type  "fixed"
+					sym   "_ZN8CNetChan18CheckReceivingListEi"
+					addr  "0x1a5880"
+					build "11267535"
+					lib   "engine"
+					// verified: read by hand, engine.dll: the receive list at this+0x128+n*0x12c (Linux +0x120), the fragment counts at +0x120/+0x124 of it, decompression, then HandleUpload inline for a file ('FileReceived: %s, %i bytes (ID %i)', 'ignored. File uploads are disabled!') and the buffer freed (0x1a1510) before returning true. Thiscall, ret 4
 				}
 				"CTFPlayer::CanBeForcedToLaugh"
 				{
