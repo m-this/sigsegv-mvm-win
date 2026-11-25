@@ -4342,10 +4342,10 @@
 				{
 					type  "fixed"
 					sym   "_ZN11CBaseObject14StartUpgradingEv"
-					addr  "0x4c59c0"
+					addr  "0x4c5cc0"
 					build "11267535"
 					lib   "server"
-					// verified: the CBaseObject function between StartBuilding (0x4c4b80) and TraceAttack (0x4c5910) in server.dll's name-ordered run, with the Linux calls in the Linux order: ShouldQuickBuild virtual, the sapper's GetReversesBuildingConstructionSpeed, GetObjectInfo twice, EmitSound, SetHealth, the object virtuals
+					// verified: the CBaseObject function right after StartPlacement (0x4c59c0, ret 4) in the name-ordered run, overridden by CObjectSentrygun (0x4cede0) as on Linux. Same calls in the Linux order: the sapper's GetReversesBuildingConstructionSpeed, GetObjectInfo, SetHealth, EmitSound, the ShouldQuickBuild virtual. Thiscall, no arguments, plain ret
 				}
 				"CBaseProjectile::~CBaseProjectile [D2]"
 				{
@@ -11410,11 +11410,11 @@
 				{
 					type  "fixed"
 					sym   "_ZN14CTeamplayRules12SetStalemateEibb"
-					addr  "0x349220"
+					addr  "0x1579f0"
 					build "11267535"
 					lib   "server"
-					vtidx "166"
-					// vtable index
+					vtidx "167"
+					// slot 167 of CTeamplayRules (166 before 11267535's new CGameRules virtual): the shared empty stub, ret 0xc
 				}
 				"CTeamplayRules::SetWinningTeam"
 				{
@@ -11423,7 +11423,8 @@
 					addr  "0x349220"
 					build "11267535"
 					lib   "server"
-					// vtable
+					vtidx "166"
+					// slot 166 of CTeamplayRules (165 before the new CGameRules virtual): empty body, ret 0x18
 				}
 				"CTFGameRules::CTFGameRules [C1]"
 				{

@@ -4006,10 +4006,10 @@
   "carried": "from 11191711 0x4c21a0 by tools/winport/carry.py: server.dll, 1133 bytes"
  },
  "_ZN11CBaseObject14StartUpgradingEv": {
-  "rva": "0x4c59c0",
+  "rva": "0x4c5cc0",
   "build": "11267535",
-  "why": "the CBaseObject function between StartBuilding (0x4c4b80) and TraceAttack (0x4c5910) in server.dll's name-ordered run, with the Linux calls in the Linux order: ShouldQuickBuild virtual, the sapper's GetReversesBuildingConstructionSpeed, GetObjectInfo twice, EmitSound, SetHealth, the object virtuals",
-  "carried": "from 11191711 0x4c6820 by hand: body changed; between the same carried neighbours at the same rank, 5 references agree"
+  "why": "the CBaseObject function right after StartPlacement (0x4c59c0, ret 4) in server.dll's name-ordered run, overridden by CObjectSentrygun (0x4cede0) as on Linux. Same calls in the Linux order: the sapper's GetReversesBuildingConstructionSpeed, GetObjectInfo, SetHealth, EmitSound, the ShouldQuickBuild virtual. Thiscall, no arguments, plain ret",
+  "carried": "from 11191711 0x4c6820 by hand: the first carry put it on StartPlacement, which had the same old address"
  },
  "_ZN11CBaseObject13CanBeUpgradedEP9CTFPlayer": {
   "rva": "0x4bf330",
