@@ -134,6 +134,26 @@ if len(sys.argv) > 4:
         by_name[name] = slots[index] - 0x10000000
         vtidx[name] = (index, by_name[name])
 
+    # carry.py moves an override's rva but not its slot. 11267535 added a
+    # CGameRules virtual at slot 40 and every hand-read CTFGameRules slot after
+    # it was one short: the runtime check then falls back to the first slot
+    # holding the address, which for a folded body is another virtual.
+    held = {sym: e for sym, e in overrides.items() if "vtidx" in e and "rva" in e and sym not in bad}
+    for sym, plain in classify.demangle(list(held)).items():
+        entry = held[sym]
+        dump = dumps / f'{plain.split("(")[0].rsplit("::", 1)[0]}.txt'
+        if not dump.exists():
+            continue
+        tables = [[int(row.split()[1], 16) - 0x10000000 for row in part.splitlines() if row.startswith("+0x")]
+                  for part in open(dump).read().split("// vtable")[1:]]
+        index, rva = int(entry["vtidx"]), int(entry["rva"], 16)
+        flat = [slot for table in tables for slot in table]
+        if any(index < len(t) and t[index] == rva for t in tables + [flat]):
+            continue
+        now = [i for i, slot in enumerate(flat) if slot == rva]
+        sys.exit(f"overrides.json: {sym}: vtidx {index} does not hold 0x{rva:x} in {dump.name}; "
+                 f"it is at {now or 'no slot'} now")
+
 # A named override takes the place of the Linux entry of that name: a function
 # Linux finds by signature ("func ebpprologue vprof") has no symbol to match.
 named = dict(extra)

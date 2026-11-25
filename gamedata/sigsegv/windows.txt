@@ -8833,7 +8833,7 @@
 					addr  "0x48b3d0"
 					build "11267535"
 					lib   "server"
-					vtidx "63"
+					vtidx "64"
 					// verified: read by hand: slot 63 of CTFGameRules (FlPlayerFallDamage pops 4 at 62). Null checks, the flag at +0xc83 with player != attacker and the red/blue team pairs, the weapon and attacker vcall at +0x310, damage custom 0x47 at info+0x40, m_bPlayingMannVsMachine at +0xc72 and info+0x5c, then the base rules' FPlayerCanTakeDamage; the Linux body. Pops 12
 				}
 				"CTFGameRules::GetCurrentMatchGroup"
@@ -9442,7 +9442,7 @@
 					addr  "0x4a1f90"
 					build "11267535"
 					lib   "server"
-					vtidx "178"
+					vtidx "179"
 					// verified: read by hand: slot 178 of CTFGameRules' table (Linux 179); Linux's body: a player that is alive (+0x14c) on team 2 in MvM with +0x22d0 (Linux +0x22d8) at 1, else GetMatchGroupDescription of the GC match group with a type of 2 or 3 and a game type of 10. Thiscall, ret 4
 				}
 				"TE_PlayerAnimEvent"
@@ -10007,7 +10007,7 @@
 					addr  "0x483480"
 					build "11267535"
 					lib   "server"
-					vtidx "207"
+					vtidx "208"
 					// verified: read by hand: slot 207 of CTFGameRules' table (Linux 209, the two-slot shift of RoundCleanupShouldIgnore at 190 and BroadcastSound at 219); the ready-status countdown check, IsCompetitiveMode (which Linux inlines as GTFGCClientSystem and GetMatchGroupDescription), PlayerReadyStatus_HaveMinPlayersToEnable, then CheckReadyRestart (0x34dda0), the Linux body's order; ret. The matcher's 0x49e310 is slot 230, RoundRespawn
 				}
 				"CSchemaAttributeType_Default::ConvertStringToEconAttributeValue"
@@ -10706,7 +10706,7 @@
 					addr  "0x49e4b0"
 					build "11267535"
 					lib   "server"
-					vtidx "190"
+					vtidx "191"
 					// verified: read by hand: the classname (or empty string) through FindInList on the same list, then a 'tf_weapon_' prefix test, else the base class's function, the Linux body; ret 4. Slot 190 of CTFGameRules' table (Linux 192)
 				}
 				"CTFGameRules::ShouldCreateEntity"
@@ -10716,7 +10716,7 @@
 					addr  "0x4a1e20"
 					build "11267535"
 					lib   "server"
-					vtidx "191"
+					vtidx "192"
 					// verified: read by hand: FindInList(s_PreserveEnts at 0x109c7b40, name) returns false, else the base class's ShouldCreateEntity, the Linux body instruction for instruction; ret 4. Slot 191 of CTFGameRules' table (Linux 193): Windows keeps FireGameEvent out of the primary table, so the shift is two here
 				}
 				"CServerGameClients::ClientPutInServer"
@@ -10793,7 +10793,7 @@
 					addr  "0x483730"
 					build "11267535"
 					lib   "server"
-					vtidx "219"
+					vtidx "220"
 					// verified: read by hand: slot 219 of CTFGameRules' table, where CTeamplayRoundBasedRules has 0x34dab0; drops the player unless its virtual at +0x14c (Linux +0x150) says so, then fires 'teamplay_broadcast_audio' with team, sound, additional_flags and the player key, the Linux body; ret 16
 				}
 				"UTIL_ScreenShake"
@@ -11357,7 +11357,7 @@
 					addr  "0x34d9b0"
 					build "11267535"
 					lib   "server"
-					vtidx "219"
+					vtidx "220"
 					// verified: read by hand: slot 219 of CTeamplayRoundBasedRules' table; creates 'teamplay_broadcast_audio', sets team, sound and additional_flags and fires it, the Linux body with no player key; ret 16. The string lead that had it at 0x4836e0 took CTFGameRules' override, which shares those strings
 				}
 				"CBaseProjectile::IsDestroyable"
@@ -11450,7 +11450,7 @@
 					addr  "0x48c4b0"
 					build "11267535"
 					lib   "server"
-					vtidx "188"
+					vtidx "189"
 					// verified: read by hand: slot 188 of CTFGameRules' table (Linux 189, after IsInArenaMode, IsInKothMode, IsInTraining, IsInItemTestingMode at 184-187); the MvM check, GTFGCClientSystem and GetMatchGroupDescription, the Linux body; ret 4 for its bool
 				}
 				"CEyeballBossIdle::OnStart"

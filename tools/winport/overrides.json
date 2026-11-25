@@ -782,8 +782,8 @@
  "_ZN24CTeamplayRoundBasedRules14BroadcastSoundEiPKciP11CBasePlayer": {
   "rva": "0x34d9b0",
   "build": "11267535",
-  "carried": "from 11191711 0x34d5f0 by hand: same 34 instructions, same layout between the carried neighbours",
-  "vtidx": 219,
+  "carried": "from 11191711 0x34d5f0 by hand: same 34 instructions, same layout between the carried neighbours; vtidx 219 to 220 by hand: 11267535 adds a CGameRules virtual at slot 40, so every slot after it moved by one",
+  "vtidx": 220,
   "why": "read by hand: slot 219 of CTeamplayRoundBasedRules' table; creates 'teamplay_broadcast_audio', sets team, sound and additional_flags and fires it, the Linux body with no player key; ret 16. The string lead that had it at 0x4836e0 took CTFGameRules' override, which shares those strings"
  },
  "_ZN24CTeamplayRoundBasedRules28GetMinTimeWhenPlayerMaySpawnEP11CBasePlayer": {
@@ -2596,8 +2596,8 @@
  "_ZN12CTFGameRules17GetBonusRoundTimeEb": {
   "rva": "0x48c4b0",
   "build": "11267535",
-  "carried": "from 11191711 0x48d1f0 by tools/winport/carry.py: server.dll, 117 bytes",
-  "vtidx": 188,
+  "carried": "from 11191711 0x48d1f0 by tools/winport/carry.py: server.dll, 117 bytes; vtidx 188 to 189 by hand: 11267535 adds a CGameRules virtual at slot 40, so every slot after it moved by one",
+  "vtidx": 189,
   "why": "read by hand: slot 188 of CTFGameRules' table (Linux 189, after IsInArenaMode, IsInKothMode, IsInTraining, IsInItemTestingMode at 184-187); the MvM check, GTFGCClientSystem and GetMatchGroupDescription, the Linux body; ret 4 for its bool"
  },
  "_ZN12CCaptureFlag6PickUpEP9CTFPlayerb": {
@@ -2766,15 +2766,15 @@
  "_ZN12CTFGameRules18ShouldCreateEntityEPKc": {
   "rva": "0x4a1e20",
   "build": "11267535",
-  "carried": "from 11191711 0x4a2c20 by tools/winport/carry.py: server.dll, 96 bytes",
-  "vtidx": 191,
+  "carried": "from 11191711 0x4a2c20 by tools/winport/carry.py: server.dll, 96 bytes; vtidx 191 to 192 by hand: 11267535 adds a CGameRules virtual at slot 40, so every slot after it moved by one",
+  "vtidx": 192,
   "why": "read by hand: FindInList(s_PreserveEnts at 0x109c7b40, name) returns false, else the base class's ShouldCreateEntity, the Linux body instruction for instruction; ret 4. Slot 191 of CTFGameRules' table (Linux 193): Windows keeps FireGameEvent out of the primary table, so the shift is two here"
  },
  "_ZN12CTFGameRules24RoundCleanupShouldIgnoreEP11CBaseEntity": {
   "rva": "0x49e4b0",
   "build": "11267535",
-  "carried": "from 11191711 0x49f2b0 by tools/winport/carry.py: server.dll, 94 bytes",
-  "vtidx": 190,
+  "carried": "from 11191711 0x49f2b0 by tools/winport/carry.py: server.dll, 94 bytes; vtidx 190 to 191 by hand: 11267535 adds a CGameRules virtual at slot 40, so every slot after it moved by one",
+  "vtidx": 191,
   "why": "read by hand: the classname (or empty string) through FindInList on the same list, then a 'tf_weapon_' prefix test, else the base class's function, the Linux body; ret 4. Slot 190 of CTFGameRules' table (Linux 192)"
  },
  "_ZN15CTFPlayerShared16OnConditionAddedE7ETFCond": {
@@ -2816,15 +2816,15 @@
  "_ZN12CTFGameRules14BroadcastSoundEiPKciP11CBasePlayer": {
   "rva": "0x483730",
   "build": "11267535",
-  "carried": "from 11191711 0x4844a0 by tools/winport/carry.py: server.dll, 156 bytes",
-  "vtidx": 219,
+  "carried": "from 11191711 0x4844a0 by tools/winport/carry.py: server.dll, 156 bytes; vtidx 219 to 220 by hand: 11267535 adds a CGameRules virtual at slot 40, so every slot after it moved by one",
+  "vtidx": 220,
   "why": "read by hand: slot 219 of CTFGameRules' table, where CTeamplayRoundBasedRules has 0x34dab0; drops the player unless its virtual at +0x14c (Linux +0x150) says so, then fires 'teamplay_broadcast_audio' with team, sound, additional_flags and the player key, the Linux body; ret 16"
  },
  "_ZN12CTFGameRules19BetweenRounds_ThinkEv": {
   "rva": "0x483480",
   "build": "11267535",
-  "carried": "from 11191711 0x4841f0 by hand: body changed; between the same carried neighbours at the same rank, 1 reference agrees",
-  "vtidx": 207,
+  "carried": "from 11191711 0x4841f0 by hand: body changed; between the same carried neighbours at the same rank, 1 reference agrees; vtidx 207 to 208 by hand: 11267535 adds a CGameRules virtual at slot 40, so every slot after it moved by one",
+  "vtidx": 208,
   "why": "read by hand: slot 207 of CTFGameRules' table (Linux 209, the two-slot shift of RoundCleanupShouldIgnore at 190 and BroadcastSound at 219); the ready-status countdown check, IsCompetitiveMode (which Linux inlines as GTFGCClientSystem and GetMatchGroupDescription), PlayerReadyStatus_HaveMinPlayersToEnable, then CheckReadyRestart (0x34dda0), the Linux body's order; ret. The matcher's 0x49e310 is slot 230, RoundRespawn"
  },
  "_Z22DispatchParticleEffectPKc20ParticleAttachment_tP11CBaseEntityib": {
@@ -2978,8 +2978,8 @@
  "_ZN12CTFGameRules20FPlayerCanTakeDamageEP11CBasePlayerP11CBaseEntityRK15CTakeDamageInfo": {
   "rva": "0x48b3d0",
   "build": "11267535",
-  "carried": "from 11191711 0x48c110 by tools/winport/carry.py: server.dll, 385 bytes",
-  "vtidx": 63,
+  "carried": "from 11191711 0x48c110 by tools/winport/carry.py: server.dll, 385 bytes; vtidx 63 to 64 by hand: 11267535 adds a CGameRules virtual at slot 40, so every slot after it moved by one",
+  "vtidx": 64,
   "why": "read by hand: slot 63 of CTFGameRules (FlPlayerFallDamage pops 4 at 62). Null checks, the flag at +0xc83 with player != attacker and the red/blue team pairs, the weapon and attacker vcall at +0x310, damage custom 0x47 at info+0x40, m_bPlayingMannVsMachine at +0xc72 and info+0x5c, then the base rules' FPlayerCanTakeDamage; the Linux body. Pops 12"
  },
  "_ZNK13CTFWeaponBase13GetDamageTypeEv": {
@@ -5095,9 +5095,9 @@
  "_ZN12CTFGameRules20ShouldRespawnQuicklyEP11CBasePlayer": {
   "rva": "0x4a1f90",
   "build": "11267535",
-  "vtidx": 178,
+  "vtidx": 179,
   "why": "read by hand: slot 178 of CTFGameRules' table (Linux 179); Linux's body: a player that is alive (+0x14c) on team 2 in MvM with +0x22d0 (Linux +0x22d8) at 1, else GetMatchGroupDescription of the GC match group with a type of 2 or 3 and a game type of 10. Thiscall, ret 4",
-  "carried": "from 11191711 0x4a2d90 by tools/winport/carry.py: server.dll, 153 bytes"
+  "carried": "from 11191711 0x4a2d90 by tools/winport/carry.py: server.dll, 153 bytes; vtidx 178 to 179 by hand: 11267535 adds a CGameRules virtual at slot 40, so every slot after it moved by one"
  },
  "_ZNK12CTFGameRules20GetCurrentMatchGroupEv": {
   "rva": "0x48c910",
