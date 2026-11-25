@@ -6356,5 +6356,1584 @@
   "bad": true,
   "build": "11138802",
   "why": "read by hand: no body in server.dll. On Linux the weapon's CreateJarProjectile tail-jumps to it; here the body is inline in CTFJarGas::CreateJarProjectile 0x617580, a thiscall virtual (ret 0x18) that a static thunk cannot stand in for"
+ },
+ "_ZN23NextBotGroundLocomotion24ApplyAccumulatedApproachEv": {
+  "rva": "0x411180",
+  "build": "11267535",
+  "carried": "from 11191711 0x411d50 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0.211), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x411d50 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.211), and 1 carried caller(s) call it"
+ },
+ "_ZN14NextBotManager12ShouldUpdateEP8INextBot": {
+  "rva": "0x415540",
+  "build": "11267535",
+  "carried": "from 11191711 0x416110 by hand: body changed; the same function between the same carried neighbours (score 7.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x416110 (string); on 11267535 the same function between the same carried neighbours (score 7.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN4Path11PostProcessEv": {
+  "rva": "0x42a5d0",
+  "build": "11267535",
+  "carried": "from 11191711 0x42b1b0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it",
+  "why": "held for 11191711 at 0x42b1b0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it"
+ },
+ "_ZN7IVision19UpdateKnownEntitiesEv": {
+  "rva": "0x426680",
+  "build": "11267535",
+  "carried": "from 11191711 0x427260 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x427260 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZZNK7IVision11IsAbleToSeeEP11CBaseEntityNS_20FieldOfViewCheckTypeEP6VectorE6tm_fmt": {
+  "rva": "0xa90318",
+  "build": "11267535",
+  "carried": "from 11191711 0xa91048 by hand: body changed; 15 reference sites in carried functions read it, all at this address",
+  "why": "held for 11191711 at 0xa91048 (data); on 11267535 15 reference sites in carried functions read it, all at this address"
+ },
+ "_ZN11CBaseEntity20CalcAbsolutePositionEv": {
+  "rva": "0x1ebfb0",
+  "build": "11267535",
+  "carried": "from 11191711 0x1ebe80 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 1989 carried caller(s) call it",
+  "why": "held for 11191711 at 0x1ebe80 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1989 carried caller(s) call it"
+ },
+ "_ZN11CBaseEntity9EmitSoundEPKcfPf": {
+  "rva": "0x32e0e0",
+  "build": "11267535",
+  "carried": "from 11191711 0x32dd20 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 291 carried caller(s) call it",
+  "why": "held for 11191711 at 0x32dd20 (call); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 291 carried caller(s) call it"
+ },
+ "_ZN11CBaseEntityC2Eb": {
+  "rva": "0x1e89f0",
+  "build": "11267535",
+  "carried": "from 11191711 0x1e8820 by hand: body changed; the same function between the same carried neighbours (score 5.977, runner-up 0), and 240 carried caller(s) call it",
+  "why": "held for 11191711 at 0x1e8820 (call); on 11267535 the same function between the same carried neighbours (score 5.977, runner-up 0), and 240 carried caller(s) call it"
+ },
+ "_ZN11CBaseEntity15FireNamedOutputEPKc9variant_tPS_S3_f": {
+  "rva": "0x1f0b10",
+  "build": "11267535",
+  "carried": "from 11191711 0x1f09e0 by hand: body changed; the same function between the same carried neighbours (score 6.0, runner-up 0); its 1 caller(s), not carried themselves, sit between the same carried neighbours too",
+  "why": "held for 11191711 at 0x1f09e0 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0); its 1 caller(s), not carried themselves, sit between the same carried neighbours too"
+ },
+ "_ZN11CBaseEntity23ApplyAbsVelocityImpulseERK6Vector": {
+  "rva": "0x1fefb0",
+  "build": "11267535",
+  "carried": "from 11191711 0x1fee50 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 12 carried caller(s) call it",
+  "why": "held for 11191711 at 0x1fee50 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 12 carried caller(s) call it"
+ },
+ "_ZN11CBaseEntity14SetLocalOriginERK6Vector": {
+  "rva": "0x1fb9f0",
+  "build": "11267535",
+  "carried": "from 11191711 0x1fb890 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 50 carried caller(s) call it",
+  "why": "held for 11191711 at 0x1fb890 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 50 carried caller(s) call it"
+ },
+ "_ZN11CBaseEntity14SetLocalAnglesERK6QAngle": {
+  "rva": "0x1fb780",
+  "build": "11267535",
+  "carried": "from 11191711 0x1fb620 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 92 carried caller(s) call it",
+  "why": "held for 11191711 at 0x1fb620 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 92 carried caller(s) call it"
+ },
+ "_ZN11CBaseEntity16SetLocalVelocityERK6Vector": {
+  "rva": "0x1fbb60",
+  "build": "11267535",
+  "carried": "from 11191711 0x1fba00 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 11 carried caller(s) call it",
+  "why": "held for 11191711 at 0x1fba00 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 11 carried caller(s) call it"
+ },
+ "_ZN11CBaseEntity13GetTracerTypeEv": {
+  "rva": "0x157580",
+  "build": "11267535",
+  "carried": "from 11191711 0x1573d0 by hand: body changed; the same function between the same carried neighbours (score 3.0, runner-up 1.5), and 4 carried caller(s) call it",
+  "why": "held for 11191711 at 0x1573d0 (vtable index); on 11267535 the same function between the same carried neighbours (score 3.0, runner-up 1.5), and 4 carried caller(s) call it",
+  "vtidx": 60
+ },
+ "_ZN14CBaseAnimating19LookupPoseParameterEP10CStudioHdrPKc": {
+  "rva": "0x1ceaa0",
+  "build": "11267535",
+  "carried": "from 11191711 0x1ce8e0 by hand: body changed; all 44 calls from carried functions land here; the body changed, so fuzzy matching lost it",
+  "why": "held for 11191711 at 0x1ce8e0 (call, ret 8 as its arguments say); on 11267535 all 44 calls from carried functions land here; the body changed, so fuzzy matching lost it"
+ },
+ "_ZN14CBaseAnimating13ResetSequenceEi": {
+  "rva": "0x1cedf0",
+  "build": "11267535",
+  "carried": "from 11191711 0x1cec30 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0.769), and 32 carried caller(s) call it",
+  "why": "held for 11191711 at 0x1cec30 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.769), and 32 carried caller(s) call it"
+ },
+ "_ZN14CBaseAnimating16SetPoseParameterEP10CStudioHdrif": {
+  "rva": "0x1cfb30",
+  "build": "11267535",
+  "carried": "from 11191711 0x1cf970 by hand: body changed; the same function between the same carried neighbours (score 6.0, runner-up 0), and 62 carried caller(s) call it",
+  "why": "held for 11191711 at 0x1cf970 (call, ret 12 as its arguments say); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 62 carried caller(s) call it"
+ },
+ "_ZN11CBasePlayer17UpdatePlayerSoundEv": {
+  "rva": "0x2e6820",
+  "build": "11267535",
+  "carried": "from 11191711 0x2e64a0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 1.176), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x2e64a0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 1.176), and 1 carried caller(s) call it"
+ },
+ "_ZN7CZombie12Event_KilledERK15CTakeDamageInfo": {
+  "rva": "0x5be870",
+  "build": "11267535",
+  "carried": "from 11191711 0x5bfa50 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 5 of 5 neighbouring slots agree",
+  "why": "held for 11191711 at 0x5bfa50 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 5 of 5 neighbouring slots agree"
+ },
+ "_ZNK17CBaseCombatWeapon11GetMaxClip1Ev": {
+  "rva": "0x1e1170",
+  "build": "11267535",
+  "carried": "from 11191711 0x1e0f90 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0.6), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x1e0f90 (call); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.6), and 1 carried caller(s) call it"
+ },
+ "_ZN17CBaseCombatWeapon13PrimaryAttackEv": {
+  "rva": "0x1e2e20",
+  "build": "11267535",
+  "carried": "from 11191711 0x1e2c40 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x1e2c40 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZNK13CTFWeaponBase13GetShootSoundEi": {
+  "rva": "0x635d50",
+  "build": "11267535",
+  "carried": "from 11191711 0x637590 by hand: body changed; the same function between the same carried neighbours (score 6.0, runner-up 0.164), and 2 carried caller(s) call it",
+  "why": "held for 11191711 at 0x637590 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0.164), and 2 carried caller(s) call it"
+ },
+ "_ZN13CTFWeaponBase20ApplyOnHitAttributesEP11CBaseEntityP9CTFPlayerRK15CTakeDamageInfo": {
+  "rva": "0x630ee0",
+  "build": "11267535",
+  "carried": "from 11191711 0x632720 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x632720 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN13CTFWeaponBase14IsSilentKillerEv": {
+  "rva": "0x636a40",
+  "build": "11267535",
+  "carried": "from 11191711 0x638280 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 5.4), and 2 carried caller(s) call it",
+  "why": "held for 11191711 at 0x638280 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 5.4), and 2 carried caller(s) call it"
+ },
+ "_ZN13CTFWeaponBase6DeployEv": {
+  "rva": "0x633ba0",
+  "build": "11267535",
+  "carried": "from 11191711 0x6353e0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 21 carried caller(s) call it",
+  "why": "held for 11191711 at 0x6353e0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 21 carried caller(s) call it"
+ },
+ "_ZN13CTFWeaponBase5EquipEP20CBaseCombatCharacter": {
+  "rva": "0x634790",
+  "build": "11267535",
+  "carried": "from 11191711 0x635fd0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 5 carried caller(s) call it",
+  "why": "held for 11191711 at 0x635fd0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 5 carried caller(s) call it"
+ },
+ "_ZNK13CTFWeaponBase15IsPassiveWeaponEv": {
+  "rva": "0x636a10",
+  "build": "11267535",
+  "carried": "from 11191711 0x638250 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 6.0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x638250 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 6.0), and 1 carried caller(s) call it"
+ },
+ "_ZN16CTFWeaponBaseGun14FireProjectileEP9CTFPlayer": {
+  "rva": "0x63bb10",
+  "build": "11267535",
+  "carried": "from 11191711 0x63d350 by hand: body changed; the same function between the same carried neighbours (score 9.897, runner-up 0), and 3 carried caller(s) call it",
+  "why": "held for 11191711 at 0x63d350 (string); on 11267535 the same function between the same carried neighbours (score 9.897, runner-up 0), and 3 carried caller(s) call it"
+ },
+ "_ZN16CTFWeaponBaseGun12FirePipeBombEP9CTFPlayeri": {
+  "rva": "0x63b580",
+  "build": "11267535",
+  "carried": "from 11191711 0x63cdc0 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 9 of 9 neighbouring slots agree; 10 of 10 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 11 of 11 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 9 of 9 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 10 of 10 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree",
+  "why": "held for 11191711 at 0x63cdc0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 9 of 9 neighbouring slots agree; 10 of 10 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 11 of 11 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 9 of 9 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 10 of 10 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree"
+ },
+ "_ZN16CTFWeaponBaseGun19GetProjectileDamageEv": {
+  "rva": "0x63c230",
+  "build": "11267535",
+  "carried": "from 11191711 0x63db40 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0.563), and 3 carried caller(s) call it",
+  "why": "held for 11191711 at 0x63db40 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.563), and 3 carried caller(s) call it"
+ },
+ "_ZN16CTFWeaponBaseGun24GetCustomProjectileModelEP17CAttribute_String": {
+  "rva": "0x63c130",
+  "build": "11267535",
+  "carried": "from 11191711 0x63d970 by hand: body changed; the same function between the same carried neighbours (score 5.937), in the same vtable slot: 9 of 9 neighbouring slots agree; 10 of 10 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 11 of 11 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 9 of 9 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 10 of 10 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree",
+  "why": "held for 11191711 at 0x63d970 (string); on 11267535 the same function between the same carried neighbours (score 5.937), in the same vtable slot: 9 of 9 neighbouring slots agree; 10 of 10 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 11 of 11 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 9 of 9 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 10 of 10 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree"
+ },
+ "_ZN16CTFWeaponBaseGun13PrimaryAttackEv": {
+  "rva": "0x63c750",
+  "build": "11267535",
+  "carried": "from 11191711 0x63e060 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 10 carried caller(s) call it",
+  "why": "held for 11191711 at 0x63e060 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 10 carried caller(s) call it"
+ },
+ "_ZN14CWeaponMedigun15SecondaryAttackEv": {
+  "rva": "0x61df10",
+  "build": "11267535",
+  "carried": "from 11191711 0x61f760 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 8 of 8 neighbouring slots agree",
+  "why": "held for 11191711 at 0x61f760 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 8 of 8 neighbouring slots agree"
+ },
+ "_ZN14CWeaponMedigun18FindAndHealTargetsEv": {
+  "rva": "0x61bc30",
+  "build": "11267535",
+  "carried": "from 11191711 0x61d480 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x61d480 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN19CTFProjectile_Flare11Explode_AirEP10CGameTraceib": {
+  "rva": "0x5fe150",
+  "build": "11267535",
+  "carried": "from 11191711 0x5ff7d0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x5ff7d0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN19CTFPipebombLauncher14FireProjectileEP9CTFPlayer": {
+  "rva": "0x623510",
+  "build": "11267535",
+  "carried": "from 11191711 0x624d50 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 6 of 6 neighbouring slots agree; 6 of 6 neighbouring slots agree",
+  "why": "held for 11191711 at 0x624d50 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 6 of 6 neighbouring slots agree; 6 of 6 neighbouring slots agree"
+ },
+ "_ZN9CBaseFlex13AddSceneEventEP12CChoreoSceneP12CChoreoEventP11CBaseEntity": {
+  "rva": "0x2050d0",
+  "build": "11267535",
+  "carried": "from 11191711 0x204f70 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 6 carried caller(s) call it",
+  "why": "held for 11191711 at 0x204f70 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 6 carried caller(s) call it"
+ },
+ "_ZN11CBaseObject27GetMaxHealthForCurrentLevelEv": {
+  "rva": "0x4c1c60",
+  "build": "11267535",
+  "carried": "from 11191711 0x4c2ac0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 4 carried caller(s) call it",
+  "why": "held for 11191711 at 0x4c2ac0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 4 carried caller(s) call it"
+ },
+ "_ZN11CBaseObject12OnTakeDamageERK15CTakeDamageInfo": {
+  "rva": "0x4c30d0",
+  "build": "11267535",
+  "carried": "from 11191711 0x4c3f30 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x4c3f30 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN11CBaseObject13StartBuildingEP11CBaseEntity": {
+  "rva": "0x4c51b0",
+  "build": "11267535",
+  "carried": "from 11191711 0x4c6010 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 1.917), and 3 carried caller(s) call it",
+  "why": "held for 11191711 at 0x4c6010 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 1.917), and 3 carried caller(s) call it"
+ },
+ "_ZN12CCaptureFlag4DropEP9CTFPlayerbbb": {
+  "rva": "0x447420",
+  "build": "11267535",
+  "carried": "from 11191711 0x447fc0 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 8 of 8 neighbouring slots agree",
+  "why": "held for 11191711 at 0x447fc0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 8 of 8 neighbouring slots agree"
+ },
+ "_ZN12CCaptureZone7CaptureEP11CBaseEntity": {
+  "rva": "0x452530",
+  "build": "11267535",
+  "carried": "from 11191711 0x4530d0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0.603); its 2 caller(s), not carried themselves, sit between the same carried neighbours too",
+  "why": "held for 11191711 at 0x4530d0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.603); its 2 caller(s), not carried themselves, sit between the same carried neighbours too"
+ },
+ "_ZN13CCurrencyPack7MyTouchEP11CBasePlayer": {
+  "rva": "0x44b3e0",
+  "build": "11267535",
+  "carried": "from 11191711 0x44bf80 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 7 of 7 neighbouring slots agree; 7 of 7 neighbouring slots agree; 8 of 8 neighbouring slots agree; 7 of 7 neighbouring slots agree",
+  "why": "held for 11191711 at 0x44bf80 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 7 of 7 neighbouring slots agree; 7 of 7 neighbouring slots agree; 8 of 8 neighbouring slots agree; 7 of 7 neighbouring slots agree"
+ },
+ "_ZN13CCurrencyPack5SpawnEv": {
+  "rva": "0x44b160",
+  "build": "11267535",
+  "carried": "from 11191711 0x44bd00 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 11 of 11 neighbouring slots agree; 11 of 11 neighbouring slots agree; 11 of 11 neighbouring slots agree; 11 of 11 neighbouring slots agree",
+  "why": "held for 11191711 at 0x44bd00 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 11 of 11 neighbouring slots agree; 11 of 11 neighbouring slots agree; 11 of 11 neighbouring slots agree; 11 of 11 neighbouring slots agree"
+ },
+ "_ZN12CDynamicProp5SpawnEv": {
+  "rva": "0x308dc0",
+  "build": "11267535",
+  "carried": "from 11191711 0x308a40 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 1.402), and 3 carried caller(s) call it",
+  "why": "held for 11191711 at 0x308a40 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 1.402), and 3 carried caller(s) call it"
+ },
+ "_ZN15CEconItemSchema15BInitAttributesEP9KeyValuesP10CUtlVectorI10CUtlString10CUtlMemoryIS3_iEE": {
+  "rva": "0x3ac3c0",
+  "build": "11267535",
+  "carried": "from 11191711 0x3acf80 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0.872), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x3acf80 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.872), and 1 carried caller(s) call it"
+ },
+ "_ZN15CEconItemSchema32ItemTesting_CreateTestDefinitionEiiP9KeyValues": {
+  "rva": "0x3bb4b0",
+  "build": "11267535",
+  "carried": "from 11191711 0x3bc230 by hand: body changed; the same function between the same carried neighbours (score 6.0, runner-up 0.169), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x3bc230 (call); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0.169), and 1 carried caller(s) call it"
+ },
+ "_ZN13CEconItemView4InitEiiij": {
+  "rva": "0x3c4470",
+  "build": "11267535",
+  "carried": "from 11191711 0x3c5080 by hand: body changed; the same function between the same carried neighbours (score 6.0, runner-up 0), and 4 carried caller(s) call it",
+  "why": "held for 11191711 at 0x3c5080 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 4 carried caller(s) call it"
+ },
+ "_ZN7CGameUI10DeactivateEP11CBaseEntity": {
+  "rva": "0x26de60",
+  "build": "11267535",
+  "carried": "from 11191711 0x26dd50 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x26dd50 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN16CObjectDispenser18GetDispenserRadiusEv": {
+  "rva": "0x4c7840",
+  "build": "11267535",
+  "carried": "from 11191711 0x4c86a0 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 8 of 8 neighbouring slots agree; 9 of 9 neighbouring slots agree",
+  "why": "held for 11191711 at 0x4c86a0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 8 of 8 neighbouring slots agree; 9 of 9 neighbouring slots agree"
+ },
+ "_ZN16CObjectSentrygun6AttackEv": {
+  "rva": "0x4ca510",
+  "build": "11267535",
+  "carried": "from 11191711 0x4cb360 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x4cb360 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN16CObjectSentrygun5SpawnEv": {
+  "rva": "0x4ce860",
+  "build": "11267535",
+  "carried": "from 11191711 0x4cf6b0 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 12 of 12 neighbouring slots agree",
+  "why": "held for 11191711 at 0x4cf6b0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 12 of 12 neighbouring slots agree"
+ },
+ "_ZN17CObjectTeleporter8SetModelEPKc": {
+  "rva": "0x4d1180",
+  "build": "11267535",
+  "carried": "from 11191711 0x4d1fd0 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 14 of 14 neighbouring slots agree",
+  "why": "held for 11191711 at 0x4d1fd0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 14 of 14 neighbouring slots agree"
+ },
+ "_ZN21CPropVehicleDriveable5SpawnEv": {
+  "rva": "0x373380",
+  "build": "11267535",
+  "carried": "from 11191711 0x372f30 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 13 of 13 neighbouring slots agree",
+  "why": "held for 11191711 at 0x372f30 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 13 of 13 neighbouring slots agree"
+ },
+ "_ZN9CSoundEnt10InitializeEv": {
+  "rva": "0x3300f0",
+  "build": "11267535",
+  "carried": "from 11191711 0x32fd30 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 13 of 13 neighbouring slots agree",
+  "why": "held for 11191711 at 0x32fd30 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 13 of 13 neighbouring slots agree"
+ },
+ "_ZN12CSpellPickup24ItemCanBeTouchedByPlayerEP11CBasePlayer": {
+  "rva": "0x5b6070",
+  "build": "11267535",
+  "carried": "from 11191711 0x5b7260 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 7 of 7 neighbouring slots agree",
+  "why": "held for 11191711 at 0x5b7260 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 7 of 7 neighbouring slots agree"
+ },
+ "_ZN13CTFBaseRocket20CheckForStunOnImpactEP9CTFPlayer": {
+  "rva": "0x63f390",
+  "build": "11267535",
+  "carried": "from 11191711 0x640ca0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it",
+  "why": "held for 11191711 at 0x640ca0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it"
+ },
+ "_ZN11CTFBat_Wood15SecondaryAttackEv": {
+  "rva": "0x5ff6c0",
+  "build": "11267535",
+  "carried": "from 11191711 0x600d40 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree",
+  "why": "held for 11191711 at 0x600d40 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree"
+ },
+ "_ZNK6CTFBot21GetNextSpawnClassnameEv": {
+  "rva": "0x553060",
+  "build": "11267535",
+  "carried": "from 11191711 0x554230 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 2.918), and 2 carried caller(s) call it",
+  "why": "held for 11191711 at 0x554230 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 2.918), and 2 carried caller(s) call it"
+ },
+ "_ZN27CTFBotMvMEngineerHintFinder8FindHintEbbP7CHandleI22CTFBotHintEngineerNestE": {
+  "rva": "0x57e4a0",
+  "build": "11267535",
+  "carried": "from 11191711 0x57f690 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it",
+  "why": "held for 11191711 at 0x57f690 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it"
+ },
+ "_ZN14CTFFlameEntity9OnCollideEP11CBaseEntity": {
+  "rva": "0x60b2b0",
+  "build": "11267535",
+  "carried": "from 11191711 0x60ca40 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x60ca40 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN15CTFFlameThrower12FireAirBlastEi": {
+  "rva": "0x609e10",
+  "build": "11267535",
+  "carried": "from 11191711 0x60b4b0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it",
+  "why": "held for 11191711 at 0x60b4b0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it"
+ },
+ "_ZNK15CTFFlameThrower19GetDeflectionRadiusEv": {
+  "rva": "0x60a980",
+  "build": "11267535",
+  "carried": "from 11191711 0x60c020 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 14 of 14 neighbouring slots agree; 14 of 14 neighbouring slots agree",
+  "why": "held for 11191711 at 0x60c020 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 14 of 14 neighbouring slots agree; 14 of 14 neighbouring slots agree"
+ },
+ "_ZN15CTFFlameThrower13PrimaryAttackEv": {
+  "rva": "0x60bc40",
+  "build": "11267535",
+  "carried": "from 11191711 0x60d3d0 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 8 of 8 neighbouring slots agree",
+  "why": "held for 11191711 at 0x60d3d0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 8 of 8 neighbouring slots agree"
+ },
+ "_ZN15CTFPlayerShared8DisguiseEiiP9CTFPlayerb": {
+  "rva": "0x51fa40",
+  "build": "11267535",
+  "carried": "from 11191711 0x520cb0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 6 carried caller(s) call it",
+  "why": "held for 11191711 at 0x520cb0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 6 carried caller(s) call it"
+ },
+ "_ZN15CTFPlayerShared13PulseRageBuffENS_13ERageBuffSlotE": {
+  "rva": "0x5290e0",
+  "build": "11267535",
+  "carried": "from 11191711 0x52a2e0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it",
+  "why": "held for 11191711 at 0x52a2e0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it"
+ },
+ "_ZN16CTFPowerupBottle16ReapplyProvisionEv": {
+  "rva": "0x4b2000",
+  "build": "11267535",
+  "carried": "from 11191711 0x4b2ec0 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 3 of 3 neighbouring slots agree",
+  "why": "held for 11191711 at 0x4b2ec0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 3 of 3 neighbouring slots agree"
+ },
+ "_ZN19CTFProjectile_Arrow10ArrowTouchEP11CBaseEntity": {
+  "rva": "0x5f9210",
+  "build": "11267535",
+  "carried": "from 11191711 0x5fa8a0 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 10 of 10 neighbouring slots agree; 10 of 10 neighbouring slots agree; 5 of 5 neighbouring slots agree",
+  "why": "held for 11191711 at 0x5fa8a0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 10 of 10 neighbouring slots agree; 10 of 10 neighbouring slots agree; 5 of 5 neighbouring slots agree"
+ },
+ "_ZN19CTFProjectile_Flare7ExplodeEP10CGameTraceP11CBaseEntity": {
+  "rva": "0x5fd900",
+  "build": "11267535",
+  "carried": "from 11191711 0x5fef80 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 10 of 10 neighbouring slots agree",
+  "why": "held for 11191711 at 0x5fef80 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 10 of 10 neighbouring slots agree"
+ },
+ "_ZN14CTFSniperRifle29ApplyChargeSpeedModificationsERf": {
+  "rva": "0x62ae80",
+  "build": "11267535",
+  "carried": "from 11191711 0x62c6b0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it",
+  "why": "held for 11191711 at 0x62c6b0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it"
+ },
+ "_ZN14CTFSniperRifle19CanFireCriticalShotEbP11CBaseEntity": {
+  "rva": "0x62a540",
+  "build": "11267535",
+  "carried": "from 11191711 0x62bd70 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 11 of 11 neighbouring slots agree; 11 of 11 neighbouring slots agree; 11 of 11 neighbouring slots agree",
+  "why": "held for 11191711 at 0x62bd70 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 11 of 11 neighbouring slots agree; 11 of 11 neighbouring slots agree; 11 of 11 neighbouring slots agree"
+ },
+ "_ZN12CTFSpellBook12RollNewSpellEib": {
+  "rva": "0x5bc8e0",
+  "build": "11267535",
+  "carried": "from 11191711 0x5bdac0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 3 carried caller(s) call it",
+  "why": "held for 11191711 at 0x5bdac0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 3 carried caller(s) call it"
+ },
+ "_ZN11CTFTankBoss12Event_KilledERK15CTakeDamageInfo": {
+  "rva": "0x5f1f50",
+  "build": "11267535",
+  "carried": "from 11191711 0x5f30f0 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 5 of 5 neighbouring slots agree",
+  "why": "held for 11191711 at 0x5f30f0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 5 of 5 neighbouring slots agree"
+ },
+ "_ZN11CTFTankBoss7ExplodeEv": {
+  "rva": "0x5f2090",
+  "build": "11267535",
+  "carried": "from 11191711 0x5f3230 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0.039), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x5f3230 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.039), and 1 carried caller(s) call it"
+ },
+ "_ZN11CTFTankBoss5SpawnEv": {
+  "rva": "0x5f2b70",
+  "build": "11267535",
+  "carried": "from 11191711 0x5f3d10 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 13 of 13 neighbouring slots agree",
+  "why": "held for 11191711 at 0x5f3d10 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 13 of 13 neighbouring slots agree"
+ },
+ "_ZN24CTFWeaponBaseGrenadeProj22SetDetonateTimerLengthEf": {
+  "rva": "0x63a8a0",
+  "build": "11267535",
+  "carried": "from 11191711 0x63c0e0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 9 carried caller(s) call it",
+  "why": "held for 11191711 at 0x63c0e0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 9 carried caller(s) call it"
+ },
+ "_ZN18CTFWeaponBaseMelee20DoSwingTraceInternalER10CGameTracebP10CUtlVectorIS0_10CUtlMemoryIS0_iEE": {
+  "rva": "0x63d970",
+  "build": "11267535",
+  "carried": "from 11191711 0x63f280 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it",
+  "why": "held for 11191711 at 0x63f280 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it"
+ },
+ "_ZN18CTFWeaponBaseMelee10OnSwingHitER10CGameTrace": {
+  "rva": "0x63e4f0",
+  "build": "11267535",
+  "carried": "from 11191711 0x63fe00 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it",
+  "why": "held for 11191711 at 0x63fe00 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it"
+ },
+ "_ZN18CTFWeaponBaseMelee5SmackEv": {
+  "rva": "0x63ebc0",
+  "build": "11267535",
+  "carried": "from 11191711 0x6404d0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 5 carried caller(s) call it",
+  "why": "held for 11191711 at 0x6404d0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 5 carried caller(s) call it"
+ },
+ "_ZN16CTFWeaponBuilder10SetSubTypeEi": {
+  "rva": "0x604050",
+  "build": "11267535",
+  "carried": "from 11191711 0x6056f0 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 11 of 11 neighbouring slots agree; 11 of 11 neighbouring slots agree",
+  "why": "held for 11191711 at 0x6056f0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 11 of 11 neighbouring slots agree; 11 of 11 neighbouring slots agree"
+ },
+ "_ZN21CTFWearableDemoShield16EndSpecialActionEP9CTFPlayer": {
+  "rva": "0x641080",
+  "build": "11267535",
+  "carried": "from 11191711 0x642990 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x642990 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN14CTriggerCamera6EnableEv": {
+  "rva": "0x3669a0",
+  "build": "11267535",
+  "carried": "from 11191711 0x3665e0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 4 carried caller(s) call it",
+  "why": "held for 11191711 at 0x3665e0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 4 carried caller(s) call it"
+ },
+ "_ZN14CWeaponMedigun11GetHealRateEv": {
+  "rva": "0x61c4c0",
+  "build": "11267535",
+  "carried": "from 11191711 0x61dd10 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 8 of 8 neighbouring slots agree",
+  "why": "held for 11191711 at 0x61dd10 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 8 of 8 neighbouring slots agree"
+ },
+ "_ZN14CWeaponMedigun19RemoveHealingTargetEb": {
+  "rva": "0x61d8e0",
+  "build": "11267535",
+  "carried": "from 11191711 0x61f130 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 12 carried caller(s) call it",
+  "why": "held for 11191711 at 0x61f130 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 12 carried caller(s) call it"
+ },
+ "_ZN20ICaptureFlagAutoList30m_ICaptureFlagAutoListAutoListE": {
+  "rva": "0xa9a1d4",
+  "build": "11267535",
+  "carried": "from 11191711 0xa9af04 by hand: body changed; 29 reference sites in carried functions read it, all at this address",
+  "why": "held for 11191711 at 0xa9af04 (data); on 11267535 29 reference sites in carried functions read it, all at this address"
+ },
+ "_ZN16CTFPowerupBottle13SetNumChargesEh": {
+  "rva": "0x4b27f0",
+  "build": "11267535",
+  "carried": "from 11191711 0x4b36b0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it",
+  "why": "held for 11191711 at 0x4b36b0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it"
+ },
+ "debugoverlay": {
+  "rva": "0xa3324c",
+  "build": "11267535",
+  "carried": "from 11191711 0xa33ed4 by hand: body changed; 3331 reference sites in carried functions read it, all at this address",
+  "why": "held for 11191711 at 0xa33ed4 (data); on 11267535 3331 reference sites in carried functions read it, all at this address"
+ },
+ "usermessages": {
+  "rva": "0xa99d0c",
+  "build": "11267535",
+  "carried": "from 11191711 0xa9aa3c by hand: body changed; 94 reference sites in carried functions read it, all at this address",
+  "why": "held for 11191711 at 0xa9aa3c (data); on 11267535 94 reference sites in carried functions read it, all at this address"
+ },
+ "TheNavAreas": {
+  "rva": "0xa8b268",
+  "build": "11267535",
+  "carried": "from 11191711 0xa8bf98 by hand: body changed; 363 reference sites in carried functions read it, all at this address",
+  "why": "held for 11191711 at 0xa8bf98 (data); on 11267535 363 reference sites in carried functions read it, all at this address"
+ },
+ "_ZN15CGameRulesProxy17s_pGameRulesProxyE": {
+  "rva": "0xa34404",
+  "build": "11267535",
+  "carried": "from 11191711 0xa3508c by hand: body changed; 887 reference sites in carried functions read it, all at this address",
+  "why": "held for 11191711 at 0xa3508c (data); on 11267535 887 reference sites in carried functions read it, all at this address"
+ },
+ "g_aTeamNames": {
+  "rva": "0x9ce260",
+  "build": "11267535",
+  "carried": "from 11191711 0x9cef20 by hand: body changed; 5 reference sites in carried functions read it, all at this address",
+  "why": "held for 11191711 at 0x9cef20 (data); on 11267535 5 reference sites in carried functions read it, all at this address"
+ },
+ "s_TFTeamManager": {
+  "rva": "0x9ced10",
+  "build": "11267535",
+  "carried": "from 11191711 0x9cf9cc by hand: body changed; 8 reference sites in carried functions read it, all at this address",
+  "why": "held for 11191711 at 0x9cf9cc (data); on 11267535 8 reference sites in carried functions read it, all at this address"
+ },
+ "_ZL25g_CBaseAnimating_ClassReg": {
+  "rva": "0xa046b8",
+  "build": "11267535",
+  "carried": "from 11191711 0xa05378 by hand: body changed; 81 reference sites in carried functions read it, all at this address",
+  "why": "held for 11191711 at 0xa05378 (data); on 11267535 81 reference sites in carried functions read it, all at this address"
+ },
+ "_ZL22g_CBasePlayer_ClassReg": {
+  "rva": "0x9a2470",
+  "build": "11267535",
+  "carried": "from 11191711 0x9a3440 by hand: body changed; 23 reference sites in carried functions read it, all at this address",
+  "why": "held for 11191711 at 0x9a3440 (data); on 11267535 23 reference sites in carried functions read it, all at this address"
+ },
+ "_ZL31g_CBaseCombatCharacter_ClassReg": {
+  "rva": "0x97a058",
+  "build": "11267535",
+  "carried": "from 11191711 0x97b058 by hand: body changed; 44 reference sites in carried functions read it, all at this address",
+  "why": "held for 11191711 at 0x97b058 (data); on 11267535 44 reference sites in carried functions read it, all at this address"
+ },
+ "_ZN11CBaseEntity23m_nPredictionRandomSeedE": {
+  "rva": "0x97ab84",
+  "build": "11267535",
+  "carried": "from 11191711 0x97bb84 by hand: body changed; 31 reference sites in carried functions read it, all at this address",
+  "why": "held for 11191711 at 0x97bb84 (data); on 11267535 31 reference sites in carried functions read it, all at this address"
+ },
+ "g_pPlayerResource": {
+  "rva": "0xa51bd8",
+  "build": "11267535",
+  "carried": "from 11191711 0xa52860 by hand: body changed; 14 reference sites in carried functions read it, all at this address",
+  "why": "held for 11191711 at 0xa52860 (data); on 11267535 14 reference sites in carried functions read it, all at this address"
+ },
+ "g_EntityListPool": {
+  "rva": "0xa09da4",
+  "build": "11267535",
+  "carried": "from 11191711 0xa0aa64 by hand: body changed; 21 reference sites in carried functions read it, all at this address",
+  "why": "held for 11191711 at 0xa0aa64 (data); on 11267535 21 reference sites in carried functions read it, all at this address"
+ },
+ "_ZN8CNavArea10m_openListE": {
+  "rva": "0xa8d884",
+  "build": "11267535",
+  "carried": "from 11191711 0xa8e5b4 by hand: body changed; 118 reference sites in carried functions read it, all at this address",
+  "why": "held for 11191711 at 0xa8e5b4 (data); on 11267535 118 reference sites in carried functions read it, all at this address"
+ },
+ "_ZN8CNavArea21s_nCurrVisTestCounterE": {
+  "rva": "0xa8d88c",
+  "build": "11267535",
+  "carried": "from 11191711 0xa8e5bc by hand: body changed; 66 reference sites in carried functions read it, all at this address",
+  "why": "held for 11191711 at 0xa8e5bc (data); on 11267535 66 reference sites in carried functions read it, all at this address"
+ },
+ "_Z24UTIL_GetListenServerHostv": {
+  "rva": "0x36cae0",
+  "build": "11267535",
+  "carried": "from 11191711 0x36c670 by hand: body changed; the same function between the same carried neighbours (score 7.0, runner-up 0), and 87 carried caller(s) call it",
+  "why": "held for 11191711 at 0x36c670 (string); on 11267535 the same function between the same carried neighbours (score 7.0, runner-up 0), and 87 carried caller(s) call it"
+ },
+ "_ZN12CTFGameRules12PlayerKilledEP11CBasePlayerRK15CTakeDamageInfo": {
+  "rva": "0x495ab0",
+  "build": "11267535",
+  "carried": "from 11191711 0x496890 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 5 of 5 neighbouring slots agree",
+  "why": "held for 11191711 at 0x496890 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 5 of 5 neighbouring slots agree"
+ },
+ "_ZN9KeyValues14LoadFromBufferEPKcR10CUtlBufferP15IBaseFileSystemS1_": {
+  "rva": "0x6e8650",
+  "build": "11267535",
+  "carried": "from 11191711 0x6e9fd0 by hand: body changed; the same function between the same carried neighbours (score 9.178, runner-up 2.432), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x6e9fd0 (string); on 11267535 the same function between the same carried neighbours (score 9.178, runner-up 2.432), and 1 carried caller(s) call it"
+ },
+ "_ZN13CUserMessages8RegisterEPKci": {
+  "rva": "0x442460",
+  "build": "11267535",
+  "carried": "from 11191711 0x443000 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0.786), and 85 carried caller(s) call it",
+  "why": "held for 11191711 at 0x443000 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.786), and 85 carried caller(s) call it"
+ },
+ "_ZN12CTFGameRules12RadiusDamageER19CTFRadiusDamageInfo": {
+  "rva": "0x499410",
+  "build": "11267535",
+  "carried": "from 11191711 0x49a1f0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 14 carried caller(s) call it",
+  "why": "held for 11191711 at 0x49a1f0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 14 carried caller(s) call it"
+ },
+ "_Z19StopParticleEffectsP11CBaseEntity": {
+  "rva": "0x2aa240",
+  "build": "11267535",
+  "carried": "from 11191711 0x2a9f20 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x2a9f20 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN12CTFGameRules29ApplyOnDamageAliveModifyRulesERK15CTakeDamageInfoP11CBaseEntityRNS_20DamageModifyExtras_tE": {
+  "rva": "0x47dbe0",
+  "build": "11267535",
+  "carried": "from 11191711 0x47e900 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it",
+  "why": "held for 11191711 at 0x47e900 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it"
+ },
+ "_ZN12CTFGameRules40PlayerReadyStatus_HaveMinPlayersToEnableEv": {
+  "rva": "0x4977b0",
+  "build": "11267535",
+  "carried": "from 11191711 0x498590 by hand: body changed; the same function between the same carried neighbours (score 6.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x498590 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN12CTFGameRules18ClientDisconnectedEP7edict_t": {
+  "rva": "0x4870a0",
+  "build": "11267535",
+  "carried": "from 11191711 0x487e10 by hand: body changed; the same function between the same carried neighbours (score 6.0), in the same vtable slot: 6 of 6 neighbouring slots agree",
+  "why": "held for 11191711 at 0x487e10 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0), in the same vtable slot: 6 of 6 neighbouring slots agree"
+ },
+ "_ZN23CLagCompensationManager20StartLagCompensationEP11CBasePlayerP8CUserCmd": {
+  "rva": "0x2ecae0",
+  "build": "11267535",
+  "carried": "from 11191711 0x2ec740 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 3 of 3 neighbouring slots agree",
+  "why": "held for 11191711 at 0x2ec740 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 3 of 3 neighbouring slots agree"
+ },
+ "_Z25Physics_RunThinkFunctionsb": {
+  "rva": "0x2c12b0",
+  "build": "11267535",
+  "carried": "from 11191711 0x2c0f80 by hand: body changed; the same function between the same carried neighbours (score 6.0, runner-up 0.462); its 1 caller(s), not carried themselves, sit between the same carried neighbours too",
+  "why": "held for 11191711 at 0x2c0f80 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0.462); its 1 caller(s), not carried themselves, sit between the same carried neighbours too"
+ },
+ "_Z18TeleportNearVictimP6CTFBotP9CTFPlayeri": {
+  "rva": "0x58fd10",
+  "build": "11267535",
+  "carried": "from 11191711 0x590f00 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x590f00 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_Z26MapEntity_ParseAllEntitiesPKcP16IMapEntityFilterb": {
+  "rva": "0x2971f0",
+  "build": "11267535",
+  "carried": "from 11191711 0x297100 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 3 carried caller(s) call it",
+  "why": "held for 11191711 at 0x297100 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 3 carried caller(s) call it"
+ },
+ "_ZNK12CTFGameRules19IsPVEModeControlledEP11CBaseEntity": {
+  "rva": "0x492690",
+  "build": "11267535",
+  "carried": "from 11191711 0x4933d0 by hand: body changed; the same function between the same carried neighbours (score 3.0, runner-up 0.632), and 3 carried caller(s) call it",
+  "why": "held for 11191711 at 0x4933d0 (consensus); on 11267535 the same function between the same carried neighbours (score 3.0, runner-up 0.632), and 3 carried caller(s) call it"
+ },
+ "_ZN12CTFGameRules19BetweenRounds_StartEv": {
+  "rva": "0x4831d0",
+  "build": "11267535",
+  "carried": "from 11191711 0x483f40 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 11 of 11 neighbouring slots agree",
+  "why": "held for 11191711 at 0x483f40 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 11 of 11 neighbouring slots agree"
+ },
+ "_ZN12CTFGameRules24ApplyOnDamageModifyRulesER15CTakeDamageInfoP11CBaseEntityb": {
+  "rva": "0x47ebc0",
+  "build": "11267535",
+  "carried": "from 11191711 0x47f8e0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it",
+  "why": "held for 11191711 at 0x47f8e0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it"
+ },
+ "_ZN12CTFGameRules25GetTeamAssignmentOverrideEP9CTFPlayerib": {
+  "rva": "0x48ea50",
+  "build": "11267535",
+  "carried": "from 11191711 0x48f790 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0.766), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x48f790 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.766), and 1 carried caller(s) call it"
+ },
+ "_ZNK10CStudioHdr20GetNumPoseParametersEv": {
+  "rva": "0x337560",
+  "build": "11267535",
+  "carried": "from 11191711 0x3371d0 by hand: body changed; the same function between the same carried neighbours (score 3.0, runner-up 0), and 8 carried caller(s) call it",
+  "why": "held for 11191711 at 0x3371d0 (call); on 11267535 the same function between the same carried neighbours (score 3.0, runner-up 0), and 8 carried caller(s) call it"
+ },
+ "_ZN10CStudioHdr14pPoseParameterEi": {
+  "rva": "0x338850",
+  "build": "11267535",
+  "carried": "from 11191711 0x3384c0 by hand: body changed; the same function between the same carried neighbours (score 6.0, runner-up 0), and 7 carried caller(s) call it",
+  "why": "held for 11191711 at 0x3384c0 (call); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 7 carried caller(s) call it"
+ },
+ "_ZN12CTFGameRules22ClientCommandKeyValuesEP7edict_tP9KeyValues": {
+  "rva": "0x4865f0",
+  "build": "11267535",
+  "carried": "from 11191711 0x487360 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 3 of 5 neighbouring slots agree (11267535 adds a CTFGameRules virtual two slots further on)",
+  "why": "held for 11191711 at 0x487360 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 3 of 5 neighbouring slots agree (11267535 adds a CTFGameRules virtual two slots further on)"
+ },
+ "_ZN24CTeamplayRoundBasedRules16State_TransitionE22gamerules_roundstate_t": {
+  "rva": "0x352800",
+  "build": "11267535",
+  "carried": "from 11191711 0x352420 by hand: body changed; the same function between the same carried neighbours (score 3.0, runner-up 1.189), and 5 carried caller(s) call it",
+  "why": "held for 11191711 at 0x352420 (call); on 11267535 the same function between the same carried neighbours (score 3.0, runner-up 1.189), and 5 carried caller(s) call it"
+ },
+ "_ZN12CTFGameRules14SetWinningTeamEiibbbb": {
+  "rva": "0x4a00a0",
+  "build": "11267535",
+  "carried": "from 11191711 0x4a0ea0 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 8 of 8 neighbouring slots agree",
+  "why": "held for 11191711 at 0x4a0ea0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 8 of 8 neighbouring slots agree"
+ },
+ "_ZNK8CSteamID6RenderEv": {
+  "rva": "0x336330",
+  "build": "11267535",
+  "carried": "from 11191711 0x335fa0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 61 carried caller(s) call it",
+  "why": "held for 11191711 at 0x335fa0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 61 carried caller(s) call it"
+ },
+ "_ZN12CTFGameRules21SetCustomUpgradesFileER11inputdata_t": {
+  "rva": "0x4911f0",
+  "build": "11267535",
+  "carried": "from 11191711 0x491f30 by hand: body changed; the script binding table pairs it with the string \"SetCustomUpgradesFile\", as on 11191711",
+  "why": "held for 11191711 at 0x491f30 (string); on 11267535 the script binding table pairs it with the string \"SetCustomUpgradesFile\", as on 11191711"
+ },
+ "_Z26TE_TFParticleEffectComplexR16IRecipientFilterfPKc6Vector6QAngleP31te_tf_particle_effects_colors_tP38te_tf_particle_effects_control_point_tP11CBaseEntity20ParticleAttachment_tS3_": {
+  "rva": "0x470bf0",
+  "build": "11267535",
+  "carried": "from 11191711 0x4717e0 by hand: body changed; the same function between the same carried neighbours (score 6.0, runner-up 0), and 12 carried caller(s) call it",
+  "why": "held for 11191711 at 0x4717e0 (call); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 12 carried caller(s) call it"
+ },
+ "_Z16UserMessageBeginR16IRecipientFilterPKc": {
+  "rva": "0x272b20",
+  "build": "11267535",
+  "carried": "from 11191711 0x272a10 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 94 carried caller(s) call it",
+  "why": "held for 11191711 at 0x272a10 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 94 carried caller(s) call it"
+ },
+ "_Z18MessageWriteStringPKc": {
+  "rva": "0x272270",
+  "build": "11267535",
+  "carried": "from 11191711 0x272160 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 3.0), and 45 carried caller(s) call it",
+  "why": "held for 11191711 at 0x272160 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 3.0), and 45 carried caller(s) call it"
+ },
+ "_ZN16CPlayerInventory24GetInventoryItemByItemIDEyPi": {
+  "rva": "0x3a4e20",
+  "build": "11267535",
+  "carried": "from 11191711 0x3a55a0 by hand: body changed; the same function between the same carried neighbours (score 3.0, runner-up 0.286), and 5 carried caller(s) call it",
+  "why": "held for 11191711 at 0x3a55a0 (call); on 11267535 the same function between the same carried neighbours (score 3.0, runner-up 0.286), and 5 carried caller(s) call it"
+ },
+ "_Z22GetParticleSystemIndexPKc": {
+  "rva": "0x271980",
+  "build": "11267535",
+  "carried": "from 11191711 0x271870 by hand: body changed; the same function between the same carried neighbours (score 7.0, runner-up 0), and 20 carried caller(s) call it",
+  "why": "held for 11191711 at 0x271870 (string); on 11267535 the same function between the same carried neighbours (score 7.0, runner-up 0), and 20 carried caller(s) call it"
+ },
+ "_Z18TF_IsHolidayActivei": {
+  "rva": "0x4a3ce0",
+  "build": "11267535",
+  "carried": "from 11191711 0x4a4ae0 by hand: body changed; the same function between the same carried neighbours (score 3.0, runner-up 0), and 12 carried caller(s) call it",
+  "why": "held for 11191711 at 0x4a4ae0 (call); on 11267535 the same function between the same carried neighbours (score 3.0, runner-up 0), and 12 carried caller(s) call it"
+ },
+ "_ZN12CTFGameRules20GetKillingWeaponNameERK15CTakeDamageInfoP9CTFPlayerPi": {
+  "rva": "0x48cef0",
+  "build": "11267535",
+  "carried": "from 11191711 0x48dc30 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0.192), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x48dc30 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.192), and 1 carried caller(s) call it"
+ },
+ "_ZN17CBaseEntityOutput10FireOutputE9variant_tP11CBaseEntityS2_f": {
+  "rva": "0x225820",
+  "build": "11267535",
+  "carried": "from 11191711 0x2256b0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 36 carried caller(s) call it",
+  "why": "held for 11191711 at 0x2256b0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 36 carried caller(s) call it"
+ },
+ "_ZN21CMultiPlayerAnimState16AddToGestureSlotEi8Activityb": {
+  "rva": "0x457f60",
+  "build": "11267535",
+  "carried": "from 11191711 0x458af0 by hand: body changed; the same function between the same carried neighbours (score 6.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x458af0 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN11CTFBotSquad5LeaveEP6CTFBot": {
+  "rva": "0x566c30",
+  "build": "11267535",
+  "carried": "from 11191711 0x567e20 by hand: body changed; the same function between the same carried neighbours (score 6.0, runner-up 0), and 3 carried caller(s) call it",
+  "why": "held for 11191711 at 0x567e20 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 3 carried caller(s) call it"
+ },
+ "_Z10JarExplodeiP9CTFPlayerP11CBaseEntityS2_RK6Vectorif7ETFCondfPKcS8_": {
+  "rva": "0x614d10",
+  "build": "11267535",
+  "carried": "from 11191711 0x616560 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0.022), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x616560 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.022), and 1 carried caller(s) call it"
+ },
+ "_ZN19CTFInventoryManager19GetBaseItemForClassEii": {
+  "rva": "0x3c9ea0",
+  "build": "11267535",
+  "carried": "from 11191711 0x3caaa0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 2.713), and 2 carried caller(s) call it",
+  "why": "held for 11191711 at 0x3caaa0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 2.713), and 2 carried caller(s) call it"
+ },
+ "_ZN9variant_t3SetE11_fieldtypesPv": {
+  "rva": "0x226a50",
+  "build": "11267535",
+  "carried": "from 11191711 0x2268e0 by hand: body changed; the same function between the same carried neighbours (score 2.627, runner-up 0), and 31 carried caller(s) call it",
+  "why": "held for 11191711 at 0x2268e0 (call); on 11267535 the same function between the same carried neighbours (score 2.627, runner-up 0), and 31 carried caller(s) call it"
+ },
+ "_ZN9variant_t7ConvertE11_fieldtypes": {
+  "rva": "0x2251e0",
+  "build": "11267535",
+  "carried": "from 11191711 0x225070 by hand: body changed; the same function between the same carried neighbours (score 9.897, runner-up 0), and 2 carried caller(s) call it",
+  "why": "held for 11191711 at 0x225070 (string); on 11267535 the same function between the same carried neighbours (score 9.897, runner-up 0), and 2 carried caller(s) call it"
+ },
+ "_Z17StopScriptedSceneP9CBaseFlex7CHandleI11CBaseEntityE": {
+  "rva": "0x322f50",
+  "build": "11267535",
+  "carried": "from 11191711 0x322bb0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 11 carried caller(s) call it",
+  "why": "held for 11191711 at 0x322bb0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 11 carried caller(s) call it"
+ },
+ "_ZN12CPhysicsHook22FindOrAddVehicleScriptEPKcP15vehicleparams_tP15vehiclesounds_t": {
+  "rva": "0x2b4b60",
+  "build": "11267535",
+  "carried": "from 11191711 0x2b4830 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x2b4830 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN17CQuestItemTracker13FireGameEventEP10IGameEvent": {
+  "rva": "0x45cf00",
+  "build": "11267535",
+  "carried": "from 11191711 0x45daa0 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 4 of 4 neighbouring slots agree",
+  "why": "held for 11191711 at 0x45daa0 (consensus); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 4 of 4 neighbouring slots agree"
+ },
+ "_ZN23CLagCompensationManager26FrameUpdatePostEntityThinkEv": {
+  "rva": "0x2ec770",
+  "build": "11267535",
+  "carried": "from 11191711 0x2ec3d0 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 3 of 3 neighbouring slots agree",
+  "why": "held for 11191711 at 0x2ec3d0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 3 of 3 neighbouring slots agree"
+ },
+ "_ZN12CTFGameStats26Event_PlayerDisconnectedTFEP9CTFPlayer": {
+  "rva": "0x4a8830",
+  "build": "11267535",
+  "carried": "from 11191711 0x4a9640 by hand: body changed; the same function between the same carried neighbours (score 6.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x4a9640 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN17CTFGCServerSystem18ClientDisconnectedE8CSteamID": {
+  "rva": "0x5c7b90",
+  "build": "11267535",
+  "carried": "from 11191711 0x5c8d50 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 1.052), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x5c8d50 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 1.052), and 1 carried caller(s) call it"
+ },
+ "_ZN13CVoiceGameMgr13ClientCommandEP11CBasePlayerRK8CCommand": {
+  "rva": "0x37a820",
+  "build": "11267535",
+  "carried": "from 11191711 0x37a3a0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0.447), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x37a3a0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.447), and 1 carried caller(s) call it"
+ },
+ "_ZN12CTFGameRules27PowerupModeKillCountCompareEv": {
+  "rva": "0x4983b0",
+  "build": "11267535",
+  "carried": "from 11191711 0x499190 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0.767); its 1 caller(s), not carried themselves, sit between the same carried neighbours too",
+  "why": "held for 11191711 at 0x499190 (consensus); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.767); its 1 caller(s), not carried themselves, sit between the same carried neighbours too"
+ },
+ "_ZN12CTFGameRules29PowerupModeInitKillCountTimerEv": {
+  "rva": "0x4982e0",
+  "build": "11267535",
+  "carried": "from 11191711 0x4990c0 by hand: body changed; the same function between the same carried neighbours (score 6.0, runner-up 3.667), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x4990c0 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 3.667), and 1 carried caller(s) call it"
+ },
+ "_ZN13CVoiceGameMgr11UpdateMasksEv": {
+  "rva": "0x37aae0",
+  "build": "11267535",
+  "carried": "from 11191711 0x37a660 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x37a660 (consensus); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN12CTFGameRules16SendWinPanelInfoEb": {
+  "rva": "0x49f4b0",
+  "build": "11267535",
+  "carried": "from 11191711 0x4a02b0 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 9 of 9 neighbouring slots agree",
+  "why": "held for 11191711 at 0x4a02b0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 9 of 9 neighbouring slots agree"
+ },
+ "_ZN12CTFGameRules18FlPlayerFallDamageEP11CBasePlayer": {
+  "rva": "0x48bf60",
+  "build": "11267535",
+  "carried": "from 11191711 0x48cca0 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 6 of 6 neighbouring slots agree",
+  "why": "held for 11191711 at 0x48cca0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 6 of 6 neighbouring slots agree"
+ },
+ "_ZN15CTFGameMovement17GrapplingHookMoveEv": {
+  "rva": "0x474770",
+  "build": "11267535",
+  "carried": "from 11191711 0x475360 by hand: body changed; the same function between the same carried neighbours (score 6.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x475360 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN18CParticleSystemMgr4InitEP20IParticleSystemQuery": {
+  "rva": "0x6e2480",
+  "build": "11267535",
+  "carried": "from 11191711 0x6e3d30 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x6e3d30 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN12CTFGameRules17SetupOnRoundStartEv": {
+  "rva": "0x4a0c10",
+  "build": "11267535",
+  "carried": "from 11191711 0x4a1a10 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 7 of 7 neighbouring slots agree",
+  "why": "held for 11191711 at 0x4a1a10 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 7 of 7 neighbouring slots agree"
+ },
+ "_ZN12CTFGameRules11DeathNoticeEP11CBasePlayerRK15CTakeDamageInfoPKc": {
+  "rva": "0x488a30",
+  "build": "11267535",
+  "carried": "from 11191711 0x4897a0 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 3 of 3 neighbouring slots agree",
+  "why": "held for 11191711 at 0x4897a0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 3 of 3 neighbouring slots agree"
+ },
+ "_ZN14CTFWorkshopMap12GetLocalFileER10CUtlString": {
+  "rva": "0x433020",
+  "build": "11267535",
+  "carried": "from 11191711 0x433c00 by hand: body changed; the same function between the same carried neighbours (score 6.0, runner-up 0), and 2 carried caller(s) call it",
+  "why": "held for 11191711 at 0x433c00 (call); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 2 carried caller(s) call it"
+ },
+ "_ZN15CTFMapsWorkshop7RefreshEv": {
+  "rva": "0x433f80",
+  "build": "11267535",
+  "carried": "from 11191711 0x434b60 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 3 carried caller(s) call it",
+  "why": "held for 11191711 at 0x434b60 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 3 carried caller(s) call it"
+ },
+ "_Z18UTIL_PrecacheOtherPKcS0_": {
+  "rva": "0x36d690",
+  "build": "11267535",
+  "carried": "from 11191711 0x36d220 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 8 carried caller(s) call it",
+  "why": "held for 11191711 at 0x36d220 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 8 carried caller(s) call it"
+ },
+ "_ZN12CTFGameRules11GetAssisterEP11CBasePlayerS1_P11CBaseEntity": {
+  "rva": "0x48c350",
+  "build": "11267535",
+  "carried": "from 11191711 0x48d090 by hand: body changed; the same function between the same carried neighbours (score 6.0, runner-up 0), and 3 carried caller(s) call it",
+  "why": "held for 11191711 at 0x48d090 (call, ret 12 as its arguments say); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 3 carried caller(s) call it"
+ },
+ "_ZN23CLagCompensationManager15BacktrackPlayerEP11CBasePlayerf": {
+  "rva": "0x2ed930",
+  "build": "11267535",
+  "carried": "from 11191711 0x2ed590 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it",
+  "why": "held for 11191711 at 0x2ed590 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it"
+ },
+ "_Z22SelectWeightedSequenceP10CStudioHdrii": {
+  "rva": "0x1c6090",
+  "build": "11267535",
+  "carried": "from 11191711 0x1c5ee0 by hand: body changed; the same function between the same carried neighbours (score 6.0, runner-up 0), and 5 carried caller(s) call it",
+  "why": "held for 11191711 at 0x1c5ee0 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 5 carried caller(s) call it"
+ },
+ "_ZNK13CEconItemView21GetPlayerDisplayModelEii": {
+  "rva": "0x3c4080",
+  "build": "11267535",
+  "carried": "from 11191711 0x3c4c90 by hand: body changed; the same function between the same carried neighbours (score 6.0, runner-up 0), and 6 carried caller(s) call it",
+  "why": "held for 11191711 at 0x3c4c90 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 6 carried caller(s) call it"
+ },
+ "_ZNK8CNavMesh17GetNearestNavAreaERK6Vectorbfbbi": {
+  "rva": "0x408eb0",
+  "build": "11267535",
+  "carried": "from 11191711 0x409a60 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 21 carried caller(s) call it",
+  "why": "held for 11191711 at 0x409a60 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 21 carried caller(s) call it"
+ },
+ "_ZNK8CNavMesh15GetGroundHeightERK6VectorPfPS0_": {
+  "rva": "0x408560",
+  "build": "11267535",
+  "carried": "from 11191711 0x409110 by hand: body changed; the same function between the same carried neighbours (score 6.0, runner-up 0), and 8 carried caller(s) call it",
+  "why": "held for 11191711 at 0x409110 (call); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 8 carried caller(s) call it"
+ },
+ "_ZN8CNavMesh15BeginGenerationEb": {
+  "rva": "0x3f92c0",
+  "build": "11267535",
+  "carried": "from 11191711 0x3f9ec0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it",
+  "why": "held for 11191711 at 0x3f9ec0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it"
+ },
+ "_ZNK8CNavArea9GetExtentEP6Extent": {
+  "rva": "0x3e3270",
+  "build": "11267535",
+  "carried": "from 11191711 0x3e3e40 by hand: body changed; the same function between the same carried neighbours (score 3.0, runner-up 0), and 26 carried caller(s) call it",
+  "why": "held for 11191711 at 0x3e3e40 (call); on 11267535 the same function between the same carried neighbours (score 3.0, runner-up 0), and 26 carried caller(s) call it"
+ },
+ "_ZNK8CNavArea21GetClosestPointOnAreaEPK6VectorPS0_": {
+  "rva": "0x3e2910",
+  "build": "11267535",
+  "carried": "from 11191711 0x3e34e0 by hand: body changed; the same function between the same carried neighbours (score 6.0, runner-up 0), and 64 carried caller(s) call it",
+  "why": "held for 11191711 at 0x3e34e0 (call); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 64 carried caller(s) call it"
+ },
+ "_ZNK8CNavArea37ComputeAdjacentConnectionHeightChangeEPKS_": {
+  "rva": "0x3dd760",
+  "build": "11267535",
+  "carried": "from 11191711 0x3de330 by hand: body changed; the same function between the same carried neighbours (score 9.977, runner-up 0), and 9 carried caller(s) call it",
+  "why": "held for 11191711 at 0x3de330 (string); on 11267535 the same function between the same carried neighbours (score 9.977, runner-up 0), and 9 carried caller(s) call it"
+ },
+ "_ZNK8CNavArea4GetZEff": {
+  "rva": "0x3e34c0",
+  "build": "11267535",
+  "carried": "from 11191711 0x3e4090 by hand: body changed; the same function between the same carried neighbours (score 3.0, runner-up 0), and 83 carried caller(s) call it",
+  "why": "held for 11191711 at 0x3e4090 (call); on 11267535 the same function between the same carried neighbours (score 3.0, runner-up 0), and 83 carried caller(s) call it"
+ },
+ "_ZNK8CNavArea13IsOverlappingERK6Vectorf": {
+  "rva": "0x3e4990",
+  "build": "11267535",
+  "carried": "from 11191711 0x3e5560 by hand: body changed; the same function between the same carried neighbours (score 3.0, runner-up 0), and 4 carried caller(s) call it",
+  "why": "held for 11191711 at 0x3e5560 (call); on 11267535 the same function between the same carried neighbours (score 3.0, runner-up 0), and 4 carried caller(s) call it"
+ },
+ "_ZNK10CTFNavArea18GetCombatIntensityEv": {
+  "rva": "0x5d2d60",
+  "build": "11267535",
+  "carried": "from 11191711 0x5d3f20 by hand: body changed; the same function between the same carried neighbours (score 6.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x5d3f20 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_Z16NavAreaBuildPathI14CTFBotPathCostEbP8CNavAreaS2_PK6VectorRT_PS2_fib": {
+  "rva": "0x5680a0",
+  "build": "11267535",
+  "carried": "from 11191711 0x569290 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 10.0), and 4 carried caller(s) call it",
+  "why": "held for 11191711 at 0x569290 (call); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 10.0), and 4 carried caller(s) call it"
+ },
+ "_ZN4Path7ComputeI14CTFBotPathCostEEbP8INextBotP20CBaseCombatCharacterRT_fb": {
+  "rva": "0x5879f0",
+  "build": "11267535",
+  "carried": "from 11191711 0x588be0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 3 carried caller(s) call it",
+  "why": "held for 11191711 at 0x588be0 (consensus); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 3 carried caller(s) call it"
+ },
+ "_ZN18CPopulationManager12AllocateBotsEv": {
+  "rva": "0x5e3030",
+  "build": "11267535",
+  "carried": "from 11191711 0x5e41d0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x5e41d0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN18CPopulationManager15ClearCheckpointEv": {
+  "rva": "0x5e3220",
+  "build": "11267535",
+  "carried": "from 11191711 0x5e43c0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 3 carried caller(s) call it",
+  "why": "held for 11191711 at 0x5e43c0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 3 carried caller(s) call it"
+ },
+ "_ZN18CPopulationManager31GetNumRespecsAvailableForPlayerEP9CTFPlayer": {
+  "rva": "0x5e4890",
+  "build": "11267535",
+  "carried": "from 11191711 0x5e5a30 by hand: body changed; the same function between the same carried neighbours (score 6.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x5e5a30 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN18CPopulationManager5ParseEv": {
+  "rva": "0x5e5db0",
+  "build": "11267535",
+  "carried": "from 11191711 0x5e6f50 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x5e6f50 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN18CPopulationManager13SetCheckpointEi": {
+  "rva": "0x5e7250",
+  "build": "11267535",
+  "carried": "from 11191711 0x5e83f0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x5e83f0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN18CPopulationManager6UpdateEv": {
+  "rva": "0x5e77b0",
+  "build": "11267535",
+  "carried": "from 11191711 0x5e8950 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x5e8950 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN18CPopulationManager13PauseSpawningEv": {
+  "rva": "0x5e6410",
+  "build": "11267535",
+  "carried": "from 11191711 0x5e75b0 by hand: body changed; the same function between the same carried neighbours (score 7.0, runner-up 0.087), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x5e75b0 (string); on 11267535 the same function between the same carried neighbours (score 7.0, runner-up 0.087), and 1 carried caller(s) call it"
+ },
+ "_ZN18CPopulationManager15UnpauseSpawningEv": {
+  "rva": "0x5e7770",
+  "build": "11267535",
+  "carried": "from 11191711 0x5e8910 by hand: body changed; the same function between the same carried neighbours (score 7.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x5e8910 (string); on 11267535 the same function between the same carried neighbours (score 7.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN18CPopulationManager22GetPlayerCurrencySpentEP9CTFPlayer": {
+  "rva": "0x5e4920",
+  "build": "11267535",
+  "carried": "from 11191711 0x5e5ac0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x5e5ac0 (consensus); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN17CMissionPopulator13UpdateMissionEN6CTFBot11MissionTypeE": {
+  "rva": "0x5f0840",
+  "build": "11267535",
+  "carried": "from 11191711 0x5f19e0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 4.847), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x5f19e0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 4.847), and 1 carried caller(s) call it"
+ },
+ "_ZN17CMissionPopulator28UpdateMissionDestroySentriesEv": {
+  "rva": "0x5f0cc0",
+  "build": "11267535",
+  "carried": "from 11191711 0x5f1e60 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 1.04), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x5f1e60 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 1.04), and 1 carried caller(s) call it"
+ },
+ "_ZN5CWave16ActiveWaveUpdateEv": {
+  "rva": "0x5ecf70",
+  "build": "11267535",
+  "carried": "from 11191711 0x5ee110 by hand: body changed; the same function between the same carried neighbours (score 9.936, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x5ee110 (string); on 11267535 the same function between the same carried neighbours (score 9.936, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN5CWave18WaveCompleteUpdateEv": {
+  "rva": "0x5f1330",
+  "build": "11267535",
+  "carried": "from 11191711 0x5f24d0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 1.315), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x5f24d0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 1.315), and 1 carried caller(s) call it"
+ },
+ "_ZN19CWaveSpawnPopulator8SetStateENS_17InternalStateTypeE": {
+  "rva": "0x5ef760",
+  "build": "11267535",
+  "carried": "from 11191711 0x5f0900 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it",
+  "why": "held for 11191711 at 0x5f0900 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it"
+ },
+ "_ZN13CTFBotSpawner26ParseEventChangeAttributesEP9KeyValues": {
+  "rva": "0x5ea4c0",
+  "build": "11267535",
+  "carried": "from 11191711 0x5eb660 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 2.523); its 1 caller(s), not carried themselves, sit between the same carried neighbours too",
+  "why": "held for 11191711 at 0x5eb660 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 2.523); its 1 caller(s), not carried themselves, sit between the same carried neighbours too"
+ },
+ "_ZN14CSpawnLocation5ParseEP9KeyValues": {
+  "rva": "0x5ee5e0",
+  "build": "11267535",
+  "carried": "from 11191711 0x5ef780 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 3.99); its 3 caller(s), not carried themselves, sit between the same carried neighbours too",
+  "why": "held for 11191711 at 0x5ef780 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 3.99); its 3 caller(s), not carried themselves, sit between the same carried neighbours too"
+ },
+ "_ZL22ParseDynamicAttributesRN6CTFBot23EventChangeAttributes_tEP9KeyValues": {
+  "rva": "0x5e9cf0",
+  "build": "11267535",
+  "carried": "from 11191711 0x5eae90 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 3.705), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x5eae90 (call); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 3.705), and 1 carried caller(s) call it"
+ },
+ "_ZNK6CTFBot28GetDesiredPathLookAheadRangeEv": {
+  "rva": "0x5521e0",
+  "build": "11267535",
+  "carried": "from 11191711 0x5533b0 by hand: body changed; the same function between the same carried neighbours (score 3.0, runner-up 1.0), and 22 carried caller(s) call it",
+  "why": "held for 11191711 at 0x5533b0 (call); on 11267535 the same function between the same carried neighbours (score 3.0, runner-up 1.0), and 22 carried caller(s) call it"
+ },
+ "_ZN6CTFBot17PopRequiredWeaponEv": {
+  "rva": "0x560a50",
+  "build": "11267535",
+  "carried": "from 11191711 0x561c40 by hand: body changed; the same function between the same carried neighbours (score 3.0, runner-up 0); its 1 caller(s), not carried themselves, sit between the same carried neighbours too",
+  "why": "held for 11191711 at 0x561c40 (call); on 11267535 the same function between the same carried neighbours (score 3.0, runner-up 0); its 1 caller(s), not carried themselves, sit between the same carried neighbours too"
+ },
+ "_ZNK6CTFBot24GetEventChangeAttributesEPKc": {
+  "rva": "0x552200",
+  "build": "11267535",
+  "carried": "from 11191711 0x5533d0 by hand: body changed; the same function between the same carried neighbours (score 6.0, runner-up 0.267), and 2 carried caller(s) call it",
+  "why": "held for 11191711 at 0x5533d0 (call); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0.267), and 2 carried caller(s) call it"
+ },
+ "_ZN6CTFBot23OnEventChangeAttributesEPKNS_23EventChangeAttributes_tE": {
+  "rva": "0x55aa00",
+  "build": "11267535",
+  "carried": "from 11191711 0x55bbf0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it",
+  "why": "held for 11191711 at 0x55bbf0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it"
+ },
+ "_ZN15CItemGeneration9SpawnItemEPK13CEconItemViewRK6VectorRK6QAnglePKc": {
+  "rva": "0x3a0570",
+  "build": "11267535",
+  "carried": "from 11191711 0x3a03a0 by hand: body changed; the same function between the same carried neighbours (score 6.0, runner-up 0), and 2 carried caller(s) call it",
+  "why": "held for 11191711 at 0x3a03a0 (consensus, ret 16 as its arguments say); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 2 carried caller(s) call it"
+ },
+ "_ZN6CTFBot14StartIdleSoundEv": {
+  "rva": "0x563130",
+  "build": "11267535",
+  "carried": "from 11191711 0x564320 by hand: body changed; the same function between the same carried neighbours (score 9.702, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x564320 (consensus); on 11267535 the same function between the same carried neighbours (score 9.702, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZNK6CTFBot17IsLineOfFireClearERK6VectorS2_": {
+  "rva": "0x557810",
+  "build": "11267535",
+  "carried": "from 11191711 0x558a00 by hand: body changed; the same function between the same carried neighbours (score 6.0, runner-up 0), and 3 carried caller(s) call it",
+  "why": "held for 11191711 at 0x558a00 (call, ret 8 as its arguments say); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 3 carried caller(s) call it"
+ },
+ "_ZN6CTFBot10ChangeTeamEibbb": {
+  "rva": "0x550750",
+  "build": "11267535",
+  "carried": "from 11191711 0x551920 by hand: body changed; the same function between the same carried neighbours (score 3.0), in the same vtable slot: 9 of 9 neighbouring slots agree",
+  "why": "held for 11191711 at 0x551920 (consensus); on 11267535 the same function between the same carried neighbours (score 3.0), in the same vtable slot: 9 of 9 neighbouring slots agree"
+ },
+ "_ZN6CTFBot5TouchEP11CBaseEntity": {
+  "rva": "0x5635d0",
+  "build": "11267535",
+  "carried": "from 11191711 0x5647c0 by hand: body changed; the same function between the same carried neighbours (score 6.0), in the same vtable slot: 12 of 12 neighbouring slots agree",
+  "why": "held for 11191711 at 0x5647c0 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0), in the same vtable slot: 12 of 12 neighbouring slots agree"
+ },
+ "_ZN6CTFBot12Event_KilledERK15CTakeDamageInfo": {
+  "rva": "0x551560",
+  "build": "11267535",
+  "carried": "from 11191711 0x552730 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 5 of 5 neighbouring slots agree",
+  "why": "held for 11191711 at 0x552730 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 5 of 5 neighbouring slots agree"
+ },
+ "_ZN6CTFBot29UpdateLookingAroundForEnemiesEv": {
+  "rva": "0x563a50",
+  "build": "11267535",
+  "carried": "from 11191711 0x564c40 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x564c40 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN16CTFBotMainAction6UpdateEP6CTFBotf": {
+  "rva": "0x56d7e0",
+  "build": "11267535",
+  "carried": "from 11191711 0x56e9c0 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 11 of 11 neighbouring slots agree",
+  "why": "held for 11191711 at 0x56e9c0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 11 of 11 neighbouring slots agree"
+ },
+ "_ZN16CTFBotMainAction13OnOtherKilledEP6CTFBotP20CBaseCombatCharacterRK15CTakeDamageInfo": {
+  "rva": "0x56bea0",
+  "build": "11267535",
+  "carried": "from 11191711 0x56d080 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 16 of 16 neighbouring slots agree",
+  "why": "held for 11191711 at 0x56d080 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 16 of 16 neighbouring slots agree"
+ },
+ "_ZN16CTFBotMainAction7OnStuckEP6CTFBot": {
+  "rva": "0x56c250",
+  "build": "11267535",
+  "carried": "from 11191711 0x56d430 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 14 of 14 neighbouring slots agree",
+  "why": "held for 11191711 at 0x56d430 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 14 of 14 neighbouring slots agree"
+ },
+ "_ZN21CTFBotMvMEngineerIdle6UpdateEP6CTFBotf": {
+  "rva": "0x57f0e0",
+  "build": "11267535",
+  "carried": "from 11191711 0x5802d0 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 10 of 10 neighbouring slots agree",
+  "why": "held for 11191711 at 0x5802d0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 10 of 10 neighbouring slots agree"
+ },
+ "_ZN15CTFBotMedicHeal6UpdateEP6CTFBotf": {
+  "rva": "0x5823f0",
+  "build": "11267535",
+  "carried": "from 11191711 0x5835e0 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 11 of 11 neighbouring slots agree",
+  "why": "held for 11191711 at 0x5835e0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 11 of 11 neighbouring slots agree"
+ },
+ "_ZN13CTFBotGetAmmo10IsPossibleEP6CTFBot": {
+  "rva": "0x570bb0",
+  "build": "11267535",
+  "carried": "from 11191711 0x571d90 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 5 carried caller(s) call it",
+  "why": "held for 11191711 at 0x571d90 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 5 carried caller(s) call it"
+ },
+ "_ZN15CTFBotGetHealth10IsPossibleEP6CTFBot": {
+  "rva": "0x5717f0",
+  "build": "11267535",
+  "carried": "from 11191711 0x5729d0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x5729d0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN15CTFBotSpyAttack6UpdateEP6CTFBotf": {
+  "rva": "0x58dbc0",
+  "build": "11267535",
+  "carried": "from 11191711 0x58edb0 by hand: body changed; the same function between the same carried neighbours (score 9.985), in the same vtable slot: 11 of 11 neighbouring slots agree",
+  "why": "held for 11191711 at 0x58edb0 (string); on 11267535 the same function between the same carried neighbours (score 9.985), in the same vtable slot: 11 of 11 neighbouring slots agree"
+ },
+ "_ZN25CTFBotStickybombSentrygun6UpdateEP6CTFBotf": {
+  "rva": "0x5785a0",
+  "build": "11267535",
+  "carried": "from 11191711 0x579790 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 12 of 12 neighbouring slots agree",
+  "why": "held for 11191711 at 0x579790 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 12 of 12 neighbouring slots agree"
+ },
+ "_ZN15CTFBotFetchFlag6UpdateEP6CTFBotf": {
+  "rva": "0x589d00",
+  "build": "11267535",
+  "carried": "from 11191711 0x58aef0 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 10 of 10 neighbouring slots agree",
+  "why": "held for 11191711 at 0x58aef0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 10 of 10 neighbouring slots agree"
+ },
+ "_ZN17CTFBotDeliverFlag6UpdateEP6CTFBotf": {
+  "rva": "0x588ab0",
+  "build": "11267535",
+  "carried": "from 11191711 0x589ca0 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 11 of 11 neighbouring slots agree",
+  "why": "held for 11191711 at 0x589ca0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 11 of 11 neighbouring slots agree"
+ },
+ "_ZN25CTFBotAttackFlagDefenders6UpdateEP6CTFBotf": {
+  "rva": "0x587fb0",
+  "build": "11267535",
+  "carried": "from 11191711 0x5891a0 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 10 of 10 neighbouring slots agree",
+  "why": "held for 11191711 at 0x5891a0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 10 of 10 neighbouring slots agree"
+ },
+ "_ZN12CTFBotAttackC1Ev": {
+  "rva": "0x569720",
+  "build": "11267535",
+  "carried": "from 11191711 0x56a910 by hand: body changed; the same function between the same carried neighbours (score 6.0, runner-up 0.807), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x56a910 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0.807), and 1 carried caller(s) call it"
+ },
+ "_ZN17CTFBotDeliverFlag15UpgradeOverTimeEP6CTFBot": {
+  "rva": "0x589150",
+  "build": "11267535",
+  "carried": "from 11191711 0x58a340 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x58a340 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN19CTFBotSpyInfiltrate6UpdateEP6CTFBotf": {
+  "rva": "0x58f6b0",
+  "build": "11267535",
+  "carried": "from 11191711 0x5908a0 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 11 of 11 neighbouring slots agree",
+  "why": "held for 11191711 at 0x5908a0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 11 of 11 neighbouring slots agree"
+ },
+ "_ZN12CTFBotAttack6UpdateEP6CTFBotf": {
+  "rva": "0x56a0a0",
+  "build": "11267535",
+  "carried": "from 11191711 0x56b290 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x56b290 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN13CTFBotSpyLurk6UpdateEP6CTFBotf": {
+  "rva": "0x590420",
+  "build": "11267535",
+  "carried": "from 11191711 0x591610 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 10 of 10 neighbouring slots agree",
+  "why": "held for 11191711 at 0x591610 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 10 of 10 neighbouring slots agree"
+ },
+ "_ZN9CTFPlayer19ApplyPushFromDamageERK15CTakeDamageInfo6Vector": {
+  "rva": "0x4e19c0",
+  "build": "11267535",
+  "carried": "from 11191711 0x4e2a20 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it",
+  "why": "held for 11191711 at 0x4e2a20 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it"
+ },
+ "_ZN9CTFPlayer5TauntE8taunts_ti": {
+  "rva": "0x511ee0",
+  "build": "11267535",
+  "carried": "from 11191711 0x513150 by hand: body changed; the same function between the same carried neighbours (score 9.969, runner-up 0), and 14 carried caller(s) call it",
+  "why": "held for 11191711 at 0x513150 (string); on 11267535 the same function between the same carried neighbours (score 9.969, runner-up 0), and 14 carried caller(s) call it"
+ },
+ "_ZN9CTFPlayer12ForceRespawnEv": {
+  "rva": "0x4f27e0",
+  "build": "11267535",
+  "carried": "from 11191711 0x4f3940 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 10 of 10 neighbouring slots agree; 10 of 10 neighbouring slots agree; 10 of 10 neighbouring slots agree",
+  "why": "held for 11191711 at 0x4f3940 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 10 of 10 neighbouring slots agree; 10 of 10 neighbouring slots agree; 10 of 10 neighbouring slots agree"
+ },
+ "_ZN9CTFPlayer23HandleCommand_JoinClassEPKcb": {
+  "rva": "0x4f4d70",
+  "build": "11267535",
+  "carried": "from 11191711 0x4f5ed0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 2.519), and 9 carried caller(s) call it",
+  "why": "held for 11191711 at 0x4f5ed0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 2.519), and 9 carried caller(s) call it"
+ },
+ "_ZN9CTFPlayer22HandleCommand_JoinTeamEPKc": {
+  "rva": "0x4f5560",
+  "build": "11267535",
+  "carried": "from 11191711 0x4f66c0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 2.315), and 8 carried caller(s) call it",
+  "why": "held for 11191711 at 0x4f66c0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 2.315), and 8 carried caller(s) call it"
+ },
+ "_ZN9CTFPlayer12Event_KilledERK15CTakeDamageInfo": {
+  "rva": "0x4ec9e0",
+  "build": "11267535",
+  "carried": "from 11191711 0x4edb30 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 2.234), and 2 carried caller(s) call it",
+  "why": "held for 11191711 at 0x4edb30 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 2.234), and 2 carried caller(s) call it"
+ },
+ "_ZN9CTFPlayer20ManageRegularWeaponsEP19TFPlayerClassData_t": {
+  "rva": "0x4fdc20",
+  "build": "11267535",
+  "carried": "from 11191711 0x4fee70 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x4fee70 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN9CTFPlayer15RememberUpgradeEiP13CEconItemViewiib": {
+  "rva": "0x509a90",
+  "build": "11267535",
+  "carried": "from 11191711 0x50acf0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x50acf0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN9CTFPlayer25ForgetFirstUpgradeForItemEP13CEconItemView": {
+  "rva": "0x4f2c20",
+  "build": "11267535",
+  "carried": "from 11191711 0x4f3d80 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0.748), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x4f3d80 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.748), and 1 carried caller(s) call it"
+ },
+ "_ZN9CTFPlayer23CreateFeignDeathRagdollERK15CTakeDamageInfobbb": {
+  "rva": "0x4e7070",
+  "build": "11267535",
+  "carried": "from 11191711 0x4e80d0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0.262); its 1 caller(s), not carried themselves, sit between the same carried neighbours too",
+  "why": "held for 11191711 at 0x4e80d0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.262); its 1 caller(s), not carried themselves, sit between the same carried neighbours too"
+ },
+ "_ZN9CTFPlayer13DoTauntAttackEv": {
+  "rva": "0x4e8a80",
+  "build": "11267535",
+  "carried": "from 11191711 0x4e9bd0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 1.185), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x4e9bd0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 1.185), and 1 carried caller(s) call it"
+ },
+ "_ZNK9CTFPlayer30TeamFortress_CalculateMaxSpeedEb": {
+  "rva": "0x52ca30",
+  "build": "11267535",
+  "carried": "from 11191711 0x52dc30 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 5 carried caller(s) call it",
+  "why": "held for 11191711 at 0x52dc30 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 5 carried caller(s) call it"
+ },
+ "_ZN9CTFPlayer12OnTakeDamageERK15CTakeDamageInfo": {
+  "rva": "0x501280",
+  "build": "11267535",
+  "carried": "from 11191711 0x5025d0 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 6 of 6 neighbouring slots agree; 6 of 6 neighbouring slots agree; 6 of 6 neighbouring slots agree",
+  "why": "held for 11191711 at 0x5025d0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 6 of 6 neighbouring slots agree; 6 of 6 neighbouring slots agree; 6 of 6 neighbouring slots agree"
+ },
+ "_ZN9CTFPlayer20GetOverrideStepSoundEPKc": {
+  "rva": "0x522be0",
+  "build": "11267535",
+  "carried": "from 11191711 0x523e50 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 11 of 11 neighbouring slots agree; 11 of 11 neighbouring slots agree; 11 of 11 neighbouring slots agree",
+  "why": "held for 11191711 at 0x523e50 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 11 of 11 neighbouring slots agree; 11 of 11 neighbouring slots agree; 11 of 11 neighbouring slots agree"
+ },
+ "_ZN9CTFPlayer25FindPartnerTauntInitiatorEv": {
+  "rva": "0x4f1c70",
+  "build": "11267535",
+  "carried": "from 11191711 0x4f2dd0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0.572), and 2 carried caller(s) call it",
+  "why": "held for 11191711 at 0x4f2dd0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.572), and 2 carried caller(s) call it"
+ },
+ "_ZN9CTFPlayer19CreateRagdollEntityEbbbbbbbbib": {
+  "rva": "0x4e78e0",
+  "build": "11267535",
+  "carried": "from 11191711 0x4e8940 by hand: body changed; the same function between the same carried neighbours (score 6.0, runner-up 0.435), and 2 carried caller(s) call it",
+  "why": "held for 11191711 at 0x4e8940 (consensus, ret 40 as its arguments say); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0.435), and 2 carried caller(s) call it"
+ },
+ "_ZN9CTFPlayer13ClientCommandERK8CCommand": {
+  "rva": "0x4e5220",
+  "build": "11267535",
+  "carried": "from 11191711 0x4e6280 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 14 of 14 neighbouring slots agree; 14 of 14 neighbouring slots agree; 14 of 14 neighbouring slots agree",
+  "why": "held for 11191711 at 0x4e6280 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 14 of 14 neighbouring slots agree; 14 of 14 neighbouring slots agree; 14 of 14 neighbouring slots agree"
+ },
+ "_ZN9CTFPlayer10StateEnterEi": {
+  "rva": "0x50ee80",
+  "build": "11267535",
+  "carried": "from 11191711 0x5100f0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 2.618), and 4 carried caller(s) call it",
+  "why": "held for 11191711 at 0x5100f0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 2.618), and 4 carried caller(s) call it"
+ },
+ "_ZN9CTFPlayer21OnKilledOther_EffectsEP11CBaseEntityRK15CTakeDamageInfo": {
+  "rva": "0x500c70",
+  "build": "11267535",
+  "carried": "from 11191711 0x501fc0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0); its 1 caller(s), not carried themselves, sit between the same carried neighbours too",
+  "why": "held for 11191711 at 0x501fc0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0); its 1 caller(s), not carried themselves, sit between the same carried neighbours too"
+ },
+ "_ZN9CTFPlayer10TakeHealthEfi": {
+  "rva": "0x511dd0",
+  "build": "11267535",
+  "carried": "from 11191711 0x513040 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 6 of 6 neighbouring slots agree; 6 of 6 neighbouring slots agree; 6 of 6 neighbouring slots agree",
+  "why": "held for 11191711 at 0x513040 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 6 of 6 neighbouring slots agree; 6 of 6 neighbouring slots agree; 6 of 6 neighbouring slots agree"
+ },
+ "_ZN9CTFPlayer16OnNavAreaChangedEP8CNavAreaS1_": {
+  "rva": "0x501080",
+  "build": "11267535",
+  "carried": "from 11191711 0x5023d0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 1.617), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x5023d0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 1.617), and 1 carried caller(s) call it"
+ },
+ "_ZN9CTFPlayer22Weapon_GetWeaponByTypeEi": {
+  "rva": "0x52f710",
+  "build": "11267535",
+  "carried": "from 11191711 0x530900 by hand: body changed; the same function between the same carried neighbours (score 6.0, runner-up 0), and 15 carried caller(s) call it",
+  "why": "held for 11191711 at 0x530900 (call); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 15 carried caller(s) call it"
+ },
+ "_ZNK9CTFPlayer21IsAllowedToPickUpFlagEv": {
+  "rva": "0x524070",
+  "build": "11267535",
+  "carried": "from 11191711 0x5252e0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x5252e0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN15CTFPlayerShared10StunPlayerEffiP9CTFPlayer": {
+  "rva": "0x52c560",
+  "build": "11267535",
+  "carried": "from 11191711 0x52d760 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 1.647), and 41 carried caller(s) call it",
+  "why": "held for 11191711 at 0x52d760 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 1.647), and 41 carried caller(s) call it"
+ },
+ "_ZNK15CTFPlayerShared15GetDisguiseTeamEv": {
+  "rva": "0x521cd0",
+  "build": "11267535",
+  "carried": "from 11191711 0x522f40 by hand: body changed; the same function between the same carried neighbours (score 3.0, runner-up 0), and 28 carried caller(s) call it",
+  "why": "held for 11191711 at 0x522f40 (call); on 11267535 the same function between the same carried neighbours (score 3.0, runner-up 0), and 28 carried caller(s) call it"
+ },
+ "_ZN15CTFPlayerShared16IsControlStunnedEv": {
+  "rva": "0x5242e0",
+  "build": "11267535",
+  "carried": "from 11191711 0x525550 by hand: body changed; the same function between the same carried neighbours (score 6.0, runner-up 0), and 24 carried caller(s) call it",
+  "why": "held for 11191711 at 0x525550 (call); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 24 carried caller(s) call it"
+ },
+ "_ZN15CTFPlayerShared25TestAndExpireChargeEffectE20medigun_charge_types": {
+  "rva": "0x52d470",
+  "build": "11267535",
+  "carried": "from 11191711 0x52e670 by hand: body changed; the same function between the same carried neighbours (score 6.0, runner-up 0), and 3 carried caller(s) call it",
+  "why": "held for 11191711 at 0x52e670 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 3 carried caller(s) call it"
+ },
+ "_ZN9CTFPlayer24UseActionSlotItemPressedEv": {
+  "rva": "0x5143b0",
+  "build": "11267535",
+  "carried": "from 11191711 0x515620 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it",
+  "why": "held for 11191711 at 0x515620 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it"
+ },
+ "_ZNK9CTFPlayer10CanAirDashEv": {
+  "rva": "0x51aa50",
+  "build": "11267535",
+  "carried": "from 11191711 0x51bcc0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 3.288), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x51bcc0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 3.288), and 1 carried caller(s) call it"
+ },
+ "_ZN9CTFPlayer5TouchEP11CBaseEntity": {
+  "rva": "0x513090",
+  "build": "11267535",
+  "carried": "from 11191711 0x514300 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 1.763), and 2 carried caller(s) call it",
+  "why": "held for 11191711 at 0x514300 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 1.763), and 2 carried caller(s) call it"
+ },
+ "_ZN9CTFPlayer36ParseSharedTauntDataFromEconItemViewEPK13CEconItemView": {
+  "rva": "0x5283d0",
+  "build": "11267535",
+  "carried": "from 11191711 0x529640 by hand: body changed; the same function between the same carried neighbours (score 9.574, runner-up 0); its 1 caller(s), not carried themselves, sit between the same carried neighbours too",
+  "why": "held for 11191711 at 0x529640 (string); on 11267535 the same function between the same carried neighbours (score 9.574, runner-up 0); its 1 caller(s), not carried themselves, sit between the same carried neighbours too"
+ },
+ "_ZN9CTFPlayer18OnTakeDamage_AliveERK15CTakeDamageInfo": {
+  "rva": "0x504400",
+  "build": "11267535",
+  "carried": "from 11191711 0x505750 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 10 of 10 neighbouring slots agree",
+  "why": "held for 11191711 at 0x505750 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 10 of 10 neighbouring slots agree"
+ },
+ "_ZN9CTFPlayer10RegenerateEb": {
+  "rva": "0x509590",
+  "build": "11267535",
+  "carried": "from 11191711 0x50a7f0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it",
+  "why": "held for 11191711 at 0x50a7f0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it"
+ },
+ "_ZN9CTFPlayer19TryToPickupBuildingEv": {
+  "rva": "0x52d710",
+  "build": "11267535",
+  "carried": "from 11191711 0x52e910 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0.978), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x52e910 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.978), and 1 carried caller(s) call it"
+ },
+ "_ZN9CTFPlayer22GetMaxHealthForBuffingEv": {
+  "rva": "0x4f3720",
+  "build": "11267535",
+  "carried": "from 11191711 0x4f4880 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 3 carried caller(s) call it",
+  "why": "held for 11191711 at 0x4f4880 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 3 carried caller(s) call it"
+ },
+ "_ZN9CTFPlayer11PrecacheMvMEv": {
+  "rva": "0x508340",
+  "build": "11267535",
+  "carried": "from 11191711 0x5095a0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 4.027), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x5095a0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 4.027), and 1 carried caller(s) call it"
+ },
+ "_ZN9CTFPlayer18ApplyPunchImpulseXEf": {
+  "rva": "0x4e18f0",
+  "build": "11267535",
+  "carried": "from 11191711 0x4e2950 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 6 carried caller(s) call it",
+  "why": "held for 11191711 at 0x4e2950 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 6 carried caller(s) call it"
+ },
+ "_ZN9CTFPlayer15HandleAnimEventEP11animevent_t": {
+  "rva": "0x4f4860",
+  "build": "11267535",
+  "carried": "from 11191711 0x4f59c0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x4f59c0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN15CTFPlayerShared17IsPlayerDominatedEi": {
+  "rva": "0x524690",
+  "build": "11267535",
+  "carried": "from 11191711 0x525900 by hand: body changed; the same function between the same carried neighbours (score 3.0, runner-up 1.5); its 2 caller(s), not carried themselves, sit between the same carried neighbours too",
+  "why": "held for 11191711 at 0x525900 (call); on 11267535 the same function between the same carried neighbours (score 3.0, runner-up 1.5); its 2 caller(s), not carried themselves, sit between the same carried neighbours too"
+ },
+ "_ZN15CTFPlayerShared20IsPlayerDominatingMeEi": {
+  "rva": "0x5246b0",
+  "build": "11267535",
+  "carried": "from 11191711 0x525920 by hand: body changed; the same function between the same carried neighbours (score 3.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x525920 (consensus); on 11267535 the same function between the same carried neighbours (score 3.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN15CTFPlayerShared18SetPlayerDominatedEP9CTFPlayerb": {
+  "rva": "0x52b760",
+  "build": "11267535",
+  "carried": "from 11191711 0x52c960 by hand: body changed; the same function between the same carried neighbours (score 6.0, runner-up 0); its 4 caller(s), not carried themselves, sit between the same carried neighbours too",
+  "why": "held for 11191711 at 0x52c960 (consensus, ret 8 as its arguments say); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0); its 4 caller(s), not carried themselves, sit between the same carried neighbours too"
+ },
+ "_ZN15CTFPlayerShared23ConditionGameRulesThinkEv": {
+  "rva": "0x51ba60",
+  "build": "11267535",
+  "carried": "from 11191711 0x51ccd0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x51ccd0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it"
+ },
+ "_ZN9CTFPlayer11TraceAttackERK15CTakeDamageInfoRK6VectorP10CGameTraceP15CDmgAccumulator": {
+  "rva": "0x513ae0",
+  "build": "11267535",
+  "carried": "from 11191711 0x514d50 by hand: body changed; the same function between the same carried neighbours (score 10.0), in the same vtable slot: 7 of 7 neighbouring slots agree; 7 of 7 neighbouring slots agree; 7 of 7 neighbouring slots agree",
+  "why": "held for 11191711 at 0x514d50 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 7 of 7 neighbouring slots agree; 7 of 7 neighbouring slots agree; 7 of 7 neighbouring slots agree"
+ },
+ "_ZN15CTFPlayerShared17SetScoutHypeMeterEf": {
+  "rva": "0x52ba00",
+  "build": "11267535",
+  "carried": "from 11191711 0x52cc00 by hand: body changed; the same function between the same carried neighbours (score 3.0, runner-up 0), and 6 carried caller(s) call it",
+  "why": "held for 11191711 at 0x52cc00 (consensus); on 11267535 the same function between the same carried neighbours (score 3.0, runner-up 0), and 6 carried caller(s) call it"
+ },
+ "_ZN9CTFPlayer18CheckBlockBackstabEPS_": {
+  "rva": "0x4e4330",
+  "build": "11267535",
+  "carried": "from 11191711 0x4e5390 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 1.561), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x4e5390 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 1.561), and 1 carried caller(s) call it"
+ },
+ "_ZN15CTFPlayerShared14ConditionThinkEv": {
+  "rva": "0x51e280",
+  "build": "11267535",
+  "carried": "from 11191711 0x51f4f0 by hand: body changed; the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it",
+  "why": "held for 11191711 at 0x51f4f0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it"
  }
 }

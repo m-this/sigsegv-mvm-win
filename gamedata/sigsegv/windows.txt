@@ -698,6 +698,15 @@
 					vtidx "49"
 					// vtable index
 				}
+				"NextBotGroundLocomotion::ApplyAccumulatedApproach"
+				{
+					type  "fixed"
+					sym   "_ZN23NextBotGroundLocomotion24ApplyAccumulatedApproachEv"
+					addr  "0x411180"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x411d50 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.211), and 1 carried caller(s) call it
+				}
 				"GroundLocomotionCollisionTraceFilter::ShouldHitEntity"
 				{
 					type  "fixed"
@@ -726,6 +735,15 @@
 					lib   "server"
 					vtidx "1"
 					// vtable
+				}
+				"NextBotManager::ShouldUpdate"
+				{
+					type  "fixed"
+					sym   "_ZN14NextBotManager12ShouldUpdateEP8INextBot"
+					addr  "0x415540"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x416110 (string); on 11267535 the same function between the same carried neighbours (score 7.0, runner-up 0), and 1 carried caller(s) call it
 				}
 				"NextBotManager::OnWeaponFired"
 				{
@@ -772,6 +790,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: empty on Linux (one ret). Path::Compute<CTFBotPathCost> (0x588be0) calls 0x130600 right after ComputePathDetails and before PostProcess (0x588e9e), where Linux calls Optimize: MSVC folded the empty body into the shared ret 4 stub, so a call through it does nothing, as on Linux. Not to be detoured
+				}
+				"Path::PostProcess"
+				{
+					type  "fixed"
+					sym   "_ZN4Path11PostProcessEv"
+					addr  "0x42a5d0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x42b1b0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it
 				}
 				"PathFollower::PathFollower [C1]"
 				{
@@ -987,6 +1014,15 @@
 					vtidx "43"
 					// vtable
 				}
+				"IVision::UpdateKnownEntities"
+				{
+					type  "fixed"
+					sym   "_ZN7IVision19UpdateKnownEntitiesEv"
+					addr  "0x426680"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x427260 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it
+				}
 				"IVision::AddKnownEntity"
 				{
 					type  "fixed"
@@ -1026,6 +1062,15 @@
 					lib   "server"
 					vtidx "70"
 					// vtable
+				}
+				"IVision::IsAbleToSee"
+				{
+					type  "fixed"
+					sym   "_ZZNK7IVision11IsAbleToSeeEP11CBaseEntityNS_20FieldOfViewCheckTypeEP6VectorE6tm_fmt"
+					addr  "0xa90318"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0xa91048 (data); on 11267535 15 reference sites in carried functions read it, all at this address
 				}
 				"IVision::IsAbleToSee2"
 				{
@@ -1506,6 +1551,15 @@
 					vtidx "138"
 					// vtable
 				}
+				"CBaseEntity::CalcAbsolutePosition"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity20CalcAbsolutePositionEv"
+					addr  "0x1ebfb0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x1ebe80 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1989 carried caller(s) call it
+				}
 				"CBaseEntity::EyePosition"
 				{
 					type  "fixed"
@@ -1581,6 +1635,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: `push ecx; call 0x36d8b0; pop ecx; ret`, UTIL_Remove(this), the Linux body (a jmp to UTIL_Remove(CBaseEntity *)); 0x36d8b0 is what CServerTools::RemoveEntity (slot 21 of CServerTools, the SDK's index) calls with its argument, as the SDK's RemoveEntity does. The matcher found it through CBaseParticleEntity::Think and turned it away; thiscall, no argument
+				}
+				"CBaseEntity::EmitSound [member: normal]"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity9EmitSoundEPKcfPf"
+					addr  "0x32e0e0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x32dd20 (call); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 291 carried caller(s) call it
 				}
 				"CBaseEntity::EmitSound [static: normal]"
 				{
@@ -2104,6 +2167,15 @@
 					vtidx "9"
 					// vtable
 				}
+				"CBaseEntity::CBaseEntity"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntityC2Eb"
+					addr  "0x1e89f0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x1e8820 (call); on 11267535 the same function between the same carried neighbours (score 5.977, runner-up 0), and 240 carried caller(s) call it
+				}
 				"CBaseEntity::GetBaseAnimating"
 				{
 					type  "fixed"
@@ -2193,6 +2265,15 @@
 					vtidx "106"
 					// vtable
 				}
+				"CBaseEntity::FireNamedOutput"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity15FireNamedOutputEPKc9variant_tPS_S3_f"
+					addr  "0x1f0b10"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x1f09e0 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0); its 1 caller(s), not carried themselves, sit between the same carried neighbours too
+				}
 				"CBaseEntity::Event_Killed"
 				{
 					type  "fixed"
@@ -2212,6 +2293,42 @@
 					lib   "server"
 					vtidx "163"
 					// vtable
+				}
+				"CBaseEntity::ApplyAbsVelocityImpulse"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity23ApplyAbsVelocityImpulseERK6Vector"
+					addr  "0x1fefb0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x1fee50 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 12 carried caller(s) call it
+				}
+				"CBaseEntity::SetLocalOrigin"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity14SetLocalOriginERK6Vector"
+					addr  "0x1fb9f0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x1fb890 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 50 carried caller(s) call it
+				}
+				"CBaseEntity::SetLocalAngles"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity14SetLocalAnglesERK6QAngle"
+					addr  "0x1fb780"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x1fb620 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 92 carried caller(s) call it
+				}
+				"CBaseEntity::SetLocalVelocity"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity16SetLocalVelocityERK6Vector"
+					addr  "0x1fbb60"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x1fba00 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 11 carried caller(s) call it
 				}
 				"CBaseEntity::GetBaseEntity"
 				{
@@ -2262,6 +2379,16 @@
 					lib   "server"
 					vtidx "62"
 					// vtable
+				}
+				"CBaseEntity::GetTracerType"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity13GetTracerTypeEv"
+					addr  "0x157580"
+					build "11267535"
+					lib   "server"
+					vtidx "60"
+					// verified: held for 11191711 at 0x1573d0 (vtable index); on 11267535 the same function between the same carried neighbours (score 3.0, runner-up 1.5), and 4 carried caller(s) call it
 				}
 				"CBaseEntity::SetTransmit"
 				{
@@ -2338,6 +2465,15 @@
 					lib   "server"
 					// verified: read by hand: the function after LookupAttachment (0x1ceea0) and shaped like it; locks the studio header at +0x498 when missing, returns -1 without one, else Studio_BoneIndexByName (0x21ca90) on it and the name, the SDK body; thiscall, ret 4
 				}
+				"CBaseAnimating::LookupPoseParameter"
+				{
+					type  "fixed"
+					sym   "_ZN14CBaseAnimating19LookupPoseParameterEP10CStudioHdrPKc"
+					addr  "0x1ceaa0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x1ce8e0 (call, ret 8 as its arguments say); on 11267535 all 44 calls from carried functions land here; the body changed, so fuzzy matching lost it
+				}
 				"CBaseAnimating::LookupSequence"
 				{
 					type  "fixed"
@@ -2356,6 +2492,15 @@
 					lib   "server"
 					vtidx "219"
 					// vtable
+				}
+				"CBaseAnimating::ResetSequence"
+				{
+					type  "fixed"
+					sym   "_ZN14CBaseAnimating13ResetSequenceEi"
+					addr  "0x1cedf0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x1cec30 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.769), and 32 carried caller(s) call it
 				}
 				"CBaseAnimating::SetBodygroup"
 				{
@@ -2402,6 +2547,15 @@
 					build "11267535"
 					lib   "server"
 					// vtable
+				}
+				"CBaseAnimating::SetPoseParameter"
+				{
+					type  "fixed"
+					sym   "_ZN14CBaseAnimating16SetPoseParameterEP10CStudioHdrif"
+					addr  "0x1cfb30"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x1cf970 (call, ret 12 as its arguments say); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 62 carried caller(s) call it
 				}
 				"CBaseAnimating::DispatchAnimEvents"
 				{
@@ -2761,6 +2915,15 @@
 					vtidx "412"
 					// vtable
 				}
+				"CBasePlayer::UpdatePlayerSound"
+				{
+					type  "fixed"
+					sym   "_ZN11CBasePlayer17UpdatePlayerSoundEv"
+					addr  "0x2e6820"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x2e64a0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 1.176), and 1 carried caller(s) call it
+				}
 				"CBasePlayer::PlayerRunCommand"
 				{
 					type  "fixed"
@@ -2963,6 +3126,15 @@
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: calls all 8 of the Linux function's matched callees, and no string disagrees
 				}
+				"CZombie::Event_Killed"
+				{
+					type  "fixed"
+					sym   "_ZN7CZombie12Event_KilledERK15CTakeDamageInfo"
+					addr  "0x5be870"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5bfa50 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 5 of 5 neighbouring slots agree
+				}
 				"CZombie::OnTakeDamage_Alive"
 				{
 					type  "fixed"
@@ -3008,6 +3180,24 @@
 					build "11267535"
 					lib   "server"
 					// call
+				}
+				"CBaseCombatWeapon::GetMaxClip1"
+				{
+					type  "fixed"
+					sym   "_ZNK17CBaseCombatWeapon11GetMaxClip1Ev"
+					addr  "0x1e1170"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x1e0f90 (call); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.6), and 1 carried caller(s) call it
+				}
+				"CBaseCombatWeapon::PrimaryAttack"
+				{
+					type  "fixed"
+					sym   "_ZN17CBaseCombatWeapon13PrimaryAttackEv"
+					addr  "0x1e2e20"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x1e2c40 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it
 				}
 				"CBaseCombatWeapon::SecondaryAttack"
 				{
@@ -3155,6 +3345,33 @@
 					vtidx "439"
 					// verified: read by hand: slot 439 of CTFWeaponBase's table, the one CTFRevolver overrides (0x625140); IsPVEModeControlled on the owner, the Linux body; ret 8 for (bool, CBaseEntity *), three direct callers as on Linux
 				}
+				"CTFWeaponBase::GetShootSound"
+				{
+					type  "fixed"
+					sym   "_ZNK13CTFWeaponBase13GetShootSoundEi"
+					addr  "0x635d50"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x637590 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0.164), and 2 carried caller(s) call it
+				}
+				"CTFWeaponBase::ApplyOnHitAttributes"
+				{
+					type  "fixed"
+					sym   "_ZN13CTFWeaponBase20ApplyOnHitAttributesEP11CBaseEntityP9CTFPlayerRK15CTakeDamageInfo"
+					addr  "0x630ee0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x632720 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it
+				}
+				"CTFWeaponBase::IsSilentKiller"
+				{
+					type  "fixed"
+					sym   "_ZN13CTFWeaponBase14IsSilentKillerEv"
+					addr  "0x636a40"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x638280 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 5.4), and 2 carried caller(s) call it
+				}
 				"CTFWeaponBase::CanPerformSecondaryAttack"
 				{
 					type  "fixed"
@@ -3203,6 +3420,15 @@
 					vtidx "134"
 					// verified: read by hand: slot 134 of CTFWeaponBase (Linux 135; GetDamage returns 0 and SetDamage pops 4 at 135 and 136). g_aWeaponDamageTypes[GetWeaponID()] with GetWeaponID at +0x5f8; the Linux body. The same body sits at 134 in the weapons that keep the base one, CTFSniperRifleClassic among them. No argument
 				}
+				"CTFWeaponBase::Deploy"
+				{
+					type  "fixed"
+					sym   "_ZN13CTFWeaponBase6DeployEv"
+					addr  "0x633ba0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x6353e0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 21 carried caller(s) call it
+				}
 				"CTFWeaponBase::Holster"
 				{
 					type  "fixed"
@@ -3241,6 +3467,15 @@
 					lib   "server"
 					vtidx "405"
 					// verified: read by hand: slot 405 of CTFWeaponBase (Linux 412). The owner's EyeAngles copied to the returned QAngle, then AttribHookValue<float> of projectile_spread_angle; the Linux body. Pops 4, the hidden return pointer
+				}
+				"CTFWeaponBase::Equip"
+				{
+					type  "fixed"
+					sym   "_ZN13CTFWeaponBase5EquipEP20CBaseCombatCharacter"
+					addr  "0x634790"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x635fd0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 5 carried caller(s) call it
 				}
 				"CTFWeaponBase::UpdateHands"
 				{
@@ -3330,6 +3565,15 @@
 					vtidx "460"
 					// verified: read by hand from the weapon vtables, seven below Linux from IsEnergyWeapon (453/446) and GetParticleColor (457/450) on: SetBroken(bool) 461 is the empty ret 4 at 454, GetDropSkinOverride 465 is the -1 return at 458, and CTFCompoundBow, which overrides GetInitialAfterburnDuration (466), has its own body at 459 where CTFWeaponBuilder has the base one. 460 is the base's 0.0f return, folded with IBody::GetHeadSteadyDuration, so the slot names it and the detour on it is refused as folded
 				}
+				"CTFWeaponBase::IsPassiveWeapon"
+				{
+					type  "fixed"
+					sym   "_ZNK13CTFWeaponBase15IsPassiveWeaponEv"
+					addr  "0x636a10"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x638250 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 6.0), and 1 carried caller(s) call it
+				}
 				"CTFWeaponBase::AutoFiresFullClip"
 				{
 					type  "fixed"
@@ -3388,6 +3632,15 @@
 					vtidx "470"
 					// verified: read by hand: slot 470 of the gun classes (Linux 477), anchored at 472 to 477 (Linux 479 to 484). Same body: the owner and IsPlayer, the virtual at +0x75c, then a tail call to the player's virtual at +0x4f8 (Linux +0x778 and +0x4fc)
 				}
+				"CTFWeaponBaseGun::FireProjectile"
+				{
+					type  "fixed"
+					sym   "_ZN16CTFWeaponBaseGun14FireProjectileEP9CTFPlayer"
+					addr  "0x63bb10"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x63d350 (string); on 11267535 the same function between the same carried neighbours (score 9.897, runner-up 0), and 3 carried caller(s) call it
+				}
 				"CTFWeaponBaseGun::RemoveProjectileAmmo"
 				{
 					type  "fixed"
@@ -3407,6 +3660,33 @@
 					lib   "server"
 					vtidx "489"
 					// verified: read by hand from the vtables: CTFWeaponBaseGun's own run of slots sits 7 below Linux (GetWeaponProjectileType 479/472, whose body indexes the weapon info at +0x6d8 by the mode at +0x6cc and returns the entry's projectile type; FireFlameRocket's two overloads 486-487/479-480 both return null); Linux 496, the shared return true
+				}
+				"CTFWeaponBaseGun::FirePipeBomb"
+				{
+					type  "fixed"
+					sym   "_ZN16CTFWeaponBaseGun12FirePipeBombEP9CTFPlayeri"
+					addr  "0x63b580"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x63cdc0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 9 of 9 neighbouring slots agree; 10 of 10 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 11 of 11 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 9 of 9 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 10 of 10 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree
+				}
+				"CTFWeaponBaseGun::GetProjectileDamage"
+				{
+					type  "fixed"
+					sym   "_ZN16CTFWeaponBaseGun19GetProjectileDamageEv"
+					addr  "0x63c230"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x63db40 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.563), and 3 carried caller(s) call it
+				}
+				"CTFWeaponBaseGun::GetCustomProjectileModel"
+				{
+					type  "fixed"
+					sym   "_ZN16CTFWeaponBaseGun24GetCustomProjectileModelEP17CAttribute_String"
+					addr  "0x63c130"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x63d970 (string); on 11267535 the same function between the same carried neighbours (score 5.937), in the same vtable slot: 9 of 9 neighbouring slots agree; 10 of 10 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 11 of 11 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 9 of 9 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 9 of 9 neighbouring slots agree; 9 of 9 neighbouring slots agree; 10 of 10 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree
 				}
 				"CTFWeaponBaseGun::GetProjectileSpeed"
 				{
@@ -3458,6 +3738,15 @@
 					vtidx "481"
 					// verified: the virtual that calls CTFProjectile_EnergyRing::Create (0x5fc2d0) and another Create after the same shape of virtual calls as the Linux body (0x7cc to 0x7b0, 0x724 to 0x708, 7 slots lower); slot 481 is Linux 488 less 7 (FirePipeBomb 484 to 477 and GetWeaponSpread 489 to 482 matched)
 				}
+				"CTFWeaponBaseGun::PrimaryAttack"
+				{
+					type  "fixed"
+					sym   "_ZN16CTFWeaponBaseGun13PrimaryAttackEv"
+					addr  "0x63c750"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x63e060 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 10 carried caller(s) call it
+				}
 				"CTFWeaponInvis::CleanupInvisibilityWatch"
 				{
 					type  "fixed"
@@ -3486,6 +3775,15 @@
 					lib   "server"
 					// verified: the builder's object handle (0x824 to 0x818), the byte flag at +0xa48 (here 0xa30), then the object's virtual taking the owner (0x618 to 0x614) or CBaseEntity::Remove, as the Linux body; it sits beside StartPlacement and is the callee StartPlacement calls first
 				}
+				"CWeaponMedigun::SecondaryAttack"
+				{
+					type  "fixed"
+					sym   "_ZN14CWeaponMedigun15SecondaryAttackEv"
+					addr  "0x61df10"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x61f760 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 8 of 8 neighbouring slots agree
+				}
 				"CWeaponMedigun::CycleResistType"
 				{
 					type  "fixed"
@@ -3494,6 +3792,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: the whole CycleResistType, opening with the medigun type attribute test of Linux's wrapper; then GetChargeType (0x61c280), GetConditionProvider and RemoveCond twice, RecalculateChargeEffects twice (0x529550) and AddCond twice, the clone's body. Callers are CWeaponMedigun::ItemPostFrame (0x61c9e6) and CTFBotMedicHeal::Update (0x582600), Linux's two. Thiscall, plain ret
+				}
+				"CWeaponMedigun::FindAndHealTargets"
+				{
+					type  "fixed"
+					sym   "_ZN14CWeaponMedigun18FindAndHealTargetsEv"
+					addr  "0x61bc30"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x61d480 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it
 				}
 				"CWeaponMedigun::Deploy"
 				{
@@ -3608,6 +3915,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: GetOwnerPlayer, GetCarryingRuneType, 'mult_projectile_speed' and 'rocket_specialist', SetAbsVelocity and SetAbsAngles, the Linux body; cdecl, plain ret; called by the sentry's FireRocket (0x4cbf40) and CTFProjectile_Rocket::Create (0x536410), two of Linux's three callers
+				}
+				"CTFProjectile_Flare::Explode_Air"
+				{
+					type  "fixed"
+					sym   "_ZN19CTFProjectile_Flare11Explode_AirEP10CGameTraceib"
+					addr  "0x5fe150"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5ff7d0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it
 				}
 				"CTFProjectile_Flare::GetDamageType"
 				{
@@ -3734,6 +4050,15 @@
 					vtidx "262"
 					// verified: read by hand from the vtables: Linux slot 268 less 6, as CanHolster (265, 259) is; CTFCompoundBow inherits it there, CTFWeaponBuilder has its own Deploy in the same slot, and CanDeploy and Holster beside it differ between the two as on Linux
 				}
+				"CTFPipebombLauncher::FireProjectile"
+				{
+					type  "fixed"
+					sym   "_ZN19CTFPipebombLauncher14FireProjectileEP9CTFPlayer"
+					addr  "0x623510"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x624d50 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 6 of 6 neighbouring slots agree; 6 of 6 neighbouring slots agree
+				}
 				"CItem::ItemTouch"
 				{
 					type  "fixed"
@@ -3836,6 +4161,15 @@
 					vtidx "199"
 					// vtable index
 				}
+				"CBaseFlex::AddSceneEvent"
+				{
+					type  "fixed"
+					sym   "_ZN9CBaseFlex13AddSceneEventEP12CChoreoSceneP12CChoreoEventP11CBaseEntity"
+					addr  "0x2050d0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x204f70 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 6 carried caller(s) call it
+				}
 				"CBaseFlex::ProcessSceneEvents"
 				{
 					type  "fixed"
@@ -3920,6 +4254,15 @@
 					lib   "server"
 					// verified: takes one argument (ret 4) and calls FindNearestBuildPoint (0x4c0a90) twice, with the team manager, team and number-of-objects walk, AddEffects and DispatchUpdateTransmitState in the Linux order; ranked first of all server.dll functions on matched callees (3, next 2)
 				}
+				"CBaseObject::GetMaxHealthForCurrentLevel"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseObject27GetMaxHealthForCurrentLevelEv"
+					addr  "0x4c1c60"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4c2ac0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 4 carried caller(s) call it
+				}
 				"CBaseObject::HasSapper"
 				{
 					type  "fixed"
@@ -3939,6 +4282,15 @@
 					lib   "server"
 					vtidx "381"
 					// verified: read by hand: sets m_bWasMapPlaced (+0x9f4, Linux +0xa0c) with NetworkStateChanged, returns if the builder handle (+0x944, Linux +0x95c) resolves, else calls the virtual at +0x540 (Linux +0x544) with 0, SpawnControlPanels unless the flag 4 at +0x90c, SetHealth (0x4c4280) of the max health, the virtual at +0x560 and sets +0x39c from the team being other than 2, the Linux body. Slot 381 in the dispenser's, the sentry's and the teleporter's tables, two below Linux there (PlayStartupAnimation 378/380, the empty SetupAttachedVersion 379/381, ShouldPlayersAvoid 380/382 comparing the collision group with 0x15); the teleporter's 381 calls this first as its Linux override calls the base. thiscall, no arguments
+				}
+				"CBaseObject::OnTakeDamage"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseObject12OnTakeDamageERK15CTakeDamageInfo"
+					addr  "0x4c30d0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4c3f30 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it
 				}
 				"CBaseObject::SetHealth"
 				{
@@ -3966,6 +4318,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: Linux's body test for test: no game rules or a type (+0x598) of 3 (sapper) is false, IsQuickBuildTime (0x4920c0), MvM (+0xc72) with a team other than 3, the flag at +0xa31 (Linux +0xa49) or a game type of 10 at +0x3cc, else the byte at +0xac4 (Linux +0xadc). Thiscall, plain ret
+				}
+				"CBaseObject::StartBuilding"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseObject13StartBuildingEP11CBaseEntity"
+					addr  "0x4c51b0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4c6010 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 1.917), and 3 carried caller(s) call it
 				}
 				"CBaseObject::StartPlacement"
 				{
@@ -4206,6 +4567,15 @@
 					vtidx "104"
 					// vtable
 				}
+				"CCaptureFlag::Drop"
+				{
+					type  "fixed"
+					sym   "_ZN12CCaptureFlag4DropEP9CTFPlayerbbb"
+					addr  "0x447420"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x447fc0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 8 of 8 neighbouring slots agree
+				}
 				"CCaptureFlag::FlagTouch"
 				{
 					type  "fixed"
@@ -4233,6 +4603,15 @@
 					lib   "server"
 					// verified: read by hand: every named call it makes is one the Linux body makes (TeamFortress_SetSpeed, LookupAttachment('flag'), SetLocalOrigin, SetLocalAngles, HasTheFlag, InCond), and it plays 'CaptureFlag.EnemyStolen', 'AttackDefend.EnemyStolen' and 'MVM.AttackDefend.EnemyStolen'; ret 8 for (player, bool)
 				}
+				"CCaptureZone::Capture"
+				{
+					type  "fixed"
+					sym   "_ZN12CCaptureZone7CaptureEP11CBaseEntity"
+					addr  "0x452530"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4530d0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.603); its 2 caller(s), not carried themselves, sit between the same carried neighbours too
+				}
 				"CCaptureZone::ShimTouch"
 				{
 					type  "fixed"
@@ -4252,6 +4631,33 @@
 					lib   "server"
 					vtidx "238"
 					// verified: mov al,1; ret, slot 238 (+0x3b8) of CCurrencyPack's table, 3 below Linux's 241 as the matched ComeToRest (win 231, Linux 234) is; the body is shared with other slots of the table
+				}
+				"CCurrencyPack::MyTouch"
+				{
+					type  "fixed"
+					sym   "_ZN13CCurrencyPack7MyTouchEP11CBasePlayer"
+					addr  "0x44b3e0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x44bf80 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 7 of 7 neighbouring slots agree; 7 of 7 neighbouring slots agree; 8 of 8 neighbouring slots agree; 7 of 7 neighbouring slots agree
+				}
+				"CCurrencyPack::Spawn"
+				{
+					type  "fixed"
+					sym   "_ZN13CCurrencyPack5SpawnEv"
+					addr  "0x44b160"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x44bd00 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 11 of 11 neighbouring slots agree; 11 of 11 neighbouring slots agree; 11 of 11 neighbouring slots agree; 11 of 11 neighbouring slots agree
+				}
+				"CDynamicProp::Spawn"
+				{
+					type  "fixed"
+					sym   "_ZN12CDynamicProp5SpawnEv"
+					addr  "0x308dc0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x308a40 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 1.402), and 3 carried caller(s) call it
 				}
 				"CEconEntity::GiveTo"
 				{
@@ -4300,6 +4706,15 @@
 					build "11267535"
 					lib   "server"
 					// call
+				}
+				"CEconItemSchema::BInitAttributes"
+				{
+					type  "fixed"
+					sym   "_ZN15CEconItemSchema15BInitAttributesEP9KeyValuesP10CUtlVectorI10CUtlString10CUtlMemoryIS3_iEE"
+					addr  "0x3ac3c0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x3acf80 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.872), and 1 carried caller(s) call it
 				}
 				"CEconItemSchema::GetAttributeDefinition"
 				{
@@ -4355,6 +4770,15 @@
 					lib   "server"
 					// verified: turned away for field disagreement, pop as expected (ret 4); returns null on a null name, then walks the definition map at +0xe8 comparing each definition's name at +0xdc with the argument, the body Linux jumps to; the whole function, where Linux detours the .part clone GCC split after the null name check, which this body makes first (ECAttr_Extensions' detour maps a custom weapon name and is null safe)
 				}
+				"CEconItemSchema::ItemTesting_CreateTestDefinition"
+				{
+					type  "fixed"
+					sym   "_ZN15CEconItemSchema32ItemTesting_CreateTestDefinitionEiiP9KeyValues"
+					addr  "0x3bb4b0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x3bc230 (call); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0.169), and 1 carried caller(s) call it
+				}
 				"CEconItemSchema::Reset"
 				{
 					type  "fixed"
@@ -4402,6 +4826,15 @@
 					lib   "server"
 					vtidx "10"
 					// vtable
+				}
+				"CEconItemView::Init"
+				{
+					type  "fixed"
+					sym   "_ZN13CEconItemView4InitEiiij"
+					addr  "0x3c4470"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x3c5080 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 4 carried caller(s) call it
 				}
 				"CEconItemView::IterateAttributes"
 				{
@@ -4679,6 +5112,15 @@
 					vtidx "33"
 					// verified: read by hand: slot 33 of CGameText, where CBaseEntity's (const char *, const char *) KeyValue sits once MSVC reverses the three overloads; it compares the key with two strings and otherwise calls CBaseEntity::KeyValue (0x2017c0), the Linux body's shape; ret 8. The old slot 31 (0x201d30) is CBaseEntity::KeyValue(const char *, const Vector &)
 				}
+				"CGameUI::Deactivate"
+				{
+					type  "fixed"
+					sym   "_ZN7CGameUI10DeactivateEP11CBaseEntity"
+					addr  "0x26de60"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x26dd50 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it
+				}
 				"CHalloweenBaseBoss::SpawnBossAtPos"
 				{
 					type  "fixed"
@@ -4755,6 +5197,15 @@
 					vtidx "405"
 					// verified: read by hand: slot 405 of CObjectDispenser's table (Linux 419), the slot CObjectSentrygun has GetTurretAngles in (0x4cc430, lea eax,[ecx+0xae8]); mov eax,[ecx+0xae0] (the metal, Linux +0xaf8); ret. CTFBotMvMEngineerIdle::Update calls that slot on the sentry hint's owner (0x57f5e1), which EngieBot_Dispensers makes a dispenser
 				}
+				"CObjectDispenser::GetDispenserRadius"
+				{
+					type  "fixed"
+					sym   "_ZN16CObjectDispenser18GetDispenserRadiusEv"
+					addr  "0x4c7840"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4c86a0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 8 of 8 neighbouring slots agree; 9 of 9 neighbouring slots agree
+				}
 				"CObjectDispenser::GetHealRate"
 				{
 					type  "fixed"
@@ -4801,6 +5252,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: the player check, the owner team virtual (0x5a4 to 0x59c) compared with the target's team (0x324 to 0x320), IsInvulnerable, then InCond 0xe, 0x32 and 0x2b with the result inverted, as the Linux body
+				}
+				"CObjectSentrygun::Attack"
+				{
+					type  "fixed"
+					sym   "_ZN16CObjectSentrygun6AttackEv"
+					addr  "0x4ca510"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4cb360 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it
 				}
 				"CObjectSentrygun::EmitSentrySound"
 				{
@@ -4875,6 +5335,15 @@
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: shares the string 'aim_pitch', 'aim_yaw' with the Linux function, and 9 of its 9 matched callees
 				}
+				"CObjectSentrygun::Spawn"
+				{
+					type  "fixed"
+					sym   "_ZN16CObjectSentrygun5SpawnEv"
+					addr  "0x4ce860"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4cf6b0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 12 of 12 neighbouring slots agree
+				}
 				"CObjectSentrygun::StartUpgrading"
 				{
 					type  "fixed"
@@ -4910,6 +5379,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: the telefrag (TakeDamage), SetFOV and the exit position, the Linux body's calls; ret 4; two direct callers, TeleporterThink (0x4d1e00) among them, as on Linux
+				}
+				"CObjectTeleporter::SetModel"
+				{
+					type  "fixed"
+					sym   "_ZN17CObjectTeleporter8SetModelEPKc"
+					addr  "0x4d1180"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4d1fd0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 14 of 14 neighbouring slots agree
 				}
 				"CObjectTeleporter::TeleporterSend"
 				{
@@ -4976,6 +5454,15 @@
 					vtidx "233"
 					// verified: read by hand: slot 233 of CPropVehicleDriveable's table (Linux 235), between VehicleAngleVectors and IsOverturned. UpdateDriverControls (0x2615b0) on m_VehiclePhysics at +0x4b0 with the command and frame time, the networked speed/RPM/throttle fields, the two pressed-attack COutputEvent::FireOutput calls and the attack axis variant_t::Set + FireOutput pairs, as the source orders them. thiscall, ret 0x10
 				}
+				"CPropVehicleDriveable::Spawn"
+				{
+					type  "fixed"
+					sym   "_ZN21CPropVehicleDriveable5SpawnEv"
+					addr  "0x373380"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x372f30 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 13 of 13 neighbouring slots agree
+				}
 				"CPropVehicleDriveable::TraceAttack"
 				{
 					type  "fixed"
@@ -5004,6 +5491,24 @@
 					lib   "server"
 					vtidx "33"
 					// verified: read by hand: slot 33 of CSmokeStack, where CBaseEntity's (const char *, const char *) KeyValue sits once MSVC reverses the three overloads (as in CGameText). Pops 8; stricmp of the key with "Wind" parses "%f %f %f" into the vector at +0x3fc and returns true, a second stricmp parses an int into +0x3f4, as the Linux body's Wind/WindAngle/WindSpeed branches do. The string match 0x437b50 pops 4, has no direct caller and only releases a handle at +0x3a0
+				}
+				"CSoundEnt::Initialize"
+				{
+					type  "fixed"
+					sym   "_ZN9CSoundEnt10InitializeEv"
+					addr  "0x3300f0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x32fd30 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 13 of 13 neighbouring slots agree
+				}
+				"CSpellPickup::ItemCanBeTouchedByPlayer"
+				{
+					type  "fixed"
+					sym   "_ZN12CSpellPickup24ItemCanBeTouchedByPlayerEP11CBasePlayer"
+					addr  "0x5b6070"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5b7260 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 7 of 7 neighbouring slots agree
 				}
 				"CTargetChangeGravity::InputChangeGrav"
 				{
@@ -5139,6 +5644,15 @@
 					lib   "server"
 					// verified: read by hand: stores the argument's handle (GetRefEHandle, vtable +8, Linux +0xc) or -1 into m_Scorer at +0x500, the handle GetScorer (0x534300, from the IScorer base at +0x4e4, reading +0x1c) reads; Linux stores at +0x518 from its base at +0x4fc, the same +0x1c. The Linux body does nothing else; thiscall, ret 4 for its one argument. Sits among CTFBaseProjectile's functions after GetScorer (0x534300)
 				}
+				"CTFBaseRocket::CheckForStunOnImpact"
+				{
+					type  "fixed"
+					sym   "_ZN13CTFBaseRocket20CheckForStunOnImpactEP9CTFPlayer"
+					addr  "0x63f390"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x640ca0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it
+				}
 				"CTFBaseRocket::Explode"
 				{
 					type  "fixed"
@@ -5187,6 +5701,15 @@
 					vtidx "382"
 					// verified: read by hand: 'mov eax, 0x52; ret', the only such body in server.dll, at slot 382 of CTFBat_Giftwrap. Linux's returns 0x52 too. Trivial, so SigMod hooks the slot
 				}
+				"CTFBat_Wood::SecondaryAttack"
+				{
+					type  "fixed"
+					sym   "_ZN11CTFBat_Wood15SecondaryAttackEv"
+					addr  "0x5ff6c0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x600d40 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 8 of 8 neighbouring slots agree; 8 of 8 neighbouring slots agree
+				}
 				"CTFBonesaw::GetWeaponID"
 				{
 					type  "fixed"
@@ -5196,6 +5719,15 @@
 					lib   "server"
 					vtidx "382"
 					// verified: read by hand: `mov eax, 11; ret`, the Linux body, and the one slot of CTFBonesaw's vtable holding a function that returns 11
+				}
+				"CTFBot::GetNextSpawnClassname"
+				{
+					type  "fixed"
+					sym   "_ZNK6CTFBot21GetNextSpawnClassnameEv"
+					addr  "0x553060"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x554230 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 2.918), and 2 carried caller(s) call it
 				}
 				"CTFBotHintEngineerNest::DetonateStaleNest"
 				{
@@ -5223,6 +5755,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: walks the sentry hint handles (count +0x39c, array +0x390; Linux +0x3b4 and +0x3a8) and then the teleporter ones (+0x3b0, +0x3a4), calling OwnerObjectHasNoOwner (0x5943f0) on each resolved hint and returning true on the first that has none, the Linux body with every field 0x18 lower. thiscall, plain ret
+				}
+				"CTFBotMvMEngineerHintFinder::FindHint"
+				{
+					type  "fixed"
+					sym   "_ZN27CTFBotMvMEngineerHintFinder8FindHintEbbP7CHandleI22CTFBotHintEngineerNestE"
+					addr  "0x57e4a0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x57f690 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it
 				}
 				"CTFChargedSMG::SecondaryAttack"
 				{
@@ -5338,6 +5879,15 @@
 					vtidx "288"
 					// verified: read by hand: slot 288 of CTFFists (Linux 294), anchored at 284 and 285 (Linux 290 and 291). Same body: CanAttack through +0x6b0, GetTFPlayerOwner, IsControlStunned, the right-hand flag at +0x6cc and a tail jump to CTFFists::Punch (0x607070)
 				}
+				"CTFFlameEntity::OnCollide"
+				{
+					type  "fixed"
+					sym   "_ZN14CTFFlameEntity9OnCollideEP11CBaseEntity"
+					addr  "0x60b2b0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x60ca40 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it
+				}
 				"CTFFlameEntity::Spawn"
 				{
 					type  "fixed"
@@ -5375,6 +5925,24 @@
 					lib   "server"
 					// vtable
 				}
+				"CTFFlameThrower::FireAirBlast"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFFlameThrower12FireAirBlastEi"
+					addr  "0x609e10"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x60b4b0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it
+				}
+				"CTFFlameThrower::GetDeflectionRadius"
+				{
+					type  "fixed"
+					sym   "_ZNK15CTFFlameThrower19GetDeflectionRadiusEv"
+					addr  "0x60a980"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x60c020 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 14 of 14 neighbouring slots agree; 14 of 14 neighbouring slots agree
+				}
 				"CTFFlameThrower::GetFlameOriginPos"
 				{
 					type  "fixed"
@@ -5392,6 +5960,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: shares the string 'FCVAR_NEVER_AS_STRING' with the Linux function, and 2 of its 2 matched callees
+				}
+				"CTFFlameThrower::PrimaryAttack"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFFlameThrower13PrimaryAttackEv"
+					addr  "0x60bc40"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x60d3d0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 8 of 8 neighbouring slots agree
 				}
 				"CTFFlareGun_Revenge::Deploy"
 				{
@@ -5747,6 +6324,15 @@
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: calls all 10 of the Linux function's matched callees, and no string disagrees
 				}
+				"CTFPlayerShared::Disguise"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFPlayerShared8DisguiseEiiP9CTFPlayerb"
+					addr  "0x51fa40"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x520cb0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 6 carried caller(s) call it
+				}
 				"CTFPlayerShared::OnAddBalloonHead"
 				{
 					type  "fixed"
@@ -5764,6 +6350,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: string lead (scored), agreed by strings: 2 shared string(s), 2/3 matched callees, windows/linux size 1088/1793
+				}
+				"CTFPlayerShared::PulseRageBuff"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFPlayerShared13PulseRageBuffENS_13ERageBuffSlotE"
+					addr  "0x5290e0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x52a2e0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it
 				}
 				"CTFPointWeaponMimic::~CTFPointWeaponMimic [D0]"
 				{
@@ -5821,6 +6416,24 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: slot 232 of CCurrencyPack's table (Linux 235); a disabled flag at +0x504, the player's alive (+0x14c) and team-allowed (+0x10c) virtuals, the pack's team against the player's, then in MvM a player on team 3 is refused, Linux's body (which ends in setne). Thiscall, ret 4
+				}
+				"CTFPowerupBottle::ReapplyProvision"
+				{
+					type  "fixed"
+					sym   "_ZN16CTFPowerupBottle16ReapplyProvisionEv"
+					addr  "0x4b2000"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4b2ec0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 3 of 3 neighbouring slots agree
+				}
+				"CTFProjectile_Arrow::ArrowTouch"
+				{
+					type  "fixed"
+					sym   "_ZN19CTFProjectile_Arrow10ArrowTouchEP11CBaseEntity"
+					addr  "0x5f9210"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5fa8a0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 10 of 10 neighbouring slots agree; 10 of 10 neighbouring slots agree; 5 of 5 neighbouring slots agree
 				}
 				"CTFProjectile_Arrow::BreakArrow"
 				{
@@ -5992,6 +6605,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: the only function with the energy_weapon_penetration literal whose AttribHookValue<int> result is returned as test; setne al, with the launcher handle read from the field the Linux body reads (0x228 to 0x210); the Linux GetDamage and GetWeaponID that mention it return an int
+				}
+				"CTFProjectile_Flare::Explode"
+				{
+					type  "fixed"
+					sym   "_ZN19CTFProjectile_Flare7ExplodeEP10CGameTraceP11CBaseEntity"
+					addr  "0x5fd900"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5fef80 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 10 of 10 neighbouring slots agree
 				}
 				"CTFProjectile_Flare::IsDeflectable"
 				{
@@ -6245,6 +6867,24 @@
 					vtidx "134"
 					// verified: read by hand: slot 134 of CTFSMG. Adds DMG_USE_HITLOCATIONS to the weapon's damage type when 0x629750 is true, which is set_weapon_mode == 1 with the attribute hook inlined; the Linux body. No argument
 				}
+				"CTFSniperRifle::ApplyChargeSpeedModifications"
+				{
+					type  "fixed"
+					sym   "_ZN14CTFSniperRifle29ApplyChargeSpeedModificationsERf"
+					addr  "0x62ae80"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x62c6b0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it
+				}
+				"CTFSniperRifle::CanFireCriticalShot"
+				{
+					type  "fixed"
+					sym   "_ZN14CTFSniperRifle19CanFireCriticalShotEbP11CBaseEntity"
+					addr  "0x62a540"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x62bd70 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 11 of 11 neighbouring slots agree; 11 of 11 neighbouring slots agree; 11 of 11 neighbouring slots agree
+				}
 				"CTFSniperRifle::CreateSniperDot"
 				{
 					type  "fixed"
@@ -6321,6 +6961,15 @@
 					vtidx "288"
 					// verified: GetTFPlayerOwner (0x635a40), InCond 0x24, the hype meter field (0x1d74 to 0x1d68) against a constant, AddCond 0x24 with -1.0, as the Linux body; slot 288 is Linux 294 less 6
 				}
+				"CTFSpellBook::RollNewSpell"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFSpellBook12RollNewSpellEib"
+					addr  "0x5bc8e0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5bdac0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 3 carried caller(s) call it
+				}
 				"CTFSpellBook::SetSelectedSpell"
 				{
 					type  "fixed"
@@ -6368,6 +7017,33 @@
 					lib   "server"
 					vtidx "487"
 					// verified: read by hand: CTFSword's slot +0x79c (Linux +0x7bc, the same seven-slot shift as CanDecapitate +0x790 against +0x7ac): returns 1.0 while the holster flag (+0x828, Linux +0x831, the byte CTFDecapitationMeleeWeaponBase::Holster sets) is set, 0 without an owner that IsPlayer (vtable +0x14c, Linux +0x150), 1.0 when CanDecapitate (vtable +0x790) is false, else min(m_iDecapitations (+0x1f10), 4) times a constant plus a constant, the Linux body (0.08 and 1.0); thiscall, plain ret
+				}
+				"CTFTankBoss::Event_Killed"
+				{
+					type  "fixed"
+					sym   "_ZN11CTFTankBoss12Event_KilledERK15CTakeDamageInfo"
+					addr  "0x5f1f50"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5f30f0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 5 of 5 neighbouring slots agree
+				}
+				"CTFTankBoss::Explode"
+				{
+					type  "fixed"
+					sym   "_ZN11CTFTankBoss7ExplodeEv"
+					addr  "0x5f2090"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5f3230 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.039), and 1 carried caller(s) call it
+				}
+				"CTFTankBoss::Spawn"
+				{
+					type  "fixed"
+					sym   "_ZN11CTFTankBoss5SpawnEv"
+					addr  "0x5f2b70"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5f3d10 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 13 of 13 neighbouring slots agree
 				}
 				"CTFTankBoss::TankBossThink"
 				{
@@ -6448,6 +7124,15 @@
 					vtidx "245"
 					// verified: read by hand: MSVC reverses the two InitGrenade overloads. Slot 245 pops 16 and calls this slot 244 (+0x3d0) with the weapon info's +0x6f8 and +0x780, the Linux (..., const CTFWeaponInfo &) body; slot 244 (0x63a170) pops 20 and is the (..., int, float) overload
 				}
+				"CTFWeaponBaseGrenadeProj::SetDetonateTimerLength"
+				{
+					type  "fixed"
+					sym   "_ZN24CTFWeaponBaseGrenadeProj22SetDetonateTimerLengthEf"
+					addr  "0x63a8a0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x63c0e0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 9 carried caller(s) call it
+				}
 				"CTFWeaponBaseMelee::DoSwingTrace"
 				{
 					type  "fixed"
@@ -6457,6 +7142,15 @@
 					lib   "server"
 					vtidx "472"
 					// verified: read by hand: slot 472 of the melee weapons (Linux 479), anchored at 470 and 482. Calls DoSwingTraceInternal (0x63d290) and returns, Linux's body. Thiscall, ret 4
+				}
+				"CTFWeaponBaseMelee::DoSwingTraceInternal"
+				{
+					type  "fixed"
+					sym   "_ZN18CTFWeaponBaseMelee20DoSwingTraceInternalER10CGameTracebP10CUtlVectorIS0_10CUtlMemoryIS0_iEE"
+					addr  "0x63d970"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x63f280 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it
 				}
 				"CTFWeaponBaseMelee::GetSwingRange"
 				{
@@ -6476,6 +7170,15 @@
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: shares the string 'self_mark_for_death' with the Linux function, and 4 of its 4 matched callees
 				}
+				"CTFWeaponBaseMelee::OnSwingHit"
+				{
+					type  "fixed"
+					sym   "_ZN18CTFWeaponBaseMelee10OnSwingHitER10CGameTrace"
+					addr  "0x63e4f0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x63fe00 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it
+				}
 				"CTFWeaponBaseMelee::SecondaryAttack"
 				{
 					type  "fixed"
@@ -6485,6 +7188,15 @@
 					lib   "server"
 					vtidx "288"
 					// verified: read by hand: slot 288 of every melee weapon class (Linux 294), anchored at 284 and 285. Same body: CanAttack through +0x6b0 (Linux +0x6cc), GetTFPlayerOwner, DoClassSpecialSkill (0x51f680)
+				}
+				"CTFWeaponBaseMelee::Smack"
+				{
+					type  "fixed"
+					sym   "_ZN18CTFWeaponBaseMelee5SmackEv"
+					addr  "0x63ebc0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x6404d0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 5 carried caller(s) call it
 				}
 				"CTFWeaponBaseMelee::Swing"
 				{
@@ -6505,6 +7217,15 @@
 					lib   "server"
 					vtidx "473"
 					// verified: read by hand: slot 473 of CTFWrench (Linux 480). GetTFPlayerOwner, AngleVectors (0x6d9680), the virtual at +0x450 (Linux +0x454), then the swing trace, Linux's body; CTFRobotArm::Smack calls it. Thiscall, plain ret
+				}
+				"CTFWeaponBuilder::SetSubType"
+				{
+					type  "fixed"
+					sym   "_ZN16CTFWeaponBuilder10SetSubTypeEi"
+					addr  "0x604050"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x6056f0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 11 of 11 neighbouring slots agree; 11 of 11 neighbouring slots agree
 				}
 				"CTFWeaponBuilder::StartBuilding"
 				{
@@ -6563,6 +7284,15 @@
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: shares the string 'mod_charge_time' with the Linux function, and 2 of its 2 matched callees
 				}
+				"CTFWearableDemoShield::EndSpecialAction"
+				{
+					type  "fixed"
+					sym   "_ZN21CTFWearableDemoShield16EndSpecialActionEP9CTFPlayer"
+					addr  "0x641080"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x642990 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it
+				}
 				"~CTriggerCamera [D0]"
 				{
 					type  "fixed"
@@ -6591,6 +7321,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: resolves m_hPlayer (+0x384, Linux +0x39c) and asks IsAlive (vtable +0x10c, Linux +0x110), clears the not-solid flag through SetSolidFlags when spawnflags bit 0x20 is set, SetViewEntity (0x2e90c0) with the player, EnableControl(true) (0x2e04d0), shows the active weapon again and DispatchUpdateTransmitState, ThinkSet(NULL), FireOutput of m_OnEndFollow, SetLocalAngularVelocity, the Linux order; the camera's Move (0x368910) calls it when SF_CAMERA_PLAYER_INTERRUPT is set and the player's buttons changed, as Linux Move calls Disable; thiscall, plain ret
+				}
+				"CTriggerCamera::Enable"
+				{
+					type  "fixed"
+					sym   "_ZN14CTriggerCamera6EnableEv"
+					addr  "0x3669a0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x3665e0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 4 carried caller(s) call it
 				}
 				"CTriggerCatapult::OnLaunchedVictim"
 				{
@@ -6713,6 +7452,15 @@
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: shares the string 'weapon_blocks_healing' with the Linux function, and 6 of its 6 matched callees
 				}
+				"CWeaponMedigun::GetHealRate"
+				{
+					type  "fixed"
+					sym   "_ZN14CWeaponMedigun11GetHealRateEv"
+					addr  "0x61c4c0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x61dd10 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 8 of 8 neighbouring slots agree
+				}
 				"CWeaponMedigun::GetTargetRange"
 				{
 					type  "fixed"
@@ -6731,6 +7479,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: the table had 0x61c340, which is 'mov eax, 0x32; ret'; corroborate.py read past its end. This body follows the int3 padding, references the think name 'MedigunHealTargetThink' through the pointer at 0x9d2cb4 (0x61c59c, 0x61c5c3) as Linux's ThinkSet and SetNextThink do, and StartHealing (0x61bb80) sets it as the think at 0x61bd81
+				}
+				"CWeaponMedigun::RemoveHealingTarget"
+				{
+					type  "fixed"
+					sym   "_ZN14CWeaponMedigun19RemoveHealingTargetEb"
+					addr  "0x61d8e0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x61f130 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 12 carried caller(s) call it
 				}
 				"CWeaponMedigun::StartHealingTarget"
 				{
@@ -6758,6 +7515,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: CTFPlayer::RemoveOwnedProjectiles walks the vector here (count 0xa07fe0) before the flame entity and flame manager lists, the Linux order, and RemoveAllProjectilesAndBuildings walks it before the building list
+				}
+				"ICaptureFlagAutoList::m_ICaptureFlagAutoListAutoList"
+				{
+					type  "fixed"
+					sym   "_ZN20ICaptureFlagAutoList30m_ICaptureFlagAutoListAutoListE"
+					addr  "0xa9a1d4"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0xa9af04 (data); on 11267535 29 reference sites in carried functions read it, all at this address
 				}
 				"ICaptureZoneAutoList::m_ICaptureZoneAutoListAutoList"
 				{
@@ -6834,6 +7600,33 @@
 					vtidx "18"
 					// verified: read by hand: slot 18 of CGameMovement, ret 12. Returns early when the player is dead (+0xb84, Linux +0xb9c) or in a water jump (+0xf08, Linux +0xf20), then calls slot 20 (GetAirSpeedCap), as the Linux body and the one it tail-calls do. Linux slot 17 is one higher on Windows for the same GetPlayerMins/Maxs grouping; the old slot 16 (0x274e30) takes no arguments
 				}
+				"CTFPowerupBottle::SetNumCharges"
+				{
+					type  "fixed"
+					sym   "_ZN16CTFPowerupBottle13SetNumChargesEh"
+					addr  "0x4b27f0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4b36b0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it
+				}
+				"debugoverlay"
+				{
+					type  "fixed"
+					sym   "debugoverlay"
+					addr  "0xa3324c"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0xa33ed4 (data); on 11267535 3331 reference sites in carried functions read it, all at this address
+				}
+				"usermessages"
+				{
+					type  "fixed"
+					sym   "usermessages"
+					addr  "0xa99d0c"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0xa9aa3c (data); on 11267535 94 reference sites in carried functions read it, all at this address
+				}
 				"TheNavMesh"
 				{
 					type  "fixed"
@@ -6843,6 +7636,15 @@
 					lib   "server"
 					// verified: 90 of the matched functions that read the Linux global read this one, far ahead of any other candidate; in CSimpleBotRoam::Update and ChasePath::PredictSubjectPosition it is the one global each reads, where Linux reads TheNavMesh
 				}
+				"TheNavAreas"
+				{
+					type  "fixed"
+					sym   "TheNavAreas"
+					addr  "0xa8b268"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0xa8bf98 (data); on 11267535 363 reference sites in carried functions read it, all at this address
+				}
 				"g_pObjectiveResource"
 				{
 					type  "fixed"
@@ -6851,6 +7653,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: CPopulationManager::StartCurrentWave reads the Linux global 0x185fc40 first thing, and its verified Windows counterpart reads this address in the same place
+				}
+				"CGameRulesProxy::s_pGameRulesProxy"
+				{
+					type  "fixed"
+					sym   "_ZN15CGameRulesProxy17s_pGameRulesProxyE"
+					addr  "0xa34404"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0xa3508c (data); on 11267535 887 reference sites in carried functions read it, all at this address
 				}
 				"g_hUpgradeEntity"
 				{
@@ -6896,6 +7707,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: a pointer; CTFWeaponBaseMelee::Smack, CTFKnife, CWeaponMedigun, CTFFlameThrower and CTFWeaponFlameBall PrimaryAttack, CTriggerPush::Touch and DeflectProjectiles load it into ecx for the Start and FinishLagCompensation calls where Linux reads lagcompensation; the file points it into CLagCompensationManager's static object
+				}
+				"g_aTeamNames"
+				{
+					type  "fixed"
+					sym   "g_aTeamNames"
+					addr  "0x9ce260"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x9cef20 (data); on 11267535 5 reference sites in carried functions read it, all at this address
 				}
 				"g_aPlayerClassNames"
 				{
@@ -7023,6 +7843,15 @@
 					lib   "server"
 					// named data
 				}
+				"s_TFTeamManager"
+				{
+					type  "fixed"
+					sym   "s_TFTeamManager"
+					addr  "0x9ced10"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x9cf9cc (data); on 11267535 8 reference sites in carried functions read it, all at this address
+				}
 				"g_EventQueue"
 				{
 					type  "fixed"
@@ -7051,6 +7880,33 @@
 					type  "sendtable"
 					table "DT_CSPlayer"
 				}
+				"g_CBaseAnimating_ClassReg"
+				{
+					type  "fixed"
+					sym   "_ZL25g_CBaseAnimating_ClassReg"
+					addr  "0xa046b8"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0xa05378 (data); on 11267535 81 reference sites in carried functions read it, all at this address
+				}
+				"g_CBasePlayer_ClassReg"
+				{
+					type  "fixed"
+					sym   "_ZL22g_CBasePlayer_ClassReg"
+					addr  "0x9a2470"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x9a3440 (data); on 11267535 23 reference sites in carried functions read it, all at this address
+				}
+				"g_CBaseCombatCharacter_ClassReg"
+				{
+					type  "fixed"
+					sym   "_ZL31g_CBaseCombatCharacter_ClassReg"
+					addr  "0x97a058"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x97b058 (data); on 11267535 44 reference sites in carried functions read it, all at this address
+				}
 				"g_CBaseCombatWeapon_ClassReg"
 				{
 					type  "fixed"
@@ -7078,6 +7934,15 @@
 					lib   "server"
 					// verified: read by hand: CTFGameRules::CreateStandardEntities stores the new monster resource here right after g_pObjectiveResource (0xa74b20), the Linux order, and the Merasmus and Eyeball boss behaviors read it first thing as Linux reads g_pMonsterResource
 				}
+				"CBaseEntity::m_nPredictionRandomSeed"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseEntity23m_nPredictionRandomSeedE"
+					addr  "0x97ab84"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x97bb84 (data); on 11267535 31 reference sites in carried functions read it, all at this address
+				}
 				"CBaseEntity::m_nPredictionRandomSeedServer"
 				{
 					type  "fixed"
@@ -7095,6 +7960,24 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: of the three static IPredictionSystem objects the initializers link into g_pPredictionSystems, the only one whose fields are read, and only by CRecipientFilter's code (0x30ee70 to 0x30fa00): m_nStatusPushed at +0x10 then m_pSuppressHost at +0xc, the reads Linux UsePredictionRules makes on 0x18347d4 and 0x18347d0
+				}
+				"g_pPlayerResource"
+				{
+					type  "fixed"
+					sym   "g_pPlayerResource"
+					addr  "0xa51bd8"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0xa52860 (data); on 11267535 14 reference sites in carried functions read it, all at this address
+				}
+				"g_EntityListPool"
+				{
+					type  "fixed"
+					sym   "g_EntityListPool"
+					addr  "0xa09da4"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0xa0aa64 (data); on 11267535 21 reference sites in carried functions read it, all at this address
 				}
 				"g_DeleteList"
 				{
@@ -7174,6 +8057,15 @@
 					lib   "server"
 					// verified: read by hand: ISearchSurroundingAreasFunctor::IterateAdjacentAreas compares an area's marker at +0x3c with this value and stores it there, the IsMarked and Mark the Linux body inlines on 0x17a052c; CTFNavMesh::ComputeBombTargetDistance reads it the same way
 				}
+				"CNavArea::m_openList"
+				{
+					type  "fixed"
+					sym   "_ZN8CNavArea10m_openListE"
+					addr  "0xa8d884"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0xa8e5b4 (data); on 11267535 118 reference sites in carried functions read it, all at this address
+				}
 				"g_SentGameRulesMasks"
 				{
 					type  "fixed"
@@ -7182,6 +8074,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: CVoiceGameMgr::ClientConnected sets the client's g_bWantModEnable bit, then clears 16 bytes at client*16 + 0xa80fb8 and then at + 0xa81608, the Linux order for g_SentGameRulesMasks then g_SentBanMasks; UpdateMasks masks the fourth dword of each with 0x1f
+				}
+				"CNavArea::s_nCurrVisTestCounter"
+				{
+					type  "fixed"
+					sym   "_ZN8CNavArea21s_nCurrVisTestCounterE"
+					addr  "0xa8d88c"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0xa8e5bc (data); on 11267535 66 reference sites in carried functions read it, all at this address
 				}
 				"g_LagCompensationManager"
 				{
@@ -7417,6 +8318,15 @@
 					lib   "server"
 					// verified: string lead, agreed by strings: 4 shared string(s), 1/1 matched callees, windows/linux size 400/247
 				}
+				"UTIL_GetListenServerHost"
+				{
+					type  "fixed"
+					sym   "_Z24UTIL_GetListenServerHostv"
+					addr  "0x36cae0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x36c670 (string); on 11267535 the same function between the same carried neighbours (score 7.0, runner-up 0), and 87 carried caller(s) call it
+				}
 				"[engine] CUtlBuffer::EnsureCapacity"
 				{
 					type  "fixed"
@@ -7443,6 +8353,15 @@
 					build "11267535"
 					lib   "engine"
 					// verified: read by hand, engine.dll: the data at +0, the byte count rounded down to 4, the bit count (bytes*8 for -1), the debug name cleared and the overflow flags, Linux's bf_write::bf_write(void *, int, int). Thiscall, ret 0xc
+				}
+				"CTFGameRules::PlayerKilled"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules12PlayerKilledEP11CBasePlayerRK15CTakeDamageInfo"
+					addr  "0x495ab0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x496890 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 5 of 5 neighbouring slots agree
 				}
 				"CTFGameRules::DropSpellPickup"
 				{
@@ -7480,6 +8399,15 @@
 					lib   "server"
 					// verified: reads the argument's +0x18 first as Linux does; called by the matched caller and calls the matched callee
 				}
+				"KeyValues::LoadFromBuffer"
+				{
+					type  "fixed"
+					sym   "_ZN9KeyValues14LoadFromBufferEPKcR10CUtlBufferP15IBaseFileSystemS1_"
+					addr  "0x6e8650"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x6e9fd0 (string); on 11267535 the same function between the same carried neighbours (score 9.178, runner-up 2.432), and 1 carried caller(s) call it
+				}
 				"CUserMessages::LookupUserMessage"
 				{
 					type  "fixed"
@@ -7488,6 +8416,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: called with the message name and the user-messages object in ecx by the wrapper at 0x273090 that every VGUIMenu caller uses; takes one argument (ret 4) and returns -1 when not found, as the Linux body does
+				}
+				"CUserMessages::Register"
+				{
+					type  "fixed"
+					sym   "_ZN13CUserMessages8RegisterEPKci"
+					addr  "0x442460"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x443000 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.786), and 85 carried caller(s) call it
 				}
 				"clear_debug_overlays"
 				{
@@ -7506,6 +8443,15 @@
 					build "11267535"
 					lib   "tier0"
 					// verified: tier0.dll exports it as ?ConColorMsg@@YAXABVColor@@PBDZZ, ConColorMsg(const Color&, const char *, ...), at this address. cdecl varargs, plain ret
+				}
+				"CTFGameRules::RadiusDamage"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules12RadiusDamageER19CTFRadiusDamageInfo"
+					addr  "0x499410"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x49a1f0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 14 carried caller(s) call it
 				}
 				"CEntitySphereQuery::CEntitySphereQuery [C1]"
 				{
@@ -7579,6 +8525,15 @@
 					lib   "server"
 					// verified: read by hand: GetParticleSystemIndex, the origin at +0xc and the angles at +0x18 by value, the entity read at +0x40, which is where this overload (origin, angles, two colours, bool, entity, attachment) has it; 'ParticleEffect'; cdecl, plain ret; one direct caller on each side (the energy ring's impact)
 				}
+				"StopParticleEffects"
+				{
+					type  "fixed"
+					sym   "_Z19StopParticleEffectsP11CBaseEntity"
+					addr  "0x2aa240"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x2a9f20 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it
+				}
 				"IGameSystem::Add"
 				{
 					type  "fixed"
@@ -7605,6 +8560,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: true for weapon ids 0x11, 0x4d and 0x63, the Linux body; WeaponID_IsSniperRifleOrBow, which adds 0x3d, follows it as on Linux. cdecl, plain ret. The emitter's match for this symbol lands mid-instruction and is not it
+				}
+				"CTFGameRules::ApplyOnDamageAliveModifyRules"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules29ApplyOnDamageAliveModifyRulesERK15CTakeDamageInfoP11CBaseEntityRNS_20DamageModifyExtras_tE"
+					addr  "0x47dbe0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x47e900 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it
 				}
 				"NextBotTraversableTraceFilter::ShouldHitEntity"
 				{
@@ -7680,6 +8644,24 @@
 					lib   "server"
 					// verified: read by hand: the whole function, wrapper and .part.0 clone together. Calls PlayerReadyStatus_HaveMinPlayersToEnable (0x4971e0), UTIL_PlayerByIndex, ShouldStartCountdown, fires 'teamplay_round_restart_seconds' with 'seconds' and walks the teams (vtable +0x34c/+0x350/+0x320), the clone's callees in order. Pops 8
 				}
+				"CTFGameRules::PlayerReadyStatus_HaveMinPlayersToEnable"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules40PlayerReadyStatus_HaveMinPlayersToEnableEv"
+					addr  "0x4977b0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x498590 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 1 carried caller(s) call it
+				}
+				"CTFGameRules::ClientDisconnected"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules18ClientDisconnectedEP7edict_t"
+					addr  "0x4870a0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x487e10 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0), in the same vtable slot: 6 of 6 neighbouring slots agree
+				}
 				"CMannVsMachineStats::RoundEvent_WaveEnd"
 				{
 					type  "fixed"
@@ -7708,6 +8690,15 @@
 					lib   "server"
 					// vtable
 				}
+				"CLagCompensationManager::StartLagCompensation"
+				{
+					type  "fixed"
+					sym   "_ZN23CLagCompensationManager20StartLagCompensationEP11CBasePlayerP8CUserCmd"
+					addr  "0x2ecae0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x2ec740 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 3 of 3 neighbouring slots agree
+				}
 				"CLagCompensationManager::FinishLagCompensation"
 				{
 					type  "fixed"
@@ -7716,6 +8707,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: opens the 'FinishLagCompensation' VPROF scope of player_lagcompensation.cpp, walks the players through UTIL_PlayerByIndex (0x36cfa0) and calls the restore body (0x2ee720, the one holding ' restore got most of the way'), which GCC inlined into the Linux function; ret 4 for the one player argument. Between StartLagCompensation (0x2ec740) and the restore helper as on Linux
+				}
+				"Physics_RunThinkFunctions"
+				{
+					type  "fixed"
+					sym   "_Z25Physics_RunThinkFunctionsb"
+					addr  "0x2c12b0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x2c0f80 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0.462); its 1 caller(s), not carried themselves, sit between the same carried neighbours too
 				}
 				"Physics_SimulateEntity"
 				{
@@ -7770,6 +8770,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: the Linux body. A vcall on the game rules (slot 0x7c here, 0x80 there) gives the hull, both corners moved by one constant (0x7793f8), the trace with mask 0x201400b (MASK_PLAYERSOLID), the overlay cross when the fraction is below one and a return of fraction >= 1. Windows has one more debug overlay before the cross. Callers: TeleportNearVictim (0x58f6d0, matched) once at 0x58f929, as on Linux, and two calls in 0x4a28f0, where Linux's SpawnZombieMob calls it twice. The call in CTFBotSpawner::Spawn is inlined here (0x5eb1f7 pushes the same mask). cdecl, one argument, plain ret, bool in al
+				}
+				"TeleportNearVictim"
+				{
+					type  "fixed"
+					sym   "_Z18TeleportNearVictimP6CTFBotP9CTFPlayeri"
+					addr  "0x58fd10"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x590f00 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it
 				}
 				"CBaseFileSystem::LoadKeyValues"
 				{
@@ -7836,6 +8845,15 @@
 					lib   "server"
 					// verified: read by hand: GTFGCClientSystem (0x5c7e20), the match at +0x384 (Linux +0x3b8), its group at +0x10 or -1, ret: Linux's body; most callers carry it inline, this is the out-of-line copy. Thiscall, plain ret
 				}
+				"MapEntity_ParseAllEntities"
+				{
+					type  "fixed"
+					sym   "_Z26MapEntity_ParseAllEntitiesPKcP16IMapEntityFilterb"
+					addr  "0x2971f0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x297100 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 3 carried caller(s) call it
+				}
 				"MapEntity_ParseToken"
 				{
 					type  "fixed"
@@ -7853,6 +8871,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: shares the string 'halloween_souls_pack' with the Linux function, and 2 of its 2 matched callees
+				}
+				"CTFGameRules::IsPVEModeControlled"
+				{
+					type  "fixed"
+					sym   "_ZNK12CTFGameRules19IsPVEModeControlledEP11CBaseEntity"
+					addr  "0x492690"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4933d0 (consensus); on 11267535 the same function between the same carried neighbours (score 3.0, runner-up 0.632), and 3 carried caller(s) call it
 				}
 				"SendProxy_LengthTable"
 				{
@@ -7899,6 +8926,15 @@
 					lib   "server"
 					// verified: read by hand: the table had 0x226320, the ServiceEventQueue wrapper that loads g_EventQueue into ecx and jumps here. This body holds 'unhandled input: (%s) -> (%s), from (%s,%s); target entity not found'
 				}
+				"CTFGameRules::BetweenRounds_Start"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules19BetweenRounds_StartEv"
+					addr  "0x4831d0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x483f40 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 11 of 11 neighbouring slots agree
+				}
 				"tf_mvm_popfile"
 				{
 					type  "fixed"
@@ -7926,6 +8962,15 @@
 					lib   "server"
 					// verified: read by hand: compares its argument with each of the 0x6e weapon alias strings through V_stricmp (0x6e4a80) and returns the index, 0 when none matches, the Linux body; cdecl
 				}
+				"CTFGameRules::ApplyOnDamageModifyRules"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules24ApplyOnDamageModifyRulesER15CTakeDamageInfoP11CBaseEntityb"
+					addr  "0x47ebc0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x47f8e0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it
+				}
 				"CTraceFilterSimple::CTraceFilterSimple [C1]"
 				{
 					type  "fixed"
@@ -7943,6 +8988,42 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: called by CTFGameRules::HasPassedMinRespawnTime (0x48f460, the Linux body: a player virtual, the +0x22d0 test, this call, compared with curtime). Body: two convar floats (+0x2c) and the 2.0 constant, a virtual with the player (+0x2c8, Linux +0x2cc); if true adds m_flDeathTime, else a second virtual (+0x2c4) with (team, 0) added first. thiscall, ret 4
+				}
+				"CTFGameRules::GetTeamAssignmentOverride"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules25GetTeamAssignmentOverrideEP9CTFPlayerib"
+					addr  "0x48ea50"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x48f790 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.766), and 1 carried caller(s) call it
+				}
+				"CStudioHdr::GetNumPoseParameters"
+				{
+					type  "fixed"
+					sym   "_ZNK10CStudioHdr20GetNumPoseParametersEv"
+					addr  "0x337560"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x3371d0 (call); on 11267535 the same function between the same carried neighbours (score 3.0, runner-up 0), and 8 carried caller(s) call it
+				}
+				"CStudioHdr::pPoseParameter"
+				{
+					type  "fixed"
+					sym   "_ZN10CStudioHdr14pPoseParameterEi"
+					addr  "0x338850"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x3384c0 (call); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 7 carried caller(s) call it
+				}
+				"CTFGameRules::ClientCommandKeyValues"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules22ClientCommandKeyValuesEP7edict_tP9KeyValues"
+					addr  "0x4865f0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x487360 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 3 of 5 neighbouring slots agree (11267535 adds a CTFGameRules virtual two slots further on)
 				}
 				"CMultiPlayerAnimState::OnNewModel"
 				{
@@ -7999,6 +9080,15 @@
 					lib   "engine"
 					// verified: read by hand, engine.dll: slot 47 of CVEngineServer's table, as on Linux. Returns when IsDedicatedServer (+0x8) holds, else formats and calls Con_NXPrintf; the Linux one is an empty ret. A varargs member: cdecl with this on the stack, plain ret
 				}
+				"CTeamplayRoundBasedRules::State_Transition"
+				{
+					type  "fixed"
+					sym   "_ZN24CTeamplayRoundBasedRules16State_TransitionE22gamerules_roundstate_t"
+					addr  "0x352800"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x352420 (call); on 11267535 the same function between the same carried neighbours (score 3.0, runner-up 1.189), and 5 carried caller(s) call it
+				}
 				"UTIL_GetHolidayForString"
 				{
 					type  "fixed"
@@ -8026,6 +9116,15 @@
 					lib   "server"
 					// verified: string lead (scored), agreed by strings: 2 shared string(s), 2/2 matched callees, windows/linux size 112/129
 				}
+				"CTFGameRules::SetWinningTeam"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules14SetWinningTeamEiibbbb"
+					addr  "0x4a00a0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4a0ea0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 8 of 8 neighbouring slots agree
+				}
 				"CTFGameRules::FireGameEvent"
 				{
 					type  "fixed"
@@ -8034,6 +9133,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: shares the string 'eventtype', 'full_round', 'player_disconnect' with the Linux function, and 15 of its 16 matched callees
+				}
+				"CSteamID::Render [member]"
+				{
+					type  "fixed"
+					sym   "_ZNK8CSteamID6RenderEv"
+					addr  "0x336330"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x335fa0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 61 carried caller(s) call it
 				}
 				"CTFItemDefinition::GetLoadoutSlot"
 				{
@@ -8052,6 +9160,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: mov eax, 0x10a89114; ret, the one candidate all four matched callers agree on, and the function after it reads the item schema as SpawnItem does; returns the static item generation system as the Linux body does
+				}
+				"CTFGameRules::SetCustomUpgradesFile"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules21SetCustomUpgradesFileER11inputdata_t"
+					addr  "0x4911f0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x491f30 (string); on 11267535 the script binding table pairs it with the string "SetCustomUpgradesFile", as on 11191711
 				}
 				"CollectPlayers<CTFPlayer>"
 				{
@@ -8108,6 +9225,15 @@
 					lib   "server"
 					// verified: read by hand: resets the temp entity, GetParticleSystemIndex(name), origin from the first Vector, start from vec3_origin, angles from the QAngle, and only when the entity is set its edict index and the attachment type (the seventh argument), then CBaseTempEntity::Create(filter, delay); the Linux body field for field. cdecl, plain ret, 60 callers. Its neighbours 0x470750 (two Vectors, attachment fixed at 2) and 0x470a10 (Complex) are the other overloads
 				}
+				"TE_TFParticleEffectComplex"
+				{
+					type  "fixed"
+					sym   "_Z26TE_TFParticleEffectComplexR16IRecipientFilterfPKc6Vector6QAngleP31te_tf_particle_effects_colors_tP38te_tf_particle_effects_control_point_tP11CBaseEntity20ParticleAttachment_tS3_"
+					addr  "0x470bf0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4717e0 (call); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 12 carried caller(s) call it
+				}
 				"TE_TFParticleEffect [No attachment]"
 				{
 					type  "fixed"
@@ -8134,6 +9260,33 @@
 					build "11267535"
 					lib   "server"
 					// verified: string lead (scored), agreed by strings+callees: 2 shared string(s), 9/10 matched callees, windows/linux size 1936/3382
+				}
+				"UserMessageBegin"
+				{
+					type  "fixed"
+					sym   "_Z16UserMessageBeginR16IRecipientFilterPKc"
+					addr  "0x272b20"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x272a10 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 94 carried caller(s) call it
+				}
+				"MessageWriteString"
+				{
+					type  "fixed"
+					sym   "_Z18MessageWriteStringPKc"
+					addr  "0x272270"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x272160 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 3.0), and 45 carried caller(s) call it
+				}
+				"CPlayerInventory::GetInventoryItemByItemID"
+				{
+					type  "fixed"
+					sym   "_ZN16CPlayerInventory24GetInventoryItemByItemIDEyPi"
+					addr  "0x3a4e20"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x3a55a0 (call); on 11267535 the same function between the same carried neighbours (score 3.0, runner-up 0.286), and 5 carried caller(s) call it
 				}
 				"CTraceFilterIgnoreFriendlyCombatItems::ShouldHitEntity"
 				{
@@ -8190,6 +9343,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: copies origin and normal to +0xc and +0x18 of the global at 0x10b406f0, which the static initializer builds with the name "TFExplosion", then the five ints to +0x24 through +0x34, and calls CBaseTempEntity::Create (0x434c20) with (filter, delay), the Linux body at the same offsets. 11 callers as on Linux, among them CTFBaseRocket::Explode, CTFWeaponBaseGrenadeProj::Explode, CTFProjectile_Flare::Explode_Air, CTFStickBomb::Smack and CTFPlayer::DoTauntAttack twice. cdecl, plain ret
+				}
+				"GetParticleSystemIndex"
+				{
+					type  "fixed"
+					sym   "_Z22GetParticleSystemIndexPKc"
+					addr  "0x271980"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x271870 (string); on 11267535 the same function between the same carried neighbours (score 7.0, runner-up 0), and 20 carried caller(s) call it
 				}
 				"UTIL_SetSize"
 				{
@@ -8320,6 +9482,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: walks m_Attributes (base +4, count +0x10, 0x10 an attribute) for the definition's index (+4) and sets its value, else builds a CEconItemAttribute (vtable 0x10828138) and adds it, the Linux body at the same offsets; thiscall, (const CEconItemAttributeDefinition *, float)
+				}
+				"TF_IsHolidayActive"
+				{
+					type  "fixed"
+					sym   "_Z18TF_IsHolidayActivei"
+					addr  "0x4a3ce0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4a4ae0 (call); on 11267535 the same function between the same carried neighbours (score 3.0, runner-up 0), and 12 carried caller(s) call it
 				}
 				"ApplyUpgrade_Default"
 				{
@@ -8544,6 +9715,15 @@
 					vtidx "44"
 					// vtable index
 				}
+				"CTFGameRules::GetKillingWeaponName"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules20GetKillingWeaponNameERK15CTakeDamageInfoP9CTFPlayerPi"
+					addr  "0x48cef0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x48dc30 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.192), and 1 carried caller(s) call it
+				}
 				"CHLTVServer::IsTVRelay"
 				{
 					type  "fixed"
@@ -8601,6 +9781,15 @@
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: calls all 6 of the Linux function's matched callees, and no string disagrees
 				}
+				"CBaseEntityOutput::FireOutput"
+				{
+					type  "fixed"
+					sym   "_ZN17CBaseEntityOutput10FireOutputE9variant_tP11CBaseEntityS2_f"
+					addr  "0x225820"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x2256b0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 36 carried caller(s) call it
+				}
 				"CBaseEdict::GetChangeAccessor"
 				{
 					type  "fixed"
@@ -8618,6 +9807,15 @@
 					build "11267535"
 					lib   "engine"
 					// verified: read by hand, engine.dll: slot 7 of CHLTVDemoRecorder's table, as on Linux. Returns unless recording (+0x540), then writes the stop command and closes the file with the body Linux keeps in StopRecording [clone .part.0]; HLTV_Optimize hooks the whole function here. Thiscall, plain ret
+				}
+				"CMultiPlayerAnimState::AddToGestureSlot"
+				{
+					type  "fixed"
+					sym   "_ZN21CMultiPlayerAnimState16AddToGestureSlotEi8Activityb"
+					addr  "0x457f60"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x458af0 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 1 carried caller(s) call it
 				}
 				"AllocChangeFrameList"
 				{
@@ -8710,6 +9908,15 @@
 					lib   "engine"
 					// verified: read by hand, engine.dll: called per table from the inline CHLTVServer::RestoreTick in UpdateTick (0x17f941). Clears +0x18, takes the item count from the dictionary at +0x34, calls CNetworkStringTableItem::RestoreTick (0x1bd9e0) on each and keeps the latest tick in +0x18, as Linux 0x1723d0. Thiscall, ret 4
 				}
+				"CTFBotSquad::Leave"
+				{
+					type  "fixed"
+					sym   "_ZN11CTFBotSquad5LeaveEP6CTFBot"
+					addr  "0x566c30"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x567e20 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 3 carried caller(s) call it
+				}
 				"CTFBotSquad::ShouldSquadLeaderWaitForFormation"
 				{
 					type  "fixed"
@@ -8718,6 +9925,24 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: CTFBotTacticalMonitor::Update (0x575e90) calls it with the bot's squad (+0x27d0) when the squad leader is the bot itself, then allocates the 0x40 byte wait-for-formation action, as the Linux Update does. Same body as Linux: members from index 1, a member handle resolved through the entity list, the timer at +0x28f4 and the byte at +0x28f8, a vcall on the member's body, and a final IsPlayerClass(5) on the member; 1 if one is waited for, else 0. thiscall, no argument, plain ret
+				}
+				"JarExplode"
+				{
+					type  "fixed"
+					sym   "_Z10JarExplodeiP9CTFPlayerP11CBaseEntityS2_RK6Vectorif7ETFCondfPKcS8_"
+					addr  "0x614d10"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x616560 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.022), and 1 carried caller(s) call it
+				}
+				"CTFInventoryManager::GetBaseItemForClass"
+				{
+					type  "fixed"
+					sym   "_ZN19CTFInventoryManager19GetBaseItemForClassEii"
+					addr  "0x3c9ea0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x3caaa0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 2.713), and 2 carried caller(s) call it
 				}
 				"Host_Say"
 				{
@@ -8867,6 +10092,24 @@
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: shares the string 'Halloween.HeadlessBossAxeHitFlesh' with the Linux function, and 7 of its 7 matched callees
 				}
+				"variant_t::Set"
+				{
+					type  "fixed"
+					sym   "_ZN9variant_t3SetE11_fieldtypesPv"
+					addr  "0x226a50"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x2268e0 (call); on 11267535 the same function between the same carried neighbours (score 2.627, runner-up 0), and 31 carried caller(s) call it
+				}
+				"variant_t::Convert"
+				{
+					type  "fixed"
+					sym   "_ZN9variant_t7ConvertE11_fieldtypes"
+					addr  "0x2251e0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x225070 (string); on 11267535 the same function between the same carried neighbours (score 9.897, runner-up 0), and 2 carried caller(s) call it
+				}
 				"CreateSpellSpawnZombie"
 				{
 					type  "fixed"
@@ -8989,6 +10232,24 @@
 					lib   "server"
 					// verified: read by hand: returns 0.0 with a warning for a null actor, then creates 'instanced_scripted_scene' (0x32040e) and returns the scene length, Linux's body; the other function holding that string, 0x3190e0, is reached only through vtables (InstancedAutoGeneratedSoundScene on Linux). Called by the actor's PlayScene (0x204819). cdecl, returns a float
 				}
+				"StopScriptedScene"
+				{
+					type  "fixed"
+					sym   "_Z17StopScriptedSceneP9CBaseFlex7CHandleI11CBaseEntityE"
+					addr  "0x322f50"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x322bb0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 11 carried caller(s) call it
+				}
+				"CPhysicsHook::FindOrAddVehicleScript"
+				{
+					type  "fixed"
+					sym   "_ZN12CPhysicsHook22FindOrAddVehicleScriptEPKcP15vehicleparams_tP15vehiclesounds_t"
+					addr  "0x2b4b60"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x2b4830 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it
+				}
 				"CAttributeList::SetRuntimeAttributeRefundableCurrency"
 				{
 					type  "fixed"
@@ -9061,6 +10322,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: the constructor, which Linux names C1 and C2 for one body. Increments a static id counter into +0x14, clears +0, +4, +8, +0xc and +0x18 and sets +0x10 to -1, then strchr for 0x1b picks that delimiter or ',' and five nexttoken calls fill the target, input, parameter, delay and fire count: Linux 0x68c740 field for field. thiscall with one argument, ret 4, returns this in eax. Two of its callers are matched functions of the Linux constructor's callers: CEventsSaveDataOps::Parse (0x224660, which pushes 0x1c for the allocation first, as 0x68fc90 does) and HookOutput (0x4d8700)
+				}
+				"CQuestItemTracker::FireGameEvent"
+				{
+					type  "fixed"
+					sym   "_ZN17CQuestItemTracker13FireGameEventEP10IGameEvent"
+					addr  "0x45cf00"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x45daa0 (consensus); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 4 of 4 neighbouring slots agree
 				}
 				"CTFGameMovement::HandleDuckingSpeedCrop"
 				{
@@ -9144,6 +10414,15 @@
 					build "11267535"
 					lib   "engine"
 					// verified: read by hand, engine.dll: 'Only the server may changelevel', the demo playback refusal, 'maps/%s.bsp', '---- Host_Changelevel ----', 'Failed to save data for transition', 'quit' and 'UpdateMap' in the order Linux has them; cdecl, plain ret, three arguments as the symbol
+				}
+				"CLagCompensationManager::FrameUpdatePostEntityThink"
+				{
+					type  "fixed"
+					sym   "_ZN23CLagCompensationManager26FrameUpdatePostEntityThinkEv"
+					addr  "0x2ec770"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x2ec3d0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 3 of 3 neighbouring slots agree
 				}
 				"SendProxyArrayLength_PlayerArray"
 				{
@@ -9236,6 +10515,15 @@
 					lib   "server"
 					// verified: read by hand: converts to a CTFPlayer through the vtable call at +0x14c, calls ResetPlayerStats (0x4aa6a0), then stores the SteamWorks uploader's GetTimeSinceEpoch (0x4600d0, 0x4600e0) in the player's block at stride 0x794, as Linux does with ToTFPlayer, ResetPlayerStats and GetSteamWorksSGameStatsUploader. Pops 4
 				}
+				"CTFGameStats::Event_PlayerDisconnectedTF"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameStats26Event_PlayerDisconnectedTFEP9CTFPlayer"
+					addr  "0x4a8830"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4a9640 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 1 carried caller(s) call it
+				}
 				"CTFGameStats::Event_PlayerLeachedHealth"
 				{
 					type  "fixed"
@@ -9300,6 +10588,15 @@
 					lib   "server"
 					// verified: read by hand: clears the count at +0x144, walks players 1 to maxClients through UTIL_PlayerByIndex, keeps one that passes the vtable test at +0x10c, has FL bit 3 clear and a team above 1, and appends to the array at +0x148, offsets and logic as Linux 0x7323d0. Plain ret
 				}
+				"CTFGCServerSystem::ClientDisconnected"
+				{
+					type  "fixed"
+					sym   "_ZN17CTFGCServerSystem18ClientDisconnectedE8CSteamID"
+					addr  "0x5c7b90"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5c8d50 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 1.052), and 1 carried caller(s) call it
+				}
 				"CVoiceGameMgrHelper::CanPlayerHearPlayer"
 				{
 					type  "fixed"
@@ -9309,6 +10606,15 @@
 					lib   "server"
 					vtidx "1"
 					// vtable
+				}
+				"CVoiceGameMgrHelper::ClientCommand"
+				{
+					type  "fixed"
+					sym   "_ZN13CVoiceGameMgr13ClientCommandEP11CBasePlayerRK8CCommand"
+					addr  "0x37a820"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x37a3a0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.447), and 1 carried caller(s) call it
 				}
 				"CTeamplayRoundBasedRules::State_Enter_PREROUND"
 				{
@@ -9338,6 +10644,24 @@
 					vtidx "4"
 					// vtable index
 				}
+				"CTFGameRules::PowerupModeKillCountCompare"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules27PowerupModeKillCountCompareEv"
+					addr  "0x4983b0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x499190 (consensus); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.767); its 1 caller(s), not carried themselves, sit between the same carried neighbours too
+				}
+				"CTFGameRules::PowerupModeInitKillCountTimer"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules29PowerupModeInitKillCountTimerEv"
+					addr  "0x4982e0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4990c0 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 3.667), and 1 carried caller(s) call it
+				}
 				"CTFGameMovement::CheckWater"
 				{
 					type  "fixed"
@@ -9365,6 +10689,15 @@
 					build "11267535"
 					lib   "engine"
 					// verified: read by hand, engine.dll: the only function with 'steamblocking:%d'; GetNumClients and GetNumFakeClients, the hltv IsTVRelay test, UpdateGroupSteamID and the Steam game server calls in the order of Linux 0xb54ef to 0xb5810. Plain ret
+				}
+				"CVoiceGameMgr::UpdateMasks"
+				{
+					type  "fixed"
+					sym   "_ZN13CVoiceGameMgr11UpdateMasksEv"
+					addr  "0x37aae0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x37a660 (consensus); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it
 				}
 				"CTFGameRules::RoundCleanupShouldIgnore"
 				{
@@ -9443,6 +10776,15 @@
 					lib   "server"
 					vtidx "81"
 					// vtable index
+				}
+				"CTFGameRules::SendWinPanelInfo"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules16SendWinPanelInfoEb"
+					addr  "0x49f4b0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4a02b0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 9 of 9 neighbouring slots agree
 				}
 				"CTFGameRules::BroadcastSound"
 				{
@@ -9544,6 +10886,15 @@
 					lib   "server"
 					// verified: the IEconItemInterface body, cdecl (interface, owner, victim, event, amount) with the owner's list at +0xef0, count +0xefc (Linux +0xf14), and the non-batched ValidateAndSendStrangeMessageToGC (0x48a5a0) as callee. The entity wrapper 0x48a440 (CHealthKit::MyTouch, CObjectSapper::Killed and 16 more callers) jumps here with the interface at entity+0x4ac+0x60, as Linux's EconEntity_OnOwnerKillEaterEvent does
 				}
+				"CTFGameRules::FlPlayerFallDamage"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules18FlPlayerFallDamageEP11CBasePlayer"
+					addr  "0x48bf60"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x48cca0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 6 of 6 neighbouring slots agree
+				}
 				"CGameMovement::CheckFalling"
 				{
 					type  "fixed"
@@ -9553,6 +10904,15 @@
 					lib   "server"
 					vtidx "44"
 					// verified: read by hand: the whole CGameMovement::CheckFalling, slot 44 (Linux 45), where Linux detours the .part.0 clone GCC split after its ground entity and fall velocity test. Its only callers are the vtable and CTFGameMovement::CheckFalling's tail jump (0x471c98); Linux's FullWalkMove calls the clone directly, this build reaches it through the virtual. SigMod's detour makes the same test itself before it does anything. Thiscall, plain ret
+				}
+				"CTFGameMovement::GrapplingHookMove"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFGameMovement17GrapplingHookMoveEv"
+					addr  "0x474770"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x475360 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 1 carried caller(s) call it
 				}
 				"CTFGameRules::IsCompetitiveMode"
 				{
@@ -9571,6 +10931,15 @@
 					build "11267535"
 					lib   "engine"
 					// verified: read by hand, engine.dll: the only function holding 'PlaybackTempEntity' and its 'SendTable_Encode returned false (ent %d), overflow? %i' error; drops the oldest queued temp entity when 255 are queued, bf_write on a 0xc0 byte buffer named so, SendTable_Encode(pST, pSender, &bf, classID + 1, 0, 0) and Host_Error on false, the Linux body in order. thiscall, ret 0x14 for (IRecipientFilter &, float, const void *, const SendTable *, int)
+				}
+				"CParticleSystemMgr::Init"
+				{
+					type  "fixed"
+					sym   "_ZN18CParticleSystemMgr4InitEP20IParticleSystemQuery"
+					addr  "0x6e2480"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x6e3d30 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it
 				}
 				"CServerNetworkProperty::GetClassName"
 				{
@@ -9727,6 +11096,15 @@
 					vtidx "6"
 					// vtable
 				}
+				"CTFGameRules::SetupOnRoundStart"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules17SetupOnRoundStartEv"
+					addr  "0x4a0c10"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4a1a10 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 7 of 7 neighbouring slots agree
+				}
 				"Script_StringToFile"
 				{
 					type  "fixed"
@@ -9762,6 +11140,15 @@
 					build "11267535"
 					lib   "engine"
 					// verified: read by hand, engine.dll: slot 16 of CHLTVClient's primary table (CBaseClient's own virtuals after the destructor and FireGameEvent), the only code with the 'CBaseClient::ActivatePlayer' profiler scope. Thiscall, plain ret
+				}
+				"CTFGameRules::DeathNotice"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules11DeathNoticeEP11CBasePlayerRK15CTakeDamageInfoPKc"
+					addr  "0x488a30"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4897a0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 3 of 3 neighbouring slots agree
 				}
 				"CStaticPropMgr::IsStaticProp (CBaseHandle)"
 				{
@@ -9882,6 +11269,15 @@
 					lib   "vscript"
 					// verified: read by hand, vscript.dll: the closure dispatch on the object type (0x8000200, 0x8004000), and the only code with "SCRIPT PERF WARNING --- \"%s\" ran long at %fms" and '<lambda or free run script>', Linux's body. The string match picked 0x2ded0, the arithmetic compare before the jump table that precedes it. Thiscall, ret 0x14
 				}
+				"CTFWorkshopMap::GetLocalFile"
+				{
+					type  "fixed"
+					sym   "_ZN14CTFWorkshopMap12GetLocalFileER10CUtlString"
+					addr  "0x433020"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x433c00 (call); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 2 carried caller(s) call it
+				}
 				"CTFMapsWorkshop::PrepareLevelResources"
 				{
 					type  "fixed"
@@ -9890,6 +11286,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: shares the string '[TF Workshop] No steam connection in PrepareLevelResources,, '[TF Workshop] Preparing map ID %llu\n', '[TF Workshop] Waiting for steam connection\n' with the Linux function, and 2 of its 2 matched callees
+				}
+				"CTFMapsWorkshop::Refresh"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFMapsWorkshop7RefreshEv"
+					addr  "0x433f80"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x434b60 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 3 carried caller(s) call it
 				}
 				"CGameClient::FileDenied"
 				{
@@ -9974,6 +11379,15 @@
 					lib   "server"
 					// consensus
 				}
+				"UTIL_PrecacheOther"
+				{
+					type  "fixed"
+					sym   "_Z18UTIL_PrecacheOtherPKcS0_"
+					addr  "0x36d690"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x36d220 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 8 carried caller(s) call it
+				}
 				"CTFTeamManager::GetTeam"
 				{
 					type  "fixed"
@@ -10019,6 +11433,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: the function that writes CTFGameRules' vtable (0x10860520, found through its RTTI locator) at offset 0 and the secondary one (0x10860904) at +0x25c after calling the base constructor, then fills +0x8e0..+0x8f0 with 0, +0x978..+0x988 with -1, a function pointer at +0x9c4 and clears +0xdac, as the Linux C1 body does after CTeamplayRoundBasedRules' constructor; ret. The other writer of the vtable, 0x47c750, is the destructor. The old 0x47ad20 is a small one-argument constructor of another class, ret 4
+				}
+				"CTFGameRules::GetAssister"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFGameRules11GetAssisterEP11CBasePlayerS1_P11CBaseEntity"
+					addr  "0x48c350"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x48d090 (call, ret 12 as its arguments say); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 3 carried caller(s) call it
 				}
 				"CTFGameRules::GetBonusRoundTime"
 				{
@@ -10184,6 +11607,24 @@
 					lib   "server"
 					// vtable
 				}
+				"CLagCompensationManager::BacktrackPlayer"
+				{
+					type  "fixed"
+					sym   "_ZN23CLagCompensationManager15BacktrackPlayerEP11CBasePlayerf"
+					addr  "0x2ed930"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x2ed590 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it
+				}
+				"SelectWeightedSequence"
+				{
+					type  "fixed"
+					sym   "_Z22SelectWeightedSequenceP10CStudioHdrii"
+					addr  "0x1c6090"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x1c5ee0 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 5 carried caller(s) call it
+				}
 				"CTraceFilterIgnorePlayers::ShouldHitEntity"
 				{
 					type  "fixed"
@@ -10273,6 +11714,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: checks the team index against 4 and the viewmodel flag, ret 8 for its two arguments, and calls GetItemSchema then GetItemDefinition, in CEconItemView's code
+				}
+				"CEconItemView::GetPlayerDisplayModel"
+				{
+					type  "fixed"
+					sym   "_ZNK13CEconItemView21GetPlayerDisplayModelEii"
+					addr  "0x3c4080"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x3c4c90 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 6 carried caller(s) call it
 				}
 				"CEconItemDefinition::GetActivityOverride"
 				{
@@ -10671,6 +12121,24 @@
 					lib   "server"
 					// verified: GetNearestNavArea (0x408de0, the function naming its VPROF 'CNavMesh::GetNearestNavArea') calls it first with (pos, a float constant) when neither checkLOS nor checkGround is set and returns its answer when not null, as the SDK does; thiscall, ret 8. Linux finds it by signature, so it has no symbol to match
 				}
+				"CNavMesh::GetNearestNavArea [vec]"
+				{
+					type  "fixed"
+					sym   "_ZNK8CNavMesh17GetNearestNavAreaERK6Vectorbfbbi"
+					addr  "0x408eb0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x409a60 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 21 carried caller(s) call it
+				}
+				"CNavMesh::GetGroundHeight"
+				{
+					type  "fixed"
+					sym   "_ZNK8CNavMesh15GetGroundHeightERK6VectorPfPS0_"
+					addr  "0x408560"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x409110 (call); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 8 carried caller(s) call it
+				}
 				"CNavMesh::GetNearestNavArea [ent]"
 				{
 					type  "fixed"
@@ -10690,6 +12158,15 @@
 					vtidx "8"
 					// vtable
 				}
+				"CNavMesh::BeginGeneration"
+				{
+					type  "fixed"
+					sym   "_ZN8CNavMesh15BeginGenerationEb"
+					addr  "0x3f92c0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x3f9ec0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it
+				}
 				"CTFNavMesh::CollectBuiltObjects"
 				{
 					type  "fixed"
@@ -10698,6 +12175,33 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: empties the vector, walks IBaseObjectAutoList (count at +0xc of 0x10b7eb4c), turns each entry into its CBaseObject (-0x87c), keeps it when the team is -2 (TEAM_ANY) or GetTeamNumber matches, AddToTail; ret 8 for (vector, team), the Linux body's shape. Called from CTFBotMedicHeal::Update, as on Linux
+				}
+				"CNavArea::GetExtent"
+				{
+					type  "fixed"
+					sym   "_ZNK8CNavArea9GetExtentEP6Extent"
+					addr  "0x3e3270"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x3e3e40 (call); on 11267535 the same function between the same carried neighbours (score 3.0, runner-up 0), and 26 carried caller(s) call it
+				}
+				"CNavArea::GetClosestPointOnArea"
+				{
+					type  "fixed"
+					sym   "_ZNK8CNavArea21GetClosestPointOnAreaEPK6VectorPS0_"
+					addr  "0x3e2910"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x3e34e0 (call); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 64 carried caller(s) call it
+				}
+				"CNavArea::ComputeAdjacentConnectionHeightChange"
+				{
+					type  "fixed"
+					sym   "_ZNK8CNavArea37ComputeAdjacentConnectionHeightChangeEPKS_"
+					addr  "0x3dd760"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x3de330 (string); on 11267535 the same function between the same carried neighbours (score 9.977, runner-up 0), and 9 carried caller(s) call it
 				}
 				"CTFNavMesh::RecomputeInternalData"
 				{
@@ -10718,6 +12222,15 @@
 					vtidx "20"
 					// vtable
 				}
+				"CNavArea::GetZ [float float]"
+				{
+					type  "fixed"
+					sym   "_ZNK8CNavArea4GetZEff"
+					addr  "0x3e34c0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x3e4090 (call); on 11267535 the same function between the same carried neighbours (score 3.0, runner-up 0), and 83 carried caller(s) call it
+				}
 				"CNavArea::IsPotentiallyVisible"
 				{
 					type  "fixed"
@@ -10727,6 +12240,15 @@
 					lib   "server"
 					vtidx "32"
 					// vtable
+				}
+				"CNavArea::IsOverlapping"
+				{
+					type  "fixed"
+					sym   "_ZNK8CNavArea13IsOverlappingERK6Vectorf"
+					addr  "0x3e4990"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x3e5560 (call); on 11267535 the same function between the same carried neighbours (score 3.0, runner-up 0), and 4 carried caller(s) call it
 				}
 				"CNavArea::ClearSearchLists"
 				{
@@ -10785,6 +12307,15 @@
 					vtidx "34"
 					// vtable
 				}
+				"CTFNavArea::GetCombatIntensity"
+				{
+					type  "fixed"
+					sym   "_ZNK10CTFNavArea18GetCombatIntensityEv"
+					addr  "0x5d2d60"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5d3f20 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 1 carried caller(s) call it
+				}
 				"CTFNavArea::MakeNewTFMarker"
 				{
 					type  "fixed"
@@ -10812,6 +12343,15 @@
 					lib   "server"
 					// verified: read by hand: mov eax, [ecx+0x21c]; cmp eax, [0x9d23e8]; sete al; ret, comparing the field TFMark (0x5d63f0) writes with the global MakeNewTFMarker (0x5d5970) increments. SelectSpawnArea (0x5ef2a0) calls it on each surrounding area and skips a true result, where Linux calls IsTFMarked; thiscall with no argument, plain ret
 				}
+				"NavAreaBuildPath<CTFBotPathCost>"
+				{
+					type  "fixed"
+					sym   "_Z16NavAreaBuildPathI14CTFBotPathCostEbP8CNavAreaS2_PK6VectorRT_PS2_fib"
+					addr  "0x5680a0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x569290 (call); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 10.0), and 4 carried caller(s) call it
+				}
 				"ISearchSurroundingAreasFunctor::IterateAdjacentAreas"
 				{
 					type  "fixed"
@@ -10821,6 +12361,15 @@
 					lib   "server"
 					vtidx "3"
 					// vtable
+				}
+				"Path::Compute<CTFBotPathCost> [ent]"
+				{
+					type  "fixed"
+					sym   "_ZN4Path7ComputeI14CTFBotPathCostEEbP8INextBotP20CBaseCombatCharacterRT_fb"
+					addr  "0x5879f0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x588be0 (consensus); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 3 carried caller(s) call it
 				}
 				"Path::Compute<CTFBotPathCost> [vec]"
 				{
@@ -10839,6 +12388,24 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: the only reference to 'WaveSpawnPopulator: Can't find target entity '%s' for %s'. The whole function, null info check included, where Linux keeps the .part.0 clone GCC split after that check: FindEntityByName on the target (+5), then g_EventQueue.AddEvent with the action (+0x111) and the variant and delay (+0x218 to +0x22c). cdecl (info, name), plain ret; 7 callers, as Linux has
+				}
+				"CPopulationManager::AllocateBots"
+				{
+					type  "fixed"
+					sym   "_ZN18CPopulationManager12AllocateBotsEv"
+					addr  "0x5e3030"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5e41d0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it
+				}
+				"CPopulationManager::ClearCheckpoint"
+				{
+					type  "fixed"
+					sym   "_ZN18CPopulationManager15ClearCheckpointEv"
+					addr  "0x5e3220"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5e43c0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 3 carried caller(s) call it
 				}
 				"CPopulationManager::CollectMvMBots"
 				{
@@ -10876,6 +12443,15 @@
 					lib   "server"
 					// verified: first of the candidates, called by 5 of its 7 matched callers; the Linux body test for test with every member 0x18 lower, as m_bAllocatedBots is: the byte at +0x5ac (Linux +0x5c4), the wave count at +0x5e0 (+0x5f8), the byte at +0x60e (+0x626)
 				}
+				"CPopulationManager::GetNumRespecsAvailableForPlayer"
+				{
+					type  "fixed"
+					sym   "_ZN18CPopulationManager31GetNumRespecsAvailableForPlayerEP9CTFPlayer"
+					addr  "0x5e4890"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5e5a30 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 1 carried caller(s) call it
+				}
 				"CPopulationManager::Initialize"
 				{
 					type  "fixed"
@@ -10902,6 +12478,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: CTFGameRules::DistributeCurrencyAmount calls it (0x4892e9) as Linux does; the RoundEvent_AcquiredCredits pair (0x5e0a80, 0x5e09d0), the respec counters at +0x718/+0x71c, CollectPlayers<CTFPlayer>(2) and the per player respec history by SteamID, Linux's body. Thiscall, ret 0xc
+				}
+				"CPopulationManager::Parse"
+				{
+					type  "fixed"
+					sym   "_ZN18CPopulationManager5ParseEv"
+					addr  "0x5e5db0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5e6f50 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it
 				}
 				"CPopulationManager::PostInitialize"
 				{
@@ -10939,6 +12524,15 @@
 					lib   "server"
 					// verified: read by hand: CTFGameRules::FireGameEvent calls it (0x48b819) right before CollectPlayers(3) as Linux does; GetAcquiredCredits (0x5dfa80) plus the two counters, CollectPlayers<CTFPlayer>(2), then FindOrAddPlayerUpgradeHistory by SteamID (0x5e3d10) per player, Linux's body. JumpToWave carries a copy inline. Thiscall, plain ret
 				}
+				"CPopulationManager::SetCheckpoint"
+				{
+					type  "fixed"
+					sym   "_ZN18CPopulationManager13SetCheckpointEi"
+					addr  "0x5e7250"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5e83f0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it
+				}
 				"CPopulationManager::SetNumRespecsForPlayer"
 				{
 					type  "fixed"
@@ -10956,6 +12550,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: base Spawn call then a virtual tail call, the Linux body's shape, inside CPopulationManager's code
+				}
+				"CPopulationManager::Update"
+				{
+					type  "fixed"
+					sym   "_ZN18CPopulationManager6UpdateEv"
+					addr  "0x5e77b0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5e8950 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it
 				}
 				"CPopulationManager::UpdateObjectiveResource"
 				{
@@ -10984,6 +12587,24 @@
 					lib   "server"
 					// verified: read by hand: calls SetTeamRespawnWaveTime as the Linux body does; its one direct caller is CWave::ActiveWaveUpdate (0x5ece00), Linux's one caller; ret
 				}
+				"CPopulationManager::PauseSpawning"
+				{
+					type  "fixed"
+					sym   "_ZN18CPopulationManager13PauseSpawningEv"
+					addr  "0x5e6410"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5e75b0 (string); on 11267535 the same function between the same carried neighbours (score 7.0, runner-up 0.087), and 1 carried caller(s) call it
+				}
+				"CPopulationManager::UnpauseSpawning"
+				{
+					type  "fixed"
+					sym   "_ZN18CPopulationManager15UnpauseSpawningEv"
+					addr  "0x5e7770"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5e8910 (string); on 11267535 the same function between the same carried neighbours (score 7.0, runner-up 0), and 1 carried caller(s) call it
+				}
 				"CPopulationManager::StartCurrentWave"
 				{
 					type  "fixed"
@@ -11010,6 +12631,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: the only Windows function calling all three of V_FileBase, CPopulationManager::ResetMap and CTFItemSchema::FindMvmMissionByName, and it copies its argument into a MAX_PATH buffer. The earlier 0x5e42e0 was wrong and broke the AI graph allocation
+				}
+				"CPopulationManager::GetPlayerCurrencySpent"
+				{
+					type  "fixed"
+					sym   "_ZN18CPopulationManager22GetPlayerCurrencySpentEP9CTFPlayer"
+					addr  "0x5e4920"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5e5ac0 (consensus); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it
 				}
 				"CPopulationManager::FindPopulationFileByShortName"
 				{
@@ -11060,6 +12690,24 @@
 					vtidx "3"
 					// vtable
 				}
+				"CMissionPopulator::UpdateMission"
+				{
+					type  "fixed"
+					sym   "_ZN17CMissionPopulator13UpdateMissionEN6CTFBot11MissionTypeE"
+					addr  "0x5f0840"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5f19e0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 4.847), and 1 carried caller(s) call it
+				}
+				"CMissionPopulator::UpdateMissionDestroySentries"
+				{
+					type  "fixed"
+					sym   "_ZN17CMissionPopulator28UpdateMissionDestroySentriesEv"
+					addr  "0x5f0cc0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5f1e60 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 1.04), and 1 carried caller(s) call it
+				}
 				"CWave::~CWave [D0]"
 				{
 					type  "fixed"
@@ -11079,6 +12727,15 @@
 					lib   "server"
 					vtidx "0"
 					// vtable index
+				}
+				"CWave::ActiveWaveUpdate"
+				{
+					type  "fixed"
+					sym   "_ZN5CWave16ActiveWaveUpdateEv"
+					addr  "0x5ecf70"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5ee110 (string); on 11267535 the same function between the same carried neighbours (score 9.936, runner-up 0), and 1 carried caller(s) call it
 				}
 				"CWave::AddClassType"
 				{
@@ -11107,6 +12764,15 @@
 					lib   "server"
 					vtidx "1"
 					// vtable
+				}
+				"CWave::WaveCompleteUpdate"
+				{
+					type  "fixed"
+					sym   "_ZN5CWave18WaveCompleteUpdateEv"
+					addr  "0x5f1330"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5f24d0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 1.315), and 1 carried caller(s) call it
 				}
 				"CWaveSpawnPopulator::~CWaveSpawnPopulator [D0]"
 				{
@@ -11137,6 +12803,15 @@
 					lib   "server"
 					vtidx "1"
 					// vtable
+				}
+				"CWaveSpawnPopulator::SetState"
+				{
+					type  "fixed"
+					sym   "_ZN19CWaveSpawnPopulator8SetStateENS_17InternalStateTypeE"
+					addr  "0x5ef760"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5f0900 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it
 				}
 				"CWaveSpawnPopulator::Update"
 				{
@@ -11305,6 +12980,15 @@
 					vtidx "2"
 					// vtable
 				}
+				"CTFBotSpawner::ParseEventChangeAttributes"
+				{
+					type  "fixed"
+					sym   "_ZN13CTFBotSpawner26ParseEventChangeAttributesEP9KeyValues"
+					addr  "0x5ea4c0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5eb660 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 2.523); its 1 caller(s), not carried themselves, sit between the same carried neighbours too
+				}
 				"CSquadSpawner::~CSquadSpawner [D0]"
 				{
 					type  "fixed"
@@ -11435,6 +13119,24 @@
 					vtidx "7"
 					// vtable
 				}
+				"CSpawnLocation::Parse"
+				{
+					type  "fixed"
+					sym   "_ZN14CSpawnLocation5ParseEP9KeyValues"
+					addr  "0x5ee5e0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5ef780 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 3.99); its 3 caller(s), not carried themselves, sit between the same carried neighbours too
+				}
+				"ParseDynamicAttributes"
+				{
+					type  "fixed"
+					sym   "_ZL22ParseDynamicAttributesRN6CTFBot23EventChangeAttributes_tEP9KeyValues"
+					addr  "0x5e9cf0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5eae90 (call); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 3.705), and 1 carried caller(s) call it
+				}
 				"ParseEvent"
 				{
 					type  "fixed"
@@ -11472,6 +13174,15 @@
 					lib   "server"
 					// verified: read by hand: the body the scalar deleting destructor (0x54e4d0, slot 0) calls first. It writes all of CTFBot's vtable pointers (0x10891400, 0x10891bc0, 0x10891bd0, 0x10891be8, 0x10891c0c, 0x10891d50, 0x10891dc0, the sub-tables of the dump) and ends in CTFPlayer's destructor body (0x4de9f0); the Linux D2 writes the same seven
 				}
+				"CTFBot::GetDesiredPathLookAheadRange"
+				{
+					type  "fixed"
+					sym   "_ZNK6CTFBot28GetDesiredPathLookAheadRangeEv"
+					addr  "0x5521e0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5533b0 (call); on 11267535 the same function between the same carried neighbours (score 3.0, runner-up 1.0), and 22 carried caller(s) call it
+				}
 				"CTFBot::AddItem"
 				{
 					type  "fixed"
@@ -11499,6 +13210,15 @@
 					lib   "server"
 					// verified: read by hand: takes the weapon's handle through the virtual at +8 (-1 for a null weapon), grows the CUtlVector at +0x28ac (capacity +0x28b0, grow size +0x28b4, count +0x28b8, the stack PopRequiredWeapon 0x560400 decrements) and stores the handle as the last element, Linux's body. Its one caller is CTFBotUseItem::OnStart (0x576acb), whose OnEnd pops through 0x576a80, as on Linux. Thiscall, ret 4
 				}
+				"CTFBot::PopRequiredWeapon"
+				{
+					type  "fixed"
+					sym   "_ZN6CTFBot17PopRequiredWeaponEv"
+					addr  "0x560a50"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x561c40 (call); on 11267535 the same function between the same carried neighbours (score 3.0, runner-up 0); its 1 caller(s), not carried themselves, sit between the same carried neighbours too
+				}
 				"CTFBot::EquipRequiredWeapon"
 				{
 					type  "fixed"
@@ -11517,6 +13237,24 @@
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: shares the string 'tf_projectile_energy_ball', 'tf_projectile_rocket' with the Linux function, and 4 of its 4 matched callees
 				}
+				"CTFBot::GetEventChangeAttributes"
+				{
+					type  "fixed"
+					sym   "_ZNK6CTFBot24GetEventChangeAttributesEPKc"
+					addr  "0x552200"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5533d0 (call); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0.267), and 2 carried caller(s) call it
+				}
+				"CTFBot::OnEventChangeAttributes"
+				{
+					type  "fixed"
+					sym   "_ZN6CTFBot23OnEventChangeAttributesEPKNS_23EventChangeAttributes_tE"
+					addr  "0x55aa00"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x55bbf0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it
+				}
 				"CTFBot::AddEventChangeAttributes"
 				{
 					type  "fixed"
@@ -11534,6 +13272,42 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: calls CItemGeneration::SpawnItem as the Linux body does; pops its four arguments (ret 16); three direct callers as Linux has three (BotGenerateAndWearItem, CTFBot::AddItem, GiveNamedItem)
+				}
+				"CItemGeneration::SpawnItem"
+				{
+					type  "fixed"
+					sym   "_ZN15CItemGeneration9SpawnItemEPK13CEconItemViewRK6VectorRK6QAnglePKc"
+					addr  "0x3a0570"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x3a03a0 (consensus, ret 16 as its arguments say); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 2 carried caller(s) call it
+				}
+				"CTFBot::StartIdleSound"
+				{
+					type  "fixed"
+					sym   "_ZN6CTFBot14StartIdleSoundEv"
+					addr  "0x563130"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x564320 (consensus); on 11267535 the same function between the same carried neighbours (score 9.702, runner-up 0), and 1 carried caller(s) call it
+				}
+				"CTFBot::IsLineOfFireClear_vec_vec"
+				{
+					type  "fixed"
+					sym   "_ZNK6CTFBot17IsLineOfFireClearERK6VectorS2_"
+					addr  "0x557810"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x558a00 (call, ret 8 as its arguments say); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 3 carried caller(s) call it
+				}
+				"CTFBot::ChangeTeam"
+				{
+					type  "fixed"
+					sym   "_ZN6CTFBot10ChangeTeamEibbb"
+					addr  "0x550750"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x551920 (consensus); on 11267535 the same function between the same carried neighbours (score 3.0), in the same vtable slot: 9 of 9 neighbouring slots agree
 				}
 				"CTFBot::IsSuspectedSpy"
 				{
@@ -11636,6 +13410,15 @@
 					vtidx "323"
 					// verified: read by hand: `mov eax, [ecx + N]; ret`, the one-field read of CBaseCombatCharacter's last nav area that Linux has under CTFBot's name too; MSVC folds it with the base. Slot 323 of CTFBot's table (Linux 324), between ClearLastKnownArea and IsAreaTraversable, both matched
 				}
+				"CTFBot::Touch"
+				{
+					type  "fixed"
+					sym   "_ZN6CTFBot5TouchEP11CBaseEntity"
+					addr  "0x5635d0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5647c0 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0), in the same vtable slot: 12 of 12 neighbouring slots agree
+				}
 				"CTFBot::EquipLongRangeWeapon"
 				{
 					type  "fixed"
@@ -11663,6 +13446,15 @@
 					lib   "server"
 					vtidx "494"
 					// verified: read by hand: slot 494 of CTFBot's table, the one NextBotPlayer::PhysicsSimulate calls with a CUserCmd (vcall +0x7b8, Linux +0x848). Same callees as the Linux body: EyeVectors (0x20bfe0), CollectPlayers<CTFPlayer> (0x450180), HasTheFlag (0x522b50), IsPlayerClass twice (0x4fbfe0), CalcAbsolutePosition twice
+				}
+				"CTFBot::Event_Killed"
+				{
+					type  "fixed"
+					sym   "_ZN6CTFBot12Event_KilledERK15CTakeDamageInfo"
+					addr  "0x551560"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x552730 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 5 of 5 neighbouring slots agree
 				}
 				"CTFBot::GetFlagToFetch"
 				{
@@ -11813,6 +13605,15 @@
 					vtidx "111"
 					// verified: read by hand: slot 111 of CTFBot's table (Linux 112). Releases the sound at +0x28f0 through CSoundEnvelopeController (0x331aa0, vcall +0x28), zeroes the field and tail calls CTFPlayer::UpdateOnRemove; the field offset is the same on both sides
 				}
+				"CTFBot::UpdateLookingAroundForEnemies"
+				{
+					type  "fixed"
+					sym   "_ZN6CTFBot29UpdateLookingAroundForEnemiesEv"
+					addr  "0x563a50"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x564c40 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it
+				}
 				"CTFBot::LeaveSquad"
 				{
 					type  "fixed"
@@ -11840,6 +13641,15 @@
 					lib   "server"
 					// verified: slot 45 of CTFBotMainAction's table, the neighbours of Linux's slot 46 (the Windows table has one destructor slot where Linux has two) both matched; opens with the same field resets as the Linux body: +0x68 to -1 and +0x6c, +0x4c, +0x50, +0x60, +0x54, +0x58 to 0. Thiscall, two arguments
 				}
+				"CTFBotMainAction::Update"
+				{
+					type  "fixed"
+					sym   "_ZN16CTFBotMainAction6UpdateEP6CTFBotf"
+					addr  "0x56d7e0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x56e9c0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 11 of 11 neighbouring slots agree
+				}
 				"CTFBotMainAction::FireWeaponAtEnemy"
 				{
 					type  "fixed"
@@ -11848,6 +13658,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: ranked first by candidates.py (14 matched callees), read by hand: IsAlive through +0x10c, the bot attribute bits 3 and 10 (SUPPRESS_FIRE, IGNORE_ENEMIES) at +0x27b8, InCond(7) (taunting), a convar's value, GetActiveTFWeapon, then HoldFireUntilFullReload (bit 11) against the clip, the Linux body in its order; one caller, at 0x56dcdf. thiscall, the bot on the stack, ret 4
+				}
+				"CTFBotMainAction::OnOtherKilled"
+				{
+					type  "fixed"
+					sym   "_ZN16CTFBotMainAction13OnOtherKilledEP6CTFBotP20CBaseCombatCharacterRK15CTakeDamageInfo"
+					addr  "0x56bea0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x56d080 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 16 of 16 neighbouring slots agree
 				}
 				"CTFBotMainAction::SelectMoreDangerousThreat"
 				{
@@ -11876,6 +13695,15 @@
 					lib   "server"
 					vtidx "53"
 					// verified: read by hand: slot 53 of CTFBotMainAction (Linux 54), between the anchors at 46 (Linux 47) and 56 (57). Same body: the entity's IsPlayer, IsMiniBoss (0x524070), then the virtuals at +0x598 and +0x1ec (Linux +0x5a0 and +0x1f0)
+				}
+				"CTFBotMainAction::OnStuck"
+				{
+					type  "fixed"
+					sym   "_ZN16CTFBotMainAction7OnStuckEP6CTFBot"
+					addr  "0x56c250"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x56d430 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 14 of 14 neighbouring slots agree
 				}
 				"CTFBotMainAction::OnInjured"
 				{
@@ -11936,6 +13764,15 @@
 					vtidx "50"
 					// vtable
 				}
+				"CTFBotMvMEngineerIdle::Update"
+				{
+					type  "fixed"
+					sym   "_ZN21CTFBotMvMEngineerIdle6UpdateEP6CTFBotf"
+					addr  "0x57f0e0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5802d0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 10 of 10 neighbouring slots agree
+				}
 				"~CTFBotMvMEngineerIdle [D0]"
 				{
 					type  "fixed"
@@ -11972,6 +13809,33 @@
 					build "11267535"
 					lib   "server"
 					// consensus
+				}
+				"CTFBotMedicHeal::Update"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFBotMedicHeal6UpdateEP6CTFBotf"
+					addr  "0x5823f0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5835e0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 11 of 11 neighbouring slots agree
+				}
+				"CTFBotGetAmmo::IsPossible"
+				{
+					type  "fixed"
+					sym   "_ZN13CTFBotGetAmmo10IsPossibleEP6CTFBot"
+					addr  "0x570bb0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x571d90 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 5 carried caller(s) call it
+				}
+				"CTFBotGetHealth::IsPossible"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFBotGetHealth10IsPossibleEP6CTFBot"
+					addr  "0x5717f0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5729d0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it
 				}
 				"CTFBotUseItem::OnStart"
 				{
@@ -12052,6 +13916,24 @@
 					lib   "server"
 					// verified: read by hand: the call turned away at 0x570470, a constructor, scored it on callee overlap. This is the function CTFBotTacticalMonitor::Update (0x575e90) calls right after MonitorArmedStickyBombs (0x575570), when the bot IsPlayerClass(8), the Linux order. Same body as Linux: returns when the actor's field at +0x27bc is under 2, swaps the team 2/3, CollectPlayers, skips IsStealthed and InCond(3), keeps the nearest by squared distance, then calls through the components at +0x2668 and +0x26c8 and a final virtual call on the actor. thiscall, one argument, ret 4
 				}
+				"CTFBotSpyAttack::Update"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFBotSpyAttack6UpdateEP6CTFBotf"
+					addr  "0x58dbc0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x58edb0 (string); on 11267535 the same function between the same carried neighbours (score 9.985), in the same vtable slot: 11 of 11 neighbouring slots agree
+				}
+				"CTFBotStickybombSentrygun::Update"
+				{
+					type  "fixed"
+					sym   "_ZN25CTFBotStickybombSentrygun6UpdateEP6CTFBotf"
+					addr  "0x5785a0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x579790 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 12 of 12 neighbouring slots agree
+				}
 				"CTFBotFetchFlag::CTFBotFetchFlag [C1]"
 				{
 					type  "fixed"
@@ -12070,6 +13952,42 @@
 					lib   "server"
 					vtidx "45"
 					// verified: read by hand: slot 45 of CTFBotFetchFlag's table, with matched slots 44 and 46 on either side at Linux slot minus 1. GetDesiredPathLookAheadRange of the actor, stored into the action's path (+0x38, a PathFollower here) through its virtual at +0x70; returns Continue. Sret thiscall, ret 0xc
+				}
+				"CTFBotFetchFlag::Update"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFBotFetchFlag6UpdateEP6CTFBotf"
+					addr  "0x589d00"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x58aef0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 10 of 10 neighbouring slots agree
+				}
+				"CTFBotDeliverFlag::Update"
+				{
+					type  "fixed"
+					sym   "_ZN17CTFBotDeliverFlag6UpdateEP6CTFBotf"
+					addr  "0x588ab0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x589ca0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 11 of 11 neighbouring slots agree
+				}
+				"CTFBotAttackFlagDefenders::Update"
+				{
+					type  "fixed"
+					sym   "_ZN25CTFBotAttackFlagDefenders6UpdateEP6CTFBotf"
+					addr  "0x587fb0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5891a0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 10 of 10 neighbouring slots agree
+				}
+				"CTFBotAttack::CTFBotAttack [C1]"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFBotAttackC1Ev"
+					addr  "0x569720"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x56a910 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0.807), and 1 carried caller(s) call it
 				}
 				"CTFBotPushToCapturePoint::CTFBotPushToCapturePoint [C1]"
 				{
@@ -12118,6 +14036,15 @@
 					lib   "server"
 					vtidx "0"
 					// vtable index
+				}
+				"CTFBotDeliverFlag::UpgradeOverTime"
+				{
+					type  "fixed"
+					sym   "_ZN17CTFBotDeliverFlag15UpgradeOverTimeEP6CTFBot"
+					addr  "0x589150"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x58a340 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it
 				}
 				"CTFBotMainAction::SelectTargetPoint"
 				{
@@ -12216,6 +14143,15 @@
 					vtidx "47"
 					// verified: read by hand: slot 47 of CTFBotDeliverFlag's table (Linux 48, after OnStart 45 and Update 46, which pop 12 with the result pointer); clears bit 8 of the bot's attribute flags and ends in one call where the Linux body ends by jumping to ResetRageBuffs; ret 8
 				}
+				"CTFBotSpyInfiltrate::Update"
+				{
+					type  "fixed"
+					sym   "_ZN19CTFBotSpyInfiltrate6UpdateEP6CTFBotf"
+					addr  "0x58f6b0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5908a0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 11 of 11 neighbouring slots agree
+				}
 				"CTFBotMedicHeal::IsVisibleToEnemy"
 				{
 					type  "fixed"
@@ -12224,6 +14160,24 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: takes the bot and the position (ret 8), and asks the bot's INextBot part (+0x2668) for its vision interface (+0xcc) to collect the known entities (+0xbc), then for each enemy (IsEnemy +0xd8) the entity's +0x414 with the position: what Linux's body does with CollectKnownEntities inline. Three callers, CTFBotMedicHeal::Update (0x583070) and twice ComputeFollowPosition (0x580120), Linux's three
+				}
+				"CTFBotAttack::Update"
+				{
+					type  "fixed"
+					sym   "_ZN12CTFBotAttack6UpdateEP6CTFBotf"
+					addr  "0x56a0a0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x56b290 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it
+				}
+				"CTFBotSpyLurk::Update"
+				{
+					type  "fixed"
+					sym   "_ZN13CTFBotSpyLurk6UpdateEP6CTFBotf"
+					addr  "0x590420"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x591610 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 10 of 10 neighbouring slots agree
 				}
 				"CTFBotBody::GetHeadAimTrackingInterval"
 				{
@@ -12324,6 +14278,15 @@
 					lib   "server"
 					// verified: string lead, agreed by strings: 2 shared string(s), 7/8 matched callees, windows/linux size 320/440
 				}
+				"CTFPlayer::ApplyPushFromDamage"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer19ApplyPushFromDamageERK15CTakeDamageInfo6Vector"
+					addr  "0x4e19c0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4e2a20 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it
+				}
 				"CTFPlayer::IsMiniBoss"
 				{
 					type  "fixed"
@@ -12342,6 +14305,15 @@
 					lib   "server"
 					// verified: read by hand: slot 0x764 of CTFPlayer's table (Linux 0x768), between CBaseMultiplayerPlayer::SpeakIfAllowed (0x20ba30, Linux 0x764) and CanBeAutobalanced (0x4e32d0, Linux 0x76c). The only reference to 'disguiseclass:%s' (0x50e45e) is inside it, after the CTFPlayerShared::InCond call (0x50e3de) as in the Linux body. Thiscall, five arguments, ret 0x14
 				}
+				"CTFPlayer::Taunt"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer5TauntE8taunts_ti"
+					addr  "0x511ee0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x513150 (string); on 11267535 the same function between the same carried neighbours (score 9.969, runner-up 0), and 14 carried caller(s) call it
+				}
 				"CTFPlayer::ForceChangeTeam"
 				{
 					type  "fixed"
@@ -12350,6 +14322,15 @@
 					build "11267535"
 					lib   "server"
 					// consensus, ret 8 as its arguments say
+				}
+				"CTFPlayer::ForceRespawn"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer12ForceRespawnEv"
+					addr  "0x4f27e0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4f3940 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 10 of 10 neighbouring slots agree; 10 of 10 neighbouring slots agree; 10 of 10 neighbouring slots agree
 				}
 				"CTFPlayer::StartBuildingObjectOfType"
 				{
@@ -12369,6 +14350,24 @@
 					lib   "server"
 					// call, ret 12 as its arguments say
 				}
+				"CTFPlayer::HandleCommand_JoinClass"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer23HandleCommand_JoinClassEPKcb"
+					addr  "0x4f4d70"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4f5ed0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 2.519), and 9 carried caller(s) call it
+				}
+				"CTFPlayer::HandleCommand_JoinTeam"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer22HandleCommand_JoinTeamEPKc"
+					addr  "0x4f5560"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4f66c0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 2.315), and 8 carried caller(s) call it
+				}
 				"CTFPlayer::IsReadyToPlay"
 				{
 					type  "fixed"
@@ -12387,6 +14386,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: shares the string 'FCVAR_NEVER_AS_STRING' with the Linux function, and 10 of its 10 matched callees
+				}
+				"CTFPlayer::Event_Killed"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer12Event_KilledERK15CTakeDamageInfo"
+					addr  "0x4ec9e0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4edb30 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 2.234), and 2 carried caller(s) call it
 				}
 				"CTFPlayer::TeleportEffect"
 				{
@@ -12415,6 +14423,15 @@
 					lib   "server"
 					// verified: read by hand: MakeDisposableBuilding calls it with (2, 0) after GetNumObjects (0x4cc8b3) as Linux does. A type above 3 returns 5, GetObjectInfo (0x53e5e0) and its mode count at +0x60, then the body Linux keeps in CanBuild [clone .part.0], with its three GetNumObjects (0x522550) calls. Thiscall, ret 8
 				}
+				"CTFPlayer::ManageRegularWeapons"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer20ManageRegularWeaponsEP19TFPlayerClassData_t"
+					addr  "0x4fdc20"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4fee70 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it
+				}
 				"CTFPlayer::ReapplyItemUpgrades"
 				{
 					type  "fixed"
@@ -12424,6 +14441,60 @@
 					lib   "server"
 					// verified: read by hand: returns early on the virtual at +0x71c (Linux +0x720), reads the class index, calls GetPlayerUpgradeHistory, bumps the counter at +0x2468 and clears +0x2478 when gpGlobals->maxClients > 1, then walks the history matching the item's definition index, the Linux body; ret 4
 				}
+				"CTFPlayer::RememberUpgrade"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer15RememberUpgradeEiP13CEconItemViewiib"
+					addr  "0x509a90"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x50acf0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it
+				}
+				"CTFPlayer::ForgetFirstUpgradeForItem"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer25ForgetFirstUpgradeForItemEP13CEconItemView"
+					addr  "0x4f2c20"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4f3d80 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.748), and 1 carried caller(s) call it
+				}
+				"CTFPlayer::CreateFeignDeathRagdoll"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer23CreateFeignDeathRagdollERK15CTakeDamageInfobbb"
+					addr  "0x4e7070"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4e80d0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.262); its 1 caller(s), not carried themselves, sit between the same carried neighbours too
+				}
+				"CTFPlayer::DoTauntAttack"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer13DoTauntAttackEv"
+					addr  "0x4e8a80"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4e9bd0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 1.185), and 1 carried caller(s) call it
+				}
+				"CTFPlayer::TeamFortress_CalculateMaxSpeed"
+				{
+					type  "fixed"
+					sym   "_ZNK9CTFPlayer30TeamFortress_CalculateMaxSpeedEb"
+					addr  "0x52ca30"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x52dc30 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 5 carried caller(s) call it
+				}
+				"CTFPlayer::OnTakeDamage"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer12OnTakeDamageERK15CTakeDamageInfo"
+					addr  "0x501280"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5025d0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 6 of 6 neighbouring slots agree; 6 of 6 neighbouring slots agree; 6 of 6 neighbouring slots agree
+				}
 				"CTFPlayer::UpdateModel"
 				{
 					type  "fixed"
@@ -12432,6 +14503,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: SetModel through vtable +0x68 with the class's model name (m_PlayerClass +0x22cc, 0x531ff0), the two vtable calls +0x57c and +0x578 (Linux +0x580, +0x57c) into SetCollisionBounds (0x1fba30), then OnNewModel on the anim state (+0x2264, Linux +0x226c), the Linux body; the two functions before it (0x50c2f0, 0x50c500) are the same after setting the class; no arguments
+				}
+				"CTFPlayer::GetOverrideStepSound"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer20GetOverrideStepSoundEPKc"
+					addr  "0x522be0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x523e50 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 11 of 11 neighbouring slots agree; 11 of 11 neighbouring slots agree; 11 of 11 neighbouring slots agree
 				}
 				"CTFPlayer::GetSceneSoundToken"
 				{
@@ -12461,6 +14541,15 @@
 					lib   "server"
 					// call, ret 8 as its arguments say
 				}
+				"CTFPlayer::FindPartnerTauntInitiator"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer25FindPartnerTauntInitiatorEv"
+					addr  "0x4f1c70"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4f2dd0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.572), and 2 carried caller(s) call it
+				}
 				"CTFPlayer::WantsLagCompensationOnEntity"
 				{
 					type  "fixed"
@@ -12479,6 +14568,33 @@
 					build "11267535"
 					lib   "server"
 					// consensus, ret 8 as its arguments say
+				}
+				"CTFPlayer::CreateRagdollEntity [args]"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer19CreateRagdollEntityEbbbbbbbbib"
+					addr  "0x4e78e0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4e8940 (consensus, ret 40 as its arguments say); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0.435), and 2 carried caller(s) call it
+				}
+				"CTFPlayer::ClientCommand"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer13ClientCommandERK8CCommand"
+					addr  "0x4e5220"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4e6280 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 14 of 14 neighbouring slots agree; 14 of 14 neighbouring slots agree; 14 of 14 neighbouring slots agree
+				}
+				"CTFPlayer::StateEnter"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer10StateEnterEi"
+					addr  "0x50ee80"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5100f0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 2.618), and 4 carried caller(s) call it
 				}
 				"CTFPlayer::StateLeave"
 				{
@@ -12516,6 +14632,24 @@
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: shares the string 'models/items/ammopack_medium.mdl' with the Linux function, and 9 of its 9 matched callees
 				}
+				"CTFPlayer::OnKilledOther_Effects"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer21OnKilledOther_EffectsEP11CBaseEntityRK15CTakeDamageInfo"
+					addr  "0x500c70"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x501fc0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0); its 1 caller(s), not carried themselves, sit between the same carried neighbours too
+				}
+				"CTFPlayer::TakeHealth"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer10TakeHealthEfi"
+					addr  "0x511dd0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x513040 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 6 of 6 neighbouring slots agree; 6 of 6 neighbouring slots agree; 6 of 6 neighbouring slots agree
+				}
 				"CTFPlayer::AddCustomAttribute"
 				{
 					type  "fixed"
@@ -12534,6 +14668,15 @@
 					lib   "server"
 					// verified: read by hand: CTriggerAddOrRemoveTFPlayerAttributes::StartTouch (0x541e60) calls it with the attribute name where it would otherwise call AddCustomAttribute (0x4e0340), the Linux shape; the body finds the name in the custom attribute map (+0x25e8, Linux +0x25f0), calls RemoveAttributeFromPlayer on m_Shared (+0x1ae8, Linux +0x1af4), unlinks the node and puts it on the free list; thiscall, ret 4
 				}
+				"CTFPlayer::OnNavAreaChanged"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer16OnNavAreaChangedEP8CNavAreaS1_"
+					addr  "0x501080"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5023d0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 1.617), and 1 carried caller(s) call it
+				}
 				"CTFPlayer::EndPurchasableUpgrades"
 				{
 					type  "fixed"
@@ -12542,6 +14685,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: ends in a call to CPopulationManager's SendUpgradesToPlayer (0x5e6fd0, in the population manager's code) as the Linux body does; ret; the matcher's call candidate from CUpgrades::GrantOrRemoveAllUpgrades
+				}
+				"CTFPlayer::Weapon_GetWeaponByType"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer22Weapon_GetWeaponByTypeEi"
+					addr  "0x52f710"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x530900 (call); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 15 carried caller(s) call it
 				}
 				"CTFPlayer::GetEquippedWearableForLoadoutSlot"
 				{
@@ -12616,6 +14768,15 @@
 					lib   "server"
 					// verified: the matcher lost it on 11087207, where GCC split the Linux body into a .part.0 clone: 'allowed in medieval mode' and 'passtime', the Linux callees
 				}
+				"CTFPlayer::IsAllowedToPickUpFlag"
+				{
+					type  "fixed"
+					sym   "_ZNK9CTFPlayer21IsAllowedToPickUpFlagEv"
+					addr  "0x524070"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5252e0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it
+				}
 				"CTFPlayer::ModifyOrAppendCriteria::kSlotCriteriaName"
 				{
 					type  "fixed"
@@ -12651,6 +14812,15 @@
 					build "11267535"
 					lib   "server"
 					// call
+				}
+				"CTFPlayerShared::StunPlayer"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFPlayerShared10StunPlayerEffiP9CTFPlayer"
+					addr  "0x52c560"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x52d760 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 1.647), and 41 carried caller(s) call it
 				}
 				"CTFPlayerShared::OnConditionAdded"
 				{
@@ -12697,6 +14867,15 @@
 					lib   "server"
 					// verified: read by hand: the Linux body: InCond, TF_COND_CRITBOOSTED (11) handed to the condition list's GetProvider (+0xe0 on both), else the provider handle at m_ConditionData (+8 on both) [cond*20 + 0xc] looked up in the entity list; thiscall, ret 4. Its m_ConditionData read is what the Windows extractor of that prop matches
 				}
+				"CTFPlayerShared::GetDisguiseTeam"
+				{
+					type  "fixed"
+					sym   "_ZNK15CTFPlayerShared15GetDisguiseTeamEv"
+					addr  "0x521cd0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x522f40 (call); on 11267535 the same function between the same carried neighbours (score 3.0, runner-up 0), and 28 carried caller(s) call it
+				}
 				"CTFPlayerShared::IsStealthed"
 				{
 					type  "fixed"
@@ -12714,6 +14893,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: GetTeamNumber of the outer player (+0x18c) compared with 2 and the MvM test first, then the currency pack loop with ApplyAbsVelocityImpulse (0x5292aa, 0x5292b7), Linux's body. Its one caller is ConditionGameRulesThink (0x51dad6), as on Linux. Thiscall, plain ret
+				}
+				"CTFPlayerShared::IsControlStunned"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFPlayerShared16IsControlStunnedEv"
+					addr  "0x5242e0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x525550 (call); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 24 carried caller(s) call it
 				}
 				"CTFPlayerShared::IsLoserStateStunned"
 				{
@@ -12796,6 +14984,15 @@
 					lib   "server"
 					// verified: read by hand: the whole PulseMedicRadiusHeal, opening with the +0x1f1 test Linux's ConditionThink makes before its clone (0xd2feff), and holding 'weapon_blocks_healing' (0x5287d5) as the clone does. ConditionThink calls it at 0x51def5. Thiscall, plain ret
 				}
+				"CTFPlayerShared::TestAndExpireChargeEffect"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFPlayerShared25TestAndExpireChargeEffectE20medigun_charge_types"
+					addr  "0x52d470"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x52e670 (consensus); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 3 carried caller(s) call it
+				}
 				"CTFPlayerShared::GetMaxBuffedHealth"
 				{
 					type  "fixed"
@@ -12852,6 +15049,15 @@
 					lib   "server"
 					// verified: string lead, agreed by strings: 2 shared string(s), 6/7 matched callees, windows/linux size 640/1124
 				}
+				"CTFPlayer::UseActionSlotItemPressed"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer24UseActionSlotItemPressedEv"
+					addr  "0x5143b0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x515620 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it
+				}
 				"CTFPlayer::UseActionSlotItemReleased"
 				{
 					type  "fixed"
@@ -12887,6 +15093,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: the call match; the global's vtable +0x64, then the anim state (+0x2264, Linux +0x226c) DoAnimationEvent through +8 (Linux +0xc, one destructor fewer) with (event, data), then the player anim temp entity built inline, the Linux body; thiscall, two arguments
+				}
+				"CTFPlayer::CanAirDash"
+				{
+					type  "fixed"
+					sym   "_ZNK9CTFPlayer10CanAirDashEv"
+					addr  "0x51aa50"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x51bcc0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 3.288), and 1 carried caller(s) call it
 				}
 				"HandleRageGain"
 				{
@@ -12951,6 +15166,15 @@
 					lib   "server"
 					// verified: read by hand: resolves the handle at the argument's index of m_aObjects (+0x2340, Linux +0x2348), whose count at +0x234c is what GetObjectCount (0x4f3b30) returns, the Linux body; thiscall, one argument
 				}
+				"CTFPlayer::Touch"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer5TouchEP11CBaseEntity"
+					addr  "0x513090"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x514300 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 1.763), and 2 carried caller(s) call it
+				}
 				"CTFPlayer::RemoveCurrency"
 				{
 					type  "fixed"
@@ -12997,6 +15221,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: the one site pushing "RegenThink" before ThinkSet (0x508ed0) pushes 0x508eb0 as the think function, inside 0x508eb0 itself: SetContextThink(&CTFPlayer::RegenThink, t, "RegenThink") at the top of RegenThink, as the source has it. It reads no argument. The string match had given 0x508e30, the function just before, which takes (int, float) and ends ret 8: RegenAmmoInternal, which calls GetMaxAmmo and GiveAmmo
+				}
+				"CTFPlayer::ParseSharedTauntDataFromEconItemView"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer36ParseSharedTauntDataFromEconItemViewEPK13CEconItemView"
+					addr  "0x5283d0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x529640 (string); on 11267535 the same function between the same carried neighbours (score 9.574, runner-up 0); its 1 caller(s), not carried themselves, sit between the same carried neighbours too
 				}
 				"CTFPlayer::InputIgnitePlayer"
 				{
@@ -13081,6 +15314,15 @@
 					vtidx "447"
 					// verified: read by hand: slot 447 of CTFPlayer's table (Linux 448); the class index at +0x22d0, the byte at +0x2354, then the game rules' virtual, the Linux body (+0x22d8, +0x235c there); ret
 				}
+				"CTFPlayer::OnTakeDamage_Alive"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer18OnTakeDamage_AliveERK15CTakeDamageInfo"
+					addr  "0x504400"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x505750 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 10 of 10 neighbouring slots agree
+				}
 				"CTFPlayer::PickupWeaponFromOther"
 				{
 					type  "fixed"
@@ -13089,6 +15331,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: corroborated by tools/winport/corroborate.py: calls all 13 of the Linux function's matched callees, and no string disagrees
+				}
+				"CTFPlayer::Regenerate"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer10RegenerateEb"
+					addr  "0x509590"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x50a7f0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 2 carried caller(s) call it
 				}
 				"CTFPlayer::ItemsMatch"
 				{
@@ -13109,6 +15360,15 @@
 					vtidx "233"
 					// verified: read by hand: slot 233 of CTFPlayer's table (Linux 234). Engine vcall +0x64, the flag at +0x2098/+0x208c selecting the handle at +0x2090/+0x2084, InstancedScriptedScene (0x3204d0), engine vcall +0x68, the float result; ret 0x10
 				}
+				"CTFPlayer::TryToPickupBuilding"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer19TryToPickupBuildingEv"
+					addr  "0x52d710"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x52e910 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.978), and 1 carried caller(s) call it
+				}
 				"CTFPlayer::EndClassSpecialSkill"
 				{
 					type  "fixed"
@@ -13117,6 +15377,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: Weapon_OwnsThisID(0x18), GetEquippedDemoShield and CTFWearableDemoShield::EndSpecialAction (0x6409a0), Linux's body. Callers are CTFWeaponBaseMelee::PrimaryAttack (0x63e3db) and 0x4d5179, CPasstimeBall::SetStateCarried, Linux's two. Thiscall, plain ret
+				}
+				"CTFPlayer::GetMaxHealthForBuffing"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer22GetMaxHealthForBuffingEv"
+					addr  "0x4f3720"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4f4880 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 3 carried caller(s) call it
 				}
 				"CTFPlayer::DetonateObjectOfType"
 				{
@@ -13163,6 +15432,15 @@
 					lib   "server"
 					// verified: read by hand: the call match turned away, and the Linux body's passtime branch laid out first by MSVC: gamerules state 7 and the passtime logic present, GetPackSpeed(this), and a changed speed written to m_flMaxspeed (+0xf04, Linux +0xf1c) through NetworkStateChanged; thiscall, no arguments, ret
 				}
+				"CTFPlayer::PrecacheMvM"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer11PrecacheMvMEv"
+					addr  "0x508340"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x5095a0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 4.027), and 1 carried caller(s) call it
+				}
 				"CTFPlayer::PostThink"
 				{
 					type  "fixed"
@@ -13192,6 +15470,51 @@
 					lib   "server"
 					// verified: five consecutive dword fields set to zero (0x2168 to 0x2178 here 0x2160 to 0x2170), nothing else, as the Linux body; in the name-ordered run it sits between ClearExpression and ClearUpgradeHistory
 				}
+				"CTFPlayer::ApplyPunchImpulseX"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer18ApplyPunchImpulseXEf"
+					addr  "0x4e18f0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4e2950 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 6 carried caller(s) call it
+				}
+				"CTFPlayer::HandleAnimEvent"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer15HandleAnimEventEP11animevent_t"
+					addr  "0x4f4860"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4f59c0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it
+				}
+				"CTFPlayerShared::IsPlayerDominated"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFPlayerShared17IsPlayerDominatedEi"
+					addr  "0x524690"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x525900 (call); on 11267535 the same function between the same carried neighbours (score 3.0, runner-up 1.5); its 2 caller(s), not carried themselves, sit between the same carried neighbours too
+				}
+				"CTFPlayerShared::IsPlayerDominatingMe"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFPlayerShared20IsPlayerDominatingMeEi"
+					addr  "0x5246b0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x525920 (consensus); on 11267535 the same function between the same carried neighbours (score 3.0, runner-up 0), and 1 carried caller(s) call it
+				}
+				"CTFPlayerShared::SetPlayerDominated"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFPlayerShared18SetPlayerDominatedEP9CTFPlayerb"
+					addr  "0x52b760"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x52c960 (consensus, ret 8 as its arguments say); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0); its 4 caller(s), not carried themselves, sit between the same carried neighbours too
+				}
 				"CTFPlayer::UpdateExpression"
 				{
 					type  "fixed"
@@ -13200,6 +15523,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: a standalone body: gated on a next-time field (+0x12a0), asks GetResponseSceneFromConcept (0x4f3910) for concept 0, stops the old scene (StopScriptedScene 0x322bb0) and plays the new one through InstancedScriptedScene (0x3204d0). Thiscall, plain ret. TFPlayerThink (0x50faa0) also carries an inline copy (ClearExpression 0x4e4a70, 0x4f3910, 0x3204d0 at 0x5105e6 to 0x510753) that no detour reaches; the standalone copy is stored as a function pointer at 0x4f6b75
+				}
+				"CTFPlayerShared::ConditionGameRulesThink"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFPlayerShared23ConditionGameRulesThinkEv"
+					addr  "0x51ba60"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x51ccd0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it
 				}
 				"CTFPlayer::GetOpposingTFTeam"
 				{
@@ -13227,6 +15559,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: the whole UpdateCloakMeter, which opens with the IsPlayerClass(8) test that Linux's wrapper makes before its .part.0 clone. CTFPlayerShared::ConditionThink calls it first (0x51dc7b), then UpdateRageBuffsAndRage (0x52eb40, 'set_buff_type'), UpdateEnergyDrinkMeter and UpdateChargeMeter (0x52da80, 'charge_recharge_rate'), Linux's order. Thiscall, plain ret
+				}
+				"CTFPlayer::TraceAttack"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer11TraceAttackERK15CTakeDamageInfoRK6VectorP10CGameTraceP15CDmgAccumulator"
+					addr  "0x513ae0"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x514d50 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 7 of 7 neighbouring slots agree; 7 of 7 neighbouring slots agree; 7 of 7 neighbouring slots agree
 				}
 				"CTFPlayerShared::IsCritBoosted"
 				{
@@ -13336,6 +15677,15 @@
 					lib   "server"
 					// verified: read by hand: called by ManageRegularWeapons (0x4fd624), RemoveAllWeapons (0x509c11) and DetermineDisguiseWeapon (0x51ea6f), Linux's callers, and by OnConditionRemoved and ConditionGameRulesThink, which carry Linux's paths to it inline. Removes the disguise weapon through the entity's virtuals and clears the handle, Linux's body. Thiscall, plain ret
 				}
+				"CTFPlayerShared::SetScoutHypeMeter"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFPlayerShared17SetScoutHypeMeterEf"
+					addr  "0x52ba00"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x52cc00 (consensus); on 11267535 the same function between the same carried neighbours (score 3.0, runner-up 0), and 6 carried caller(s) call it
+				}
 				"CTFPlayerShared::UpdateEnergyDrinkMeter"
 				{
 					type  "fixed"
@@ -13380,6 +15730,15 @@
 					build "11267535"
 					lib   "server"
 					// verified: read by hand: the table had 0x50c120, a one-argument handle setter that ends at 0x50c147; this one follows it. Takes the target and the bool (ret 8) and adds conditions 0x63 and 0x64 for a target as Linux's body does at 0xcba282 and 0xcba294. Called by CTFProjectile_GrapplingHook::HookTarget (0x5faccd), twice by TFPlayerThink (0x50b112, 0x50b124), by 0x5fb69f (UpdateOnRemove) and by the script binding (0x5104dc), Linux's four callers
+				}
+				"CTFPlayer::CheckBlockBackstab"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer18CheckBlockBackstabEPS_"
+					addr  "0x4e4330"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x4e5390 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 1.561), and 1 carried caller(s) call it
 				}
 				"CTFPlayer::RemoveOwnedProjectiles"
 				{
@@ -13435,6 +15794,15 @@
 					build "11267535"
 					lib   "server"
 					// call
+				}
+				"CTFPlayerShared::ConditionThink"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFPlayerShared14ConditionThinkEv"
+					addr  "0x51e280"
+					build "11267535"
+					lib   "server"
+					// verified: held for 11191711 at 0x51f4f0 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 1 carried caller(s) call it
 				}
 				"CAmbientGeneric::m_DataMap"
 				{
