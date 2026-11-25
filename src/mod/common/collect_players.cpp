@@ -1,7 +1,7 @@
 #include "mod.h"
-#include "stub/tfplayer.h"
 
-#if defined _LINUX && !defined PLATFORM_64BITS
+#if defined SE_IS_TF2 && defined _LINUX && !defined PLATFORM_64BITS
+#include "stub/tfplayer.h"
 #include <list>
 #include <unordered_set>
 
