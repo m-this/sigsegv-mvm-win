@@ -13,15 +13,12 @@ namespace Mod::Robot::Underground_Check_Override
 		0x66, 0x0f, 0xef, 0xc0,                                      // +0x001c pxor    xmm0, xmm0
 		0x41, 0x0f, 0x2f, 0x86, 0xac, 0x00, 0x00, 0x00,              // +0x0020 comiss  xmm0, dword ptr [r14+0ACh]
 #else
-		0xf3, 0x0f, 0x10, 0x45, 0xb8,                    // +0x0000 movss   xmm0, dword ptr [ebp-48h]
-		0xf3, 0x0f, 0x5c, 0x83, 0xd8, 0x02, 0x00, 0x00,  // +0x0005 subss   xmm0, dword ptr [ebx+2D8h]
-		0x0f, 0x2f, 0x05, 0x64, 0x44, 0x1c, 0x01,        // +0x000d comiss  xmm0, ds:flt_11C4464
-		0x0f, 0x86, 0x72, 0x02, 0x00, 0x00,              // +0x0014 jbe     loc_D75668
-		0x8b, 0x45, 0x0c,                                // +0x001a mov     eax, [ebp+0Ch]
-		0x66, 0x0f, 0xef, 0xc0,                          // +0x001d pxor    xmm0, xmm0
-		0x8b, 0x4d, 0x0c,                                // +0x0021 mov     ecx, [ebp+0Ch]
-		0x83, 0xc0, 0x70,                                // +0x0024 add     eax, 70h ; 'p'
-		0x0f, 0x2f, 0x41, 0x70,                          // +0x0027 comiss  xmm0, dword ptr [ecx+70h]
+		0xf3, 0x0f, 0x5c, 0x87, 0x00, 0x00, 0x00, 0x00,  // +0x0000 subss   xmm0, dword ptr [edi+m_vecAbsOrigin.z]
+		0x0f, 0x2f, 0x45, 0x90,                          // +0x0008 comiss  xmm0, dword ptr [ebp-70h]
+		0x0f, 0x86, 0x00, 0x00, 0x00, 0x00,              // +0x000c jbe     not underground
+		0x8b, 0x45, 0x0c,                                // +0x0012 mov     eax, [ebp+0Ch]
+		0x66, 0x0f, 0xef, 0xc0,                          // +0x0015 pxor    xmm0, xmm0
+		0xf3, 0x0f, 0x10, 0x48, 0x70,                    // +0x0019 movss   xmm1, dword ptr [eax+m_itUnderground]
 #endif
 	};
 
@@ -84,15 +81,13 @@ namespace Mod::Robot::Underground_Check_Override
 			mask.SetRange(0x16 + 2, 4, 0x00);
 			mask.SetRange(0x20 + 4, 4, 0x00);
 #else
-			buf.SetDword(0x05 + 4, off_m_vecAbsOrigin + 8);
+			buf.SetDword(0x00 + 4, off_m_vecAbsOrigin + 8);
 			
-			mask.SetRange(0x00 + 4, 1, 0x00);
-			mask.SetRange(0x0d + 3, 4, 0x00);
-			mask.SetRange(0x14 + 2, 4, 0x00);
-			mask.SetRange(0x1a + 2, 1, 0x00);
-			mask.SetRange(0x21 + 2, 1, 0x00);
-			mask.SetRange(0x24 + 2, 1, 0x00);
-			mask.SetRange(0x27 + 3, 1, 0x00);
+			mask.SetRange(0x00 + 3, 1, 0x00);
+			mask.SetRange(0x08 + 2, 2, 0x00);
+			mask.SetRange(0x0c + 2, 4, 0x00);
+			mask.SetRange(0x12 + 2, 1, 0x00);
+			mask.SetRange(0x19 + 4, 1, 0x00);
 #endif
 			
 			return true;
@@ -100,11 +95,11 @@ namespace Mod::Robot::Underground_Check_Override
 		
 		virtual const char *GetFuncName() const override            { return "CTFBotMainAction::Update"; }
 		virtual uint32_t GetFuncOffMin() const override             { return 0x0000; }
-		virtual uint32_t GetFuncOffMax() const override             { return 0x0a00; } // @ 0x0789
+		virtual uint32_t GetFuncOffMax() const override             { return 0x0a00; } // @ 0x06fe
 #ifdef PLATFORM_64BITS
 		virtual uint32_t GetExtractOffset() const override          { return 0x0020 + 4; }
 #else
-		virtual uint32_t GetExtractOffset() const override          { return 0x0027 + 3; }
+		virtual uint32_t GetExtractOffset() const override          { return 0x0019 + 4; }
 #endif
 #endif
 	};
