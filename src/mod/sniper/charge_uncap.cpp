@@ -7,10 +7,9 @@ namespace Mod::Sniper::Charge_Uncap
 #if defined _LINUX
 	
 	constexpr uint8_t s_Buf_CTFSniperRifle[] = {
-		0xf3, 0x0f, 0x5f, 0xc1,                         // +0000  maxss xmm0,xmm1
-		0xf3, 0x0f, 0x5d, 0x05, 0x30, 0x97, 0x2a, 0x01, // +0004  minss xmm0,[100.0f]
-		0xf3, 0x0f, 0x11, 0x45, 0xc8,                   // +000C  movss [ebp-0x38],xmm0
-		0xf3, 0x0f, 0x59, 0x40, 0x10,                   // +0011  mulss xmm0,dword ptr [eax+0x10]
+		0xf3, 0x0f, 0x5d, 0x83, 0x00, 0x00, 0x00, 0x00, // +0000  minss xmm0,[ebx+100.0f@GOTOFF]
+		0xf3, 0x0f, 0x11, 0x45, 0x00,                   // +0008  movss [ebp-0xXX],xmm0
+		0xf3, 0x0f, 0x59, 0x40, 0x10,                   // +000D  mulss xmm0,dword ptr [eax+0x10]
 		//0x8d, 0x83, 0x0C, 0x08, 0x00, 0x00,             // +0016  lea eax, dword ptr [ebx+m_flChargedDamage]
 		//0xf3, 0x0f, 0x58, 0x83, 0xdc, 0x07, 0x00, 0x00, // +001c  addss xmm0,dword ptr [ebx+m_flChargedDamage]
 		//0xc7, 0x44, 0x24, 0x08, 0x04, 0x00, 0x00, 0x00, // +0021  mov dword ptr [esp+8],4
@@ -33,8 +32,8 @@ namespace Mod::Sniper::Charge_Uncap
 			//buf.SetDword(0x16 + 2, (uint32_t)off__CTFSniperRifle_m_flChargedDamage);
 			//buf.SetDword(0x1c + 4, (uint32_t)off__CTFSniperRifle_m_flChargedDamage);
 			
-			mask.SetRange(0x04 + 4, 4, 0x00);
-			mask.SetRange(0x0c + 4, 1, 0x00);
+			mask.SetRange(0x00 + 4, 4, 0x00);
+			mask.SetRange(0x08 + 4, 1, 0x00);
 			//mask.SetRange(0x33 + 4, 4, 0x00);
 			
 			return true;
@@ -43,21 +42,20 @@ namespace Mod::Sniper::Charge_Uncap
 		virtual bool GetPatchInfo(ByteBuf& buf, ByteBuf& mask) const override
 		{
 			/* NOP out the MINSS instruction */
-			buf .SetRange(0x04, 8, 0x90);
-			mask.SetRange(0x04, 8, 0xff);
+			buf .SetRange(0x00, 8, 0x90);
+			mask.SetRange(0x00, 8, 0xff);
 			return true;
 		}
 		
 		virtual const char *GetFuncName() const override { return "CTFSniperRifle::ItemPostFrame"; }
 		virtual uint32_t GetFuncOffMin() const override  { return 0x0000; }
-		virtual uint32_t GetFuncOffMax() const override  { return 0x0480; } // @ 0x0424
+		virtual uint32_t GetFuncOffMax() const override  { return 0x0480; } // @ 0x0214
 	};
 	
 	constexpr uint8_t s_Buf_CTFSniperRifleClassic[] = {
-		0xf3, 0x0f, 0x5f, 0xc1,                         // +0000  maxss xmm0,xmm1
-		0xf3, 0x0f, 0x5d, 0x05, 0x90, 0xad, 0x1f, 0x01, // +0004  minss xmm0,[100.0f]
-		0xf3, 0x0f, 0x11, 0x45, 0xc8,                   // +000C  movss [ebp-0x38],xmm0
-		0xf3, 0x0f, 0x59, 0x40, 0x10,                   // +0011  mulss xmm0,dword ptr [eax+0x10]
+		0xf3, 0x0f, 0x5d, 0x83, 0x00, 0x00, 0x00, 0x00, // +0000  minss xmm0,[ebx+100.0f@GOTOFF]
+		0xf3, 0x0f, 0x11, 0x45, 0x00,                   // +0008  movss [ebp-0xXX],xmm0
+		0xf3, 0x0f, 0x59, 0x40, 0x10,                   // +000D  mulss xmm0,dword ptr [eax+0x10]
 		//0x8d, 0x83, 0xdc, 0x07, 0x00, 0x00,             // +0016  lea eax,[ebx+m_flChargedDamage]
 		//0xf3, 0x0f, 0x58, 0x83, 0xdc, 0x07, 0x00, 0x00, // +001C  addss xmm0,dword ptr [ebx+m_flChargedDamage]
 		//0xc7, 0x44, 0x24, 0x08, 0x04, 0x00, 0x00, 0x00, // +0024  mov dword ptr [esp+8],4
@@ -80,8 +78,8 @@ namespace Mod::Sniper::Charge_Uncap
 			//buf.SetDword(0x16 + 2, (uint32_t)off__CTFSniperRifle_m_flChargedDamage);
 			//buf.SetDword(0x1c + 4, (uint32_t)off__CTFSniperRifle_m_flChargedDamage);
 			
-			mask.SetRange(0x04 + 4, 4, 0x00);
-			mask.SetRange(0x0c + 4, 1, 0x00);
+			mask.SetRange(0x00 + 4, 4, 0x00);
+			mask.SetRange(0x08 + 4, 1, 0x00);
 			//mask.SetRange(0x33 + 4, 4, 0x00);
 			
 			return true;
@@ -90,15 +88,15 @@ namespace Mod::Sniper::Charge_Uncap
 		virtual bool GetPatchInfo(ByteBuf& buf, ByteBuf& mask) const override
 		{
 			/* NOP out the MINSS instruction */
-			buf .SetRange(0x04, 8, 0x90);
-			mask.SetRange(0x04, 8, 0xff);
+			buf .SetRange(0x00, 8, 0x90);
+			mask.SetRange(0x00, 8, 0xff);
 			
 			return true;
 		}
 		
 		virtual const char *GetFuncName() const override { return "CTFSniperRifleClassic::ItemPostFrame"; }
 		virtual uint32_t GetFuncOffMin() const override  { return 0x0000; }
-		virtual uint32_t GetFuncOffMax() const override  { return 0x0280; } // @ 0x0141
+		virtual uint32_t GetFuncOffMax() const override  { return 0x0280; } // @ 0x01ce
 	};
 	
 #elif defined _WINDOWS

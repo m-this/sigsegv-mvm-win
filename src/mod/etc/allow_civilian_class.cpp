@@ -50,7 +50,7 @@ namespace Mod::Etc::Allow_Civilian_Class
 		virtual uint32_t GetFuncOffMax() const override  { return 0x0400; } // @ 0x038e
 #else
 		virtual uint32_t GetFuncOffMin() const override  { return 0x0400; }
-		virtual uint32_t GetFuncOffMax() const override  { return 0x0BF0; } // @ 0x072a
+		virtual uint32_t GetFuncOffMax() const override  { return 0x1000; } // @ 0x0c0a
 #endif
 	};
 

@@ -22,7 +22,7 @@ namespace Mod::Etc::Override_Move_Speed
 #elif defined _WINDOWS
 		0xc7, 0x40, 0x3c, 0x00, 0x00, 0x02, 0x44, // +0000 mov dword ptr [eax+0x3c],520.0f
 #else
-		0xc7, 0x47, 0x3c, 0x00, 0x00, 0x02, 0x44, // +0000 mov dword ptr [edi+0x3c],520.0f
+		0xc7, 0x40, 0x3c, 0x00, 0x00, 0x02, 0x44, // +0000 mov dword ptr [eax+0x3c],520.0f
 #endif
 	};
 	
@@ -32,7 +32,7 @@ namespace Mod::Etc::Override_Move_Speed
 		
 		virtual const char *GetFuncName() const override { return "CTFGameMovement::ProcessMovement"; }
 		virtual uint32_t GetFuncOffMin() const override { return 0x0000; }
-		virtual uint32_t GetFuncOffMax() const override { return 0x0100; } // @ 0x0067
+		virtual uint32_t GetFuncOffMax() const override { return 0x0100; } // @ 0x0070
 		
 		virtual bool GetVerifyInfo(ByteBuf& buf, ByteBuf& mask) const override
 		{

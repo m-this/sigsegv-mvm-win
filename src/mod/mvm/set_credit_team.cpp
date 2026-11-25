@@ -268,11 +268,9 @@ namespace Mod::MvM::Set_Credit_Team
 		0x50,                          // +0x0007 push    eax
 		0xe8,                          // +0x0008 call    CollectPlayers<CTFPlayer>
 #else
-		0x6a, 0x00,                    // +0x0000 push    0
-		0x6a, 0x00,                    // +0x0002 push    0
-		0x6a, 0x02,                    // +0x0004 push    2
-		0x50,                          // +0x0006 push    eax
-		0xe8,  // +0x0007 call    _Z14CollectPlayersI9CTFPlayerEiP10CUtlVectorIPT_10CUtlMemoryIS3_iEEibb; CollectPlayers<CTFPlayer>(CUtlVector<CTFPlayer *,CUtlMemory<CTFPlayer *,int>> *,int,bool,bool)
+		/* CollectPlayers<CTFPlayer>.isra.0 takes the team in edx */
+		0xba, 0x02, 0x00, 0x00, 0x00,              // +0x0000 mov     edx, 2
+		0xc7, 0x45, 0x00, 0x00, 0x00, 0x00, 0x00,  // +0x0005 mov     dword ptr [ebp-N], 0
 #endif
 	};
 	
@@ -282,13 +280,15 @@ namespace Mod::MvM::Set_Credit_Team
 		
 		virtual const char *GetFuncName() const override { return "CTFGameRules::DistributeCurrencyAmount"; }
 		virtual uint32_t GetFuncOffMin() const override  { return 0x0000; }
-		virtual uint32_t GetFuncOffMax() const override  { return 0x0100; } // @ +0x00d3
+		virtual uint32_t GetFuncOffMax() const override  { return 0x0100; } // @ +0x00b0
 		
 		virtual bool GetVerifyInfo(ByteBuf& buf, ByteBuf& mask) const override
 		{
 			buf.CopyFrom(s_Buf_CTFGameRules_DistributeCurrencyAmount);
 #if defined _WINDOWS
 			mask[0x02 + 2] = 0x00;
+#elif !defined PLATFORM_64BITS
+			mask[0x05 + 2] = 0x00;
 #endif
 			
 			return true;
@@ -306,9 +306,8 @@ namespace Mod::MvM::Set_Credit_Team
 			
 			mask[0x05 + 1] = 0xFF;
 #else
-			buf[0x04 + 1] = TEAM_INVALID;
-			
-			mask[0x04 + 1] = 0xFF;
+			buf.SetDword(0x00 + 1, TEAM_INVALID);
+			mask.SetDword(0x00 + 1, 0xffffffff);
 #endif
 			return true;
 		}
@@ -321,7 +320,7 @@ namespace Mod::MvM::Set_Credit_Team
 			buf[0x05 + 1] = GetCreditTeamNum();
 #else
 			/* set the teamnum argument to the actual user-requested teamnum */
-			buf[0x04 + 1] = GetCreditTeamNum();
+			buf.SetDword(0x00 + 1, GetCreditTeamNum());
 #endif
 			return true;
 		}
@@ -339,7 +338,7 @@ namespace Mod::MvM::Set_Credit_Team
 		0x50,                                      // +0x0006 push    eax
 #else
 		0xba, 0x02, 0x00, 0x00, 0x00,              // +0x0000 mov     edx, 2
-		0x89, 0xf8,                                // +0x0005 mov     eax, edi
+		0xc7, 0x45, 0x00, 0x00, 0x00, 0x00, 0x00,  // +0x0005 mov     dword ptr [ebp-N], 0
 #endif
 	};
 	
@@ -349,13 +348,14 @@ namespace Mod::MvM::Set_Credit_Team
 		
 		virtual const char *GetFuncName() const override { return "CPopulationManager::OnCurrencyCollected"; }
 		virtual uint32_t GetFuncOffMin() const override  { return 0x0000; }
-		virtual uint32_t GetFuncOffMax() const override  { return 0x0200; } // @ +0x00af
+		virtual uint32_t GetFuncOffMax() const override  { return 0x0200; } // @ +0x00d0
 		
 		virtual bool GetVerifyInfo(ByteBuf& buf, ByteBuf& mask) const override
 		{
 			buf.CopyFrom(s_Buf_CPopulationManager_OnCurrencyCollected);
-			
-			
+#if !defined _WINDOWS && !defined PLATFORM_64BITS
+			mask[0x05 + 2] = 0x00;
+#endif
 			return true;
 		}
 		

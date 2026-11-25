@@ -136,11 +136,11 @@ namespace Mod::Perf::Func_Optimize
         0x48, 0x8d, 0x35, 0x68, 0xb3, 0xd9, 0x00,  // +0x0009 lea     rsi, _ZTI13CEconWearable; lpstype
         0xe8, 0xb3, 0x37, 0xb9, 0xff,              // +0x0010 call    ___dynamic_cast
 #else
-        0x6A, 0x00, // 0
-        0x68, 0xBC, 0x08, 0x21, 0x01, // 2
-        0x68, 0xB8, 0x11, 0x1E, 0x01, // 7
-        0x50, // C
-        0xE8, 0x5D, 0x0D, 0x0C, 0x00 // d
+        0x6a, 0x00,                          // +0x0000 push    0
+        0xff, 0x75, 0x00,                    // +0x0002 push    [ebp-N] (&typeinfo for CTFWearable)
+        0xff, 0xb3, 0x00, 0x00, 0x00, 0x00,  // +0x0005 push    [ebx+&typeinfo for CEconWearable@GOT]
+        0x50,                                // +0x000b push    eax
+        0xe8, 0x00, 0x00, 0x00, 0x00,        // +0x000c call    __dynamic_cast
 #endif
 	};
 	struct CPatch_CTFPlayer_GetEquippedWearableForLoadoutSlot : public CPatch
@@ -161,9 +161,9 @@ namespace Mod::Perf::Func_Optimize
 			mask.SetDword(0x09 + 3, 0);
 			mask.SetDword(0x10 + 1, 0);
 #else
-			mask.SetDword(0x02 + 1, 0);
-			mask.SetDword(0x07 + 1, 0);
-			mask.SetDword(0x0d + 1, 0);
+			mask[0x02 + 2] = 0x00;
+			mask.SetDword(0x05 + 2, 0);
+			mask.SetDword(0x0c + 1, 0);
 #endif
 			return true;
 		}
@@ -179,8 +179,8 @@ namespace Mod::Perf::Func_Optimize
             buf[0x14] = 0x90;
 			mask.SetRange(0x10, 5, 0xFF);
 #else
-			buf.SetRange(0x0d, 5, 0x90);
-			mask.SetRange(0x0d, 5, 0xFF);
+			buf.SetRange(0x0c, 5, 0x90);
+			mask.SetRange(0x0c, 5, 0xFF);
 #endif
 			
 			return true;
@@ -189,7 +189,7 @@ namespace Mod::Perf::Func_Optimize
 		virtual bool AdjustPatchInfo(ByteBuf& buf) const override
 		{
 #ifndef PLATFORM_64BITS
-			buf.SetRange(0x0d, 5, 0x90);
+			buf.SetRange(0x0c, 5, 0x90);
 #endif
 			return true;
 		}
