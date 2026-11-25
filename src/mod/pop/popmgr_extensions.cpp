@@ -1263,8 +1263,8 @@ namespace Mod::Pop::PopMgr_Extensions
 			TFGameRules()->DropSpellPickup(killed->GetAbsOrigin(), state.m_bGiantsDropRareSpells && ToTFPlayer(pVictim)->IsMiniBoss() ? 1 : 0);
 		}
 	}
-	
-	DETOUR_DECL_STATIC_CALL_CONVENTION(__gcc_regcall, void, CTFGameRules_DropSpellPickup, float x, float y, float z, int tier)
+
+	DETOUR_DECL_STATIC(void, CTFGameRules_DropSpellPickup, float x, float y, float z, int tier)
 	{
 	//	DevMsg("CTFGameRules::DropSpellPickup\n");
 		
@@ -2764,8 +2764,8 @@ namespace Mod::Pop::PopMgr_Extensions
 
 		return DETOUR_MEMBER_CALL(bot);
 	}
-	
-    DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, bool, CObjectTeleporter_PlayerCanBeTeleported, CTFPlayer *player)
+
+    DETOUR_DECL_MEMBER(bool, CObjectTeleporter_PlayerCanBeTeleported, CTFPlayer *player)
 	{
 		auto tp = reinterpret_cast<CObjectTeleporter *>(this);
 		if (player->IsBot() && tp->GetBuilder() != nullptr && !tp->GetBuilder()->IsBot()) {
@@ -3247,20 +3247,14 @@ namespace Mod::Pop::PopMgr_Extensions
         return DETOUR_MEMBER_CALL(player, slot, defindex, upgrade);
     }
 	
-#if defined _WINDOWS
-	using PurchaseResult = bool;
-#else
-	using PurchaseResult = void;
-#endif
-
-	DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, PurchaseResult, CUpgrades_PlayerPurchasingUpgrade, CTFPlayer *player, int itemslot, int upgradeslot, bool sell, bool free, bool b3)
+	DETOUR_DECL_MEMBER(bool, CUpgrades_PlayerPurchasingUpgrade, CTFPlayer *player, int itemslot, int upgradeslot, bool sell, bool free, bool b3)
 	{
 		if (!sell && !b3) {
 			auto upgrade = reinterpret_cast<CUpgrades *>(this);
 			
 			if (upgradeslot >= 0 && upgradeslot < CMannVsMachineUpgradeManager::Upgrades().Count()) {
 				if (!IsUpgradeAllowed(player, itemslot, upgradeslot)) {
-					return PurchaseResult();
+					return false;
 				}
 			}
 		}

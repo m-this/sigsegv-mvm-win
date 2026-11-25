@@ -47,17 +47,28 @@ def split_params(text, raw=False):
 def windows_only(text):
     """The text with every line Windows does not compile blanked, lines kept.
 
-    Only conditions on _WINDOWS are read; any other #if keeps both branches."""
+    Only conditions on _WINDOWS and PLATFORM_64BITS are read, for the x86
+    Windows build; any other #if keeps both branches."""
+    defined = {"_WINDOWS": True, "PLATFORM_64BITS": False}
+    names = "|".join(defined)
+
+    def condition(d, keyword):
+        neg = re.match(rf"#\s*(?:ifndef\s+({names})\b|{keyword}\s+!\s*defined\s*\(?\s*({names})\b)", d)
+        if neg:
+            return not defined[neg[1] or neg[2]]
+        pos = re.match(rf"#\s*(?:ifdef\s+({names})\b|{keyword}\s+defined\s*\(?\s*({names})\b)", d)
+        if pos:
+            return defined[pos[1] or pos[2]]
+        return None
+
     out, stack = [], []
     for line in text.split("\n"):
         d = line.strip()
-        if re.match(r"#\s*if(?:def)?\b", d):
-            neg = re.match(r"#\s*(?:ifndef\s+_WINDOWS\b|if\s+!\s*defined\s*\(?\s*_WINDOWS\b)", d)
-            pos = re.match(r"#\s*(?:ifdef\s+_WINDOWS\b|if\s+defined\s*\(?\s*_WINDOWS\b)", d)
-            stack.append(False if neg else True if pos else None)
+        if re.match(r"#\s*if(?:def|ndef)?\b", d):
+            stack.append(condition(d, "if"))
         elif re.match(r"#\s*elif\b", d) and stack:
-            pos = re.match(r"#\s*elif\s+defined\s*\(?\s*_WINDOWS\b", d)
-            stack[-1] = True if pos else (False if stack[-1] else None)
+            taken = condition(d, "elif")
+            stack[-1] = False if stack[-1] else taken
         elif re.match(r"#\s*else\b", d) and stack:
             stack[-1] = None if stack[-1] is None else not stack[-1]
         elif re.match(r"#\s*endif\b", d) and stack:

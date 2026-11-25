@@ -3801,21 +3801,10 @@ namespace Mod::Attr::Custom_Attributes
 
 	void InspectAttributes(CTFPlayer *target, CTFPlayer *player, bool force, int slot = -2);
 
-#if defined _WINDOWS
-	/* The Windows CUpgrades::PlayerPurchasingUpgrade returns whether the purchase went through, and its callers test it */
-	using UpgradePurchaseResult = bool;
-#else
-	using UpgradePurchaseResult = void;
-#endif
-
-	DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, UpgradePurchaseResult, CUpgrades_PlayerPurchasingUpgrade, CTFPlayer *player, int itemslot, int upgradeslot, bool sell, bool free, bool refund)
+	DETOUR_DECL_MEMBER(bool, CUpgrades_PlayerPurchasingUpgrade, CTFPlayer *player, int itemslot, int upgradeslot, bool sell, bool free, bool refund)
 	{
-#if defined _WINDOWS
-		/* server.dll has no clone, so this detours the whole function. The
-		 * Linux wrapper returns before the clone for a null player or an
-		 * upgrade index out of range: return the same way here. */
-		if (player == nullptr || upgradeslot < 0 || upgradeslot >= CMannVsMachineUpgradeManager::Upgrades().Count()) return UpgradePurchaseResult();
-#endif
+		/* The wrapper's own early return, for the builds that detour the whole function */
+		if (player == nullptr || upgradeslot < 0 || upgradeslot >= CMannVsMachineUpgradeManager::Upgrades().Count()) return false;
 		if (!refund) {
 			auto upgrade = reinterpret_cast<CUpgrades *>(this);
 			
@@ -3830,16 +3819,12 @@ namespace Mod::Attr::Custom_Attributes
 						if (!sell) {
 							gamehelpers->TextMsg(ENTINDEX(player), TEXTMSG_DEST_CENTER, TranslateText(player, "This weapon is not upgradeable"));
 						}
-						return UpgradePurchaseResult();
+						return false;
 					}
 				}
 			}
 		}
-#if defined _WINDOWS
 		bool result = DETOUR_MEMBER_CALL(player, itemslot, upgradeslot, sell, free, refund);
-#else
-		DETOUR_MEMBER_CALL(player, itemslot, upgradeslot, sell, free, refund);
-#endif
 		
 		if (!refund) {
 			InspectAttributes(player, player , true, itemslot);
@@ -3858,9 +3843,7 @@ namespace Mod::Attr::Custom_Attributes
 				}
 			}
 		}
-#if defined _WINDOWS
 		return result;
-#endif
 	}
 	
 	RefCount rc_CTFPlayer_ReapplyItemUpgrades;
@@ -3876,7 +3859,7 @@ namespace Mod::Attr::Custom_Attributes
 		DETOUR_MEMBER_CALL(item_view);
 	}
 
-	DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, unsigned short, CUpgrades_ApplyUpgradeToItem, CTFPlayer* player, CEconItemView *item, int upgrade, int cost, bool downgrade, bool fresh)
+	DETOUR_DECL_MEMBER(unsigned short, CUpgrades_ApplyUpgradeToItem, CTFPlayer* player, CEconItemView *item, int upgrade, int cost, bool downgrade, bool fresh)
 	{
 		if (rc_CTFPlayer_ReapplyItemUpgrades)
 		{
@@ -4187,16 +4170,13 @@ namespace Mod::Attr::Custom_Attributes
 		THINK_FUNC_SET(arrow, UpdateArrowTrail, gpGlobals->curtime+0.01f);
 	}
 
-	DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, int, CTFRadiusDamageInfo_ApplyToEntity, CBaseEntity *ent)
+	DETOUR_DECL_MEMBER(int, CTFRadiusDamageInfo_ApplyToEntity, CBaseEntity *ent)
 	{
 		auto info = reinterpret_cast<CTFRadiusDamageInfo *>(this);
-#if defined _WINDOWS
-		/* server.dll has no clone, so this detours the whole function. The
-		 * Linux wrapper returns 0 before the clone for the ignored entity and
-		 * one that takes no damage: return the same way here, or a chain
-		 * explosion would reach projectiles Linux never hands the detour. */
+		/* The wrapper's own early return, for the builds that detour the whole
+		 * function: without it a chain explosion reaches projectiles the
+		 * clone is never handed. */
 		if (ent == info->m_pEntityIgnore || ent->m_takedamage == DAMAGE_NO) return 0;
-#endif
 		if (hit_entities_explosive_max != 0 && hit_entities_explosive >= hit_entities_explosive_max)
 			return 0;
 		int healthpre = ent->GetHealth();
@@ -5699,19 +5679,17 @@ namespace Mod::Attr::Custom_Attributes
 		return ret;
 	}
 
-#if defined _WINDOWS
-	/* The whole function there, with the class data the Linux clone drops */
+#if defined PLATFORM_64BITS
+	DETOUR_DECL_MEMBER(bool, CTFPlayer_ItemsMatch, CEconItemView *pCurWeaponItem, CEconItemView *pNewWeaponItem, CTFWeaponBase *pWpnEntity)
+	{
+		return CTFPlayer_ItemsMatch_Func(DETOUR_MEMBER_CALL(pCurWeaponItem, pNewWeaponItem, pWpnEntity), reinterpret_cast<CTFPlayer *>(this), pCurWeaponItem, pNewWeaponItem, pWpnEntity);
+	}
+#else
 	DETOUR_DECL_MEMBER(bool, CTFPlayer_ItemsMatch, void *pClassData, CEconItemView *pCurWeaponItem, CEconItemView *pNewWeaponItem, CTFWeaponBase *pWpnEntity)
 	{
 		return CTFPlayer_ItemsMatch_Func(DETOUR_MEMBER_CALL(pClassData, pCurWeaponItem, pNewWeaponItem, pWpnEntity), reinterpret_cast<CTFPlayer *>(this), pCurWeaponItem, pNewWeaponItem, pWpnEntity);
 	}
-#else
-	DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, bool, CTFPlayer_ItemsMatch, CEconItemView *pCurWeaponItem, CEconItemView *pNewWeaponItem, CTFWeaponBase *pWpnEntity)
-	{
-		return CTFPlayer_ItemsMatch_Func(DETOUR_MEMBER_CALL(pCurWeaponItem, pNewWeaponItem, pWpnEntity), reinterpret_cast<CTFPlayer *>(this), pCurWeaponItem, pNewWeaponItem, pWpnEntity);
-	}
 #endif
-
 	THINK_FUNC_DECL(MinigunClearSounds)
 	{
 		auto minigun = reinterpret_cast<CTFMinigun *>(this);
@@ -6875,7 +6853,7 @@ namespace Mod::Attr::Custom_Attributes
         return ret;
     }
 
-	DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall,void, CTFGameMovement_ToggleParachute)
+	DETOUR_DECL_MEMBER(void, CTFGameMovement_ToggleParachute)
     {
 		CTFPlayer *player = ToTFPlayer(reinterpret_cast<CGameMovement *>(this)->player);
 		//if ((player->GetFlags() & FL_ONGROUND) || (reinterpret_cast<CGameMovement *>(this)->GetMoveData()->m_nOldButtons & IN_JUMP)) return;
@@ -7349,7 +7327,7 @@ namespace Mod::Attr::Custom_Attributes
         return DETOUR_MEMBER_CALL(flagcheck);
     }
 	
-    DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, bool, CObjectTeleporter_PlayerCanBeTeleported, CTFPlayer *player)
+    DETOUR_DECL_MEMBER(bool, CObjectTeleporter_PlayerCanBeTeleported, CTFPlayer *player)
 	{
 		int alwaysAllowTeleport = 0;
 		CALL_ATTRIB_HOOK_INT_ON_OTHER(player, alwaysAllowTeleport, always_allow_teleport);
@@ -7471,7 +7449,7 @@ namespace Mod::Attr::Custom_Attributes
 
 	void ChangeBuildingProperties(CTFPlayer *player, CBaseObject *obj);
 
-	DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, void, CTFPlayer_AddObject, CBaseObject *object)
+	DETOUR_DECL_MEMBER(void, CTFPlayer_AddObject, CBaseObject *object)
 	{
         DETOUR_MEMBER_CALL(object);
     }
@@ -8709,7 +8687,7 @@ namespace Mod::Attr::Custom_Attributes
 		}
 	}
 	
-	DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, bool, CBaseObject_FindBuildPointOnPlayer, CTFPlayer *pTFPlayer, CBasePlayer *pBuilder, float &flNearestPoint, Vector &vecNearestBuildPoint)
+	DETOUR_DECL_MEMBER(bool, CBaseObject_FindBuildPointOnPlayer, CTFPlayer *pTFPlayer, CBasePlayer *pBuilder, float &flNearestPoint, Vector &vecNearestBuildPoint)
 	{
 		auto object = reinterpret_cast<CBaseObject *>(this);
 		

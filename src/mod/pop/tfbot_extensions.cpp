@@ -2146,7 +2146,7 @@ namespace Mod::Pop::TFBot_Extensions
 	}
 #endif
 
-	DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, bool, CBaseObject_FindBuildPointOnPlayer, CTFPlayer *pTFPlayer, CBasePlayer *pBuilder, float &flNearestPoint, Vector &vecNearestBuildPoint)
+	DETOUR_DECL_MEMBER(bool, CBaseObject_FindBuildPointOnPlayer, CTFPlayer *pTFPlayer, CBasePlayer *pBuilder, float &flNearestPoint, Vector &vecNearestBuildPoint)
 	{
 		auto object = reinterpret_cast<CBaseObject *>(this);
 		CBaseEntity *oldBuildOnEntity = object->GetBuiltOnEntity();
@@ -2249,7 +2249,7 @@ namespace Mod::Pop::TFBot_Extensions
 		DETOUR_MEMBER_CALL();
 	}
 	
-	DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, bool, CTFKnife_CanPerformBackstabAgainstTarget, CTFPlayer *target )
+	DETOUR_DECL_MEMBER(bool, CTFKnife_CanPerformBackstabAgainstTarget, CTFPlayer *target )
 	{
 		bool sappedNotStunned = false;
 		if (TFGameRules() && TFGameRules()->IsMannVsMachineMode()) {
@@ -2665,4 +2665,4 @@ Current UseHumanModel mod:
 	
 	return false;
 }
-*/
+*/
