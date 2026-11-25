@@ -230,7 +230,7 @@ public:
 private:
 	DECL_SENDPROP(bool,           m_bPlayingMedieval);
 	DECL_SENDPROP(bool,           m_bPlayingMannVsMachine);
-	DECL_SENDPROP(int,            m_iGlobalAttributeCacheVersion);
+	DECL_RELATIVE(int,            m_iGlobalAttributeCacheVersion);
 	DECL_SENDPROP(char[MAX_PATH], m_pszCustomUpgradesFile);
 	DECL_SENDPROP(float,           m_flRestartRoundTime);
 	
