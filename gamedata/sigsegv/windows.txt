@@ -14971,10 +14971,10 @@
 				{
 					type  "fixed"
 					sym   "_ZN15CTFPlayerShared15SetChargeEffectE20medigun_charge_typesbbRK16MedigunEffects_tfP9CTFPlayer"
-					addr  "0x52ac80"
+					addr  "0x52af50"
 					build "11267535"
 					lib   "server"
-					// verified: the function with the add_uber_time literal and the same run of AddCond, RemoveCond, StopSound, SendNewInvulnGameEvent and recipient-filter EmitSound calls as the Linux body; between SelectItem and SetOffHandWeapon in the name-ordered run; 8 of 8 matched callees
+					// verified: read by hand: 0x52ac80, named here before, is SetCarryingRuneType (one argument, -1 for none, ret 4, called from CTFRune's touch); SetChargeEffect follows its jump table, references add_uber_time at 0x52b014, ends in ret 0x18, and each of its six calls at 0x529d4f..0x529dd6 pushes six arguments. 11191711's 0x52be80 was the same mistake
 				}
 				"CTFPlayerShared::PulseMedicRadiusHeal"
 				{
