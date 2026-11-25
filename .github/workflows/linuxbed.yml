@@ -202,6 +202,14 @@ jobs:
         done
         bedbin/waveprobe -rcon "$addr:27015" -mission "$mission" $probeargs -mode normal -timeout 900s \
           >> out/results.jsonl 2>> out/waveprobe.err || true
+        # A wave that times out on a server rcon no longer reaches is a hang:
+        # no core, so take every thread's stack from the live process.
+        if grep -q '"wave timed out"' out/results.jsonl && pid=$(pgrep -o srcds_linux); then
+          sudo apt-get install -y -q gdb > /dev/null
+          (cd "$BED/tf-dedicated" && sudo gdb -q -batch -p "$pid" -ex "set solib-search-path bin:tf/bin" -ex "thread apply all bt 40" 2>&1) \
+            | grep -v -E "^(warning|\[New LWP)" > out/hang-backtrace.txt || true
+          head -120 out/hang-backtrace.txt
+        fi
         cp "$tf/console.log" out/ 2>/dev/null || true
         cp -r "$tf/addons/sourcemod/logs" out/smlogs 2>/dev/null || true
     # A segfault leaves a core (the last one: a crash loop overwrites it); its
