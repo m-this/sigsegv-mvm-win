@@ -1,12 +1,30 @@
 name: Build and Release
 
+# The Linux build; windows.yml builds the Windows one from the same branch.
+# A push that only touches the Windows port needs no Linux draft release.
+# Date tags (2*) belong to windows.yml, and this workflow has no tag trigger.
+# Actions does not read YAML anchors, so the two path lists are written out.
 on:
   push:
     branches:
-      - master
+      - main
+    paths-ignore:
+      - 'gamedata/sigsegv/windows.txt'
+      - 'tools/winport/**'
+      - '.github/workflows/windows.yml'
+      - '.github/workflows/addrs.yml'
+      - '.github/workflows/checktable.yml'
+      - '.github/workflows/linuxbed.yml'
   pull_request:
     branches:
-      - master
+      - main
+    paths-ignore:
+      - 'gamedata/sigsegv/windows.txt'
+      - 'tools/winport/**'
+      - '.github/workflows/windows.yml'
+      - '.github/workflows/addrs.yml'
+      - '.github/workflows/checktable.yml'
+      - '.github/workflows/linuxbed.yml'
   workflow_dispatch:
     inputs:
       sourcemod_ref:

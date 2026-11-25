@@ -72,6 +72,11 @@ See `tools/winport/census.sh` for what it needs. Releases are tagged by date
 and carry `package-windows.zip`, which tf2-archipelago pins by SHA-256 in
 `deploy/env/versions.env`.
 
+Both builds come from the `main` branch. `windows.yml` builds the Windows
+package and publishes it on a date tag (`20261101`). `main.yml` builds the
+Linux packages and, on a push to `main`, leaves a draft release for the
+`linux-YYYYMMDD` one; a push that only touches the Windows port skips it.
+
 ## Test bed
 
 A Windows dedicated server under Wine, driven by
