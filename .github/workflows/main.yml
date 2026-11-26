@@ -38,6 +38,10 @@ env:
 
 jobs:
   build-and-package:
+    # The repository's default token is read-only: the draft release needs
+    # to write.
+    permissions:
+      contents: write
     defaults:
       run:
         shell: bash
