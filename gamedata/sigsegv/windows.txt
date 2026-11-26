@@ -79,6 +79,15 @@
 					lib   "server"
 					// verified: read by hand: the three calls of Action<CTFBot>::ApplyResult (0x550880) after CHANGE_TO, SUSPEND_FOR and DONE land here. It clears DebugString's static buffer (0x10b8e340), walks m_parent (+0xc) to the root, calls BuildDecoratedName (0x417ac0) and prints the result split at '(', ')' and '<' through ConColorMsg, as Linux 0xea0cc0 does. thiscall, no arguments, plain ret
 				}
+				"Action<CZombie>::ApplyResult"
+				{
+					type  "fixed"
+					sym   "_ZN6ActionI7CZombieE11ApplyResultEPS0_P8BehaviorIS0_E12ActionResultIS0_E"
+					addr  "0x5be550"
+					build "11278981"
+					lib   "server"
+					// verified: read by hand: the ApplyResult instance (CHANGE_TO, SUSPEND_FOR and DONE, RESUME debug strings) that CZombieBehavior::Update (0x5c0f00) calls; thiscall, ret 0x14
+				}
 				"Action<CZombie>::InvokeOnEnd"
 				{
 					type  "fixed"
@@ -88,6 +97,15 @@
 					lib   "server"
 					// verified: read by hand: the ENDING body Action<CZombie>::ApplyResult (0x5bf4e0) calls. MSVC folded the identical InvokeOnEnd of several Action<T> into this one body, which is fine for the call thunk nextbot1.cpp makes of it; thiscall, ret 0xc
 				}
+				"Action<CZombie>::InvokeOnResume"
+				{
+					type  "fixed"
+					sym   "_ZN6ActionI7CZombieE14InvokeOnResumeEPS0_P8BehaviorIS0_EPS1_"
+					addr  "0x5beed0"
+					build "11278981"
+					lib   "server"
+					// verified: read by hand: the RESUMING body that Action<CZombie>::ApplyResult (0x5bf4e0) calls and that calls it back; same shape as Action<CTFBot>::InvokeOnResume (0x557960); thiscall with the ActionResult return pointer, ret 0x10
+				}
 				"Action<CZombie>::BuildDecoratedName [clone]"
 				{
 					type  "fixed"
@@ -96,6 +114,15 @@
 					build "11278981"
 					lib   "server"
 					// verified: read by hand: MSVC folded every Action<T>::BuildDecoratedName into this one body, called by each PrintStateToConsole and DebugString (22 calls). GetName (vcall +0xa8, Linux +0xac) appended with V_strncat (0x6e66f0), then '( ' and the child (+0x10) recursively and ' )', then '<<' and the action we suspended (+0x14) recursively, as Linux's .isra clone does. Unlike that clone it keeps this: thiscall (buf, action), ret 8, which is what the thunk passes
+				}
+				"Action<CZombie>::PrintStateToConsole"
+				{
+					type  "fixed"
+					sym   "_ZNK6ActionI7CZombieE19PrintStateToConsoleEv"
+					addr  "0x5bfa80"
+					build "11278981"
+					lib   "server"
+					// verified: read by hand: the three calls of Action<CZombie>::ApplyResult (0x5bf4e0) after CHANGE_TO, SUSPEND_FOR and DONE land here; the same body as Action<CTFBot>'s (0x562000) on CZombie's own DebugString buffer (0x10b94d48). thiscall, no arguments, plain ret
 				}
 				"CZombieIntention::Reset"
 				{
@@ -2484,6 +2511,15 @@
 					lib   "server"
 					// verified: held for 11191711 at 0x1cec30 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0.769), and 32 carried caller(s) call it
 				}
+				"CBaseAnimating::SetBodygroup"
+				{
+					type  "fixed"
+					sym   "_ZN14CBaseAnimating12SetBodygroupEii"
+					addr  "0x1cf570"
+					build "11278981"
+					lib   "server"
+					// verified: matched by consensus on 11267535 (ret 8 as its arguments say); the update changed its body
+				}
 				"CBaseAnimating::SetLightingOrigin"
 				{
 					type  "fixed"
@@ -4301,6 +4337,16 @@
 					lib   "server"
 					// verified: held for 11191711 at 0x4c6010 (string); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 1.917), and 3 carried caller(s) call it
 				}
+				"CBaseObject::StartPlacement"
+				{
+					type  "fixed"
+					sym   "_ZN11CBaseObject14StartPlacementEP9CTFPlayer"
+					addr  "0x4c5b50"
+					build "11278981"
+					lib   "server"
+					vtidx "339"
+					// verified: read by hand: slot 339 of CObjectTeleporter and CObjectSapper, which share it as Linux's 340 does (both hold 0xc84ac0 there), while CObjectSentrygun (0x4ce5b0) and CObjectDispenser (0x4c7e60) override it as on Linux. The slots around agree: 335 is the one all four override (Linux 336), 336 to 338 are shared by all four (Linux 337 to 339). Same body: SetSolidFlags with 4 or'd in first (0x4c53ac), then the placement fields. Thiscall, ret 4
+				}
 				"CBaseObject::StartUpgrading"
 				{
 					type  "fixed"
@@ -4879,6 +4925,16 @@
 					vtidx "0"
 					// verified: read by hand: slot 0 of the vtable RTTI names CEntityFactory<CPathTrack>; allocates the object, calls CBaseEntity::CBaseEntity(false) (0x1e8ea0), sets the CPathTrack vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4
 				}
+				"CEntityFactory<CPointClientCommand>::Create"
+				{
+					type  "fixed"
+					sym   "_ZN14CEntityFactoryI19CPointClientCommandE6CreateEPKc"
+					addr  "0x226eb0"
+					build "11278981"
+					lib   "server"
+					vtidx "0"
+					// verified: read by hand: slot 0 of the vtable RTTI names CEntityFactory<CPointClientCommand>; allocates the object, calls CBaseEntity::CBaseEntity(false) (0x1e8ea0), sets the CPointClientCommand vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4
+				}
 				"CEntityFactory<CPointEntity>::Create"
 				{
 					type  "fixed"
@@ -4888,6 +4944,16 @@
 					lib   "server"
 					vtidx "0"
 					// verified: read by hand: slot 0 of the vtable RTTI names CEntityFactory<CPointEntity>; allocates the object, calls CBaseEntity::CBaseEntity(false) (0x1e8ea0), sets the CPointEntity vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4
+				}
+				"CEntityFactory<CPointHurt>::Create"
+				{
+					type  "fixed"
+					sym   "_ZN14CEntityFactoryI10CPointHurtE6CreateEPKc"
+					addr  "0x2fad60"
+					build "11278981"
+					lib   "server"
+					vtidx "0"
+					// verified: read by hand: slot 0 of the vtable RTTI names CEntityFactory<CPointHurt>; allocates the object, calls CBaseEntity::CBaseEntity(false) (0x1e8ea0), sets the CPointHurt vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4
 				}
 				"CEntityFactory<CPointNavInterface>::Create"
 				{
@@ -4908,6 +4974,16 @@
 					lib   "server"
 					vtidx "0"
 					// verified: read by hand: slot 0 of the vtable RTTI names CEntityFactory<CPointPopulatorInterface>; allocates the object, calls CBaseEntity::CBaseEntity(false) (0x1e8ea0), sets the CPointPopulatorInterface vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4
+				}
+				"CEntityFactory<CPointServerCommand>::Create"
+				{
+					type  "fixed"
+					sym   "_ZN14CEntityFactoryI19CPointServerCommandE6CreateEPKc"
+					addr  "0x226f10"
+					build "11278981"
+					lib   "server"
+					vtidx "0"
+					// verified: read by hand: slot 0 of the vtable RTTI names CEntityFactory<CPointServerCommand>; allocates the object, calls CBaseEntity::CBaseEntity(false) (0x1e8ea0), sets the CPointServerCommand vtable and fields, calls PostConstructor with the classname through the vtable and returns the networkable (this+0xc, Linux this+0x14), the Linux body; thiscall, ret 4
 				}
 				"CEntityFactory<CRagdollMagnet>::Create"
 				{
@@ -5321,6 +5397,24 @@
 					build "11278981"
 					lib   "server"
 					// verified: held for 11191711 at 0x4d1fd0 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 14 of 14 neighbouring slots agree
+				}
+				"CObjectTeleporter::TeleporterSend"
+				{
+					type  "fixed"
+					sym   "_ZN17CObjectTeleporter14TeleporterSendEP9CTFPlayer"
+					addr  "0x4d1e40"
+					build "11278981"
+					lib   "server"
+					// verified: read by hand: returns on a null player, AddCond(TF_COND_SELECTED_TO_TELEPORT) on its m_Shared, a PVS filter at the teleporter's origin, the spy check (IsPlayerClass 8), the 'teleported_red/blue' and 'player_sparkles_red/blue' effects, 'Building_Teleporter.Send', the 'mod_teleporter_speed_boost' hook and AddCond 0x20, the Linux body; thiscall, ret 4. It was matched to TeleporterThink, which takes no argument
+				}
+				"CObjectTeleporter::TeleporterThink"
+				{
+					type  "fixed"
+					sym   "_ZN17CObjectTeleporter15TeleporterThinkEv"
+					addr  "0x4d21d0"
+					build "11278981"
+					lib   "server"
+					// verified: read by hand: the function after TeleporterSend, the Linux body with offsets 0x18 lower: returns when +0xa30 is set, then sets itself as the 'TeleporterContext' think (pushes its own VA 0x104d1e00 to 0x2025e0, as the teleporter's spawn at 0x4d0680 does), tests +0xa20 and +0xa30, the 'bidirectional_teleport' hook, and switches on the state at +0xad0 (Linux +0xae8); thiscall, no arguments, plain ret. 0x4d1a70, the earlier match, is TeleporterSend
 				}
 				"CObjectTeleporter::TeleporterTouch"
 				{
@@ -6960,6 +7054,15 @@
 					lib   "server"
 					// verified: held for 11191711 at 0x5f3d10 (string); on 11267535 the same function between the same carried neighbours (score 10.0), in the same vtable slot: 13 of 13 neighbouring slots agree
 				}
+				"CTFTankBoss::TankBossThink"
+				{
+					type  "fixed"
+					sym   "_ZN11CTFTankBoss13TankBossThinkEv"
+					addr  "0x5f40c0"
+					build "11278981"
+					lib   "server"
+					// verified: read by hand: the tank's think: 'Announcer.MVM_Tank_Alert_Halfway', 'Announcer.MVM_Tank_Alert_Near_Hatch', the 'movement' sequence, TakeDamage, StopSound, EmitSound and StopParticleEffects, the Linux body's calls; ret. CTFTankBoss' datamap, built at run time, writes 'TankBossThink' and then this address (0x4dd4b)
+				}
 				"CTFTankBoss::UpdateOnRemove"
 				{
 					type  "fixed"
@@ -7458,6 +7561,15 @@
 					lib   "server"
 					vtidx "92"
 					// vtable
+				}
+				"ITFBotHintEntityAutoList::m_ITFBotHintEntityAutoListAutoList"
+				{
+					type  "fixed"
+					sym   "_ZN24ITFBotHintEntityAutoList34m_ITFBotHintEntityAutoListAutoListE"
+					addr  "0xb90464"
+					build "11278981"
+					lib   "server"
+					// verified: read by hand: CTFBotHintEngineerNest::HintThink, CTFBotMvMEngineerHintFinder::FindHint and CTFBot::Event_Killed loop over the vector here, count at +0xc (0xb8fc80), where Linux reads 0x1967480
 				}
 				"ITFFlameEntityAutoList::m_ITFFlameEntityAutoListAutoList"
 				{
@@ -9174,6 +9286,15 @@
 					build "11278981"
 					lib   "server"
 					// verified: turned away for field disagreement, pop as expected (ret 4); returns null on a null name, then walks the definition map at +0xe8 comparing each definition's name at +0xdc with the argument, the body Linux jumps to; the whole function, where Linux detours the .part clone GCC split after the null name check, which this body makes first (ECAttr_Extensions' detour maps a custom weapon name and is null safe)
+				}
+				"CollectPlayers<CTFPlayer>"
+				{
+					type  "fixed"
+					sym   "_Z14CollectPlayersI9CTFPlayerEiP10CUtlVectorIPT_10CUtlMemoryIS3_iEEibb"
+					addr  "0x450940"
+					build "11278981"
+					lib   "server"
+					// verified: read by hand: clears the vector's count unless shouldAppend (arg 4), walks players 1 to maxClients through UTIL_PlayerByIndex (0x36d470), keeps one with an edict and IsPlayer (vtable +0x14c), skips one whose field at +0xe74 is 2 (Linux +0xe8c), lets team -2 through or compares GetTeamNumber with arg 2, then the isAlive test and the append, the Linux body. cdecl, plain ret; called with (vector, team, isAlive, append) and add esp, 0x10 by UpdateMission (0x5f0791), UpdateMissionDestroySentries (0x5f0dab) and ScoutPrimary::Push (0x624601)
 				}
 				"DataTable_Warning"
 				{
@@ -11283,6 +11404,15 @@
 					lib   "server"
 					// verified: held for 11191711 at 0x433c00 (call); on 11267535 the same function between the same carried neighbours (score 6.0, runner-up 0), and 2 carried caller(s) call it
 				}
+				"CTFMapsWorkshop::PrepareLevelResources"
+				{
+					type  "fixed"
+					sym   "_ZN15CTFMapsWorkshop21PrepareLevelResourcesEPcjS0_j"
+					addr  "0x433ce0"
+					build "11278981"
+					lib   "server"
+					// verified: corroborated by tools/winport/corroborate.py: shares the string '[TF Workshop] No steam connection in PrepareLevelResources,, '[TF Workshop] Preparing map ID %llu\n', '[TF Workshop] Waiting for steam connection\n' with the Linux function, and 2 of its 2 matched callees
+				}
 				"CTFMapsWorkshop::Refresh"
 				{
 					type  "fixed"
@@ -11406,11 +11536,11 @@
 				{
 					type  "fixed"
 					sym   "_ZN14CTeamplayRules12SetStalemateEibb"
-					addr  "0x3493b0"
+					addr  "0x157a40"
 					build "11278981"
 					lib   "server"
-					vtidx "166"
-					// vtable index
+					vtidx "167"
+					// verified: read by hand: slot 167 of CTeamplayRules (166 before the CGameRules virtual 11267535 added): the shared empty stub, ret 0xc. knownvtidx.generated.txt still names slot 166, which is SetWinningTeam
 				}
 				"CTeamplayRules::SetWinningTeam"
 				{
@@ -11419,7 +11549,8 @@
 					addr  "0x3493b0"
 					build "11278981"
 					lib   "server"
-					// vtable
+					vtidx "166"
+					// verified: read by hand: slot 166 of CTeamplayRules (165 before the CGameRules virtual 11267535 added): empty body, ret 0x18. d5fa1ea5 fixed it in windows.txt only, so the next carry lost it
 				}
 				"CTFGameRules::CTFGameRules [C1]"
 				{
@@ -12231,6 +12362,15 @@
 					lib   "server"
 					// verified: read by hand: mov eax, [ecx+0x21c]; cmp eax, [0x9d23e8]; sete al; ret, comparing the field TFMark (0x5d63f0) writes with the global MakeNewTFMarker (0x5d5970) increments. SelectSpawnArea (0x5ef2a0) calls it on each surrounding area and skips a true result, where Linux calls IsTFMarked; thiscall with no argument, plain ret
 				}
+				"NavAreaBuildPath<CTFBotPathCost>"
+				{
+					type  "fixed"
+					sym   "_Z16NavAreaBuildPathI14CTFBotPathCostEbP8CNavAreaS2_PK6VectorRT_PS2_fib"
+					addr  "0x5682f0"
+					build "11278981"
+					lib   "server"
+					// verified: held for 11191711 at 0x569290 (call); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 10.0), and 4 carried caller(s) call it
+				}
 				"ISearchSurroundingAreasFunctor::IterateAdjacentAreas"
 				{
 					type  "fixed"
@@ -12249,6 +12389,15 @@
 					build "11278981"
 					lib   "server"
 					// verified: held for 11191711 at 0x588be0 (consensus); on 11267535 the same function between the same carried neighbours (score 10.0, runner-up 0), and 3 carried caller(s) call it
+				}
+				"Path::Compute<CTFBotPathCost> [vec]"
+				{
+					type  "fixed"
+					sym   "_ZN4Path7ComputeI14CTFBotPathCostEEbP8INextBotRK6VectorRT_fbb"
+					addr  "0x567fc0"
+					build "11278981"
+					lib   "server"
+					// verified: read by hand: seven functions reference 'Path::Compute(goal)', one per cost functor; this one has 46 callers, all in the TFBot behaviours (0x56a284 to 0x57xxxx), where each of the other six has one
 				}
 				"FireEvent"
 				{
@@ -13446,6 +13595,15 @@
 					lib   "server"
 					vtidx "491"
 					// verified: read by hand: `xor al, al; ret`. Slot 491 of CTFBot's table: NextBotPlayer::PhysicsSimulate (0x55fe70) calls vcall +0x7ac and tests the life state against 2, as the Linux one does at +0x7d0, and IsRemovedOnReset, the other false body, is in the INextBot table (slot 45) on Windows
+				}
+				"CTFBot::PhysicsSimulate"
+				{
+					type  "fixed"
+					sym   "_ZN6CTFBot15PhysicsSimulateEv"
+					addr  "0x560ba0"
+					build "11278981"
+					lib   "server"
+					// verified: matched by consensus on 11267535; the update changed its body, as it changed CBasePlayer::PhysicsSimulate on Linux
 				}
 				"CTFBot::IsExplosiveProjectileWeapon"
 				{
@@ -14982,6 +15140,15 @@
 					lib   "server"
 					// verified: read by hand: the first call of CTFPlayer::Taunt (0x5118de) and of PlayTauntSceneFromItem (0x50625e), as on Linux, and called from the HandleTauntCommand wrapper (0x4f5739) and CTFFlameThrower::UseRage (0x60be2c), Linux's other two callers. Tests conditions 0x11, 0x75, 0x52, 0x78, 0x13 and 0xe through InCond as Linux does, with the rest inline. Thiscall, plain ret
 				}
+				"CTFPlayer::ModifyOrAppendCriteria"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer22ModifyOrAppendCriteriaER14AI_CriteriaSet"
+					addr  "0x4ff070"
+					build "11278981"
+					lib   "server"
+					// verified: string lead, agreed by strings: 43 shared string(s), 28/29 matched callees, windows/linux size 4976/5797
+				}
 				"SendProxy_PlayerObjectList"
 				{
 					type  "fixed"
@@ -15035,6 +15202,16 @@
 					build "11278981"
 					lib   "server"
 					// verified: read by hand: m_nCurrency (+0x2448, the offset its send prop pushes) less the amount, floored at 0, stored with NetworkStateChanged when it changes; then if g_pGameRules is in MvM (+0xc72, as Linux) calls 0x5e2dc0 on g_pPopulationManager with (player, amount), Linux's AddPlayerCurrencySpent, the Linux body. Its three callers are Linux's: ClientCommand, Event_Killed and the upgrade purchase (0x5f6220). thiscall, ret 4 for the int
+				}
+				"CTFPlayer::ShouldTransmit"
+				{
+					type  "fixed"
+					sym   "_ZN9CTFPlayer14ShouldTransmitEPK18CCheckTransmitInfo"
+					addr  "0x50d6f0"
+					build "11278981"
+					lib   "server"
+					vtidx "20"
+					// verified: read by hand: slot 20 of CTFPlayer's table (Linux 21). Both resolve the two observer handles (0x2038/0x2034 and 0x202c/0x2028 against the entity list), test the game rules state against 7, return 8 (FL_EDICT_ALWAYS) or tail into CBasePlayer::ShouldTransmit (0x2e9030). The string match that had put CTFPlayer::Spawn here is overridden by the Spawn entry
 				}
 				"CTFPlayer::UpdateOnRemove"
 				{
@@ -15942,6 +16119,15 @@
 					build "11278981"
 					lib   "server"
 					// verified: read by hand: the function slot 0 of Action<CZombie>'s table (0x5bddc0, the scalar deleting destructor: flags test, frees 0x34 bytes, ret 4) calls before freeing, as Action<CTFBot>'s slot 0 calls 0x54e3f0; no argument, ret
+				}
+				"CBaseAnimating::LookupActivity"
+				{
+					type  "fixed"
+					sym   "_ZN14CBaseAnimating14LookupActivityEPKc"
+					addr  "0x1cea30"
+					build "11278981"
+					lib   "server"
+					// verified: read by hand: the twin of LookupSequence (0x1cefb0) calling the global LookupActivity(hdr, name) instead, as on Linux; thiscall, ret 4. CTFPlayer::ClientCommand's inlined PlaySpecificSequence calls it first and plays the result as PLAYERANIMEVENT_CUSTOM (0x13), the Linux shape. Only Windows needs it: its PlaySpecificSequence is written in SigMod
 				}
 				"~CBaseEntity [D2 windows]"
 				{
