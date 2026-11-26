@@ -19,9 +19,9 @@ namespace Mod::MvM::Dominations
 		0x89, 0x45, 0x10,                              // +0007  mov [ebp+0x10],eax
 		0x0f, 0x85, 0x00, 0x00, 0x00, 0x00,            // +000A  jnz near
 #else
-		0x80, 0xbe, 0x72, 0x09, 0x00, 0x00, 0x00, // +0000  cmp byte ptr [esi+m_bPlayingMannVsMachine],0x0
-		0x89, 0xc2,                               // +0007  mov edx,eax
-		0x75, 0xcc,                               // +0009  jnz -0x34
+		0x8b, 0x45, 0x00,                         // +0000  mov eax,[ebp-0xXX] (this)
+		0x80, 0xb8, 0x72, 0x09, 0x00, 0x00, 0x00, // +0003  cmp byte ptr [eax+m_bPlayingMannVsMachine],0x0
+		0x75, 0x00,                               // +000A  jnz -0xXX
 #endif
 	};
 	
@@ -40,14 +40,16 @@ namespace Mod::MvM::Dominations
 			int off_CTFGameRules_m_bPlayingMannVsMachine;
 			if (!Prop::FindOffset(off_CTFGameRules_m_bPlayingMannVsMachine, "CTFGameRules", "m_bPlayingMannVsMachine")) return false;
 			
-			buf.SetDword(0x00 + 2, (uint32_t)off_CTFGameRules_m_bPlayingMannVsMachine);
-			
 #ifdef PLATFORM_64BITS
+			buf.SetDword(0x00 + 2, (uint32_t)off_CTFGameRules_m_bPlayingMannVsMachine);
 			mask[0x0a + 1] = 0x00;
 #elif defined _WINDOWS
+			buf.SetDword(0x00 + 2, (uint32_t)off_CTFGameRules_m_bPlayingMannVsMachine);
 			mask.SetDword(0x0a + 2, 0x00000000);
 #else
-			mask[0x09 + 1] = 0x00;
+			buf.SetDword(0x03 + 2, (uint32_t)off_CTFGameRules_m_bPlayingMannVsMachine);
+			mask[0x00 + 2] = 0x00;
+			mask[0x0a + 1] = 0x00;
 #endif
 			
 			return true;
@@ -63,8 +65,8 @@ namespace Mod::MvM::Dominations
 			buf .SetRange(0x0a, 6, 0x90);
 			mask.SetRange(0x0a, 6, 0xff);
 #else
-			buf .SetRange(0x09, 2, 0x90);
-			mask.SetRange(0x09, 2, 0xff);
+			buf .SetRange(0x0a, 2, 0x90);
+			mask.SetRange(0x0a, 2, 0xff);
 #endif
 			
 			return true;

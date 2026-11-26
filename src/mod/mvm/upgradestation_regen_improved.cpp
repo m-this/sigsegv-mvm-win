@@ -11,7 +11,7 @@ namespace Mod::MvM::UpgradeStation_Regen_Improved
 	ConVar cvar_only_creators("sig_mvm_upgradestation_creators", "0", FCVAR_NOTIFY | FCVAR_GAMEDLL,
 		"The mod only affects creators.tf weapons");
 
-	DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, Mod::MvM::Extended_Upgrades::PurchaseResult, CUpgrades_PlayerPurchasingUpgrade, CTFPlayer *player, int slot, int tier, bool sell, bool free, bool b3)
+	DETOUR_DECL_MEMBER(bool, CUpgrades_PlayerPurchasingUpgrade, CTFPlayer *player, int slot, int tier, bool sell, bool free, bool b3)
 	{
 		SCOPED_INCREMENT(rc_CUpgrades_PlayerPurchasingUpgrade);
 		return DETOUR_MEMBER_CALL(player, slot, tier, sell, free, b3);

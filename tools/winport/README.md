@@ -49,6 +49,19 @@ committed, and the package job then took 8m32s to build. That update left depot
 232255 alone, which is the cheap case. 10828683 to 11068238, where the binaries
 did change, cost thirteen overrides read by hand instead of one.
 
+11191711 to 11267535 is the expensive case. The carry drops every entry whose
+function body changed, and its report named 67 of the 263 it dropped, so diff
+the entry names of `windows.txt` between `main` and the carry commit rather than
+trusting the report. A dropped thunk is not an error: `BInitAttributes` returned
+false and all 389 attribute names went missing. `fuzzy.py OLD.dll NEW.dll RVA...`
+finds each changed function between the nearest unchanged neighbours and
+scores the candidates on strings, callees and instructions; 193 of the 263 came
+out strong, and every pick was then checked by its callers and vtable slots.
+That update also added a virtual to `CGameRules`, which moved every
+`CTFGameRules` slot after it by one, and two names had been sharing one address
+since the build before (`CBaseObject::StartUpgrading` on `StartPlacement`).
+`detourargs.py` cannot see either, so look for duplicate addresses after a carry.
+
 ## What the address table actually contains
 
 `classify.py` parses all 35 files under `gamedata/sigsegv`, demangles every

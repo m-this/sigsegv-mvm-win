@@ -21,11 +21,11 @@ namespace Mod::MvM::YER_Unnerf
 		0x80, 0xb8, 0x1e, 0x0d, 0x00, 0x00, 0x00,  // +0x000f cmp     byte ptr [rax+0D1Eh], 0
 		0x0f, 0x85, 0x6d, 0x01, 0x00, 0x00,        // +0x0016 jnz     loc_BD7B9D
 #else
-		0xa1, 0x00, 0x00, 0x00, 0x00,              // +0x0000 mov     eax, ds:g_pGameRules
-		0x85, 0xc0,                                // +0x0005 test    eax, eax
-		0x74, 0x0d,                                // +0x0007 jz      short
-		0x80, 0xb8, 0x72, 0x0c, 0x00, 0x00, 0x00,  // +0x0009 cmp     byte ptr [eax+0C72h], 0
-		0x0f, 0x85, 0x00, 0x00, 0x00, 0x00,        // +0x0010 jnz     rel32
+		0x8b, 0x00,                                // +0x0000 mov     eax, [eax] (g_pGameRules, from the GOT)
+		0x85, 0xc0,                                // +0x0002 test    eax, eax
+		0x74, 0x0d,                                // +0x0004 jz      short
+		0x80, 0xb8, 0x72, 0x0c, 0x00, 0x00, 0x00,  // +0x0006 cmp     byte ptr [eax+0C72h], 0
+		0x0f, 0x85, 0x00, 0x00, 0x00, 0x00,        // +0x000d jnz     rel32
 #endif
 	};
 	
@@ -35,7 +35,7 @@ namespace Mod::MvM::YER_Unnerf
 		
 		virtual const char *GetFuncName() const override { return "CTFKnife::PrimaryAttack"; }
 		virtual uint32_t GetFuncOffMin() const override  { return 0x0000; }
-		virtual uint32_t GetFuncOffMax() const override  { return 0x0800; } // @ 0x0393
+		virtual uint32_t GetFuncOffMax() const override  { return 0x0800; } // @ 0x0667 Linux
 		
 		virtual bool GetVerifyInfo(ByteBuf& buf, ByteBuf& mask) const override
 		{
@@ -57,11 +57,10 @@ namespace Mod::MvM::YER_Unnerf
 			mask.SetRange(0x0d + 1, 1, 0x00);
 			mask.SetRange(0x16 + 2, 4, 0x00);
 #else
-			buf.SetDword(0x09 + 2, (uint32_t)off__CTFGameRules_m_bPlayingMannVsMachine);
+			buf.SetDword(0x06 + 2, (uint32_t)off__CTFGameRules_m_bPlayingMannVsMachine);
 			
-			mask.SetRange(0x00 + 1, 4, 0x00);
-			mask.SetRange(0x07 + 1, 1, 0x00);
-			mask.SetRange(0x10 + 1, 5, 0x00);
+			mask.SetRange(0x04 + 1, 1, 0x00);
+			mask.SetRange(0x0d + 2, 4, 0x00);
 #endif
 			
 			return true;
@@ -84,9 +83,9 @@ namespace Mod::MvM::YER_Unnerf
 			mask.SetRange(0x0f, 13, 0xff);
 #else
 			/* overwrite the CMP and jnz instruction with NOPs */
-			buf.SetRange(0x09, 13, 0x90);
+			buf.SetRange(0x06, 13, 0x90);
 			
-			mask.SetRange(0x09, 13, 0xff);
+			mask.SetRange(0x06, 13, 0xff);
 #endif
 			return true;
 		}

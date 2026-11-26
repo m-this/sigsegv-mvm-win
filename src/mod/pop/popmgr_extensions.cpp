@@ -1263,8 +1263,8 @@ namespace Mod::Pop::PopMgr_Extensions
 			TFGameRules()->DropSpellPickup(killed->GetAbsOrigin(), state.m_bGiantsDropRareSpells && ToTFPlayer(pVictim)->IsMiniBoss() ? 1 : 0);
 		}
 	}
-	
-	DETOUR_DECL_STATIC_CALL_CONVENTION(__gcc_regcall, void, CTFGameRules_DropSpellPickup, float x, float y, float z, int tier)
+
+	DETOUR_DECL_STATIC(void, CTFGameRules_DropSpellPickup, float x, float y, float z, int tier)
 	{
 	//	DevMsg("CTFGameRules::DropSpellPickup\n");
 		
@@ -2764,8 +2764,8 @@ namespace Mod::Pop::PopMgr_Extensions
 
 		return DETOUR_MEMBER_CALL(bot);
 	}
-	
-    DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, bool, CObjectTeleporter_PlayerCanBeTeleported, CTFPlayer *player)
+
+    DETOUR_DECL_MEMBER(bool, CObjectTeleporter_PlayerCanBeTeleported, CTFPlayer *player)
 	{
 		auto tp = reinterpret_cast<CObjectTeleporter *>(this);
 		if (player->IsBot() && tp->GetBuilder() != nullptr && !tp->GetBuilder()->IsBot()) {
@@ -3247,20 +3247,14 @@ namespace Mod::Pop::PopMgr_Extensions
         return DETOUR_MEMBER_CALL(player, slot, defindex, upgrade);
     }
 	
-#if defined _WINDOWS
-	using PurchaseResult = bool;
-#else
-	using PurchaseResult = void;
-#endif
-
-	DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, PurchaseResult, CUpgrades_PlayerPurchasingUpgrade, CTFPlayer *player, int itemslot, int upgradeslot, bool sell, bool free, bool b3)
+	DETOUR_DECL_MEMBER(bool, CUpgrades_PlayerPurchasingUpgrade, CTFPlayer *player, int itemslot, int upgradeslot, bool sell, bool free, bool b3)
 	{
 		if (!sell && !b3) {
 			auto upgrade = reinterpret_cast<CUpgrades *>(this);
 			
 			if (upgradeslot >= 0 && upgradeslot < CMannVsMachineUpgradeManager::Upgrades().Count()) {
 				if (!IsUpgradeAllowed(player, itemslot, upgradeslot)) {
-					return PurchaseResult();
+					return false;
 				}
 			}
 		}
@@ -4129,7 +4123,7 @@ namespace Mod::Pop::PopMgr_Extensions
 		SelectExtraLoadoutItemsInfoHandler *handler = new SelectExtraLoadoutItemsInfoHandler(player);
         IBaseMenu *menu = menus->GetDefaultStyle()->CreateMenu(handler, g_Ext.GetIdentity());
         
-        menu->SetDefaultTitle(TranslateText(player, "Extra loadout items class", TranslateText(player, g_aPlayerClassNames_NonLocalized[id])));
+        menu->SetDefaultTitle(TranslateText(player, "Extra loadout items"));
         menu->SetMenuOptionFlags(MENUFLAG_BUTTON_EXIT);
 
 		for (size_t i = 0; i < state.m_ExtraLoadoutItems.size(); i++) {
@@ -4242,7 +4236,7 @@ namespace Mod::Pop::PopMgr_Extensions
 		SelectExtraLoadoutItemsHandler *handler = new SelectExtraLoadoutItemsHandler(player, autoHide);
         IBaseMenu *menu = menus->GetDefaultStyle()->CreateMenu(handler, g_Ext.GetIdentity());
         
-        menu->SetDefaultTitle(TranslateText(player, "Extra loadout items class", TranslateText(player, g_aPlayerClassNames_NonLocalized[class_index])));
+        menu->SetDefaultTitle(TranslateText(player, "Extra loadout items"));
         menu->SetMenuOptionFlags(MENUFLAG_BUTTON_EXIT);
 
 		int wave = TFObjectiveResource()->m_nMannVsMachineWaveCount;
@@ -4262,7 +4256,7 @@ namespace Mod::Pop::PopMgr_Extensions
 				if (item.cost > 0 && !state.m_BoughtLoadoutItems[player->GetSteamID()].count(i)) {
 					snprintf(cost, sizeof(cost), "($%d)", item.cost);
 				}
-				ItemDrawInfo info1(FormatTextForPlayerSM(player, "%t: %s %s %t", loadoutStrings[item.loadout_slot], GetItemNameForDisplay(item.item, player), cost, selected ? "(selected)" : ""), ITEMDRAW_DEFAULT);
+				ItemDrawInfo info1(FormatTextForPlayerSM(player, "%t: %s %s %s", loadoutStrings[item.loadout_slot], GetItemNameForDisplay(item.item, player), cost, selected ? "(selected)" : ""), ITEMDRAW_DEFAULT);
 				std::string num = std::to_string(i);
 				menu->AppendItem(num.c_str(), info1);
 			}

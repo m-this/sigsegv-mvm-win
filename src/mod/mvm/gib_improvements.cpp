@@ -12,10 +12,15 @@ namespace Mod::MvM::Gib_Improvements
 		0x48, 0x8b, 0x00,                          // +0x0007 mov     rax, [rax]
 		0x80, 0xb8, 0x1e, 0x0d, 0x00, 0x00, 0x00,  // +0x000a cmp     byte ptr [rax+0D1Eh], 0
 		0x0f, 0x85, 0x39, 0x01, 0x00, 0x00,        // +0x0011 jnz     loc_11B6258
-#else
+#elif defined _WINDOWS
 		0xa1, 0x5c, 0x6c, 0x70, 0x01,             // +0000  mov eax,ds:g_pGameRules
 		0x80, 0xb8, 0x7a, 0x09, 0x00, 0x00, 0x00, // +0005  cmp byte ptr [eax+m_bPlayingMannVsMachine],0x0
 		0x0F, 0x85, 0x26, 0x01, 0x00, 0x00        // +000C  jnz +0xXX
+#else
+		0x8d, 0x83, 0x00, 0x00, 0x00, 0x00,       // +0000  lea eax,[ebx+g_pGameRules@GOTOFF]
+		0x8b, 0x00,                               // +0006  mov eax,[eax]
+		0x80, 0xb8, 0x00, 0x00, 0x00, 0x00, 0x00, // +0008  cmp byte ptr [eax+m_bPlayingMannVsMachine],0x0
+		0x0f, 0x85, 0x00, 0x00, 0x00, 0x00,       // +000F  jnz +0xXX
 #endif
 	};
 	
@@ -39,7 +44,7 @@ namespace Mod::MvM::Gib_Improvements
 
 			mask.SetRange(0x00 + 3, 4, 0x00);
 			mask.SetRange(0x11 + 2, 4, 0x00);
-#else
+#elif defined _WINDOWS
 			void *addr__g_pGameRules = AddrManager::GetAddr("g_pGameRules");
 			if (addr__g_pGameRules == nullptr) return false;
 			
@@ -47,6 +52,11 @@ namespace Mod::MvM::Gib_Improvements
 			buf.SetDword(0x05 + 2, (uint32_t)off__CTFGameRules_m_bPlayingMannVsMachine);
 			
 			mask.SetRange(0x0c + 2, 4, 0x00);
+#else
+			buf.SetDword(0x08 + 2, (uint32_t)off__CTFGameRules_m_bPlayingMannVsMachine);
+			
+			mask.SetRange(0x00 + 2, 4, 0x00);
+			mask.SetRange(0x0f + 2, 4, 0x00);
 #endif
 			return true;
 		}
@@ -57,9 +67,12 @@ namespace Mod::MvM::Gib_Improvements
 #ifdef PLATFORM_64BITS
 			buf .SetRange(0x11, 6, 0x90);
 			mask.SetRange(0x11, 6, 0xff);
-#else
+#elif defined _WINDOWS
 			buf .SetRange(0x0c, 6, 0x90);
 			mask.SetRange(0x0c, 6, 0xff);
+#else
+			buf .SetRange(0x0f, 6, 0x90);
+			mask.SetRange(0x0f, 6, 0xff);
 #endif
 			
 			return true;

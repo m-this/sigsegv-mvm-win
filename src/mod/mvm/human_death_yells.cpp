@@ -23,13 +23,14 @@ namespace Mod::MvM::Human_Death_Yells
 		0x66, 0x0f, 0xef, 0xc0,                                // +0x0018 pxor    xmm0, xmm0
 		0xeb, 0x8d,                                            // +0x001c jmp     short loc_11B4D6E
 #else
-		0x80, 0xbb, 0x24, 0x24, 0x00, 0x00, 0x00,  // +0x0000 cmp     byte ptr [ebx+2424h], 0
-		0x0f, 0x85, 0x0f, 0xff, 0xff, 0xff,        // +0x0007 jnz     loc_EF3B78
-		0x6a, 0x00,                                // +0x000d push    0
-		0x6a, 0x00,                                // +0x000f push    0
-		0x68, 0xbe, 0xb1, 0x21, 0x01,              // +0x0011 push    121B1BEh; "MVM.PlayerDied"
-		0x53,                                      // +0x0016 push    ebx
-		0xe8, 0x18, 0x32, 0x8e, 0xff,              // +0x0017 call    _ZN11CBaseEntity9EmitSoundEPKcfPf; CBaseEntity::EmitSound(char const*,float,float *)
+		0x80, 0xbe, 0x30, 0x24, 0x00, 0x00, 0x00,  // +0x0000 cmp     byte ptr [esi+2430h], 0
+		0x0f, 0x85, 0x00, 0x00, 0x00, 0x00,        // +0x0007 jnz     skip
+		0x8d, 0x83, 0x00, 0x00, 0x00, 0x00,        // +0x000d lea     eax, [ebx+"MVM.PlayerDied"@GOTOFF]
+		0x6a, 0x00,                                // +0x0013 push    0
+		0x6a, 0x00,                                // +0x0015 push    0
+		0x50,                                      // +0x0017 push    eax
+		0x56,                                      // +0x0018 push    esi
+		0xe8, 0x00, 0x00, 0x00, 0x00,              // +0x0019 call    _ZN11CBaseEntity9EmitSoundEPKcfPf; CBaseEntity::EmitSound(char const*,float,float *)
 #endif
 	};
 
@@ -57,8 +58,8 @@ namespace Mod::MvM::Human_Death_Yells
 #else
 			mask.SetRange(0x00 + 2, 4, 0x00);
 			mask.SetRange(0x07 + 2, 4, 0x00);
-			mask.SetRange(0x11 + 1, 4, 0x00);
-			mask.SetRange(0x17 + 1, 4, 0x00);
+			mask.SetRange(0x0d + 2, 4, 0x00);
+			mask.SetRange(0x19 + 1, 4, 0x00);
 #endif
 			
 			return true;

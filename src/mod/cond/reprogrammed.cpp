@@ -84,16 +84,10 @@ namespace Mod::Cond::Reprogrammed
 		0x48, 0x89, 0x85, 0x58, 0xff, 0xff, 0xff,        // +0x002d mov     [rbp+var_A8], rax
 		0xe8,                                            // +0x0034 call    _Z14CollectPlayersI9CTFPlayerEiP10CUtlVectorIPT_10CUtlMemoryIS3_iEEibb_isra_0_13; CollectPlayers<CTFPlayer>(CUtlVector<CTFPlayer *,CUtlMemory<CTFPlayer *,int>> *,int,bool,bool) [clone]
 #else
-		0xB9, 0x01, 0x00, 0x00, 0x00,                   // +0000  mov     ecx, 1
-		0xBA, 0x03, 0x00, 0x00, 0x00,                   // +0005  mov     edx, 3
-		0xC7, 0x45, 0xB8, 0x00, 0x00, 0x00, 0x00,       // +000A  mov     dword ptr [ebp-48h], 0
-		0x6A, 0x00,                                     // +0011  push    0
-		0x8D, 0x45, 0xB8,                               // +0013  lea     eax, [ebp-48h]
-		0xc7, 0x45, 0xac, 0x00, 0x00, 0x00, 0x00,       // +0016  mov [ebp-0x54],0x00000000
-		0xc7, 0x45, 0xb0, 0x00, 0x00, 0x00, 0x00,       // +001D  mov [ebp-0x50],0x00000000
-		0xc7, 0x45, 0xb4, 0x00, 0x00, 0x00, 0x00,       // +0024  mov [ebp-0x4c],0x00000000
-		0xc7, 0x45, 0xb8, 0x00, 0x00, 0x00, 0x00,       // +002b  mov [ebp-0x48],0x00000000
-		0xe8,                                           // +0032  call CollectPlayers<CTFPlayer>
+		/* CollectPlayers<CTFPlayer>.isra.0: isAlive in ecx, team in edx */
+		0xb9, 0x01, 0x00, 0x00, 0x00,                   // +0000  mov     ecx, 1
+		0xc7, 0x45, 0x00, 0x00, 0x00, 0x00, 0x00,       // +0005  mov     dword ptr [ebp-N], 0
+		0xba, 0x03, 0x00, 0x00, 0x00,                   // +000C  mov     edx, 3
 #endif
 	};
 	
@@ -103,7 +97,7 @@ namespace Mod::Cond::Reprogrammed
 		
 		virtual const char *GetFuncName() const override { return "CMissionPopulator::UpdateMission"; }
 		virtual uint32_t GetFuncOffMin() const override  { return 0x0000; }
-		virtual uint32_t GetFuncOffMax() const override  { return 0x0200; } // @ 0x0100
+		virtual uint32_t GetFuncOffMax() const override  { return 0x0200; } // @ 0x009e
 		
 		virtual bool GetVerifyInfo(ByteBuf& buf, ByteBuf& mask) const override
 		{
@@ -115,12 +109,7 @@ namespace Mod::Cond::Reprogrammed
 			mask.SetRange(0x25 + 3, 1, 0x00);
 			mask.SetRange(0x2d + 3, 4, 0x00);
 #else
-			mask.SetRange(0x0a + 2, 5, 0x00);
-			mask.SetRange(0x13 + 2, 1, 0x00);
-			mask.SetRange(0x16 + 2, 1, 0x00);
-			mask.SetRange(0x1d + 2, 1, 0x00);
-			mask.SetRange(0x24 + 2, 1, 0x00);
-			mask.SetRange(0x2b + 2, 1, 0x00);
+			mask.SetRange(0x05 + 2, 1, 0x00);
 #endif
 			
 			return true;
@@ -133,8 +122,8 @@ namespace Mod::Cond::Reprogrammed
 			buf .SetDword(0x0d + 1, TEAM_ANY);
 			mask.SetDword(0x0d + 1, 0xffffffff);
 #else
-			buf .SetDword(0x05 + 1, TEAM_ANY);
-			mask.SetDword(0x05 + 1, 0xffffffff);
+			buf .SetDword(0x0c + 1, TEAM_ANY);
+			mask.SetDword(0x0c + 1, 0xffffffff);
 #endif
 			return true;
 		}
@@ -144,7 +133,7 @@ namespace Mod::Cond::Reprogrammed
 	{
 		virtual const char *GetFuncName() const override { return "CMissionPopulator::UpdateMissionDestroySentries"; }
 		virtual uint32_t GetFuncOffMin() const override  { return 0x0000; }
-		virtual uint32_t GetFuncOffMax() const override  { return 0x0800; } // @ 0x0442
+		virtual uint32_t GetFuncOffMax() const override  { return 0x0800; } // @ 0x02ec
 		
 		/* exact same pattern matching and replacment as the other patch */
 	};
@@ -362,7 +351,7 @@ namespace Mod::Cond::Reprogrammed
 		
 		virtual const char *GetFuncName() const override { return "CTFPistol_ScoutPrimary::Push"; }
 		virtual uint32_t GetFuncOffMin() const override  { return 0x0060; }
-		virtual uint32_t GetFuncOffMax() const override  { return 0x0160; } // @ 0x0110
+		virtual uint32_t GetFuncOffMax() const override  { return 0x0160; } // @ 0x014c
 		
 		virtual bool GetVerifyInfo(ByteBuf& buf, ByteBuf& mask) const override
 		{
@@ -373,9 +362,10 @@ namespace Mod::Cond::Reprogrammed
 			mask.SetRange(0x07 + 2, 4, 0x00);
 			mask.SetRange(0x11 + 1, 1, 0x00);
 #else
+			mask[0x00 + 1] = 0x00;
 			mask.SetRange(0x00 + 2, 4, 0x00);
 			mask.SetRange(0x07 + 1, 1, 0x00);
-			mask.SetRange(0x09 + 2, 1, 0x00);
+			mask.SetRange(0x09 + 2, 2, 0x00);
 			mask.SetRange(0x10 + 1, 1, 0x00);
 #endif
 			
@@ -1491,7 +1481,7 @@ namespace Mod::Cond::Reprogrammed
 		return DETOUR_MEMBER_CALL();
 	}
 
-	DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, bool, CTFKnife_CanPerformBackstabAgainstTarget, CTFPlayer *target )
+	DETOUR_DECL_MEMBER(bool, CTFKnife_CanPerformBackstabAgainstTarget, CTFPlayer *target )
 	{
 		bool ret = DETOUR_MEMBER_CALL(target);
 

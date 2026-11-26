@@ -165,6 +165,9 @@ jobs:
       run: |
         mkdir -p out
         tf="$BED/tf-dedicated/tf"
+        sudo mkdir -p -m 1777 /tmp/cores
+        sudo sysctl -q -w kernel.core_pattern=/tmp/cores/core.%e
+        ulimit -c unlimited
         bedbin/winbed -serve -root "$BED" > out/winbed.out 2> out/winbed.err &
         # srcds on a LAN reach binds rcon to the address its hostname
         # resolves to, so try loopback and every IPv4 the runner has.
@@ -199,8 +202,31 @@ jobs:
         done
         bedbin/waveprobe -rcon "$addr:27015" -mission "$mission" $probeargs -mode normal -timeout 900s \
           >> out/results.jsonl 2>> out/waveprobe.err || true
+        # A wave that times out, or a server rcon no longer reaches, is a hang:
+        # no core, so take every thread's stack from the live process.
+        if grep -q -E '"wave timed out"|cannot reach' out/results.jsonl && pid=$(pgrep -o srcds_linux); then
+          sudo apt-get install -y -q gdb > /dev/null
+          (cd "$BED/tf-dedicated" && sudo gdb -q -batch -p "$pid" -ex "set solib-search-path bin:tf/bin" -ex "thread apply all bt 40" 2>&1) \
+            | grep -v -E "^(warning|\[New LWP)" > out/hang-backtrace.txt || true
+          head -120 out/hang-backtrace.txt
+        elif grep -q -E '"wave timed out"|cannot reach' out/results.jsonl; then
+          echo "rcon lost and no srcds_linux left: the server exited"
+          ps -ef | grep -i srcds | grep -v grep || true
+        fi
         cp "$tf/console.log" out/ 2>/dev/null || true
         cp -r "$tf/addons/sourcemod/logs" out/smlogs 2>/dev/null || true
+    # A segfault leaves a core (the last one: a crash loop overwrites it); its
+    # backtrace says which module faulted.
+    - name: Backtrace
+      if: always()
+      run: |
+        set -- /tmp/cores/core.*
+        [ -e "$1" ] || { echo "no core"; exit 0; }
+        ls -la /tmp/cores
+        sudo apt-get install -y -q gdb > /dev/null
+        cd "$BED/tf-dedicated"
+        gdb -q -batch -ex "set solib-search-path bin:tf/bin" -ex "info sharedlibrary" -ex "bt 40" ./srcds_linux "$1" 2>&1 \
+          | grep -v -E "^(warning|\[New LWP)" | tee "$GITHUB_WORKSPACE/out/backtrace.txt" | tail -80
     - name: Report
       if: always()
       run: |

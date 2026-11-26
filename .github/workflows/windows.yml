@@ -36,7 +36,7 @@ on:
         default: false
       sourcemod_ref:
         description: alliedmodders/sourcemod branch, tag or commit to build against (1.11-dev for a 1.12 server)
-        default: ce7dccfffbabe02f872f5ac3f4eb3f310e68f9f3
+        default: a830fd1dd6f69f57a6cd774eec883307a70a889b
       extensions_run:
         description: id of a tf2-archipelago Extensions run whose bundle (CBaseNPC, Actions, REST in Pawn built for SourceMod 1.13) the bed installs; empty takes the latest successful run on archipelago_ref
         default: ''
@@ -69,12 +69,12 @@ jobs:
       XWIN_SDK: 10.0.26100
       XWIN_CRT: 14.44.17.14
       # The hl2sdk tf2 commit the extension is built against; see the cache key.
-      HL2SDK_TF2: 9c2efb1deeffd5e895d2b43dabb639409c78c6d6
+      HL2SDK_TF2: 53ea9e2aeee29c63b552adbabeaac15be2c1251a
       # A .pdb beside the DLL, for the bed's debugger. The package does not ship it.
       DEBUGINFO: '1'
       # 1.13.0-git7477. SourceMod 1.13 raised the extension API to 9 and refuses
       # an extension built for 8, so a DLL built against 1.11-dev loads only on 1.12.
-      SOURCEMOD_REF: ${{ inputs.sourcemod_ref || 'ce7dccfffbabe02f872f5ac3f4eb3f310e68f9f3' }}
+      SOURCEMOD_REF: ${{ inputs.sourcemod_ref || 'a830fd1dd6f69f57a6cd774eec883307a70a889b' }}
 
     steps:
     - uses: actions/checkout@v4
@@ -144,7 +144,9 @@ jobs:
 
     # hl2sdk is pinned: a commit on its tf2 branch changes what SigMod reads
     # from the game, and on 2026-10-02 one (631a7b6c) stalled nine community
-    # waves that the commit before it (9c2efb1d) plays to the end. Moving the
+    # waves that the commit before it (9c2efb1d) plays to the end. TF2
+    # 11267535 then packed the KeyValues flags into one byte, and 53ea9e2a
+    # (alliedmodders/hl2sdk#443) is the header that matches it. Moving the
     # pin is a change to test with the bed. The key follows the pin and the
     # other two branch heads.
     - name: AlliedModders heads

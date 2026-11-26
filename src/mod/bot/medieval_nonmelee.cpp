@@ -18,10 +18,11 @@ namespace Mod::Bot::Medieval_NonMelee
 		0x80, 0xb8, 0x00, 0x00, 0x00, 0x00, 0x00,       // +0005  cmp byte ptr [eax+m_bPlayingMedieval],0
 		0x75, 0x00,                                     // +000C  jnz +0xXX
 #else
-		0xa1, 0x00, 0x00, 0x00, 0x00,             // +0000  mov eax,[g_pGameRules]
-		0x0f, 0xb6, 0x80, 0x00, 0x00, 0x00, 0x00, // +0005  movzx eax,byte ptr [eax+m_bPlayingMedieval]
-		0x84, 0xc0,                               // +000C  test al,al
-		0x75, 0x00,                               // +000E  jnz +0xXX
+		0x8d, 0x83, 0x00, 0x00, 0x00, 0x00,       // +0000  lea eax,[ebx+g_pGameRules@GOTOFF]
+		0x8b, 0x00,                               // +0006  mov eax,[eax]
+		0x0f, 0xb6, 0x80, 0x00, 0x00, 0x00, 0x00, // +0008  movzx eax,byte ptr [eax+m_bPlayingMedieval]
+		0x84, 0xc0,                               // +000F  test al,al
+		0x75, 0x00,                               // +0011  jnz +0xXX
 #endif
 	};
 	
@@ -59,10 +60,10 @@ namespace Mod::Bot::Medieval_NonMelee
 			
 			mask.SetRange(0x0c + 1, 1, 0x00);
 #else
-			buf.SetDword(0x00 + 1, (uint32_t)&g_pGameRules.GetRef());
-			buf.SetDword(0x05 + 3, (uint32_t)off_CTFGameRules_m_bPlayingMedieval);
+			buf.SetDword(0x08 + 3, (uint32_t)off_CTFGameRules_m_bPlayingMedieval);
 			
-			mask.SetRange(0x0e + 1, 1, 0x00);
+			mask.SetRange(0x00 + 2, 4, 0x00);
+			mask.SetRange(0x11 + 1, 1, 0x00);
 #endif			
 			return true;
 		}
@@ -77,8 +78,8 @@ namespace Mod::Bot::Medieval_NonMelee
 			buf .SetRange(0x0c, 2, 0x90);
 			mask.SetRange(0x0c, 2, 0xff);
 #else
-			buf .SetRange(0x0e, 2, 0x90);
-			mask.SetRange(0x0e, 2, 0xff);
+			buf .SetRange(0x11, 2, 0x90);
+			mask.SetRange(0x11, 2, 0xff);
 #endif
 			return true;
 		}

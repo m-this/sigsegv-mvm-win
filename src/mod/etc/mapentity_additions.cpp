@@ -743,7 +743,7 @@ namespace Mod::Etc::Mapentity_Additions
 	}
     
     RefCount rc_CTriggerHurt_HurtEntity;
-    DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, bool, CTriggerHurt_HurtEntity, CBaseEntity *other, float damage)
+    DETOUR_DECL_MEMBER(bool, CTriggerHurt_HurtEntity, CBaseEntity *other, float damage)
 	{
         SCOPED_INCREMENT(rc_CTriggerHurt_HurtEntity);
 		return DETOUR_MEMBER_CALL(other, damage);
@@ -1782,7 +1782,7 @@ namespace Mod::Etc::Mapentity_Additions
         return false;
     }
 
-    DETOUR_DECL_STATIC_CALL_CONVENTION(__gcc_regcall, bool, PassServerEntityFilter, IHandleEntity *ent1, IHandleEntity *ent2)
+    DETOUR_DECL_STATIC(bool, PassServerEntityFilter, IHandleEntity *ent1, IHandleEntity *ent2)
 	{
         if (ent1 != ent2 && ent2 != nullptr)
         {
@@ -1896,18 +1896,14 @@ namespace Mod::Etc::Mapentity_Additions
         }
     }
     
-    DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, bool, CPopulationManager_Initialize)
+    DETOUR_DECL_MEMBER(bool, CPopulationManager_Initialize)
 	{
-#if defined _WINDOWS
-        /* server.dll has no clone, so this detours the whole function. Linux detours the clone
-         * GCC split off after the wrapper's check that the nav mesh has areas (TheNavMesh + 0x30,
-         * the count both builds read); without that check the code below would run for a
-         * failed Initialize. */
+        /* The wrapper's check that the nav mesh has areas (TheNavMesh + 0x30), for the builds
+         * that detour the whole function; without it the code below runs for a failed Initialize. */
         CTFNavMesh *nav_mesh = TheNavMesh;
         if (nav_mesh == nullptr || *reinterpret_cast<unsigned int *>(reinterpret_cast<uintptr_t>(nav_mesh) + 0x30) == 0) {
             return DETOUR_MEMBER_CALL();
         }
-#endif
 		auto ret = DETOUR_MEMBER_CALL();
         
 #ifndef NO_MVM

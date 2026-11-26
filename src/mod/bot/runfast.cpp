@@ -20,11 +20,12 @@ namespace Mod::Bot::RunFast
 		0xd9, 0x1c, 0x24,                   // +0014  fstp dword ptr [esp]
 		0xff, 0x15, 0x00, 0x00, 0x00, 0x00, // +0017  call dword ptr [RandomFloat]
 #else
-		0xE8, 0xFA, 0x16, 0xFE, 0xFF, // +0000  call Path::Compute<CTFBotPathCost>
-		0x83, 0xC4, 0x18,             // +0005  add esp, 18h
-		0x68, 0x00, 0x00, 0x00, 0x40, // +0008  push 2.0f
-		0x68, 0x00, 0x00, 0x80, 0x3F, // +000D  push 1.0f
-		0xe8, 0xdc, 0xd8, 0xae, 0x00, // +0012  call RandomFloat
+		0xE8, 0x00, 0x00, 0x00, 0x00, // +0000  call Path::Compute<CTFBotPathCost>
+		0x58,                         // +0005  pop eax
+		0x5a,                         // +0006  pop edx
+		0x68, 0x00, 0x00, 0x00, 0x40, // +0007  push 2.0f
+		0x68, 0x00, 0x00, 0x80, 0x3F, // +000C  push 1.0f
+		0xe8, 0x00, 0x00, 0x00, 0x00, // +0011  call RandomFloat
 #endif
 	};
 	
@@ -38,7 +39,7 @@ namespace Mod::Bot::RunFast
 		virtual uint32_t GetFuncOffMax() const override { return 0x0300; } // @ 0x015f
 #else
 		virtual uint32_t GetFuncOffMin() const override { return 0x0200; }
-		virtual uint32_t GetFuncOffMax() const override { return 0x0680; } // @ 0x01d3
+		virtual uint32_t GetFuncOffMax() const override { return 0x0680; } // @ 0x0356
 #endif
 		
 		virtual bool GetVerifyInfo(ByteBuf& buf, ByteBuf& mask) const override
@@ -56,8 +57,8 @@ namespace Mod::Bot::RunFast
 			mask.SetRange(0x17 + 2, 4, 0x00);
 #else
 			mask.SetRange(0x00 + 1, 4, 0x00);
-			mask.SetRange(0x05 + 2, 1, 0x00);
-			mask.SetRange(0x12 + 1, 4, 0x00);
+			mask.SetRange(0x05, 2, 0x00);
+			mask.SetRange(0x11 + 1, 4, 0x00);
 #endif
 			
 			return true;
@@ -72,8 +73,8 @@ namespace Mod::Bot::RunFast
 			buf.SetRange(0x17, 6, 0x90);
 			mask.SetRange(0x17, 6, 0xff);
 #else
-			buf.SetRange(0x12, 5, 0x90);
-			mask.SetRange(0x12, 5, 0xff);
+			buf.SetRange(0x11, 5, 0x90);
+			mask.SetRange(0x11, 5, 0xff);
 #endif
 			
 			return true;

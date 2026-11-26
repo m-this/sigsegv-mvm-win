@@ -1,12 +1,40 @@
 name: Build and Release
 
+# The Linux build; windows.yml builds the Windows one from the same branch.
+# A push that only touches the Windows port needs no Linux draft release.
+# Date tags (2*) belong to windows.yml, and this workflow has no tag trigger.
+# Actions does not read YAML anchors, so the two path lists are written out.
 on:
   push:
     branches:
-      - master
+      - main
+    paths-ignore:
+      - 'gamedata/sigsegv/windows.txt'
+      - 'tools/winport/**'
+      - '.github/workflows/windows.yml'
+      - '.github/workflows/addrs.yml'
+      - '.github/workflows/checktable.yml'
+      - '.github/workflows/linuxbed.yml'
   pull_request:
     branches:
-      - master
+      - main
+    paths-ignore:
+      - 'gamedata/sigsegv/windows.txt'
+      - 'tools/winport/**'
+      - '.github/workflows/windows.yml'
+      - '.github/workflows/addrs.yml'
+      - '.github/workflows/checktable.yml'
+      - '.github/workflows/linuxbed.yml'
+  workflow_dispatch:
+    inputs:
+      sourcemod_ref:
+        description: alliedmodders/sourcemod branch, tag or commit to build against (1.11-dev for a 1.12 server)
+        default: ce7dccfffbabe02f872f5ac3f4eb3f310e68f9f3
+
+env:
+  # 1.13.0-git7477. SourceMod 1.13 raised the extension API to 9 and refuses an
+  # extension built for 8, so a package built against 1.11-dev loads only on 1.12.
+  SOURCEMOD_REF: ${{ inputs.sourcemod_ref || 'ce7dccfffbabe02f872f5ac3f4eb3f310e68f9f3' }}
 
 jobs:
   build-and-package:
@@ -41,12 +69,19 @@ jobs:
         pushd ..
         mkdir -p alliedmodders
         cd alliedmodders
-        git clone --recursive https://github.com/alliedmodders/sourcemod --depth 1 -b 1.11-dev
+        git init --quiet sourcemod
+        git -C sourcemod remote add origin https://github.com/alliedmodders/sourcemod
+        git -C sourcemod fetch --quiet --depth 1 origin "$SOURCEMOD_REF"
+        git -C sourcemod checkout --quiet --detach FETCH_HEAD
+        git -C sourcemod submodule update --quiet --init --recursive --depth 1
         git clone https://github.com/alliedmodders/hl2sdk --depth 1 -b sdk2013 hl2sdk-sdk2013
         git clone https://github.com/alliedmodders/hl2sdk --depth 1 -b tf2 hl2sdk-tf2
         git clone https://github.com/alliedmodders/hl2sdk --depth 1 -b css hl2sdk-css
         git clone https://github.com/alliedmodders/metamod-source --depth 1 -b 1.11-dev
         popd
+
+    - name: Rebuild the tf2 SDK's tier1 from its sources
+      run: tools/build-sdk-tier1.sh ../alliedmodders/hl2sdk-tf2
 
     - name: Build submodules
       run: |
@@ -91,6 +126,7 @@ jobs:
       with:
         name: package-linux
         path: build/release/package-linux.zip
+        if-no-files-found: error
 
     - name: Upload package-linux-optimize-only
       uses: actions/upload-artifact@v4
@@ -106,7 +142,7 @@ jobs:
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
-      if: github.event_name != 'pull_request'
+      if: github.event_name == 'push'
       with:
         files: build/release/*.zip
         token: ${{ secrets.GITHUB_TOKEN }}

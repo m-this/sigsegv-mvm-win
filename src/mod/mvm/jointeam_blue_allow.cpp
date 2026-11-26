@@ -567,12 +567,11 @@ namespace Mod::MvM::JoinTeam_Blue_Allow
 		0x48, 0xc7, 0x45, 0xc8, 0x00, 0x00, 0x00, 0x00,  // +0x0008 mov     [rbp+var_38], 0
 		0x48, 0xc7, 0x45, 0xd0, 0x00, 0x00, 0x00, 0x00,  // +0x0010 mov     [rbp+var_30], 0
 		0xe8, 0x54, 0xcc, 0xff, 0xff,                    // +0x0018 call    _Z14CollectPlayersI9CTFPlayerEiP10CUtlVectorIPT_10CUtlMemoryIS3_iEEibb_isra_0_12; CollectPlayers<CTFPlayer>(CUtlVector<CTFPlayer *,CUtlMemory<CTFPlayer *,int>> *,int,bool,bool) [clone]
-#else 
-		0xc7, 0x45, 0xd4, 0x00, 0x00, 0x00, 0x00,  // +0x0000 mov     [ebp+var_2C], 0
-		0xc7, 0x45, 0xd8, 0x00, 0x00, 0x00, 0x00,  // +0x0007 mov     [ebp+var_28], 0
-		0xc7, 0x45, 0xdc, 0x00, 0x00, 0x00, 0x00,  // +0x000e mov     [ebp+var_24], 0
-		0xc7, 0x45, 0xe0, 0x00, 0x00, 0x00, 0x00,  // +0x0015 mov     [ebp+var_20], 0
-		0xe8, 0x16, 0x97, 0xfe, 0xff,              // +0x001c call    _Z14CollectPlayersI9CTFPlayerEiP10CUtlVectorIPT_10CUtlMemoryIS3_iEEibb_isra_0_1; CollectPlayers<CTFPlayer>(CUtlVector<CTFPlayer *,CUtlMemory<CTFPlayer *,int>> *,int,bool,bool) [clone]
+#else
+		/* GCC 14 zeroes the vector in no fixed order: anchor on the call */
+		0x89, 0x45, 0x00,              // +0x0000 mov     [ebp-N], eax
+		0x6a, 0x00,                    // +0x0003 push    0 (shouldAppend)
+		0xe8, 0x00, 0x00, 0x00, 0x00,  // +0x0005 call    CollectPlayers<CTFPlayer> [clone .isra.0]
 #endif
 	};
 
@@ -583,18 +582,16 @@ namespace Mod::MvM::JoinTeam_Blue_Allow
 		0xFF, 0xFF, 0xFF, 0x00, 0xFF, 0xFF, 0xFF, 0xFF,  // +0x000e mov     [ebp+var_24], 0
 		0xFF, 0x00, 0x00, 0x00, 0x00,                    // +0x001c call    _Z14CollectPlayersI9CTFPlayerEiP10CUtlVectorIPT_10CUtlMemoryIS3_iEEibb_isra_0_1; CollectPlayers<CTFPlayer>(CUtlVector<CTFPlayer *,CUtlMemory<CTFPlayer *,int>> *,int,bool,bool) [clone]
 #else
-		0xFF, 0xFF, 0x00, 0xFF, 0xFF, 0xFF, 0xFF,  // +0x0000 mov     [ebp+var_2C], 0
-		0xFF, 0xFF, 0x00, 0xFF, 0xFF, 0xFF, 0xFF,  // +0x0007 mov     [ebp+var_28], 0
-		0xFF, 0xFF, 0x00, 0xFF, 0xFF, 0xFF, 0xFF,  // +0x000e mov     [ebp+var_24], 0
-		0xFF, 0xFF, 0x00, 0xFF, 0xFF, 0xFF, 0xFF,  // +0x0015 mov     [ebp+var_20], 0
-		0xFF, 0x00, 0x00, 0x00, 0x00,              // +0x001c call    _Z14CollectPlayersI9CTFPlayerEiP10CUtlVectorIPT_10CUtlMemoryIS3_iEEibb_isra_0_1; CollectPlayers<CTFPlayer>(CUtlVector<CTFPlayer *,CUtlMemory<CTFPlayer *,int>> *,int,bool,bool) [clone]
+		0xFF, 0xFF, 0x00,              // +0x0000 mov     [ebp-N], eax
+		0xFF, 0xFF,                    // +0x0003 push    0
+		0xFF, 0x00, 0x00, 0x00, 0x00,  // +0x0005 call    CollectPlayers<CTFPlayer> [clone .isra.0]
 #endif
 	};
 	
 #ifdef PLATFORM_64BITS
 	constexpr uintptr_t s_CallOff_CollectPlayers_Common_Regcall = 0x18;
 #else
-	constexpr uintptr_t s_CallOff_CollectPlayers_Common_Regcall = 0x1c;
+	constexpr uintptr_t s_CallOff_CollectPlayers_Common_Regcall = 0x05;
 #endif
 
 	constexpr uint8_t s_Buf_CPopulationManager_RestorePlayerCurrency[] = {
@@ -610,19 +607,10 @@ namespace Mod::MvM::JoinTeam_Blue_Allow
 		0x48, 0x89, 0x45, 0x98,                          // +0x002f mov     [rbp+var_68], rax
 		0xe8, 0xdc, 0xd0, 0xff, 0xff,                    // +0x0033 call    _Z14CollectPlayersI9CTFPlayerEiP10CUtlVectorIPT_10CUtlMemoryIS3_iEEibb_isra_0_12; CollectPlayers<CTFPlayer>(CUtlVector<CTFPlayer *,CUtlMemory<CTFPlayer *,int>> *,int,bool,bool) [clone]
 #else
-		0xba, 0x02, 0x00, 0x00, 0x00,              // +0x0000 mov     edx, 2
-		0xc7, 0x45, 0xd0, 0x00, 0x00, 0x00, 0x00,  // +0x0005 mov     dword ptr [ebp-30h], 0
-		0xc7, 0x45, 0xd4, 0x00, 0x00, 0x00, 0x00,  // +0x000c mov     dword ptr [ebp-2Ch], 0
-		0xc7, 0x45, 0xd8, 0x00, 0x00, 0x00, 0x00,  // +0x0013 mov     dword ptr [ebp-28h], 0
-		0x03, 0x81, 0xd0, 0x05, 0x00, 0x00,        // +0x001a add     eax, [ecx+5D0h]
-		0xc7, 0x45, 0xdc, 0x00, 0x00, 0x00, 0x00,  // +0x0020 mov     dword ptr [ebp-24h], 0
-		0x03, 0x81, 0xcc, 0x05, 0x00, 0x00,        // +0x0027 add     eax, [ecx+5CCh]
-		0x31, 0xc9,                                // +0x002d xor     ecx, ecx
-		0xc7, 0x45, 0xe0, 0x00, 0x00, 0x00, 0x00,  // +0x002f mov     dword ptr [ebp-20h], 0
-		0xc7, 0x04, 0x24, 0x00, 0x00, 0x00, 0x00,  // +0x0036 mov     dword ptr [esp], 0
-		0x89, 0x45, 0xc4,                          // +0x003d mov     [ebp-3Ch], eax
-		0x8d, 0x45, 0xd0,                          // +0x0040 lea     eax, [ebp-30h]
-		0xe8, 0x3a, 0xd1, 0xff, 0xff,              // +0x0043 call    _Z14CollectPlayersI9CTFPlayerEiP10CUtlVectorIPT_10CUtlMemoryIS3_iEEibb_isra_0_12; CollectPlayers<CTFPlayer>(CUtlVector<CTFPlayer *,CUtlMemory<CTFPlayer *,int>> *,int,bool,bool) [clone]
+		0x8d, 0x45, 0x00,                          // +0x0000 lea     eax, [ebp-30h]
+		0x89, 0x45, 0x00,                          // +0x0003 mov     [ebp-N], eax
+		0xc7, 0x04, 0x24, 0x00, 0x00, 0x00, 0x00,  // +0x0006 mov     dword ptr [esp], 0
+		0xe8, 0x00, 0x00, 0x00, 0x00,              // +0x000d call    CollectPlayers<CTFPlayer> [clone .isra.0]
 #endif
 	};
 
@@ -639,26 +627,17 @@ namespace Mod::MvM::JoinTeam_Blue_Allow
 		0xFF, 0xFF, 0xFF, 0x00,                          // +0x002f mov     [rbp+var_68], rax
 		0xFF, 0x00, 0x00, 0x00, 0x00,                    // +0x0033 call    _Z14CollectPlayersI9CTFPlayerEiP10CUtlVectorIPT_10CUtlMemoryIS3_iEEibb_isra_0_12; CollectPlayers<CTFPlayer>(CUtlVector<CTFPlayer *,CUtlMemory<CTFPlayer *,int>> *,int,bool,bool) [clone]
 #else
-		0xFF, 0xFF, 0xFF, 0xFF, 0xFF,              // +0x0000 mov     edx, 2
-		0xFF, 0xFF, 0x00, 0xFF, 0xFF, 0xFF, 0xFF,  // +0x0005 mov     dword ptr [ebp-30h], 0
-		0xFF, 0xFF, 0x00, 0xFF, 0xFF, 0xFF, 0xFF,  // +0x000c mov     dword ptr [ebp-2Ch], 0
-		0xFF, 0xFF, 0x00, 0xFF, 0xFF, 0xFF, 0xFF,  // +0x0013 mov     dword ptr [ebp-28h], 0
-		0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00,        // +0x001a add     eax, [ecx+5D0h]
-		0xFF, 0xFF, 0x00, 0xFF, 0xFF, 0xFF, 0xFF,  // +0x0020 mov     dword ptr [ebp-24h], 0
-		0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00,        // +0x0027 add     eax, [ecx+5CCh]
-		0xFF, 0xFF,                                // +0x002d xor     ecx, ecx
-		0xFF, 0xFF, 0x00, 0xFF, 0xFF, 0xFF, 0xFF,  // +0x002f mov     dword ptr [ebp-20h], 0
-		0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,  // +0x0036 mov     dword ptr [esp], 0
-		0xFF, 0x00, 0x00,                          // +0x003d mov     [ebp-3Ch], eax
-		0xFF, 0x00, 0x00,                          // +0x0040 lea     eax, [ebp-30h]
-		0xFF, 0x00, 0x00, 0x00, 0x00,              // +0x0043 call    _Z14CollectPlayersI9CTFPlayerEiP10CUtlVectorIPT_10CUtlMemoryIS3_iEEibb_isra_0_12; CollectPlayers<CTFPlayer>(CUtlVector<CTFPlayer *,CUtlMemory<CTFPlayer *,int>> *,int,bool,bool) [clone]
+		0xFF, 0xFF, 0x00,                          // +0x0000 lea     eax, [ebp-30h]
+		0xFF, 0xFF, 0x00,                          // +0x0003 mov     [ebp-N], eax
+		0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,  // +0x0006 mov     dword ptr [esp], 0
+		0xFF, 0x00, 0x00, 0x00, 0x00,              // +0x000d call    CollectPlayers<CTFPlayer> [clone .isra.0]
 #endif
 	};
 
 #ifdef PLATFORM_64BITS
 	constexpr uintptr_t s_CallOff_CPopulationManager_RestorePlayerCurrency = 0x33;
 #else
-	constexpr uintptr_t s_CallOff_CPopulationManager_RestorePlayerCurrency = 0x43;
+	constexpr uintptr_t s_CallOff_CPopulationManager_RestorePlayerCurrency = 0x0d;
 #endif
 
 	constexpr uint8_t s_Buf_CollectPlayers_WaveCompleteUpdate[] = {
@@ -672,14 +651,10 @@ namespace Mod::MvM::JoinTeam_Blue_Allow
 		0x48, 0x89, 0x85, 0x68, 0xff, 0xff, 0xff,                          // +0x002e mov     [rbp+var_98], rax
 		0xe8, 0xc8, 0xde, 0xff, 0xff,                                      // +0x0035 call    _Z14CollectPlayersI9CTFPlayerEiP10CUtlVectorIPT_10CUtlMemoryIS3_iEEibb_isra_0_13; CollectPlayers<CTFPlayer>(CUtlVector<CTFPlayer *,CUtlMemory<CTFPlayer *,int>> *,int,bool,bool) [clone]
 #else
-		0xc7, 0x45, 0xb0, 0x00, 0x00, 0x00, 0x00,  // +0x0000 mov     dword ptr [ebp-50h], 0
-		0x6a, 0x00,                                // +0x0007 push    0
-		0xba, 0x02, 0x00, 0x00, 0x00,              // +0x0009 mov     edx, 2
-		0xc7, 0x45, 0xb4, 0x00, 0x00, 0x00, 0x00,  // +0x000e mov     dword ptr [ebp-4Ch], 0
-		0xc7, 0x45, 0xb8, 0x00, 0x00, 0x00, 0x00,  // +0x0015 mov     dword ptr [ebp-48h], 0
-		0xc7, 0x45, 0xbc, 0x00, 0x00, 0x00, 0x00,  // +0x001c mov     dword ptr [ebp-44h], 0
-		0xc7, 0x45, 0xc0, 0x00, 0x00, 0x00, 0x00,  // +0x0023 mov     dword ptr [ebp-40h], 0
-		0xe8, 0xf6, 0xdf, 0xff, 0xff,              // +0x002a call    _Z14CollectPlayersI9CTFPlayerEiP10CUtlVectorIPT_10CUtlMemoryIS3_iEEibb_isra_0_13; CollectPlayers<CTFPlayer>(CUtlVector<CTFPlayer *,CUtlMemory<CTFPlayer *,int>> *,int,bool,bool) [clone]
+		/* GCC 14 zeroes the vector in no fixed order: anchor on the call */
+		0x89, 0x45, 0x00,              // +0x0000 mov     [ebp-N], eax
+		0x6a, 0x00,                    // +0x0003 push    0 (shouldAppend)
+		0xe8, 0x00, 0x00, 0x00, 0x00,  // +0x0005 call    CollectPlayers<CTFPlayer> [clone .isra.0]
 #endif
 	};
 
@@ -694,21 +669,16 @@ namespace Mod::MvM::JoinTeam_Blue_Allow
 		0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00,                          // +0x002e mov     [rbp+var_98], rax
 		0xFF, 0x00, 0x00, 0x00, 0x00,                                      // +0x0035 call    _Z14CollectPlayersI9CTFPlayerEiP10CUtlVectorIPT_10CUtlMemoryIS3_iEEibb_isra_0_13; CollectPlayers<CTFPlayer>(CUtlVector<CTFPlayer *,CUtlMemory<CTFPlayer *,int>> *,int,bool,bool) [clone]
 #else
-		0xFF, 0xFF, 0x00, 0xFF, 0xFF, 0xFF, 0xFF,  // +0x0000 mov     dword ptr [ebp-50h], 0
-		0xFF, 0xFF,                                // +0x0007 push    0
-		0xFF, 0xFF, 0xFF, 0xFF, 0xFF,              // +0x0009 mov     edx, 2
-		0xFF, 0xFF, 0x00, 0xFF, 0xFF, 0xFF, 0xFF,  // +0x000e mov     dword ptr [ebp-4Ch], 0
-		0xFF, 0xFF, 0x00, 0xFF, 0xFF, 0xFF, 0xFF,  // +0x0015 mov     dword ptr [ebp-48h], 0
-		0xFF, 0xFF, 0x00, 0xFF, 0xFF, 0xFF, 0xFF,  // +0x001c mov     dword ptr [ebp-44h], 0
-		0xFF, 0xFF, 0x00, 0xFF, 0xFF, 0xFF, 0xFF,  // +0x0023 mov     dword ptr [ebp-40h], 0
-		0xFF, 0x00, 0x00, 0x00, 0x00,              // +0x002a call    _Z14CollectPlayersI9CTFPlayerEiP10CUtlVectorIPT_10CUtlMemoryIS3_iEEibb_isra_0_13; CollectPlayers<CTFPlayer>(CUtlVector<CTFPlayer *,CUtlMemory<CTFPlayer *,int>> *,int,bool,bool) [clone]
+		0xFF, 0xFF, 0x00,              // +0x0000 mov     [ebp-N], eax
+		0xFF, 0xFF,                    // +0x0003 push    0
+		0xFF, 0x00, 0x00, 0x00, 0x00,  // +0x0005 call    CollectPlayers<CTFPlayer> [clone .isra.0]
 #endif
 	};
 
 #ifdef PLATFORM_64BITS
 	constexpr uintptr_t s_CallOff_CollectPlayers_WaveCompleteUpdate = 0x35;
 #else
-	constexpr uintptr_t s_CallOff_CollectPlayers_WaveCompleteUpdate = 0x2a;
+	constexpr uintptr_t s_CallOff_CollectPlayers_WaveCompleteUpdate = 0x05;
 #endif
 
 #ifdef PLATFORM_64BITS
@@ -747,10 +717,11 @@ constexpr uintptr_t s_CallOff_CollectPlayers_RadiusSpyScan = 0x2c;
 		0xe8, 0x09, 0x81, 0xcc, 0xff,        // +0x0006 call    CBaseEntity::GetTeamNumber
 		0x83, 0xf8, 0x02,                    // +0x000b cmp     eax, 2
 #else
-		0xff, 0xb7, 0x8c, 0x01, 0x00, 0x00,  // +0x0000 push    dword ptr [edi+18Ch]
-		0xe8, 0x49, 0xf5, 0x1f, 0x00,        // +0x0006 call    _ZNK11CBaseEntity13GetTeamNumberEv; CBaseEntity::GetTeamNumber(void)
-		0x83, 0xc4, 0x10,                    // +0x000b add     esp, 10h
-		0x83, 0xf8, 0x02,                    // +0x000e cmp     eax, 2
+		0xff, 0xb0, 0x8c, 0x01, 0x00, 0x00,  // +0x0000 push    dword ptr [eax+18Ch]
+		0x89, 0xfb,                          // +0x0006 mov     ebx, edi (GOT base)
+		0xe8, 0x00, 0x00, 0x00, 0x00,        // +0x0008 call    _ZNK11CBaseEntity13GetTeamNumberEv; CBaseEntity::GetTeamNumber(void)
+		0x83, 0xc4, 0x10,                    // +0x000d add     esp, 10h
+		0x83, 0xf8, 0x02,                    // +0x0010 cmp     eax, 2
 #endif
 	};
 	
@@ -779,8 +750,11 @@ constexpr uintptr_t s_CallOff_CollectPlayers_RadiusSpyScan = 0x2c;
 #else
 			buf.SetDword(0x00 + 2, off_CTFPlayerShared_m_pOuter);
 			
-			mask.SetDword(0x06 + 1, 0x00000000);
-			mask[0x0b + 2] = 0x00;
+			/* allow any source register */
+			mask[0x00 + 1] = 0b11111000;
+			mask[0x06 + 1] = 0x00;
+			mask.SetDword(0x08 + 1, 0x00000000);
+			mask[0x0d + 2] = 0x00;
 #endif
 			
 			return true;
@@ -804,11 +778,11 @@ constexpr uintptr_t s_CallOff_CollectPlayers_RadiusSpyScan = 0x2c;
 			mask.SetRange(0x0b, 3, 0xff);
 #else
 			/* replace 'cmp eax,TF_TEAM_RED' with 'cmp eax,eax; nop' */
-			buf[0x0e + 0] = 0x39;
-			buf[0x0e + 1] = 0xc0;
-			buf[0x0e + 2] = 0x90;
+			buf[0x10 + 0] = 0x39;
+			buf[0x10 + 1] = 0xc0;
+			buf[0x10 + 2] = 0x90;
 			
-			mask.SetRange(0x0e, 3, 0xff);
+			mask.SetRange(0x10, 3, 0xff);
 #endif
 			
 			return true;
@@ -1388,7 +1362,7 @@ constexpr uintptr_t s_CallOff_CollectPlayers_RadiusSpyScan = 0x2c;
 		return ret;
 	}
 
-	DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, bool, CTFKnife_CanPerformBackstabAgainstTarget, CTFPlayer *target )
+	DETOUR_DECL_MEMBER(bool, CTFKnife_CanPerformBackstabAgainstTarget, CTFPlayer *target )
 	{
 		bool ret = DETOUR_MEMBER_CALL(target);
 
@@ -1696,8 +1670,9 @@ constexpr uintptr_t s_CallOff_CollectPlayers_RadiusSpyScan = 0x2c;
 		}
 	}
 
+#if defined PLATFORM_64BITS
 	// this argument optimized out, CTFPlayer becomes this
-	DETOUR_DECL_MEMBER_CALL_CONVENTION(__gcc_regcall, bool, CVoteController_IsValidVoter)
+	DETOUR_DECL_MEMBER(bool, CVoteController_IsValidVoter)
 	{
 		auto player = reinterpret_cast<CTFPlayer *>(this);
 		bool blueHuman = IsMvMBlueHuman(ToTFPlayer(player));
@@ -1712,6 +1687,23 @@ constexpr uintptr_t s_CallOff_CollectPlayers_RadiusSpyScan = 0x2c;
 		}
 		return ret;
 	}
+#else
+	// The complete ELF32 function retains both the controller and player arguments.
+	DETOUR_DECL_MEMBER(bool, CVoteController_IsValidVoter, CBasePlayer *player)
+	{
+		bool blueHuman = IsMvMBlueHuman(ToTFPlayer(player));
+		if (blueHuman) {
+			TFGameRules()->Set_m_bPlayingMannVsMachine(false);
+		}
+
+		bool ret = DETOUR_MEMBER_CALL(player);
+
+		if (blueHuman) {
+			TFGameRules()->Set_m_bPlayingMannVsMachine(true);
+		}
+		return ret;
+	}
+#endif
 
 #if defined _WINDOWS
 	/* IsValidVoter is inline in CountPotentialVoters there, its only caller,
