@@ -41,6 +41,9 @@ on:
       missions:
         description: missions to play instead of the SigMod catalog, separated by commas, all on shard 0
         default: ''
+      launcher_config:
+        description: a launcher config.json, as JSON text, whose settings the bed plays; winbed keeps its own machine, room and server fields (needs a tf2-archipelago ref with winbed -config)
+        default: ''
       sourcemod_ref:
         description: alliedmodders/sourcemod branch, tag or commit to build against (1.11-dev for a 1.12 server)
         default: a830fd1dd6f69f57a6cd774eec883307a70a889b
@@ -447,6 +450,16 @@ jobs:
     - if: steps.focus.outputs.idle != 'true'
       uses: actions/download-artifact@v4
       with: { name: symbols, path: pkg }
+    - name: Launcher config
+      if: steps.focus.outputs.idle != 'true' && inputs.launcher_config != ''
+      shell: pwsh
+      env:
+        LAUNCHER_CONFIG: ${{ inputs.launcher_config }}
+      run: |
+        $path = Join-Path $env:RUNNER_TEMP 'launcher-config.json'
+        [IO.File]::WriteAllText($path, $env:LAUNCHER_CONFIG)
+        Get-Content $path -Raw | ConvertFrom-Json | Out-Null
+        "WINBED_CONFIG=$path" >> $env:GITHUB_ENV
     - name: Install
       if: steps.focus.outputs.idle != 'true'
       shell: pwsh
