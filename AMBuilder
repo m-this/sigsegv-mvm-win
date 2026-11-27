@@ -363,6 +363,7 @@ if 'mods_debug' not in Extension.exclude:
     'src/mod/debug/bottle_break.cpp',
     'src/mod/debug/building_status.cpp',
     'src/mod/debug/changelevel.cpp',
+    'src/mod/debug/team_lists.cpp',
     'src/mod/debug/client_desync.cpp',
     'src/mod/debug/client_player_track.cpp',
     'src/mod/debug/cond_stunned.cpp',
