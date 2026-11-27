@@ -132,7 +132,7 @@ foreach ($command in $Commands) {
 # vanilla, and the exit tracer still prints, so nothing else notices. No mod
 # reporting OK means the extension is not running: say why SourceMod refused it.
 $mods = @(& bedbin\rcon.exe sig_list_mods)
-if (-not ($mods | Select-String '\bOK\b')) {
+if (-not $env:WINBED_NO_SIGMOD -and -not ($mods | Select-String '\bOK\b')) {
   Say 'SigMod is not running: sig_list_mods lists no mods'
   $why = @(@(& bedbin\rcon.exe 'sm exts list') | Select-String 'sigsegv|FAILED')
   $why += @(Select-String -Path "$tf\console.log", "$tf\addons\sourcemod\logs\*.log" -Pattern 'Unable to load extension.*sigsegv' -ErrorAction SilentlyContinue)

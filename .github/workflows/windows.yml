@@ -34,6 +34,13 @@ on:
         description: fill RED with defender bots, which buy upgrades (needs a tf2-archipelago ref with winbed -bots)
         type: boolean
         default: false
+      no_sigmod:
+        description: install and load no SigMod, as a server without it runs, and skip heapcheck (needs a tf2-archipelago ref with winbed -no-sigmod)
+        type: boolean
+        default: false
+      missions:
+        description: missions to play instead of the SigMod catalog, separated by commas, all on shard 0
+        default: ''
       sourcemod_ref:
         description: alliedmodders/sourcemod branch, tag or commit to build against (1.11-dev for a 1.12 server)
         default: a830fd1dd6f69f57a6cd774eec883307a70a889b
@@ -43,6 +50,9 @@ on:
 
 permissions:
   contents: write
+
+env:
+  WINBED_NO_SIGMOD: ${{ inputs.no_sigmod && '1' || '' }}
 
 # A newer push supersedes a bed run still playing an older build.
 concurrency:
@@ -326,6 +336,7 @@ jobs:
   # write out of bounds faults at the instruction, and WER keeps the dump.
   heapcheck:
     needs: [build, bed-tools]
+    if: ${{ !inputs.no_sigmod }}
     runs-on: windows-2022
     timeout-minutes: 120
     env:
@@ -419,7 +430,10 @@ jobs:
     - name: Focus
       id: focus
       shell: pwsh
+      env:
+        MISSIONS: ${{ inputs.missions }}
       run: |
+        if ($env:MISSIONS) { $env:MISSIONS -split ',' | Set-Content tools/winport/bed/focus.txt }
         $focus = @(Get-Content tools/winport/bed/focus.txt -ErrorAction SilentlyContinue | ForEach-Object { ($_ -split '#')[0].Trim() } | Where-Object { $_ })
         $idle = ($focus.Count -gt 0) -and (${{ matrix.shard }} -ne 0)
         "idle=$($idle.ToString().ToLower())" >> $env:GITHUB_OUTPUT
