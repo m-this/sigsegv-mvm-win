@@ -180,7 +180,7 @@ jobs:
         mkdir -p out
         tf="$BED/tf-dedicated/tf"
         sudo mkdir -p -m 1777 /tmp/cores
-        sudo sysctl -q -w kernel.core_pattern=/tmp/cores/core.%e
+        sudo sysctl -q -w kernel.core_pattern=/tmp/cores/core.%e.%p
         ulimit -c unlimited
         bedbin/winbed -serve -root "$BED" > out/winbed.out 2> out/winbed.err &
         # srcds on a LAN reach binds rcon to the address its hostname
@@ -229,8 +229,9 @@ jobs:
         fi
         cp "$tf/console.log" out/ 2>/dev/null || true
         cp -r "$tf/addons/sourcemod/logs" out/smlogs 2>/dev/null || true
-    # A segfault leaves a core (the last one: a crash loop overwrites it); its
-    # backtrace says which module faulted.
+    # Every segfault leaves a core named by its pid; each backtrace says which
+    # module faulted, and the registers and the instructions at the fault say
+    # what it touched.
     - name: Backtrace
       if: always()
       run: |
@@ -239,8 +240,32 @@ jobs:
         ls -la /tmp/cores
         sudo apt-get install -y -q gdb > /dev/null
         cd "$BED/tf-dedicated"
-        gdb -q -batch -ex "set solib-search-path bin:tf/bin" -ex "info sharedlibrary" -ex "bt 40" ./srcds_linux "$1" 2>&1 \
-          | grep -v -E "^(warning|\[New LWP)" | tee "$GITHUB_WORKSPACE/out/backtrace.txt" | tail -80
+        cat > /tmp/fault.gdb <<'GDB'
+        set solib-search-path bin:tf/bin
+        bt 40
+        info registers
+        x/8i $pc-16
+        set $self = *(int*)($ebp+8)
+        set $team = *(int*)($ebp-0x1c)
+        printf "self=%#x team=%d name=%.32s\n", $self, *(int*)($self+0x244), (char*)($self+0xfcc)
+        printf "loop index=%d count=%d\n", $esi, *(int*)($ebp-0x20)
+        printf "team=%#x teamnum=%d players=%d\n", $team, *(int*)($team+0x3f4), *(int*)($team+0x3bc)
+        set $i = 0
+        while $i < *(int*)($team+0x3bc) && $i < 64
+          set $p = *(int*)(*(int*)($team+0x3b0) + 4*$i)
+          printf "[%d] %#x vtable=%#x\n", $i, $p, *(int*)$p
+          info symbol *(int*)$p
+          printf "    team=%d name=%.32s\n", *(int*)($p+0x244), (char*)($p+0xfcc)
+          set $i = $i + 1
+        end
+        GDB
+        n=0
+        for core in "$@"; do
+          n=$((n+1)); [ $n -le 8 ] || break
+          echo "===== $core" | tee -a "$GITHUB_WORKSPACE/out/backtrace.txt"
+          gdb -q -batch -x /tmp/fault.gdb ./srcds_linux "$core" 2>&1 \
+            | grep -v -E "^(warning|\[New LWP)" | tee -a "$GITHUB_WORKSPACE/out/backtrace.txt" | tail -120
+        done
     - name: Report
       if: always()
       run: |
