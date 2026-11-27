@@ -180,7 +180,7 @@ jobs:
         mkdir -p out
         tf="$BED/tf-dedicated/tf"
         sudo mkdir -p -m 1777 /tmp/cores
-        sudo sysctl -q -w kernel.core_pattern=/tmp/cores/core.%e
+        sudo sysctl -q -w kernel.core_pattern=/tmp/cores/core.%e.%p
         ulimit -c unlimited
         bedbin/winbed -serve -root "$BED" > out/winbed.out 2> out/winbed.err &
         # srcds on a LAN reach binds rcon to the address its hostname
@@ -214,8 +214,12 @@ jobs:
         for c in "meta list" "sm exts list" "sm plugins list" "sig_list_mods"; do
           echo "## $c"; bedbin/rcon "$c" 2>&1 | tee "out/$(echo $c | tr ' ' _).txt" | head -60
         done
-        bedbin/waveprobe -rcon "$addr:27015" -mission "$mission" $probeargs -mode normal -timeout 900s \
-          >> out/results.jsonl 2>> out/waveprobe.err || true
+        # "a+b+a": several missions in turn on the one server, so a level
+        # change between them is played; a single job plays one otherwise
+        for m in ${mission//+/ }; do
+          bedbin/waveprobe -rcon "$addr:27015" -mission "$m" $probeargs -mode normal -timeout 900s \
+            >> out/results.jsonl 2>> out/waveprobe.err || true
+        done
         # A wave that times out, or a server rcon no longer reaches, is a hang:
         # no core, so take every thread's stack from the live process.
         if grep -q -E '"wave timed out"|cannot reach' out/results.jsonl && pid=$(pgrep -o srcds_linux); then
@@ -229,8 +233,8 @@ jobs:
         fi
         cp "$tf/console.log" out/ 2>/dev/null || true
         cp -r "$tf/addons/sourcemod/logs" out/smlogs 2>/dev/null || true
-    # A segfault leaves a core (the last one: a crash loop overwrites it); its
-    # backtrace says which module faulted.
+    # A segfault leaves a core, one per process; its backtrace says which
+    # module faulted.
     - name: Backtrace
       if: always()
       run: |
@@ -239,8 +243,11 @@ jobs:
         ls -la /tmp/cores
         sudo apt-get install -y -q gdb > /dev/null
         cd "$BED/tf-dedicated"
-        gdb -q -batch -ex "set solib-search-path bin:tf/bin" -ex "info sharedlibrary" -ex "bt 40" ./srcds_linux "$1" 2>&1 \
-          | grep -v -E "^(warning|\[New LWP)" | tee "$GITHUB_WORKSPACE/out/backtrace.txt" | tail -80
+        for core in "$@"; do
+          echo "== $core"
+          gdb -q -batch -ex "set solib-search-path bin:tf/bin" -ex "info sharedlibrary" -ex "bt 40" ./srcds_linux "$core" 2>&1 \
+            | grep -v -E "^(warning|\[New LWP)"
+        done | tee "$GITHUB_WORKSPACE/out/backtrace.txt" | grep -v "^0x" | tail -200
     - name: Report
       if: always()
       run: |
