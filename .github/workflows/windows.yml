@@ -34,6 +34,16 @@ on:
         description: fill RED with defender bots, which buy upgrades (needs a tf2-archipelago ref with winbed -bots)
         type: boolean
         default: false
+      no_sigmod:
+        description: install and load no SigMod, as a server without it runs, and skip heapcheck (needs a tf2-archipelago ref with winbed -no-sigmod)
+        type: boolean
+        default: false
+      missions:
+        description: missions to play instead of the SigMod catalog, separated by commas, all on shard 0
+        default: ''
+      launcher_config:
+        description: a launcher config.json, as JSON text, whose settings the bed plays; winbed keeps its own machine, room and server fields (needs a tf2-archipelago ref with winbed -config)
+        default: ''
       sourcemod_ref:
         description: alliedmodders/sourcemod branch, tag or commit to build against (1.11-dev for a 1.12 server)
         default: a830fd1dd6f69f57a6cd774eec883307a70a889b
@@ -44,9 +54,13 @@ on:
 permissions:
   contents: write
 
-# A newer push supersedes a bed run still playing an older build.
+env:
+  WINBED_NO_SIGMOD: ${{ inputs.no_sigmod && '1' || '' }}
+
+# A newer push supersedes a bed run still playing an older build. A dispatched
+# run is an experiment of its own, and several run side by side in a bisection.
 concurrency:
-  group: windows-${{ github.ref }}
+  group: windows-${{ github.event_name == 'workflow_dispatch' && github.run_id || github.ref }}
   cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
 
 jobs:
@@ -326,6 +340,7 @@ jobs:
   # write out of bounds faults at the instruction, and WER keeps the dump.
   heapcheck:
     needs: [build, bed-tools]
+    if: ${{ !inputs.no_sigmod }}
     runs-on: windows-2022
     timeout-minutes: 120
     env:
@@ -419,7 +434,10 @@ jobs:
     - name: Focus
       id: focus
       shell: pwsh
+      env:
+        MISSIONS: ${{ inputs.missions }}
       run: |
+        if ($env:MISSIONS) { $env:MISSIONS -split ',' | Set-Content tools/winport/bed/focus.txt }
         $focus = @(Get-Content tools/winport/bed/focus.txt -ErrorAction SilentlyContinue | ForEach-Object { ($_ -split '#')[0].Trim() } | Where-Object { $_ })
         $idle = ($focus.Count -gt 0) -and (${{ matrix.shard }} -ne 0)
         "idle=$($idle.ToString().ToLower())" >> $env:GITHUB_OUTPUT
@@ -433,6 +451,16 @@ jobs:
     - if: steps.focus.outputs.idle != 'true'
       uses: actions/download-artifact@v4
       with: { name: symbols, path: pkg }
+    - name: Launcher config
+      if: steps.focus.outputs.idle != 'true' && inputs.launcher_config != ''
+      shell: pwsh
+      env:
+        LAUNCHER_CONFIG: ${{ inputs.launcher_config }}
+      run: |
+        $path = Join-Path $env:RUNNER_TEMP 'launcher-config.json'
+        [IO.File]::WriteAllText($path, $env:LAUNCHER_CONFIG)
+        Get-Content $path -Raw | ConvertFrom-Json | Out-Null
+        "WINBED_CONFIG=$path" >> $env:GITHUB_ENV
     - name: Install
       if: steps.focus.outputs.idle != 'true'
       shell: pwsh

@@ -4,7 +4,9 @@
 $ErrorActionPreference = 'Stop'
 Get-PSDrive C | Format-Table -AutoSize | Out-String | Write-Host
 
-& bedbin\winbed.exe -install -root $env:BED -sigmod pkg\package-windows.zip -probe bedbin\tf2_waveprobe.smx
+# WINBED_NO_SIGMOD installs the server a player without SigMod has.
+$sigmod = if ($env:WINBED_NO_SIGMOD) { @() } else { @('-sigmod', 'pkg\package-windows.zip') }
+& bedbin\winbed.exe -install -root $env:BED @sigmod -probe bedbin\tf2_waveprobe.smx
 if ($LASTEXITCODE) { exit $LASTEXITCODE }
 
 # A crash leaves a minidump behind: srcds under Breakpad wrote none for SAM.

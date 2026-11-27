@@ -32,6 +32,9 @@ on:
       missions:
         description: missions to play instead of linuxbed.txt, separated by commas
         default: ''
+      launcher_config:
+        description: a launcher config.json, as JSON text, whose settings the bed plays; winbed keeps its own machine, room and server fields (needs a tf2-archipelago ref with winbed -config)
+        default: ''
       extensions_run:
         description: id of a tf2-archipelago Extensions run whose bundle (CBaseNPC, Actions, REST in Pawn built for SourceMod 1.13) the bed installs; empty takes the latest successful run on archipelago_ref
         default: ''
@@ -39,8 +42,10 @@ on:
         description: id of a Build and Release run whose package-linux to install instead of the pinned release
         default: ''
 
+# A dispatched run is an experiment of its own, and several run side by side in
+# a bisection.
 concurrency:
-  group: linuxbed-${{ github.ref }}
+  group: linuxbed-${{ github.event_name == 'workflow_dispatch' && github.run_id || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -142,6 +147,15 @@ jobs:
         path: sigmod
         run-id: ${{ inputs.sigmod_run }}
         github-token: ${{ github.token }}
+    - name: Launcher config
+      if: inputs.launcher_config != ''
+      env:
+        LAUNCHER_CONFIG: ${{ inputs.launcher_config }}
+      run: |
+        path="$RUNNER_TEMP/launcher-config.json"
+        printf '%s' "$LAUNCHER_CONFIG" > "$path"
+        python3 -c 'import json,sys; json.load(open(sys.argv[1]))' "$path"
+        echo "WINBED_CONFIG=$path" >> "$GITHUB_ENV"
     - name: Install
       env:
         WINBED_NO_SIGMOD: ${{ inputs.no_sigmod && '1' || '' }}
