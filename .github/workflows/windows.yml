@@ -57,9 +57,10 @@ permissions:
 env:
   WINBED_NO_SIGMOD: ${{ inputs.no_sigmod && '1' || '' }}
 
-# A newer push supersedes a bed run still playing an older build.
+# A newer push supersedes a bed run still playing an older build. A dispatched
+# run is an experiment of its own, and several run side by side in a bisection.
 concurrency:
-  group: windows-${{ github.ref }}
+  group: windows-${{ github.event_name == 'workflow_dispatch' && github.run_id || github.ref }}
   cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
 
 jobs:

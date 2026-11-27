@@ -42,8 +42,10 @@ on:
         description: id of a Build and Release run whose package-linux to install instead of the pinned release
         default: ''
 
+# A dispatched run is an experiment of its own, and several run side by side in
+# a bisection.
 concurrency:
-  group: linuxbed-${{ github.ref }}
+  group: linuxbed-${{ github.event_name == 'workflow_dispatch' && github.run_id || github.ref }}
   cancel-in-progress: true
 
 jobs:
