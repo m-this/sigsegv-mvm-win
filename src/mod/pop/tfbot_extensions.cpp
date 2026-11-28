@@ -1595,37 +1595,26 @@ namespace Mod::Pop::TFBot_Extensions
 		return DETOUR_MEMBER_CALL(gun);
 	}
 
-	// A living neutral bot passes CTFBotMainAction::Update's playing-team check
-	// as BLUE, and goes back to TEAM_SPECTATOR at the FindPartnerTauntInitiator
-	// call that follows the check. That call can be skipped (another detour of it
-	// returns early), and FindPartnerTauntInitiator is also called by
-	// HandleTauntCommand: only the bot that was switched may be switched back.
-	CTFBot *neutral_bot_as_blue = nullptr;
+	bool rc_CTFBotMainAction_Update = false;
 	DETOUR_DECL_MEMBER(ActionResult<CTFBot>, CTFBotMainAction_Update, CTFBot *actor, float dt)
 	{
-		if (actor->GetTeamNumber() != TEAM_SPECTATOR || actor->StateGet() != TF_STATE_ACTIVE) {
-			return DETOUR_MEMBER_CALL(actor, dt);
+		rc_CTFBotMainAction_Update = false;
+
+		if (actor->GetTeamNumber() == TEAM_SPECTATOR && actor->StateGet() == TF_STATE_ACTIVE) {
+			rc_CTFBotMainAction_Update = true;
+			actor->SetTeamNumber(TF_TEAM_BLUE);
 		}
-		neutral_bot_as_blue = actor;
-		actor->SetTeamNumber(TF_TEAM_BLUE);
-		auto result = DETOUR_MEMBER_CALL(actor, dt);
-		if (neutral_bot_as_blue == actor) {
-			Msg("TEAMLISTS neutral bot #%d \"%s\" left as BLUE by CTFBotMainAction::Update, reprogrammed %d\n",
-				ENTINDEX(actor), actor->GetPlayerName(), actor->m_Shared->InCond(TF_COND_REPROGRAMMED));
-			actor->SetTeamNumber(TEAM_SPECTATOR);
-		}
-		neutral_bot_as_blue = nullptr;
-		return result;
+		return DETOUR_MEMBER_CALL(actor, dt);
 	}
 	
 	ConVar sig_no_bot_partner_taunt("sig_no_bot_partner_taunt", "1", FCVAR_NONE, "Disable bots answering to partner taunts");
 	DETOUR_DECL_MEMBER(CTFPlayer *, CTFPlayer_FindPartnerTauntInitiator)
 	{
 		auto player = reinterpret_cast<CTFPlayer *>(this);
-		if (player == neutral_bot_as_blue) {
+		if (rc_CTFBotMainAction_Update) {
 			player->SetTeamNumber(TEAM_SPECTATOR);
-			neutral_bot_as_blue = nullptr;
 		}
+		rc_CTFBotMainAction_Update = false;
 
 		if (sig_no_bot_partner_taunt.GetBool() && player->IsBot())
 			return nullptr;
@@ -2676,4 +2665,4 @@ Current UseHumanModel mod:
 	
 	return false;
 }
-*/
+*/
