@@ -282,7 +282,11 @@ public:
 	ICollideable *GetCollideable() const          { return &this->m_Collision; }
 	CCollisionProperty *CollisionProp() const     { return &this->m_Collision; }
 	int GetTeamNumber() const                     { return this->m_iTeamNum; }
-	void SetTeamNumber(int number)                { this->m_iTeamNum = number; }
+	void SetTeamNumber(int number, const char *file = __builtin_FILE(), int line = __builtin_LINE())
+	{
+		if (number != this->m_iTeamNum && this->IsPlayer()) Msg("SETTEAM ent=%d %d->%d at %s:%d\n", this->entindex(), (int)this->m_iTeamNum, number, file, line);
+		this->m_iTeamNum = number;
+	}
 	void SetMaxHealth(int amt)                    { this->m_iMaxHealth = amt; }
 	int GetHealth() const                         { return this->m_iHealth; }
 	void SetHealth(int amt)                       { this->m_iHealth = amt; }
