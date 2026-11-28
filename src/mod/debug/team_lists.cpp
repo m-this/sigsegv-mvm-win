@@ -19,8 +19,8 @@ namespace Mod::Debug::Team_Lists
 	void PrintStack()
 	{
 #if defined _LINUX
-		void *frames[24];
-		int count = backtrace(frames, 24);
+		void *frames[64];
+		int count = backtrace(frames, 64);
 		for (int i = 1; i < count; i++) {
 			Dl_info info;
 			if (dladdr(frames[i], &info) != 0 && info.dli_fname != nullptr) {
@@ -120,6 +120,7 @@ namespace Mod::Debug::Team_Lists
 
 	DETOUR_DECL_MEMBER(void, CTFPlayer_Event_Killed, const CTakeDamageInfo& info)
 	{
+		CheckAll("before CTFPlayer::Event_Killed");
 		DETOUR_MEMBER_CALL(info);
 		CheckAll("CTFPlayer::Event_Killed");
 	}
