@@ -407,7 +407,12 @@ namespace Mod::Etc::Weapon_Mimic_Teamnum
 	DETOUR_DECL_MEMBER(void, CTFPlayer_Event_Killed, const CTakeDamageInfo& info)
 	{
 		auto player = reinterpret_cast<CTFPlayer *>(this);
+		int pre = player->GetTeamNumber();
+		Msg("KILLED pre ent=%d team=%d inflictor=%s attacker=%s dmgtype=%d custom=%d\n", ENTINDEX(player), pre,
+			info.GetInflictor() != nullptr ? info.GetInflictor()->GetClassname() : "null",
+			info.GetAttacker() != nullptr ? info.GetAttacker()->GetClassname() : "null", info.GetDamageType(), info.GetDamageCustom());
 		DETOUR_MEMBER_CALL(info);
+		Msg("KILLED post ent=%d team=%d\n", ENTINDEX(player), player->GetTeamNumber());
 		CBaseEntity *observer = player->m_hObserverTarget;
 		if (info.GetInflictor() != nullptr) {
 			if (rtti_cast<CTFPointWeaponMimic *>(info.GetInflictor()) != nullptr) {
