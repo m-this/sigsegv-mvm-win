@@ -1905,7 +1905,11 @@ namespace Mod::Pop::TFBot_Extensions
 	DETOUR_DECL_MEMBER(void, CBasePlayer_ChangeTeam, int iTeamNum, bool b1, bool b2, bool b3)
 	{
 		auto player = reinterpret_cast<CTFPlayer *>(this);
+		int pre = player->GetTeamNumber();
+		CTeam *team = TFTeamMgr()->GetTeam(pre);
+		Msg("CHTEAM pre ent=%d %d->%d silent=%d list=%d\n", ENTINDEX(player), pre, iTeamNum, (int)b2, team != nullptr ? team->m_aPlayers->Find(player) : -9);
 		DETOUR_MEMBER_CALL(iTeamNum, b1, b2, b3);
+		Msg("CHTEAM post ent=%d now=%d oldlist=%d\n", ENTINDEX(player), player->GetTeamNumber(), team != nullptr ? team->m_aPlayers->Find(player) : -9);
 		SCOPED_INCREMENT(rc_CBasePlayer_ChangeTeam);
 	}
 
@@ -2665,4 +2669,4 @@ Current UseHumanModel mod:
 	
 	return false;
 }
-*/
+*/

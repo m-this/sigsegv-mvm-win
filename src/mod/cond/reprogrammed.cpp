@@ -1078,6 +1078,7 @@ namespace Mod::Cond::Reprogrammed
 			
 			for (auto player : tempVector) {
 				if (player->IsBot()) {
+					Msg("ROUNDSTART ent=%d team=%d alive=%d\n", ENTINDEX(player), player->GetTeamNumber(), (int)player->IsAlive());
 					if (player->IsAlive() && player->GetTeamNumber() == TEAM_SPECTATOR) {
 						player->ForceChangeTeam(TF_TEAM_BLUE, true);
 						player->ForceChangeTeam(TEAM_SPECTATOR, true);
